@@ -10,7 +10,7 @@
              Background="{DynamicResource ControlBackgroundBrush}">
     <Border Padding="0,0,0,0" BorderThickness="1 0 0 0" BorderBrush="{StaticResource GlassPanelBorder}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Sections}">
+            <ItemsControl ItemsSource="{Binding Groups}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical" />
@@ -64,14 +64,8 @@
                                                     <Image Source="{Binding Image}" Stretch="UniformToFill" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
                                                     <Border x:Name="ImageOverlay" Background="#CC333333" Grid.ColumnSpan="2" Padding="3"/>
                                                     <Border Background="Black" BorderBrush="Gold" BorderThickness="1" CornerRadius="3" Padding="3" Margin="3 3 3 3">
-                                                        <TextBlock x:Name="CountBox" Foreground="Wheat" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                            <TextBlock.Text>
-                                                                <MultiBinding StringFormat="{}{0} \ {1}" NotifyOnTargetUpdated="True">
-                                                                    <Binding Path="ViewedCards" NotifyOnTargetUpdated="True" />
-                                                                    <Binding Path="Quantity" />
-                                                                </MultiBinding>
-                                                            </TextBlock.Text>
-                                                        </TextBlock>
+                                                        <TextBlock x:Name="CountBox" Text="{Binding CardCount}" Foreground="Wheat" VerticalAlignment="Center" HorizontalAlignment="Center" />
+
                                                     </Border>
                                                     <TextBlock x:Name="NameBox" Text="{Binding Name}" Foreground="White" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
                                                 </Grid>

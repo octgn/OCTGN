@@ -667,7 +667,7 @@ namespace Octgn.Play
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if(e.Key == Key.F9 && Program.GameEngine.DeckStats.Sections.Count > 0) {
+            if(e.Key == Key.F9 && Program.GameEngine.DeckStats.Groups.Count > 0) {
                 Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
 
                 e.Handled = true;

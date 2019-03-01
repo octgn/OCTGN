@@ -195,6 +195,12 @@ namespace Octgn
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
                 Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
+
+                foreach(var group in Player.LocalPlayer.Groups) {
+                    if (group != Player.LocalPlayer.Hand) {
+                        DeckStats.Groups.Add(new DeckStatsGroupViewModel(group));
+                    }
+                }
             }));
         }
 
@@ -542,15 +548,8 @@ namespace Octgn
                     group.SetVisibility(false, false);
                 }
 
-                var sectionStats = new DeckStatsSectionViewModel(section.Name);
-                DeckStats.Sections.Add(sectionStats);
-
                 foreach (IMultiCard element in section.Cards)
                 {
-                    var cardStats = new DeckStatsCardViewModel(element);
-
-                    sectionStats.Cards.Add(cardStats);
-
                     //DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
                     {
@@ -564,8 +563,6 @@ namespace Octgn
                         sizes[j] = card.Size.Name;
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
-
-                        cardStats.AttachCard(card);
                     }
 
                     // Load images in the background
@@ -573,8 +570,6 @@ namespace Octgn
                     Dispatcher.CurrentDispatcher.BeginInvoke(
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                         DispatcherPriority.Background, pictureUri);
-
-                    ImageUtils.GetCardImage(element, x => cardStats.Image = x, false);
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(deck.SleeveId), limited);
