@@ -1306,23 +1306,29 @@ namespace Octgn.DeckBuilder
 
             if (parentRows.Count == 4)
             {
-                Double maxH = e.NewSize.Height - parentRows[3].MinHeight -
-                              parentRows[2].ActualHeight - parentRows[0].ActualHeight;
-                parentRows[1].MaxHeight = maxH - 1; // work around window resizing issue
-
-                if (e.NewSize.Height < e.PreviousSize.Height && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
+                Double maxH = e.NewSize.Height 
+                            - parentRows[3].MinHeight 
+                            - parentRows[2].ActualHeight 
+                            - parentRows[0].ActualHeight;
+                parentRows[1].MaxHeight = maxH - 1; // -1 required to force updating when resizing window (no idea why)
+                // speeds up grid resizing to fit minSizes when shrinking window
+                if (e.NewSize.Height < e.PreviousSize.Height 
+                    && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
                 {
-                    parentRows[1].Height = new GridLength(parentRows[1].ActualHeight - (e.PreviousSize.Height - e.NewSize.Height));
+                    parentRows[1].Height = new GridLength(self.ActualHeight);
                 }
             }
             if (parentCols.Count == 3)
             {
-                double maxW = e.NewSize.Width - parentCols[2].MinWidth - parentCols[1].ActualWidth;
-                parentCols[0].MaxWidth = maxW - 1; // work around window resizing issue
-
-                if (e.NewSize.Width < e.PreviousSize.Width && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
+                double maxW = e.NewSize.Width 
+                            - parentCols[2].MinWidth 
+                            - parentCols[1].ActualWidth;
+                parentCols[0].MaxWidth = maxW - 1; // -1 required to force updating when resizing window
+                // speeds up grid resizing to fit minSizes when shrinking window
+                if (e.NewSize.Width < e.PreviousSize.Width 
+                    && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
                 {
-                    parentCols[0].Width = new GridLength(parentCols[0].ActualWidth - (e.PreviousSize.Width - e.NewSize.Width));
+                    parentCols[0].Width = new GridLength(self.ActualWidth);
                 }
             }
         }
