@@ -1103,10 +1103,6 @@ namespace Octgn.Play
             playerArea.MinHeight = playerTabs.DesiredSize.Height;
         }
 
-        private void ResetGame(object sender, ExecutedRoutedEventArgs e) {
-
-        }
-
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (ChatGridChatPart.ActualHeight <= ChatGridChatPart.MinHeight && e.VerticalChange >= 0) // + VerticalChange means shrinking chat box
