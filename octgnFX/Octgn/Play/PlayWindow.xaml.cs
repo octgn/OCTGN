@@ -1103,6 +1103,10 @@ namespace Octgn.Play
             playerArea.MinHeight = playerTabs.DesiredSize.Height;
         }
 
+        private void CardList_Click(object sender, RoutedEventArgs e) {
+            Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
+        }
+
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (ChatGridChatPart.ActualHeight <= ChatGridChatPart.MinHeight && e.VerticalChange >= 0) // + VerticalChange means shrinking chat box
