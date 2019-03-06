@@ -1103,8 +1103,8 @@ namespace Octgn.Play
             playerArea.MinHeight = playerTabs.DesiredSize.Height;
         }
 
-        private void ResetGame(object sender, ExecutedRoutedEventArgs e) {
-
+        private void CardList_Click(object sender, RoutedEventArgs e) {
+            Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
         }
 
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)

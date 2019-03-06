@@ -1,1 +1,2 @@
-
+Fix game reset not working - Kelly
+Add Card List menu item in game - Kelly

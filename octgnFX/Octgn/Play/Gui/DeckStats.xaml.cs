@@ -31,14 +31,8 @@ namespace Octgn.Play.Gui
         private bool _isVisible;
 
         public void Clear() {
-            Groups.Clear();
-        }
-
-        public void ResetCounters() {
             foreach(var group in Groups) {
-                foreach(var card in group.Cards) {
-                    card.ResetCounters();
-                }
+                group.Clear();
             }
         }
 
@@ -74,6 +68,10 @@ namespace Octgn.Play.Gui
             Cards = new ObservableCollection<DeckStatsCardViewModel>();
 
             group.Cards.CollectionChanged += Cards_CollectionChanged;
+        }
+
+        public void Clear() {
+            Cards.Clear();
         }
 
         private void AddCardVm(DeckStatsCardViewModel vm) {
