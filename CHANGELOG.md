@@ -1,3 +1,7 @@
+#3.3.115.0
++ Fix game reset not working - Kelly
++ Add Card List menu item in game - Kelly
+
 #3.3.114.0
 
 #3.3.113.0
@@ -3650,6 +3654,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
