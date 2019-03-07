@@ -1,3 +1,6 @@
+#3.3.116.0
++ Don't categorize deck stats. - Kelly
+
 #3.3.115.0
 + Fix game reset not working - Kelly
 + Add Card List menu item in game - Kelly
@@ -3654,6 +3657,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
