@@ -195,12 +195,6 @@ namespace Octgn
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
                 Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
-
-                foreach(var group in Player.LocalPlayer.Groups) {
-                    if (group != Player.LocalPlayer.Hand) {
-                        DeckStats.Groups.Add(new DeckStatsGroupViewModel(group));
-                    }
-                }
             }));
         }
 
@@ -451,7 +445,7 @@ namespace Octgn
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
 
-            DeckStats.Clear();
+            DeckStats.Reset();
 
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
@@ -524,8 +518,6 @@ namespace Octgn
                         } else {
                             var newCard = new ObservableMultiCard(card);
 
-                            newCard.ImageUri = newCard.GetPicture();
-
                             loadedCardsSection.Cards.AddCard(newCard);
                         }
                     }
@@ -563,6 +555,8 @@ namespace Octgn
                         sizes[j] = card.Size.Name;
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
+
+                        DeckStats.AddCard(card);
                     }
 
                     // Load images in the background
