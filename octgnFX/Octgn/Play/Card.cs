@@ -17,6 +17,9 @@ using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 
 using log4net;
+using Octgn.Site.Api;
+using Octgn.Library;
+using Octgn.Core;
 
 namespace Octgn.Play
 {
@@ -439,8 +442,6 @@ namespace Octgn.Play
 
         public Dictionary<string, Dictionary<string, object>> PropertyOverrides = new Dictionary<string, Dictionary<string, object>>(StringComparer.InvariantCultureIgnoreCase);
 
-        private string sleeveUrl;
-
         public Player TargetedBy { get; private set; }
 
         internal bool TargetsOtherCards { get; set; }
@@ -671,20 +672,16 @@ namespace Octgn.Play
         {
             if (!up)
             {
-                if (string.IsNullOrWhiteSpace(sleeveUrl))
+                if (Owner.SleeveImage == null) {
                     return Program.GameEngine.GetCardBack(this.Size.Name);
-                BitmapImage b = null;
-                Library.X.Instance.Try(() => b = ImageUtils.CreateFrozenBitmap(new Uri(sleeveUrl)));
-                if (b == null)
-                    return Program.GameEngine.GetCardBack(this.Size.Name);
-                return b;
+                } else {
+                    return Owner.SleeveImage;
+                }
             }
             if (Type == null || Type.Model == null) return Program.GameEngine.GetCardFront(this.Size.Name);
             BitmapImage bmpo = null;
             Octgn.Library.X.Instance.Try(() =>
             {
-                //Uri imgUrl = null;
-                //imgUrl = proxyOnly ? new Uri(Type.Model.GetProxyPicture()) : new Uri(Type.Model.GetPicture());
                 ImageUtils.GetCardImage(Type.Model, x => bmpo = x,proxyOnly);
             });
 
@@ -937,36 +934,6 @@ namespace Octgn.Play
         internal bool hasProperty(string propertyName)
         {
             return (Type.Model.HasProperty(propertyName));
-        }
-
-        public void SetSleeve(int sleeveId)
-        {
-            try
-            {
-                var sleeve = SleeveManager.Instance.SleeveFromId(sleeveId);
-                if (sleeve != null)
-                {
-                    SetSleeve(sleeve.Url);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Warn("SetSleeve " + sleeveId, e);
-            }
-        }
-
-        public void SetSleeve(string pleeveUrl)
-        {
-            try
-            {
-                this.sleeveUrl = pleeveUrl;
-                OnPropertyChanged("FaceUp");
-            }
-            catch (Exception e)
-            {
-                Log.Warn("SetSleeve " + (sleeveUrl ?? ""), e);
-                throw;
-            }
         }
     }
 }

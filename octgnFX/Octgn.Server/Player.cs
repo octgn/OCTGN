@@ -5,6 +5,7 @@ using System.Reflection;
 using log4net;
 using Octgn.Library.Localization;
 using Octgn.Library.Networking;
+using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
@@ -66,6 +67,8 @@ namespace Octgn.Server
 
         public int TotalPingsReceived => _socket.PingsReceived;
 
+        public bool IsSubbed { get; private set; }
+
         /// <summary>
         /// Is this player part of a local game or a Octgn.Net hosted game.
         /// </summary>
@@ -87,6 +90,13 @@ namespace Octgn.Server
             Pkey = pkey;
             Settings = new PlayerSettings(invertedTable, spectator);
             _collection = collection ?? throw new ArgumentNullException(nameof(collection));
+
+            if (!_context.Config.IsLocal) {
+                var client = new ApiClient();
+                var result = client.IsSubbed(nick, _context.Config.ApiKey);
+
+                IsSubbed = result == IsSubbedResult.Ok;
+            }
         }
 
         private ServerSocket _socket;

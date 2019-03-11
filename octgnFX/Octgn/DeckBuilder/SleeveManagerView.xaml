@@ -20,7 +20,6 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <!--<ColumnDefinition Width="Auto" MinWidth="100"/>-->
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -42,13 +41,17 @@
 
         <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ButtonBarPanel}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
-                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
-                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35"
+                        Padding="0 -7 0 0" Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List" Content="&#10227;">
                 </Button>
-                <Button Click="ButtonCancelClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="28" Padding="0 1 0 0"
-                        Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonCancel"
+                <Button Click="ButtonCancelClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="28"
+                        Padding="0 0 0 0" Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonCancel"
                         FontFamily="{StaticResource Entypo}" ToolTip="Cancel" Content="X">
+                </Button>
+                <Button Click="ButtonAddClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="28"
+                        Padding="0 -2 0 0" Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonAdd"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Add" Content="+">
                 </Button>
             </StackPanel>
         </Border>
@@ -91,24 +94,20 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition x:Name="row3" Height="0"/>
                             </Grid.RowDefinitions>
-                            <Image Source="{Binding Url}" HorizontalAlignment="Center" Grid.RowSpan="3" IsHitTestVisible="False" Focusable="False" Canvas.ZIndex="-1" Stretch="Fill"/>
-                            <!--<Border Grid.Row="1" Style="{StaticResource DarkPanel}">
+                            <Image Source="{Binding Image}" HorizontalAlignment="Center" Grid.RowSpan="3" IsHitTestVisible="False" Focusable="False" Canvas.ZIndex="-1" Stretch="Fill"/>
+                            <Border Grid.Row="1" Style="{StaticResource DarkPanel}">
                                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
                             </TextBlock>
-                            </Border>-->
+                            </Border>
                             <Border Grid.Row="2" Background="#AA000000">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="100*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0,0,0,3">
-                                        <!--<TextBlock Text="{Binding Path=Notes}" Margin="5,0,5,0" TextWrapping="Wrap" Foreground="White"/>-->
-                                    </ScrollViewer>
-                                    <Button Grid.Row="1" Height="30" Click="GetSleeve" Style="{StaticResource FlatDarkButtonStyle}" 
-                                                Cursor="Hand" Background="Green" Content="{Binding ButtonText}" 
-                                                IsEnabled="{Binding ButtonEnabled}"/>
-                                </Grid>
+                                <StackPanel VerticalAlignment="Bottom">
+                                    <Button Height="30" Click="DeleteSleeve" Style="{StaticResource FlatDarkRedButtonStyle}" 
+                                                Content="Delete" IsEnabled="{Binding CanDelete}"/>
+                                    <Rectangle Height="5"/>
+                                    <Button Height="30" Click="SelectSleeve" Style="{StaticResource FlatDarkButtonStyle}" 
+                                                Background="Green" Content="Select"
+                                                IsEnabled="{Binding CanSelect}"/>
+                                </StackPanel>
                             </Border>
                         </Grid >
                     </DataTemplate>

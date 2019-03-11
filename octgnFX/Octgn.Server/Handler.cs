@@ -288,34 +288,15 @@ namespace Octgn.Server
             for (var i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
 
-            var sstring = "";
-            try {
-                var split = sleeveString.Split(new char[1] { '\t' }, 2);
-                if (split.Length == 2) {
-                    if (int.TryParse(split[0], out var sid)) {
-                        if (Uri.TryCreate(split[1], UriKind.Absolute, out var url)) {
-                            if (!_context.Config.IsLocal) {
-                                // Check if the user can even do this
-                                var p = _player;
-                                var c = new ApiClient();
-                                var resp = c.CanUseSleeve(p.Nick, sid);
-                                if (resp.Authorized) {
-                                    sstring = split[1];
-                                }
-                            } else {
-                                sstring = split[1];
-                            }
-                        }
-                    }
+            if (!_context.Config.IsLocal) {
+                // Check if the user can even do this
+                var p = _player;
+                if (!p.IsSubbed) {
+                    sleeveString = null;
                 }
-
-            } catch (Exception e) {
-                if (_context.Config.IsLocal)
-                    Log.Warn("LoadDeck", e);
-                else
-                    Log.Error("LoadDeck", e);
             }
-            _context.Broadcaster.LoadDeck(id, type, group, size, sstring, limited);
+
+            _context.Broadcaster.LoadDeck(id, type, group, size, sleeveString, limited);
         }
 
         public void CreateCard(int[] id, Guid[] type, string[] size, int @group) {

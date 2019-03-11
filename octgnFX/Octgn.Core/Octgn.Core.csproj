@@ -92,6 +92,7 @@
     <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sleeve.cs" />
     <Compile Include="Tabletop\GameEngine.cs" />
     <Compile Include="Tabletop\GameState.cs" />
     <Compile Include="Util\BigInteger.cs" />
@@ -107,6 +108,10 @@
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
       <Name>Octgn.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8BED43B1-B215-49BF-9DB7-5C72171E1CAD}</Project>
+      <Name>Octgn.Online</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>

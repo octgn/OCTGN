@@ -11,7 +11,7 @@
         Guid GameId { get; }
         bool IsShared { get; }
         string Notes { get; }
-        int SleeveId { get; }
+        ISleeve Sleeve { get; }
         IEnumerable<ISection> Sections { get; }
     }
 
@@ -20,7 +20,7 @@
         public Guid GameId { get; set; }
         public bool IsShared { get; set; }
         public string Notes { get; set; }
-        public int SleeveId { get; set; }
+        public ISleeve Sleeve { get; set; }
         public IEnumerable<ISection> Sections { get; set; }
 
         public Deck()
@@ -39,7 +39,7 @@
 
         private string notes;
 
-        private int sleeveId;
+        private ISleeve sleeve;
 
         public Guid GameId
         {
@@ -106,17 +106,17 @@
             }
         }
 
-        public int SleeveId
+        public ISleeve Sleeve
         {
             get
             {
-                return this.sleeveId;
+                return this.sleeve;
             }
             set
             {
-                if (this.sleeveId == value) return;
-                this.sleeveId = value;
-                OnPropertyChanged("SleeveId");
+                if (this.sleeve == value) return;
+                this.sleeve = value;
+                OnPropertyChanged("Sleeve");
             }
         }
 

@@ -229,56 +229,6 @@ namespace Octgn.Site.Api
             }
         }
 
-        public AuthorizedResponse<IEnumerable<ApiSleeve>> GetUserSleeves(string username, string password) {
-            var client = Client;
-            var resp =
-                client.GetAsync(
-                    "api/user/sleeves?sleeveusername=" + HttpUtility.UrlEncode(username)
-                    + "&sleevepassword=" + HttpUtility.UrlEncode(password)).Result;
-            if (resp.StatusCode == HttpStatusCode.Unauthorized)
-                return new AuthorizedResponse<IEnumerable<ApiSleeve>>(null, false);
-            return new AuthorizedResponse<IEnumerable<ApiSleeve>>(resp.Content.ReadAsAsync<IEnumerable<ApiSleeve>>().Result, true);
-        }
-
-        public AuthorizedResponse<object> CanUseSleeve(string username, int id) {
-            var client = Client;
-            var resp =
-                client.GetAsync(
-                    "api/user/canusesleeve?cansleeveusername=" + HttpUtility.UrlEncode(username)
-                    + "&sleeveId=" + id).Result;
-            if (resp.StatusCode == HttpStatusCode.Unauthorized)
-                return new AuthorizedResponse<object>(null, false);
-            if (resp.StatusCode == HttpStatusCode.OK)
-                return new AuthorizedResponse<object>(null, true);
-            throw new Exception("Unexpected status code for CanUseSleeve " + resp.StatusCode.ToString());
-        }
-
-        public AuthorizedResponse<int[]> AddUserSleeves(string username, string password, UpdateUserSleevesRequest req) {
-            var client = Client;
-            var resp = client.PostAsJsonAsync(
-                    "api/user/addsleeves?sleeveusername=" + HttpUtility.UrlEncode(username)
-                    + "&sleevepassword=" + HttpUtility.UrlEncode(password), req).Result;
-            if (resp.StatusCode == HttpStatusCode.Unauthorized)
-                return new AuthorizedResponse<int[]>(new int[0], false);
-            if (resp.StatusCode == HttpStatusCode.InternalServerError)
-                throw new Exception("Server Error");
-            var list = resp.Content.ReadAsAsync<int[]>().Result;
-            if (list == null) {
-                throw new Exception("Response data is invalid\n" + resp.Content.ReadAsStringAsync().Result);
-            }
-            return new AuthorizedResponse<int[]>(list, true);
-        }
-
-        public ApiSleeveList GetAllSleeves(int skip, int take) {
-            var client = Client;
-            var resp = client.GetAsync(string.Format("api/user/allsleeves?skip={0}&take={1}", skip, take)).Result;
-            if (resp.StatusCode != HttpStatusCode.OK) {
-                var cn = resp.Content.ReadAsStringAsync().Result;
-                throw new Exception(cn);
-            }
-            return resp.Content.ReadAsAsync<ApiSleeveList>().Result;
-        }
-
         public void CreateGameHistory(PutGameHistoryReq req) {
             var client = Client;
             var resp = client.PostAsJsonAsync("api/gamehistory/put", req).Result;

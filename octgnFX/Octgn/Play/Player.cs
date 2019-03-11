@@ -6,12 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using log4net;
+using Octgn.Core;
 using Octgn.Core.Play;
+using Octgn.DataNew.Entities;
 using Octgn.Site.Api;
 
 namespace Octgn.Play
@@ -326,7 +330,7 @@ namespace Octgn.Play
         //Color for the chat.
         // Associated color
         public Color Color { get; set; }
-		public Color ActualColor { get; set; }
+        public Color ActualColor { get; set; }
 
         // Work around a WPF binding bug ? Borders don't seem to bind correctly to Color!
         public Brush Brush
@@ -359,6 +363,21 @@ namespace Octgn.Play
             }
         }
 
+        public BitmapImage SleeveImage {
+            get => _sleeveImage;
+            set {
+                if(value != _sleeveImage) {
+                    _sleeveImage = value;
+                    OnPropertyChanged(nameof(SleeveImage));
+                }
+            }
+        }
+        private BitmapImage _sleeveImage;
+
+        public void SetSleeve(ISleeve sleeve) {
+            SleeveImage = Sleeve.GetImage(sleeve);
+        }
+
         //Set the player's color based on their id.
         public void SetPlayerColor(int idx)
         {
@@ -370,12 +389,12 @@ namespace Octgn.Play
                 playerColor = _playerColors[(idx - 1) % _playerColors.Length];
 
             ActualColor = playerColor;
-			if (this == LocalPlayer)
-			{
-				return;
-			}
-	        Color = playerColor;
-			_solidBrush = new SolidColorBrush(Color);
+            if (this == LocalPlayer)
+            {
+                return;
+            }
+            Color = playerColor;
+            _solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();
             _transparentBrush = new SolidColorBrush(Color) { Opacity = 0.4 };
             _transparentBrush.Freeze();
@@ -386,28 +405,28 @@ namespace Octgn.Play
             OnPropertyChanged("TransparentBrush");
         }
 
-	    public void SetPlayerColor(string colorHex)
-	    {
-			var convertFromString = ColorConverter.ConvertFromString(colorHex);
-		    if (convertFromString != null)
-		    {
-				ActualColor = (Color)convertFromString;
+        public void SetPlayerColor(string colorHex)
+        {
+            var convertFromString = ColorConverter.ConvertFromString(colorHex);
+            if (convertFromString != null)
+            {
+                ActualColor = (Color)convertFromString;
 
-				if (this == LocalPlayer)
-				{
-					return;
-				}
+                if (this == LocalPlayer)
+                {
+                    return;
+                }
 
-				Color = (Color) convertFromString;
+                Color = (Color) convertFromString;
 
-				_solidBrush = new SolidColorBrush(Color);
-			    _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+                _solidBrush = new SolidColorBrush(Color);
+                _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
 
-				OnPropertyChanged("Color");
-				OnPropertyChanged("Brush");
-				OnPropertyChanged("TransparentBrush");
-			}
-	    }
+                OnPropertyChanged("Color");
+                OnPropertyChanged("Brush");
+                OnPropertyChanged("TransparentBrush");
+            }
+        }
 
         #endregion
 

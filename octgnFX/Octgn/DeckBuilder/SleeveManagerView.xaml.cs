@@ -6,14 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using log4net;
+using Microsoft.Win32;
 using Octgn.Annotations;
-using Octgn.Site.Api.Models;
+using Octgn.Core;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
 
 namespace Octgn.DeckBuilder
 {
@@ -38,7 +43,7 @@ namespace Octgn.DeckBuilder
 
         public ObservableCollection<SleeveViewModel> Sleeves { get; set; }
 
-        public event Action<ApiSleeve> OnClose;
+        public event Action<Sleeve> OnClose;
 
         public bool IsLoading
         {
@@ -70,9 +75,9 @@ namespace Octgn.DeckBuilder
             RefreshListAsync();
         }
 
-        public Task RefreshListAsync()
+        public void RefreshListAsync()
         {
-            return Task.Factory.StartNew(RefreshList);
+            Task.Factory.StartNew(RefreshList);
         }
 
         public void RefreshList()
@@ -80,10 +85,9 @@ namespace Octgn.DeckBuilder
             IsLoading = true;
             try
             {
-                var allSleeves = SleeveManager.Instance.GetAllSleeves();
-                var mySleeves = SleeveManager.Instance.GetUserSleeves();
+                var sleeves = Sleeve.GetSleeves().ToArray();
 
-                SetList(allSleeves, mySleeves);
+                SetList(sleeves);
             }
             catch (Exception e)
             {
@@ -95,21 +99,23 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public void SetList(IEnumerable<ApiSleeve> sleeves, IEnumerable<ApiSleeve> ownedSleeves)
+        public void SetList(IEnumerable<Sleeve> sleeves)
         {
-            var nl = (from s in
-                          (from s in sleeves
-                           select new SleeveViewModel(s, ownedSleeves.Any(x => x.Id == s.Id))
-                          )
-                      orderby s.Owned
-                      select s
-                     );
+            var vms = sleeves
+                .OrderBy(sleeve => sleeve.Source)
+                .ThenBy(sleeve => sleeve.Name)
+                .Select(sleeve => new SleeveViewModel(sleeve))
+                .ToArray();
+
             Dispatcher.Invoke(new Action(() =>
             {
                 Sleeves.Clear();
-                foreach (var s in nl)
+
+                foreach (var sleeve in vms)
                 {
-                    Sleeves.Add(s);
+                    sleeve.LoadImage();
+
+                    Sleeves.Add(sleeve);
                 }
             }));
         }
@@ -124,20 +130,15 @@ namespace Octgn.DeckBuilder
             this.Visibility = Visibility.Collapsed;
         }
 
-        private void GetSleeve(object sender, RoutedEventArgs e)
+        private void SelectSleeve(object sender, RoutedEventArgs e)
         {
             var vm = (sender as System.Windows.Controls.Button).DataContext as SleeveViewModel;
+
             if (vm == null)
                 return;
-            if (vm.Owned)
-            {
-                FireOnClose(vm.Sleeve);
-                this.Hide();
-            }
-            else
-            {
-                vm.GetAsync();
-            }
+
+            FireOnClose(vm.Sleeve);
+            this.Hide();
         }
 
         private void ButtonRefreshClick(object sender, RoutedEventArgs e)
@@ -147,47 +148,74 @@ namespace Octgn.DeckBuilder
 
         private void ButtonCancelClick(object sender, RoutedEventArgs e)
         {
-                FireOnClose(null);
-                this.Hide();
+            FireOnClose(null);
+            this.Hide();
         }
 
-        protected virtual void FireOnClose(ApiSleeve obj)
-        {
-            Action<ApiSleeve> handler = OnClose;
-            if (handler != null) handler(obj);
+        private async void DeleteSleeve(object sender, RoutedEventArgs e) {
+            var vm = (sender as System.Windows.Controls.Button).DataContext as SleeveViewModel;
+
+            if (vm == null)
+                return;
+
+            var result = MessageBox.Show("Are you sure you want to delete this sleeve?", "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes) {
+                await vm.DeleteAsync();
+
+                RefreshListAsync();
+            }
         }
+
+        private void ButtonAddClick(object sender, RoutedEventArgs e) {
+            var fo = new OpenFileDialog {
+                Filter = "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG"
+            };
+            if ((bool)fo.ShowDialog()) {
+                if (File.Exists(fo.FileName)) {
+                    var newPath = Path.Combine(Config.Instance.Paths.SleevePath, Path.GetFileName(fo.FileName));
+
+                    if (File.Exists(newPath)) {
+                        var result = MessageBox.Show("Sleeve already exists. Do you want to overwrite it?", "File Exists", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                        if (result != MessageBoxResult.Yes) return;
+                    }
+
+                    var dir = Path.GetDirectoryName(newPath);
+
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    File.Copy(fo.FileName, newPath);
+
+                    RefreshListAsync();
+                }
+            }
+        }
+
+        protected virtual void FireOnClose(Sleeve sleeve) => OnClose?.Invoke(sleeve);
 
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
     public class SleeveViewModel : ViewModelBase
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const string OWNED_STRING = "Select";
-        private const string NOT_OWNED_STRING = "Get It";
-
-        public int Id { get; set; }
-        public string Url { get; set; }
-
-        private bool _owned;
+        public string Name { get; set; }
 
         private bool _isBusy;
 
+        public BitmapImage Image { get; set; }
 
-        public bool ButtonEnabled
-        {
-            get { return IsBusy == false; }
-        }
+        public bool CanDelete => Sleeve.Source == SleeveSource.User && !IsBusy;
+
+        public bool CanSelect => !IsBusy;
 
 
         public bool IsBusy
@@ -198,52 +226,39 @@ namespace Octgn.DeckBuilder
                 if (_isBusy == value) return;
                 _isBusy = value;
                 RaisePropertyChanged(() => IsBusy);
-                RaisePropertyChanged(() => ButtonEnabled);
+                RaisePropertyChanged(() => CanDelete);
+                RaisePropertyChanged(() => CanSelect);
             }
         }
 
-        public bool Owned
+        public Sleeve Sleeve { get; set; }
+
+        public SleeveViewModel(Sleeve sleeve)
         {
-            get { return _owned; }
-            set
-            {
-                if (_owned == value) return;
-                _owned = value;
-                RaisePropertyChanged(() => Owned);
-                RaisePropertyChanged(() => ButtonText);
-                RaisePropertyChanged(() => ButtonEnabled);
-            }
-        }
+            this.Name = sleeve.Name;
 
-        public string ButtonText { get { return _owned ? OWNED_STRING : NOT_OWNED_STRING; } }
-
-        public ApiSleeve Sleeve { get; set; }
-
-        public SleeveViewModel(ApiSleeve sleeve, bool owned)
-        {
-            this.Id = sleeve.Id;
-            this.Url = sleeve.Url;
-            Owned = owned;
             Sleeve = sleeve;
         }
 
-        public void GetAsync()
-        {
-            Task.Factory.StartNew(Get);
+        public void LoadImage() {
+            Image = Sleeve.GetImage();
         }
 
-        public void Get()
-        {
+        public Task DeleteAsync() {
+            return Task.Run(new Action(Delete));
+        }
+
+        public void Delete() {
             IsBusy = true;
             try
             {
-                var result = SleeveManager.Instance.AddSleeveToAccount(this.Id);
-                if (result)
-                    this.Owned = true;
+                if (File.Exists(Sleeve.FilePath)) {
+                    File.Delete(Sleeve.FilePath);
+                }
             }
             catch (Exception e)
             {
-                Log.Error("Get", e);
+                Log.Error("Delete", e);
             }
             finally
             {

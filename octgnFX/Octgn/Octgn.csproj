@@ -402,7 +402,6 @@
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SleeveManager.cs" />
     <Compile Include="SubscriptionModule.cs" />
     <Compile Include="Tabs\ChallengeBoards\ChallengeBoards.xaml.cs">
       <DependentUpon>ChallengeBoards.xaml</DependentUpon>
@@ -430,7 +429,6 @@
     <Compile Include="Utils\CompoundCall.cs" />
     <Compile Include="Utils\Converters\BooleanInverterConverter.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
-    <Compile Include="Utils\Converters\IdToSleeveImageConverter.cs" />
     <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
@@ -665,6 +663,54 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <Content Include="Sleeves\Air-Travel.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Canival.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Dragon-Strategy.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Face-In-The-Crowd.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\GGG.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Homewrecker.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Invent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Master-Ritualist.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Monstrous-Lassitude.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\P-Warrior.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Rudo-Shade.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Straw-Man.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Thabbashite-Assailant.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\The-Spoils.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Scripting\Versions\3.1.0.2.py" />
     <Resource Include="Scripting\Versions\3.1.0.1.py" />
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
