@@ -22,6 +22,7 @@ using Counter = Octgn.Play.Counter;
 using Group = Octgn.Play.Group;
 using Player = Octgn.Play.Player;
 using Phase = Octgn.Play.Phase;
+using Octgn.Core;
 
 namespace Octgn.Networking
 {
@@ -275,7 +276,20 @@ namespace Octgn.Networking
             }
             if (limited) Program.GameMess.System("{0} loads a limited deck.", who);
             else Program.GameMess.System("{0} loads a deck.", who);
-            CreateCard(id, type, group, size, sleeve);
+
+            if (who != Player.LocalPlayer) {
+                try {
+                    var sleeveObj = Sleeve.FromString(sleeve);
+
+                    who.SetSleeve(sleeveObj);
+                } catch (Exception ex) {
+                    Log.Warn(ex.Message, ex);
+
+                    Program.GameMess.Warning($"There was an error loading {0}'s deck sleeve.", who);
+                }
+            }
+
+            CreateCard(id, type, group, size);
             Log.Info("LoadDeck Starting Task to Fire Event");
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
@@ -287,7 +301,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
-        private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, IList<string> sizes, string sleeveUrl = "")
+        private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, IList<string> sizes)
         {
             // Ignore cards created by oneself
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
@@ -301,7 +315,8 @@ namespace Octgn.Networking
                     continue;
                 }
 
-                var c = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false, sizes[i]); c.SetSleeve(sleeveUrl); group.AddAt(c, group.Count);
+                var c = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false, sizes[i]);
+                group.AddAt(c, group.Count);
             }
         }
 

@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -18,6 +17,7 @@ using Octgn.Library.Exceptions;
 
 using log4net;
 using Octgn.Library.Localization;
+using System.Windows.Media.Imaging;
 
 namespace Octgn.Core.DataExtensionMethods
 {
@@ -37,28 +37,40 @@ namespace Octgn.Core.DataExtensionMethods
                     var writer = XmlWriter.Create(fs, settings);
 
                     writer.WriteStartDocument(true);
-                    writer.WriteStartElement("deck");
-                    writer.WriteAttributeString("game", game.Id.ToString());
-                    writer.WriteAttributeString("sleeveid", deck.SleeveId.ToString());
-                    foreach (var section in deck.Sections)
                     {
-                        writer.WriteStartElement("section");
-                        writer.WriteAttributeString("name", section.Name);
-                        writer.WriteAttributeString("shared", section.Shared.ToString());
-                        foreach (var c in section.Cards)
-                        {
-                            writer.WriteStartElement("card");
-                            writer.WriteAttributeString("qty", c.Quantity.ToString());
-                            writer.WriteAttributeString("id", c.Id.ToString());
-                            writer.WriteString(c.Name);
+                        writer.WriteStartElement("deck");
+                        writer.WriteAttributeString("game", game.Id.ToString());
+
+                        // Write Sections
+                        foreach (var section in deck.Sections) {
+                            writer.WriteStartElement("section");
+                            writer.WriteAttributeString("name", section.Name);
+                            writer.WriteAttributeString("shared", section.Shared.ToString());
+                            foreach (var c in section.Cards) {
+                                writer.WriteStartElement("card");
+                                writer.WriteAttributeString("qty", c.Quantity.ToString());
+                                writer.WriteAttributeString("id", c.Id.ToString());
+                                writer.WriteString(c.Name);
+                                writer.WriteEndElement();
+                            }
                             writer.WriteEndElement();
                         }
+                        { // Write Notes
+                            writer.WriteStartElement("notes");
+                            writer.WriteCData(deck.Notes);
+                            writer.WriteEndElement();
+                        }
+                        { // Write Sleeve
+                            if (deck.Sleeve != null) {
+                                writer.WriteStartElement("sleeve");
+                                var sleeveString = Sleeve.ToString(deck.Sleeve);
+                                writer.WriteValue(sleeveString);
+                                writer.WriteEndElement();
+                            }
+                        }
+
                         writer.WriteEndElement();
                     }
-                    writer.WriteStartElement("notes");
-                    writer.WriteCData(deck.Notes);
-                    writer.WriteEndElement();
-                    writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();
                     writer.Close();
@@ -159,7 +171,6 @@ namespace Octgn.Core.DataExtensionMethods
                     var doc = XDocument.Load(fs);
                     var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
                     var shared = doc.Descendants("deck").First().Attr<bool>("shared");
-                    var sleeveId = doc.Descendants("deck").First().Attr<int>("sleeveid");
                     foreach (var sectionelem in doc.Descendants("section"))
                     {
                         var section = new Section();
@@ -217,9 +228,25 @@ namespace Octgn.Core.DataExtensionMethods
                             }
                         }
                     }
+
+                    // Add card sleeve
+                    {
+                        var sleeveElem = doc.Descendants("sleeve").FirstOrDefault();
+                        if(sleeveElem != null) {
+                            var sleeveString = sleeveElem.Value;
+
+                            if (!string.IsNullOrWhiteSpace(sleeveString)) {
+                                try {
+                                    ret.Sleeve = Sleeve.FromString(sleeveString);
+                                } catch (SleeveException ex) {
+                                    throw new UserMessageException(ex.Message, ex);
+                                }
+                            }
+                        }
+                    }
+
                     ret.GameId = gameId;
                     ret.IsShared = shared;
-                    ret.SleeveId = sleeveId;
                 }
                 // This is an old style shared deck file, we need to convert it now, for posterity sake.
                 if (ret.IsShared)
@@ -290,7 +317,7 @@ namespace Octgn.Core.DataExtensionMethods
             var ret = new ObservableDeck();
             ret.GameId = deck.GameId;
             ret.IsShared = deck.IsShared;
-            ret.SleeveId = deck.SleeveId;
+            ret.Sleeve = (ISleeve)deck.Sleeve?.Clone();
             if (deck.Sections == null) ret.Sections = new List<ObservableSection>();
             else
             {

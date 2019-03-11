@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -20,7 +19,6 @@ using Octgn.Core.Plugin;
 using Octgn.DataNew.Entities;
 using Octgn.Library.Exceptions;
 using Octgn.Library.Plugin;
-using Octgn.Site.Api.Models;
 using Octgn.Windows;
 
 using log4net;
@@ -28,6 +26,7 @@ using Octgn.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
 using Octgn.Extentions;
+using System.Windows.Media.Imaging;
 
 namespace Octgn.DeckBuilder
 {
@@ -129,6 +128,7 @@ namespace Octgn.DeckBuilder
                     {
                         Game = g;
                         Deck = Game.CreateDeck().AsObservable();
+                        SleeveImage = null;
                         _deckFilename = null;
                     }
 
@@ -253,6 +253,17 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public BitmapImage SleeveImage {
+            get => _sleeveImage;
+            set {
+                if(value != _sleeveImage) {
+                    _sleeveImage = value;
+                    OnPropertyChanged(nameof(SleeveImage));
+                }
+            }
+        }
+        private BitmapImage _sleeveImage;
+
         public IEnumerable<ObservableSection> DeckSections
         {
             get
@@ -360,6 +371,7 @@ namespace Octgn.DeckBuilder
             Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
+            SleeveImage = Sleeve.GetImage(Deck.Sleeve);
             _deckFilename = null;
             InvokeDeckChangedEvent();
         }
@@ -534,6 +546,7 @@ namespace Octgn.DeckBuilder
                 return;
             }
             Deck = newDeck;
+            SleeveImage = Sleeve.GetImage(Deck.Sleeve);
             _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
             InvokeDeckChangedEvent();
@@ -1058,6 +1071,8 @@ namespace Octgn.DeckBuilder
         public void LoadDeck(IDeck deck)
         {
             Deck = deck.AsObservable();
+            SleeveImage = Sleeve.GetImage(deck.Sleeve);
+
             _unsaved = true;
         }
 
@@ -1222,17 +1237,22 @@ namespace Octgn.DeckBuilder
 
         private void RemoveSleeve(object sender, RequestNavigateEventArgs e)
         {
-			if(Deck != null)
-				Deck.SleeveId = 0;
+            if (Deck != null) {
+                Deck.Sleeve = null;
+                SleeveImage = null;
+            }
         }
 
-        private void OnSleeveManagerClose(ApiSleeve obj)
+        private void OnSleeveManagerClose(Sleeve obj)
         {
             if (obj == null)
                 return;
             if (Deck == null)
                 return;
-            Deck.SleeveId = obj.Id;
+            
+            Deck.Sleeve = obj;
+
+            SleeveImage = Sleeve.GetImage(Deck.Sleeve);
         }
 
         private void ChangeSortButton_Click(object sender, RoutedEventArgs e)

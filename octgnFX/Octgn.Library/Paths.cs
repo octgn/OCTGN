@@ -31,6 +31,7 @@
         string SpoilsFeedPath { get; }
         string CommunityFeedPath { get; }
         string DeckPath { get; }
+        string SleevePath { get; }
         string GraveyardPath { get; }
         string UpdatesPath { get; }
     }
@@ -71,6 +72,7 @@
             LocalFeedPath = FS.Path.Combine(DataDirectory, "LocalFeed");
             FS.Directory.CreateDirectory(LocalFeedPath);
             DeckPath = FS.Path.Combine(DataDirectory, "Decks");
+            SleevePath = FS.Path.Combine(DataDirectory, "Sleeves");
             MainOctgnFeed = "https://www.myget.org/F/octgngames/";
             SpoilsFeedPath = "https://www.myget.org/f/thespoils/";
             CommunityFeedPath = "https://www.myget.org/f/octgngamedirectory";
@@ -99,6 +101,7 @@
         public string CommunityFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
+        public string SleevePath { get; set; }
 
         public string UpdatesPath { get; set; }
         public string GraveyardPath

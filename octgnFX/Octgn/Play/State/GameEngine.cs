@@ -28,6 +28,7 @@ using Card = Octgn.Play.Card;
 using Marker = Octgn.Play.Marker;
 using Player = Octgn.Play.Player;
 using System.Collections.ObjectModel;
+using Octgn.Site.Api;
 
 namespace Octgn
 {
@@ -99,14 +100,14 @@ namespace Octgn
 
         public ushort CurrentUniqueId;
 
-		/// <summary>
-		/// For Testing
-		/// </summary>
-		[Obsolete("This is only to be used for mocking")]
-	    internal GameEngine()
-	    {
+        /// <summary>
+        /// For Testing
+        /// </summary>
+        [Obsolete("This is only to be used for mocking")]
+        internal GameEngine()
+        {
 
-	    }
+        }
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
@@ -547,7 +548,6 @@ namespace Octgn
                     {
                         //for every card in the deck, generate a unique key for it, ID for it
                         var card = element.ToPlayCard(player);
-                        card.SetSleeve(deck.SleeveId);
                         ids[j] = card.Id;
                         keys[j] = card.Type.Model.Id;
                         //keys[j] = card.GetEncryptedKey();
@@ -566,7 +566,47 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(deck.SleeveId), limited);
+
+            string sleeveString = null;
+
+            if(deck.Sleeve != null) {
+                try {
+                    var loadSleeve = true;
+
+                    if (!IsLocal) {
+                        var isSubscriber = SubscriptionModule.Get().IsSubscribed;
+
+                        if (isSubscriber == null) {
+                            loadSleeve = false;
+
+                            Log.Warn("Can't set deck sleeve, unable to determin if user is a subscriber.");
+
+                            Program.GameMess.Warning($"Deck sleeve can not be loaded, subscriber status is unknown.");
+
+                        } else if (isSubscriber == false) {
+                            loadSleeve = false;
+
+                            Log.Warn("Not authorized to use deck sleeve.");
+
+                            Program.GameMess.Warning($"Deck sleeve can not be used, you're not a subscriber.");
+                        }
+                    }
+
+                    if (loadSleeve) {
+                        Player.LocalPlayer.SetSleeve(deck.Sleeve);
+
+                        sleeveString = Sleeve.ToString(deck.Sleeve);
+                    } else {
+                        Log.Info("Sleeve will not be loaded.");
+                    }
+                } catch (Exception ex) {
+                    Log.Warn(ex.Message, ex);
+
+                    Program.GameMess.Warning($"There was an error loading the decks sleeve.");
+                }
+            }
+
+            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, sleeveString, limited);
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
             {

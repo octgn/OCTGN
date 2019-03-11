@@ -34,7 +34,7 @@ namespace Octgn.DeckBuilder
         public IEnumerable<ISection> NonEmptySections { get; set; }
         public bool IsGameInstalled { get; set; }
         public bool IsCorrupt { get; set; }
-        public int SleeveId { get; set; }
+        public ISleeve Sleeve { get; set; }
 
         public bool IsVisible
         {
@@ -59,7 +59,7 @@ namespace Octgn.DeckBuilder
             //IDeck d = null;
             this.Path = "c:\\test.o8g";
             this.Name = new FileInfo(Path).Name.Replace(new FileInfo(Path).Extension, "");
-            this.SleeveId = 0;
+            this.Sleeve = null;
             CardBack = "../Resources/Back.jpg";
         }
 
@@ -90,7 +90,7 @@ namespace Octgn.DeckBuilder
                                                  }).ToArray();
             this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
             this.CardBack = GameManager.Get().GetById(this.GameId).CardSize.Back;
-            this.SleeveId = d.SleeveId;
+            this.Sleeve = (ISleeve)d.Sleeve?.Clone();
         }
 
         public void UpdateFilter(string filter)

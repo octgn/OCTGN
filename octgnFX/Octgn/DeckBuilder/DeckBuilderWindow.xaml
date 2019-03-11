@@ -141,20 +141,13 @@
                             <ColumnDefinition Width="50*"/>
                             <ColumnDefinition Width="50*"/>
                         </Grid.ColumnDefinitions>
-                        <Image Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Stretch="Uniform" >
-                            <Image.Source>
-                                <MultiBinding Converter="{StaticResource IdToSleeveImageConverter}">
-                                    <Binding ElementName="self" Path="Deck.SleeveId"/>
-                                    <Binding ElementName="self" Path="Game"/>
-                                </MultiBinding>
-                            </Image.Source>
-
+                        <Image Source="{Binding SleeveImage, Mode=OneWay, ElementName=self}" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Stretch="Uniform" >
                         </Image>
                         <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
-								<Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="ChangeSleeve" Cursor="Hand">Change Sleeve</Hyperlink>
+                            <Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="ChangeSleeve" Cursor="Hand">Change Sleeve</Hyperlink>
                         </TextBlock>
                         <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
-								<Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="RemoveSleeve" Cursor="Hand">Remove Sleeve</Hyperlink>
+                            <Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="RemoveSleeve" Cursor="Hand">Remove Sleeve</Hyperlink>
                         </TextBlock>
                     </Grid>
                 </TabItem>
