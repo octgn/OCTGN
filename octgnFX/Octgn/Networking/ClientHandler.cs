@@ -22,7 +22,7 @@ using Counter = Octgn.Play.Counter;
 using Group = Octgn.Play.Group;
 using Player = Octgn.Play.Player;
 using Phase = Octgn.Play.Phase;
-using Octgn.Core;
+using Octgn.DataNew;
 
 namespace Octgn.Networking
 {
@@ -282,10 +282,14 @@ namespace Octgn.Networking
                     var sleeveObj = Sleeve.FromString(sleeve);
 
                     who.SetSleeve(sleeveObj);
+                } catch (SleeveException ex) {
+                    Log.Warn(ex.Message, ex);
+
+                    Program.GameMess.Warning($"There was an error loading {0}'s deck sleeve: " + ex.Message, who);
                 } catch (Exception ex) {
                     Log.Warn(ex.Message, ex);
 
-                    Program.GameMess.Warning($"There was an error loading {0}'s deck sleeve.", who);
+                    Program.GameMess.Warning($"There was an unknown error loading {0}'s deck sleeve.", who);
                 }
             }
 

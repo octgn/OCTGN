@@ -16,7 +16,8 @@ using GalaSoft.MvvmLight;
 using log4net;
 using Microsoft.Win32;
 using Octgn.Annotations;
-using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.DataNew;
 using Octgn.DataNew.Entities;
 using Octgn.Library;
 

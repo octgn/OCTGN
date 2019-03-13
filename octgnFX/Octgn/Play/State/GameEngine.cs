@@ -28,7 +28,7 @@ using Card = Octgn.Play.Card;
 using Marker = Octgn.Play.Marker;
 using Player = Octgn.Play.Player;
 using System.Collections.ObjectModel;
-using Octgn.Site.Api;
+using Octgn.DataNew;
 
 namespace Octgn
 {
