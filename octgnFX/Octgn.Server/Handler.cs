@@ -301,7 +301,7 @@ namespace Octgn.Server
                 }
             }
 
-            _context.Broadcaster.LoadDeck(id, type, group, size, sleeveString, limited);
+            _context.Broadcaster.LoadDeck(id, type, group, size, sleeveString ?? string.Empty, limited);
         }
 
         public void CreateCard(int[] id, Guid[] type, string[] size, int @group) {
