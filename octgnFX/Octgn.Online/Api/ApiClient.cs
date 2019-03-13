@@ -279,5 +279,15 @@ namespace Octgn.Site.Api
             var resp = client.GetAsync("api/octgn/latestrelease?currentVersion=" + currentVersion).Result;
             return resp.Content.ReadAsAsync<ReleaseInfo>().Result;
         }
+
+        public void ReportUser(string username, string password, ReportUserRequest request) {
+            var client = Client;
+            var resp =
+                client.PostAsJsonAsync(
+                    "api/user/report/?reportusername=" + HttpUtility.UrlEncode(username) + "&reportpassword="
+                    + HttpUtility.UrlEncode(password), request).Result;
+
+            resp.EnsureSuccessStatusCode();
+        }
     }
 }
