@@ -606,7 +606,7 @@ namespace Octgn
                 }
             }
 
-            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, sleeveString, limited);
+            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, sleeveString ?? string.Empty, limited);
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
             {
