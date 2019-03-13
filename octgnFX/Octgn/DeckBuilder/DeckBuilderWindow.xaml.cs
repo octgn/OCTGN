@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using Microsoft.Win32;
 using Octgn.Core;
+using Octgn.DataNew;
 using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
 using Octgn.Core.DataExtensionMethods;
@@ -371,7 +372,7 @@ namespace Octgn.DeckBuilder
             Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
-            SleeveImage = Sleeve.GetImage(Deck.Sleeve);
+            SleeveImage = Deck.Sleeve.GetImage();
             _deckFilename = null;
             InvokeDeckChangedEvent();
         }
@@ -546,7 +547,7 @@ namespace Octgn.DeckBuilder
                 return;
             }
             Deck = newDeck;
-            SleeveImage = Sleeve.GetImage(Deck.Sleeve);
+            SleeveImage = Deck.Sleeve.GetImage();
             _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
             InvokeDeckChangedEvent();
@@ -1071,7 +1072,7 @@ namespace Octgn.DeckBuilder
         public void LoadDeck(IDeck deck)
         {
             Deck = deck.AsObservable();
-            SleeveImage = Sleeve.GetImage(deck.Sleeve);
+            SleeveImage = deck.Sleeve.GetImage();
 
             _unsaved = true;
         }
@@ -1252,7 +1253,7 @@ namespace Octgn.DeckBuilder
             
             Deck.Sleeve = obj;
 
-            SleeveImage = Sleeve.GetImage(Deck.Sleeve);
+            SleeveImage = Deck.Sleeve.GetImage();
         }
 
         private void ChangeSortButton_Click(object sender, RoutedEventArgs e)

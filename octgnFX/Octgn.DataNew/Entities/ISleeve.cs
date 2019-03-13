@@ -10,6 +10,8 @@ namespace Octgn.DataNew.Entities
 
         string FilePath { get; set; }
 
+        Guid GameId { get; set; }
+
         SleeveSource Source { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using log4net;
 using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Play;
 using Octgn.DataNew.Entities;
 using Octgn.Site.Api;
@@ -375,7 +376,7 @@ namespace Octgn.Play
         private BitmapImage _sleeveImage;
 
         public void SetSleeve(ISleeve sleeve) {
-            SleeveImage = Sleeve.GetImage(sleeve);
+            SleeveImage = sleeve.GetImage();
         }
 
         //Set the player's color based on their id.

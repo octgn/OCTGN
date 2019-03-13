@@ -71,6 +71,7 @@
     <Compile Include="DataExtensionMethods\IGroupActionExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\PackExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\SetExtensionMethods.cs" />
+    <Compile Include="DataExtensionMethods\SleeveExtensionMethods.cs" />
     <Compile Include="DataManagers\CardManager.cs" />
     <Compile Include="DataManagers\GameManager.cs" />
     <Compile Include="DataManagers\PackManager.cs" />
@@ -92,7 +93,6 @@
     <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sleeve.cs" />
     <Compile Include="Tabletop\GameEngine.cs" />
     <Compile Include="Tabletop\GameState.cs" />
     <Compile Include="Util\BigInteger.cs" />

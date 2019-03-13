@@ -1,16 +1,13 @@
 ﻿using log4net;
-using Octgn.DataNew;
 using Octgn.DataNew.Entities;
 using Octgn.Library;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Windows.Media.Imaging;
 
-namespace Octgn.Core
+namespace Octgn.DataNew
 {
     public class Sleeve : ISleeve
     {
@@ -23,6 +20,7 @@ namespace Octgn.Core
         public string FilePath { get; set; }
 
         public SleeveSource Source { get; set; }
+        public Guid GameId { get; set; }
 
         public Sleeve() {
 
@@ -52,38 +50,6 @@ namespace Octgn.Core
                 throw new SleeveException("Sleeve Image is invalid.");
         }
 
-        public BitmapImage GetImage() {
-            return GetImage(this);
-        }
-
-        public static BitmapImage GetImage(ISleeve sleeve) {
-            if (sleeve == null) return null;
-
-            BitmapImage image = null;
-
-            using (var memoryStream = new MemoryStream(sleeve.ImageData)) {
-                memoryStream.Position = 0;
-
-                image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-
-                try {
-                    image.StreamSource = memoryStream;
-
-                    image.EndInit();
-                } catch (Exception ex) {
-                    throw new SleeveException($"Error loading deck sleeve for {sleeve.Name}, the image is invalid.", ex);
-                }
-
-                if (image.CanFreeze) {
-                    image.Freeze();
-                }
-            }
-
-            return image;
-        }
-
         public object Clone() {
             return new Sleeve() {
                 Name = Name,
@@ -100,20 +66,45 @@ namespace Octgn.Core
                 if (parts.Length != 3)
                     throw new SleeveException($"This decks sleeve format is invalid.");
 
-                if (parts[0] == "sleeve64") {
-                    var sleeve = new Sleeve();
+                var name = parts[1];
 
-                    sleeve.Name = parts[1];
+                switch (parts[0]) {
+                    case "custom": {
+                            var sleeve = new Sleeve();
 
-                    try {
-                        sleeve.ImageData = Convert.FromBase64String(parts[2]);
-                    } catch (FormatException ex) {
-                        throw new SleeveException("This decks sleeve data is invalid.", ex);
-                    }
+                            sleeve.Name = name;
 
-                    return sleeve;
-                } else {
-                    throw new SleeveException($"This decks sleeve format is invalid.");
+                            try {
+                                sleeve.ImageData = Convert.FromBase64String(parts[2]);
+                            } catch (FormatException ex) {
+                                throw new SleeveException("This decks sleeve data is invalid.", ex);
+                            }
+
+                            return sleeve;
+                        }
+                    case "game": {
+
+                            var sleeve = GetSleeves()
+                                .Where(x => x.Source == SleeveSource.Game)
+                                .Where(x => {
+                                    var dir = new DirectoryInfo(x.FilePath);
+                                    var gameIdString = dir.Parent.Parent.Name;
+                                    return string.Equals(gameIdString, x.GameId.ToString(), StringComparison.InvariantCultureIgnoreCase);
+                                })
+                                .Where(x => x.Name == name)
+                                .FirstOrDefault();
+
+                            return sleeve ?? throw new SleeveException($"Unable to find Game sleeve ");
+                        }
+                    case "octgn": {
+                            var sleeve = GetSleeves()
+                                .Where(x => x.Source == SleeveSource.OCTGN)
+                                .Where(x => x.Name == name)
+                                .FirstOrDefault();
+
+                            return sleeve ?? throw new SleeveException($"Unable to find Game sleeve ");
+                        }
+                    default: throw new SleeveException($"Sleeve type {parts[0]} is not valid.");
                 }
             } else {
                 return null;
@@ -123,14 +114,14 @@ namespace Octgn.Core
         public static string ToString(ISleeve sleeve) {
             if (sleeve == null) return null;
 
-            return "sleeve64:" + sleeve.Name + ":" + Convert.ToBase64String(sleeve.ImageData);
-        }
-
-        public static byte[] FromUrl(Uri url) {
-            if (url == null) return null;
-
-            using (var webClient = new WebClient()) {
-                return webClient.DownloadData(url);
+            switch (sleeve.Source) {
+                case SleeveSource.User:
+                    return "custom:" + sleeve.Name + ":" + Convert.ToBase64String(sleeve.ImageData);
+                case SleeveSource.Game:
+                    return "game:" + sleeve.Name + ":" + sleeve.GameId.ToString();
+                case SleeveSource.OCTGN:
+                    return "octgn:" + sleeve.Name + ":";
+                default: throw new InvalidOperationException($"Can't use SleeveSource.{sleeve.Source}, it hasn't been implemented.");
             }
         }
 

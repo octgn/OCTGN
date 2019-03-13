@@ -72,6 +72,7 @@
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\CardSize.cs" />
     <Compile Include="Entities\ISleeve.cs" />
+    <Compile Include="Entities\Sleeve.cs" />
     <Compile Include="Entities\SleeveSource.cs" />
     <Compile Include="Entities\Symbol.cs" />
     <Compile Include="Entities\GamePhase.cs" />

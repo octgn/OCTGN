@@ -293,6 +293,11 @@ namespace Octgn.Server
                 var p = _player;
                 if (!p.IsSubbed) {
                     sleeveString = null;
+                } if(!string.IsNullOrWhiteSpace(sleeveString)) {
+                    if (sleeveString.StartsWith("custom")){
+                        // Disable custom sleeves for now.
+                        sleeveString = null;
+                    }
                 }
             }
 
