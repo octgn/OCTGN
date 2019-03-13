@@ -14,6 +14,6 @@
     <Product>Octgn.Online</Product>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
+    <PackageReference Include="Octgn.Communication" Version="2.0.72" />
   </ItemGroup>
 </Project>
