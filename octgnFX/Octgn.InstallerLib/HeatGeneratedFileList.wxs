@@ -763,6 +763,56 @@
                     </Component>
                 </Directory>
             </Directory>
+            <Directory Id="dirBF178DDB161BCC490D074F8822F7A9CA" Name="Sleeves">
+                <Component Id="cmp347F510074E50E38EEAC3B498A87C60D" Guid="*">
+                    <File Id="fil3E8C59D23ECDE74F42959DA89A231456" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Air-Travel.jpg" />
+                </Component>
+                <Component Id="cmpAC93CF817F3CF9EE9815455F66936D66" Guid="*">
+                    <File Id="fil1EC5C0A9AA18BC2780532D9224B7FF3C" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Canival.jpg" />
+                </Component>
+                <Component Id="cmp4D0058C889671E06E3B7A6F7B045C43B" Guid="*">
+                    <File Id="filC65B4E30CB943C3715BD05A49893CF4C" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\cb1.png" />
+                </Component>
+                <Component Id="cmp72DABBA2BFB1A66B09A8394B83486D93" Guid="*">
+                    <File Id="filFD3CB4724E43806A4BB271C1DB0FAB9C" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\cb2.png" />
+                </Component>
+                <Component Id="cmp9FD51FB129C8420A59D934CB521C57AC" Guid="*">
+                    <File Id="fil14C01C63E9619392D2576C543DB7EE4A" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Dragon-Strategy.jpg" />
+                </Component>
+                <Component Id="cmpD3CFCE55A3B519F7EA487494C3DC8AFD" Guid="*">
+                    <File Id="fil014D957661344C73F63BD9CC3E132944" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Face-In-The-Crowd.jpg" />
+                </Component>
+                <Component Id="cmp4A8194CA84783FCD12997EE3B2699F98" Guid="*">
+                    <File Id="filE3CA2A42DDD189FA89B77A1A567179F9" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\GGG.jpg" />
+                </Component>
+                <Component Id="cmpFED186C6E87CB47B97978F8C6FA4C030" Guid="*">
+                    <File Id="filF39E70E47E3DB60FBCE22405FE754AD3" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Homewrecker.jpg" />
+                </Component>
+                <Component Id="cmpF8116FF290612378B8DB54ED994A5345" Guid="*">
+                    <File Id="fil1ADDBD05B29952FBC7DD1490A1A14CD4" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Invent.jpg" />
+                </Component>
+                <Component Id="cmp431D163586F72F85CCE3389D582BC314" Guid="*">
+                    <File Id="filEF0354E6554D6D632D8C2373A9F08BCE" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Master-Ritualist.jpg" />
+                </Component>
+                <Component Id="cmp0E7EE9BEB2E4BB80D8ABCF58C4FEFC8A" Guid="*">
+                    <File Id="fil5CD0577BAECC2F418DFA0057D7A4D296" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Monstrous-Lassitude.jpg" />
+                </Component>
+                <Component Id="cmpF2BAF16C5EAD178B3DAB612A35AAE021" Guid="*">
+                    <File Id="fil2904A89AEA634493680370922DF7D4FB" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\P-Warrior.jpg" />
+                </Component>
+                <Component Id="cmp5FC142EF0BA71FF699E19A73B9CB8FE0" Guid="*">
+                    <File Id="fil14E7A171DF8ECC6008BE341E98A0826B" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Rudo-Shade.jpg" />
+                </Component>
+                <Component Id="cmp268CFA9E409E3F500D1F8725D8C415A2" Guid="*">
+                    <File Id="filB834C64BBE63105BDF0B66FD8DE11004" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Straw-Man.jpg" />
+                </Component>
+                <Component Id="cmp86F0A9D3CF5615C291707E0006C8B507" Guid="*">
+                    <File Id="fil4DF10DAA9A0DE8EB45AB513FA465D6B9" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\Thabbashite-Assailant.jpg" />
+                </Component>
+                <Component Id="cmp3693D898AFB346737C5C2F1578A28C22" Guid="*">
+                    <File Id="fil261D566A5AABD493C3A050EE75373725" KeyPath="yes" Source="$(var.HarvestPath)\Sleeves\The-Spoils.jpg" />
+                </Component>
+            </Directory>
             <Directory Id="dir56F6D5D260C5269AF1D79DC8AF5A7171" Name="sv">
                 <Component Id="cmp865B06FA53299590F6250AC75B67ED67" Guid="*">
                     <File Id="fil7379BA11CD4768EBDE2ABE2099F2AA75" KeyPath="yes" Source="$(var.HarvestPath)\sv\Xceed.Wpf.AvalonDock.resources.dll" />
@@ -1027,6 +1077,22 @@
             <ComponentRef Id="cmp5ED4D1EBFDD1FF137BE49A7277313281" />
             <ComponentRef Id="cmp918C2C6E0172318D335C987C9C43BCE8" />
             <ComponentRef Id="cmp2A164C99E89A630094718036D94E70C2" />
+            <ComponentRef Id="cmp347F510074E50E38EEAC3B498A87C60D" />
+            <ComponentRef Id="cmpAC93CF817F3CF9EE9815455F66936D66" />
+            <ComponentRef Id="cmp4D0058C889671E06E3B7A6F7B045C43B" />
+            <ComponentRef Id="cmp72DABBA2BFB1A66B09A8394B83486D93" />
+            <ComponentRef Id="cmp9FD51FB129C8420A59D934CB521C57AC" />
+            <ComponentRef Id="cmpD3CFCE55A3B519F7EA487494C3DC8AFD" />
+            <ComponentRef Id="cmp4A8194CA84783FCD12997EE3B2699F98" />
+            <ComponentRef Id="cmpFED186C6E87CB47B97978F8C6FA4C030" />
+            <ComponentRef Id="cmpF8116FF290612378B8DB54ED994A5345" />
+            <ComponentRef Id="cmp431D163586F72F85CCE3389D582BC314" />
+            <ComponentRef Id="cmp0E7EE9BEB2E4BB80D8ABCF58C4FEFC8A" />
+            <ComponentRef Id="cmpF2BAF16C5EAD178B3DAB612A35AAE021" />
+            <ComponentRef Id="cmp5FC142EF0BA71FF699E19A73B9CB8FE0" />
+            <ComponentRef Id="cmp268CFA9E409E3F500D1F8725D8C415A2" />
+            <ComponentRef Id="cmp86F0A9D3CF5615C291707E0006C8B507" />
+            <ComponentRef Id="cmp3693D898AFB346737C5C2F1578A28C22" />
             <ComponentRef Id="cmp865B06FA53299590F6250AC75B67ED67" />
             <ComponentRef Id="cmpC84A0C26D2459B18A10539C90606C1C9" />
             <ComponentRef Id="cmpD4693380EB6BF54E0B02A525B74C2C27" />
