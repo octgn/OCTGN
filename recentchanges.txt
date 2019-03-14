@@ -1,2 +1,3 @@
 Fix issue causing network calls to go out of order - Kelly
 Fix built in sleeves not being included in the installer - Kelly
+Fix Phase Control text being cut off if too long - Kelly

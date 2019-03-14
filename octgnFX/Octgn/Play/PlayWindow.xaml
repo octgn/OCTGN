@@ -527,8 +527,11 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
-                                              Background="#444444" Foreground="WhiteSmoke" FontWeight="Bold" VerticalAlignment="Center" />
+                                        <Popup IsOpen="{Binding IsMouseOver, ElementName=PhaseButton, Mode=OneWay}" Placement="Left" PlacementTarget="{Binding ElementName=PhaseButton}">
+                                            <Border Background="#444444" Padding="4 2 4 2">
+                                                <TextBlock Text="{Binding Name}" Foreground="WhiteSmoke" FontWeight="Bold" VerticalAlignment="Center" />
+                                            </Border>
+                                        </Popup>
                                         <Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" Background="Black" >
                                             <Button.Style>
                                                 <Style TargetType="Button">
