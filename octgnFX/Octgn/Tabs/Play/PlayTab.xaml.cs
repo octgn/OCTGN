@@ -207,11 +207,7 @@ namespace Octgn.Tabs.Play
 
                 if (dialogResult == DialogResult.OK) {
                     if (dialog.SuccessfulHost) {
-                        if (WindowManager.PlayWindow == null) {
-                            WindowManager.PlayWindow = new PlayWindow();
-                            WindowManager.PlayWindow.Show();
-                            return;
-                        }
+                        LaunchPlayWindow();
                     }
                 }
             }
@@ -274,8 +270,7 @@ namespace Octgn.Tabs.Play
                 await Program.Client.Connect();
 
                 Log.Info($"{nameof(JoinGame)}: Launching {nameof(PlayWindow)}");
-                WindowManager.PlayWindow = new PlayWindow();
-                WindowManager.PlayWindow.Show();
+                LaunchPlayWindow();
             } catch (Exception ex) {
                 HandleException(ex);
             } finally {
@@ -352,11 +347,7 @@ namespace Octgn.Tabs.Play
 
                 if (dialogResult == DialogResult.OK) {
                     if (dialog.Successful) {
-                        if (WindowManager.PlayWindow == null) {
-                            WindowManager.PlayWindow = new PlayWindow();
-                            WindowManager.PlayWindow.Show();
-                            return;
-                        }
+                        LaunchPlayWindow();
                     }
                 }
 
@@ -365,6 +356,19 @@ namespace Octgn.Tabs.Play
         }
 
         #endregion Join Offline Game
+
+        private void LaunchPlayWindow() {
+            Dispatcher.VerifyAccess();
+
+            if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
+
+            Dispatcher.InvokeAsync(async () => {
+                await Dispatcher.Yield(DispatcherPriority.Background);
+                WindowManager.PlayWindow = new PlayWindow();
+                WindowManager.PlayWindow.Show();
+                WindowManager.PlayWindow.Activate();
+            });
+        }
 
         private void ButtonKillGame(object sender, RoutedEventArgs e) {
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;

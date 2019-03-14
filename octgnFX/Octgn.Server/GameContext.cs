@@ -56,7 +56,6 @@ namespace Octgn.Server
             Broadcaster.Reset(playerId);
         }
 
-        private Task _dispatcherTask = Task.FromResult<object>(null);
         private readonly object _dispatcherLock = new object();
 
         /// <summary>
@@ -66,15 +65,7 @@ namespace Octgn.Server
         /// <returns>Task that runs the action</returns>
         public void Run(Action action) {
             lock (_dispatcherLock) {
-                var task = Task.Run(() => {
-                    try {
-                        action();
-                    } catch (Exception ex) {
-                        Log.Error("Run Error", ex);
-                    }
-                });
-
-                _dispatcherTask = _dispatcherTask.ContinueWith(t => task);
+                action();
             }
         }
     }
