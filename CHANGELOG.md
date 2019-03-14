@@ -1,3 +1,10 @@
+#3.3.125.0
++ Fix issue causing network calls to go out of order - Kelly
++ Fix built in sleeves not being included in the installer - Kelly
++ Fix Phase Control text being cut off if too long - Kelly
++ Fix issue with lobby popping up behind the main window. - Kelly
++ Fixed some issues where hovering/clicking was only working on certain parts of list items (games list etc) - Kelly
+
 #3.3.124.0
 
 #3.3.123.0
@@ -3671,6 +3678,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
