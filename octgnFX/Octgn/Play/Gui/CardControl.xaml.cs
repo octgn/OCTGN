@@ -308,6 +308,7 @@ namespace Octgn.Play.Gui
             IsAnchored = Card.Anchored;
             UpdateInvertedTransform();
             Card.PropertyChanged += PropertyChangeHandler;
+            Card.Owner.PropertyChanged += Owner_PropertyChangeHandler;
             //InvalidateMeasure();
             InvalidateVisual();
             OnPropertyChanged("ActualWidth");
@@ -337,6 +338,7 @@ namespace Octgn.Play.Gui
             if (groupCtrl != null && groupCtrl.IsLoaded) return;
 
             Card.PropertyChanged -= PropertyChangeHandler;
+            Card.Owner.PropertyChanged -= Owner_PropertyChangeHandler;
             img = null;
             this.DisplayedPicture = null;
             Card = null;
@@ -367,7 +369,6 @@ namespace Octgn.Play.Gui
                         AnimateTurn(Card.FaceUp);
                     break;
                 case "Picture":
-                    //if (IsUp) SetDisplayedPicture(Card.GetPicture(true));
                     SetDisplayedPicture(Card.GetBitmapImage(Card.FaceUp));
                     break;
                 case "Y":
@@ -375,6 +376,14 @@ namespace Octgn.Play.Gui
                     break;
                 case "Anchored":
                     this.IsAnchored = Card.Anchored;
+                    break;
+            }
+        }
+
+        private void Owner_PropertyChangeHandler(object sender, PropertyChangedEventArgs e) {
+            switch (e.PropertyName) {
+                case nameof(Player.SleeveImage):
+                    SetDisplayedPicture(Card.GetBitmapImage(Card.FaceUp));
                     break;
             }
         }

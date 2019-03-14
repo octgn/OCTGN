@@ -87,8 +87,8 @@ namespace Octgn.DataNew
                             var sleeve = GetSleeves()
                                 .Where(x => x.Source == SleeveSource.Game)
                                 .Where(x => {
-                                    var dir = new DirectoryInfo(x.FilePath);
-                                    var gameIdString = dir.Parent.Parent.Name;
+                                    var dir = new FileInfo(x.FilePath).Directory;
+                                    var gameIdString = dir.Parent.Name;
                                     return string.Equals(gameIdString, x.GameId.ToString(), StringComparison.InvariantCultureIgnoreCase);
                                 })
                                 .Where(x => x.Name == name)
@@ -141,6 +141,7 @@ namespace Octgn.DataNew
 
                 foreach(var sleeve in GetFromFolder(dir)) {
                     sleeve.Source = SleeveSource.Game;
+                    sleeve.GameId = game.Id;
 
                     yield return sleeve;
                 }
