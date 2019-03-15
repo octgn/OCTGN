@@ -43,12 +43,26 @@ namespace Octgn.Play.Save
         public byte[] ReadNextMessage() {
             if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
 
-            var timeTicks = _binaryReader.ReadInt64();
+            long timeTicks = 0;
+            try {
+                timeTicks = _binaryReader.ReadInt64();
+            } catch (EndOfStreamException) {
+                return null;
+            }
             var time = TimeSpan.FromTicks(timeTicks);
 
             var dataLength = _binaryReader.ReadInt32();
 
             var data = _binaryReader.ReadBytes(dataLength);
+
+            var stream = new MemoryStream(data);
+            var reader = new BinaryReader(stream);
+
+            var muted = reader.ReadInt32();
+
+            byte method = reader.ReadByte();
+
+            if (method == 5 || method == 7) return null;
 
             return data;
         }

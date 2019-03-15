@@ -197,6 +197,9 @@ namespace Octgn
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
                 Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), true, true);
+
+                IsConnected = true;
+
                 var dt = new DispatcherTimer();
                 dt.Interval = TimeSpan.FromSeconds(1);
 
