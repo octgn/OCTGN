@@ -8,6 +8,7 @@
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
     xmlns:login="clr-namespace:Octgn.Tabs.Login"
     xmlns:playtab="clr-namespace:Octgn.Tabs.Play"
+    xmlns:historytab="clr-namespace:Octgn.Tabs.GameHistory"
     xmlns:converters="clr-namespace:Octgn.Utils.Converters"
     xmlns:windows="clr-namespace:Octgn.Windows"
     x:Class="Octgn.Windows.Main"
@@ -69,6 +70,9 @@
                 <Border Padding="5,5,5,5">
                     <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
                 </Border>
+            </TabItem>
+            <TabItem x:Name="TabItemHistory" Header="Game History">
+                <historytab:GameHistoryTab x:Name="TabHistory"/>
             </TabItem>
             <TabItem x:Name="TabWatch" Header="Twitch.tv">
                 <watch:WatchList/>

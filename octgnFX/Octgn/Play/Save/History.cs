@@ -7,6 +7,7 @@ namespace Octgn.Play.Save
 {
     public class History
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public Guid GameId { get; set; }
@@ -19,9 +20,12 @@ namespace Octgn.Play.Save
 
         public History() {
             State = new GameSaveState();
+            Id = Guid.NewGuid();
         }
 
         public History(Guid gameId) {
+            Id = Guid.NewGuid();
+
             GameId = gameId;
 
             State = new GameSaveState();
