@@ -27,6 +27,11 @@ namespace Octgn.Play.Save
         public Handler Handler { get; set; }
         public int Muted { get; set; }
 
+        public ReplayClient() {
+            Rpc = new ReplayRpc();
+            Handler = new Handler();
+        }
+
         public Task Connect() {
             return Task.CompletedTask;
         }
@@ -36,6 +41,13 @@ namespace Octgn.Play.Save
 
         public void AddMessage(byte[] message) {
             Handler.ReceiveMessage(message);
+        }
+    }
+
+    public class ReplayRpc : BaseBinaryStub
+    {
+        protected override void Send(byte[] data) {
+            // nothing 2 do
         }
     }
 }

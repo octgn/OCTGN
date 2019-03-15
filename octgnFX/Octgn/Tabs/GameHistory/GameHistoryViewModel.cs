@@ -1,7 +1,10 @@
 ﻿using Octgn.Play.Save;
+using Octgn.Play.State;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Media;
 
 namespace Octgn.Tabs.GameHistory
 {
@@ -106,6 +109,18 @@ namespace Octgn.Tabs.GameHistory
         }
         private string _logFile;
 
+        public ObservableCollection<GameHistoryPlayerViewModel> Players {
+            get => _players;
+            set {
+                if (value.Equals(_players)) {
+                    return;
+                }
+                _players = value;
+                OnPropertyChanged(nameof(Players));
+            }
+        }
+        private ObservableCollection<GameHistoryPlayerViewModel> _players;
+
         public GameHistoryViewModel() {
         }
 
@@ -117,6 +132,13 @@ namespace Octgn.Tabs.GameHistory
             var runTime = (history.DateSaved.LocalDateTime - history.DateStarted.LocalDateTime);
             RunTime = string.Format("{0}h {1}m", Math.Floor(runTime.TotalHours), runTime.Minutes);
             GameName = gameName;
+
+            _players = new ObservableCollection<GameHistoryPlayerViewModel>();
+
+            foreach(var player in history.State.Players) {
+                var pvm = new GameHistoryPlayerViewModel(player);
+                _players.Add(pvm);
+            }
         }
 
         public GameHistoryViewModel(GameHistoryViewModel history) {
@@ -126,6 +148,7 @@ namespace Octgn.Tabs.GameHistory
             StartTime = history.StartTime;
             RunTime = history.RunTime;
             GameName = history.GameName;
+            _players = new ObservableCollection<GameHistoryPlayerViewModel>(history.Players);
         }
 
         public void Update(GameHistoryViewModel history) {
@@ -135,6 +158,46 @@ namespace Octgn.Tabs.GameHistory
             StartTime = history.StartTime;
             RunTime = history.RunTime;
             GameName = history.GameName;
+            _players = new ObservableCollection<GameHistoryPlayerViewModel>(history.Players);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+    public class GameHistoryPlayerViewModel : INotifyPropertyChanged
+    {
+        public string Name {
+            get => _name;
+            private set {
+                if (value == _name) {
+                    return;
+                }
+                _name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+        private string _name;
+
+        public SolidColorBrush Color {
+            get => _color;
+            private set {
+                if (value == _color) {
+                    return;
+                }
+                _color = value;
+                OnPropertyChanged(nameof(Color));
+            }
+        }
+        private SolidColorBrush _color;
+
+        public GameHistoryPlayerViewModel() { }
+
+        public GameHistoryPlayerViewModel(PlayerSaveState player) {
+            Name = player.Nickname;
+            Color = new SolidColorBrush(player.Color);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

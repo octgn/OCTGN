@@ -321,7 +321,11 @@
     </Compile>
     <Compile Include="Play\Save\History.cs" />
     <Compile Include="Play\Save\Replay.cs" />
+    <Compile Include="Play\Save\ReplayReader.cs" />
     <Compile Include="Play\Save\ReplayWriter.cs" />
+    <Compile Include="Windows\GameHistoryWindow.xaml.cs">
+      <DependentUpon>GameHistoryWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\GameHistory\GameHistoryViewModel.cs" />
     <Compile Include="Tabs\GameHistory\GameHistoryTab.xaml.cs">
       <DependentUpon>GameHistoryTab.xaml</DependentUpon>
@@ -903,6 +907,10 @@
     <Page Include="Play\Gui\DeckStats.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\GameHistoryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\GameHistory\GameHistoryTab.xaml">
       <Generator>MSBuild:Compile</Generator>

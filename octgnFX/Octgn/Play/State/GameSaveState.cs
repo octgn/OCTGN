@@ -272,6 +272,7 @@ namespace Octgn.Play.State
     public class PlayerSaveState : SaveState<Play.Player, PlayerSaveState>
     {
         public byte Id { get; set; }
+        public string Nickname { get; set; }
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }
@@ -285,6 +286,7 @@ namespace Octgn.Play.State
         public override PlayerSaveState Create(Play.Player play, Play.Player fromPlayer)
         {
             this.Id = play.Id;
+            this.Nickname = play.Name;
             this.GlobalVariables = play.GlobalVariables;
             this.Counters = play.Counters.Select(x => new CounterSaveState().Create(x, fromPlayer)).ToArray();
             this.Groups = play.Groups.Select(x => new GroupSaveState().Create(x, fromPlayer)).ToArray();

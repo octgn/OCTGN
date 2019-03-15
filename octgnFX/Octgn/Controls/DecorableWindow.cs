@@ -240,7 +240,7 @@ namespace Octgn.Controls
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(string info)
+        protected void NotifyPropertyChanged(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }

@@ -106,6 +106,7 @@ namespace Octgn
         public bool IsReplay { get; }
 
         public ReplayWriter ReplayWriter { get; }
+        public ReplayReader ReplayReader { get; }
 
         public ushort CurrentUniqueId;
 
@@ -116,6 +117,105 @@ namespace Octgn
         internal GameEngine()
         {
 
+        }
+
+        public GameEngine(ReplayReader replayReader, Game def, string nickname) {
+            ReplayReader = replayReader;
+            IsReplay = true;
+
+            LoadedCards = new ObservableDeck();
+            LoadedCards.Sections = new ObservableCollection<ObservableSection>();
+
+            DeckStats = new DeckStatsViewModel();
+
+            Spectator = true;
+            Program.GameMess.Clear();
+            if (def.ScriptVersion.Equals(new Version(0, 0, 0, 0))) {
+                Program.GameMess.Warning("This game doesn't have a Script Version specified. Please contact the game developer.\n\n\nYou can get in contact of the game developer here {0}", def.GameUrl);
+                def.ScriptVersion = new Version(3, 1, 0, 0);
+            }
+            if (Versioned.ValidVersion(def.ScriptVersion) == false) {
+                Program.GameMess.Warning(
+                    "Can't find API v{0}. Loading the latest version.\n\nIf you have problems, get in contact of the developer of the game to get an update.\nYou can get in contact of them here {1}",
+                    def.ScriptVersion, def.GameUrl);
+                def.ScriptVersion = Versioned.LowestVersion;
+            } else {
+                var vmeta = Versioned.GetVersion(def.ScriptVersion);
+                if (vmeta.DeleteDate <= DateTime.Now) {
+                    Program.GameMess.Warning("This game requires an API version {0} which is no longer supported by OCTGN.\nYou can still play, however some aspects of the game may no longer function as expected, and it may be removed at any time.\nYou may want to contact the developer of this game and ask for an update.\n\nYou can find more information about this game at {1}."
+                        , def.ScriptVersion, def.GameUrl);
+                }
+            }
+            //Program.ChatLog.ClearEvents();
+            IsLocal = true;
+            Definition = def;
+            Password = string.Empty;
+            _table = new Table(def.Table);
+            if (def.Phases != null) {
+                byte PhaseId = 1;
+                _allPhases = def.Phases.Select(x => new Phase(PhaseId++, x)).ToList();
+            }
+            GlobalVariables = new Dictionary<string, string>();
+            foreach (var varDef in def.GlobalVariables)
+                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+            ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
+            this.Nickname = nickname;
+            while (String.IsNullOrWhiteSpace(this.Nickname)) {
+                this.Nickname = Prefs.Nickname;
+                if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Randomness.GrabRandomNounWord() + new Random().Next(30);
+                var retNick = this.Nickname;
+                Program.Dispatcher.Invoke(new Action(() =>
+                {
+                    var i = new InputDlg("Choose a nickname", "Choose a nickname", this.Nickname);
+                    retNick = i.GetString();
+                }));
+                this.Nickname = retNick;
+            }
+            // Load all game markers
+            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers()) {
+                if (!_markersById.ContainsKey(m.Id)) {
+                    _markersById.Add(m.Id, m);
+                }
+            }
+            // Init fields
+            CurrentUniqueId = 1;
+            TurnNumber = 0;
+            GameBoard = Definition.GameBoards["Default"];
+            ActivePlayer = null;
+
+            foreach (var size in Definition.CardSizes) {
+                var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
+                var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
+                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front, back));
+            }
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                // clear any existing players
+                Play.Player.All.Clear();
+                Player.Spectators.Clear();
+                // Create the global player, if any
+                if (Definition.GlobalPlayer != null)
+                    Play.Player.GlobalPlayer = new Play.Player(Definition);
+                // Create the local player
+                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), true, true);
+                var dt = new DispatcherTimer();
+                dt.Interval = TimeSpan.FromSeconds(1);
+
+                dt.Tick += Dt_Tick;
+
+                dt.Start();
+            }));
+
+        }
+
+        private void Dt_Tick(object sender, EventArgs e) {
+            var msg = ReplayReader.ReadNextMessage();
+            if (msg == null) {
+                return;
+            }
+
+            var rc = (Program.Client as ReplayClient);
+
+            rc.AddMessage(msg);
         }
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
@@ -425,6 +525,9 @@ namespace Octgn
 
             Program.GameEngine.SessionId = gameSessionId;
             Program.GameEngine.WaitForGameState = waitForGameState;
+
+            if (IsReplay) return;
+
             Program.GameEngine.History.Name = gameName;
 
             if (_historyPath == null) {
@@ -624,8 +727,9 @@ namespace Octgn
             Program.GameMess.OnMessage -= GameMess_OnMessage;
 
             SaveHistory();
-            ReplayWriter.Dispose();
-            _logStream.Dispose();
+            ReplayWriter?.Dispose();
+            ReplayWriter?.Dispose();
+            _logStream?.Dispose();
 
             Program.GameEngine = null;
             Player.Reset();
@@ -920,6 +1024,8 @@ namespace Octgn
         }
 
         public void SaveHistory() {
+            if (IsReplay) return;
+
             var serialized = History.GetSnapshot(this, Player.LocalPlayer);
 
             File.WriteAllBytes(_historyPath, serialized);

@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using System.IO;
 using Octgn.Library;
 using Octgn.Play.Save;
+using Octgn.Windows;
 
 namespace Octgn.Tabs.GameHistory
 {
@@ -31,7 +32,20 @@ namespace Octgn.Tabs.GameHistory
         }
 
         private void ListViewItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var history = (GameHistoryViewModel)ListViewHistoryList.SelectedItem;
 
+            if(history != null) {
+                Dispatcher.VerifyAccess();
+
+                if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
+
+                Dispatcher.InvokeAsync(async () => {
+                    await Dispatcher.Yield(DispatcherPriority.Background);
+                    var win = new GameHistoryWindow(history);
+                    win.Show();
+                    win.Activate();
+                });
+            }
         }
 
         private void ButtonRefreshClick(object sender, RoutedEventArgs e) {

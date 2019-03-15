@@ -35,11 +35,12 @@ namespace Octgn.Play.Save
             // header count
             _binaryWriter.Write(2);
             _binaryWriter.Write(Replay.Name);
-            _binaryWriter.Write(Replay.GameId.ToByteArray());
+            _binaryWriter.Write(Replay.GameId.ToString());
 
             while(_prestartQueue.Count > 0) {
                 var item = _prestartQueue.Dequeue();
                 _binaryWriter.Write((DateTime.Now - item.time).Ticks);
+                _binaryWriter.Write(item.message.Length);
                 _binaryWriter.Write(item.message);
             }
 
@@ -53,8 +54,8 @@ namespace Octgn.Play.Save
                 _prestartQueue.Enqueue((DateTime.Now - _startTime, message));
             } else {
                 _binaryWriter.Write((DateTime.Now - _startTime).Ticks);
-                var str = BitConverter.ToString(message);
-                _binaryWriter.Write(str);
+                _binaryWriter.Write(message.Length);
+                _binaryWriter.Write(message);
                 _binaryWriter.Flush();
             }
         }
