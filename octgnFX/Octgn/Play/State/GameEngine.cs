@@ -31,6 +31,7 @@ using System.Collections.ObjectModel;
 using Octgn.DataNew;
 using Octgn.Play.Save;
 using Octgn.Play.State;
+using Octgn.Core.Play;
 
 namespace Octgn
 {
@@ -415,6 +416,9 @@ namespace Octgn
 
         private string _historyPath = null;
         private string _replayPath = null;
+        private string _logPath = null;
+
+        private StreamWriter _logStream = null;
 
         public void OnWelcomed(Guid gameSessionId, string gameName, bool waitForGameState) {
             IsWelcomed = true;
@@ -433,25 +437,25 @@ namespace Octgn
                 for (var i = 0; i < Int32.MaxValue; i++) {
                     var historyFileName = History.Name;
                     var replayFileName = History.Name;
+                    var logFileName = History.Name;
 
                     if (i > 0) {
-                        historyFileName = replayFileName = historyFileName + "_" + i;
+                        historyFileName = replayFileName = logFileName = historyFileName + "_" + i;
                     }
 
                     historyFileName = Path.Combine(dir.FullName, historyFileName + ".o8h");
                     replayFileName = Path.Combine(dir.FullName, replayFileName + ".o8r");
+                    logFileName = Path.Combine(dir.FullName, logFileName + ".o8l");
 
                     if (!File.Exists(historyFileName) && !File.Exists(replayFileName)) {
                         _historyPath = historyFileName;
                         _replayPath = replayFileName;
+                        _logPath = logFileName;
                         break;
                     }
                 }
 
                 SaveHistory();
-            }
-
-            if (!Program.GameEngine.ReplayWriter.IsStarted) {
                 var replay = new Replay {
                     Name = gameName,
                     GameId = Definition.Id
@@ -460,6 +464,98 @@ namespace Octgn
                 var stream = File.Open(_replayPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
 
                 Program.GameEngine.ReplayWriter.Start(replay, stream);
+
+                var logStream = File.Open(_logPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+
+                _logStream = new StreamWriter(logStream);
+
+                Program.GameMess.OnMessage += GameMess_OnMessage;
+            }
+        }
+
+        private void GameMess_OnMessage(Core.Play.IGameMessage obj) {
+            if (_logStream == null) return;
+
+            if (obj is DebugMessage) return;
+
+            var block = ChatControl.GameMessageToBlock(obj);
+
+            var blockString = BlockToString(block);
+
+            _logStream.Write(blockString);
+
+            _logStream.Flush();
+        }
+
+        private string BlockToString(System.Windows.Documents.Block block) {
+            if (block == null) return string.Empty;
+
+            switch (block) {
+                case System.Windows.Documents.List list: {
+                        var result = string.Empty;
+
+                        foreach (var item in list.ListItems) {
+                            foreach (var itemBlock in item.Blocks) {
+                                result += BlockToString(itemBlock);
+                            }
+                            result += Environment.NewLine;
+                        }
+
+                        return result;
+                    }
+                case System.Windows.Documents.Paragraph pg: {
+                        var result = string.Empty;
+
+                        foreach (var inline in pg.Inlines) {
+                            result += RunToString(inline);
+                        }
+
+                        return result;
+                    }
+                case System.Windows.Documents.Section sec: {
+                        var result = string.Empty;
+
+                        foreach (var secBlock in sec.Blocks) {
+                            result += BlockToString(secBlock);
+                        }
+                        result += Environment.NewLine;
+
+                        return result;
+                    }
+                default: {
+                        throw new InvalidOperationException($"Block {block.GetType().Name} not implemented.");
+                    }
+            }
+        }
+
+        private string RunToString(System.Windows.Documents.Inline inline) {
+            switch (inline) {
+                case System.Windows.Documents.Run run: {
+                        return run.Text;
+                    }
+
+                case System.Windows.Documents.Span span: {
+                        var ret = string.Empty;
+                        foreach (var sinline in span.Inlines) {
+                            ret += RunToString(sinline);
+                        }
+                        return ret;
+                    }
+
+                case System.Windows.Documents.LineBreak lb: {
+                        return Environment.NewLine;
+                    }
+
+                case System.Windows.Documents.InlineUIContainer uicontainer: {
+                        return string.Empty;
+                    }
+
+                case System.Windows.Documents.AnchoredBlock ab: {
+                        return string.Empty;
+                    }
+
+                default:
+                    throw new InvalidOperationException($"Inline {inline.GetType().Name} not implemented.");
             }
         }
 
@@ -525,8 +621,11 @@ namespace Octgn
 
         public void End()
         {
+            Program.GameMess.OnMessage -= GameMess_OnMessage;
+
             SaveHistory();
             ReplayWriter.Dispose();
+            _logStream.Dispose();
 
             Program.GameEngine = null;
             Player.Reset();

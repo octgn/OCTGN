@@ -122,6 +122,10 @@ namespace Octgn.Tabs.GameHistory
                 .GetFiles("*.o8r")
                 .ToDictionary(x => Path.GetFileNameWithoutExtension(x.Name), x => x)
             ;
+            var logFiles = dir
+                .GetFiles("*.o8l")
+                .ToDictionary(x => Path.GetFileNameWithoutExtension(x.Name), x => x)
+            ;
 
             foreach (var historyFile in historyFiles) {
                 var historyFileName = Path.GetFileNameWithoutExtension(historyFile.Name);
@@ -140,6 +144,10 @@ namespace Octgn.Tabs.GameHistory
 
                 if (replayFiles.TryGetValue(historyFileName, out var replayFile)) {
                     vm.ReplayFile = replayFile.FullName;
+                }
+
+                if (logFiles.TryGetValue(historyFileName, out var logFile)) {
+                    vm.LogFile = logFile.FullName;
                 }
 
                 yield return vm;

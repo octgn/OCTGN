@@ -91,6 +91,8 @@
             AddMessage(new NotifyBarMessage(color, message, args));
         }
 
+        public event Action<IGameMessage> OnMessage;
+
         public void AddMessage(IGameMessage message)
         {
             try
@@ -100,6 +102,7 @@
 					message = messageAction(message);
                 messages.Add(message);
                 OnPropertyChanged("Messages");
+                OnMessage?.Invoke(message);
             }
             finally
             {

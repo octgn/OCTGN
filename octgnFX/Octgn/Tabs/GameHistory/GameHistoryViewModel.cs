@@ -94,6 +94,18 @@ namespace Octgn.Tabs.GameHistory
             !string.IsNullOrWhiteSpace(ReplayFile)
             && File.Exists(ReplayFile);
 
+        public string LogFile {
+            get => _logFile;
+            set {
+                if (value.Equals(_logFile)) {
+                    return;
+                }
+                _logFile = value;
+                OnPropertyChanged(nameof(LogFile));
+            }
+        }
+        private string _logFile;
+
         public GameHistoryViewModel() {
         }
 
