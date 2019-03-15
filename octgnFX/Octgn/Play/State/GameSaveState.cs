@@ -31,7 +31,11 @@ namespace Octgn.Play.State
         public Guid SessionId { get; set; }
         public GroupSaveState Table { get; set; }
 
-        public override GameSaveState Create(GameEngine engine, Play.Player fromPlayer)
+        public override GameSaveState Create(GameEngine tp, Play.Player fromPlayer) {
+            return Create(tp, fromPlayer, false);
+        }
+
+        public GameSaveState Create(GameEngine engine, Play.Player fromPlayer, bool includeFromPlayer)
         {
             // Still need to a way to send users their state back
             //  I'm thinking that the CardIdentity.Key could be
@@ -50,7 +54,11 @@ namespace Octgn.Play.State
             {
                 CurrentUniqueId = engine.CurrentUniqueId;
             }
-            Players = Play.Player.All.Where(x => x.Id != fromPlayer.Id).Select(x => new PlayerSaveState().Create(x, fromPlayer)).ToArray();
+            Players = Play.Player.All
+                .Where(x => !includeFromPlayer ? x.Id != fromPlayer.Id : true)
+                .Select(x => new PlayerSaveState().Create(x, fromPlayer))
+                .ToArray()
+            ;
             Table = new GroupSaveState().Create(Program.GameEngine.Table, fromPlayer);
             Table.Visiblity = GroupVisibility.Undefined;
             SessionId = engine.SessionId;
@@ -73,10 +81,10 @@ namespace Octgn.Play.State
             foreach (var p in state.Players)
             {
                 var player = Play.Player.Find(p.Id);
-	            player.Color = p.Color;
-	            player.ActualColor = p.Color;
-	            player.Brush = new SolidColorBrush(player.Color);
-	            player.TransparentBrush = new SolidColorBrush(player.Color) { Opacity = 0.4};
+                player.Color = p.Color;
+                player.ActualColor = p.Color;
+                player.Brush = new SolidColorBrush(player.Color);
+                player.TransparentBrush = new SolidColorBrush(player.Color) { Opacity = 0.4};
                 foreach (var gv in p.GlobalVariables)
                 {
                     player.GlobalVariables[gv.Key] = gv.Value;
@@ -186,7 +194,7 @@ namespace Octgn.Play.State
         public override CardSaveState Create(Play.Card card, Play.Player fromPlayer)
         {
             this.Id = card.Id;
-			this.Type = card.Type.Model.Id;
+            this.Type = card.Type.Model.Id;
             this.Index = card.GetIndex();
             this.FaceUp = ((card.FaceUp && card.Group.Viewers.Contains(fromPlayer)) || (card.Group.Viewers.Contains(fromPlayer)) || card.IsVisibleToAll());
             X = card.X;
@@ -267,7 +275,7 @@ namespace Octgn.Play.State
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }
-		public Color Color { get; set; }
+        public Color Color { get; set; }
 
         public PlayerSaveState()
         {
@@ -280,7 +288,7 @@ namespace Octgn.Play.State
             this.GlobalVariables = play.GlobalVariables;
             this.Counters = play.Counters.Select(x => new CounterSaveState().Create(x, fromPlayer)).ToArray();
             this.Groups = play.Groups.Select(x => new GroupSaveState().Create(x, fromPlayer)).ToArray();
-	        this.Color = play.ActualColor;
+            this.Color = play.ActualColor;
             return this;
         }
     }

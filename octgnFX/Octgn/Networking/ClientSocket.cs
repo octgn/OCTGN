@@ -11,12 +11,12 @@ using Octgn.Library.Networking;
 
 namespace Octgn.Networking
 {
-    public class ClientSocket : ReconnectingSocketBase
+    public class ClientSocket : ReconnectingSocketBase, IClient
     {
         private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal IServerCalls Rpc { get; set; }
-        internal Handler Handler { get; set; }
+        public IServerCalls Rpc { get; set; }
+        public Handler Handler { get; set; }
 
         public int Muted { get; set; }
 
@@ -99,5 +99,18 @@ namespace Octgn.Networking
             if (data.Length < length) return 0;
             return length;
         }
+    }
+
+    public interface IClient
+    {
+        IServerCalls Rpc { get; set; }
+
+        Handler Handler { get; set; }
+
+        int Muted { get; set; }
+
+        Task Connect();
+
+        void Shutdown();
     }
 }

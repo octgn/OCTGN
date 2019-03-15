@@ -33,7 +33,7 @@ namespace Octgn.Library.Networking
             this._reportedDisconnect = false;
         }
 
-        public void ForceDisconnect()
+        public void Shutdown()
         {
             this.ForcedDisconnect = true;
             this.Reconnecting = false;

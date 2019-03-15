@@ -64,12 +64,14 @@ namespace Octgn.Controls
                     "The following players have joined your game.\n\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
                 if (isLocal)
                 {
-                    descriptionLabel.Text += "\n\nHosting on port: " + Program.Client.EndPoint.Port;
-                    GetIps();
+                    if (Program.Client is ClientSocket clientSocket) {
+                        descriptionLabel.Text += "\n\nHosting on port: " + clientSocket.EndPoint.Port;
+                        GetIps();
 
-                    // save game/port so a new client can start up and connect
-                    Prefs.LastLocalHostedGamePort = Program.Client.EndPoint.Port;
-                    Prefs.LastHostedGameType = Program.GameEngine.Definition.Id;
+                        // save game/port so a new client can start up and connect
+                        Prefs.LastLocalHostedGamePort = clientSocket.EndPoint.Port;
+                        Prefs.LastHostedGameType = Program.GameEngine.Definition.Id;
+                    }
                 }
             }
             else

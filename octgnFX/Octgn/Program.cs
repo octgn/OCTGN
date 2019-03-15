@@ -44,7 +44,7 @@ namespace Octgn
         public static Client LobbyClient;
 
         public static GameSettings GameSettings { get; set; }
-        internal static ClientSocket Client;
+        internal static IClient Client;
         public static event Action OnOptionsChanged;
 
 
@@ -311,7 +311,7 @@ namespace Octgn
 			X.Instance.Try(()=>Program.Client?.Rpc?.Leave(Player.LocalPlayer));
             if (Client != null)
             {
-                Client.ForceDisconnect();
+                Client.Shutdown();
                 Client = null;
             }
             if (GameEngine != null)

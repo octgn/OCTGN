@@ -23,10 +23,11 @@ using Group = Octgn.Play.Group;
 using Player = Octgn.Play.Player;
 using Phase = Octgn.Play.Phase;
 using Octgn.DataNew;
+using Octgn.Play.Save;
 
 namespace Octgn.Networking
 {
-    internal sealed class Handler
+    public sealed class Handler
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -38,6 +39,8 @@ namespace Octgn.Networking
             _binParser = new BinaryParser(this);
         }
 
+        private DateTime _lastMessageTime = DateTime.MinValue;
+
         public void ReceiveMessage(byte[] data)
         {
             // Fix: because ReceiveMessage is called through the Dispatcher queue, we may be called
@@ -45,9 +48,27 @@ namespace Octgn.Networking
             // (otherwise NRE may occur)
             if (Program.Client == null) return;
 
+            var isPing = false;
+
+            if(data.Length == 5) {
+                if(
+                    data[0] == 0
+                    && data[1] == 0
+                    && data[2] == 0
+                    && data[3] == 0
+                    && data[4] == 87
+                  ) {
+                    isPing = true;
+                }
+            }
+
             try
             {
                 _binParser.Parse(data);
+
+                if (!isPing && !Program.GameEngine.IsReplay) {
+                    Program.GameEngine.ReplayWriter.WriteMessage(data);
+                }
             }
             catch (EndOfStreamException e)
             {
@@ -57,6 +78,9 @@ namespace Octgn.Networking
             {
                 if (Program.Client != null) Program.Client.Muted = 0;
             }
+
+            if (Program.GameEngine.IsWelcomed)
+                Program.GameEngine.SaveHistory();
         }
 
         public void Binary()
@@ -72,7 +96,7 @@ namespace Octgn.Networking
         {
             Program.GameMess.Warning("You have been kicked: {0}", reason);
             Program.InPreGame = false;
-            Program.Client.ForceDisconnect();
+            Program.Client.Shutdown();
         }
 
         public void Start()
@@ -209,14 +233,15 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false, isScriptChange);
         }
 
-        public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
+        public void Welcome(byte id, Guid gameSessionId, string gameName, bool waitForGameState)
         {
             Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
-            Program.Client.StartPings();
+            if (Program.Client is ClientSocket cs) {
+                cs.StartPings();
+            }
             Player.FireLocalPlayerWelcomed();
-            Program.GameEngine.SessionId = gameSessionId;
-            Program.GameEngine.WaitForGameState = waitForGameState;
+            Program.GameEngine.OnWelcomed(gameSessionId, gameName, waitForGameState);
         }
 
         public void NewPlayer(byte id, string nick, string userId, ulong pkey, bool invertedTable, bool spectator)

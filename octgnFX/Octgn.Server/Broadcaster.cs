@@ -37,11 +37,11 @@ namespace Octgn.Server
 		}
 	}
 
-	public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
+	public void Welcome(byte id, Guid gameSessionId, string gameName, bool waitForGameState)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
-				ply.Rpc.Welcome(id, gameSessionId, waitForGameState);
+				ply.Rpc.Welcome(id, gameSessionId, gameName, waitForGameState);
 			}
 		}
 	}

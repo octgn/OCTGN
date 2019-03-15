@@ -52,7 +52,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
+    public void Welcome(byte id, Guid gameSessionId, string gameName, bool waitForGameState)
     {
 		Log.Debug($"SERVER OUT: {nameof(Welcome)}");
 		using(var stream = new MemoryStream(512)) {
@@ -62,6 +62,7 @@ namespace Octgn.Server
 				writer.Write((byte)5);
 				writer.Write(id);
 				writer.Write(gameSessionId.ToByteArray());
+				writer.Write(gameName);
 				writer.Write(waitForGameState);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);

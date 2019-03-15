@@ -29,6 +29,8 @@ using Marker = Octgn.Play.Marker;
 using Player = Octgn.Play.Player;
 using System.Collections.ObjectModel;
 using Octgn.DataNew;
+using Octgn.Play.Save;
+using Octgn.Play.State;
 
 namespace Octgn
 {
@@ -98,6 +100,12 @@ namespace Octgn
             }
         }
 
+        public History History { get; }
+
+        public bool IsReplay { get; }
+
+        public ReplayWriter ReplayWriter { get; }
+
         public ushort CurrentUniqueId;
 
         /// <summary>
@@ -111,6 +119,13 @@ namespace Octgn
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
+            History = new History(def.Id);
+            if (Program.IsHost) {
+                History.Name = Program.CurrentOnlineGameName;
+            }
+
+            ReplayWriter = new ReplayWriter();
+
             LoadedCards = new ObservableDeck();
             LoadedCards.Sections = new ObservableCollection<ObservableSection>();
 
@@ -396,6 +411,58 @@ namespace Octgn
 
         #endregion
 
+        public bool IsWelcomed { get; private set; }
+
+        private string _historyPath = null;
+        private string _replayPath = null;
+
+        public void OnWelcomed(Guid gameSessionId, string gameName, bool waitForGameState) {
+            IsWelcomed = true;
+
+            Program.GameEngine.SessionId = gameSessionId;
+            Program.GameEngine.WaitForGameState = waitForGameState;
+            Program.GameEngine.History.Name = gameName;
+
+            if (_historyPath == null) {
+                var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
+
+                if (!dir.Exists) {
+                    dir.Create();
+                }
+
+                for (var i = 0; i < Int32.MaxValue; i++) {
+                    var historyFileName = History.Name;
+                    var replayFileName = History.Name;
+
+                    if (i > 0) {
+                        historyFileName = replayFileName = historyFileName + "_" + i;
+                    }
+
+                    historyFileName = Path.Combine(dir.FullName, historyFileName + ".o8h");
+                    replayFileName = Path.Combine(dir.FullName, replayFileName + ".o8r");
+
+                    if (!File.Exists(historyFileName) && !File.Exists(replayFileName)) {
+                        _historyPath = historyFileName;
+                        _replayPath = replayFileName;
+                        break;
+                    }
+                }
+
+                SaveHistory();
+            }
+
+            if (!Program.GameEngine.ReplayWriter.IsStarted) {
+                var replay = new Replay {
+                    Name = gameName,
+                    GameId = Definition.Id
+                };
+
+                var stream = File.Open(_replayPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+
+                Program.GameEngine.ReplayWriter.Start(replay, stream);
+            }
+        }
+
         public void Begin()
         {
             if (_BeginCalled) return;
@@ -458,11 +525,13 @@ namespace Octgn
 
         public void End()
         {
+            SaveHistory();
+            ReplayWriter.Dispose();
+
             Program.GameEngine = null;
             Player.Reset();
             Card.Reset();
             CardIdentity.Reset();
-            History.Reset();
             Selection.Clear();
         }
 
@@ -749,6 +818,12 @@ namespace Octgn
         {
             Log.Debug("Ready");
             Program.Client.Rpc.Ready(Player.LocalPlayer);
+        }
+
+        public void SaveHistory() {
+            var serialized = History.GetSnapshot(this, Player.LocalPlayer);
+
+            File.WriteAllBytes(_historyPath, serialized);
         }
 
         public void ExecuteRemoteCall(Player fromPlayer, string func, string args)

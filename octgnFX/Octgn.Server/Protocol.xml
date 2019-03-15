@@ -39,6 +39,7 @@
   <msg name="Welcome" client="true">
     <param name="id" type="byte" />
     <param name="gameSessionId" type="Guid"/>
+    <param name="gameName" type="string"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
   <msg name="Settings" server="true" client="true" allowedbyspectator="true">

@@ -1501,7 +1501,9 @@ namespace Octgn.Scripting.Versions
 
         public void ForceDisconnect()
         {
-            Program.Client.SeverConnectionAtTheKnee();
+            if (Program.Client is ClientSocket clientSocket) {
+                clientSocket.SeverConnectionAtTheKnee();
+            }
         }
         public void ResetGame()
         {
