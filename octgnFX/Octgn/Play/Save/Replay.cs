@@ -1,6 +1,7 @@
 ﻿using Octgn.Networking;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Octgn.Play.Save
@@ -84,17 +85,19 @@ namespace Octgn.Play.Save
         }
 
         protected override void Send(byte[] data) {
-            var stream = new MemoryStream(data);
-            var reader = new BinaryReader(stream);
+            //var stream = new MemoryStream(data);
+            //var reader = new BinaryReader(stream);
 
-            reader.ReadInt32();
-            reader.ReadInt32();
+            //reader.ReadInt32();
+            //reader.ReadInt32();
 
-            byte method = reader.ReadByte();
+            //byte method = reader.ReadByte();
+
+            var realData = data.Skip(4).ToArray();
 
             var client = (ReplayClient)Program.Client;
 
-            client.AddMessage(data);
+            client.AddMessage(realData);
         }
     }
 }

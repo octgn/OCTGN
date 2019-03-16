@@ -201,7 +201,7 @@ namespace Octgn
                 IsConnected = true;
 
                 var dt = new DispatcherTimer();
-                dt.Interval = TimeSpan.FromSeconds(1);
+                dt.Interval = TimeSpan.FromSeconds(.5);
 
                 dt.Tick += Dt_Tick;
 
