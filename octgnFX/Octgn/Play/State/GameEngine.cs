@@ -496,15 +496,22 @@ namespace Octgn
 
         private StreamWriter _logStream = null;
 
+        private string _gameName;
+
         public void OnWelcomed(Guid gameSessionId, string gameName, bool waitForGameState) {
             IsWelcomed = true;
 
             Program.GameEngine.SessionId = gameSessionId;
             Program.GameEngine.WaitForGameState = waitForGameState;
+            _gameName = gameName;
+        }
 
-            if (IsReplay) return;
+        public void OnStart() {
+            if (IsReplay) {
+                return;
+            }
 
-            Program.GameEngine.History.Name = gameName;
+            Program.GameEngine.History.Name = _gameName;
 
             if (_historyPath == null) {
                 var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
@@ -536,7 +543,7 @@ namespace Octgn
 
                 SaveHistory();
                 var replay = new Replay {
-                    Name = gameName,
+                    Name = _gameName,
                     GameId = Definition.Id,
                     User = Player.LocalPlayer.Name
                 };
@@ -651,7 +658,9 @@ namespace Octgn
                                      , Spectator);
             Program.IsGameRunning = true;
 
-            ReplayEngine.Start();
+            if (IsReplay) {
+                ReplayEngine.Start();
+            }
         }
 
         public void Resume()
@@ -1004,6 +1013,7 @@ namespace Octgn
 
         public void SaveHistory() {
             if (IsReplay) return;
+            if (_historyPath == null) return;
 
             var serialized = History.GetSnapshot(this, Player.LocalPlayer);
 

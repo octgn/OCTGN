@@ -48,13 +48,17 @@ namespace Octgn.Play.Save
             var name = binaryReader.ReadString();
             var gameIdString = binaryReader.ReadString();
             var username = binaryReader.ReadString();
+            var gameStartTimeTicks = binaryReader.ReadInt64();
+
+            var gameStartTime = TimeSpan.FromTicks(gameStartTimeTicks);
 
             var gameId = Guid.Parse(gameIdString);
 
             var replay = new Replay {
                 Name = name,
                 GameId = gameId,
-                User = username
+                User = username,
+                GameStartTime = gameStartTime
             };
 
             return new ReplayReader(binaryReader, replay);

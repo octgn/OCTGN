@@ -10,6 +10,8 @@ namespace Octgn.Play.Save
 
         public Guid GameId { get; set; }
 
+        public TimeSpan GameStartTime { get; set; }
+
         public Replay() {
         }
     }

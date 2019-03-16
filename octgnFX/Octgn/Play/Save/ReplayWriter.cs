@@ -18,6 +18,7 @@ namespace Octgn.Play.Save
         private BinaryWriter _binaryWriter;
 
         public ReplayWriter() {
+            _startTime = DateTime.Now;
         }
 
         private Queue<(TimeSpan time, byte[] message)> _prestartQueue = new Queue<(TimeSpan, byte[])>();
@@ -30,17 +31,16 @@ namespace Octgn.Play.Save
 
             _binaryWriter = new BinaryWriter(_stream = stream ?? throw new ArgumentNullException(nameof(stream)));
 
-            _startTime = DateTime.Now;
-
             // header count
-            _binaryWriter.Write(2);
+            _binaryWriter.Write(4);
             _binaryWriter.Write(Replay.Name);
             _binaryWriter.Write(Replay.GameId.ToString());
             _binaryWriter.Write(Replay.User);
+            _binaryWriter.Write((DateTime.Now - _startTime).Ticks); // Game start time, for fastforwarding
 
             while(_prestartQueue.Count > 0) {
                 var item = _prestartQueue.Dequeue();
-                _binaryWriter.Write((DateTime.Now - item.time).Ticks);
+                _binaryWriter.Write(item.time.Ticks);
                 _binaryWriter.Write(item.message.Length);
                 _binaryWriter.Write(item.message);
             }

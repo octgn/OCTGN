@@ -217,6 +217,8 @@
             </Border>
 
             <StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right" Grid.Row="1">
+                <Button Content="Skip" Margin="0,0,16,0" MinWidth="128" x:Name="skipBtn" Click="SkipClicked"
+                    Style="{StaticResource FlatDarkOrangeButtonStyle}"/>
                 <Button Content="Start" Margin="0,0,16,0" MinWidth="128" x:Name="startBtn" Click="StartClicked"
                     Style="{StaticResource FlatDarkGreenButtonStyle}"/>
                 <Button Content="Cancel" MinWidth="128" Click="CancelClicked" Style="{StaticResource FlatDarkButtonStyle}"/>

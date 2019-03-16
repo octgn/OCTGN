@@ -25,6 +25,10 @@ namespace Octgn.Play.Save
 
         private DateTime? _lastTickTime = null;
 
+        private TimeSpan? _fastforwardTo;
+
+        private double _speed = 1;
+
         private void _timer_Tick(object sender, EventArgs e) {
             while (true) {
                 var timePassedSinceLastTick = _lastTickTime == null
@@ -32,9 +36,19 @@ namespace Octgn.Play.Save
                     : DateTime.Now - _lastTickTime.Value
                 ;
 
+                _lastTickTime = DateTime.Now;
+
+                var newTicks = (long)(timePassedSinceLastTick.Ticks * _speed);
+                timePassedSinceLastTick = TimeSpan.FromTicks(newTicks);
+
                 _currentTime += timePassedSinceLastTick;
 
-                _lastTickTime = DateTime.Now;
+                if(_fastforwardTo != null) {
+                    if(_fastforwardTo.Value <= _currentTime) {
+                        _fastforwardTo = null;
+                        _speed = 1;
+                    }
+                }
 
                 if (_nextMsg != null) {
                     if (_currentTime >= _nextTime) {
@@ -72,6 +86,15 @@ namespace Octgn.Play.Save
 
         public void Pause() {
             _timer.Stop();
+        }
+
+        public void FastForwardTo(TimeSpan when) {
+            _fastforwardTo = when;
+            _speed = 100;
+        }
+
+        public void FastForwardToStart() {
+            FastForwardTo(_reader.Replay.GameStartTime);
         }
 
         #region IDisposable Support

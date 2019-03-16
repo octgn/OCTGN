@@ -102,6 +102,9 @@ namespace Octgn.Networking
         {
             Log.Debug("Start");
             Program.InPreGame = false;
+
+            Program.GameEngine.OnStart();
+
             if (WindowManager.PlayWindow != null)
             {
                 WindowManager.PlayWindow.PreGameLobby.Start(false);

@@ -60,6 +60,7 @@ namespace Octgn.Controls
 
             if (CanChangeSettings)
             {
+                skipBtn.Visibility = Visibility.Collapsed;
                 descriptionLabel.Text =
                     "The following players have joined your game.\n\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
                 if (isLocal)
@@ -79,6 +80,9 @@ namespace Octgn.Controls
                 descriptionLabel.Text =
                     "The following players have joined the game.\nPlease wait until the game starts, or click 'Cancel' to leave this game.";
                 startBtn.Visibility = Visibility.Collapsed;
+                if (Program.GameEngine.IsReplay) {
+                    skipBtn.Visibility = Visibility.Visible;
+                }
             }
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -298,6 +302,10 @@ namespace Octgn.Controls
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
 			await UserProfileWindow.Show(new User(play.UserId));
+        }
+
+        private void SkipClicked(object sender, RoutedEventArgs e) {
+            Program.GameEngine.ReplayEngine.FastForwardToStart();
         }
     }
 }
