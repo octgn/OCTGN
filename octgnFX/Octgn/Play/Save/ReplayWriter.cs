@@ -36,6 +36,7 @@ namespace Octgn.Play.Save
             _binaryWriter.Write(2);
             _binaryWriter.Write(Replay.Name);
             _binaryWriter.Write(Replay.GameId.ToString());
+            _binaryWriter.Write(Replay.User);
 
             while(_prestartQueue.Count > 0) {
                 var item = _prestartQueue.Dequeue();

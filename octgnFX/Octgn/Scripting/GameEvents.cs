@@ -154,7 +154,7 @@ namespace Octgn.Scripting
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -175,7 +175,7 @@ namespace Octgn.Scripting
 		}
 		public void OnGameStart_3_1_0_0()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -196,7 +196,7 @@ namespace Octgn.Scripting
 		}
 		public void OnLoadDeck_3_1_0_0(Player player, Group[] groups)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -219,7 +219,7 @@ namespace Octgn.Scripting
 		}
 		public void OnChangeCounter_3_1_0_0(Player player, Counter counter, int oldValue)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -243,7 +243,7 @@ namespace Octgn.Scripting
 		}
 		public void OnEndTurn_3_1_0_0(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -265,7 +265,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTurn_3_1_0_0(Player player, int turnNumber)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -288,7 +288,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTargetCard_3_1_0_0(Player player, Card card, bool isTargeted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -312,7 +312,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTargetCardArrow_3_1_0_0(Player player, Card fromCard, Card toCard, bool isTargeted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -337,7 +337,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMoveCard_3_1_0_0(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -369,7 +369,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMoveCards_3_1_0_0(Player player, Card[] cards, Group[] fromGroup, Group[] toGroup, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool isScriptMove)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -403,7 +403,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerGlobalVariableChanged_3_1_0_0(Player player, string name, string oldValue, string Value)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -428,7 +428,7 @@ namespace Octgn.Scripting
 		}
 		public void OnGlobalVariableChanged_3_1_0_0(string name, string oldValue, string Value)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -452,7 +452,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardClick_3_1_0_0(Card card, int mouseButton, string[] keysDown)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -476,7 +476,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardDoubleClick_3_1_0_0(Card card, int mouseButton, string[] keysDown)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -500,7 +500,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMarkerChanged_3_1_0_0(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -527,7 +527,7 @@ namespace Octgn.Scripting
 	private static readonly Version C_3_1_0_1 = Version.Parse("3.1.0.1");
 		public void OnTableLoad_3_1_0_1()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -548,7 +548,7 @@ namespace Octgn.Scripting
 		}
 		public void OnGameStart_3_1_0_1()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -569,7 +569,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerConnect_3_1_0_1(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -591,7 +591,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerLeaveGame_3_1_0_1(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -613,7 +613,7 @@ namespace Octgn.Scripting
 		}
 		public void OnLoadDeck_3_1_0_1(Player player, Group[] groups)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -636,7 +636,7 @@ namespace Octgn.Scripting
 		}
 		public void OnChangeCounter_3_1_0_1(Player player, Counter counter, int oldValue)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -660,7 +660,7 @@ namespace Octgn.Scripting
 		}
 		public void OnEndTurn_3_1_0_1(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -682,7 +682,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTurn_3_1_0_1(Player player, int turnNumber)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -705,7 +705,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTargetCard_3_1_0_1(Player player, Card card, bool isTargeted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -729,7 +729,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTargetCardArrow_3_1_0_1(Player player, Card fromCard, Card toCard, bool isTargeted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -754,7 +754,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerGlobalVariableChanged_3_1_0_1(Player player, string name, string oldValue, string Value)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -779,7 +779,7 @@ namespace Octgn.Scripting
 		}
 		public void OnGlobalVariableChanged_3_1_0_1(string name, string oldValue, string Value)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -803,7 +803,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardClick_3_1_0_1(Card card, int mouseButton, string[] keysDown)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -827,7 +827,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardDoubleClick_3_1_0_1(Card card, int mouseButton, string[] keysDown)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -851,7 +851,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMarkerChanged_3_1_0_1(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -877,7 +877,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMoveCard_3_1_0_1(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool faceup, string highlight, string markers)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -911,7 +911,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -945,7 +945,7 @@ namespace Octgn.Scripting
 		}
 		public void OnScriptedMoveCard_3_1_0_1(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool faceup, string highlight, string markers)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -979,7 +979,7 @@ namespace Octgn.Scripting
 		}
 		public void OnScriptedMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -1014,7 +1014,7 @@ namespace Octgn.Scripting
 	private static readonly Version C_3_1_0_2 = Version.Parse("3.1.0.2");
 		public void OnTableLoaded_3_1_0_2()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1035,7 +1035,7 @@ namespace Octgn.Scripting
 		}
 		public void OnGameStarted_3_1_0_2()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1056,7 +1056,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerConnected_3_1_0_2(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1078,7 +1078,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerQuit_3_1_0_2(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1100,7 +1100,7 @@ namespace Octgn.Scripting
 		}
 		public void OnDeckLoaded_3_1_0_2(Player player, Group[] groups)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1123,7 +1123,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCounterChanged_3_1_0_2(Player player, Counter counter, int value, bool scripted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1148,7 +1148,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTurnPaused_3_1_0_2(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1170,7 +1170,7 @@ namespace Octgn.Scripting
 		}
 		public void OnTurnPassed_3_1_0_2(Player player, int turn, bool force)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1194,7 +1194,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardTargeted_3_1_0_2(Player player, Card card, bool targeted, bool scripted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1219,7 +1219,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardArrowTargeted_3_1_0_2(Player player, Card fromCard, Card toCard, bool targeted, bool scripted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1245,7 +1245,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPlayerGlobalVariableChanged_3_1_0_2(Player player, string name, string oldValue, string value)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1270,7 +1270,7 @@ namespace Octgn.Scripting
 		}
 		public void OnGlobalVariableChanged_3_1_0_2(string name, string oldValue, string value)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1294,7 +1294,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardClicked_3_1_0_2(Card card, int mouseButton, string[] keysDown)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1318,7 +1318,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardDoubleClicked_3_1_0_2(Card card, int mouseButton, string[] keysDown)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1342,7 +1342,7 @@ namespace Octgn.Scripting
 		}
 		public void OnMarkerChanged_3_1_0_2(Card card, string marker, string id, int value, bool scripted)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1368,7 +1368,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardControllerChanged_3_1_0_2(Card card, Player oldPlayer, Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1392,7 +1392,7 @@ namespace Octgn.Scripting
 		}
 		public void OnCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups, string[] filters, string[] alternates)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1425,7 +1425,7 @@ namespace Octgn.Scripting
 		}
 		public void OnScriptedCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups, string[] filters, string[] alternates)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1458,7 +1458,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPhasePassed_3_1_0_2(string name, int id, bool force)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1482,7 +1482,7 @@ namespace Octgn.Scripting
 		}
 		public void OnPhasePaused_3_1_0_2(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1504,7 +1504,7 @@ namespace Octgn.Scripting
 		}
 		public void OverrideCardsMoved_3_1_0_2(Card[] cards, Group[] toGroups, int[] indexs, int[] xs, int[] ys, bool[] faceups)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1531,7 +1531,7 @@ namespace Octgn.Scripting
 		}
 		public void OverrideTurnPassed_3_1_0_2(Player player)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1553,7 +1553,7 @@ namespace Octgn.Scripting
 		}
 		public void OverrideGameReset_3_1_0_2()
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1574,7 +1574,7 @@ namespace Octgn.Scripting
 		}
 		public void OverridePhasePassed_3_1_0_2(string name, int id)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
@@ -1597,7 +1597,7 @@ namespace Octgn.Scripting
 		}
 		public void OverridePhaseClicked_3_1_0_2(string name, int id)
 		{
-			if(Player.LocalPlayer.Spectator)return;
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;

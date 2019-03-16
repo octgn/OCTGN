@@ -23,7 +23,6 @@ using Group = Octgn.Play.Group;
 using Player = Octgn.Play.Player;
 using Phase = Octgn.Play.Phase;
 using Octgn.DataNew;
-using Octgn.Play.Save;
 
 namespace Octgn.Networking
 {
@@ -218,14 +217,15 @@ namespace Octgn.Networking
         public void Print(Player player, string text)
         {
             // skip for local player, handled when called for consistency
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             Program.Print(player, text);
         }
 
         public void Random(int result)
         {
-            Program.GameEngine.ScriptApi.RandomResult(result);
+            if (Program.GameEngine.IsReplay) return;
 
+            Program.GameEngine.ScriptApi.RandomResult(result);
         }
 
         public void Counter(Player player, Counter counter, int value, bool isScriptChange)
@@ -249,7 +249,7 @@ namespace Octgn.Networking
             var p = Player.FindIncludingSpectators(id);
             if (p == null)
             {
-                var player = new Player(Program.GameEngine.Definition, nick, userId, id, pkey, spectator, false);
+                var player = new Player(Program.GameEngine.Definition, nick, userId, id, pkey, spectator, false, Program.GameEngine.IsReplay);
                 Program.GameMess.System("{0} has joined the game", player);
                 player.UpdateSettings(invertedTable, spectator, false);
                 if (Program.InPreGame == false)
@@ -302,7 +302,7 @@ namespace Octgn.Networking
             if (limited) Program.GameMess.System("{0} loads a limited deck.", who);
             else Program.GameMess.System("{0} loads a deck.", who);
 
-            if (who != Player.LocalPlayer) {
+            if (!IsLocalPlayer(who)) {
                 try {
                     var sleeveObj = Sleeve.FromString(sleeve);
 
@@ -333,7 +333,9 @@ namespace Octgn.Networking
         private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, IList<string> sizes)
         {
             // Ignore cards created by oneself
-            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
+            var who = Player.Find((byte)(id[0] >> 16));
+
+            if (IsLocalPlayer(who)) return;
             for (var i = 0; i < id.Count; i++)
             {
                 var group = groups[i];
@@ -356,7 +358,8 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
         public void CreateCard(int[] id, Guid[] type, string[] size, Group group)
         {
-            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
+            var who = Player.Find((byte)(id[0] >> 16));
+            if (IsLocalPlayer(who)) return;
             for (var i = 0; i < id.Length; i++)
             {
                 var owner = group.Owner;
@@ -402,7 +405,7 @@ namespace Octgn.Networking
             }
             var table = Program.GameEngine.Table;
             // Bring cards created by oneself to top, for z-order consistency
-            if (owner == Player.LocalPlayer)
+            if (IsLocalPlayer(owner))
             {
                 for (var i = id.Length - 1; i >= 0; --i)
                 {
@@ -422,10 +425,10 @@ namespace Octgn.Networking
             }
 
             if (modelId.All(m => m == modelId[0]))
-                Program.GameMess.PlayerEvent(owner, "creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
+                Program.GameMess.PlayerEvent(owner, "creates {1} '{2}'", owner, modelId.Length, IsLocalPlayer(owner) || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
             else
                 foreach (var m in modelId)
-                    Program.GameMess.PlayerEvent(owner, "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
+                    Program.GameMess.PlayerEvent(owner, "{0} creates a '{1}'", owner, IsLocalPlayer(owner) || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
         }
 
         public void Leave(Player player)
@@ -446,7 +449,7 @@ namespace Octgn.Networking
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
             var cards = card.Select(Card.Find).Where(x=>x != null).ToArray();
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
                 new MoveCards(player, cards, to, idx, faceUp, isScriptMove).Do();
         }
 
@@ -486,7 +489,7 @@ namespace Octgn.Networking
             }
 
             // Ignore cards moved by the local player (already done, for responsiveness)
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             // Find the old position on the table, if any
             // Do the move
             new MoveCards( player, playCards, x, y, idx, faceUp, isScriptMove).Do();
@@ -497,7 +500,7 @@ namespace Octgn.Networking
             var model = Program.GameEngine.GetMarkerModel(id);
             model.Name = name;
             var marker = card.FindMarker(id, name);
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
             {
                 if (marker == null && oldCount != 0)
                 {
@@ -528,7 +531,7 @@ namespace Octgn.Networking
         public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             var marker = card.FindMarker(id, name);
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
             {
                 if (marker == null)
                 {
@@ -541,12 +544,12 @@ namespace Octgn.Networking
             if (count != 0)
             {
                 var newCount = oldCount - count;
-                if (player != Player.LocalPlayer)
+                if (!IsLocalPlayer(player))
                 {
                     card.RemoveMarker(marker, count);
                 }
                 Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
-                if (player == Player.LocalPlayer && marker == null)
+                if (IsLocalPlayer(player) && marker == null)
                 {
                     var markerString = new StringBuilder();
                     markerString.AppendFormat("('{0}','{1}')", name, id);
@@ -579,7 +582,7 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("Inconsistent state. Cannot transfer marker to unknown player.");
                 return;
             }
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
             {
                 if (marker == null)
                 {
@@ -595,7 +598,7 @@ namespace Octgn.Networking
                 toOldCount = newMarker.Count - 1;
             var fromNewCount = oldCount - count;
             var toNewCount = toOldCount + count;
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
             {
                 from.RemoveMarker(marker, count);
                 to.AddMarker(marker.Model, count);
@@ -659,7 +662,7 @@ namespace Octgn.Networking
         {
             if (!card.PeekingPlayers.Contains(player))
                 card.PeekingPlayers.Add(player);
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
             {
                 Program.GameMess.PlayerEvent(player, "peeks at a card ({0}).", card.Group is Table ? "on table" : "in " + card.Group.FullName);
             }
@@ -668,21 +671,21 @@ namespace Octgn.Networking
         public void Untarget(Player player, Card card, bool isScriptChange)
         {
             // Ignore the card we targeted ourselves
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             new Target(player, card, null, false, isScriptChange).Do();
         }
 
         public void Target(Player player, Card card, bool isScriptChange)
         {
             // Ignore the card we targeted ourselves
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             new Target(player, card, null, true, isScriptChange).Do();
         }
 
         public void TargetArrow(Player player, Card card, Card otherCard, bool isScriptChange)
         {
             // Ignore the card we targeted ourselves
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             new Target(player, card, otherCard, true, isScriptChange).Do();
         }
 
@@ -695,7 +698,7 @@ namespace Octgn.Networking
         public void Turn(Player player, Card card, bool up)
         {
             // Ignore the card we turned ourselves
-            if (player == Player.LocalPlayer)
+            if (IsLocalPlayer(player))
             {
                 card.MayBeConsideredFaceUp = false;     // see comment on mayBeConsideredFaceUp
                 return;
@@ -706,21 +709,21 @@ namespace Octgn.Networking
         public void Rotate(Player player, Card card, CardOrientation rot)
         {
             // Ignore the moves we made ourselves
-            if (player == Player.LocalPlayer)
+            if (IsLocalPlayer(player))
                 return;
             new Rotate(player, card, rot).Do();
         }
 
         public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             ((Pile)group).DoShuffle(card, pos);
         }
 
         public void PassTo(Player who, ControllableObject obj, Player player, bool requested)
         {
             // Ignore message that we sent in the first place
-            if (who != Player.LocalPlayer)
+            if (!IsLocalPlayer(who))
                 obj.PassControlTo(player, who, false, requested);
             if (obj is Card)
                Program.GameEngine.EventProxy.OnCardControllerChanged_3_1_0_2((Card)obj, who, player);
@@ -740,7 +743,7 @@ namespace Octgn.Networking
         public void GroupVis(Player player, Group group, bool defined, bool visible)
         {
             // Ignore messages sent by myself
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
                 group.SetVisibility(defined ? (bool?)visible : null, false);
             if (defined)
                 Program.GameMess.PlayerEvent(player, visible ? "shows {0} to everybody." : "shows {0} to nobody.", group);
@@ -749,7 +752,7 @@ namespace Octgn.Networking
         public void GroupVisAdd(Player player, Group group, Player whom)
         {
             // Ignore messages sent by myself
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
                 group.AddViewer(whom, false);
             Program.GameMess.PlayerEvent(player, "shows {0} to {1}.", group, whom);
         }
@@ -757,7 +760,7 @@ namespace Octgn.Networking
         public void GroupVisRemove(Player player, Group group, Player whom)
         {
             // Ignore messages sent by myself
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
                 group.RemoveViewer(whom, false);
             Program.GameMess.PlayerEvent(player, "hides {0} from {1}.", group, whom);
         }
@@ -852,11 +855,11 @@ namespace Octgn.Networking
             var wnd = (Play.Dialogs.PickCardsDialog)WindowManager.PlayWindow.backstage.Child;
             var packNames = wnd.PackNames(packs);
             if (packNames == "") return;
-            if (selfOnly && player != Player.LocalPlayer)
+            if (selfOnly && !IsLocalPlayer(player))
             {
                 Program.GameMess.System("{0} added {1} to their pool.", player, packNames);
             }
-            else if (selfOnly && player == Player.LocalPlayer)
+            else if (selfOnly && IsLocalPlayer(player))
             {
                 Program.GameMess.System("{0} added {1} to their pool.", player, packNames);
                 wnd.OpenPacks(packs);
@@ -883,7 +886,7 @@ namespace Octgn.Networking
             {
                 p.GlobalVariables.Add(name, value);
             }
-            if (p != Player.LocalPlayer)
+            if (!IsLocalPlayer(p))
             {
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_0(p, name, oldValue, value);
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_1(p, name, oldValue, value);
@@ -914,7 +917,7 @@ namespace Octgn.Networking
 
         public void CardSwitchTo(Player player, Card card, string alternate)
         {
-            if (player.Id != Player.LocalPlayer.Id)
+            if (!IsLocalPlayer(player))
                 card.SwitchTo(player, alternate);
         }
 
@@ -925,7 +928,7 @@ namespace Octgn.Networking
 
         public void PlaySound(Player player, string name)
         {
-            if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player, name);
+            if (!IsLocalPlayer(player)) Program.GameEngine.PlaySoundReq(player, name);
         }
 
         public void Ready(Player player)
@@ -1014,7 +1017,7 @@ namespace Octgn.Networking
         public void DeleteCard(Card card, Player player)
         {
             Program.GameMess.PlayerEvent(player, "deletes {0}", card);
-            if (player != Player.LocalPlayer)
+            if (!IsLocalPlayer(player))
                 card.Group.Remove(card);
         }
 
@@ -1028,20 +1031,20 @@ namespace Octgn.Networking
         {
             var astring = anchor ? "anchored" : "unanchored";
             Program.GameMess.PlayerEvent(player, "{0} {1}", astring, card);
-            if (Player.LocalPlayer == player)
+            if (IsLocalPlayer(player))
                 return;
             card.SetAnchored(true, anchor);
         }
 
         public void SetCardProperty(Card card, Player player, string name, string val, string valtype)
         {
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             card.SetProperty(name, val, false);
         }
 
         public void ResetCardProperties(Card card, Player player)
         {
-            if (player == Player.LocalPlayer) return;
+            if (IsLocalPlayer(player)) return;
             card.ResetProperties(false);
         }
 
@@ -1049,5 +1052,11 @@ namespace Octgn.Networking
 	    {
 			player.SetPlayerColor(colorHex);
 	    }
+
+        public static bool IsLocalPlayer(Player player) {
+            if (Player.LocalPlayer == player && Program.GameEngine.IsReplay) return false;
+
+            return Player.LocalPlayer == player;
+        }
     }
 }

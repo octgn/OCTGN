@@ -76,7 +76,7 @@ namespace Octgn.Play.Gui
         {
             var action = (MoveCards)sender;
             Table table = Program.GameEngine.Table;
-            if (action.Who == Player.LocalPlayer || action.To != table || action.From != table)
+            if ((action.Who == Player.LocalPlayer && !Program.GameEngine.IsReplay) || action.To != table || action.From != table)
                 return;
 
             for (int i = 0; i < action.Cards.Length; i++)

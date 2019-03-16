@@ -106,7 +106,7 @@ namespace Octgn
         public bool IsReplay { get; }
 
         public ReplayWriter ReplayWriter { get; }
-        public ReplayReader ReplayReader { get; }
+        public ReplayEngine ReplayEngine { get; }
 
         public ushort CurrentUniqueId;
 
@@ -119,8 +119,8 @@ namespace Octgn
 
         }
 
-        public GameEngine(ReplayReader replayReader, Game def, string nickname) {
-            ReplayReader = replayReader;
+        public GameEngine(ReplayEngine replayEngine, Game def, string nickname) {
+            ReplayEngine = replayEngine;
             IsReplay = true;
 
             LoadedCards = new ObservableDeck();
@@ -128,7 +128,7 @@ namespace Octgn
 
             DeckStats = new DeckStatsViewModel();
 
-            Spectator = true;
+            Spectator = false;
             Program.GameMess.Clear();
             if (def.ScriptVersion.Equals(new Version(0, 0, 0, 0))) {
                 Program.GameMess.Warning("This game doesn't have a Script Version specified. Please contact the game developer.\n\n\nYou can get in contact of the game developer here {0}", def.GameUrl);
@@ -160,23 +160,14 @@ namespace Octgn
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
             ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
-            while (String.IsNullOrWhiteSpace(this.Nickname)) {
-                this.Nickname = Prefs.Nickname;
-                if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Randomness.GrabRandomNounWord() + new Random().Next(30);
-                var retNick = this.Nickname;
-                Program.Dispatcher.Invoke(new Action(() =>
-                {
-                    var i = new InputDlg("Choose a nickname", "Choose a nickname", this.Nickname);
-                    retNick = i.GetString();
-                }));
-                this.Nickname = retNick;
-            }
+
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers()) {
                 if (!_markersById.ContainsKey(m.Id)) {
                     _markersById.Add(m.Id, m);
                 }
             }
+
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
@@ -194,31 +185,13 @@ namespace Octgn
                 Player.Spectators.Clear();
                 // Create the global player, if any
                 if (Definition.GlobalPlayer != null)
-                    Play.Player.GlobalPlayer = new Play.Player(Definition);
+                    Play.Player.GlobalPlayer = new Play.Player(Definition, IsReplay);
                 // Create the local player
-                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), true, true);
+                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), false, true, IsReplay);
 
                 IsConnected = true;
-
-                var dt = new DispatcherTimer();
-                dt.Interval = TimeSpan.FromSeconds(.5);
-
-                dt.Tick += Dt_Tick;
-
-                dt.Start();
             }));
 
-        }
-
-        private void Dt_Tick(object sender, EventArgs e) {
-            var msg = ReplayReader.ReadNextMessage();
-            if (msg == null) {
-                return;
-            }
-
-            var rc = (Program.Client as ReplayClient);
-
-            rc.AddMessage(msg);
         }
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
@@ -312,9 +285,9 @@ namespace Octgn
                 Player.Spectators.Clear();
                 // Create the global player, if any
                 if (Definition.GlobalPlayer != null)
-                    Play.Player.GlobalPlayer = new Play.Player(Definition);
+                    Play.Player.GlobalPlayer = new Play.Player(Definition, IsReplay);
                 // Create the local player
-                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
+                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true, IsReplay);
             }));
         }
 
@@ -564,7 +537,8 @@ namespace Octgn
                 SaveHistory();
                 var replay = new Replay {
                     Name = gameName,
-                    GameId = Definition.Id
+                    GameId = Definition.Id,
+                    User = Player.LocalPlayer.Name
                 };
 
                 var stream = File.Open(_replayPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
@@ -676,6 +650,8 @@ namespace Octgn
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
                                      , Spectator);
             Program.IsGameRunning = true;
+
+            ReplayEngine.Start();
         }
 
         public void Resume()
@@ -731,7 +707,7 @@ namespace Octgn
 
             SaveHistory();
             ReplayWriter?.Dispose();
-            ReplayWriter?.Dispose();
+            ReplayEngine?.Dispose();
             _logStream?.Dispose();
 
             Program.GameEngine = null;

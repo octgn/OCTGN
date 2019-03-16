@@ -386,8 +386,7 @@
                 </GridSplitter.Template>
             </GridSplitter>
             <Border Margin="0,0,0,2" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"
-                                 IsEnabled="{Binding ElementName=self,Path=CanChat}"/>
+                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333" />
             </Border>
         </Grid>
         <GridSplitter Grid.Row="3" x:Name="playerAreaGridSplitter" VerticalAlignment="Center" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" 

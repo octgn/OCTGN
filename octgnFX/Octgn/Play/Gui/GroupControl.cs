@@ -217,7 +217,7 @@ namespace Octgn.Play.Gui
 
         internal virtual void ShowContextMenu(Card card)
         {
-            if (Player.LocalPlayer.Spectator)
+            if (Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)
                 return;
             // Modify selection
             if (card == null || !card.Selected) Selection.Clear();

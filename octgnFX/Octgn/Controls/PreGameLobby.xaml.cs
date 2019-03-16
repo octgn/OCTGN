@@ -26,7 +26,7 @@ namespace Octgn.Controls
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public event Action<object> OnClose;
-        public bool IsHost { get; set; }
+        public bool CanChangeSettings { get; }
 
         protected virtual void FireOnClose(object obj)
         {
@@ -43,7 +43,7 @@ namespace Octgn.Controls
 
         public PreGameLobby()
         {
-            IsHost = Program.IsHost;
+            CanChangeSettings = Program.IsHost && !Program.GameEngine.IsReplay;
             IsOnline = Program.GameEngine.IsLocal == false;
             var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
@@ -58,7 +58,7 @@ namespace Octgn.Controls
                 this.Height = Double.NaN;
             }
 
-            if (Program.IsHost)
+            if (CanChangeSettings)
             {
                 descriptionLabel.Text =
                     "The following players have joined your game.\n\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
@@ -181,7 +181,7 @@ namespace Octgn.Controls
         private void PlayerOnOnLocalPlayerWelcomed()
         {
             if (Player.LocalPlayer.Id == 255) return;
-            if (Player.LocalPlayer.Id == 1)
+            if (Player.LocalPlayer.Id == 1 && !Program.GameEngine.IsReplay)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);

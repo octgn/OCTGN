@@ -438,13 +438,16 @@ namespace Octgn.Play
             State = PlayerState.Connected;
         }
 
+        public bool IsLocal { get; }
+
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, string userId, byte id, ulong pkey, bool spectator, bool local)
+        internal Player(DataNew.Entities.Game g, string name, string userId, byte id, ulong pkey, bool spectator, bool local, bool isReplay)
         {
             // Cannot access Program.GameEngine here, it's null.
 
             Id = id;
             _name = name;
+            IsLocal = local;
 
             if (!string.IsNullOrWhiteSpace(userId)) {
                 UserId = userId;
@@ -485,7 +488,7 @@ namespace Octgn.Play
             // Create counters
             _counters = new Counter[0];
             if (g.Player.Counters != null)
-                _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
+                _counters = g.Player.Counters.Select(x => new Counter(this, x, isReplay)).ToArray();
             // Create global variables
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varD in g.Player.GlobalVariables)
@@ -522,7 +525,7 @@ namespace Octgn.Play
         }
 
         // C'tor for global items
-        internal Player(DataNew.Entities.Game g)
+        internal Player(DataNew.Entities.Game g, bool isReplay)
         {
             _spectator = false;
             SetupPlayer(false);
@@ -544,7 +547,7 @@ namespace Octgn.Play
             // Create counters
             _counters = new Counter[0];
             if (globalDef.Counters != null)
-                _counters = globalDef.Counters.Select(x => new Counter(this, x)).ToArray();
+                _counters = globalDef.Counters.Select(x => new Counter(this, x, isReplay)).ToArray();
             // Create global's lPlayer groups
             // TODO: This could fail with a run-time exception on write, make it safe
             // I don't know if the above todo is still relevent - Kelly Elton - 3/18/2013

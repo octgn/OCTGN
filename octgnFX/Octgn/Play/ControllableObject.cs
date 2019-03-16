@@ -107,7 +107,7 @@ namespace Octgn.Play
             if (notifyServer)
             {
                 // Can't pass control if I don't own it
-                if (Controller != Player.LocalPlayer) return;
+                if (Controller == Player.LocalPlayer && !Program.GameEngine.IsReplay) return;
                 Program.Client.Rpc.PassToReq(this, p, requested);
             }
             Controller = p;
@@ -134,7 +134,7 @@ namespace Octgn.Play
         // Return true if the object can be manipulated by the local player
         internal virtual bool CanManipulate()
         {
-            return Controller == Player.LocalPlayer || Controller == null;
+            return (Controller == Player.LocalPlayer || Controller == null) && !Program.GameEngine.IsReplay;
         }
 
         // Return true if we can manipulate this object, otherwise display an error and return false

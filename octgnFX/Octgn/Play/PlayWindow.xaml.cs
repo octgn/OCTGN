@@ -125,17 +125,6 @@ namespace Octgn.Play
             }
         }
 
-        public bool CanChat
-        {
-            get { return _canChat; }
-            set
-            {
-                if (_canChat == value) return;
-                _canChat = value;
-                OnPropertyChanged("CanChat");
-            }
-        }
-
         public GameSettings GameSettings { get; set; }
 
         public PlayWindow()
@@ -143,14 +132,6 @@ namespace Octgn.Play
         {
             GameSettings = Program.GameSettings;
             IsHost = Program.IsHost;
-            if (Program.GameEngine.Spectator)
-            {
-                CanChat = Program.GameSettings.MuteSpectators == false;
-            }
-            else
-            {
-                CanChat = true;
-            }
             GameMessages = new ObservableCollection<IGameMessage>();
             _gameMessageReader = new GameMessageDispatcherReader(Program.GameMess);
             var isLocal = Program.GameEngine.IsLocal;
@@ -176,7 +157,7 @@ namespace Octgn.Play
                 if (this.PreGameLobby.StartingGame)
                 {
                     PreGameLobby.Visibility = Visibility.Collapsed;
-                    if (Player.LocalPlayer.Spectator == false)
+                    if (Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
                         Program.GameEngine.ScriptEngine.SetupEngine(false);
 
 
@@ -190,7 +171,7 @@ namespace Octgn.Play
 					Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
                     
                     //Program.GameEngine.Ready();
-                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false)
+                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
                     {
                         MenuConsole.Visibility = Visibility.Visible;
                         var wnd = new DeveloperWindow() { Owner = this };
@@ -198,10 +179,6 @@ namespace Octgn.Play
                     }
                     Program.GameSettings.PropertyChanged += (sender, args) =>
                         {
-                            if (Program.GameEngine.Spectator)
-                            {
-                                CanChat = Program.GameSettings.MuteSpectators == false;
-                            }
                             if (Program.IsHost)
                             {
                                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable,
@@ -210,13 +187,10 @@ namespace Octgn.Play
                             }
                         };
                     // Select proper player tab
-                    if (Player.LocalPlayer.Spectator)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                playerTabs.SelectedIndex = 0;
-                            }));
-                    }
+                    Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            playerTabs.SelectedIndex = 0;
+                        }));
                 }
                 else
                 {
@@ -509,7 +483,7 @@ namespace Octgn.Play
         {
 
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Player.LocalPlayer.Spectator) return;
+            if (Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay) return;
 
             // Show the dialog to choose the file
 
@@ -873,7 +847,7 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Player.LocalPlayer.Spectator == true) return;
+            if (Player.LocalPlayer.Spectator == true || Program.GameEngine.IsReplay) return;
 
             if (Program.DeveloperMode)
             {
@@ -1019,6 +993,7 @@ namespace Octgn.Play
             if (s == null) return;
             var player = s.DataContext as Player;
             if (player == null) return;
+            if (Program.GameEngine.IsReplay) return;
             if (player == Player.LocalPlayer)
             {
                 throw new UserMessageException("You cannot kick yourself.");

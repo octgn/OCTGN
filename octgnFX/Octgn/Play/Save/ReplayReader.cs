@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Octgn.Play.Save
@@ -7,64 +6,58 @@ namespace Octgn.Play.Save
     public class ReplayReader : IDisposable
     {
         private DateTime _startTime;
+    
+        public Replay Replay { get; }
 
-        public Replay Replay { get; private set; }
-
-        public bool IsStarted => Replay != null;
-
-        private Stream _stream;
-
-        //private StreamWriter _streamWriter;
         private BinaryReader _binaryReader;
 
-        public ReplayReader() {
-        }
+        private ReplayReader(BinaryReader reader, Replay replay) {
+            _binaryReader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-        public void Start(Stream stream) {
-            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
-            if (Replay != null) throw new InvalidOperationException("Already started.");
-
-            _binaryReader = new BinaryReader(_stream = stream ?? throw new ArgumentNullException(nameof(stream)));
+            Replay = replay;
 
             _startTime = DateTime.Now;
-
-            var headerCount = _binaryReader.ReadInt32();
-            var name = _binaryReader.ReadString();
-            var gameIdString = _binaryReader.ReadString();
-
-            var gameId = Guid.Parse(gameIdString);
-
-            Replay = new Replay {
-                Name = name,
-                GameId = gameId
-            };
         }
 
-        public byte[] ReadNextMessage() {
+        public bool ReadNextMessage(out TimeSpan atTime, out byte[] msg) {
             if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
 
             long timeTicks = 0;
             try {
                 timeTicks = _binaryReader.ReadInt64();
             } catch (EndOfStreamException) {
-                return null;
+                atTime = default(TimeSpan);
+                msg = null;
+
+                return false;
             }
-            var time = TimeSpan.FromTicks(timeTicks);
+
+            atTime = TimeSpan.FromTicks(timeTicks);
 
             var dataLength = _binaryReader.ReadInt32();
 
-            var data = _binaryReader.ReadBytes(dataLength);
+            msg = _binaryReader.ReadBytes(dataLength);
 
-            var stream = new MemoryStream(data);
-            var reader = new BinaryReader(stream);
+            return true;
+        }
 
-            var muted = reader.ReadInt32();
+        public static ReplayReader FromStream(Stream stream) {
+            var binaryReader = new BinaryReader(stream ?? throw new ArgumentNullException(nameof(stream)));
 
-            byte method = reader.ReadByte();
+            var headerCount = binaryReader.ReadInt32();
+            var name = binaryReader.ReadString();
+            var gameIdString = binaryReader.ReadString();
+            var username = binaryReader.ReadString();
 
-            if (method == 5 || method == 7) return null;
+            var gameId = Guid.Parse(gameIdString);
 
-            return data;
+            var replay = new Replay {
+                Name = name,
+                GameId = gameId,
+                User = username
+            };
+
+            return new ReplayReader(binaryReader, replay);
         }
 
         #region IDisposable Support
@@ -75,7 +68,6 @@ namespace Octgn.Play.Save
                 if (disposing) {
                     _binaryReader?.Dispose();
                     _binaryReader = null;
-                    _stream = null;
                 }
 
                 disposedValue = true;

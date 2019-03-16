@@ -104,7 +104,7 @@
 
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <CheckBox VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding Spectator}" IsEnabled="{Binding IsHostOrLocal}"
+                    <CheckBox VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding Spectator}" IsEnabled="{Binding CanChangeSettings, ElementName=me}"
                                             Visibility="{Binding AllowSpectators,Source={x:Static o:Program.GameSettings},Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CheckBox.Template>
                             <ControlTemplate TargetType="CheckBox">
@@ -122,7 +122,7 @@
                         </CheckBox.Template>
                     </CheckBox>
 
-                    <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding InvertedTable}" IsEnabled="{Binding IsHostOrLocal}"
+                    <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding InvertedTable}" IsEnabled="{Binding CanChangeSettings, ElementName=me}"
                                             Visibility="{Binding UseTwoSidedTable,Source={x:Static o:Program.GameSettings},Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CheckBox.Template>
                             <ControlTemplate TargetType="CheckBox">
@@ -182,7 +182,7 @@
                     <Border Style="{StaticResource ButtonBarPanel}" Grid.Row="1" Grid.ColumnSpan="2">
                         <StackPanel Orientation="Horizontal">
                             <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" Visibility="{Binding ChangeTwoSidedTable, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                IsEnabled="{Binding ElementName=me,Path=IsHost}">
+                                IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Two Sided Table" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
@@ -191,7 +191,7 @@
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowSpectators, Mode=TwoWay}" Margin="10,0,0,0"
-                                IsEnabled="{Binding ElementName=me,Path=IsHost}">
+                                IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Allow Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
@@ -199,23 +199,8 @@
                                     <TextBlock Text="No Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
-                            <!--<toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static play:Player.LocalPlayer}" IsChecked="{Binding Spectator, Mode=TwoWay, Converter={StaticResource BooleanInverterConverter}}" Margin="10,0,0,0"
-                                IsEnabled="{Binding ElementName=me,Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                                    <TextBlock Text="Play" TextWrapping="Wrap"></TextBlock>
-                                </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                                <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
-                                </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                            </toggleSwitch:HorizontalToggleSwitch>-->
                         </StackPanel>
                     </Border>
-                    <!--<Grid x:Name="options" Grid.Row="1" Margin="32,0,8,0" Grid.ColumnSpan="2">
-                        <CheckBox x:Name="cbTwoSided" Click="CheckBoxClick"
-                    ToolTip="Simulates a real table setup, with players facing each other." IsChecked="True">
-                            <TextBlock Text="Use a two-sided table" VerticalAlignment="Center" Padding="0,0,4,0" />
-                        </CheckBox>
-                    </Grid>-->
                     <Border Grid.Row="2" Margin="0,8,8,8" Style="{StaticResource PanelControl}" >
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <StackPanel>
