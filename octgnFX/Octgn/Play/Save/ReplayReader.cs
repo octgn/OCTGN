@@ -11,12 +11,19 @@ namespace Octgn.Play.Save
 
         private BinaryReader _binaryReader;
 
-        private ReplayReader(BinaryReader reader, Replay replay) {
+        private readonly long _streamGameStartPosition;
+
+        private ReplayReader(BinaryReader reader, Replay replay, long streamGameStartPosition) {
             _binaryReader = reader ?? throw new ArgumentNullException(nameof(reader));
+            _streamGameStartPosition = streamGameStartPosition;
 
             Replay = replay;
 
             _startTime = DateTime.Now;
+        }
+
+        public void StartOver() {
+            _binaryReader.BaseStream.Position = _streamGameStartPosition;
         }
 
         public bool ReadNextMessage(out TimeSpan atTime, out byte[] msg) {
@@ -61,7 +68,25 @@ namespace Octgn.Play.Save
                 GameStartTime = gameStartTime
             };
 
-            return new ReplayReader(binaryReader, replay);
+            var pos = binaryReader.BaseStream.Position;
+
+            long lengthTicks = 0;
+
+            while (true) {
+                try {
+                    lengthTicks = binaryReader.ReadInt64();
+                    var length = binaryReader.ReadInt32();
+                    binaryReader.ReadBytes(length);
+                } catch (EndOfStreamException) {
+                    break;
+                }
+            }
+
+            binaryReader.BaseStream.Position = pos;
+
+            replay.GameLength = TimeSpan.FromTicks(lengthTicks);
+
+            return new ReplayReader(binaryReader, replay, pos);
         }
 
         #region IDisposable Support

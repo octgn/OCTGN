@@ -381,6 +381,7 @@ namespace Octgn.Play.Gui
         }
 
         private void Owner_PropertyChangeHandler(object sender, PropertyChangedEventArgs e) {
+            if (Card == null) return;
             switch (e.PropertyName) {
                 case nameof(Player.SleeveImage):
                     SetDisplayedPicture(Card.GetBitmapImage(Card.FaceUp));

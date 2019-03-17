@@ -37,6 +37,7 @@ using Octgn.Windows;
 
 using log4net;
 using Octgn.Controls;
+using Octgn.Play.Save;
 
 namespace Octgn.Play
 {
@@ -127,6 +128,8 @@ namespace Octgn.Play
 
         public GameSettings GameSettings { get; set; }
 
+        public ReplayEngine ReplayEngine { get; }
+
         public PlayWindow()
             : base()
         {
@@ -139,7 +142,16 @@ namespace Octgn.Play
             //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
+
+            ReplayEngine = Program.GameEngine.ReplayEngine;
+
             InitializeComponent();
+
+            if (Program.GameEngine.IsReplay) {
+                ReplayControls.Visibility = Visibility.Visible;
+            } else {
+                ReplayControls.Visibility = Visibility.Collapsed;
+            }
 
             _isLocal = isLocal;
             //Application.Current.MainWindow = this;
@@ -1080,6 +1092,32 @@ namespace Octgn.Play
 
         private void CardList_Click(object sender, RoutedEventArgs e) {
             Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
+        }
+
+        private bool replayDragStarted = false;
+
+        private void ReplaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
+            if (replayDragStarted) return;
+            var val = (long)e.NewValue;
+
+            if (!this.IsLoaded) return;
+
+            ReplayEngine.FastForwardTo(TimeSpan.FromTicks(val));
+        }
+
+        private void ReplaySlider_DragStarted(object sender, DragStartedEventArgs e) {
+            replayDragStarted = true;
+        }
+
+        private void ReplaySlider_DragCompleted(object sender, DragCompletedEventArgs e) {
+            replayDragStarted = false;
+            var val = (long)((Slider)sender).Value;
+
+            ReplayEngine.FastForwardTo(TimeSpan.FromTicks(val));
+        }
+
+        private void ReplaySpeed_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.ToggleSpeed();
         }
 
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)

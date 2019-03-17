@@ -12,6 +12,8 @@ namespace Octgn.Play.Save
 
         public TimeSpan GameStartTime { get; set; }
 
+        public TimeSpan GameLength { get; set; }
+
         public Replay() {
         }
     }

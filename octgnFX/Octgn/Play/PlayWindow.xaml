@@ -588,5 +588,40 @@
             </gui:DeckStats>
         </Grid>
 
+        <Border Grid.ColumnSpan="6" Grid.Row="1" Grid.RowSpan="2"
+                VerticalAlignment="Top" Background="#333333" CornerRadius="0 0 3 3"
+                HorizontalAlignment="Center" MaxWidth="700" Canvas.ZIndex="499" Padding="10"
+                x:Name="ReplayControls" DataContext="{Binding ReplayEngine}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition MinWidth="516"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Content="{Binding SpeedString}" FontSize="20" Click="ReplaySpeed_Click" Height="40"/>
+                <Rectangle Grid.Column="1" Height="30" Width="1" Fill="#aaaaaa" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Vertical">
+                    <Slider x:Name="ReplaySlider"
+                            Minimum="{Binding Replay.GameStartTime.Ticks}"
+                            Maximum="{Binding Replay.GameLength.Ticks}"
+                            ValueChanged="ReplaySlider_ValueChanged"
+                            Thumb.DragStarted="ReplaySlider_DragStarted"
+                            Thumb.DragCompleted="ReplaySlider_DragCompleted"
+                            Foreground="White"
+                            TickPlacement="Both"
+                            TickFrequency="100000000"
+                            IsEnabled="{Binding IsFastForwarding, Converter={StaticResource BooleanInverterConverter}}"
+                            />
+                    <ProgressBar Height="4" Foreground="CornflowerBlue"
+                                 Minimum="{Binding Replay.GameStartTime.Ticks, Mode=OneWay}"
+                                 Maximum="{Binding Replay.GameLength.Ticks, Mode=OneWay}"
+                                 Value="{Binding CurrentTime.Ticks, Mode=OneWay}"
+                                 Margin="0 0 9 0"
+                                 >
+                    </ProgressBar>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </ctrl:DecorableWindow>
