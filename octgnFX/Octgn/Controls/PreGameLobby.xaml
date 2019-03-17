@@ -82,7 +82,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
 
-                <Grid HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch" Margin="5 0 0 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="100*"/>
@@ -91,14 +91,14 @@
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="9">
                         <TextBlock Grid.Column="1" FontWeight="Bold" FontSize="12" Foreground="#eee">
                             <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0} - ">
+                                <MultiBinding StringFormat="{}{0}">
                                     <Binding Path="Name" />
                                     <!--<Binding Path="DisconnectPercent" />-->
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                        <TextBlock Grid.Column="1" FontSize="12" Margin="0" Text="Profile Page" Foreground="WhiteSmoke" 
-                               TextDecorations="Underline" Cursor="Hand" MouseUp="ProfileMouseUp"/>
+                        <!--<TextBlock Grid.Column="1" FontSize="12" Margin="0" Text="Profile Page" Foreground="WhiteSmoke" 
+                               TextDecorations="Underline" Cursor="Hand" MouseUp="ProfileMouseUp"/>-->
                     </StackPanel>
                 </Grid>
 
@@ -139,9 +139,9 @@
                             </ControlTemplate>
                         </CheckBox.Template>
                     </CheckBox>
-                    <Button Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="KickPlayer" Click="KickPlayer_OnClick" Margin="0,0,0,0" 
-                                                    Width="30" Visibility="{Binding Path=CanKick,Converter={StaticResource BooleanToVisibilityConverter}}" 
-                                                    FontFamily="{StaticResource Entypo}" FontSize="20" Padding="0 1 0 0">&#10060;</Button>
+                    <Button Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="KickPlayer" Click="KickPlayer_OnClick" Margin="-4,0,5,0" 
+                                                    Width="22" Height="22" Visibility="{Binding Path=CanKick,Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                                    FontFamily="{StaticResource Entypo}" FontSize="20" Padding="0 -8 0 0">&#10060;</Button>
                 </StackPanel>
             </Grid>
 
