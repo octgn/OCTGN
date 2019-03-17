@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace Octgn.Play.Save
@@ -73,53 +74,58 @@ namespace Octgn.Play.Save
             try {
                 _timer.Stop();
 
-                var timePassedSinceLastTick = _lastTickTime == null
-                    ? TimeSpan.Zero
-                    : DateTime.Now - _lastTickTime.Value
-                ;
+                while (true) {
+                    var timePassedSinceLastTick = _lastTickTime == null
+                        ? TimeSpan.Zero
+                        : DateTime.Now - _lastTickTime.Value
+                    ;
 
-                _lastTickTime = DateTime.Now;
+                    var newTicks = (long)(timePassedSinceLastTick.Ticks * Speed);
+                    timePassedSinceLastTick = TimeSpan.FromTicks(newTicks);
 
-                var newTicks = (long)(timePassedSinceLastTick.Ticks * Speed);
-                timePassedSinceLastTick = TimeSpan.FromTicks(newTicks);
+                    CurrentTime += timePassedSinceLastTick;
 
-                CurrentTime += timePassedSinceLastTick;
+                    if (_fastforwardTo != null) {
+                        if (_fastforwardTo.Value <= CurrentTime) {
+                            _fastforwardTo = null;
+                            Speed = 1;
 
-                if (_fastforwardTo != null) {
-                    if (_fastforwardTo.Value <= CurrentTime) {
-                        _fastforwardTo = null;
-                        Speed = 1;
-
-                        OnPropertyChanged(nameof(IsFastForwarding));
+                            OnPropertyChanged(nameof(IsFastForwarding));
+                        }
                     }
-                }
 
-                if (_nextMsg != null) {
-                    if (CurrentTime >= _nextTime) {
-                        var next = _nextMsg;
+                    if (_nextMsg != null) {
+                        if (CurrentTime >= _nextTime) {
+                            var next = _nextMsg;
 
-                        _nextMsg = null;
+                            _nextMsg = null;
 
-                        _client.AddMessage(next);
+                            _client.AddMessage(next);
 
-                        await Dispatcher.Yield(DispatcherPriority.Loaded);
-                    } else {
-                        return;
-                    }
-                }
+                            await Task.Delay(50);
 
-                if (_nextMsg == null) {
-                    try {
-                        if (_reader.ReadNextMessage(out var atTime, out var msg)) {
-                            _nextMsg = msg;
-                            _nextTime = atTime;
+                            await Dispatcher.Yield(DispatcherPriority.ContextIdle);
+
+                            _lastTickTime = DateTime.Now;
                         } else {
+                            _lastTickTime = DateTime.Now;
+                            return;
+                        }
+                    }
+
+                    if (_nextMsg == null) {
+                        try {
+                            if (_reader.ReadNextMessage(out var atTime, out var msg)) {
+                                _nextMsg = msg;
+                                _nextTime = atTime;
+                            } else {
+                                Pause();
+                                return;
+                            }
+                        } catch (ObjectDisposedException) {
                             Pause();
                             return;
                         }
-                    } catch (ObjectDisposedException) {
-                        Pause();
-                        return;
                     }
                 }
             } catch(Exception ex) {
