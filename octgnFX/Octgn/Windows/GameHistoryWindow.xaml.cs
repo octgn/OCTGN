@@ -82,6 +82,11 @@ namespace Octgn.Windows
         }
 
         private void Replay_Click(object sender, System.Windows.RoutedEventArgs e) {
+            if(SubscriptionModule.Get().IsSubscribed ?? false) {
+                MessageBox.Show("Replays are currently only available for subscribers.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                return;
+            }
             if(WindowManager.PlayWindow != null) {
                 MessageBox.Show("Unable to watch replay, you're currently in a game.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 

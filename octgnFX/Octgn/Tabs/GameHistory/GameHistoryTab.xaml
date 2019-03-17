@@ -28,7 +28,7 @@
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
             <WrapPanel Orientation="Horizontal">
-                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh">&#10227;</Button>
             </WrapPanel>
@@ -82,19 +82,24 @@
                   IsSynchronizedWithCurrentItem="True"
                   utils:GridViewSort.AutoSort="True"
                   Grid.RowSpan="3"
-                  SelectionMode="Single"
+                  SelectionMode="Single" HorizontalContentAlignment="Left"
                   AlternationCount="1">
             <ListView.View>
                 <GridView>
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
                     <GridViewColumn Header="Name"
                                     utils:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}" Width="Auto"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=Name}" Width="150"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
-                                    DisplayMemberBinding="{Binding Path=GameName}" Width="Auto"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Start Time"
                                     utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=StartTime}" Width="Auto"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=StartTime}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Run Time"
                                     utils:GridViewSort.PropertyName="RunTime"
                                     DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
