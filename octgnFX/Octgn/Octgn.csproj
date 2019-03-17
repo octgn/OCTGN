@@ -323,6 +323,8 @@
     <Compile Include="Play\Save\Replay.cs" />
     <Compile Include="Play\Save\ReplayClient.cs" />
     <Compile Include="Play\Save\ReplayEngine.cs" />
+    <Compile Include="Play\Save\ReplayEvent.cs" />
+    <Compile Include="Play\Save\ReplayEventType.cs" />
     <Compile Include="Play\Save\ReplayReader.cs" />
     <Compile Include="Play\Save\ReplayWriter.cs" />
     <Compile Include="Windows\GameHistoryWindow.xaml.cs">

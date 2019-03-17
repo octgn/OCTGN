@@ -138,8 +138,6 @@ namespace Octgn.Play
             GameMessages = new ObservableCollection<IGameMessage>();
             _gameMessageReader = new GameMessageDispatcherReader(Program.GameMess);
             var isLocal = Program.GameEngine.IsLocal;
-            //GameLogWindow.Show();
-            //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
 
@@ -147,7 +145,14 @@ namespace Octgn.Play
 
             InitializeComponent();
 
+
             if (Program.GameEngine.IsReplay) {
+                foreach (var eve in ReplayEngine.AllEvents) {
+                    if (eve.Type == ReplayEventType.NextTurn) {
+                        ReplaySlider.Ticks.Add(eve.Time.Ticks);
+                    }
+                }
+
                 ReplayControls.Visibility = Visibility.Visible;
             } else {
                 ReplayControls.Visibility = Visibility.Collapsed;

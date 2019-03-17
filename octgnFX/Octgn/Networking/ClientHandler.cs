@@ -38,7 +38,7 @@ namespace Octgn.Networking
             _binParser = new BinaryParser(this);
         }
 
-        private DateTime _lastMessageTime = DateTime.MinValue;
+        private byte[] _data = null;
 
         public void ReceiveMessage(byte[] data)
         {
@@ -47,27 +47,10 @@ namespace Octgn.Networking
             // (otherwise NRE may occur)
             if (Program.Client == null) return;
 
-            var isPing = false;
-
-            if(data.Length == 5) {
-                if(
-                    data[0] == 0
-                    && data[1] == 0
-                    && data[2] == 0
-                    && data[3] == 0
-                    && data[4] == 87
-                  ) {
-                    isPing = true;
-                }
-            }
-
             try
             {
-                _binParser.Parse(data);
-
-                if (!isPing && !Program.GameEngine.IsReplay) {
-                    Program.GameEngine.ReplayWriter.WriteMessage(data);
-                }
+                _data = data;
+                _binParser.Parse(_data);
             }
             catch (EndOfStreamException e)
             {
@@ -82,17 +65,50 @@ namespace Octgn.Networking
                 Program.GameEngine.SaveHistory();
         }
 
+        private void WriteReplayAction() {
+            WriteReplayAction(0);
+        }
+
+        private void WriteReplayAction(byte playerId) {
+            if (Program.GameEngine.IsReplay) return;
+            Program.GameEngine.ReplayWriter.WriteEvent(new Play.Save.ReplayEvent {
+                Type = Play.Save.ReplayEventType.Action,
+                PlayerId = playerId,
+                Action = _data
+            });
+        }
+
+        private void WriteReplayReset(byte playerId) {
+            if (Program.GameEngine.IsReplay) return;
+            Program.GameEngine.ReplayWriter.WriteEvent(new Play.Save.ReplayEvent {
+                Type = Play.Save.ReplayEventType.Reset,
+                PlayerId = playerId,
+                Action = _data
+            });
+        }
+
+        private void WriteReplayNextTurn(byte playerId) {
+            if (Program.GameEngine.IsReplay) return;
+            Program.GameEngine.ReplayWriter.WriteEvent(new Play.Save.ReplayEvent {
+                Type = Play.Save.ReplayEventType.NextTurn,
+                PlayerId = playerId,
+                Action = _data
+            });
+        }
+
         public void Binary()
         {
         }
 
         public void Error(string msg)
         {
+            WriteReplayAction();
             Program.GameMess.Warning("The server has returned an error: {0}", msg);
         }
 
         public void Kick(string reason)
         {
+            WriteReplayAction();
             Program.GameMess.Warning("You have been kicked: {0}", reason);
             Program.InPreGame = false;
             Program.Client.Shutdown();
@@ -101,6 +117,7 @@ namespace Octgn.Networking
         public void Start()
         {
             Log.Debug("Start");
+            WriteReplayAction();
             Program.InPreGame = false;
 
             Program.GameEngine.OnStart();
@@ -127,6 +144,7 @@ namespace Octgn.Networking
 
         public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
+            WriteReplayAction();
             // The host is the driver for this flag and should ignore notifications,
             // otherwise there might be a loop if the server takes more time to dispatch this message
             // than the user to click again on the checkbox.
@@ -140,18 +158,22 @@ namespace Octgn.Networking
 
         public void PlayerSettings(Player player, bool invertedTable, bool spectator)
         {
+            WriteReplayAction();
             player.UpdateSettings(invertedTable, spectator, false);
             Player.RefreshSpectators();
         }
 
         public void Reset(Player player)
         {
+            WriteReplayReset(player.Id);
             Program.GameEngine.Reset();
             Program.GameMess.System("{0} reset the game", player);
         }
 
         public void NextTurn(Player player, bool setActive, bool force)
         {
+            WriteReplayNextTurn(player.Id);
+
             var lastPlayer = Program.GameEngine.ActivePlayer;
             var lastTurn = Program.GameEngine.TurnNumber;
             Program.GameEngine.TurnNumber++;
@@ -166,6 +188,7 @@ namespace Octgn.Networking
 
         public void StopTurn(Player player)
         {
+            WriteReplayAction(player.Id);
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
             Program.GameMess.System("{0} wants to play before end of turn.", player);
@@ -176,6 +199,7 @@ namespace Octgn.Networking
 
         public void SetPhase(byte phase, Player[] players, bool force)
         {
+            WriteReplayAction();
             var currentPhase = Program.GameEngine.CurrentPhase;
             var newPhase = Phase.Find(phase);
             Program.GameEngine.CurrentPhase = newPhase;
@@ -193,6 +217,7 @@ namespace Octgn.Networking
 
         public void SetActivePlayer(Player player)
         {
+            WriteReplayAction(player.Id);
             var lastPlayer = Program.GameEngine.ActivePlayer;
             Program.GameEngine.ActivePlayer = player;
             Program.GameEngine.StopTurn = false;
@@ -201,6 +226,7 @@ namespace Octgn.Networking
 
         public void ClearActivePlayer()
         {
+            WriteReplayAction();
             var lastPlayer = Program.GameEngine.ActivePlayer;
             Program.GameEngine.ActivePlayer = null;
             Program.GameEngine.StopTurn = false;
@@ -209,16 +235,19 @@ namespace Octgn.Networking
 
         public void SetBoard(string name)
         {
+            WriteReplayAction();
             Program.GameEngine.ChangeGameBoard(name);
         }
 
         public void Chat(Player player, string text)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.Chat(player, text);
         }
 
         public void Print(Player player, string text)
         {
+            WriteReplayAction(player.Id);
             // skip for local player, handled when called for consistency
             if (IsLocalPlayer(player)) return;
             Program.Print(player, text);
@@ -226,18 +255,18 @@ namespace Octgn.Networking
 
         public void Random(int result)
         {
-            if (Program.GameEngine.IsReplay) return;
-
             Program.GameEngine.ScriptApi.RandomResult(result);
         }
 
         public void Counter(Player player, Counter counter, int value, bool isScriptChange)
         {
+            WriteReplayAction(player.Id);
             counter.SetValue(value, player, false, isScriptChange);
         }
 
         public void Welcome(byte id, Guid gameSessionId, string gameName, bool waitForGameState)
         {
+            WriteReplayAction(id);
             Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
             if (Program.Client is ClientSocket cs) {
@@ -249,6 +278,7 @@ namespace Octgn.Networking
 
         public void NewPlayer(byte id, string nick, string userId, ulong pkey, bool invertedTable, bool spectator)
         {
+            WriteReplayAction(id);
             var p = Player.FindIncludingSpectators(id);
             if (p == null)
             {
@@ -302,6 +332,8 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("[LoadDeck] Player not found.");
                 return;
             }
+            WriteReplayAction(who.Id);
+
             if (limited) Program.GameMess.System("{0} loads a limited deck.", who);
             else Program.GameMess.System("{0} loads a deck.", who);
 
@@ -362,6 +394,7 @@ namespace Octgn.Networking
         public void CreateCard(int[] id, Guid[] type, string[] size, Group group)
         {
             var who = Player.Find((byte)(id[0] >> 16));
+            WriteReplayAction(who.Id);
             if (IsLocalPlayer(who)) return;
             for (var i = 0; i < id.Length; i++)
             {
@@ -406,6 +439,7 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("[CreateCardAt] Player not found.");
                 return;
             }
+            WriteReplayAction(owner.Id);
             var table = Program.GameEngine.Table;
             // Bring cards created by oneself to top, for z-order consistency
             if (IsLocalPlayer(owner))
@@ -436,6 +470,7 @@ namespace Octgn.Networking
 
         public void Leave(Player player)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.System("{0} has closed their game window left the game. They did not crash or lose connection, they left on purpose.", player);
             if( !Program.InPreGame ) {
                 Program.GameEngine.EventProxy.OnPlayerLeaveGame_3_1_0_1( player );
@@ -450,6 +485,7 @@ namespace Octgn.Networking
 
         public void MoveCard(Player player, int[] card, Group to, int[] idx, bool[] faceUp, bool isScriptMove)
         {
+            WriteReplayAction(player.Id);
             // Ignore cards moved by the local player (already done, for responsiveness)
             var cards = card.Select(Card.Find).Where(x=>x != null).ToArray();
             if (!IsLocalPlayer(player))
@@ -458,6 +494,7 @@ namespace Octgn.Networking
 
         public void MoveCardAt(Player player, int[] cards, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
         {
+            WriteReplayAction(player.Id);
             // Get the table control
             var table = Program.GameEngine.Table;
 
@@ -500,6 +537,7 @@ namespace Octgn.Networking
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
+            WriteReplayAction(player.Id);
             var model = Program.GameEngine.GetMarkerModel(id);
             model.Name = name;
             var marker = card.FindMarker(id, name);
@@ -533,6 +571,7 @@ namespace Octgn.Networking
 
         public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
+            WriteReplayAction(player.Id);
             var marker = card.FindMarker(id, name);
             if (!IsLocalPlayer(player))
             {
@@ -585,6 +624,7 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("Inconsistent state. Cannot transfer marker to unknown player.");
                 return;
             }
+            WriteReplayAction(player.Id);
             if (!IsLocalPlayer(player))
             {
                 if (marker == null)
@@ -657,12 +697,14 @@ namespace Octgn.Networking
 
         public void Nick(Player player, string nick)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.System("{0} is now known as {1}.", player, nick);
             player.Name = nick;
         }
 
         public void Peek(Player player, Card card)
         {
+            WriteReplayAction(player.Id);
             if (!card.PeekingPlayers.Contains(player))
                 card.PeekingPlayers.Add(player);
             if (!IsLocalPlayer(player))
@@ -673,6 +715,7 @@ namespace Octgn.Networking
 
         public void Untarget(Player player, Card card, bool isScriptChange)
         {
+            WriteReplayAction(player.Id);
             // Ignore the card we targeted ourselves
             if (IsLocalPlayer(player)) return;
             new Target(player, card, null, false, isScriptChange).Do();
@@ -680,6 +723,7 @@ namespace Octgn.Networking
 
         public void Target(Player player, Card card, bool isScriptChange)
         {
+            WriteReplayAction(player.Id);
             // Ignore the card we targeted ourselves
             if (IsLocalPlayer(player)) return;
             new Target(player, card, null, true, isScriptChange).Do();
@@ -687,19 +731,27 @@ namespace Octgn.Networking
 
         public void TargetArrow(Player player, Card card, Card otherCard, bool isScriptChange)
         {
+            WriteReplayAction(player.Id);
             // Ignore the card we targeted ourselves
             if (IsLocalPlayer(player)) return;
             new Target(player, card, otherCard, true, isScriptChange).Do();
         }
 
         public void Highlight(Card card, Color? color)
-        { card.SetHighlight(color); }
+        {
+            WriteReplayAction();
+            card.SetHighlight(color);
+        }
 
         public void Filter(Card card, Color? color)
-        { card.SetFilter(color); }
+        {
+            WriteReplayAction();
+            card.SetFilter(color);
+        }
 
         public void Turn(Player player, Card card, bool up)
         {
+            WriteReplayAction(player.Id);
             // Ignore the card we turned ourselves
             if (IsLocalPlayer(player))
             {
@@ -711,6 +763,7 @@ namespace Octgn.Networking
 
         public void Rotate(Player player, Card card, CardOrientation rot)
         {
+            WriteReplayAction(player.Id);
             // Ignore the moves we made ourselves
             if (IsLocalPlayer(player))
                 return;
@@ -719,12 +772,14 @@ namespace Octgn.Networking
 
         public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
+            WriteReplayAction(player.Id);
             if (IsLocalPlayer(player)) return;
             ((Pile)group).DoShuffle(card, pos);
         }
 
         public void PassTo(Player who, ControllableObject obj, Player player, bool requested)
         {
+            WriteReplayAction(player.Id);
             // Ignore message that we sent in the first place
             if (!IsLocalPlayer(who))
                 obj.PassControlTo(player, who, false, requested);
@@ -733,18 +788,26 @@ namespace Octgn.Networking
         }
 
         public void TakeFrom(ControllableObject obj, Player to)
-        { obj.TakingControl(to); }
+        {
+            WriteReplayAction(to.Id);
+            obj.TakingControl(to);
+        }
 
         public void DontTake(ControllableObject obj)
-        { obj.DontTakeError(); }
+        {
+            WriteReplayAction();
+            obj.DontTakeError();
+        }
 
         public void FreezeCardsVisibility(Group group)
         {
+            WriteReplayAction();
             foreach (var c in group.Cards) c.SetOverrideGroupVisibility(true);
         }
 
         public void GroupVis(Player player, Group group, bool defined, bool visible)
         {
+            WriteReplayAction(player.Id);
             // Ignore messages sent by myself
             if (!IsLocalPlayer(player))
                 group.SetVisibility(defined ? (bool?)visible : null, false);
@@ -754,6 +817,7 @@ namespace Octgn.Networking
 
         public void GroupVisAdd(Player player, Group group, Player whom)
         {
+            WriteReplayAction(player.Id);
             // Ignore messages sent by myself
             if (!IsLocalPlayer(player))
                 group.AddViewer(whom, false);
@@ -762,6 +826,7 @@ namespace Octgn.Networking
 
         public void GroupVisRemove(Player player, Group group, Player whom)
         {
+            WriteReplayAction(player.Id);
             // Ignore messages sent by myself
             if (!IsLocalPlayer(player))
                 group.RemoveViewer(whom, false);
@@ -770,6 +835,7 @@ namespace Octgn.Networking
 
         public void LookAt(Player player, int uid, Group group, bool look)
         {
+            WriteReplayAction(player.Id);
             if (look)
             {
                 if (group.Visibility != DataNew.Entities.GroupVisibility.Everybody)
@@ -796,6 +862,7 @@ namespace Octgn.Networking
 
         public void LookAtTop(Player player, int uid, Group group, int count, bool look)
         {
+            WriteReplayAction(player.Id);
             if (look)
             {
                 var cards = group.Take(count);
@@ -819,6 +886,7 @@ namespace Octgn.Networking
 
         public void LookAtBottom(Player player, int uid, Group group, int count, bool look)
         {
+            WriteReplayAction(player.Id);
             if (look)
             {
                 var skipCount = Math.Max(0, group.Count - count);
@@ -844,6 +912,7 @@ namespace Octgn.Networking
 
         public void StartLimited(Player player, Guid[] packs)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.System("{0} starts a limited game.", player);
             if (Player.LocalPlayer.Spectator == false)
             {
@@ -855,6 +924,7 @@ namespace Octgn.Networking
 
         public void AddPacks(Player player, Guid[] packs, bool selfOnly)
         {
+            WriteReplayAction(player.Id);
             var wnd = (Play.Dialogs.PickCardsDialog)WindowManager.PlayWindow.backstage.Child;
             var packNames = wnd.PackNames(packs);
             if (packNames == "") return;
@@ -876,11 +946,13 @@ namespace Octgn.Networking
 
         public void CancelLimited(Player player)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.System("{0} cancels out of the limited game.", player);
         }
 
         public void PlayerSetGlobalVariable(Player p, string name, string oldValue, string value)
         {
+            WriteReplayAction(p.Id);
             if (p.GlobalVariables.ContainsKey(name))
             {
                 p.GlobalVariables[name] = value;
@@ -899,6 +971,7 @@ namespace Octgn.Networking
 
         public void SetGlobalVariable(string name, string oldValue, string value)
         {
+            WriteReplayAction();
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
             {
                 Program.GameEngine.GlobalVariables[name] = value;
@@ -915,11 +988,13 @@ namespace Octgn.Networking
 
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
+            WriteReplayAction();
             Program.GameEngine.IsTableBackgroundFlipped = isFlipped;
         }
 
         public void CardSwitchTo(Player player, Card card, string alternate)
         {
+            WriteReplayAction(player.Id);
             if (!IsLocalPlayer(player))
                 card.SwitchTo(player, alternate);
         }
@@ -931,11 +1006,13 @@ namespace Octgn.Networking
 
         public void PlaySound(Player player, string name)
         {
+            WriteReplayAction(player.Id);
             if (!IsLocalPlayer(player)) Program.GameEngine.PlaySoundReq(player, name);
         }
 
         public void Ready(Player player)
         {
+            WriteReplayAction(player.Id);
             player.Ready = true;
             Program.GameMess.System("{0} is ready", player);
             if (player.Spectator)
@@ -960,6 +1037,7 @@ namespace Octgn.Networking
 
         public void PlayerState(Player player, byte b)
         {
+            WriteReplayAction(player.Id);
             player.State = (PlayerState)b;
         }
 
@@ -991,6 +1069,7 @@ namespace Octgn.Networking
 
         public void GameState(Player fromPlayer, string strstate)
         {
+            WriteReplayAction(fromPlayer.Id);
             Log.DebugFormat("GameState From {0}", fromPlayer);
             var state = JsonConvert.DeserializeObject<GameSaveState>(strstate);
 
@@ -1019,6 +1098,7 @@ namespace Octgn.Networking
 
         public void DeleteCard(Card card, Player player)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.PlayerEvent(player, "deletes {0}", card);
             if (!IsLocalPlayer(player))
                 card.Group.Remove(card);
@@ -1026,12 +1106,14 @@ namespace Octgn.Networking
 
         public void PlayerDisconnect(Player player)
         {
+            WriteReplayAction(player.Id);
             Program.GameMess.System("{0} disconnected, please wait. If they do not reconnect within 1 minute they will be booted.", player);
             player.Ready = false;
         }
 
         public void AnchorCard(Card card, Player player, bool anchor)
         {
+            WriteReplayAction(player.Id);
             var astring = anchor ? "anchored" : "unanchored";
             Program.GameMess.PlayerEvent(player, "{0} {1}", astring, card);
             if (IsLocalPlayer(player))
@@ -1041,19 +1123,22 @@ namespace Octgn.Networking
 
         public void SetCardProperty(Card card, Player player, string name, string val, string valtype)
         {
+            WriteReplayAction(player.Id);
             if (IsLocalPlayer(player)) return;
             card.SetProperty(name, val, false);
         }
 
         public void ResetCardProperties(Card card, Player player)
         {
+            WriteReplayAction(player.Id);
             if (IsLocalPlayer(player)) return;
             card.ResetProperties(false);
         }
 
 	    public void SetPlayerColor(Player player, string colorHex)
 	    {
-			player.SetPlayerColor(colorHex);
+            WriteReplayAction(player.Id);
+            player.SetPlayerColor(colorHex);
 	    }
 
         public static bool IsLocalPlayer(Player player) {

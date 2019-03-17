@@ -18,14 +18,15 @@ namespace Octgn.Play.Save
         private BinaryWriter _binaryWriter;
 
         public ReplayWriter() {
-            _startTime = DateTime.Now;
         }
 
-        private Queue<(TimeSpan time, byte[] message)> _prestartQueue = new Queue<(TimeSpan, byte[])>();
+        private Queue<ReplayEvent> _prestartQueue = new Queue<ReplayEvent>();
 
         public void Start(Replay replay, Stream stream) {
             if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
             if (Replay != null) throw new InvalidOperationException("Already started.");
+
+            _startTime = DateTime.Now - _lobbyTime;
 
             Replay = replay ?? throw new ArgumentNullException(nameof(replay));
 
@@ -36,27 +37,37 @@ namespace Octgn.Play.Save
             _binaryWriter.Write(Replay.Name);
             _binaryWriter.Write(Replay.GameId.ToString());
             _binaryWriter.Write(Replay.User);
-            _binaryWriter.Write((DateTime.Now - _startTime).Ticks); // Game start time, for fastforwarding
+            _binaryWriter.Write(_lobbyTime.Ticks); // Game start time, for fastforwarding
 
             while(_prestartQueue.Count > 0) {
                 var item = _prestartQueue.Dequeue();
-                _binaryWriter.Write(item.time.Ticks);
-                _binaryWriter.Write(item.message.Length);
-                _binaryWriter.Write(item.message);
+                ReplayEvent.Write(item, _binaryWriter);
             }
 
             _binaryWriter.Flush();
         }
 
-        public void WriteMessage(byte[] message) {
+        private TimeSpan _lobbyTime = TimeSpan.Zero;
+
+        private bool _wroteStartEvent = false;
+
+        public void WriteEvent(ReplayEvent replayEvent) {
             if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
 
+            if(replayEvent.Type == ReplayEventType.Start) {
+                if(_wroteStartEvent)
+                    throw new InvalidOperationException($"Already wrote Start event");
+
+                _wroteStartEvent = true;
+            }
+
             if (Replay == null) {
-                _prestartQueue.Enqueue((DateTime.Now - _startTime, message));
+                replayEvent.Time = _lobbyTime;
+                _lobbyTime += TimeSpan.FromMilliseconds(10);
+                _prestartQueue.Enqueue(replayEvent);
             } else {
-                _binaryWriter.Write((DateTime.Now - _startTime).Ticks);
-                _binaryWriter.Write(message.Length);
-                _binaryWriter.Write(message);
+                replayEvent.Time = DateTime.Now - _startTime;
+                ReplayEvent.Write(replayEvent, _binaryWriter);
                 _binaryWriter.Flush();
             }
         }

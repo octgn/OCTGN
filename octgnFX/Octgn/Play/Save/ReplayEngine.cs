@@ -1,5 +1,7 @@
 ﻿using log4net;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -39,8 +41,7 @@ namespace Octgn.Play.Save
 
         public bool IsFastForwarding => _fastforwardTo != null;
 
-        private byte[] _nextMsg = null;
-        private TimeSpan _nextTime = TimeSpan.MinValue;
+        private ReplayEvent? _nextEvent;
 
         private DateTime? _lastTickTime = null;
 
@@ -58,17 +59,13 @@ namespace Octgn.Play.Save
 
         public string SpeedString {
             get {
-                if (Speed <= 1) {
-                    return Speed.ToString(".##%");
-                } else if(Speed == 1) {
-                    return "1X";
-                } else {
-                    return Speed.ToString("###.##X");
-                }
+                return Speed.ToString("###.##X");
             }
         }
 
         private double _speed = 1;
+
+        public IEnumerable<ReplayEvent> AllEvents => _reader.ReadAllEvents();
 
         private async void _timer_Tick(object sender, EventArgs e) {
             try {
@@ -94,13 +91,13 @@ namespace Octgn.Play.Save
                         }
                     }
 
-                    if (_nextMsg != null) {
-                        if (CurrentTime >= _nextTime) {
-                            var next = _nextMsg;
+                    if (_nextEvent != null) {
+                        if (CurrentTime >= _nextEvent.Value.Time) {
+                            var next = _nextEvent.Value;
 
-                            _nextMsg = null;
+                            _nextEvent = null;
 
-                            _client.AddMessage(next);
+                            _client.AddMessage(next.Action);
 
                             await Task.Delay(50);
 
@@ -113,11 +110,10 @@ namespace Octgn.Play.Save
                         }
                     }
 
-                    if (_nextMsg == null) {
+                    if (_nextEvent == null) {
                         try {
-                            if (_reader.ReadNextMessage(out var atTime, out var msg)) {
-                                _nextMsg = msg;
-                                _nextTime = atTime;
+                            if (_reader.ReadNextEvent(out var replayEvent)) {
+                                _nextEvent = replayEvent;
                             } else {
                                 Pause();
                                 return;
@@ -181,8 +177,7 @@ namespace Octgn.Play.Save
                 Program.GameEngine.Reset();
                 CurrentTime = Replay.GameStartTime;
 
-                _nextMsg = null;
-                _nextTime = TimeSpan.MinValue;
+                _nextEvent = null;
                 _lastTickTime = null;
             }
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Octgn.Play.Save
 {
@@ -9,13 +11,14 @@ namespace Octgn.Play.Save
     
         public Replay Replay { get; }
 
-        private BinaryReader _binaryReader;
+        private IEnumerable<ReplayEvent> _replayEvents;
 
-        private readonly long _streamGameStartPosition;
+        private IEnumerator<ReplayEvent> _replayEventPosition;
 
-        private ReplayReader(BinaryReader reader, Replay replay, long streamGameStartPosition) {
-            _binaryReader = reader ?? throw new ArgumentNullException(nameof(reader));
-            _streamGameStartPosition = streamGameStartPosition;
+        private ReplayReader(IEnumerable<ReplayEvent> events, Replay replay) {
+            _replayEvents = events ?? throw new ArgumentNullException(nameof(events));
+
+            _replayEventPosition = _replayEvents.GetEnumerator();
 
             Replay = replay;
 
@@ -23,29 +26,25 @@ namespace Octgn.Play.Save
         }
 
         public void StartOver() {
-            _binaryReader.BaseStream.Position = _streamGameStartPosition;
-        }
-
-        public bool ReadNextMessage(out TimeSpan atTime, out byte[] msg) {
             if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
 
-            long timeTicks = 0;
-            try {
-                timeTicks = _binaryReader.ReadInt64();
-            } catch (EndOfStreamException) {
-                atTime = default(TimeSpan);
-                msg = null;
+            _replayEventPosition.Reset();
+        }
 
+        public bool ReadNextEvent(out ReplayEvent? replayEvent) {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayWriter));
+
+            if (_replayEventPosition.MoveNext()) {
+                replayEvent = _replayEventPosition.Current;
+                return true;
+            } else {
+                replayEvent = null;
                 return false;
             }
+        }
 
-            atTime = TimeSpan.FromTicks(timeTicks);
-
-            var dataLength = _binaryReader.ReadInt32();
-
-            msg = _binaryReader.ReadBytes(dataLength);
-
-            return true;
+        public IEnumerable<ReplayEvent> ReadAllEvents() {
+            return _replayEvents.AsEnumerable();
         }
 
         public static ReplayReader FromStream(Stream stream) {
@@ -70,13 +69,15 @@ namespace Octgn.Play.Save
 
             var pos = binaryReader.BaseStream.Position;
 
+            var replayList = new List<ReplayEvent>();
+
             long lengthTicks = 0;
 
             while (true) {
                 try {
-                    lengthTicks = binaryReader.ReadInt64();
-                    var length = binaryReader.ReadInt32();
-                    binaryReader.ReadBytes(length);
+                    var eve = ReplayEvent.Read(binaryReader);
+                    lengthTicks = eve.Time.Ticks;
+                    replayList.Add(eve);
                 } catch (EndOfStreamException) {
                     break;
                 }
@@ -86,7 +87,7 @@ namespace Octgn.Play.Save
 
             replay.GameLength = TimeSpan.FromTicks(lengthTicks);
 
-            return new ReplayReader(binaryReader, replay, pos);
+            return new ReplayReader(replayList, replay);
         }
 
         #region IDisposable Support
@@ -95,9 +96,10 @@ namespace Octgn.Play.Save
         protected virtual void Dispose(bool disposing) {
             if (!disposedValue) {
                 if (disposing) {
-                    _binaryReader?.Dispose();
-                    _binaryReader = null;
+                    _replayEventPosition?.Dispose();
                 }
+
+                _replayEvents = null;
 
                 disposedValue = true;
             }
