@@ -1125,6 +1125,26 @@ namespace Octgn.Play
             ReplayEngine.ToggleSpeed();
         }
 
+        private void ReplayPlayButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.TogglePlay();
+        }
+
+        private void ReplayPreviousEventButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.RewindToPreviousEvent();
+        }
+
+        private void ReplayNextEventButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.FastForwardToNextEvent();
+        }
+
+        private void ReplayPreviousTurnButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.RewindToPreviousTurn();
+        }
+
+        private void ReplayNextTurnButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.FastForwardToNextTurn();
+        }
+
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (ChatGridChatPart.ActualHeight <= ChatGridChatPart.MinHeight && e.VerticalChange >= 0) // + VerticalChange means shrinking chat box

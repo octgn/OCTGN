@@ -73,9 +73,12 @@ namespace Octgn.Play.Save
 
             long lengthTicks = 0;
 
+            var nextId = 0;
             while (true) {
                 try {
                     var eve = ReplayEvent.Read(binaryReader);
+                    eve.Id = nextId;
+                    nextId++;
                     lengthTicks = eve.Time.Ticks;
                     replayList.Add(eve);
                 } catch (EndOfStreamException) {

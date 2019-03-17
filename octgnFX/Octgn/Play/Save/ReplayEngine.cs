@@ -1,8 +1,8 @@
 ﻿using log4net;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -14,17 +14,23 @@ namespace Octgn.Play.Save
     {
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Replay Replay => _reader.Replay;
+        public Replay Replay { get; }
 
         private readonly DispatcherTimer _timer;
-        private readonly ReplayReader _reader;
         private readonly ReplayClient _client;
+
+        private readonly IReadOnlyDictionary<int, ReplayEvent> _events;
 
         public ReplayEngine(ReplayReader reader, ReplayClient client) {
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromMilliseconds(5);
-            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
             _client = client ?? throw new ArgumentNullException(nameof(client));
+
+            if(reader == null) throw new ArgumentNullException(nameof(reader));
+
+            Replay = reader.Replay;
+
+            _events = reader.ReadAllEvents().ToDictionary(x => x.Id, x => x);
 
             _timer.Tick += _timer_Tick;
         }
@@ -39,13 +45,44 @@ namespace Octgn.Play.Save
         }
         private TimeSpan _currentTime = TimeSpan.Zero;
 
+        public string PlayButtonText {
+            get => IsPlaying
+                ? "‖"
+                : "▶";
+        }
+
+        public bool IsPlaying {
+            get => _isPlaying;
+            set {
+                if (value == _isPlaying) return;
+                _isPlaying = value;
+
+                if (value) {
+                    _lastTickTime = null;
+
+                    if (!_timer.IsEnabled) {
+                        _timer.Start();
+                    }
+                } else {
+                    _fastforwardTo = null;
+                    Speed = 1;
+                    OnPropertyChanged(nameof(IsFastForwarding));
+                }
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PlayButtonText));
+            }
+        }
+        private bool _isPlaying;
+
         public bool IsFastForwarding => _fastforwardTo != null;
 
-        private ReplayEvent? _nextEvent;
+        private ReplayEvent? _currentEvent;
 
         private DateTime? _lastTickTime = null;
 
         private TimeSpan? _fastforwardTo;
+        private bool _pauseAfterFastForward;
 
         public double Speed {
             get => _speed;
@@ -65,13 +102,15 @@ namespace Octgn.Play.Save
 
         private double _speed = 1;
 
-        public IEnumerable<ReplayEvent> AllEvents => _reader.ReadAllEvents();
+        public IEnumerable<ReplayEvent> AllEvents => _events.Select(x => x.Value);
 
         private async void _timer_Tick(object sender, EventArgs e) {
             try {
                 _timer.Stop();
 
                 while (true) {
+                    if (!_isPlaying && _fastforwardTo == null) return;
+
                     var timePassedSinceLastTick = _lastTickTime == null
                         ? TimeSpan.Zero
                         : DateTime.Now - _lastTickTime.Value
@@ -82,46 +121,43 @@ namespace Octgn.Play.Save
 
                     CurrentTime += timePassedSinceLastTick;
 
+                    var next = default(ReplayEvent);
+
+                    if(_currentEvent == null) {
+                        next = _events[0];
+                    } else if(_events.Count > _currentEvent.Value.Id + 1) {
+                        next = _events[_currentEvent.Value.Id + 1];
+                    } else {
+                        Pause();
+                        return;
+                    }
+
                     if (_fastforwardTo != null) {
+                        CurrentTime = next.Time;
+
                         if (_fastforwardTo.Value <= CurrentTime) {
                             _fastforwardTo = null;
                             Speed = 1;
+
+                            IsPlaying = !_pauseAfterFastForward;
 
                             OnPropertyChanged(nameof(IsFastForwarding));
                         }
                     }
 
-                    if (_nextEvent != null) {
-                        if (CurrentTime >= _nextEvent.Value.Time) {
-                            var next = _nextEvent.Value;
+                    if (CurrentTime >= next.Time) {
+                        _currentEvent = next;
 
-                            _nextEvent = null;
+                        _client.AddMessage(_currentEvent.Value.Action);
 
-                            _client.AddMessage(next.Action);
+                        await Task.Delay(10);
 
-                            await Task.Delay(50);
+                        await Dispatcher.Yield(DispatcherPriority.ContextIdle);
 
-                            await Dispatcher.Yield(DispatcherPriority.ContextIdle);
-
-                            _lastTickTime = DateTime.Now;
-                        } else {
-                            _lastTickTime = DateTime.Now;
-                            return;
-                        }
-                    }
-
-                    if (_nextEvent == null) {
-                        try {
-                            if (_reader.ReadNextEvent(out var replayEvent)) {
-                                _nextEvent = replayEvent;
-                            } else {
-                                Pause();
-                                return;
-                            }
-                        } catch (ObjectDisposedException) {
-                            Pause();
-                            return;
-                        }
+                        _lastTickTime = DateTime.Now;
+                    } else {
+                        _lastTickTime = DateTime.Now;
+                        return;
                     }
                 }
             } catch(Exception ex) {
@@ -132,6 +168,7 @@ namespace Octgn.Play.Save
         }
 
         public void ToggleSpeed() {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
             if (_fastforwardTo != null) return;
 
             switch (Speed) {
@@ -157,27 +194,111 @@ namespace Octgn.Play.Save
             }
         }
 
+        public void TogglePlay() {
+            if (IsPlaying) {
+                Pause();
+            } else {
+                Start();
+            }
+        }
+
         public void Start() {
-            if (_timer.IsEnabled) return;
-            _lastTickTime = null;
-            _timer.Start();
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
+            if (_isPlaying) return;
+
+            IsPlaying = true;
         }
 
         public void Pause() {
-            if (!_timer.IsEnabled) return;
-            _timer.Stop();
+            if (!_isPlaying) return;
+            IsPlaying = false;
+        }
+
+        public void FastForwardToNextEvent() {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
+            if (_currentEvent == null) return;
+
+            var current = _currentEvent.Value;
+
+            var nextId = current.Id + 1;
+
+            if(nextId >= _events.Count) {
+                nextId = _events.Count - 1;
+            }
+
+            if (nextId == current.Id) return;
+
+            var next = _events[nextId];
+
+            FastForwardTo(next.Time);
+        }
+
+        public void RewindToPreviousEvent() {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
+            if (_currentEvent == null) return;
+
+            var current = _currentEvent.Value;
+
+            var nextId = current.Id - 1;
+
+            if (nextId < 0) {
+                nextId = 0;
+            }
+
+            if (nextId == current.Id) return;
+
+            var next = _events[nextId];
+
+            FastForwardTo(next.Time);
+        }
+
+        public void FastForwardToNextTurn() {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
+            if (_currentEvent == null) return;
+
+            var current = _currentEvent.Value;
+
+            for(var nextId = current.Id + 1;nextId < _events.Count; nextId++) {
+                var next = _events[nextId];
+
+                if(next.Type == ReplayEventType.NextTurn || next.Type == ReplayEventType.Reset) {
+                    FastForwardTo(next.Time);
+                    return;
+                }
+            }
+        }
+
+        public void RewindToPreviousTurn() {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
+            if (_currentEvent == null) return;
+
+            var current = _currentEvent.Value;
+
+            TimeSpan? fastForwardTo = null;
+
+            for (var nextId = current.Id - 1; nextId >= 0; nextId--) {
+                var next = _events[nextId];
+
+                if (next.Type == ReplayEventType.NextTurn || next.Type == ReplayEventType.Reset) {
+                    FastForwardTo(next.Time);
+                    return;
+                } else if(nextId == 0) {
+                    FastForwardTo(next.Time);
+                    return;
+                }
+            }
         }
 
         public void FastForwardTo(TimeSpan when) {
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
             if (_fastforwardTo == when) return;
             if (when == CurrentTime) return;
 
             if(when < CurrentTime) {
-                _reader.StartOver();
+                _currentEvent = null;
                 Program.GameEngine.Reset();
                 CurrentTime = Replay.GameStartTime;
 
-                _nextEvent = null;
                 _lastTickTime = null;
             }
 
@@ -186,11 +307,14 @@ namespace Octgn.Play.Save
 
             OnPropertyChanged(nameof(IsFastForwarding));
 
+            _pauseAfterFastForward = !IsPlaying;
+
             Start();
         }
 
         public void FastForwardToStart() {
-            FastForwardTo(_reader.Replay.GameStartTime);
+            if (disposedValue) throw new ObjectDisposedException(nameof(ReplayEngine));
+            FastForwardTo(Replay.GameStartTime);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -207,7 +331,7 @@ namespace Octgn.Play.Save
                 if (disposing) {
                     _timer.Stop();
                     _timer.Tick -= _timer_Tick;
-                    _reader.Dispose();
+                    (_events as Dictionary<int, ReplayEvent>)?.Clear();
                 }
 
                 disposedValue = true;
