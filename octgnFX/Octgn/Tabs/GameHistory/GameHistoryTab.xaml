@@ -31,6 +31,10 @@
                 <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh">&#10227;</Button>
+                <Button Click="ButtonDeleteClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
+                        Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonDelete"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Delete"
+                        IsEnabled="{Binding IsHistorySelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">&#59177;</Button>
             </WrapPanel>
         </Border>
         <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0" Foreground="CornflowerBlue">

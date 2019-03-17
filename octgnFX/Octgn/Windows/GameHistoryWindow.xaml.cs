@@ -82,7 +82,7 @@ namespace Octgn.Windows
         }
 
         private void Replay_Click(object sender, System.Windows.RoutedEventArgs e) {
-            if(SubscriptionModule.Get().IsSubscribed ?? false) {
+            if((SubscriptionModule.Get().IsSubscribed ?? false) == false) {
                 MessageBox.Show("Replays are currently only available for subscribers.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 return;

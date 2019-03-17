@@ -16,7 +16,6 @@ namespace Octgn.Play.Save
         public TimeSpan Time { get; set; }
 
         public static void Write(ReplayEvent eve, BinaryWriter writer) {
-            writer.Write(eve.Id);
             writer.Write((byte)eve.Type);
             writer.Write(eve.Time.Ticks);
             writer.Write(eve.PlayerId);

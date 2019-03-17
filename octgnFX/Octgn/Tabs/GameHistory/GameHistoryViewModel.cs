@@ -109,6 +109,18 @@ namespace Octgn.Tabs.GameHistory
         }
         private string _logFile;
 
+        public string Path {
+            get => _path;
+            set {
+                if (value.Equals(_path)) {
+                    return;
+                }
+                _path = value;
+                OnPropertyChanged(nameof(Path));
+            }
+        }
+        private string _path;
+
         public ObservableCollection<GameHistoryPlayerViewModel> Players {
             get => _players;
             set {
@@ -124,7 +136,7 @@ namespace Octgn.Tabs.GameHistory
         public GameHistoryViewModel() {
         }
 
-        public GameHistoryViewModel(History history, string gameName) {
+        public GameHistoryViewModel(History history, string gameName, string path) {
             Id = history.Id;
             GameId = history.GameId;
             Name = history.Name;
@@ -132,6 +144,7 @@ namespace Octgn.Tabs.GameHistory
             var runTime = (history.DateSaved.LocalDateTime - history.DateStarted.LocalDateTime);
             RunTime = string.Format("{0}h {1}m", Math.Floor(runTime.TotalHours), runTime.Minutes);
             GameName = gameName;
+            Path = path;
 
             _players = new ObservableCollection<GameHistoryPlayerViewModel>();
 

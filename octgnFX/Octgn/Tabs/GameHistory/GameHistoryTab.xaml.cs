@@ -54,8 +54,47 @@ namespace Octgn.Tabs.GameHistory
             }
         }
 
-        private void ListViewHistoryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) {
+        private void ButtonDeleteClick(object sender, RoutedEventArgs e) {
+            if (!IsRefreshingHistoryList) {
+                var selected = (GameHistoryViewModel)ListViewHistoryList.SelectedItem;
 
+                TryDelete(selected.LogFile);
+                TryDelete(selected.ReplayFile);
+                TryDelete(selected.Path);
+
+                RefreshHistoryListTimer_Tick(null, null);
+            }
+        }
+
+        private void TryDelete(string path) {
+            while (true) {
+                try {
+                    if (!File.Exists(path)) return;
+
+                    File.Delete(path);
+
+                    return;
+                } catch (Exception ex) {
+                    var result = MessageBox.Show($"Error deleting {path}: {ex.Message}.\r\n\r\nTry again?", "Try Again?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (result != MessageBoxResult.Yes) return;
+                }
+            }
+        }
+
+        public bool IsHistorySelected {
+            get => _isHistorySelected;
+            set {
+                if (value == _isHistorySelected)
+                    return;
+
+                _isHistorySelected = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isHistorySelected;
+
+        private void ListViewHistoryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) {
+            IsHistorySelected = ListViewHistoryList.SelectedItem != null;
         }
 
         #region History List Refreshing
@@ -154,7 +193,7 @@ namespace Octgn.Tabs.GameHistory
                     gameName = dbgames[history.GameId].Name;
                 }
 
-                var vm = new GameHistoryViewModel(history, gameName);
+                var vm = new GameHistoryViewModel(history, gameName, historyFile.FullName);
 
                 if (replayFiles.TryGetValue(historyFileName, out var replayFile)) {
                     vm.ReplayFile = replayFile.FullName;
