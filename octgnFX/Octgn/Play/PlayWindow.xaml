@@ -599,7 +599,13 @@
                     <ColumnDefinition MinWidth="516"/>
                     <ColumnDefinition Width="64"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Content="{Binding SpeedString}" FontSize="20" Click="ReplaySpeed_Click" Height="40"/>
+                <Button Style="{StaticResource FlatDarkButtonStyle}"
+                        Cursor="Hand"
+                        Content="{Binding SpeedString}"
+                        FontSize="20"
+                        Click="ReplaySpeed_Click"
+                        Height="40"
+                        IsEnabled="{Binding IsFastForwarding, Converter={StaticResource BooleanInverterConverter}}"/>
                 <Rectangle Grid.Column="1" Height="30" Width="1" Fill="#aaaaaa" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                 <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Vertical">
                     <Slider x:Name="ReplaySlider"

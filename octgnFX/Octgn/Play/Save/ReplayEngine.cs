@@ -59,6 +59,8 @@ namespace Octgn.Play.Save
             get {
                 if (Speed <= 1) {
                     return Speed.ToString(".##%");
+                } else if(Speed == 1) {
+                    return "1X";
                 } else {
                     return Speed.ToString("###.##X");
                 }
