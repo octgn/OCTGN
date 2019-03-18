@@ -283,11 +283,11 @@ namespace Octgn
                 // clear any existing players
                 Play.Player.All.Clear();
                 Player.Spectators.Clear();
+                // Create the local player
+                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true, IsReplay);
                 // Create the global player, if any
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition, IsReplay);
-                // Create the local player
-                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true, IsReplay);
             }));
         }
 
