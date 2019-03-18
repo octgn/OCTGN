@@ -124,7 +124,7 @@ namespace Octgn.Play
             all.CollectionChanged += (sender, args) =>
             {
                 allExceptGlobal.Clear();
-                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
+                foreach (var p in all.ToArray().Where(x => !x.IsGlobal))
                 {
                     allExceptGlobal.Add(p);
                 }
@@ -524,9 +524,12 @@ namespace Octgn.Play
             CanKick = local == false && Program.IsHost;
         }
 
+        public bool IsGlobal { get; }
+
         // C'tor for global items
         internal Player(DataNew.Entities.Game g, bool isReplay)
         {
+            IsGlobal = true;
             _spectator = false;
             SetupPlayer(false);
             var globalDef = g.GlobalPlayer;
