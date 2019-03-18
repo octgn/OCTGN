@@ -1304,8 +1304,9 @@ namespace Octgn.DeckBuilder
             RowDefinitionCollection parentRows = ParentGrid.RowDefinitions;
             ColumnDefinitionCollection parentCols = ParentGrid.ColumnDefinitions;
 
-            if (parentRows.Count == 4)
+            if (parentRows.Count == 4) // only valid if layout hasn't changed
             {
+                // calculate height available for search grid 
                 Double maxH = e.NewSize.Height 
                             - parentRows[3].MinHeight 
                             - parentRows[2].ActualHeight 
@@ -1318,8 +1319,9 @@ namespace Octgn.DeckBuilder
                     parentRows[1].Height = new GridLength(self.ActualHeight);
                 }
             }
-            if (parentCols.Count == 3)
+            if (parentCols.Count == 3) // only valid if layout hasn't changed
             {
+                // calculate width available for search grid
                 double maxW = e.NewSize.Width 
                             - parentCols[2].MinWidth 
                             - parentCols[1].ActualWidth;
