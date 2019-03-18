@@ -263,8 +263,8 @@ namespace Octgn.Controls
             hs.Start();
 
             Prefs.Nickname = hg.HostUser.DisplayName;
-            Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
+            Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");

@@ -26,7 +26,7 @@ namespace Octgn.Controls
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public event Action<object> OnClose;
-        public bool IsHost { get; set; }
+        public bool CanChangeSettings { get; }
 
         protected virtual void FireOnClose(object obj)
         {
@@ -43,7 +43,7 @@ namespace Octgn.Controls
 
         public PreGameLobby()
         {
-            IsHost = Program.IsHost;
+            CanChangeSettings = Program.IsHost && !Program.GameEngine.IsReplay;
             IsOnline = Program.GameEngine.IsLocal == false;
             var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
@@ -58,18 +58,21 @@ namespace Octgn.Controls
                 this.Height = Double.NaN;
             }
 
-            if (Program.IsHost)
+            if (CanChangeSettings)
             {
+                skipBtn.Visibility = Visibility.Collapsed;
                 descriptionLabel.Text =
                     "The following players have joined your game.\n\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
                 if (isLocal)
                 {
-                    descriptionLabel.Text += "\n\nHosting on port: " + Program.Client.EndPoint.Port;
-                    GetIps();
+                    if (Program.Client is ClientSocket clientSocket) {
+                        descriptionLabel.Text += "\n\nHosting on port: " + clientSocket.EndPoint.Port;
+                        GetIps();
 
-                    // save game/port so a new client can start up and connect
-                    Prefs.LastLocalHostedGamePort = Program.Client.EndPoint.Port;
-                    Prefs.LastHostedGameType = Program.GameEngine.Definition.Id;
+                        // save game/port so a new client can start up and connect
+                        Prefs.LastLocalHostedGamePort = clientSocket.EndPoint.Port;
+                        Prefs.LastHostedGameType = Program.GameEngine.Definition.Id;
+                    }
                 }
             }
             else
@@ -77,6 +80,9 @@ namespace Octgn.Controls
                 descriptionLabel.Text =
                     "The following players have joined the game.\nPlease wait until the game starts, or click 'Cancel' to leave this game.";
                 startBtn.Visibility = Visibility.Collapsed;
+                if (Program.GameEngine.IsReplay) {
+                    skipBtn.Visibility = Visibility.Visible;
+                }
             }
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -179,7 +185,7 @@ namespace Octgn.Controls
         private void PlayerOnOnLocalPlayerWelcomed()
         {
             if (Player.LocalPlayer.Id == 255) return;
-            if (Player.LocalPlayer.Id == 1)
+            if (Player.LocalPlayer.Id == 1 && !Program.GameEngine.IsReplay)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
@@ -296,6 +302,10 @@ namespace Octgn.Controls
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
 			await UserProfileWindow.Show(new User(play.UserId));
+        }
+
+        private void SkipClicked(object sender, RoutedEventArgs e) {
+            Program.GameEngine.ReplayEngine.FastForwardToStart();
         }
     }
 }

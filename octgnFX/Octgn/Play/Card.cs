@@ -763,7 +763,7 @@ namespace Octgn.Play
 
         protected override void OnControllerChanged()
         {
-            if (Selected && Controller != Player.LocalPlayer)
+            if (Selected && (Controller != Player.LocalPlayer || Program.GameEngine.IsReplay))
                 Selection.Remove(this);
         }
 

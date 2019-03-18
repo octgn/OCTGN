@@ -2378,6 +2378,270 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style TargetType="{x:Type TabControl}" x:Key="MainTab" >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="ColumnDefinition0" />
+                            <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" x:Name="RowDefinition0" />
+                            <RowDefinition Height="*" x:Name="RowDefinition1" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="border" BorderThickness="0 0 0 2" BorderBrush="{DynamicResource SelectedBackgroundBrush}" Background="#333333">
+                            <TabPanel x:Name="HeaderPanel" IsItemsHost="true" Panel.ZIndex="1" KeyboardNavigation.TabIndex="1" RenderTransformOrigin="0.5,0.5" Width="Auto" Height="Auto">
+                                <TabPanel.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        <SkewTransform AngleX="0" AngleY="0" />
+                                        <RotateTransform Angle="0" />
+                                        <TranslateTransform X="0" Y="0" />
+                                    </TransformGroup>
+                                </TabPanel.LayoutTransform>
+                                <TabPanel.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        <SkewTransform AngleX="0" AngleY="0" />
+                                        <RotateTransform />
+                                        <TranslateTransform X="0" Y="0" />
+                                    </TransformGroup>
+                                </TabPanel.RenderTransform>
+
+                            </TabPanel>
+                        </Border>
+                        <Border x:Name="ContentPanel" Grid.Column="0" Grid.Row="1" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local" CornerRadius="0,0,2,2">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
+                        </Border>
+                        <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" BorderThickness="0,0,0,1" CornerRadius="10,0,0,0" Opacity="0.5" Margin="2,0,2,0" x:Name="border1">
+                            <Border.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    <SkewTransform AngleX="0" AngleY="0"/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform X="0" Y="0"/>
+                                </TransformGroup>
+                            </Border.LayoutTransform>
+                            <!--<Border.BorderBrush>
+                                <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                            </Border.BorderBrush>-->
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0" />
+                            <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                            <Setter Property="Height" TargetName="RowDefinition1" Value="Auto" />
+                            <Setter Property="Grid.Row" TargetName="border" Value="1"/>
+                            <Setter Property="CornerRadius" TargetName="ContentPanel" Value="2,2,0,0"/>
+                            <Setter Property="CornerRadius" TargetName="border" Value="0,0,2,2"/>
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Left">
+
+                            <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0" />
+                            <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0" />
+                            <Setter Property="Grid.Column" TargetName="ContentPanel" Value="1" />
+                            <Setter Property="Width" TargetName="ColumnDefinition0" Value="Auto" />
+                            <Setter Property="Width" TargetName="ColumnDefinition1" Value="*" />
+                            <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                            <Setter Property="Height" TargetName="RowDefinition1" Value="0" />
+                            <Setter Property="Grid.Column" TargetName="border" Value="0"/>
+                            <Setter Property="Margin" TargetName="border" Value="0,0,0,0"/>
+                            <Setter Property="Margin" TargetName="ContentPanel" Value="0,0,0,0"/>
+                            <Setter Property="LayoutTransform" TargetName="border1">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="-90"/>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Margin" TargetName="border1" Value="0,0,0,0"/>
+                            <Setter Property="CornerRadius" TargetName="border" Value="0,2,2,0"/>
+                            <Setter Property="CornerRadius" TargetName="ContentPanel" Value="0,2,2,0"/>
+
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Right">
+                            <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0" />
+                            <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0" />
+                            <Setter Property="Grid.Column" TargetName="ContentPanel" Value="0" />
+                            <Setter Property="Width" TargetName="ColumnDefinition0" Value="*" />
+                            <Setter Property="Width" TargetName="ColumnDefinition1" Value="Auto" />
+                            <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                            <Setter Property="Height" TargetName="RowDefinition1" Value="0" />
+                            <Setter Property="Grid.Column" TargetName="border" Value="1"/>
+                            <Setter Property="LayoutTransform" TargetName="border1">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Grid.Column" TargetName="border1" Value="1"/>
+                            <Setter Property="CornerRadius" TargetName="ContentPanel" Value="2,0,0,2"/>
+                            <Setter Property="CornerRadius" TargetName="border" Value="0,2,2,0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style d:IsControlPart="True" TargetType="{x:Type TabItem}" x:Key="MainTabItem">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="HoverOn">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="HoverOff">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="SelectedOn">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="SelectedOff">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Grid x:Name="grid" Margin="0,2,6,0">
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                <SkewTransform AngleX="0" AngleY="0"/>
+                                <RotateTransform Angle="0"/>
+                                <TranslateTransform X="0" Y="0"/>
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0.9" Background="#DD333333">
+                        </Border>
+                        <Border x:Name="SelectedBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0" Background="{DynamicResource SelectedBackgroundBrush}"/>
+                        <Border x:Name="HoverBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0">
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
+                                    <GradientStop Color="#7F595959" Offset="0" />
+                                    <GradientStop Color="#7F595959" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <Border Padding="10 5 10 8">
+                            <ContentPresenter x:Name="ContentSite" RecognizesAccessKey="True" ContentSource="Header" d:LayoutOverrides="Width, Height" HorizontalAlignment="Center" Margin="6,1,6,1" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TabStripPlacement" Value="Left">
+                            <Setter Property="LayoutTransform" TargetName="grid">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        <SkewTransform AngleX="0" AngleY="0" />
+                                        <RotateTransform Angle="-90" />
+                                        <TranslateTransform X="0" Y="0" />
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Right">
+                            <Setter Property="LayoutTransform" TargetName="grid">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        <SkewTransform AngleX="0" AngleY="0" />
+                                        <RotateTransform Angle="90" />
+                                        <TranslateTransform X="0" Y="0" />
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <Setter Property="LayoutTransform" TargetName="ContentSite">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        <SkewTransform AngleX="0" AngleY="0" />
+                                        <RotateTransform Angle="180" />
+                                        <TranslateTransform X="0" Y="0" />
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="LayoutTransform" TargetName="grid">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="180"/>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOff}" x:Name="HoverOff_BeginStoryboard"/>
+                            </MultiTrigger.ExitActions>
+                            <MultiTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOn}"/>
+                            </MultiTrigger.EnterActions>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="Selector.IsSelected" Value="False" />
+                            </MultiTrigger.Conditions>
+                        </MultiTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource SelectedOff}" x:Name="SelectedOff_BeginStoryboard"/>
+                            </Trigger.ExitActions>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource SelectedOn}" x:Name="SelectedOn_BeginStoryboard"/>
+                            </Trigger.EnterActions>
+                            <Setter Property="Panel.ZIndex" Value="100" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" SourceName="grid" />
+                                <Condition Property="Selector.IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="border" Value="{DynamicResource SelectedBackgroundBrush}" />
+                            <Setter Property="Opacity" TargetName="border" Value="0.9" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}" />
+                            <Setter Property="Background" TargetName="border" Value="{DynamicResource DisabledBackgroundBrush}"/>
+                            <Setter Property="Opacity" TargetName="grid" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Selector.IsSelected" Value="True">
+                <Setter Property="Foreground" >
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
     <Style x:Key="NuclearSliderThumb" d:IsControlPart="True" TargetType="{x:Type Thumb}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="Height" Value="14" />

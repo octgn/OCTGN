@@ -37,6 +37,7 @@ using Octgn.Windows;
 
 using log4net;
 using Octgn.Controls;
+using Octgn.Play.Save;
 
 namespace Octgn.Play
 {
@@ -125,40 +126,37 @@ namespace Octgn.Play
             }
         }
 
-        public bool CanChat
-        {
-            get { return _canChat; }
-            set
-            {
-                if (_canChat == value) return;
-                _canChat = value;
-                OnPropertyChanged("CanChat");
-            }
-        }
-
         public GameSettings GameSettings { get; set; }
+
+        public ReplayEngine ReplayEngine { get; }
 
         public PlayWindow()
             : base()
         {
             GameSettings = Program.GameSettings;
             IsHost = Program.IsHost;
-            if (Program.GameEngine.Spectator)
-            {
-                CanChat = Program.GameSettings.MuteSpectators == false;
-            }
-            else
-            {
-                CanChat = true;
-            }
             GameMessages = new ObservableCollection<IGameMessage>();
             _gameMessageReader = new GameMessageDispatcherReader(Program.GameMess);
             var isLocal = Program.GameEngine.IsLocal;
-            //GameLogWindow.Show();
-            //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
+
+            ReplayEngine = Program.GameEngine.ReplayEngine;
+
             InitializeComponent();
+
+
+            if (Program.GameEngine.IsReplay) {
+                foreach (var eve in ReplayEngine.AllEvents) {
+                    if (eve.Type == ReplayEventType.NextTurn) {
+                        ReplaySlider.Ticks.Add(eve.Time.Ticks);
+                    }
+                }
+
+                ReplayControls.Visibility = Visibility.Visible;
+            } else {
+                ReplayControls.Visibility = Visibility.Collapsed;
+            }
 
             _isLocal = isLocal;
             //Application.Current.MainWindow = this;
@@ -176,7 +174,7 @@ namespace Octgn.Play
                 if (this.PreGameLobby.StartingGame)
                 {
                     PreGameLobby.Visibility = Visibility.Collapsed;
-                    if (Player.LocalPlayer.Spectator == false)
+                    if (Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
                         Program.GameEngine.ScriptEngine.SetupEngine(false);
 
 
@@ -190,7 +188,7 @@ namespace Octgn.Play
 					Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
                     
                     //Program.GameEngine.Ready();
-                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false)
+                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
                     {
                         MenuConsole.Visibility = Visibility.Visible;
                         var wnd = new DeveloperWindow() { Owner = this };
@@ -198,10 +196,6 @@ namespace Octgn.Play
                     }
                     Program.GameSettings.PropertyChanged += (sender, args) =>
                         {
-                            if (Program.GameEngine.Spectator)
-                            {
-                                CanChat = Program.GameSettings.MuteSpectators == false;
-                            }
                             if (Program.IsHost)
                             {
                                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable,
@@ -210,13 +204,10 @@ namespace Octgn.Play
                             }
                         };
                     // Select proper player tab
-                    if (Player.LocalPlayer.Spectator)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                playerTabs.SelectedIndex = 0;
-                            }));
-                    }
+                    Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            playerTabs.SelectedIndex = 0;
+                        }));
                 }
                 else
                 {
@@ -509,7 +500,7 @@ namespace Octgn.Play
         {
 
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Player.LocalPlayer.Spectator) return;
+            if (Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay) return;
 
             // Show the dialog to choose the file
 
@@ -873,7 +864,7 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Player.LocalPlayer.Spectator == true) return;
+            if (Player.LocalPlayer.Spectator == true || Program.GameEngine.IsReplay) return;
 
             if (Program.DeveloperMode)
             {
@@ -1019,6 +1010,7 @@ namespace Octgn.Play
             if (s == null) return;
             var player = s.DataContext as Player;
             if (player == null) return;
+            if (Program.GameEngine.IsReplay) return;
             if (player == Player.LocalPlayer)
             {
                 throw new UserMessageException("You cannot kick yourself.");
@@ -1105,6 +1097,52 @@ namespace Octgn.Play
 
         private void CardList_Click(object sender, RoutedEventArgs e) {
             Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
+        }
+
+        private bool replayDragStarted = false;
+
+        private void ReplaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
+            if (replayDragStarted) return;
+            var val = (long)e.NewValue;
+
+            if (!this.IsLoaded) return;
+
+            ReplayEngine.FastForwardTo(TimeSpan.FromTicks(val));
+        }
+
+        private void ReplaySlider_DragStarted(object sender, DragStartedEventArgs e) {
+            replayDragStarted = true;
+        }
+
+        private void ReplaySlider_DragCompleted(object sender, DragCompletedEventArgs e) {
+            replayDragStarted = false;
+            var val = (long)((Slider)sender).Value;
+
+            ReplayEngine.FastForwardTo(TimeSpan.FromTicks(val));
+        }
+
+        private void ReplaySpeed_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.ToggleSpeed();
+        }
+
+        private void ReplayPlayButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.TogglePlay();
+        }
+
+        private void ReplayPreviousEventButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.RewindToPreviousEvent();
+        }
+
+        private void ReplayNextEventButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.FastForwardToNextEvent();
+        }
+
+        private void ReplayPreviousTurnButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.RewindToPreviousTurn();
+        }
+
+        private void ReplayNextTurnButton_Click(object sender, RoutedEventArgs e) {
+            ReplayEngine.FastForwardToNextTurn();
         }
 
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)

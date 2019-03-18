@@ -34,6 +34,7 @@
         string SleevePath { get; }
         string GraveyardPath { get; }
         string UpdatesPath { get; }
+        string GameHistoryPath { get; }
     }
 
     public class Paths : IPaths
@@ -77,6 +78,7 @@
             SpoilsFeedPath = "https://www.myget.org/f/thespoils/";
             CommunityFeedPath = "https://www.myget.org/f/octgngamedirectory";
             UpdatesPath = FS.Path.Combine(DataDirectory, "Updates");
+            GameHistoryPath = FS.Path.Combine(DataDirectory, "History");
 
             Task.Factory.StartNew(() =>
             {
@@ -104,6 +106,7 @@
         public string SleevePath { get; set; }
 
         public string UpdatesPath { get; set; }
+        public string GameHistoryPath { get; set; }
         public string GraveyardPath
         {
             get

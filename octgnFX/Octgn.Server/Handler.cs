@@ -215,7 +215,7 @@ namespace Octgn.Server
             _player.SaidHello = true;
 
             // Welcome newcomer and asign them their side
-            _player.Rpc.Welcome(_player.Id, _context.Game.Id, GameStarted);
+            _player.Rpc.Welcome(_player.Id, _context.Game.Id, _context.Game.Name, GameStarted);
             _player.Rpc.PlayerSettings(_player.Id, _player.Settings.InvertedTable, _player.Settings.IsSpectator);
 
             // Notify everybody of the newcomer
@@ -266,7 +266,7 @@ namespace Octgn.Server
 
             oldPlayerInfo.SaidHello = true;
             // welcome the player and assign them their side
-            oldPlayerInfo.Rpc.Welcome(oldPlayerInfo.Id, _context.Game.Id, true);
+            oldPlayerInfo.Rpc.Welcome(oldPlayerInfo.Id, _context.Game.Id, _context.Game.Name, true);
             // Notify everybody of the newcomer
             _context.Broadcaster.NewPlayer(oldPlayerInfo.Id, nick, userId, pkey, oldPlayerInfo.Settings.InvertedTable, oldPlayerInfo.Settings.IsSpectator);
 

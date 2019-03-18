@@ -1,15 +1,9 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
+using Octgn.Utils;
 
 namespace Octgn.Play
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using Octgn.Utils;
-
     public sealed class Counter : INotifyPropertyChanged
     {
         #region Private fields
@@ -20,21 +14,36 @@ namespace Octgn.Play
         private int _state; // Value of this counter
 
         #endregion
-
         #region Public interface
 
-        // Find a counter given its Id
-
-        // Name of this counter
-        private readonly string _name;
-
-        public Counter(Player player, DataNew.Entities.Counter def)
+        public Counter(Player player, DataNew.Entities.Counter def, bool isReplay)
         {
             _player = player;
             _state = def.Start;
-            _name = def.Name;
+            Name = def.Name;
             _id = def.Id;
             _defintion = def;
+
+            if (!isReplay) {
+                Player localPlayer = null;
+                if (player.IsLocal) {
+                    localPlayer = player;
+                } else {
+                    localPlayer = Player.LocalPlayer;
+                }
+
+                localPlayer.PropertyChanged += Player_PropertyChanged;
+
+                _canChange = !localPlayer.Spectator;
+            }
+        }
+
+        private void Player_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            if(e.PropertyName == nameof(Player.Spectator)) {
+                var player = (Player)sender;
+
+                CanChange = !player.Spectator;
+            }
         }
 
         public Player Owner
@@ -45,10 +54,17 @@ namespace Octgn.Play
             }
         }
 
-        public string Name
-        {
-            get { return _name; }
+        public string Name { get; }
+
+        public bool CanChange {
+            get => _canChange;
+            set {
+                if(_canChange != value) {
+                    _canChange = value;
+                }
+            }
         }
+        private bool _canChange;
 
         // Get or set the counter's value
         public int Value

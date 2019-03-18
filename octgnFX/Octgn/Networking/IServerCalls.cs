@@ -8,7 +8,7 @@ using Octgn.Play;
 
 namespace Octgn.Networking
 {
-	interface IServerCalls
+	public interface IServerCalls
 	{ 
 		void Error(string msg);
 		void Boot(Player player, string reason);

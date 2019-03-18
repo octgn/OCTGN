@@ -164,6 +164,20 @@ namespace Octgn.Play.Gui
                 chatTimer2.Elapsed -= this.TickMessage;
                 chatTimer2.Dispose();
             };
+
+            Program.GameSettings.PropertyChanged += (a, b) => {
+                if (Program.GameEngine.Spectator) {
+                    ShowInput = Program.GameSettings.MuteSpectators == false;
+                } else {
+                    ShowInput = Program.GameEngine.IsReplay == false;
+                }
+            };
+
+            if (Program.GameEngine.Spectator) {
+                ShowInput = Program.GameSettings.MuteSpectators == false;
+            } else {
+                ShowInput = Program.GameEngine.IsReplay == false;
+            }
         }
 
         public static Block GameMessageToBlock(IGameMessage m)

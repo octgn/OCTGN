@@ -100,6 +100,7 @@ namespace Octgn.Windows
         private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             TabCustomGamesList.VisibleChanged(TabCustomGames.IsSelected);
+            TabHistory.VisibleChanged(TabItemHistory.IsSelected);
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)

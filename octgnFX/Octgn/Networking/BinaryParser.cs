@@ -46,9 +46,10 @@ namespace Octgn.Networking
 				{
 					var arg0 = reader.ReadByte();
 					var arg1 = new Guid(reader.ReadBytes(16));
-					var arg2 = reader.ReadBoolean();
+					var arg2 = reader.ReadString();
+					var arg3 = reader.ReadBoolean();
 					Log.Debug($"OCTGN IN: Welcome");
-					handler.Welcome(arg0, arg1, arg2);
+					handler.Welcome(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 6:

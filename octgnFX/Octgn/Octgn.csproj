@@ -319,6 +319,21 @@
     <Compile Include="Play\Gui\DeckStats.xaml.cs">
       <DependentUpon>DeckStats.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\Save\History.cs" />
+    <Compile Include="Play\Save\Replay.cs" />
+    <Compile Include="Play\Save\ReplayClient.cs" />
+    <Compile Include="Play\Save\ReplayEngine.cs" />
+    <Compile Include="Play\Save\ReplayEvent.cs" />
+    <Compile Include="Play\Save\ReplayEventType.cs" />
+    <Compile Include="Play\Save\ReplayReader.cs" />
+    <Compile Include="Play\Save\ReplayWriter.cs" />
+    <Compile Include="Windows\GameHistoryWindow.xaml.cs">
+      <DependentUpon>GameHistoryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\GameHistory\GameHistoryViewModel.cs" />
+    <Compile Include="Tabs\GameHistory\GameHistoryTab.xaml.cs">
+      <DependentUpon>GameHistoryTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Login\NewsViewModel.cs" />
     <Compile Include="Tabs\Play\PlayTab.xaml.cs">
       <DependentUpon>PlayTab.xaml</DependentUpon>
@@ -370,9 +385,6 @@
     <Compile Include="Play\PlayDispatcher.cs" />
     <Compile Include="Play\PlayDispatcherAction.cs" />
     <Compile Include="Play\State\GameSaveState.cs" />
-    <Compile Include="Play\State\StateSave-Old\GameSave.cs" />
-    <Compile Include="Play\State\StateSave-Old\IStateSave.cs" />
-    <Compile Include="Play\State\StateSave-Old\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scripting\Controls\PackDlg.xaml.cs">
       <DependentUpon>PackDlg.xaml</DependentUpon>
@@ -561,7 +573,6 @@
     <Compile Include="Play\Gui\VirtualizingTilePanel.cs" />
     <Compile Include="Play\Gui\WrapPanel.cs" />
     <Compile Include="Play\Hand.cs" />
-    <Compile Include="Play\History.cs" />
     <Compile Include="Play\Marker.cs" />
     <Compile Include="Play\Pile.cs" />
     <Compile Include="Play\Table.cs" />
@@ -900,6 +911,14 @@
     <Page Include="Play\Gui\DeckStats.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\GameHistoryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\GameHistory\GameHistoryTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Play\PlayTab.xaml">
       <SubType>Designer</SubType>

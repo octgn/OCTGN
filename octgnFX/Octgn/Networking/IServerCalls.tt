@@ -19,7 +19,7 @@ using Octgn.Play;
 
 namespace Octgn.Networking
 {
-	interface IServerCalls
+	public interface IServerCalls
 	{ 
 <#
     foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("server") == true))
