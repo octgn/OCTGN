@@ -62,29 +62,29 @@
 			<Controls:UpdateBar/>
 		</StackPanel>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
-        <TabControl x:Name="TabControlMain" Grid.Row="2">
-            <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
+        <TabControl x:Name="TabControlMain" Grid.Row="2" Style="{StaticResource MainTab}">
+            <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent" Style="{StaticResource MainTabItem}">
                 <login:LoginTab></login:LoginTab>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Play or Spectate">
+            <TabItem x:Name="TabCustomGames" Header="Play or Spectate" Style="{StaticResource MainTabItem}">
                 <Border Padding="5,5,5,5">
                     <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
                 </Border>
             </TabItem>
-            <TabItem x:Name="TabItemHistory" Header="Game History">
+            <TabItem x:Name="TabItemHistory" Header="Game History" Style="{StaticResource MainTabItem}">
                 <historytab:GameHistoryTab x:Name="TabHistory"/>
             </TabItem>
-            <TabItem x:Name="TabWatch" Header="Twitch.tv">
+            <TabItem x:Name="TabWatch" Header="Twitch.tv" Style="{StaticResource MainTabItem}">
                 <watch:WatchList/>
             </TabItem>
-            <TabItem Header="Games Manager" IsEnabled="true">
+            <TabItem Header="Games Manager" IsEnabled="true" Style="{StaticResource MainTabItem}">
                 <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
             </TabItem>
-            <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab">
-                <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
-            </TabItem>
-            <TabItem Header="Challenge Board" x:Name="ChallengeBoardTab">
+            <TabItem Header="Challenge Board" x:Name="ChallengeBoardTab" Style="{StaticResource MainTabItem}">
                 <challengeBoards:ChallengeBoards Margin="5,5,5,5" />
+            </TabItem>
+            <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab" Style="{StaticResource MainTabItem}">
+                <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
         </TabControl>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" Background="Transparent" HorizontalAlignment="Right">
