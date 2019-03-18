@@ -1,3 +1,6 @@
+#3.3.127.0
++ Fix bug with Global Player - Kelly
+
 #3.3.126.0
 + Add replay support - Kelly
 + Update some buttons and tab bar styles - Kelly
@@ -3682,6 +3685,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
