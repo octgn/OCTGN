@@ -1,3 +1,7 @@
+#3.3.126.0
++ Add replay support - Kelly
++ Update some buttons and tab bar styles - Kelly
+
 #3.3.125.0
 + Fix issue causing network calls to go out of order - Kelly
 + Fix built in sleeves not being included in the installer - Kelly
@@ -3678,6 +3682,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
