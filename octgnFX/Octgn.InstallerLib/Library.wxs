@@ -35,10 +35,16 @@
         <RemoveFolder Id="RemoveDataDirectory" Directory="DATADIRECTORY" On="uninstall"/>
       </Component>
     </DirectoryRef>
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="FontsComponent" Guid="{128AAA65-B209-42DB-B97A-16BCFAEDDCEC}">
+        <File Id="Entypo.otf" Source="$(var.RootPath)\octgnFX\Graphics\Entypo.otf" TrueType="yes" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
     <ComponentGroup Id="Octgn.AppComponents" Directory="Octgn.InstallDirectory">
       <ComponentGroupRef Id="Octgn.EventSourceComponentGroup" />
       <ComponentGroupRef Id="O__HeatGenerated"/>
       <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="FontsComponent" />
     </ComponentGroup>
     <ComponentGroup Id="Octgn.DataDirectoryComponents">
       <ComponentRef Id="EmptyDataDirectory" />
