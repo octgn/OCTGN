@@ -42,16 +42,16 @@
         <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ButtonBarPanel}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
                 <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35"
-                        Padding="0 -7 0 0" Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                        Padding="0 -17 0 0" Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List" Content="&#10227;">
                 </Button>
-                <Button Click="ButtonCancelClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="28"
-                        Padding="0 0 0 0" Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonCancel"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Cancel" Content="X">
+                <Button Click="ButtonCancelClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35"
+                        Padding="0 -16 0 0" Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonCancel"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Cancel" Content="&#10060;">
                 </Button>
-                <Button Click="ButtonAddClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="28"
-                        Padding="0 -2 0 0" Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonAdd"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Add" Content="+">
+                <Button Click="ButtonAddClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35"
+                        Padding="0 -16 0 0" Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonAdd"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Add" Content="&#10133;">
                 </Button>
             </StackPanel>
         </Border>
