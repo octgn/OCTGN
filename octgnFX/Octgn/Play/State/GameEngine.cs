@@ -565,9 +565,13 @@ namespace Octgn
 
             if (obj is DebugMessage) return;
 
-            var block = ChatControl.GameMessageToBlock(obj);
+            string blockString = null;
 
-            var blockString = BlockToString(block);
+            Program.Dispatcher.Invoke(() => { 
+                var block = ChatControl.GameMessageToBlock(obj);
+
+                blockString = BlockToString(block);
+            });
 
             _logStream.Write(blockString);
 
