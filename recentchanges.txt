@@ -1,4 +1,1 @@
-Fix periodic lockups in game - Kelly
-Fix not being able to connect to an offline game - Kelly
-Fixed 'Skip' button showing up when joining games - Kelly
-Fixed issue sometimes causing OCTGN to show a 'Disconnected' dialog when we're actually connected - Kelly
+

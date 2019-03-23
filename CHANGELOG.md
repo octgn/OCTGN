@@ -1,3 +1,9 @@
+#3.3.131.0
++ Fix periodic lockups in game - Kelly
++ Fix not being able to connect to an offline game - Kelly
++ Fixed 'Skip' button showing up when joining games - Kelly
++ Fixed issue sometimes causing OCTGN to show a 'Disconnected' dialog when we're actually connected - Kelly
+
 #3.3.130.0
 
 #3.3.129.0
@@ -3689,6 +3695,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
