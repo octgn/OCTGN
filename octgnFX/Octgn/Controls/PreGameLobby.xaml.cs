@@ -82,6 +82,8 @@ namespace Octgn.Controls
                 startBtn.Visibility = Visibility.Collapsed;
                 if (Program.GameEngine.IsReplay) {
                     skipBtn.Visibility = Visibility.Visible;
+                } else {
+                    skipBtn.Visibility = Visibility.Collapsed;
                 }
             }
             Loaded += OnLoaded;

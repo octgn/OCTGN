@@ -348,6 +348,7 @@ namespace Octgn.Tabs.Play
                 if (dialogResult == DialogResult.OK) {
                     if (dialog.Successful) {
                         LaunchPlayWindow();
+                        return;
                     }
                 }
 
