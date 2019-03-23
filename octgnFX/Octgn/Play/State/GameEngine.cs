@@ -354,6 +354,8 @@ namespace Octgn
 
         public Game Definition { get; set; }
 
+        private object _isConnectedLocker = new object();
+
         public bool IsConnected
         {
             get
@@ -362,23 +364,16 @@ namespace Octgn
             }
             set
             {
-                if (value == this.isConnected) return;
-                if (Program.Dispatcher != null && Program.Dispatcher.CheckAccess() == false)
-                {
-                    Program.Dispatcher.Invoke(new Action(() => { IsConnected = value; }));
-                    return;
+                lock (_isConnectedLocker) {
+                    if (value == this.isConnected) {
+                        return;
+                    }
+                    Log.DebugFormat("IsConnected = {0}", value);
+                    this.isConnected = value;
                 }
-                Log.DebugFormat("IsConnected = {0}", value);
-                this.isConnected = value;
                 this.OnPropertyChanged("IsConnected");
             }
         }
-
-        //public BitmapImage CardFrontBitmap { get; private set; }
-
-        //public BitmapImage CardBackBitmap { get; private set; }
-
-
 
         public IList<DataNew.Entities.Marker> Markers
         {
