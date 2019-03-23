@@ -1,1 +1,2 @@
-
+Fix periodic lockups in game - Kelly
+Fix not being able to connect to an offline game - Kelly

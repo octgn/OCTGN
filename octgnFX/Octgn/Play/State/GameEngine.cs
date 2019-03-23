@@ -567,15 +567,19 @@ namespace Octgn
 
             string blockString = null;
 
-            Program.Dispatcher.Invoke(() => { 
+            Program.Dispatcher.InvokeAsync(() => { 
                 var block = ChatControl.GameMessageToBlock(obj);
 
                 blockString = BlockToString(block);
+
+                try {
+                    _logStream.Write(blockString);
+
+                    _logStream.Flush();
+                } catch (ObjectDisposedException) {
+
+                }
             });
-
-            _logStream.Write(blockString);
-
-            _logStream.Flush();
         }
 
         private string BlockToString(System.Windows.Documents.Block block) {
