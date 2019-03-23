@@ -1,2 +1,3 @@
 Fix periodic lockups in game - Kelly
 Fix not being able to connect to an offline game - Kelly
+Fixed 'Skip' button showing up when joining games - Kelly
