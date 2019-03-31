@@ -1,2 +1,1 @@
-Fixed bug blocking Pass Control and Take Control actions
 

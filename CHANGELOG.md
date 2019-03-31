@@ -1,3 +1,6 @@
+#3.3.132.0
++ Fixed bug blocking Pass Control and Take Control actions
+
 #3.3.131.0
 + Fix periodic lockups in game - Kelly
 + Fix not being able to connect to an offline game - Kelly
@@ -3695,6 +3698,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
