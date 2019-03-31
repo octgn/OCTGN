@@ -81,7 +81,7 @@ namespace Octgn.Play
 
         public void TakeControl()
         {
-            if (Controller == Player.LocalPlayer) return;
+            if (Controller == Player.LocalPlayer || Program.GameEngine.IsReplay) return;
             Program.Client.Rpc.TakeFromReq(this, Controller);
         }
 
@@ -107,7 +107,7 @@ namespace Octgn.Play
             if (notifyServer)
             {
                 // Can't pass control if I don't own it
-                if (Controller == Player.LocalPlayer && !Program.GameEngine.IsReplay) return;
+                if (Controller != Player.LocalPlayer || Program.GameEngine.IsReplay) return;
                 Program.Client.Rpc.PassToReq(this, p, requested);
             }
             Controller = p;
