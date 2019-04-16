@@ -1,1 +1,1 @@
-
+o8build: Don't throw an unexpeted error when a game has no scripts. (allows for basic modules with no scripts to be built)
