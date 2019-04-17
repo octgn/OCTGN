@@ -506,7 +506,7 @@ namespace Octgn
                 return;
             }
 
-            Program.GameEngine.History.Name = _gameName;
+            Program.GameEngine.History.Name = SanitizeFilenames.SanitizeFilename(_gameName);
 
             if (_historyPath == null) {
                 var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
