@@ -1,1 +1,1 @@
-
+Phase bar and deck stats don't overlap the limited deck editor
