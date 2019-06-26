@@ -1,1 +1,2 @@
+fixed slowdown when resizing deck editor in some cases - Ben
 
