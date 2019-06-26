@@ -265,6 +265,7 @@ class Card(object):
 		self._id = id
 		self._props = CardProperties(id)
 		self._markers = None
+		self._scriptProperties = dict()
 	def __cmp__(self, other):
 		if other == None: return 1
 		elif not hasattr(other, "_id"): return 1
@@ -380,6 +381,15 @@ class Card(object):
 		return (x + delta, y + delta)
 	def resetProperties(self):
 		_api.CardResetProperties(self._id)
+	@property
+	def scriptProperties(self):
+		return self._scriptProperties
+	@scriptProperties.setter
+	def scriptProperties(self, propertiesDict):
+		if type(propertiesDict) is dict:
+			self._scriptProperties = propertiesDict
+		else:
+			raise TypeError('scriptProperties must be set to a dictionary')
 
 class NamedObject(object):
 	def __init__(self, id, name):
