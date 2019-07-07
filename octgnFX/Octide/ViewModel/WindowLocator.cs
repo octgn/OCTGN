@@ -26,12 +26,12 @@
             else
             {
                 RegisterWindowEvents<MainViewModel, MainWindow>();
-				RegisterWindowEvents<SplashViewModel,SplashWindow>();
+				RegisterWindowEvents<LoaderViewModel, LoaderWindow>();
             }
 
 
-            ViewModelLocator.ViewModelKernel.Bind<SplashViewModel>().To<SplashViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<MainViewModel>().To<MainViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<LoaderViewModel>().To<LoaderViewModel>().InSingletonScope();
 
         }
 
@@ -58,27 +58,13 @@
         {
             DispatcherHelper.UIDispatcher.Invoke(new Action(() => Activator.CreateInstance<T>()));
         }
+		public static MainViewModel MainViewModel => ServiceLocator.Current.GetInstance<MainViewModel>();
+		public static LoaderViewModel LoaderViewModel => ServiceLocator.Current.GetInstance<LoaderViewModel>();
 
-        public static SplashViewModel SplashViewModel
+		public static void Cleanup()
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<SplashViewModel>();
-            }
-        }
-
-        public static MainViewModel MainViewModel
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
-            }
-        }
-
-        public static void Cleanup()
-        {
-            ServiceLocator.Current.GetInstance<SplashViewModel>().Cleanup();
-            ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<LoaderViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
         }
     }
 }

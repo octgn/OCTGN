@@ -1,7 +1,46 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ctrl="clr-namespace:Octgn.Controls;assembly=OCTGN"
-                    xmlns:metro="http://schemas.codeplex.com/elysium">
+                    xmlns:ctrl="clr-namespace:Octgn.Controls;assembly=OCTGN"
+                    xmlns:gong="urn:gong-wpf-dragdrop"
+                    xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
+
+                    xmlns:local="clr-namespace:Octide"
+                    xmlns:model="clr-namespace:Octide.ItemModel"
+                    xmlns:metro="http://schemas.codeplex.com/elysium"
+                    xmlns:params="http://schemas.codeplex.com/elysium/params">
+
+    <local:RadioButtonStateConverter x:Key="RadioConverter"/>
+    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" x:Key="ControlFillBrush">
+        <GradientStop Color="#A2EEEEEE" Offset="0.663" />
+        <GradientStop Color="#C3FFFFFF" Offset="0.995" />
+        <GradientStop Color="#9DF8F8F8" Offset="0" />
+        <GradientStop Color="#B1FFFFFF" Offset="0.418" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1" x:Key="ControlBorderBrush">
+        <GradientStop Color="#E0888888" Offset="1" />
+        <GradientStop Color="#DAFFFFFF" Offset="0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackOptionsBrush">
+        <GradientStop Color="#777777" Offset="0"/>
+        <GradientStop Color="#BBBB77" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackOptionBrush">
+        <GradientStop Color="#777777" Offset="0"/>
+        <GradientStop Color="#77BB77" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackPickBrush">
+        <GradientStop Color="#777777" Offset="0"/>
+        <GradientStop Color="#BB77BB" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackPropertiesBrush">
+        <GradientStop Color="#777777" Offset="0"/>
+        <GradientStop Color="#7777BB" Offset="1"/>
+    </LinearGradientBrush>
 
     <Style x:Key="OctideInputPanel" >
         <Style.Resources>
@@ -14,14 +53,61 @@
                 <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
             </Style>
             <Style TargetType="{x:Type Image}">
-                <Setter Property="Width" Value="20"/>
-                <Setter Property="Height" Value="20" />
+                <Setter Property="MaxHeight" Value="20"/>
+                <Setter Property="MaxWidth" Value="40"/>
                 <Setter Property="Stretch" Value="Uniform" />
-                <Setter Property="Margin" Value="10,1,0,1" />
+                <Setter Property="Margin" Value="10,15,0,0" />
+            </Style>
+            <Style TargetType="{x:Type Slider}">
+                <Setter Property="Margin" Value="10,0,0,0" />
             </Style>
         </Style.Resources>
     </Style>
+    <Style TargetType="{x:Type local:KeyInputTextBox}" BasedOn="{StaticResource {x:Type TextBox}}"/>
+
+    <Style TargetType="{x:Type local:AssetControl}">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type local:AssetControl}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="PART_Button" Content="Load/Drop Asset" AllowDrop="True"  />
+                            <ComboBox x:Name="PART_ComboBox" Grid.Column="1" ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=AssetView}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedAsset, UpdateSourceTrigger=PropertyChanged}" >
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type ComboBoxItem}">
+                                        <StackPanel Orientation="Horizontal" >
+                                            <Image Height="18" Margin="0,0,5,0" >
+                                                <Image.Style>
+                                                    <Style TargetType="{x:Type Image}">
+                                                        <Setter Property="Source" Value="{x:Null}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:AssetType.Image}">
+                                                                <Setter Property="Source" Value="{Binding FullPath, TargetNullValue={x:Null}}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                            <TextBlock Text="{Binding RelativePath}" Foreground="WhiteSmoke" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
     
+    <DataTemplate x:Key="ComboBoxItem" >
+        <TextBlock Text="{Binding }" />
+    </DataTemplate>
+
     <Style x:Key="VirtualListBox" TargetType="{x:Type ToggleButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -46,19 +132,104 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Button" x:Key="XButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ToolTip" Value="Remove" />
+        <Setter Property="Margin" Value="5,0,2,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Background="Transparent">
+                        <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" x:Key="ControlFillBrush">
-        <GradientStop Color="#A2EEEEEE" Offset="0.663" />
-        <GradientStop Color="#C3FFFFFF" Offset="0.995" />
-        <GradientStop Color="#9DF8F8F8" Offset="0" />
-        <GradientStop Color="#B1FFFFFF" Offset="0.418" />
-    </LinearGradientBrush>
+    <ContextMenu x:Key="ListBoxContextMenu">
+        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" >
+            <MenuItem.Style>
+                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanRemove}" Value="False" >
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </MenuItem.Style>
+        </MenuItem>
+        <MenuItem Header="Copy" Command="{Binding CopyCommand}" >
+            <MenuItem.Style>
+                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanCopy}" Value="False" >
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </MenuItem.Style>
+        </MenuItem>
+        <MenuItem Header="Insert New" Command="{Binding InsertCommand}" >
+            <MenuItem.Style>
+                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanInsert}" Value="False" >
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </MenuItem.Style>
+        </MenuItem>
+    </ContextMenu>
 
-    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1" x:Key="ControlBorderBrush">
-        <GradientStop Color="#E0888888" Offset="1" />
-        <GradientStop Color="#DAFFFFFF" Offset="0" />
-    </LinearGradientBrush>
+    <Style x:Key="GenericIdeListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="SkyBlue"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding IsDefault}" Value="True" >
+                <Setter Property="BorderThickness" Value="5"/>
+                <Setter Property="BorderBrush" Value="Red" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsVisible}" Value="False" >
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
     
+    <Style x:Key="GenericIdeListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}" >
+        <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
+        <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
+        <Setter Property="gong:DragDrop.UseDefaultDragAdorner" Value="True" />
+        <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource GenericIdeListBoxItemStyle}" />
+    </Style>
+
+    
+    <Style x:Key="IdeListBoxItemControl" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource GenericIdeListBoxItemStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
+                    <StackPanel Orientation="Horizontal" Background="{TemplateBinding Background}" >
+                        <Image Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
+                        <local:EditableTextBlock Padding="6" Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IdeListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource GenericIdeListBoxStyle}" >
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource IdeListBoxItemControl}" />
+    </Style>
+
     <Style TargetType="Border" x:Key="PanelControl">
         <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
@@ -87,17 +258,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style x:Key="NewItemButton" TargetType="{x:Type RepeatButton}" >
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="Width" Value="40" />
-        <Setter Property="Content" Value="+" />
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
-        <Setter Property="Opacity" Value="0.5" />
-    </Style>
-    
+   
     <Style x:Key="SpinDown" TargetType="{x:Type RepeatButton}">
         <Setter Property="FontSize" Value="9" />
         <Setter Property="Template">
@@ -116,6 +277,26 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="NewItemButton" TargetType="{x:Type Button}" >
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Content" Value="+" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
+        <Setter Property="Opacity" Value="0.5" />
+    </Style>
+
+    <Style x:Key="NewActionButton" TargetType="{x:Type Button}" >
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
+        <Setter Property="Margin" Value="1" />
     </Style>
 
 </ResourceDictionary>

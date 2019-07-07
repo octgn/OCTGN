@@ -1,11 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 
 using Octgn.DataNew.Entities;
+using Octide.ItemModel;
 
 namespace Octide.ViewModel
 {
@@ -95,12 +101,11 @@ namespace Octide.ViewModel
             set
             {
                 if (value == ViewModelLocator.GameLoader.Game.Version.ToString()) return;
-                Version v;
-                if (System.Version.TryParse(value, out v))
+                if (System.Version.TryParse(value, out Version v))
                 {
                     ViewModelLocator.GameLoader.Game.Version = v;
                 }
-				RaisePropertyChanged("Version");
+                RaisePropertyChanged("Version");
                 ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
@@ -178,13 +183,98 @@ namespace Octide.ViewModel
             }
         }
 
+
+        public GameFontItemModel DeckEditorFont { get; set; }
+        public GameFontItemModel ContextFont { get; set; }
+        public GameFontItemModel ChatFont { get; set; }
+        public GameFontItemModel NotesFont { get; set; }
+
         public GameTabViewModel()
         {
-			Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
-			    x =>
-			    {
-					this.RaisePropertyChanged(string.Empty);
-			    });
+            DeckEditorFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.DeckEditorFont);
+            ContextFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.ContextFont);
+            NotesFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.NoteFont);
+            ChatFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.ChatFont);
+            
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
+                x =>
+                {
+                    this.RaisePropertyChanged(string.Empty);
+                });
+        }
+
+        public void UpdateFonts()
+        {
+            ViewModelLocator.GameLoader.Game.DeckEditorFont = DeckEditorFont._font;
+            ViewModelLocator.GameLoader.Game.ContextFont = ContextFont._font;
+            ViewModelLocator.GameLoader.Game.NoteFont = NotesFont._font;
+            ViewModelLocator.GameLoader.Game.ChatFont = ChatFont._font;
+        }
+    }
+
+    public class GameFontItemModel : ViewModelBase
+    {
+        public Font _font;
+        public RelayCommand RemoveFontCommand { get; set; }
+
+        public GameFontItemModel(Font f)
+        {
+            _font = f;
+            RemoveFontCommand = new RelayCommand(RemoveFont);
+            RaisePropertyChanged("FontControlVisibility");
+        }
+
+        public int Size
+        {
+            get
+            {
+                if (_font == null) return 0;
+                return _font.Size;
+            }
+            set
+            {
+                if (_font.Size == value) return;
+                _font.Size = value;
+                RaisePropertyChanged("Size");
+            }
+        }
+       
+        public Asset Asset
+        {
+            get
+            {
+                if (_font == null) return null;
+
+                return Asset.Load(_font.Src);
+            }
+            set
+            {
+                if (_font == null)
+                    _font = new Font();
+                _font.Src = value?.FullPath;
+                ViewModelLocator.GameTabViewModel.UpdateFonts();
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Path");
+                RaisePropertyChanged("Size");
+                RaisePropertyChanged("FontControlVisibility");
+            }
+        }
+
+        public void RemoveFont()
+        {
+            _font = null;
+            ViewModelLocator.GameTabViewModel.UpdateFonts();
+            RaisePropertyChanged("FontControlVisibility");
+            RaisePropertyChanged("Size");
+            RaisePropertyChanged("Asset");
+        }
+
+        public Visibility FontControlVisibility
+        {
+            get
+            {
+                return _font == null ? Visibility.Hidden : Visibility.Visible;
+            }
         }
     }
 }

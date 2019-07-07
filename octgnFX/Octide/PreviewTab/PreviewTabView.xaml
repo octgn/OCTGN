@@ -1,0 +1,425 @@
+﻿<UserControl x:Class="Octide.Views.PreviewTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:viewModel="clr-namespace:Octide.ViewModel"
+             xmlns:model="clr-namespace:Octide.ItemModel"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             mc:Ignorable="d" 
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
+             d:DesignHeight="600" d:DesignWidth="800"
+             DataContext="{Binding PreviewTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True"
+             PreviewMouseUp="ControlMouseUp"
+             >
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewModel:ActionMenuViewModel}" >
+            <views:ActionMenuView />
+        </DataTemplate>
+        
+        <DataTemplate x:Key="GroupPanel" >
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonDown="CreateActionsMenu">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Image Source="{Binding Asset.FullPath}" Height="16" HorizontalAlignment="Left" />
+                        <local:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" MinWidth="25" VerticalAlignment="Center" ClipToBounds="False" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="CollapsedGroupPanel" >
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" >
+                <StackPanel Orientation="Horizontal" >
+                    <Image Source="{Binding Asset.FullPath}" Height="16" ToolTip="{Binding Name}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CounterPanel">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding Asset.FullPath}" Height="20" />
+                <local:EditableTextBlock VerticalAlignment="Center" Text="{Binding Name}" Foreground="White" FontSize="12" MinWidth="20" Width="Auto" />
+                <Border BorderThickness="1" CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}" VerticalAlignment="Center">
+                    <Grid Height="20" Width="60">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBox Text="{Binding Default}" BorderThickness="1" BorderBrush="Gray" Background="#11000000" FontWeight="Bold"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+                        <RepeatButton Content="+" Command="{Binding IncreaseCommand}" Style="{StaticResource SpinUp}" Focusable="False" Grid.Column="1" Grid.Row="0" />
+                        <RepeatButton Content="-" Command="{Binding DecreaseCommand}" Style="{StaticResource SpinDown}" Focusable="False" Grid.Column="1" Grid.Row="1" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="200" MinHeight="200"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="300" MinWidth="300"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid ClipToBounds="False" >
+            <Border x:Name="PhaseControl" Panel.ZIndex="3" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Add Phase" Foreground="Black" Padding="0" HorizontalAlignment="Stretch" Height="25" VerticalContentAlignment="Center"
+                            Background="{StaticResource ControlFillBrush}" BorderBrush="{StaticResource ControlBorderBrush}" Command="{Binding AddPhaseCommand}" />
+                    <ListBox Grid.Row="1" Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding Phases}" SelectedValue="{Binding Selection}" 
+                     Padding="0" HorizontalContentAlignment="Right" Background="Transparent" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <local:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" Padding="3" Background="#444444" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" ClipToBounds="False" />
+                                    <Border BorderThickness="3" BorderBrush="Gray">
+                                        <Image Source="{Binding Asset.FullPath}" StretchDirection="DownOnly" MaxHeight="50" />
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+            <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickTable, Mode=TwoWay}"  gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" >
+                <Border DataContext="{Binding TableGroup}" Background="{Binding PreviewTabViewModel.Table.BackgroundImage, Source={StaticResource Locator}}" PreviewMouseRightButtonDown="CreateActionsMenu" />
+            </ToggleButton>
+            <Viewbox Stretch="Uniform">
+                <AdornerDecorator >
+                    <AdornerDecorator.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Table.Zoom}" ScaleY="{Binding Table.Zoom}"
+                            CenterX="0" CenterY="0" />
+                            <TranslateTransform X="{Binding Table.Offset.X}"
+                                Y="{Binding Table.Offset.Y}" />
+                        </TransformGroup>
+                    </AdornerDecorator.RenderTransform>
+                    <Grid ClipToBounds="False">
+                        <Canvas x:Name="boardView" Focusable="False" MouseMove="BoardViewMove" MouseLeave="ResetCursor" Width="{Binding Table.Width}" Height="{Binding Table.Height}" 
+                                gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
+                            <Canvas DataContext="{Binding ActiveBoard}" Left="{Binding XPos, Mode=TwoWay}" Top="{Binding YPos, Mode=TwoWay}" MouseDown="BoardMouseDown" PreviewMouseUp="BoardMouseUp" >
+                                <Border Width="{Binding Width}" Height="{Binding Height}" Canvas.ZIndex="2" Background="Transparent"
+                                                BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
+                                    <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
+                                        <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0:0}, {1:0}">
+                                                    <Binding Path="XPos" />
+                                                    <Binding Path="YPos" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Border>
+                                </Border>
+                                <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}"/>
+                            </Canvas>
+                        </Canvas>
+                        <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove" MouseLeave="ResetCursor" 
+                                      gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" >
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas Left="{Binding X, Mode=TwoWay}" Top="{Binding Y,Mode=TwoWay}" PreviewMouseMove="CardMouseMove" MouseDown="CardMouseDown" PreviewMouseUp="CardMouseUp" >
+                                        <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" PreviewMouseRightButtonDown="CreateActionsMenu"
+                                                BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False" Background="Transparent">
+                                            <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
+                                                <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0}, {1:0}">
+                                                            <Binding Path="X" />
+                                                            <Binding Path="Y" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Border>
+                                        </Border>
+                                        <Rectangle Width="{Binding CardWidth}" Height="{Binding CardHeight}" RadiusX="{Binding CardCornerRadius}" RadiusY="{Binding CardCornerRadius}" >
+                                            <Rectangle.Fill>
+                                                <ImageBrush ImageSource="{Binding CardImage}" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                    </Canvas>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas Width="{Binding Table.Width}" Height="{Binding Table.Height}" ClipToBounds="False" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </Grid>
+                </AdornerDecorator>
+            </Viewbox>
+        </Grid>
+
+        <TabControl Grid.Row="2" Style="{x:Null}" Background="Black" Margin="0" Padding="0" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,4,4" Margin="2,0,2,2">
+                                    <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="White" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Border" Property="Background" Value="DarkGray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Global Tab" />
+                        <Border BorderBrush="Black" BorderThickness="1" Background="White">
+                            <local:EditableTextBlock Text="{Binding GlobalSummary}" Margin="5,0,0,0" FontSize="12" Height="16" MinWidth="25" VerticalAlignment="Center" Foreground="Black" />
+                        </Border>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding GlobalCounters}" ItemTemplate="{StaticResource CounterPanel}" SelectedValue="{Binding Selection}"
+                             Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                    <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddGlobalCounterCommand}" />
+                    <ListBox Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Disabled" Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource GroupPanel}" SelectedValue="{Binding Selection}" ItemsSource="{Binding GlobalPiles, Mode=TwoWay}"
+                                         VerticalAlignment="Stretch" Focusable="False" VerticalContentAlignment="Stretch" >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                    <Button Margin="6" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddGlobalPileCommand}" />
+                </Grid>
+            </TabItem>
+
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Player Tab" />
+                        <Border BorderBrush="Black" BorderThickness="1" Background="White">
+                            <local:EditableTextBlock Text="{Binding Summary}" Margin="5,0,0,0" FontSize="12" Height="16" MinWidth="25" VerticalAlignment="Center" Foreground="Black" />
+                        </Border>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource CounterPanel}" ItemsSource="{Binding Counters}" SelectedValue="{Binding Selection}" 
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                    <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
+
+                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
+                        <DockPanel>
+                            <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource GroupPanel}" ItemsSource="{Binding Piles, Mode=TwoWay}" SelectedValue="{Binding Selection}"
+                                         Focusable="False" VerticalAlignment="Stretch" DockPanel.Dock="Right" VerticalContentAlignment="Stretch">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                            </ListBox>
+                            <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickHand, Mode=TwoWay}" >
+                                <Grid>
+                                    <TextBlock x:Name="NewHandLabel" Text="(Click to create a Hand group)" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Hand}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}" >
+                                        <ContentControl.Style>
+                                            <Style TargetType="{x:Type ContentControl}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Hand}" Value="{x:Null}">
+                                                        <Setter Property="Opacity" Value="0.2" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                    </ContentControl>
+                                </Grid>
+                            </ToggleButton>
+                        </DockPanel>
+                    </ScrollViewer>
+                    <Button Margin="6" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddPileCommand}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Card Sizes" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}" 
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type ListBoxItem}">
+                                <DockPanel >
+                                    <local:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" Grid.Row="1" Foreground="White" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
+                                    <Image Source="{Binding Back.FullPath}" Stretch="Uniform" Margin="0 0 0 4"/>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Margin="6" Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddSizeCommand}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Game Boards" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding Boards}" SelectedValue="{Binding Selection}"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type ListBoxItem}">
+                                <DockPanel>
+                                    <local:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" Grid.Row="1" Foreground="White" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
+                                    <Image Source="{Binding Asset.FullPath}" Stretch="Uniform" Margin="0 0 0 4" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Margin="6" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddBoardCommand}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
+
+        <ContentControl Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="4" Content="{Binding Selection}" >
+            <ContentControl.Resources>
+
+
+                <DataTemplate DataType="{x:Type model:GroupItemViewModel}" >
+                    <views:GroupItemView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type model:CounterItemViewModel}" >
+                    <views:CounterItemView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type model:SizeItemViewModel}" >
+                    <views:SizeItemView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type model:BoardItemViewModel}" >
+                    <views:BoardItemView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type model:PhaseItemViewModel}" >
+                    <views:PhaseItemView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewModel:TableItemViewModel}" >
+                    <views:TableItemView />
+                </DataTemplate>
+                
+                <DataTemplate DataType="{x:Type model:ActionItemModel}" >
+                    <views:ActionView />
+                </DataTemplate>
+                
+                <DataTemplate DataType="{x:Type model:ActionSeparatorItemModel}" >
+                    <views:ActionSeparatorView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type model:ActionSubmenuItemModel}" >
+                    <views:ActionSubmenuView />
+                </DataTemplate>
+                
+            </ContentControl.Resources>
+        </ContentControl>
+
+        <Popup Grid.RowSpan="5" Grid.ColumnSpan="5" x:Name="ActionMenuPopup" Placement="MousePoint" IsOpen="False" StaysOpen="False" Focusable="False">
+
+        </Popup>
+    </Grid>
+</UserControl>

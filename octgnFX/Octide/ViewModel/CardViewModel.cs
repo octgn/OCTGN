@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
+using Octide.ItemModel;
 using Octide.Messages;
 
 namespace Octide.ViewModel
@@ -9,6 +10,20 @@ namespace Octide.ViewModel
     {
         private double _x;
         private double _y;
+        private SizeItemViewModel _size;
+        private bool _isBack = true;
+
+        public bool IsBack
+        {
+            get { return _isBack; }
+            set
+            {
+                if (_isBack == value) return;
+                _isBack = value;
+                RaisePropertyChanged("IsBack");
+                RefreshValues();
+            }
+        }
 
         public double X
         {
@@ -32,11 +47,39 @@ namespace Octide.ViewModel
             }
         }
 
+        public SizeItemViewModel Size
+        {
+            get
+            {
+                if (_size == null) return ViewModelLocator.PreviewTabViewModel.DefaultSize;
+                return _size;
+            }
+            set
+            {
+                if (_size == value) return;
+                _size = value;
+                RaisePropertyChanged("Size");
+            }
+        }
+
+        public int CardCornerRadius
+        {
+            get
+            {
+                return IsBack ? Size.BackCornerRadius : Size.CornerRadius;
+            }
+        }
         public int CardWidth
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Width : 50;
+               return IsBack ? Size.BackWidth : Size.Width;
+            }
+            set
+            {
+                if (IsBack) Size.BackWidth = value;
+                else Size.Width = value;
+                RaisePropertyChanged("CardWidth");
             }
         }
 
@@ -44,15 +87,21 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Height : 50;
+               return IsBack ? Size.BackHeight : Size.Height;
+            }
+            set
+            {
+                if (IsBack) Size.BackHeight = value;
+                else Size.Height = value;
+                RaisePropertyChanged("CardHeight");
             }
         }
 
-        public string CardBack
+        public string CardImage
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Back : "";
+                return IsBack ? Size.Back.FullPath : Size.Back.FullPath;
             }
         }
 
@@ -62,9 +111,14 @@ namespace Octide.ViewModel
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
         }
 
-        internal void RefreshValues()
+        public void RefreshValues()
         {
             RaisePropertyChanged("");
+            RaisePropertyChanged("Size");
+            RaisePropertyChanged("CardWidth");
+            RaisePropertyChanged("CardHeight");
+            RaisePropertyChanged("CardImage");
+            RaisePropertyChanged("CardCornerRadius");
         }
     }
 }
