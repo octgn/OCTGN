@@ -59,39 +59,17 @@ namespace Octgn
 
             LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
-            Log.Info("Getting Data Directory");
-
-            string dataDirectory = null;
-
-            using(var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if(subKey == null) {
-                    Log.Warn("No DataDirectory found in the registory, shutting down.");
-                    MessageBox.Show("OCTGN is not installed. Please install OCTGN.", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    Application.Current.Shutdown(1);
-                    return;
-                }
-
-                dataDirectory = (string)subKey.GetValue(@"DataDirectory");
-            }
-
-            if(dataDirectory == null) {
-                Log.Warn("No DataDirectory found in the registory, shutting down.");
-                MessageBox.Show("OCTGN is not installed. Please install OCTGN.", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                Application.Current.Shutdown(1);
-                return;
-            }
-
-            Log.Info($"Found DataDirectory {dataDirectory}");
-
-            if (!Directory.Exists(dataDirectory)) {
-                Log.Info($"Creating DataDirectory {dataDirectory}");
-                Directory.CreateDirectory(dataDirectory);
-            }
-
             Log.Info("Creating Config class");
-            Config.Instance = new Config(dataDirectory);
-
-
+			try
+			{
+				Config.Instance = new Config();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(string.Format("{0}. Please install OCTGN.", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				Application.Current.Shutdown(1);
+			}
+			
             if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {
                 Log.Info($"Creating Updates directory");
                 Directory.CreateDirectory(Config.Instance.Paths.UpdatesPath);
@@ -101,7 +79,7 @@ namespace Octgn
             var isTestRelease = false;
             try
             {
-                isTestRelease = File.Exists(Path.Combine(dataDirectory, "Config", "TEST"));
+                isTestRelease = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             }
             catch(Exception ex)
             {
@@ -163,7 +141,7 @@ namespace Octgn
                     args.Event.SetUserIdentity(Prefs.Username);
                 });
                 args.Event.AddObject(Config.Instance.Paths, "Registered Paths");
-                using (var cf = new ConfigFile(Config.Instance.ConfigPath))
+                using (var cf = new ConfigFile(Config.Instance.Paths.ConfigDirectory))
                 {
                     args.Event.AddObject(cf.ConfigData, "Config File");
                 }

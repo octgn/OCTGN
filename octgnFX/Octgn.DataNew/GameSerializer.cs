@@ -432,14 +432,15 @@ namespace Octgn.DataNew
                 foreach (var s in g.scripts)
                 {
                     ret.Scripts.Add(s.src);
-                    var coll = (Def.Config.IsExternalDb)
-                        ?
-                            Def.Config.DefineCollection<GameScript>("Scripts")
-                            .OverrideRoot(x => x.Directory(""))
-                        :
-                            Def.Config.DefineCollection<GameScript>("Scripts")
-                            .OverrideRoot(x => x.Directory("GameDatabase"))
-                            .SetPart(x => x.Directory(ret.Id.ToString()));
+					var coll = (Def.Config.IsExternalDb)
+						?
+							Def.Config.DefineCollection<GameScript>("Scripts")
+							.OverrideRoot(x => x.Directory(""))
+							.SetPart(x => x.Directory(ret.Id.ToString()))
+						:
+							Def.Config.DefineCollection<GameScript>("Scripts")
+							.OverrideRoot(x => x.Directory("GameDatabase"))
+							.SetPart(x => x.Directory(ret.Id.ToString()));
                     var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     for (var index = 0; index < pathParts.Length; index++)
                     {
@@ -486,6 +487,7 @@ namespace Octgn.DataNew
                     ?
                         Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                         .OverrideRoot(x => x.Directory(""))
+						.SetPart(x => x.Directory(ret.Id.ToString()))
                     :
                        Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                        .OverrideRoot(x => x.Directory("GameDatabase"))

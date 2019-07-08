@@ -14,7 +14,6 @@ using GalaSoft.MvvmLight.Messaging;
 using Octide.Messages;
 using Octgn.DataNew.Entities;
 using Octgn.ProxyGenerator;
-using Octgn.Extentions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Octgn.ProxyGenerator.Definitions;

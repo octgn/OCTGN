@@ -130,15 +130,16 @@ namespace Octide
 		public void SetFileDb()
 		{
 			var config = new FileDbConfiguration()
-				.SetDirectory(Config.Instance.Paths.DataDirectory)
+				.SetDirectory(Path.Combine(Config.Instance.Paths.DataDirectory, "IdeDevDatabase"))
 				.SetExternalDb()
-				.DefineCollection<Game>("IdeDevDatabase")
+				.DefineCollection<Game>("Game")
+				.OverrideRoot(x => x.Directory(""))
 				.SetPart(x => x.Property(y => y.Id))
 				.SetPart(x => x.File("definition.xml"))
 				.SetSerializer<GameSerializer>()
 				.Conf()
 				.DefineCollection<Set>("Sets")
-				.OverrideRoot(x => x.Directory("IdeDevDatabase"))
+				.OverrideRoot(x => x.Directory(""))
 				.SetPart(x => x.Property(y => y.GameId))
 				.SetPart(x => x.Directory("Sets"))
 				.SetPart(x => x.Property(y => y.Id))
@@ -146,9 +147,11 @@ namespace Octide
 				.SetSerializer<SetSerializer>()
 				.Conf()
 				.DefineCollection<GameScript>("Scripts")
+				.OverrideRoot(x => x.Directory(""))
 				.SetSteril()
 				.Conf()
 				.DefineCollection<ProxyDefinition>("Proxies")
+				.OverrideRoot(x => x.Directory(""))
 				.SetSteril()
 				.Conf()
 				.SetCacheProvider<FullCacheProvider>();
@@ -159,7 +162,7 @@ namespace Octide
         public void New()
         {
             var id = Guid.NewGuid();
-            var path = Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "IdeDevDatabase", id.ToString());
+            var path = Path.Combine(Config.Instance.DataDirectory, "IdeDevDatabase", id.ToString());
             var defPath = Path.Combine(path, "definition.xml");
             var resourcePath = Path.Combine(path, "Resources");
 
@@ -191,7 +194,7 @@ namespace Octide
             XmlDocument definition = new XmlDocument();
             definition.LoadXml(Properties.Resources.definition
                 .Replace("{GUID}", id.ToString())
-                .Replace("{OCTVER}", typeof(Octgn.Library.Config).Assembly.GetName().Version.ToString()));
+                .Replace("{OCTVER}", typeof(Config).Assembly.GetName().Version.ToString()));
             definition.Save(defPath);
 
 

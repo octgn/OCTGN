@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using Octgn.DataNew.Entities;
-using Octgn.Extentions;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ViewModel;
 using System;
