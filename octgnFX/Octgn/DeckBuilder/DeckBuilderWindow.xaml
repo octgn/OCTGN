@@ -112,7 +112,11 @@
                   HorizontalAlignment="Stretch" Background="Transparent" Grid.ColumnSpan="2" />
         <Border Grid.Row="3" Margin="4,0,0,4" Padding="6" Style="{StaticResource Panel}">
             <TabControl DragLeave="TabControl_DragLeave">
-                <TabItem Header="Player">
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding Path=DeckSectionsTotalCards, ElementName=self, StringFormat='Player({0})', FallbackValue=Player}" 
+                                   Style="{Binding Parent.Header.Style, RelativeSource={RelativeSource Self}}" />
+                    </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                         <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" x:Name="PlayerCardSections"
                                       ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -120,7 +124,11 @@
                         <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                     </ScrollViewer>
                 </TabItem>
-                <TabItem Header="Global">
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding Path=DeckSharedSectionsTotalCards, ElementName=self, StringFormat='Global({0})', FallbackValue=Global}" 
+                                   Style="{Binding Parent.Header.Style, RelativeSource={RelativeSource Self}}" />
+                    </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                         <ItemsControl ItemsSource="{Binding DeckSharedSections, ElementName=self}" x:Name="GlobalCardSections"
                                       ScrollViewer.VerticalScrollBarVisibility="Visible"
