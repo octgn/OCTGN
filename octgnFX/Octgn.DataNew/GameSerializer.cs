@@ -51,7 +51,7 @@ namespace Octgn.DataNew
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
-							  CardSizes = new Dictionary<string, CardSize>(),
+                              CardSizes = new Dictionary<string, CardSize>(),
                               GameBoards = new Dictionary<string, GameBoard>(),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
@@ -80,7 +80,8 @@ namespace Octgn.DataNew
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
                               Scripts = new List<string>(),
-							  Modes = new List<GameMode>(),
+                              Modes = new List<GameMode>(),
+
                           };
             var defSize = new CardSize
             {
@@ -110,51 +111,67 @@ namespace Octgn.DataNew
             ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
             ret.Table.Height = Int32.Parse(g.table.height);
             ret.Table.Width = Int32.Parse(g.table.width);
-			#endregion table
-			#region gameBoards
-			if (g.gameboards == null)
-			{
-				var position = g.table.boardPosition.Split(',');
-				var defBoard = new GameBoard
-				{
-					Name = "Default",
-					Source = Path.Combine(directory, g.table.board),
-					XPos = double.Parse(position[0]),
-					YPos = double.Parse(position[1]),
-					Width = double.Parse(position[2]),
-					Height = double.Parse(position[3])
-				};
-				ret.GameBoards.Add("", defBoard);
-			}
-			else
-			{
-				var defaultBoard = new GameBoard
-				{
-					Name = g.gameboards.name,
-					Source = Path.Combine(directory, g.gameboards.src),
-					XPos = int.Parse(g.gameboards.x),
-					YPos = int.Parse(g.gameboards.y),
-					Width = int.Parse(g.gameboards.width),
-					Height = int.Parse(g.gameboards.height),
-				};
-				ret.GameBoards.Add("", defaultBoard);
-				if (g.gameboards.gameboard != null)
-				{
-					foreach (var board in g.gameboards.gameboard)
-					{
-						var b = new GameBoard
-						{
-							Name = board.name,
-							XPos = int.Parse(board.x),
-							YPos = int.Parse(board.y),
-							Width = int.Parse(board.width),
-							Height = int.Parse(board.height),
-							Source = Path.Combine(directory, board.src)
-						};
-						ret.GameBoards.Add(board.name, b);
-					}
-				}
-			}
+            #endregion table
+            #region gameBoards
+            if (g.gameboards == null)
+            {
+                try
+                {
+                    // if the game doesn't have the gameboards element, check for the default board in the table property
+                    var position = g.table.boardPosition.Split(',');
+                    var defBoard = new GameBoard
+                    {
+                        Name = "Default",
+                        Source = Path.Combine(directory, g.table.board),
+                        XPos = double.Parse(position[0]),
+                        YPos = double.Parse(position[1]),
+                        Width = double.Parse(position[2]),
+                        Height = double.Parse(position[3])
+                    };
+                    ret.GameBoards.Add("", defBoard);
+                }
+                catch
+                {
+                    // ignores this game board instead of invalidating the entire game definition
+                }
+            }
+            else
+            {
+                try
+                {
+                    var defaultBoard = new GameBoard
+                    {
+                        Name = g.gameboards.name,
+                        Source = Path.Combine(directory, g.gameboards.src),
+                        XPos = int.Parse(g.gameboards.x),
+                        YPos = int.Parse(g.gameboards.y),
+                        Width = int.Parse(g.gameboards.width),
+                        Height = int.Parse(g.gameboards.height),
+                    };
+                    ret.GameBoards.Add("", defaultBoard);
+                }
+                catch
+                {
+                    // xsd can't make these properties mandatory so ignore the default board if something's missing
+                }
+
+                if (g.gameboards.gameboard != null)
+                {
+                    foreach (var board in g.gameboards.gameboard)
+                    {
+                        var b = new GameBoard
+                        {
+                            Name = board.name,
+                            XPos = int.Parse(board.x),
+                            YPos = int.Parse(board.y),
+                            Width = int.Parse(board.width),
+                            Height = int.Parse(board.height),
+                            Source = Path.Combine(directory, board.src)
+                        };
+                        ret.GameBoards.Add(board.name, b);
+                    }
+                }
+            }
             #endregion gameBoards
             #region shared
             if (g.shared != null)
@@ -384,7 +401,7 @@ namespace Octgn.DataNew
                             cardSize.BackWidth = ret.CardSize.Width;
                         if (cardSize.BackCornerRadius < 0)
                             cardSize.BackCornerRadius = ret.CardSize.CornerRadius;
-						ret.CardSizes.Add(cardSize.Name,cardSize);
+                        ret.CardSizes.Add(cardSize.Name, cardSize);
                     }
                 }
             }
@@ -424,15 +441,15 @@ namespace Octgn.DataNew
                 foreach (var s in g.scripts)
                 {
                     ret.Scripts.Add(s.src);
-					var coll = (Def.Config.IsExternalDb)
-						?
-							Def.Config.DefineCollection<GameScript>("Scripts")
-							.OverrideRoot(x => x.Directory(""))
-							.SetPart(x => x.Directory(ret.Id.ToString()))
-						:
-							Def.Config.DefineCollection<GameScript>("Scripts")
-							.OverrideRoot(x => x.Directory("GameDatabase"))
-							.SetPart(x => x.Directory(ret.Id.ToString()));
+                    var coll = (Def.Config.IsExternalDb)
+                        ?
+                            Def.Config.DefineCollection<GameScript>("Scripts")
+                            .OverrideRoot(x => x.Directory(""))
+                            .SetPart(x => x.Directory(ret.Id.ToString()))
+                        :
+                            Def.Config.DefineCollection<GameScript>("Scripts")
+                            .OverrideRoot(x => x.Directory("GameDatabase"))
+                            .SetPart(x => x.Directory(ret.Id.ToString()));
                     var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     for (var index = 0; index < pathParts.Length; index++)
                     {
@@ -479,7 +496,7 @@ namespace Octgn.DataNew
                     ?
                         Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                         .OverrideRoot(x => x.Directory(""))
-						.SetPart(x => x.Directory(ret.Id.ToString()))
+                        .SetPart(x => x.Directory(ret.Id.ToString()))
                     :
                        Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                        .OverrideRoot(x => x.Directory("GameDatabase"))
@@ -750,7 +767,7 @@ namespace Octgn.DataNew
             }
             #endregion phases
             #region gameBoards
-            if (game.GameBoards != null || game.GameBoards.Count > 0)
+            if (game.GameBoards != null && game.GameBoards.Count > 0)
             {
                 var gameboards = new gameGameboards();
                 var boardList = new List<gameBoardDef>();
@@ -1325,12 +1342,12 @@ namespace Octgn.DataNew
                 var game = Game ?? DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var c in doc.Document.Descendants("card"))
                 {
-					var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value,c.Attribute("id").Value, "",game.CardSizes[""],new Dictionary<string, CardPropertySet>());
+                    var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value, c.Attribute("id").Value, "", game.CardSizes[""], new Dictionary<string, CardPropertySet>());
 
                     var cs = c.Attribute("size");
                     if (cs != null)
                     {
-						if(game.CardSizes.ContainsKey(cs.Value) == false)
+                        if (game.CardSizes.ContainsKey(cs.Value) == false)
                             throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
 
                         card.Size = game.CardSizes[cs.Value];
