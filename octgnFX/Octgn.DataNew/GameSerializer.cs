@@ -110,59 +110,51 @@ namespace Octgn.DataNew
             ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
             ret.Table.Height = Int32.Parse(g.table.height);
             ret.Table.Width = Int32.Parse(g.table.width);
-            #endregion table
-            #region gameBoards
-            if (g.gameboards == null)
-            {
-                try
-                {
-                    var position = g.table.boardPosition.Split(',');
-                    var defBoard = new GameBoard
-                    {
-                        Name = "Default",
-                        Source = Path.Combine(directory, g.table.board),
-                        XPos = double.Parse(position[0]),
-                        YPos = double.Parse(position[1]),
-                        Width = double.Parse(position[2]),
-                        Height = double.Parse(position[3])
-                    };
-                    ret.GameBoards.Add("", defBoard);
-            }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    var defaultBoard = new GameBoard
-                    {
-                        Name = g.gameboards.name,
-                        Source = Path.Combine(directory, g.gameboards.src),
-                        XPos = int.Parse(g.gameboards.x),
-                        YPos = int.Parse(g.gameboards.y),
-                        Width = int.Parse(g.gameboards.width),
-                        Height = int.Parse(g.gameboards.height),
-                    };
-                    ret.GameBoards.Add("", defaultBoard);
-                }
-                catch { }
-                if (g.gameboards.gameboard != null)
-                {
-                    foreach (var board in g.gameboards.gameboard)
-                    {
-                        var b = new GameBoard
-                        {
-                            Name = board.name,
-                            XPos = int.Parse(board.x),
-                            YPos = int.Parse(board.y),
-                            Width = int.Parse(board.width),
-                            Height = int.Parse(board.height),
-                            Source = Path.Combine(directory, board.src)
-                        };
-                        ret.GameBoards.Add(board.name, b);
-                    }
-                }
-            }
+			#endregion table
+			#region gameBoards
+			if (g.gameboards == null)
+			{
+				var position = g.table.boardPosition.Split(',');
+				var defBoard = new GameBoard
+				{
+					Name = "Default",
+					Source = Path.Combine(directory, g.table.board),
+					XPos = double.Parse(position[0]),
+					YPos = double.Parse(position[1]),
+					Width = double.Parse(position[2]),
+					Height = double.Parse(position[3])
+				};
+				ret.GameBoards.Add("", defBoard);
+			}
+			else
+			{
+				var defaultBoard = new GameBoard
+				{
+					Name = g.gameboards.name,
+					Source = Path.Combine(directory, g.gameboards.src),
+					XPos = int.Parse(g.gameboards.x),
+					YPos = int.Parse(g.gameboards.y),
+					Width = int.Parse(g.gameboards.width),
+					Height = int.Parse(g.gameboards.height),
+				};
+				ret.GameBoards.Add("", defaultBoard);
+				if (g.gameboards.gameboard != null)
+				{
+					foreach (var board in g.gameboards.gameboard)
+					{
+						var b = new GameBoard
+						{
+							Name = board.name,
+							XPos = int.Parse(board.x),
+							YPos = int.Parse(board.y),
+							Width = int.Parse(board.width),
+							Height = int.Parse(board.height),
+							Source = Path.Combine(directory, board.src)
+						};
+						ret.GameBoards.Add(board.name, b);
+					}
+				}
+			}
             #endregion gameBoards
             #region shared
             if (g.shared != null)
