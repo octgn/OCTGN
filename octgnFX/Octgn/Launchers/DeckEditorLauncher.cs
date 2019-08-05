@@ -26,9 +26,8 @@ namespace Octgn.Launchers
         public bool Shutdown { get; private set; }
 
         public Task Launch() {
-            if (DeckPath == null) return Task.CompletedTask;
             try {
-                Deck = new MetaDeck(DeckPath);
+                Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
                 var win = new DeckBuilderWindow(Deck, true);
                 Application.Current.MainWindow = win;
                 win.Show();
