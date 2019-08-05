@@ -881,6 +881,8 @@ namespace Octgn.Play
                     this.wndManager.Visibility = Visibility.Collapsed
                         ;
                     this.backstage.Child = ui;
+					this.PhaseControl.Visibility = Visibility.Collapsed;
+					this.DeckStats.Visibility = Visibility.Collapsed;
                     this.LimitedBackstage.Visibility = Visibility.Visible;
                     backstage.Visibility = Visibility.Visible;
                     this.Menu.IsEnabled = false;
@@ -895,7 +897,9 @@ namespace Octgn.Play
             wndManager.Visibility = Visibility.Visible;
             LimitedBackstage.Visibility = Visibility.Collapsed;
             backstage.Visibility = Visibility.Collapsed;
-            this.Menu.IsEnabled = true;
+			this.PhaseControl.Visibility = Visibility.Visible;
+			this.DeckStats.Visibility = Visibility.Visible;
+			this.Menu.IsEnabled = true;
             this.Menu.Visibility = Visibility.Visible;
             backstage.Child = null;
 

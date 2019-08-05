@@ -439,10 +439,10 @@
             </TabControl>
         </Grid>
         
-        <Grid Grid.Column="0" Grid.Row="2" Margin="0 0 -280 0">
+        <Grid Grid.Column="0" Grid.Row="2" Margin="0 0 -280 0" Panel.ZIndex="6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="280"/>
             </Grid.ColumnDefinitions>
             <Grid.Style>
@@ -505,7 +505,7 @@
                     </Storyboard>
                 </Border.Resources>
                 <StackPanel MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
-                    <Border x:Name="PhaseToolBar" HorizontalAlignment="Right" BorderThickness="2" Cursor="Hand" MinWidth="100" Height="45" Opacity="0.5"
+                    <Border x:Name="PhaseToolBar" HorizontalAlignment="Right" BorderThickness="2" Cursor="Hand" Height="45" Opacity="0.5"
                             BorderBrush="{StaticResource GlassPanelBorder}" Background="{StaticResource GlassPanelBrush}" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}}"
                             MouseLeftButtonUp="LockPhaseStoryboard">
                         <StackPanel Orientation="Vertical">
@@ -513,6 +513,7 @@
                                 <Run Text="Turn" />
                                 <Run Text="{Binding TurnNumber}" />
                                 <Run Text=":" />
+                                <LineBreak/>
                                 <Run Text="{Binding ActivePlayer.Name}" Foreground="{Binding ActivePlayer.Color}" />
                             </TextBlock>
                             <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding CurrentPhase.Name}" />
@@ -560,7 +561,7 @@
                     </Border>
                 </StackPanel>
             </Border>
-            <gui:DeckStats Grid.Column="2" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}">
+            <gui:DeckStats x:Name="DeckStats"  Grid.Column="2" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}">
                 <gui:DeckStats.Style>
                     <Style>
                         <Style.Triggers>

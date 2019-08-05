@@ -143,19 +143,22 @@
 
             ValidateGameAttributes(game);
 
-            foreach (var s in game.scripts)
+            if (game.scripts != null)
             {
-                // Let's check for valid attributes
-                if (String.IsNullOrWhiteSpace(s.src))
+                foreach (var s in game.scripts)
                 {
-                    throw GenerateEmptyAttributeException("Script", "src");
-                }
+                    // Let's check for valid attributes
+                    if (String.IsNullOrWhiteSpace(s.src))
+                    {
+                        throw GenerateEmptyAttributeException("Script", "src");
+                    }
 
-                path = Path.Combine(Directory.FullName, s.src.Trim('\\', '/'));
+                    path = Path.Combine(Directory.FullName, s.src.Trim('\\', '/'));
 
-                if (!File.Exists(path))
-                {
-                    throw GenerateFileDoesNotExistException("Script", path, s.src);
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException("Script", path, s.src);
+                    }
                 }
             }
 

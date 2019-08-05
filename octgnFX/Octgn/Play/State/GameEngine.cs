@@ -506,7 +506,7 @@ namespace Octgn
                 return;
             }
 
-            Program.GameEngine.History.Name = _gameName;
+            Program.GameEngine.History.Name = DateTime.Now.Ticks.ToString();
 
             if (_historyPath == null) {
                 var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
