@@ -94,6 +94,7 @@ namespace Octgn.DeckBuilder
             newSubMenu.ItemsSource = GameManager.Get().Games;
             LoadPlugins();
             SetupAndLoadDeck(deck);
+            DeckChanged += OnCardsChanged;
         }
 
         private void SetupAndLoadDeck(IDeck deck)
@@ -251,6 +252,7 @@ namespace Octgn.DeckBuilder
                 OnPropertyChanged("Deck");
                 OnPropertyChanged("DeckSections");
                 OnPropertyChanged("DeckSharedSections");
+                InvokeDeckChangedEvent();
             }
         }
 
@@ -274,6 +276,14 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public int DeckSectionsTotalCards
+        {
+            get
+            {
+                return DeckSections.Aggregate(0, (total, x) => total += x.Quantity);
+            }
+        }
+
         public IEnumerable<ObservableSection> DeckSharedSections
         {
             get
@@ -281,6 +291,20 @@ namespace Octgn.DeckBuilder
                 if (_deck == null) return new List<ObservableSection>();
                 return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == true);
             }
+        }
+
+        public int DeckSharedSectionsTotalCards
+        {
+            get
+            {
+                return DeckSharedSections.Aggregate(0, (total, x) => total += x.Quantity);
+            }
+        }
+
+        private void OnCardsChanged(object sender, DeckChangedEventArgs e)
+        {
+            OnPropertyChanged("DeckSectionsTotalCards");
+            OnPropertyChanged("DeckSharedSectionsTotalCards");
         }
 
         public bool IsGameLoaded
@@ -374,7 +398,6 @@ namespace Octgn.DeckBuilder
             Deck = Game.CreateDeck().AsObservable();
             SleeveImage = Deck.Sleeve.GetImage();
             _deckFilename = null;
-            InvokeDeckChangedEvent();
         }
 
         private void NewDeckCommand(object sender, ExecutedRoutedEventArgs e)
@@ -550,7 +573,6 @@ namespace Octgn.DeckBuilder
             SleeveImage = Deck.Sleeve.GetImage();
             _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
-            InvokeDeckChangedEvent();
         }
 
         private void showShortcutsClick(object sender, RoutedEventArgs e)
@@ -659,6 +681,8 @@ namespace Octgn.DeckBuilder
                 ActiveSection.Cards.AddCard(element);
                 this.InvalidateVisual();
             }
+            InvokeDeckChangedEvent();
+
             // Focus section where card was added
             var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
             Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
@@ -681,8 +705,6 @@ namespace Octgn.DeckBuilder
             {
                 presenter.BringIntoView();
             }
-
-            InvokeDeckChangedEvent();
         }
 
         private void RemoveResultCard(object sender, SearchCardIdEventArgs e)
@@ -796,6 +818,7 @@ namespace Octgn.DeckBuilder
                     grid.SelectedIndex = moveUp; // -1 == no selected row, so this is safe
                 _unsaved = true;
                 e.Handled = true;
+                InvokeDeckChangedEvent();
             }
             #endregion
 
@@ -806,7 +829,6 @@ namespace Octgn.DeckBuilder
                 element = ActiveSection.Cards.Last();
                 grid.SelectedIndex = items;
                 e.Handled = true;
-                InvokeDeckChangedEvent();
             }
             // Jump to first element
             else if (e.Key == Key.Home)
@@ -857,9 +879,9 @@ namespace Octgn.DeckBuilder
                     var item = ic.SelectedItem as IMultiCard;
                     if (item == null) return;
                     ActiveSection.Cards.RemoveCard(item);
-                    InvokeDeckChangedEvent();
                 }
             }
+            InvokeDeckChangedEvent();
 
         }
 
@@ -928,6 +950,7 @@ namespace Octgn.DeckBuilder
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
+            _unsaved = true;
             e.Handled = true;
             if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeRow != null && !dragging)
             {
@@ -939,6 +962,7 @@ namespace Octgn.DeckBuilder
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
                         dragSection.Cards.RemoveCard(getCard);
+                        InvokeDeckChangedEvent();
                         DragDrop.DoDragDrop(activeRow, dragCard, DragDropEffects.All);
                     }
                     else
@@ -947,7 +971,6 @@ namespace Octgn.DeckBuilder
                         DragDrop.DoDragDrop(activeRow, dragCard, DragDropEffects.Copy);
                     }
                     dragging = false;
-
                 }
                 catch (Exception ex)
                 {
@@ -1006,6 +1029,7 @@ namespace Octgn.DeckBuilder
 
         private void DeckDrop(object sender, DragEventArgs e)
         {
+            e.Handled = true;
             if (e.Data.GetDataPresent("Card"))
             {
                 _unsaved = true;
@@ -1025,8 +1049,8 @@ namespace Octgn.DeckBuilder
                         dropSection.Cards.Move(dragCard, row.GetIndex());
                 }
                 RemoveAdorner();
-            }
-            e.Handled = true;
+                InvokeDeckChangedEvent();
+            }  
         }
         private static T FindAncestor<T>(DependencyObject Current)
             where T : DependencyObject
@@ -1073,8 +1097,6 @@ namespace Octgn.DeckBuilder
         {
             Deck = deck.AsObservable();
             SleeveImage = deck.Sleeve.GetImage();
-
-            _unsaved = true;
         }
 
         public IDeck GetLoadedDeck()
@@ -1304,25 +1326,33 @@ namespace Octgn.DeckBuilder
             RowDefinitionCollection parentRows = ParentGrid.RowDefinitions;
             ColumnDefinitionCollection parentCols = ParentGrid.ColumnDefinitions;
 
-            if (parentRows.Count == 4)
+            if (parentRows.Count == 4) // only valid if layout hasn't changed
             {
-                Double maxH = e.NewSize.Height - parentRows[3].MinHeight -
-                              parentRows[2].ActualHeight - parentRows[0].ActualHeight;
-                parentRows[1].MaxHeight = maxH - 1; // work around window resizing issue
-
-                if (e.NewSize.Height < e.PreviousSize.Height && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
+                // calculate height available for search grid 
+                Double maxH = e.NewSize.Height 
+                            - parentRows[3].MinHeight 
+                            - parentRows[2].ActualHeight 
+                            - parentRows[0].ActualHeight;
+                parentRows[1].MaxHeight = maxH - 1; // -1 required to force updating when resizing window (no idea why)
+                // speeds up grid resizing to fit minSizes when shrinking window
+                if (e.NewSize.Height < e.PreviousSize.Height 
+                    && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
                 {
-                    parentRows[1].Height = new GridLength(parentRows[1].ActualHeight - (e.PreviousSize.Height - e.NewSize.Height));
+                    parentRows[1].Height = new GridLength(self.ActualHeight);
                 }
             }
-            if (parentCols.Count == 3)
+            if (parentCols.Count == 3) // only valid if layout hasn't changed
             {
-                double maxW = e.NewSize.Width - parentCols[2].MinWidth - parentCols[1].ActualWidth;
-                parentCols[0].MaxWidth = maxW - 1; // work around window resizing issue
-
-                if (e.NewSize.Width < e.PreviousSize.Width && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
+                // calculate width available for search grid
+                double maxW = e.NewSize.Width 
+                            - parentCols[2].MinWidth 
+                            - parentCols[1].ActualWidth;
+                parentCols[0].MaxWidth = maxW - 1; // -1 required to force updating when resizing window
+                // speeds up grid resizing to fit minSizes when shrinking window
+                if (e.NewSize.Width < e.PreviousSize.Width 
+                    && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
                 {
-                    parentCols[0].Width = new GridLength(parentCols[0].ActualWidth - (e.PreviousSize.Width - e.NewSize.Width));
+                    parentCols[0].Width = new GridLength(self.ActualWidth);
                 }
             }
         }
