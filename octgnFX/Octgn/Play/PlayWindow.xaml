@@ -561,7 +561,7 @@
                     </Border>
                 </StackPanel>
             </Border>
-            <gui:DeckStats Grid.Column="2" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}">
+            <gui:DeckStats x:Name="DeckStats"  Grid.Column="2" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}">
                 <gui:DeckStats.Style>
                     <Style>
                         <Style.Triggers>
