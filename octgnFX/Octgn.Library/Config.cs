@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Runtime.Caching;
 using System.Threading;
 using log4net;
-using Microsoft.Win32;
 
 namespace Octgn.Library
 {
@@ -31,33 +30,7 @@ namespace Octgn.Library
         /// Can't call into Octgn.Library.Paths
         /// </summary>
         public Config() {
-            string dataDirectory = null;
-
-            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if (subKey == null) {
-                    throw new OctgnNotInstalledException("Octgn is missing from registry");
-                }
-
-                dataDirectory = (string)subKey.GetValue(@"DataDirectory");
-            }
-
-            if (dataDirectory == null) {
-                throw new OctgnNotInstalledException("OCTGN DataDirectory is missing from registry");
-            }
-
-            Log.Info($"Found DataDirectory {dataDirectory}");
-
-            if (!Directory.Exists(dataDirectory)) {
-                Log.Info($"Creating DataDirectory {dataDirectory}");
-                Directory.CreateDirectory(dataDirectory);
-            }
-
-            Log.Debug("Constructing");
-
-            if (string.IsNullOrWhiteSpace(dataDirectory))
-                throw new ArgumentNullException(nameof(dataDirectory));
-
-            DataDirectory = dataDirectory;
+            DataDirectory = GetDataDirectory();
 
             this.cacheLocker = new ReaderWriterLockSlim();
             this.locker = new ReaderWriterLockSlim();
@@ -135,6 +108,92 @@ namespace Octgn.Library
             } finally {
                 locker.ExitWriteLock();
             }
+        }
+
+        public const string OCTGNDATA_ENVIRONMENTALVARIABLE = "OCTGN_DATA";
+
+        private string GetDataDirectory() {
+            string dataDirectory = null;
+
+            {
+                if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                    dataDirectory = Environment.GetEnvironmentVariable(OCTGNDATA_ENVIRONMENTALVARIABLE, EnvironmentVariableTarget.Process);
+                }
+
+                if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                    dataDirectory = Environment.GetEnvironmentVariable(OCTGNDATA_ENVIRONMENTALVARIABLE, EnvironmentVariableTarget.User);
+                }
+
+                if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                    dataDirectory = Environment.GetEnvironmentVariable(OCTGNDATA_ENVIRONMENTALVARIABLE, EnvironmentVariableTarget.Machine);
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                var dir = Path.GetDirectoryName(typeof(Config).Assembly.Location);
+
+                var dataPathFile = Path.Combine(dir, "data.path");
+
+                dataDirectory = ReadDataPathFile(dataPathFile);
+
+                var writeDataPathFile = string.IsNullOrWhiteSpace(dataDirectory);
+
+                if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                    var oldLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
+
+                    var oldConfigLocation = Path.Combine(oldLocation, "Config", "settings.json");
+
+                    if (File.Exists(oldConfigLocation)) {
+                        dataDirectory = oldLocation;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                    dataDirectory = Path.Combine(dir, "Data");
+                }
+
+                if (writeDataPathFile) {
+                    Log.Info($"Writing data.path '{dataPathFile}' containing '{dataDirectory}'");
+
+                    WriteDataPathFile(dataPathFile, dataDirectory);
+                }
+            }
+
+            Log.Info($"Found DataDirectory Path {dataDirectory}");
+
+            if (!Directory.Exists(dataDirectory)) {
+                Log.Info($"Creating DataDirectory {dataDirectory}");
+
+                Directory.CreateDirectory(dataDirectory);
+            }
+
+            return dataDirectory;
+        }
+
+        private string ReadDataPathFile(string dataPathFile) {
+            if (!File.Exists(dataPathFile)) return null;
+
+            var path = File.ReadAllText(dataPathFile);
+
+            if (!string.IsNullOrWhiteSpace(path)) {
+                if (!IsDirectoryPathValid(path))
+                    throw new InvalidOperationException($"File '{dataPathFile}' is corrupt");
+            }
+
+            return path;
+        }
+
+        private void WriteDataPathFile(string dataPathFile, string path) {
+            File.WriteAllText(dataPathFile, path);
+        }
+
+        private bool IsDirectoryPathValid(string path) {
+            if (Path.GetExtension(path) != null) return false;
+            var dname = Path.GetDirectoryName(path);
+
+            if (!path.Equals(dname, StringComparison.InvariantCultureIgnoreCase)) return false;
+
+            return true;
         }
 
         #region Cache
