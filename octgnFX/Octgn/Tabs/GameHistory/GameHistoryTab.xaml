@@ -103,7 +103,7 @@
                                     DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Start Time"
                                     utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=StartTime}" Width="200"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=StartTime, StringFormat='{}{0:f}'}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Run Time"
                                     utils:GridViewSort.PropertyName="RunTime"
                                     DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
