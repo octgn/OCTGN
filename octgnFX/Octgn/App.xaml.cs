@@ -12,7 +12,6 @@ using System.Windows;
 using Exceptionless;
 using log4net.Repository.Hierarchy;
 using Octgn.Library;
-using System.Runtime.InteropServices;
 using System.Windows.Markup;
 using System.Windows.Threading;
 using Octgn.Core;
@@ -27,7 +26,6 @@ using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
 using Octgn.Communication;
-using Microsoft.Win32;
 using System.Net;
 
 namespace Octgn
@@ -60,20 +58,22 @@ namespace Octgn
             LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
             Log.Info("Creating Config class");
-			try
-			{
-				Config.Instance = new Config();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(string.Format("{0}. Please install OCTGN.", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-				Application.Current.Shutdown(1);
-			}
-			
+            try
+            {
+                Config.Instance = new Config();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("{0}. Please install OCTGN.", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Application.Current.Shutdown(1);
+            }
+
             if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {
                 Log.Info($"Creating Updates directory");
                 Directory.CreateDirectory(Config.Instance.Paths.UpdatesPath);
             }
+
+            // TODO: Show an error if Octgn 3.3 or earlier is installed
 
             // Check for test mode
             var isTestRelease = false;
@@ -272,10 +272,10 @@ namespace Octgn
         {
             if (e.Exception is UserMessageException)
             {
-				if((e.Exception as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
-					ShowErrorMessageBox("Error",e.Exception.Message);
-				else
-				    WindowManager.GrowlWindow.AddNotification(new ErrorNotification(e.Exception.Message));
+                if((e.Exception as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
+                    ShowErrorMessageBox("Error",e.Exception.Message);
+                else
+                    WindowManager.GrowlWindow.AddNotification(new ErrorNotification(e.Exception.Message));
                 e.Handled = true;
             }
             if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase))
