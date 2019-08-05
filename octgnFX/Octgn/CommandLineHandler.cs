@@ -58,6 +58,7 @@ namespace Octgn
                     return HandleProtocol(uri);
                 }
                 var tableOnly = false;
+                var editorOnly = false;
                 int? hostport = null;
                 Guid? gameid = null;
                 string deckPath = null;
@@ -66,7 +67,8 @@ namespace Octgn
                     {"t|table", x => tableOnly = true},
                     {"g|game=", x => gameid = Guid.Parse(x)},
                     {"d|deck=", x => deckPath = x},
-                    {"x|devmode", x => DevMode = true}
+                    {"x|devmode", x => DevMode = true},
+                    {"e|editor", x=> editorOnly = true}
                 };
                 try
                 {
@@ -92,7 +94,7 @@ namespace Octgn
                     }
                 }
 
-                if (deckPath != null)
+                if (deckPath != null || editorOnly)
                 {
                     return new DeckEditorLauncher(deckPath);
                 }

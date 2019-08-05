@@ -1,1 +1,1 @@
-
+Allow launching the deck editor directly with no deck specified via -e - Ben
