@@ -1,3 +1,5 @@
+Fixed slowdown when resizing deck editor in some cases - Ben
+Added card count to player/global tabs - Ben
 o8build: Don't throw an unexpeted error when a game has no scripts. (allows for basic modules with no scripts to be built)
 Fix game replay ordering - Ben
 Moved extended chat behind zoomed card - Ben
