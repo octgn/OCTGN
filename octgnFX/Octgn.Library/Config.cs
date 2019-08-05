@@ -7,6 +7,7 @@
     using System.Threading;
 
     using log4net;
+    using Microsoft.Win32;
 
     public class Config : ISimpleConfig
     {
@@ -26,9 +27,34 @@
         /// Can't call into Octgn.Core.Prefs
         /// Can't call into Octgn.Library.Paths
         /// </summary>
-        internal Config(string dataDirectory)
-        {
-            Log.Debug("Constructing");
+        public Config()
+		{
+			string dataDirectory = null;
+
+			using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN"))
+			{
+				if (subKey == null)
+				{
+					throw new OctgnNotInstalledException("Octgn is missing from registry");
+				}
+
+				dataDirectory = (string)subKey.GetValue(@"DataDirectory");
+			}
+
+			if (dataDirectory == null)
+			{
+				throw new OctgnNotInstalledException("OCTGN DataDirectory is missing from registry");
+			}
+
+			Log.Info($"Found DataDirectory {dataDirectory}");
+
+			if (!Directory.Exists(dataDirectory))
+			{
+				Log.Info($"Creating DataDirectory {dataDirectory}");
+				Directory.CreateDirectory(dataDirectory);
+			}
+
+			Log.Debug("Constructing");
 
             if (string.IsNullOrWhiteSpace(dataDirectory))
                 throw new ArgumentNullException(nameof(dataDirectory));
@@ -196,10 +222,18 @@
             }
         }
 
-        #endregion Cache
-    }
+		#endregion Cache
+	}
+	public class OctgnNotInstalledException : Exception
+	{
+		public OctgnNotInstalledException()
+		{ }
 
-    internal class NullObject
+		public OctgnNotInstalledException(string message) : base(message)
+		{ }
+	}
+
+	internal class NullObject
     {
 
     }

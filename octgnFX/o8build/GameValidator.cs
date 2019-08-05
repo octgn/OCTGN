@@ -176,7 +176,7 @@
                             throw GenerateFileDoesNotExistException("Font", path, font.src);
                         }
                     }
-                    if (font.sizeSpecified && font.size < 1)
+                    if (font.size != null && int.Parse(font.size) < 1)
                     {
                         throw new UserMessageException(string.Format("{0} Font Size must be greater than 0.", font.target));
                     }

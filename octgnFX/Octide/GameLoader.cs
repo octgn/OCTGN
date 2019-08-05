@@ -14,13 +14,18 @@ namespace Octide
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.DataNew.FileDB;
+    using Octgn.Core.DataExtensionMethods;
     using Octgn.Library;
     using Octgn.ProxyGenerator;
+    using System.Windows;
+    using System.Collections.ObjectModel;
 
     public class GameLoader : ViewModelBase
     {
         private Game game;
         private IEnumerable<Set> sets;
+        private ProxyDefinition proxyDef;
+        private String gamePath;
         private bool needsSave;
 
         public Game Game
@@ -55,6 +60,21 @@ namespace Octide
             }
         }
 
+        public ProxyDefinition ProxyDef
+        {
+            get
+            {
+                return this.proxyDef;
+            }
+            set
+            {
+                if (value == this.proxyDef) return;
+                this.proxyDef = value;
+                this.RaisePropertyChanged("ProxyDef");
+                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<ProxyDefinition>(this, this.proxyDef, value, "ProxyDef")));
+            }
+        }
+
         public String GamePath
         {
             get
@@ -68,8 +88,6 @@ namespace Octide
                 this.RaisePropertyChanged("GamePath");
             }
         }
-
-        private String gamePath;
 
         public bool ValidGame
         {
@@ -97,25 +115,59 @@ namespace Octide
 
         public bool DidManualSave { get; set; }
 
-        public GameLoader()
-        {
-            if (Directory.Exists(Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "GameDatabase", "263b2f19-fb22-4f32-82dd-3d1b28d3da3a")))
-                LoadGame(Guid.Parse("263b2f19-fb22-4f32-82dd-3d1b28d3da3a"));
-            else 
-                New();
-        }
+		public ObservableCollection<Game> IdeDevDatabaseGames
+		{
+			get
+			{
+				return new ObservableCollection<Game>(DbContext.Get().Games);
+			}
+		}
+		public GameLoader()
+		{
+			SetFileDb();
+		}
+
+		public void SetFileDb()
+		{
+			var config = new FileDbConfiguration()
+				.SetDirectory(Path.Combine(Config.Instance.Paths.DataDirectory, "IdeDevDatabase"))
+				.SetExternalDb()
+				.DefineCollection<Game>("Game")
+				.OverrideRoot(x => x.Directory(""))
+				.SetPart(x => x.Property(y => y.Id))
+				.SetPart(x => x.File("definition.xml"))
+				.SetSerializer<GameSerializer>()
+				.Conf()
+				.DefineCollection<Set>("Sets")
+				.OverrideRoot(x => x.Directory(""))
+				.SetPart(x => x.Property(y => y.GameId))
+				.SetPart(x => x.Directory("Sets"))
+				.SetPart(x => x.Property(y => y.Id))
+				.SetPart(x => x.File("set.xml"))
+				.SetSerializer<SetSerializer>()
+				.Conf()
+				.DefineCollection<GameScript>("Scripts")
+				.OverrideRoot(x => x.Directory(""))
+				.SetSteril()
+				.Conf()
+				.DefineCollection<ProxyDefinition>("Proxies")
+				.OverrideRoot(x => x.Directory(""))
+				.SetSteril()
+				.Conf()
+				.SetCacheProvider<FullCacheProvider>();
+
+			DbContext.SetContext(config);
+		}
 
         public void New()
         {
-            var id = "263b2f19-fb22-4f32-82dd-3d1b28d3da3a";
-            var path = Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "GameDatabase", id.ToString());
+            var id = Guid.NewGuid();
+            var path = Path.Combine(Config.Instance.DataDirectory, "IdeDevDatabase", id.ToString());
             var defPath = Path.Combine(path, "definition.xml");
-            var setPath = Path.Combine(path, "Sets", "071443fe-b5d1-43b4-bb3a-284c4f6d52ce" );
             var resourcePath = Path.Combine(path, "Resources");
 
             Directory.CreateDirectory(path);
             Directory.CreateDirectory(resourcePath);
-            Directory.CreateDirectory(setPath);
             
             var bg = Properties.Resources.background;
             bg.Save(Path.Combine(resourcePath, "background.jpg"));
@@ -140,85 +192,35 @@ namespace Octide
             score.Dispose();
 
             XmlDocument definition = new XmlDocument();
-            definition.LoadXml(Properties.Resources.definition.Replace("{GUID}", id.ToString()).Replace("{OCTVER}", typeof(Octgn.Library.Config).Assembly.GetName().Version.ToString()));
+            definition.LoadXml(Properties.Resources.definition
+                .Replace("{GUID}", id.ToString())
+                .Replace("{OCTVER}", typeof(Config).Assembly.GetName().Version.ToString()));
             definition.Save(defPath);
 
-            XmlDocument set = new XmlDocument();
-            set.LoadXml(Properties.Resources.set.Replace("{GAMEID}", id.ToString()));
-            set.Save(Path.Combine(setPath, "set.xml"));
 
             XmlDocument proxydef = new XmlDocument();
             definition.LoadXml(Properties.Resources.proxydef);
             definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
-
-            LoadGame(Guid.Parse(id));
-            NeedsSave = true;
-            DidManualSave = false;
+			RaisePropertyChanged("IdeDevDatabaseGames");
         }
         
+		public void ImportGame(string directory)
+		{
+			NeedsSave = false;
+			DidManualSave = true;
+		}
 
-        public void LoadGame(string filename)
-        {
-            var file = new FileInfo(filename);
-            var gameSerializer = new GameSerializer();
-            var setSerializer = new SetSerializer();
+		public void LoadGame(Game game)
+		{
 
-            try {
-                Game = (Game)gameSerializer.Deserialize(filename);
-                GamePath = Game.InstallPath;
+			NeedsSave = false;
+			DidManualSave = true;
 
-                /// Associate any <see cref="Octgn.DataNew.Entities.Set"/>s deserialized with this serializer with the <see cref="Octgn.DataNew.Entities.Game"/>
-                /// we just deserialized
-                setSerializer.Game = Game;
-
-                Sets = file.Directory
-                    .EnumerateFiles("set.xml", SearchOption.AllDirectories)
-                    .Select(setFile => (Set)setSerializer.Deserialize(setFile.FullName))
-                    .ToArray();
-
-            } catch (Exception) {
-                Game = null;
-                GamePath = string.Empty;
-                Sets = null;
-            }
-        }
-
-        public void LoadGame(Guid guid)
-        {
-            NeedsSave = false;
-            DidManualSave = true;
-
-
-            var g = new Octgn.DataNew.GameSerializer();
-            try
-            {
-                Game = DbContext.Get().GameById(guid);
-                GamePath = Game.InstallPath;
-                Sets = DbContext.Get().SetQuery.By(x => x.GameId, Op.Eq, Game.Id);
-            }
-            catch (System.Exception)
-            {
-                GamePath = "";
-            }
-        }
-
-/*
-            var g = new Octgn.DataNew.GameSerializer();
-            g.Def = new CollectionDefinition<Game>(conf, "IdeDevDatabase");
-            try
-            {
-                GamePath = new FileInfo(filename).Directory.FullName;
-                Game = (Game)g.Deserialize(filename);
-                Sets = Directory.EnumerateFiles(Path.GetDirectoryName(filename), "set.xml", SearchOption.AllDirectories).Select(x =>
-                {
-                    var s = new Octgn.DataNew.SetSerializer();
-                    s.Def = new CollectionDefinition<Set>(conf, "IdeDevDatabase");
-                    return (Set)s.Deserialize(x);
-                    }
-                );
-            }
-        } */
-
+			Game = game;
+			GamePath = Game.InstallPath;
+			Sets = Game.Sets().ToList();
+			ProxyDef = Game.GetCardProxyDef();
+		}
         public void SaveGame()
         {
          //   if (!NeedsSave)

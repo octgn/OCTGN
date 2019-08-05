@@ -84,27 +84,20 @@
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
+    <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommonServiceLocator.2.0.4\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Elysium, Version=2.0.1042.4, Culture=neutral, PublicKeyToken=afa220db249e5b15, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Elysium.Theme.2.0.4\lib\net45\Elysium.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Exceptionless, Version=4.0.1955.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.4.0.1955\lib\net45\Exceptionless.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
-    <Reference Include="Exceptionless.Wpf, Version=4.0.1955.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.Wpf.4.0.1955\lib\net45\Exceptionless.Wpf.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
     <Reference Include="GongSolutions.Wpf.DragDrop, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\gong-wpf-dragdrop.1.1.0\lib\net46\GongSolutions.Wpf.DragDrop.dll</HintPath>
@@ -115,6 +108,7 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
     </Reference>
@@ -128,36 +122,39 @@
       <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -173,50 +170,147 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssetManager.cs" />
+    <Compile Include="DocumentTab\DocumentItemViewModel.cs" />
+    <Compile Include="DocumentTab\DocumentItemView.xaml.cs">
+      <DependentUpon>DocumentItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GameLoader.cs" />
+    <Compile Include="PreviewTab\ActionItemModel.cs" />
+    <Compile Include="PreviewTab\BoardItemViewModel.cs" />
+    <Compile Include="SetTab\CardTab\SetCardAltItemViewModel.cs" />
+    <Compile Include="SetTab\CardTab\SetCardAltItemView.xaml.cs">
+      <DependentUpon>SetCardAltItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\CardTab\SetCardPropertyItemViewModel.cs" />
+    <Compile Include="SetTab\CardTab\SetCardItemViewModel.cs" />
+    <Compile Include="PreviewTab\CounterItemViewModel.cs" />
+    <Compile Include="PreviewTab\GroupItemViewModel.cs" />
+    <Compile Include="ItemModel\AssetItemModel.cs" />
+    <Compile Include="SetTab\CardTab\SetCardItemView.xaml.cs">
+      <DependentUpon>SetCardItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\PackageTab\SetPackagePropertyItemViewModel.cs" />
+    <Compile Include="SetTab\PackageTab\SetPackagePickItemViewModel.cs" />
+    <Compile Include="SetTab\PackageTab\SetPackageOptionItemViewModel.cs" />
+    <Compile Include="SetTab\PackageTab\SetPackageOptionsItemViewModel.cs" />
+    <Compile Include="SetTab\PackageTab\SetPackageItemViewModel.cs" />
+    <Compile Include="PreviewTab\PhaseItemViewModel.cs" />
+    <Compile Include="PropertyTab\PropertyItemViewModel.cs" />
+    <Compile Include="ProxyTab\ProxyItemModel.cs" />
+    <Compile Include="SetTab\SetItemViewModel.cs" />
+    <Compile Include="PreviewTab\SizeItemViewModel.cs" />
+    <Compile Include="Messages\PropertyChangeMessages.cs" />
     <Compile Include="Messages\MouseWheelTableZoom.cs" />
-    <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="NInjectServiceLocator.cs" />
+    <Compile Include="PropertyTab\PropertyItemView.xaml.cs">
+      <DependentUpon>PropertyItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\SetItemView.xaml.cs">
+      <DependentUpon>SetItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShellManager.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="SoundTab\SoundItemViewModel.cs" />
+    <Compile Include="SoundTab\SoundTabView.xaml.cs">
+      <DependentUpon>SoundTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SymbolTab\SymbolItemViewModel.cs" />
+    <Compile Include="SymbolTab\SymbolItemView.xaml.cs">
+      <DependentUpon>SymbolItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\AssetControl.cs" />
+    <Compile Include="Utils\KeyInputTextBox.cs" />
+    <Compile Include="Utils\IdeListBoxItem.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Utils\EditableTextBlock.cs" />
+    <Compile Include="Utils\EditableTextBlockAdorner.cs" />
+    <Compile Include="PreviewTab\ActionMenuViewModel.cs" />
     <Compile Include="ViewModel\AssetsTabViewModel.cs" />
     <Compile Include="ViewModel\CardViewModel.cs" />
-    <Compile Include="ViewModel\CounterViewModel.cs" />
-    <Compile Include="ViewModel\SetTabViewModel.cs" />
-    <Compile Include="ViewModel\SizeTabViewModel.cs" />
-    <Compile Include="ViewModel\PropertyTabViewModel.cs" />
-    <Compile Include="ViewModel\GroupViewModel.cs" />
+    <Compile Include="PreviewTab\ActionViewModel.cs" />
+    <Compile Include="ProxyTab\ProxyTextBlockViewModel.cs" />
+    <Compile Include="ProxyTab\ProxyOverlayViewModel.cs" />
+    <Compile Include="SoundTab\SoundTabViewModel.cs" />
+    <Compile Include="DocumentTab\DocumentTabViewModel.cs" />
+    <Compile Include="SymbolTab\SymbolTabViewModel.cs" />
+    <Compile Include="ProxyTab\ProxyTabViewModel.cs" />
+    <Compile Include="SetTab\SetTabViewModel.cs" />
+    <Compile Include="PropertyTab\PropertyTabViewModel.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\SplashViewModel.cs" />
-    <Compile Include="ViewModel\PreviewCardViewModel.cs" />
-    <Compile Include="ViewModel\TableTabViewModel.cs" />
+    <Compile Include="ViewModel\LoaderViewModel.cs" />
+    <Compile Include="PreviewTab\PreviewTabViewModel.cs" />
+    <Compile Include="PreviewTab\TableItemViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WindowLocator.cs" />
+    <Compile Include="PreviewTab\ActionMenuView.xaml.cs">
+      <DependentUpon>ActionMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreviewTab\ActionSeparatorView.xaml.cs">
+      <DependentUpon>ActionSeparatorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreviewTab\ActionSubmenuView.xaml.cs">
+      <DependentUpon>ActionSubmenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AssetsTabView.xaml.cs">
       <DependentUpon>AssetsTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CounterView.xaml.cs">
-      <DependentUpon>CounterView.xaml</DependentUpon>
+    <Compile Include="PreviewTab\ActionView.xaml.cs">
+      <DependentUpon>ActionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SetTabView.xaml.cs">
+    <Compile Include="PreviewTab\CounterItemView.xaml.cs">
+      <DependentUpon>CounterItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProxyTab\ProxyTextBlockView.xaml.cs">
+      <DependentUpon>ProxyTextBlockView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProxyTab\ProxyOverlayView.xaml.cs">
+      <DependentUpon>ProxyOverlayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SoundTab\SoundItemView.xaml.cs">
+      <DependentUpon>SoundItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentTab\DocumentTabView.xaml.cs">
+      <DependentUpon>DocumentTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SymbolTab\SymbolTabView.xaml.cs">
+      <DependentUpon>SymbolTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProxyTab\ProxyTabView.xaml.cs">
+      <DependentUpon>ProxyTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\CardTab\SetCardProxyView.xaml.cs">
+      <DependentUpon>SetCardProxyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\SetMarkersView.xaml.cs">
+      <DependentUpon>SetMarkersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\PackageTab\SetPackageItemView.xaml.cs">
+      <DependentUpon>SetPackageItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\SetTabView.xaml.cs">
       <DependentUpon>SetTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SizeTabView.xaml.cs">
-      <DependentUpon>SizeTabView.xaml</DependentUpon>
+    <Compile Include="PreviewTab\BoardItemView.xaml.cs">
+      <DependentUpon>BoardItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PropertyTabView.xaml.cs">
+    <Compile Include="PreviewTab\PhaseItemView.xaml.cs">
+      <DependentUpon>PhaseItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreviewTab\SizeItemView.xaml.cs">
+      <DependentUpon>SizeItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyTab\PropertyTabView.xaml.cs">
       <DependentUpon>PropertyTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GroupView.xaml.cs">
-      <DependentUpon>GroupView.xaml</DependentUpon>
+    <Compile Include="PreviewTab\GroupItemView.xaml.cs">
+      <DependentUpon>GroupItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PreviewTabView.xaml.cs">
+    <Compile Include="PreviewTab\PreviewTabView.xaml.cs">
       <DependentUpon>PreviewTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TableTabView.xaml.cs">
-      <DependentUpon>TableTabView.xaml</DependentUpon>
+    <Compile Include="PreviewTab\TableItemView.xaml.cs">
+      <DependentUpon>TableItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GameTabView.xaml.cs">
       <DependentUpon>GameTabView.xaml</DependentUpon>
@@ -224,8 +318,8 @@
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SplashWindow.xaml.cs">
-      <DependentUpon>SplashWindow.xaml</DependentUpon>
+    <Compile Include="Views\LoaderWindow.xaml.cs">
+      <DependentUpon>LoaderWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -246,7 +340,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -278,39 +374,127 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="DocumentTab\DocumentItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PropertyTab\PropertyItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\CardTab\SetCardAltItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\CardTab\SetCardItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\SetItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SoundTab\SoundTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SymbolTab\SymbolItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Theme\StyleTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PreviewTab\ActionMenuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\ActionSeparatorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\ActionSubmenuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\AssetsTabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CounterView.xaml">
+    <Page Include="PreviewTab\ActionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SetTabView.xaml">
+    <Page Include="PreviewTab\CounterItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SizeTabView.xaml">
+    <Page Include="ProxyTab\ProxyTextBlockView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PropertyTabView.xaml">
+    <Page Include="ProxyTab\ProxyOverlayView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\GroupView.xaml">
+    <Page Include="SoundTab\SoundItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PreviewTabView.xaml">
+    <Page Include="DocumentTab\DocumentTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TableTabView.xaml">
+    <Page Include="SymbolTab\SymbolTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProxyTab\ProxyTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\CardTab\SetCardProxyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\SetMarkersView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\PackageTab\SetPackageItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SetTab\SetTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\BoardItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\PhaseItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\SizeItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PropertyTab\PropertyTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\GroupItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\PreviewTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\TableItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -322,9 +506,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SplashWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\LoaderWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Theme\Colors.xaml">
       <SubType>Designer</SubType>

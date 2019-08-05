@@ -166,7 +166,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="size" type="xs:unsignedInt" use="optional">
+                  <xs:attribute name="size" type="xs:integer" use="optional">
                     <xs:annotation>
                       <xs:documentation>
                         The size of the font
@@ -355,7 +355,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="playerCount" type="xs:int" use="required">
+                  <xs:attribute name="playerCount" type="xs:integer" use="required">
                     <xs:annotation>
                       <xs:documentation>
                         Number of players this game mode uses.
@@ -512,6 +512,13 @@
                 </xs:annotation>
               </xs:element>
             </xs:sequence>
+            <xs:attribute name="name" type="xs:string" default="Default">
+              <xs:annotation>
+                <xs:documentation>
+                  The name of the board.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
             <xs:attribute name="src" type="xs:string">
               <xs:annotation>
                 <xs:documentation>

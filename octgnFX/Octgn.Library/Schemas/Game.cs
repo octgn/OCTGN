@@ -1542,9 +1542,7 @@ public partial class gameFont {
     
     private string srcField;
     
-    private uint sizeField;
-    
-    private bool sizeFieldSpecified;
+    private string sizeField;
     
     private fonttarget targetField;
     
@@ -1560,24 +1558,13 @@ public partial class gameFont {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public uint size {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string size {
         get {
             return this.sizeField;
         }
         set {
             this.sizeField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool sizeSpecified {
-        get {
-            return this.sizeFieldSpecified;
-        }
-        set {
-            this.sizeFieldSpecified = value;
         }
     }
     
@@ -1778,7 +1765,7 @@ public partial class gameGameMode {
     
     private string imageField;
     
-    private int playerCountField;
+    private string playerCountField;
     
     private boolean usetwosidedtableField;
     
@@ -1823,8 +1810,8 @@ public partial class gameGameMode {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public int playerCount {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string playerCount {
         get {
             return this.playerCountField;
         }
@@ -2053,6 +2040,8 @@ public partial class gameGameboards {
     
     private gameBoardDef[] gameboardField;
     
+    private string nameField;
+    
     private string srcField;
     
     private string xField;
@@ -2063,6 +2052,10 @@ public partial class gameGameboards {
     
     private string heightField;
     
+    public gameGameboards() {
+        this.nameField = "Default";
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("gameboard", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public gameBoardDef[] gameboard {
@@ -2071,6 +2064,18 @@ public partial class gameGameboards {
         }
         set {
             this.gameboardField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("Default")]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
         }
     }
     

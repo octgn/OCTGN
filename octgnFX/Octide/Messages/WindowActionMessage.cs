@@ -18,6 +18,6 @@
 
     public enum WindowActionType
     {
-        Close,Show,Create,SetMain
+        Close,Show,Create,SetMain,Hide
     }
 }

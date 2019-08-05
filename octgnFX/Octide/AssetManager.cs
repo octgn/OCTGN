@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
 
     using GalaSoft.MvvmLight.Messaging;
 
+    using Microsoft.Win32;
     using Octgn.DataNew.Entities;
 
     using Octide.ViewModel;
@@ -43,8 +45,10 @@
 
         internal AssetManager()
         {
-            Watcher = new FileSystemWatcher();
-            Watcher.IncludeSubdirectories = true;
+            Watcher = new FileSystemWatcher
+            {
+                IncludeSubdirectories = true
+            };
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
                 x =>
                 {
@@ -66,16 +70,58 @@
             Watcher.Changed -= WatcherOnChanged;
         }
 
-        public List<Asset> Assets
+        private ObservableCollection<Asset> _assets;
+
+        public ObservableCollection<Asset> Assets
         {
             get
             {
-                if (!ViewModelLocator.GameLoader.ValidGame) return new List<Asset>();
-                var di = new DirectoryInfo(ViewModelLocator.GameLoader.GamePath);
-                var files = di.GetFiles("*.*", SearchOption.AllDirectories);
-                var ret = files.Select(Asset.Load);
-                return ret.ToList();
+                if (_assets == null)
+                {
+                    AssetManager.Instance.CollectAssets();
+                }
+                return _assets;
             }
+            set
+            {
+                _assets = value;
+            }
+        }
+
+        public Asset LoadAsset(AssetType validAssetType)
+        {
+
+            var fo = new OpenFileDialog
+            {
+                Filter = Asset.GetAssetFilters(validAssetType)
+            };
+            if ((bool)fo.ShowDialog() == false)
+            {
+                return null;
+            }
+            return LoadAsset(validAssetType, new FileInfo(fo.FileName));
+        }
+       
+        public Asset LoadAsset(AssetType validAssetType, FileInfo file)
+        {
+            if (Asset.GetAssetType(file) != validAssetType) return null;
+            var assetPath = Path.Combine(ViewModelLocator.GameLoader.GamePath, "Assets");
+            if (!Directory.Exists(assetPath))
+                Directory.CreateDirectory(assetPath);
+
+            var fileCopy = file.CopyTo(Utils.GetUniqueFilename(Path.Combine(assetPath, file.Name)));
+            var asset = Asset.Load(fileCopy);
+            Assets.Add(asset);
+            return asset;
+        }
+
+        public void CollectAssets()
+        {
+            if (!ViewModelLocator.GameLoader.ValidGame) return;
+            var di = new DirectoryInfo(ViewModelLocator.GameLoader.GamePath);
+            var files = di.GetFiles("*.*", SearchOption.AllDirectories);
+            var ret = files.Select(Asset.Load);
+            Assets = new ObservableCollection<Asset>(ret);
         }
 
         private void WatcherOnChanged(object sender, FileSystemEventArgs args)
@@ -88,20 +134,77 @@
     {
     }
 
-    public sealed class Asset : IEqualityComparer<Asset>, IEquatable<Asset>
+    public partial class Asset : IEqualityComparer<Asset>, IEquatable<Asset>
     {
-        public string FullPath { get; private set; }
-        public string RelativePath { get; private set; }
-        public string Folder { get; private set; }
-        public string FileName { get; private set; }
-        public string Extension { get; private set; }
+        public FileInfo File { get; private set; }
         public AssetType Type { get; private set; }
+
+        public string FullPath => File?.FullName;
+        public string Folder => File?.Directory.FullName;
+        public string FileName => File?.Name.Substring(0, File.Name.Length - File.Extension.Length);
+        public string Extension => File?.Extension.Substring(1);
+        public string RelativePath => File == null ? null : Utils.MakeRelativePath(ViewModelLocator.GameLoader.GamePath, File.FullName);
 
         public Asset()
         {
         }
 
         private static readonly Dictionary<string, Asset> AssetCache = new Dictionary<string, Asset>(StringComparer.InvariantCultureIgnoreCase);
+
+        public static AssetType GetAssetType(FileInfo file)
+        {
+            switch (file.Extension.Substring(1).ToLower())
+            {
+                case "jpg":
+                case "jpeg":
+                case "bmp":
+                case "png":
+                case "gif":
+                case "tiff":
+                    return AssetType.Image;
+                case "py":
+                    return AssetType.PythonScript;
+                case "xml":
+                    return AssetType.Xml;
+                case "ttf":
+                    return AssetType.Font;
+                case "o8d":
+                    return AssetType.Deck;
+                case "mp3":
+                case "oog":
+                case "wav":
+                    return AssetType.Sound;
+                case "txt":
+                case "html":
+                case "pdf":
+                    return AssetType.Document;
+                default:
+                    return AssetType.Other;
+            }
+        }
+
+        public static string GetAssetFilters(AssetType assetType)
+        {
+            switch (assetType)
+            {
+                case AssetType.Image:
+                    return "Image Files (*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG";
+                case AssetType.PythonScript:
+                    return "Python files (*.PY)|*.PY";
+                case AssetType.Xml:
+                    return "Xml files (*.XML)|*.XML";
+                case AssetType.Font:
+                    return "Font files (*.TTF)|*.TTF";
+                case AssetType.Deck:
+                    return "OCTGN Deck files (*.O8D)|*.O8D";
+                case AssetType.Document:
+                    return "Document files (*.HTML;*.PDF;*.TXT)|*.HTML;*.PDF;*.TXT";
+                case AssetType.Sound:
+                    return "Sound files (*.MP3;*.WAV;*.OGG)|*.MP3;*.WAV;*.OGG";
+                default:
+                    return "Any files|*.*";
+            }
+        }
 
         public static Asset Load(FileInfo file)
         {
@@ -112,46 +215,25 @@
                     return AssetCache[file.FullName];
                 }
 
-                var a = new Asset();
-                a.FullPath = file.FullName;
-                a.Folder = file.Directory.FullName;
-                a.FileName = file.Name.Substring(0, file.Name.Length - file.Extension.Length);
-                a.Extension = file.Extension.Substring(1);
-                a.RelativePath = Utils.MakeRelativePath(ViewModelLocator.GameLoader.GamePath, file.FullName);
-
-                switch (a.Extension.ToLower())
+                var a = new Asset
                 {
-                    case "jpg":
-                    case "jpeg":
-                    case "bmp":
-                    case "png":
-                    case "gif":
-                    case "tiff":
-                        a.Type = AssetType.Image;
-                        break;
-                    case "py":
-                        a.Type = AssetType.PythonScript;
-                        break;
-                    case "xml":
-                        a.Type = AssetType.Xml;
-                        break;
-                    case "mp3":
-                    case "oog":
-                    case "wav":
-                        a.Type = AssetType.Sound;
-                        break;
-                    default:
-                        a.Type = AssetType.Other;
-                        break;
-                }
+                    File = file
+                };
+
+                a.Type = GetAssetType(file);
+                
                 AssetCache.Add(file.FullName, a);
                 return a;
             }
         }
 
-        public static Asset Load(string file)
+        public static Asset Load(string path)
         {
-            return Load(new FileInfo(Path.GetFullPath(file)));
+            if (string.IsNullOrEmpty(path)) return null;
+            var file = new FileInfo(Path.GetFullPath(path));
+            if (file == null || path == ViewModelLocator.GameLoader.GamePath)
+                return null;
+            return Load(file);
         }
 
         public bool Equals(Asset other)
@@ -182,6 +264,13 @@
 
     public enum AssetType
     {
-        Image, PythonScript, Xml, Sound, Other
+        PythonScript,
+        Image,
+        Xml,
+        Deck,
+        Font,
+        Sound,
+        Document,
+        Other
     }
 }

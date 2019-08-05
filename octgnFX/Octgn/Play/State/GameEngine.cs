@@ -171,7 +171,7 @@ namespace Octgn
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
-            GameBoard = Definition.GameBoards["Default"];
+            GameBoard = Definition.GameBoards[""];
             ActivePlayer = null;
 
             foreach (var size in Definition.CardSizes) {
@@ -269,7 +269,7 @@ namespace Octgn
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
-            GameBoard = Definition.GameBoards["Default"];
+            GameBoard = Definition.GameBoards[""];
             ActivePlayer = null;
 
             foreach (var size in Definition.CardSizes)
