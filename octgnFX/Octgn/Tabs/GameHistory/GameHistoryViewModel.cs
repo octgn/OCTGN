@@ -56,7 +56,7 @@ namespace Octgn.Tabs.GameHistory
         }
         private string _name;
 
-        public string StartTime {
+        public DateTime StartTime {
             get => _startTime;
             private set {
                 if (value.Equals(_startTime)) {
@@ -66,7 +66,7 @@ namespace Octgn.Tabs.GameHistory
                 OnPropertyChanged(nameof(StartTime));
             }
         }
-        private string _startTime;
+        private DateTime _startTime;
 
         public string RunTime {
             get => _runTime;
@@ -140,7 +140,7 @@ namespace Octgn.Tabs.GameHistory
             Id = history.Id;
             GameId = history.GameId;
             Name = history.Name;
-            StartTime = history.DateStarted.LocalDateTime.ToString("f");
+            StartTime = history.DateStarted.LocalDateTime;
             var runTime = (history.DateSaved.LocalDateTime - history.DateStarted.LocalDateTime);
             RunTime = string.Format("{0}h {1}m", Math.Floor(runTime.TotalHours), runTime.Minutes);
             GameName = gameName;
