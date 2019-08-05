@@ -1,3 +1,12 @@
+#3.3.140.0
++ Phase bar and deck stats don't overlap the limited deck editor
++ Fixed slowdown when resizing deck editor in some cases - Ben
++ Added card count to player/global tabs - Ben
++ o8build: Don't throw an unexpeted error when a game has no scripts. (allows for basic modules with no scripts to be built)
++ Fix game replay ordering - Ben
++ Moved extended chat behind zoomed card - Ben
++ Allow launching the deck editor directly with no deck specified via -e - Ben
+
 #3.3.132.0
 + Fixed bug blocking Pass Control and Take Control actions
 
@@ -3698,6 +3707,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
