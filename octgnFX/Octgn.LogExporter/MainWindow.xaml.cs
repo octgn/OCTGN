@@ -171,21 +171,18 @@ namespace Octgn.LogExporter
             details.FillDetails();
 
             // Is octgn installed
-            if (details.IsInstalled) {
-                log.Info("Octgn Installed: " + details.InstallPath);
-                log.Info("Data Directory: " + details.DataDirectory);
-                log.Info("OCTGN Version: " + details.Version);
-                log.Info("Running Instance Count: " + details.RunningInstances);
+            log.Info("Octgn Installed: " + details.Location);
+            log.Info("Data Path File: " + details.DataPathFile);
+            log.Info("Data Directory Env Var : " + details.DataDirectoryEnvironmentalVariable);
+            log.Info("OCTGN Version: " + details.Version);
+            log.Info("Running Instance Count: " + details.RunningInstances);
 
-                var copyTo = Path.Combine(buildDirectoryPath, "settings.json");
+            var copyTo = Path.Combine(buildDirectoryPath, "settings.json");
 
-                try {
-                    File.Copy(details.ConfigPath, copyTo);
-                } catch (Exception ex) {
-                    log.Error($"Couldn't copy {details.ConfigPath} to {copyTo}", ex);
-                }
-            } else {
-                log.Info("OCTGN not installed.");
+            try {
+                File.Copy(details.ConfigPath, copyTo);
+            } catch (Exception ex) {
+                log.Error($"Couldn't copy {details.ConfigPath} to {copyTo}", ex);
             }
         }
 
@@ -198,9 +195,9 @@ namespace Octgn.LogExporter
             }
         }
 
-        // Checking the version using >= will enable forward compatibility,  
-        // however you should always compile your code on newer versions of 
-        // the framework to ensure your app works the same. 
+        // Checking the version using >= will enable forward compatibility,
+        // however you should always compile your code on newer versions of
+        // the framework to ensure your app works the same.
         private static string CheckFor45DotVersion(int releaseKey) {
             if (releaseKey >= 461808) {
                 return "4.7.2 or later";

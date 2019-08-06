@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -9,17 +8,16 @@ namespace Octgn.LogExporter
     {
         private class OctgnDetails
         {
-            // Is octgn installed
-            public bool IsInstalled { get; set; }
-
             // octgn version
             public Version Version { get; set; }
 
             // octgn install path
-            public string InstallPath { get; set; }
+            public string Location { get; set; }
 
             // octgn data directory
-            public string DataDirectory { get; set; }
+            public string DataPathFile { get; set; }
+
+            public string DataDirectoryEnvironmentalVariable { get; set; }
 
             // Is OCTGN running (all running instances)
             public int RunningInstances { get; set; }
@@ -27,31 +25,40 @@ namespace Octgn.LogExporter
             public string ConfigPath { get; set; }
 
             public void FillDetails() {
-                using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                    if (subKey == null) {
-                        IsInstalled = false;
-                        return;
-                    }
+                var assLocation = new FileInfo(typeof(OctgnDetails).Assembly.Location);
 
-                    IsInstalled = true;
+                Location = assLocation.Directory.FullName;
 
-                    InstallPath = (string)subKey.GetValue(@"InstallDirectory");
+                DataDirectoryEnvironmentalVariable = Environment.GetEnvironmentVariable("OCTGN_DATA", EnvironmentVariableTarget.Process);
 
-                    if(InstallPath == null) {
-                        InstallPath = (string)subKey.GetValue(@"Install_Dir");
-                    }
-
-                    DataDirectory = (string)subKey.GetValue(@"DataDirectory");
-                }
-                
-                if(DataDirectory == null) {
-                    DataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
+                if (DataDirectoryEnvironmentalVariable == null) {
+                    DataDirectoryEnvironmentalVariable = Environment.GetEnvironmentVariable("OCTGN_DATA", EnvironmentVariableTarget.User);
                 }
 
-                ConfigPath = Path.Combine(DataDirectory, "Config", "settings.json");
+                if (DataDirectoryEnvironmentalVariable == null) {
+                    DataDirectoryEnvironmentalVariable = Environment.GetEnvironmentVariable("OCTGN_DATA", EnvironmentVariableTarget.Machine);
+                }
 
-                if (InstallPath != null) {
-                    var octgnPath = Path.Combine(InstallPath, "Octgn.exe");
+                var dataPathFile = Path.Combine(Location, "data.path");
+
+                if (File.Exists(dataPathFile)) {
+                    DataPathFile = File.ReadAllText(dataPathFile);
+                }
+
+                if (DataPathFile == null) {
+                    DataPathFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
+
+                    if (!Directory.Exists(DataPathFile)) {
+                        DataPathFile = null;
+                    }
+                }
+
+                if (DataPathFile != null) {
+                    ConfigPath = Path.Combine(DataPathFile, "Config", "settings.json");
+                }
+
+                if (Location != null) {
+                    var octgnPath = Path.Combine(Location, "Octgn.exe");
 
                     if (File.Exists(octgnPath)) {
                         var fileVersionInfo = FileVersionInfo.GetVersionInfo(octgnPath);
