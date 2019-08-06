@@ -20,27 +20,49 @@ namespace Octgn.Library.Providers
 
             _dataPathFile = Path.Combine(_rootDirectory, "data.path");
 
-            _defaultDataDirectory = Path.Combine(_rootDirectory, "Data");
+            _defaultDataDirectory = "Data";
         }
 
         public string Get() {
             string dataDirectory = null;
 
             if (GetDataDirectoryFromEnvironment(ref dataDirectory)) {
+                Log.Info($"Got Data Directory from OCTGN_DATA: {dataDirectory}");
+
+                dataDirectory = CorrectDataPath(dataDirectory);
+
+                Log.Info($"Corrected: {dataDirectory}");
+
+                ValidateDataPath(dataDirectory);
+
                 return dataDirectory;
             }
 
-            if (GetDataDirectoryFromDataPath(ref dataDirectory)) {
+            if (GetDataDirectoryFromDataPath(ref dataDirectory, out var dataPath)) {
+                Log.Info($"Got Data Directory from {dataPath}: {dataDirectory}");
+
+                dataDirectory = CorrectDataPath(dataDirectory);
+
+                Log.Info($"Corrected: {dataDirectory}");
+
+                ValidateDataPath(dataDirectory);
+
                 return dataDirectory;
             }
 
             if (GetDataDirectoryFromOldDefault(ref dataDirectory)) {
+                Log.Info($"Got Data Directory from old default: {dataDirectory}");
+
+                WriteDataPathFile(_dataPathFile, dataDirectory);
+
                 return dataDirectory;
             }
 
-            dataDirectory = _defaultDataDirectory;
+            dataDirectory = CorrectDataPath(_defaultDataDirectory);
 
-            WriteDataPathFile(_dataPathFile, dataDirectory);
+            ValidateDataPath(dataDirectory);
+
+            WriteDataPathFile(_dataPathFile, _defaultDataDirectory);
 
             return dataDirectory;
         }
@@ -51,39 +73,21 @@ namespace Octgn.Library.Providers
         private bool GetDataDirectoryFromEnvironment(ref string dataDirectory) {
             dataDirectory = Environment.GetEnvironmentVariable(OCTGNDATA_ENVIRONMENTALVARIABLE, EnvironmentVariableTarget.Process);
 
-            if (dataDirectory != null) {
-                dataDirectory = CorrectDataPath(dataDirectory);
-
-                ValidateDataPath(dataDirectory);
-
-                return true;
-            }
+            if (dataDirectory != null) return true;
 
             dataDirectory = Environment.GetEnvironmentVariable(OCTGNDATA_ENVIRONMENTALVARIABLE, EnvironmentVariableTarget.User);
 
-            if (dataDirectory != null) {
-                dataDirectory = CorrectDataPath(dataDirectory);
-
-                ValidateDataPath(dataDirectory);
-
-                return true;
-            }
+            if (dataDirectory != null) return true;
 
             dataDirectory = Environment.GetEnvironmentVariable(OCTGNDATA_ENVIRONMENTALVARIABLE, EnvironmentVariableTarget.Machine);
 
-            if (dataDirectory != null) {
-                dataDirectory = CorrectDataPath(dataDirectory);
-
-                ValidateDataPath(dataDirectory);
-
-                return true;
-            }
+            if (dataDirectory != null) return true;
 
             return false;
         }
 
-        private bool GetDataDirectoryFromDataPath(ref string dataDirectory) {
-            dataDirectory = ReadDataPathFile(_dataPathFile);
+        private bool GetDataDirectoryFromDataPath(ref string dataDirectory, out string dataPath) {
+            dataDirectory = ReadDataPathFile(dataPath = _dataPathFile);
 
             return dataDirectory != null;
         }
@@ -95,8 +99,6 @@ namespace Octgn.Library.Providers
 
             if (File.Exists(oldConfigLocation)) {
                 dataDirectory = oldLocation;
-
-                WriteDataPathFile(_dataPathFile, dataDirectory);
 
                 return true;
             }
@@ -111,14 +113,6 @@ namespace Octgn.Library.Providers
 
             if (string.IsNullOrWhiteSpace(path))
                 throw new InvalidOperationException($"File '{dataPathFile}' is corrupt, it's empty");
-
-            Log.Info($"Read '{path}' from data path file '{dataPathFile}'");
-
-            path = CorrectDataPath(path);
-
-            Log.Info($"Corrected '{path}'");
-
-            ValidateDataPath(path);
 
             return path;
         }
