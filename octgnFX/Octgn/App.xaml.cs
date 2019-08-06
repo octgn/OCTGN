@@ -65,7 +65,10 @@ namespace Octgn
             catch (Exception ex)
             {
                 MessageBox.Show(string.Format("{0}. Please install OCTGN.", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
                 Application.Current.Shutdown(1);
+
+                return;
             }
 
             if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {
