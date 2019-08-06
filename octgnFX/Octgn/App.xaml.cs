@@ -64,9 +64,12 @@ namespace Octgn
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format("{0}. Please install OCTGN.", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                //TODO: Find a better user experience for dealing with this error. Like a wizard to fix the problem or something.
+                Log.Fatal("Error loading config", ex);
 
-                Application.Current.Shutdown(1);
+                MessageBox.Show($"Error loading Config:{Environment.NewLine}{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                Shutdown(1);
 
                 return;
             }
