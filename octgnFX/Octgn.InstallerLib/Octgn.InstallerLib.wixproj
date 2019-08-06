@@ -52,7 +52,7 @@
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
   <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug'">
-    <HeatDirectory Directory="..\Octgn\bin\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="O__HeatGenerated" DirectoryRefId="Octgn.InstallDirectory" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" Transforms="HeatGeneratedFileList.xslt" />
+    <HeatDirectory Directory="..\Octgn\bin\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="O__HeatGenerated" DirectoryRefId="INSTALLDIR" AutogenerateGuids="False" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" GenerateGuidsNow="true" Transforms="HeatGeneratedFileList.xslt" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

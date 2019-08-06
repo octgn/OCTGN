@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?define ProductVersion=!(bind.fileVersion.filE8DEE176C8DC9D5A29B290E0EF74916F)?>
+  <?define ProductVersion=!(bind.fileVersion.filDD92BED66D8CCAE233C37576A2AB17A7)?>
   <?define UpgradeCode = "d398568a-92c0-4230-959c-03bc7d136570"?>
   <Product Id="*"
            Name="Octgn v$(var.ProductVersion)"
@@ -8,7 +8,7 @@
            Version="$(var.ProductVersion)"
            Manufacturer="OCTGN"
            UpgradeCode="$(var.UpgradeCode)">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
+    <Package InstallerVersion="200" Compressed="yes" InstallPrivileges="limited" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
 
     <MajorUpgrade AllowDowngrades="yes"/>
     <MediaTemplate EmbedCab="yes" />
@@ -33,9 +33,6 @@
         Root='HKCU' Key='Software\OCTGN' Name='InstallDirectory' Win64='no'/>
     </Property>
 
-    <Property Id="DATADIRECTORY">
-    </Property>
-
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
     <Binary Id="Octgn.Installer.CustomActions.dll" SourceFile="$(var.RootPath)octgnFX\Octgn.Installer.CustomActions\bin\$(var.Configuration)\Octgn.Installer.CustomActions.CA.dll" />
@@ -48,20 +45,27 @@
       <ComponentGroupRef Id="Octgn.AppComponents"/>
       <ComponentRef Id="Octgn.DeckIconSupport"/>
       <ComponentRef Id="Octgn.CustomProtocolSupport"/>
-    </Feature>
-    <Feature Id="DataDirectoryFeature" Title="Data Directory" Level="1" Absent="disallow" ConfigurableDirectory="DATADIRECTORY">
-      <ComponentGroupRef Id="Octgn.DataDirectoryComponents"/>
+      <ComponentRef Id="InstallDirUninstaller" />
+      <ComponentRef Id="ProgramFolderUninstaller" />
     </Feature>
   </Product>
 
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLDIR" Name="OCTGN">
-        </Directory>
-      </Directory>
-      <Directory Id="PersonalFolder">
-        <Directory Id="DATADIRECTORY" Name="Octgn">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="ProgramsFolder" Name="Programs">
+          <Directory Id="INSTALLDIR" Name="OCTGN">
+            <Component Id="InstallDirUninstaller" Guid="{46BF2569-B522-4F50-807C-DC111C54BA1A}">
+              <CreateFolder Directory="INSTALLDIR" />
+              <RemoveFolder Id="RemoveInstallDir" Directory="INSTALLDIR" On="uninstall" />
+              <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+          </Directory>
+          <Component Id="ProgramFolderUninstaller" Guid="{6A5CE7B2-70E1-4E89-8B24-873EF5A2338C}">
+            <CreateFolder Directory="ProgramsFolder" />
+            <RemoveFolder Id="RemoveProgramFolder" Directory="ProgramsFolder" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+          </Component>
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
