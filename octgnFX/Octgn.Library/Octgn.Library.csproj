@@ -115,6 +115,7 @@
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\DataDirectoryProvider.cs" />
     <Compile Include="Randomness.cs" />
     <Compile Include="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
