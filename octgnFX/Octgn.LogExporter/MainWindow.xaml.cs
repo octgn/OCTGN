@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.IO.Compression;
 using System.Net.NetworkInformation;
@@ -84,15 +83,28 @@ namespace Octgn.LogExporter
                     log.Error("Error gather system info", ex);
                 }
 
-                // ---- Export the EventLog
+                // ---- Export the Logs
                 try {
-                    log.Info("Exporting Event Log...");
+                    log.Info("Exporting Logs...");
 
-                    var eventLogPath = Path.Combine(buildDirectoryPath, "Octgn.evtx");
-                    var session = EventLogSession.GlobalSession;
-                    session.ExportLogAndMessages("Octgn", PathType.LogName, "*", eventLogPath);
-                } catch (EventLogException ex) {
-                    log.Error("Event Log OCTGN not found", ex);
+                    var assLocation = new FileInfo(typeof(OctgnDetails).Assembly.Location);
+
+                    var logsFolder = assLocation.Directory.FullName;
+
+                    logsFolder = Path.Combine(logsFolder, "Logs");
+
+                    foreach (var file in Directory.EnumerateFiles(logsFolder, "log*.txt")) {
+                        var fileName = Path.GetFileName(file);
+
+                        var copyToPath = Path.Combine(buildDirectoryPath, fileName);
+
+                        log.Info($"Copying log {file} to {copyToPath}");
+
+                        File.Copy(file, copyToPath);
+                    }
+
+                } catch (Exception ex) {
+                    log.Error("Error exporting logs", ex);
                 }
 
                 // ---- Export installer logs
