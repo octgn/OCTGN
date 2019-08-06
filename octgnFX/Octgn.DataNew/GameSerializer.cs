@@ -103,9 +103,9 @@ namespace Octgn.DataNew
                 defSize.BackCornerRadius = defSize.CornerRadius;
             ret.CardSize = defSize;
             ret.CardSizes.Add("", defSize);
-            
+
             #region table
-            
+
             ret.Table = this.DeserialiseGroup(g.table, 0);
             ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
             ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
@@ -118,11 +118,17 @@ namespace Octgn.DataNew
                 try
                 {
                     // if the game doesn't have the gameboards element, check for the default board in the table property
-                    var position = g.table.boardPosition.Split(',');
+                    var position = g.table.boardPosition?.Split(',') ?? new string[] { "0", "0", "0", "0"};
+
+                    string boardPath = null;
+                    if(g.table.board != null) {
+                        boardPath = Path.Combine(directory, g.table.board);
+                    }
+
                     var defBoard = new GameBoard
                     {
                         Name = "Default",
-                        Source = Path.Combine(directory, g.table.board),
+                        Source = boardPath,
                         XPos = double.Parse(position[0]),
                         YPos = double.Parse(position[1]),
                         Width = double.Parse(position[2]),
@@ -177,8 +183,8 @@ namespace Octgn.DataNew
             if (g.shared != null)
             {
                 var player = new GlobalPlayer
-                                   { 
-                                     Counters = new List<Counter>(), 
+                                   {
+                                     Counters = new List<Counter>(),
                                      Groups = new List<Group>(),
                                      IndicatorsFormat = g.shared.summary
                                    };
@@ -746,7 +752,7 @@ namespace Octgn.DataNew
             save.noteBackgroundColor = game.NoteBackgroundColor;
             save.noteForegroundColor = game.NoteForegroundColor;
             save.scriptVersion = game.ScriptVersion?.ToString();
-            
+
             #region table
             save.table = SerializeTable(game.Table, parsedRootPath);
             #endregion table
@@ -987,7 +993,7 @@ namespace Octgn.DataNew
                     propertyDefList.Add(propertyDef);
                 }
                 save.card.property = propertyDefList.ToArray();
-                
+
                 var sizeList = new List<cardsizeDef>();
                 foreach (var c in game.CardSizes)
                 {
@@ -1430,7 +1436,7 @@ namespace Octgn.DataNew
                             propertySet.Size = game.CardSizes[acs.Value];
                         }
                         else propertySet.Size = card.Size;
-                        
+
                         var thisName = a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {
@@ -1659,7 +1665,7 @@ namespace Octgn.DataNew
             }
             return ret;
         }
-        
+
         public byte[] Serialize(object obj)
         {
             if ((obj is Set) == false)
