@@ -11,6 +11,9 @@
             <Component Id="cmp00FEB0197F65810DE7E59783EC3734A3" Guid="*">
                 <File Id="fil61ACEF379C5B78EC32DCEA01F9BF40E6" KeyPath="yes" Source="$(var.HarvestPath)\DotNetZip.dll" />
             </Component>
+            <Component Id="cmp7B0BE3A626B063173DE45AE4C8196790" Guid="*">
+                <File Id="filEC7EC7E7D439ACB9A92CCE741989C0E5" KeyPath="yes" Source="$(var.HarvestPath)\DotNetZip.pdb" />
+            </Component>
             <Component Id="cmpEF0653ED57E353A622CDE8B3D2A9D424" Guid="*">
                 <File Id="filCD8590A9F25C46B5262AF09D5E3EAD4A" KeyPath="yes" Source="$(var.HarvestPath)\DotNetZip.xml" />
             </Component>
@@ -56,14 +59,14 @@
             <Component Id="cmpE05BFC6E470B6EE144302439A89B0CE4" Guid="*">
                 <File Id="fil2C413610B32BF1081A43DBCC81CAEC22" KeyPath="yes" Source="$(var.HarvestPath)\GalaSoft.MvvmLight.xml" />
             </Component>
-            <Component Id="cmpDE0291453308F3E9737547968F02B258" Guid="*">
-                <File Id="fil777B7D530B5893C45BC8513BD7F3FF0B" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.Wpf.DragDrop.dll" />
+            <Component Id="cmp58737FDFC7E23849B2D152CBA7FDB676" Guid="*">
+                <File Id="filD338B5F439B7407D7B399DF666D1F612" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.WPF.DragDrop.dll" />
             </Component>
-            <Component Id="cmp888DCAF68C55AA61C53A24F7108192FB" Guid="*">
-                <File Id="fil216E6FB0849C0E4C5CA92483ED197397" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.Wpf.DragDrop.pdb" />
+            <Component Id="cmpF5483F5DAAFEAE4757FC6F9E0C525C7C" Guid="*">
+                <File Id="fil7FE39DAD45D2EB30034C1424F17A9360" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.WPF.DragDrop.pdb" />
             </Component>
-            <Component Id="cmpB0A9E3DC6FFC513D2C7748BFEE2B0882" Guid="*">
-                <File Id="fil33C53F4FD320476C301FB1AFA7E75322" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.Wpf.DragDrop.xml" />
+            <Component Id="cmpFA400C14857DB9CC2C3321D2E26F9856" Guid="*">
+                <File Id="filD3E3546DE3E3164743CBC9CCB78EDAB9" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.WPF.DragDrop.xml" />
             </Component>
             <Component Id="cmpF907B66B1268B8DD79A62EC3047BE252" Guid="*">
                 <File Id="filEE591992D589D5FA5647D0F39C8C60D5" KeyPath="yes" Source="$(var.HarvestPath)\ICSharpCode.AvalonEdit.dll" />
@@ -262,6 +265,15 @@
             </Component>
             <Component Id="cmpAD590BDE8A1BCB5DAA5DC20010E96205" Guid="*">
                 <File Id="fil7E5B8F3FFE8D39CAEF55DC995DB89885" KeyPath="yes" Source="$(var.HarvestPath)\OCTGN.exe.config" />
+            </Component>
+            <Component Id="cmpAB04D0D5A80BAAA799C2A29A48DDBB0E" Guid="*">
+                <File Id="fil68B4F6D7867B40E2C3B4D6F454692D98" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Launcher.exe" />
+            </Component>
+            <Component Id="cmp07BD1A3483391918329F330533124221" Guid="*">
+                <File Id="fil347EC0CA42C57176E1C809EC729D9368" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Launcher.exe.config" />
+            </Component>
+            <Component Id="cmpDB34E5960433499FB160AF072994DFF2" Guid="*">
+                <File Id="filF7660E34BAF4C017CCE15323C5024A11" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Launcher.pdb" />
             </Component>
             <Component Id="cmpEC3CB70282ACA2DFC8D4AD65F5BF908F" Guid="*">
                 <File Id="fil01816CFA917D0D3D9653B80A8EFA707F" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Library.dll" />
@@ -835,6 +847,7 @@
             <ComponentRef Id="cmp5D1765A0797C443BA4D4DAACD41EBE71" />
             <ComponentRef Id="cmp5DB1CBC551A28B57E9815C68589F6965" />
             <ComponentRef Id="cmp00FEB0197F65810DE7E59783EC3734A3" />
+            <ComponentRef Id="cmp7B0BE3A626B063173DE45AE4C8196790" />
             <ComponentRef Id="cmpEF0653ED57E353A622CDE8B3D2A9D424" />
             <ComponentRef Id="cmp26C2ACC01C8234137FDD0A39A3512F9C" />
             <ComponentRef Id="cmp2C8FA5961211114F74624E05F3F8A67E" />
@@ -850,9 +863,9 @@
             <ComponentRef Id="cmp3F5DFAB380A3BCC96473FFF02194D101" />
             <ComponentRef Id="cmp7985962D6D876DD8EC3A1267854DBBBA" />
             <ComponentRef Id="cmpE05BFC6E470B6EE144302439A89B0CE4" />
-            <ComponentRef Id="cmpDE0291453308F3E9737547968F02B258" />
-            <ComponentRef Id="cmp888DCAF68C55AA61C53A24F7108192FB" />
-            <ComponentRef Id="cmpB0A9E3DC6FFC513D2C7748BFEE2B0882" />
+            <ComponentRef Id="cmp58737FDFC7E23849B2D152CBA7FDB676" />
+            <ComponentRef Id="cmpF5483F5DAAFEAE4757FC6F9E0C525C7C" />
+            <ComponentRef Id="cmpFA400C14857DB9CC2C3321D2E26F9856" />
             <ComponentRef Id="cmpF907B66B1268B8DD79A62EC3047BE252" />
             <ComponentRef Id="cmp1FD8F63504BBE9049D12DF7A3388ADB6" />
             <ComponentRef Id="cmp9C9C5D965A6AA00CB177A140CC22182C" />
@@ -919,6 +932,9 @@
             <ComponentRef Id="cmp3BD65EE4BDE898325E29208D1E7A6529" />
             <ComponentRef Id="cmpF781B4B08E447A34750CCCB1742DC62B" />
             <ComponentRef Id="cmpAD590BDE8A1BCB5DAA5DC20010E96205" />
+            <ComponentRef Id="cmpAB04D0D5A80BAAA799C2A29A48DDBB0E" />
+            <ComponentRef Id="cmp07BD1A3483391918329F330533124221" />
+            <ComponentRef Id="cmpDB34E5960433499FB160AF072994DFF2" />
             <ComponentRef Id="cmpEC3CB70282ACA2DFC8D4AD65F5BF908F" />
             <ComponentRef Id="cmp70963CAD6F1F8C21152A4139C1949666" />
             <ComponentRef Id="cmp39ACF9F752BE37AADD1899A46F7E9C60" />

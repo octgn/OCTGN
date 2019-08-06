@@ -8,12 +8,12 @@
         <RegistryValue Root="HKCU" Key="Software\Classes\.o8d" Type="string" Value="octgn.o8d" KeyPath="yes"/>
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d" Type="string" Value="OCTGN Deck File" KeyPath="no"/>
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\DefaultIcon" Type="string" Value="[#fil5A5E054775535CD79B7C3807A64F0A84]" KeyPath="no"/>
-        <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\shell\open\command" Type="string" Value="&quot;[#filE8DEE176C8DC9D5A29B290E0EF74916F]&quot; &quot;%1&quot;" KeyPath="no"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\shell\open\command" Type="string" Value="&quot;[#fil68B4F6D7867B40E2C3B4D6F454692D98]&quot; &quot;%1&quot;" KeyPath="no"/>
       </Component>
       <Component Id="Octgn.CustomProtocolSupport">
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Value="URL:OCTGN Protocol" KeyPath="yes"/>
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Name="URL Protocol" Value="" KeyPath="no"/>
-        <RegistryValue Root="HKCU" Key="Software\Classes\octgn\shell\open\command" Type="string" Value="&quot;[#filE8DEE176C8DC9D5A29B290E0EF74916F]&quot; &quot;%1&quot;" KeyPath="no"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn\shell\open\command" Type="string" Value="&quot;[#fil68B4F6D7867B40E2C3B4D6F454692D98]&quot; &quot;%1&quot;" KeyPath="no"/>
       </Component>
     </DirectoryRef>
     <DirectoryRef Id="ApplicationProgramsFolder">
@@ -21,7 +21,7 @@
         <Shortcut Id="ApplicationStartMenuShortcut"
                   Name="OCTGN"
                   Description="OCTGN Application"
-                  Target="[#filE8DEE176C8DC9D5A29B290E0EF74916F]"
+                  Target="[#fil68B4F6D7867B40E2C3B4D6F454692D98]"
                   WorkingDirectory="Octgn.InstallDirectory"/>
         <Shortcut Id="LogExporterStartMenuShortcut"
                   Name="Log Exporter"
@@ -46,7 +46,6 @@
       </Component>
     </DirectoryRef>
     <ComponentGroup Id="Octgn.AppComponents" Directory="Octgn.InstallDirectory">
-      <ComponentGroupRef Id="Octgn.EventSourceComponentGroup" />
       <ComponentGroupRef Id="O__HeatGenerated"/>
       <ComponentRef Id="ApplicationShortcut" />
       <ComponentRef Id="FontsComponent" />
