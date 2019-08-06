@@ -93,7 +93,7 @@ namespace Octgn.LogExporter
 
                     logsFolder = Path.Combine(logsFolder, "Logs");
 
-                    foreach (var file in Directory.EnumerateFiles(logsFolder, "log*.txt")) {
+                    foreach (var file in Directory.EnumerateFiles(logsFolder, "*.log")) {
                         var fileName = Path.GetFileName(file);
 
                         var copyToPath = Path.Combine(buildDirectoryPath, fileName);
