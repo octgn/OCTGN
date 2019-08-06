@@ -1,3 +1,6 @@
+#3.3.141.0
++ Fixed a few bugs - Kelly
+
 #3.3.140.0
 + Phase bar and deck stats don't overlap the limited deck editor
 + Fixed slowdown when resizing deck editor in some cases - Ben
@@ -3707,6 +3710,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
