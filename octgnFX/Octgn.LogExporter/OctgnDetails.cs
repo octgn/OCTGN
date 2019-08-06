@@ -53,8 +53,16 @@ namespace Octgn.LogExporter
                     }
                 }
 
-                if (DataPathFile != null) {
-                    ConfigPath = Path.Combine(DataPathFile, "Config", "settings.json");
+                var dataDirectoryPath = DataDirectoryEnvironmentalVariable ?? DataPathFile;
+
+                if (dataDirectoryPath != null) {
+                    dataDirectoryPath = Environment.ExpandEnvironmentVariables(dataDirectoryPath);
+
+                    if (!Path.IsPathRooted(dataDirectoryPath)) {
+                        dataDirectoryPath = Path.GetFullPath(dataDirectoryPath);
+                    }
+
+                    ConfigPath = Path.Combine(dataDirectoryPath, "Config", "settings.json");
                 }
 
                 if (Location != null) {
