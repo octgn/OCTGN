@@ -102,6 +102,7 @@ namespace Octgn.DataNew
             if (defSize.BackCornerRadius < 0)
                 defSize.BackCornerRadius = defSize.CornerRadius;
             ret.CardSize = defSize;
+            ret.CardSizes.Add("Default", defSize);
             ret.CardSizes.Add("", defSize);
 
             #region table
