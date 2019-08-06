@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?define ProductVersion=!(bind.fileVersion.filDD92BED66D8CCAE233C37576A2AB17A7)?>
-  <?define UpgradeCode = "d398568a-92c0-4230-959c-03bc7d136570"?>
+  <?define OldUpgradeCode = "d398568a-92c0-4230-959c-03bc7d136570"?>
+  <?define UpgradeCode = "3347CE98-D382-4E37-94C8-7548D0777736"?>
   <Product Id="*"
            Name="Octgn v$(var.ProductVersion)"
            Language="1033"
@@ -13,12 +14,6 @@
     <MajorUpgrade AllowDowngrades="yes"/>
     <MediaTemplate EmbedCab="yes" />
 
-    <Upgrade Id="$(var.UpgradeCode)">
-      <!-- Detect older product versions -->
-      <UpgradeVersion OnlyDetect="no" IncludeMinimum="yes" IncludeMaximum="no" Minimum="0.0.1" Maximum="$(var.ProductVersion)" Property="PREVIOUSVERSIONSINSTALLED"/>
-      <!-- Detect newer product versions -->
-      <UpgradeVersion OnlyDetect="yes" IncludeMinimum="no" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED"/>
-    </Upgrade>
     <!-- Exits successfully in the case newer version are already installed -->
     <CustomActionRef Id="WixExitEarlyWithSuccess"/>
 
@@ -28,9 +23,16 @@
     <UIRef Id="WixUI_FeatureTree" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
+    <Property Id="OLDINSTALLDIR">
+      <RegistrySearch Id='OldInstallPathRegistry' Type='raw'
+        Root='HKCU' Key='Software\OCTGN' Name='InstallDirectory' Win64='no'/>
+    </Property>
+
+    <Condition Message="An older version of OCTGN has been detected. Please uninstall it first before installing this version of OCTGN.">NOT OLDINSTALLDIR OR Installed</Condition>
+
     <Property Id="INSTALLDIR">
       <RegistrySearch Id='InstallPathRegistry' Type='raw'
-        Root='HKCU' Key='Software\OCTGN' Name='InstallDirectory' Win64='no'/>
+        Root='HKCU' Key='Software\OCTGN' Name='InstallPath' Win64='no'/>
     </Property>
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />

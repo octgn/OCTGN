@@ -27,7 +27,7 @@
                   Target="[#filADC02EADCCD3A41A1292298778B013E3]"
                   WorkingDirectory="INSTALLDIR"/>
         <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
-        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="InstallDirectory" Type="string" Value="[INSTALLDIR]" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="InstallPath" Type="string" Value="[INSTALLDIR]" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
     <ComponentGroup Id="Octgn.AppComponents" Directory="INSTALLDIR">
