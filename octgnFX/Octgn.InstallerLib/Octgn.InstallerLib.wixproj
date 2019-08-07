@@ -23,6 +23,9 @@
     <Compile Include="HeatGeneratedFileList.wxs" />
     <Compile Include="Library.wxs" />
   </ItemGroup>
+  <PropertyGroup>
+    <SuppressIces>ICE91</SuppressIces>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn\Octgn.csproj">
       <Name>Octgn</Name>
