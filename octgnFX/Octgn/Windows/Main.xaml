@@ -25,15 +25,15 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="100*"/>
-			<RowDefinition Height="5"/>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="5"/>
-		</Grid.RowDefinitions>
-		<Menu Grid.ColumnSpan="4" Grid.Row="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.ColumnSpan="4" Grid.Row="0">
             <MenuItem Header="_File">
                 <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" MinWidth="137" Click="MenuLogOffClick"/>-->
                 <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" MinWidth="137" Click="MenuExitClick"/>
@@ -47,9 +47,9 @@
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" MinWidth="137" Click="MenuAboutClick"/>
             </MenuItem>
             <MenuItem Header="Open _Source">
-            <MenuItem.Icon>
-                <Image Source="../Resources/github.png" Width="16"/>
-            </MenuItem.Icon>
+                <MenuItem.Icon>
+                    <Image Source="../Resources/github.png" Width="16"/>
+                </MenuItem.Icon>
                 <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
                 <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
             </MenuItem>
@@ -59,8 +59,9 @@
         <Border Grid.Column="2">
         </Border>
         <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
-			<Controls:UpdateBar/>
-		</StackPanel>
+            <Controls:UpdateBar/>
+            <Controls:NewVersionBar/>
+        </StackPanel>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <TabControl x:Name="TabControlMain" Grid.Row="2" Style="{StaticResource MainTab}">
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent" Style="{StaticResource MainTabItem}">
