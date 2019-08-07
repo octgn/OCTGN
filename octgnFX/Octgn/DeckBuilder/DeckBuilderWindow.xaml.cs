@@ -950,7 +950,6 @@ namespace Octgn.DeckBuilder
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
-            _unsaved = true;
             e.Handled = true;
             if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeRow != null && !dragging)
             {
@@ -959,6 +958,7 @@ namespace Octgn.DeckBuilder
                     ObservableMultiCard getCard = (ObservableMultiCard)activeRow.Item;
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
                     dragging = true;
+                    _unsaved = true;
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
                         dragSection.Cards.RemoveCard(getCard);
