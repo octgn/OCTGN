@@ -109,7 +109,8 @@ namespace Octgn.DeckBuilder
                 if (g != null)
                 {
                     Game = g;
-                    LoadDeck(deck);
+                    Deck = deck.AsObservable();
+                    SleeveImage = deck.Sleeve.GetImage();
                 }
                 else
                 {
@@ -276,11 +277,14 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public int DeckSectionsTotalCards
+        public int? DeckSectionsTotalCards
         {
             get
             {
-                return DeckSections.Aggregate(0, (total, x) => total += x.Quantity);
+                var sections = DeckSections;
+                if (sections.Count() == 0)
+                    return null;
+                return sections.Aggregate(0, (total, x) => total += x.Quantity);
             }
         }
 
@@ -293,11 +297,14 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public int DeckSharedSectionsTotalCards
+        public int? DeckSharedSectionsTotalCards
         {
             get
             {
-                return DeckSharedSections.Aggregate(0, (total, x) => total += x.Quantity);
+                var sections = DeckSharedSections;
+                if (sections.Count() == 0)
+                    return null;
+                return sections.Aggregate(0, (total, x) => total += x.Quantity);
             }
         }
 
@@ -1085,7 +1092,9 @@ namespace Octgn.DeckBuilder
 
         public void SetLoadedGame(Game game)
         {
-            Game = game;
+            if (game == _game)
+                return;
+            NewDeck(game);
         }
 
         public Game GetLoadedGame()
@@ -1095,8 +1104,22 @@ namespace Octgn.DeckBuilder
 
         public void LoadDeck(IDeck deck)
         {
-            Deck = deck.AsObservable();
-            SleeveImage = deck.Sleeve.GetImage();
+            if (_unsaved)
+            {
+                MessageBoxResult result = TopMostMessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
+                                                            MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        Save();
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                    default:
+                        return;
+                }
+            }
+            SetupAndLoadDeck(deck);
         }
 
         public IDeck GetLoadedDeck()
