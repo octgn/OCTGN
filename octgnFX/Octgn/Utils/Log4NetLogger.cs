@@ -7,7 +7,7 @@ using Octgn.Communication;
 
 namespace Octgn.Utils
 {
-    public class Log4NetLogger : ILogger
+    internal class Log4NetLogger : ILogger
     {
         public string Name { get; set; }
 

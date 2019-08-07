@@ -85,7 +85,6 @@ namespace Octgn.Play
         private Card _currentCard;
         private bool _currentCardUpStatus;
         private bool _newCard;
-        private bool _canChat;
 
         private Storyboard _showBottomBar;
 
@@ -186,7 +185,7 @@ namespace Octgn.Play
                     Keyboard.Focus(table);
 
 					Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
-                    
+
                     //Program.GameEngine.Ready();
                     if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
                     {
@@ -277,7 +276,7 @@ namespace Octgn.Play
                 _gameMessageReader.Stop();
             };
 
-            
+
             //this.chat.NewMessage = x =>
             //{
             //    GameMessages.Insert(0, x);
@@ -369,7 +368,7 @@ namespace Octgn.Play
             }
 
         }
-        
+
         private void InitializePlayerSummary(object sender, EventArgs e)
         {
             var textBlock = (TextBlock)sender;
@@ -385,8 +384,8 @@ namespace Octgn.Play
                 format = Program.GameEngine.Definition.GlobalPlayer.IndicatorsFormat;
             }
             else
-            { 
-                format = Program.GameEngine.Definition.Player.IndicatorsFormat; 
+            {
+                format = Program.GameEngine.Definition.Player.IndicatorsFormat;
             }
 
             if (format == null)
@@ -467,7 +466,7 @@ namespace Octgn.Play
             base.OnClosed(e);
             WindowManager.PlayWindow = null;
             Program.StopGame();
-            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
+            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 
         public bool TryClose()
@@ -843,7 +842,7 @@ namespace Octgn.Play
         {
             LockPhaseList = !LockPhaseList;
         }
-        
+
         private void ActivateChat(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -922,7 +921,7 @@ namespace Octgn.Play
             var dlg = backstage.Child as PickCardsDialog;
             try
             {
-                if (dlg != null) 
+                if (dlg != null)
                     dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
                 else
                     Program.GameEngine.LoadedCards.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);

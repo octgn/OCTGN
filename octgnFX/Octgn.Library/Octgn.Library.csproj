@@ -138,6 +138,7 @@
     <Compile Include="X.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Localization\DynamicLanguageDictionary.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DynamicLanguageDictionary.cs</LastGenOutput>
