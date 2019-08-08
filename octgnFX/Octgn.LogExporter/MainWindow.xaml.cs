@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.IO.Compression;
 using System.Net.NetworkInformation;
@@ -84,15 +83,28 @@ namespace Octgn.LogExporter
                     log.Error("Error gather system info", ex);
                 }
 
-                // ---- Export the EventLog
+                // ---- Export the Logs
                 try {
-                    log.Info("Exporting Event Log...");
+                    log.Info("Exporting Logs...");
 
-                    var eventLogPath = Path.Combine(buildDirectoryPath, "Octgn.evtx");
-                    var session = EventLogSession.GlobalSession;
-                    session.ExportLogAndMessages("Octgn", PathType.LogName, "*", eventLogPath);
-                } catch (EventLogException ex) {
-                    log.Error("Event Log OCTGN not found", ex);
+                    var assLocation = new FileInfo(typeof(OctgnDetails).Assembly.Location);
+
+                    var logsFolder = assLocation.Directory.FullName;
+
+                    logsFolder = Path.Combine(logsFolder, "Logs");
+
+                    foreach (var file in Directory.EnumerateFiles(logsFolder, "*.log")) {
+                        var fileName = Path.GetFileName(file);
+
+                        var copyToPath = Path.Combine(buildDirectoryPath, fileName);
+
+                        log.Info($"Copying log {file} to {copyToPath}");
+
+                        File.Copy(file, copyToPath);
+                    }
+
+                } catch (Exception ex) {
+                    log.Error("Error exporting logs", ex);
                 }
 
                 // ---- Export installer logs
@@ -171,21 +183,18 @@ namespace Octgn.LogExporter
             details.FillDetails();
 
             // Is octgn installed
-            if (details.IsInstalled) {
-                log.Info("Octgn Installed: " + details.InstallPath);
-                log.Info("Data Directory: " + details.DataDirectory);
-                log.Info("OCTGN Version: " + details.Version);
-                log.Info("Running Instance Count: " + details.RunningInstances);
+            log.Info("Octgn Installed: " + details.Location);
+            log.Info("Data Path File: " + details.DataPathFile);
+            log.Info("Data Directory Env Var : " + details.DataDirectoryEnvironmentalVariable);
+            log.Info("OCTGN Version: " + details.Version);
+            log.Info("Running Instance Count: " + details.RunningInstances);
 
-                var copyTo = Path.Combine(buildDirectoryPath, "settings.json");
+            var copyTo = Path.Combine(buildDirectoryPath, "settings.json");
 
-                try {
-                    File.Copy(details.ConfigPath, copyTo);
-                } catch (Exception ex) {
-                    log.Error($"Couldn't copy {details.ConfigPath} to {copyTo}", ex);
-                }
-            } else {
-                log.Info("OCTGN not installed.");
+            try {
+                File.Copy(details.ConfigPath, copyTo);
+            } catch (Exception ex) {
+                log.Error($"Couldn't copy {details.ConfigPath} to {copyTo}", ex);
             }
         }
 
@@ -198,9 +207,9 @@ namespace Octgn.LogExporter
             }
         }
 
-        // Checking the version using >= will enable forward compatibility,  
-        // however you should always compile your code on newer versions of 
-        // the framework to ensure your app works the same. 
+        // Checking the version using >= will enable forward compatibility,
+        // however you should always compile your code on newer versions of
+        // the framework to ensure your app works the same.
         private static string CheckFor45DotVersion(int releaseKey) {
             if (releaseKey >= 461808) {
                 return "4.7.2 or later";

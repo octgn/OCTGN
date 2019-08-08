@@ -9,7 +9,7 @@ using System.Windows.Markup;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Octgn")]
 [assembly: AssemblyProduct("Octgn")]
-[assembly: AssemblyCopyright("Copyright @ Skylabs 2005-2012")]
+[assembly: AssemblyCopyright("Copyright © Octgn 2005-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

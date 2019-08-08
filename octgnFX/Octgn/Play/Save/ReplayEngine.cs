@@ -274,8 +274,6 @@ namespace Octgn.Play.Save
 
             var current = _currentEvent.Value;
 
-            TimeSpan? fastForwardTo = null;
-
             for (var nextId = current.Id - 1; nextId >= 0; nextId--) {
                 var next = _events[nextId];
 

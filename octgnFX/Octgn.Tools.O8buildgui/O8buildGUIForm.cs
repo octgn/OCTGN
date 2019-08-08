@@ -68,24 +68,12 @@ namespace Octgn.Tools.O8buildgui
 
         private string GetO8BuildPath()
         {
-            string installDirectory = null;
+            var assLocation = new FileInfo(typeof(O8buildGUIForm).Assembly.Location);
 
-            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if (subKey == null) {
-                    AddToListbox("OCTGN is not installed.");
-                    return string.Empty;
-                }
+            var installDirectory = assLocation.Directory.FullName;
 
-                installDirectory = (string)subKey.GetValue(@"InstallDirectory");
-            }
+            var o8build = Path.Combine(installDirectory, "o8build.exe");
 
-            if (installDirectory == null) {
-                AddToListbox("OCTGN is not installed.");
-                return string.Empty;
-            }
-
-            string o8build = Path.Combine(installDirectory, "OCTGN", "o8build.exe");
-            
             if (!File.Exists(o8build))
             {
                 AddToListbox(string.Format("Could not find o8build.exe at location: {0}", o8build));

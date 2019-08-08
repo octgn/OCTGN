@@ -10,9 +10,6 @@ namespace Octide.Views
     using System.Windows.Media.Imaging;
     using System.Xml;
 
-    using ICSharpCode.AvalonEdit.Highlighting;
-    using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-
     using Octide.ViewModel;
 
     /// <summary>
