@@ -1,3 +1,7 @@
+#3.4.202.0
++ New Installer - Kelly E
++ New Data Directory Config - Kelly E
+
 #3.3.141.0
 + Fixed a few bugs - Kelly
 
@@ -3710,6 +3714,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
