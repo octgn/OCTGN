@@ -20,6 +20,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>RootPath=..\..\</DefineConstants>
+    <SuppressIces>ICE69</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />

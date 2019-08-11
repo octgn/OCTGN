@@ -52,7 +52,7 @@
     </Feature>
     <Feature Id="Feat.Dev" Title="Developer Features" Absent="allow" Display="expand" Level="2" Description="OCTGN game developer features" AllowAdvertise="no">
       <Component Id="Empty.Fixes.Bug" Guid="{411C356E-20F6-4D63-8A32-C25DED282F37}" Directory="INSTALLDIR">
-
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
       </Component>
       <Feature Id="Octgn.Feature.OctgnInPath" Title="Octgn In %PATH%" Absent="allow" AllowAdvertise="no" Description="Adds the OCTGN install directory to the current users %PATH%">
         <ComponentRef Id="Octgn.Components.OctgnInPath"/>

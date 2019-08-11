@@ -13,11 +13,13 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug;HarvestPath=..\Octgn\bin\$(Configuration);RootPath=..\..\</DefineConstants>
+    <SuppressIces>ICE91;ICE69</SuppressIces>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>HarvestPath=..\Octgn\bin\$(Configuration);RootPath=..\..\</DefineConstants>
+    <SuppressIces>ICE91;ICE69</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Comp.StartMenu.Dev.OctgnDeveloperMode.wxs" />
@@ -28,9 +30,6 @@
     <Compile Include="HeatGeneratedFileList.wxs" />
     <Compile Include="Library.wxs" />
   </ItemGroup>
-  <PropertyGroup>
-    <SuppressIces>ICE91;ICE69</SuppressIces>
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn\Octgn.csproj">
       <Name>Octgn</Name>
