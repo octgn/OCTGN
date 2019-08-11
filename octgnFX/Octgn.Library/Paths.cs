@@ -64,7 +64,6 @@
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
             DataDirectory = dataDirectory;
             PluginPath = FS.Path.Combine(DataDirectory, "Plugins");
-            //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(DataDirectory, "GameDatabase");
             ImageDatabasePath = FS.Path.Combine(DataDirectory, "ImageDatabase");
 

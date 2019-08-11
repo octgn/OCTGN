@@ -1,21 +1,22 @@
-﻿namespace Octgn.Windows
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+using Octgn.Core;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+
+namespace Octgn.Windows
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Forms;
-
-    using Octgn.Core;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-
     public partial class Options
     {
-        public Options()
-        {
+        public Options() {
             InitializeComponent();
             TextBoxDataDirectory.Text = Config.Instance.Paths.DataDirectory;
             TextBoxWindowSkin.Text = Prefs.WindowSkin;
@@ -24,14 +25,12 @@
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
             foreach (ComboBoxItem item in TextBoxWindowBorderDecorator.Items) {
-                if (string.Equals(Prefs.WindowBorderDecorator, (string)item.Tag, StringComparison.Ordinal))
-                {
+                if (string.Equals(Prefs.WindowBorderDecorator, (string)item.Tag, StringComparison.Ordinal)) {
                     item.IsSelected = true;
                 }
             }
             CheckBoxIgnoreSSLCertificates.IsChecked = Prefs.IgnoreSSLCertificates;
             CheckBoxEnableChatImages.IsChecked = Prefs.EnableChatImages;
-            //CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
             CheckBoxEnableWhisperSound.IsChecked = Prefs.EnableWhisperSound;
             CheckBoxEnableNameSound.IsChecked = Prefs.EnableNameSound;
             CheckBoxUseWindowsForChat.IsChecked = Prefs.UseWindowsForChat;
@@ -55,58 +54,45 @@
 
         }
 
-        void SetError(string error = "")
-        {
+        void SetError(string error = "") {
             Dispatcher.Invoke(new Action(() =>
-                {
-                    if (string.IsNullOrWhiteSpace(error))
-                    {
-                        LabelError.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        LabelError.Visibility = Visibility.Visible;
-                        LabelError.Text = error;
-                    }
-                }));
+            {
+                if (string.IsNullOrWhiteSpace(error)) {
+                    LabelError.Visibility = Visibility.Collapsed;
+                } else {
+                    LabelError.Visibility = Visibility.Visible;
+                    LabelError.Text = error;
+                }
+            }));
         }
 
         void ValidateFields(ref string dataDirectory,
             bool useLightChat, bool useHardwareRendering,
             bool useTransparentWindows, bool ignoreSSLCertificates, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
-            bool enableNameSound, string windowSkin, 
+            bool enableNameSound, string windowSkin,
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
-            bool useGameFonts, double handDensity, bool useTestReleases)
-        {
-            try
-            {
+            bool useGameFonts, double handDensity, bool useTestReleases) {
+            try {
                 var dir = new DirectoryInfo(dataDirectory);
-                if(!dir.Exists)Directory.CreateDirectory(dataDirectory);
+                if (!dir.Exists) Directory.CreateDirectory(dataDirectory);
                 dataDirectory = dir.FullName;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 throw new UserMessageException("The data directory value is invalid");
             }
             if (maxChatHistory < 50) throw new UserMessageException("Max chat history can't be less than 50");
-            try
-            {
-                if (!String.IsNullOrWhiteSpace(windowSkin))
-                {
-                    if(!File.Exists(windowSkin))throw new UserMessageException("Window skin file doesn't exist");
+            try {
+                if (!String.IsNullOrWhiteSpace(windowSkin)) {
+                    if (!File.Exists(windowSkin)) throw new UserMessageException("Window skin file doesn't exist");
                 }
-            }
-            catch (Exception)
-            {
-                
+            } catch (Exception) {
+
                 throw;
             }
 
         }
 
-        void SaveSettings()
-        {
+        void SaveSettings() {
             SetError();
             if (MaxChatHistory.Value == null) MaxChatHistory.Value = 100;
             var dataDirectory = TextBoxDataDirectory.Text;
@@ -119,7 +105,6 @@
             var ignoreSSLCertificates = CheckBoxIgnoreSSLCertificates.IsChecked ?? false;
             var maxChatHistory = MaxChatHistory.Value ?? 100;
             var enableChatImages = CheckBoxEnableChatImages.IsChecked ?? false;
-            //var enableChatGifs = CheckBoxEnableChatGifs.IsChecked ?? false;
             var enableWhisperSound = CheckBoxEnableWhisperSound.IsChecked ?? false;
             var enableNameSound = CheckBoxEnableNameSound.IsChecked ?? false;
             var useWindowsForChat = CheckBoxUseWindowsForChat.IsChecked ?? false;
@@ -130,15 +115,15 @@
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
             var handDensity = HandDensitySlider.Value;
             var useTestReleases = CheckBoxUseTestReleases.IsChecked ?? false;
-            Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
-            Prefs.SoundType soundOption = (Prefs.SoundType)ComboBoxJoinSound.SelectedIndex;
-            Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
+            var zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
+            var soundOption = (Prefs.SoundType)ComboBoxJoinSound.SelectedIndex;
+            var animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
-                () => 
+                () =>
                     this.SaveSettingsTask(
-                    ref dataDirectory, 
-                    useLightChat, 
-                    useHardwareRendering, 
+                    ref dataDirectory,
+                    useLightChat,
+                    useHardwareRendering,
                     useTransparentWindows,
                     ignoreSSLCertificates,
                     maxChatHistory,
@@ -161,18 +146,18 @@
                     useTestReleases)
                     );
             task.ContinueWith((t) =>
-                                  {
-                                      Dispatcher
-                                          .Invoke(new Action(
-                                              () => this.SaveSettingsComplete(t)));
-                                  });
+            {
+                Dispatcher
+                    .Invoke(new Action(
+                        () => this.SaveSettingsComplete(t)));
+            });
             task.Start();
         }
 
         void SaveSettingsTask(
-            ref string dataDirectory, 
+            ref string dataDirectory,
             bool useLightChat,
-            bool useHardwareRendering, 
+            bool useHardwareRendering,
             bool useTransparentWindows,
             bool ignoreSSLCertificates,
             int maxChatHistory,
@@ -192,12 +177,11 @@
             bool enableAdvancedOptions,
             bool useGameFonts,
             double handDensity,
-            bool useTestReleases)
-        {
+            bool useTestReleases) {
             this.ValidateFields(
-                ref dataDirectory, 
-                useLightChat, 
-                useHardwareRendering, 
+                ref dataDirectory,
+                useLightChat,
+                useHardwareRendering,
                 useTransparentWindows,
                 ignoreSSLCertificates,
                 maxChatHistory,
@@ -216,7 +200,6 @@
                 useTestReleases
                 );
 
-            //Prefs.DataDirectory = dataDirectory;
             Prefs.UseLightChat = useLightChat;
             Prefs.UseHardwareRendering = useHardwareRendering;
             Prefs.UseWindowTransparency = useTransparentWindows;
@@ -238,22 +221,17 @@
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
             Prefs.HandDensity = handDensity;
-            if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
-                File.Create(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
-            else if (!useTestReleases && File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
+            if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"))) {
+                File.Create(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")).Dispose();
+            } else if (!useTestReleases && File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
                 File.Delete(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
-            //Prefs.EnableChatGifs = enableChatGifs;
         }
 
-        void SaveSettingsComplete(Task task)
-        {
-            if (task.IsFaulted)
-            {
-                if (task.Exception != null)
-                {
+        void SaveSettingsComplete(Task task) {
+            if (task.IsFaulted) {
+                if (task.Exception != null) {
                     var ex = task.Exception.InnerExceptions.OfType<UserMessageException>().FirstOrDefault();
-                    if (ex != null)
-                    {
+                    if (ex != null) {
                         this.SetError(ex.Message);
                         return;
                     }
@@ -265,18 +243,15 @@
             this.Close();
         }
 
-        private void ButtonCancelClick(object sender, RoutedEventArgs e)
-        {
+        private void ButtonCancelClick(object sender, RoutedEventArgs e) {
             this.Close();
         }
 
-        private void ButtonSaveClick(object sender, RoutedEventArgs e)
-        {
+        private void ButtonSaveClick(object sender, RoutedEventArgs e) {
             this.SaveSettings();
         }
 
-        private void ButtonPickDataDirectoryClick(object sender, RoutedEventArgs e)
-        {
+        private void ButtonPickDataDirectoryClick(object sender, RoutedEventArgs e) {
             var dialog = new FolderBrowserDialog();
             dialog.SelectedPath = Config.Instance.Paths.DataDirectory;
             var result = dialog.ShowDialog();
@@ -284,15 +259,13 @@
             TextBoxDataDirectory.Text = dialog.SelectedPath;
         }
 
-        private void ButtonPickWindowSkinClick(object sender, RoutedEventArgs e)
-        {
+        private void ButtonPickWindowSkinClick(object sender, RoutedEventArgs e) {
             var dialog = new OpenFileDialog();
             dialog.Filter =
                 "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
             dialog.CheckFileExists = true;
             var res = dialog.ShowDialog();
-            if (res == System.Windows.Forms.DialogResult.OK)
-            {
+            if (res == System.Windows.Forms.DialogResult.OK) {
                 TextBoxWindowSkin.Text = dialog.FileName;
             }
         }
