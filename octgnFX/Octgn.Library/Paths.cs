@@ -26,7 +26,6 @@ namespace Octgn.Library
         string PluginPath { get; }
         string DataDirectory { get; }
         string DatabasePath { get; }
-        string ImageDatabasePath { get; }
         string ConfigDirectory { get; }
         string FeedListPath { get; }
         string LocalFeedPath { get; }
@@ -44,31 +43,18 @@ namespace Octgn.Library
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal Paths(string dataDirectory)
+        internal Paths(string dataDirectory, string workingDirectory)
         {
             // WARN - Do Not Call Config.Instance from in here!!!
             if (FS == null)
                 FS = new FileSystem();
-            try
-            {
-                if (WorkingDirectory == null)
-                {
-                    if (Assembly.GetEntryAssembly() != null)
-                        WorkingDirectory = Assembly.GetEntryAssembly().Location;
-                    else
-                    {
-                        WorkingDirectory = Assembly.GetExecutingAssembly().Location;
-                    }
-                }
-            }
-            catch
-            {
-            }
+
+            WorkingDirectory = workingDirectory;
+
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
             DataDirectory = dataDirectory;
             PluginPath = FS.Path.Combine(DataDirectory, "Plugins");
             DatabasePath = FS.Path.Combine(DataDirectory, "GameDatabase");
-            ImageDatabasePath = FS.Path.Combine(DataDirectory, "ImageDatabase");
 
             ConfigDirectory = System.IO.Path.Combine(DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
@@ -97,7 +83,6 @@ namespace Octgn.Library
         public string PluginPath { get; private set; }
         public string DataDirectory { get; private set; }
         public string DatabasePath { get; set; }
-        public string ImageDatabasePath { get; set; }
         public string ConfigDirectory { get; set; }
         public string FeedListPath { get; set; }
         public string LocalFeedPath { get; set; }

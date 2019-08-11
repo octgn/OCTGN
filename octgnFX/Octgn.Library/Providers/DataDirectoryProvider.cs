@@ -33,11 +33,11 @@ namespace Octgn.Library.Providers
             if (GetDataDirectoryFromEnvironment(ref dataDirectory)) {
                 Log.Info($"Got Data Directory from OCTGN_DATA: {dataDirectory}");
 
-                dataDirectory = CorrectDataPath(dataDirectory);
+                var corrected = CorrectDataPath(dataDirectory);
 
-                Log.Info($"Corrected: {dataDirectory}");
+                Log.Info($"Corrected: {corrected}");
 
-                ValidateDataPath(dataDirectory);
+                ValidateDataPath(corrected);
 
                 return dataDirectory;
             }
@@ -45,11 +45,11 @@ namespace Octgn.Library.Providers
             if (GetDataDirectoryFromDataPath(ref dataDirectory, out var dataPath)) {
                 Log.Info($"Got Data Directory from {dataPath}: {dataDirectory}");
 
-                dataDirectory = CorrectDataPath(dataDirectory);
+                var corrected = CorrectDataPath(dataDirectory);
 
-                Log.Info($"Corrected: {dataDirectory}");
+                Log.Info($"Corrected: {corrected}");
 
-                ValidateDataPath(dataDirectory);
+                ValidateDataPath(corrected);
 
                 return dataDirectory;
             }
@@ -68,7 +68,7 @@ namespace Octgn.Library.Providers
 
             WriteDataPathFile(_dataPathFile, _defaultDataDirectory);
 
-            return dataDirectory;
+            return _defaultDataDirectory;
         }
 
 
@@ -108,6 +108,18 @@ namespace Octgn.Library.Providers
             }
 
             return false;
+        }
+
+        public void Set(string dataDirectory) {
+            if (string.IsNullOrWhiteSpace(dataDirectory)) {
+                dataDirectory = _defaultDataDirectory;
+            }
+
+            var corrected = CorrectDataPath(dataDirectory);
+
+            ValidateDataPath(corrected);
+
+            WriteDataPathFile(_dataPathFile, dataDirectory);
         }
 
         private string ReadDataPathFile(string dataPathFile) {

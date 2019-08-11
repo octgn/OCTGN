@@ -27,6 +27,7 @@ using Octgn.Utils;
 using Octgn.Windows;
 using Octgn.Communication;
 using System.Net;
+using System.Threading;
 
 namespace Octgn
 {
@@ -39,6 +40,8 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Thread.CurrentThread.Name = "MAIN";
+
             // Need this to load Octgn.Core for the logger
             Debug.WriteLine(bi);
             GlobalContext.Properties["version"] = Const.OctgnVersion;
@@ -73,6 +76,8 @@ namespace Octgn
 
                 return;
             }
+
+            Environment.SetEnvironmentVariable("OCTGN_DATA", Config.Instance.DataDirectoryFull, EnvironmentVariableTarget.Process);
 
             if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {
                 Log.Info($"Creating Updates directory");

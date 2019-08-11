@@ -162,13 +162,13 @@ namespace Octide
         public void New()
         {
             var id = Guid.NewGuid();
-            var path = Path.Combine(Config.Instance.DataDirectory, "IdeDevDatabase", id.ToString());
+            var path = Path.Combine(Config.Instance.DataDirectoryFull, "IdeDevDatabase", id.ToString());
             var defPath = Path.Combine(path, "definition.xml");
             var resourcePath = Path.Combine(path, "Resources");
 
             Directory.CreateDirectory(path);
             Directory.CreateDirectory(resourcePath);
-            
+
             var bg = Properties.Resources.background;
             bg.Save(Path.Combine(resourcePath, "background.jpg"));
             bg.Dispose();
@@ -203,7 +203,7 @@ namespace Octide
             definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
 			RaisePropertyChanged("IdeDevDatabaseGames");
         }
-        
+
 		public void ImportGame(string directory)
 		{
 			NeedsSave = false;
