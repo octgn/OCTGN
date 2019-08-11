@@ -43,12 +43,32 @@
     <WixVariable Id="WixUIBannerBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerBanner.png" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerDialog.png" />
 
-    <Feature Id="ProductFeature" Title="Octgn" Level="1" Absent="disallow" ConfigurableDirectory="INSTALLDIR">
+    <Feature Id="ProductFeature" Title="Octgn Program" Level="1" Absent="disallow" ConfigurableDirectory="INSTALLDIR" Display="expand" Description="The OCTGN application" AllowAdvertise="no">
       <ComponentGroupRef Id="Octgn.AppComponents"/>
       <ComponentRef Id="Octgn.DeckIconSupport"/>
       <ComponentRef Id="Octgn.CustomProtocolSupport"/>
       <ComponentRef Id="InstallDirUninstaller" />
       <ComponentRef Id="ProgramFolderUninstaller" />
+    </Feature>
+    <Feature Id="Feat.Dev" Title="Developer Features" Absent="allow" Display="expand" Level="2" Description="OCTGN game developer features" AllowAdvertise="no">
+      <Component Id="Empty.Fixes.Bug" Guid="{411C356E-20F6-4D63-8A32-C25DED282F37}" Directory="INSTALLDIR">
+
+      </Component>
+      <Feature Id="Octgn.Feature.OctgnInPath" Title="Octgn In %PATH%" Absent="allow" AllowAdvertise="no" Description="Adds the OCTGN install directory to the current users %PATH%">
+        <ComponentRef Id="Octgn.Components.OctgnInPath"/>
+      </Feature>
+      <Feature Id="Feat.Dev.StartMenu" Title="Start Menu Shortcuts" Absent="allow" Description="Add shortcuts to the start menu for game developers" Display="expand" AllowAdvertise="no">
+        <ComponentRef Id="Comp.StartMenu.Dev"/>
+        <Feature Id="Feat.Dev.StartMenu.OctgnDeveloperMode" Title="OCTGN (Developer Mode)" AllowAdvertise="no" Description="Unlockes additional features in OCTGN for game developers">
+          <ComponentRef Id="Comp.StartMenu.Dev.OctgnDeveloperMode"/>
+        </Feature>
+        <Feature Id="Feat.Dev.StartMenu.O8BuildGui" Title="O8Build Gui" Description="Tool for packaging and validating games" AllowAdvertise="no">
+          <ComponentRef Id="Comp.StartMenu.Dev.O8BuildGui"/>
+        </Feature>
+        <Feature Id="Feat.Dev.StartMenu.ProxygenTest" Title="Proxy Tester" AllowAdvertise="no" Description="Tool for testing proxy definitions">
+          <ComponentRef Id="Comp.StartMenu.Dev.ProxygenTest"/>
+        </Feature>
+      </Feature>
     </Feature>
   </Product>
 
@@ -57,13 +77,13 @@
       <Directory Id="LocalAppDataFolder">
         <Directory Id="ProgramsFolder" Name="Programs">
           <Directory Id="INSTALLDIR" Name="OCTGN">
-            <Component Id="InstallDirUninstaller" Guid="{46BF2569-B522-4F50-807C-DC111C54BA1A}">
+            <Component Id="InstallDirUninstaller" Guid="{46BF2569-B522-4F50-807C-DC111C54BA1A}" Location="local">
               <CreateFolder Directory="INSTALLDIR" />
               <RemoveFolder Id="RemoveInstallDir" Directory="INSTALLDIR" On="uninstall" />
               <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
           </Directory>
-          <Component Id="ProgramFolderUninstaller" Guid="{6A5CE7B2-70E1-4E89-8B24-873EF5A2338C}">
+          <Component Id="ProgramFolderUninstaller" Guid="{6A5CE7B2-70E1-4E89-8B24-873EF5A2338C}" Location="local">
             <CreateFolder Directory="ProgramsFolder" />
             <RemoveFolder Id="RemoveProgramFolder" Directory="ProgramsFolder" On="uninstall" />
             <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
