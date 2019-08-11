@@ -111,10 +111,15 @@
         {
             get
             {
-                var ret = FS.Path.Combine(DataDirectory, "Garbage");
-                if (!FS.Directory.Exists(ret)) FS.Directory.CreateDirectory(ret);
-                ret = FS.Path.Combine(ret, Guid.NewGuid().ToString());
-                return ret;
+                var tempPath = FS.Path.GetTempPath();
+
+                var path = FS.Path.Combine(tempPath, "Octgn", "Garbage");
+
+                if (!FS.Directory.Exists(path)) FS.Directory.CreateDirectory(path);
+
+                path = FS.Path.Combine(path, Guid.NewGuid().ToString());
+
+                return path;
             }
         }
     }
