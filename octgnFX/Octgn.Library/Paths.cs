@@ -1,12 +1,15 @@
-﻿namespace Octgn.Library
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
+using System.IO.Abstractions;
+using System.Reflection;
+using System.Threading.Tasks;
+using log4net;
+
+namespace Octgn.Library
 {
-    using System;
-    using System.IO.Abstractions;
-    using System.Reflection;
-    using System.Threading.Tasks;
-
-    using log4net;
-
     public interface IPaths
     {
         /// <summary>
