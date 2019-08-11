@@ -721,6 +721,7 @@
       <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
     </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
+    <Resource Include="Resources\Fonts\Entypo.otf" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>GameEvents.cs</LastGenOutput>
