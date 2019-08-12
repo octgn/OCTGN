@@ -1,3 +1,6 @@
+#3.4.206.0
++ Added more features to the installer - Kelly
+
 #3.4.203.0
 + Add ability to change DataDirectory and ImageDirectory inside of OCTGN - Kelly
 
@@ -3717,6 +3720,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
