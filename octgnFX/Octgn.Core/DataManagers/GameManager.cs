@@ -165,7 +165,7 @@ namespace Octgn.Core.DataManagers
                 //Sets//setid//Cards//Proxies
 
                 var setsDir = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id, "Sets");
-                var imageSetsDir = Path.Combine(Config.Instance.ImageDirectory, package.Id, "Sets");
+                var imageSetsDir = Path.Combine(Config.Instance.ImageDirectoryFull, package.Id, "Sets");
                 if (!Directory.Exists(imageSetsDir))
                 {
                     Directory.CreateDirectory(imageSetsDir);
@@ -292,7 +292,7 @@ namespace Octgn.Core.DataManagers
                 X.Instance.ForEachProgress(cardImageList.Length, cardImageList,
                     x =>
                     {
-                        string copyDirPath = Path.Combine(Config.Instance.ImageDirectory, package.Id, "Sets", x.SetDirectory.Name, "Cards");
+                        string copyDirPath = Path.Combine(Config.Instance.ImageDirectoryFull, package.Id, "Sets", x.SetDirectory.Name, "Cards");
                         if (!Directory.Exists(copyDirPath))
                         {
                             Directory.CreateDirectory(copyDirPath);
@@ -409,11 +409,11 @@ namespace Octgn.Core.DataManagers
                     {
                         Log.DebugFormat(
                             "Should extract, so extracting {0},{1},{2}",
-                            Config.Instance.ImageDirectory,
+                            Config.Instance.ImageDirectoryFull,
                             entry.FileName,
                             testGuid);
-                        entry.Extract(Config.Instance.ImageDirectory, ExtractExistingFileAction.OverwriteSilently);
-                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectory, entry.FileName, testGuid);
+                        entry.Extract(Config.Instance.ImageDirectoryFull, ExtractExistingFileAction.OverwriteSilently);
+                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectoryFull, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
