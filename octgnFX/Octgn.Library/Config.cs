@@ -92,8 +92,6 @@ namespace Octgn.Library
 
                     if (originalDataDirectory == value) return;
 
-                    var correctedPath = ResolvePath(value);
-
                     ValidatePath(value);
 
                     new DataDirectoryProvider().Set(value);
