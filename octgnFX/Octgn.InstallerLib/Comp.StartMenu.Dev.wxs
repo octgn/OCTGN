@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Directory Id="Dir.StartMenu.Dev" Name="Developer">
+        <Component Id="Comp.StartMenu.Dev" Guid="{7CDDDEF5-F37B-4274-8195-B52C49CCE82F}" Location="local">
+          <CreateFolder Directory="Dir.StartMenu.Dev"/>
+          <RemoveFolder Id="Comp.StartMenu.Dev.RemoveFolderOnUninstall"
+                        Directory="Dir.StartMenu.Dev" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

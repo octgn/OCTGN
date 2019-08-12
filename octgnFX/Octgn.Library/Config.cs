@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Caching;
@@ -12,70 +13,166 @@ using Octgn.Library.Providers;
 
 namespace Octgn.Library
 {
-    public class Config : ISimpleConfig
+    public class Config : ISimpleConfig, IDisposable
     {
         public static Config Instance { get; set; }
 
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public IPaths Paths { get; set; }
+        public IPaths Paths { get; }
 
-        private readonly MemoryCache cache;
+        private readonly MemoryCache _cache;
 
-        private readonly ReaderWriterLockSlim cacheLocker;
+        private readonly ReaderWriterLockSlim _cacheLocker;
 
-        private readonly ReaderWriterLockSlim locker;
+        private readonly ReaderWriterLockSlim _locker;
+
+        private bool _isConstructing = true;
 
         /// <summary>
         /// Can't call into Octgn.Core.Prefs
         /// Can't call into Octgn.Library.Paths
         /// </summary>
         public Config() {
-            var dataDirectoryProvider = new DataDirectoryProvider();
+            try {
+                _isConstructing = true;
 
-            DataDirectory = dataDirectoryProvider.Get();
+                var ass = typeof(Config).Assembly;
 
-            if (!Directory.Exists(DataDirectory)) {
-                Directory.CreateDirectory(DataDirectory);
+                var assFile = new FileInfo(ass.Location);
+
+                WorkingDirectory = assFile.Directory.FullName;
+
+                _cacheLocker = new ReaderWriterLockSlim();
+                _locker = new ReaderWriterLockSlim();
+
+                var dataDirectoryProvider = new DataDirectoryProvider();
+
+                var dataDirectory = dataDirectoryProvider.Get();
+
+                var correctedPath = ResolvePath(dataDirectory);
+
+                Paths = new Paths(correctedPath, WorkingDirectory);
+
+                DataDirectory = dataDirectory;
+
+                // Expected Exception: System.InvalidOperationException
+                // Additional information: The requested Performance Counter is not a custom counter, it has to be initialized as ReadOnly.
+                _cache = new MemoryCache("ConfigCache");
+
+                Log.Info("Config Path: " + ConfigPath);
+
+                Log.Debug("Created Paths");
+            } catch {
+                _cacheLocker?.Dispose();
+                _locker?.Dispose();
+                _cache?.Dispose();
+
+                throw;
+            } finally {
+                _isConstructing = false;
+            }
+        }
+
+        public string DataDirectory {
+            get {
+                try {
+                    _locker.EnterReadLock();
+
+                    return _dataDirectory;
+                } finally {
+                    _locker.ExitReadLock();
+                }
+            }
+            set {
+                try {
+                    _locker.EnterWriteLock();
+
+                    var originalDataDirectory = _dataDirectory;
+
+                    if (originalDataDirectory == value) return;
+
+                    ValidatePath(value);
+
+                    new DataDirectoryProvider().Set(value);
+
+                    if (!_isConstructing) {
+                        var originalConfigPath = CreateConfigPath(originalDataDirectory);
+                        var newConfigPath = CreateConfigPath(value);
+
+                        File.Copy(originalConfigPath, newConfigPath, true);
+                    }
+
+                    _dataDirectory = value;
+                } finally {
+                    _locker.ExitWriteLock();
+                }
+
+                if (!_isConstructing) {
+                    DataDirectoryChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataDirectory)));
+                }
+            }
+        }
+
+        private string _dataDirectory;
+
+        public event EventHandler<PropertyChangedEventArgs> DataDirectoryChanged;
+
+        public string DataDirectoryFull => ResolvePath(DataDirectory);
+
+        public string WorkingDirectory { get; }
+
+        public string ImageDirectory {
+            get { return ReadValue(nameof(ImageDirectory), "%OCTGN_DATA%\\ImageDatabase"); }
+            set { WriteValue(nameof(ImageDirectory), value); }
+        }
+
+        public string ImageDirectoryFull => ResolvePath(ImageDirectory);
+
+        public string ResolvePath(string path) {
+            path = Environment.ExpandEnvironmentVariables(path);
+
+            if (!Path.IsPathRooted(path)) {
+                path = Path.Combine(WorkingDirectory, path);
             }
 
-            this.cacheLocker = new ReaderWriterLockSlim();
-            this.locker = new ReaderWriterLockSlim();
-            // Expected Exception: System.InvalidOperationException
-            // Additional information: The requested Performance Counter is not a custom counter, it has to be initialized as ReadOnly.
-            cache = new MemoryCache("ConfigCache");
+            return path;
+        }
 
-            var p = Path.Combine(DataDirectory, "Config");
-            const string f = "settings.json";
-            ConfigPath = Path.Combine(p, f);
+        public void ValidatePath(string path) {
+            var dir = ResolvePath(path);
 
-            if (!Directory.Exists(p)) {
+            if (!Directory.Exists(dir)) {
+                Directory.CreateDirectory(dir);
+            }
+        }
+
+        public string ConfigPath => CreateConfigPath(DataDirectoryFull);
+
+        private static string CreateConfigPath(string dataDirectory) {
+            var configDirectory = Path.Combine(dataDirectory, "Config");
+
+            if (!Directory.Exists(configDirectory)) {
                 Log.Debug("Creating Config Directory");
-                Directory.CreateDirectory(p);
+
+                Directory.CreateDirectory(configDirectory);
             }
-            Log.Debug("Creating Paths");
-            Paths = new Paths(DataDirectory);
-            Log.Debug("Created Paths");
+
+            const string configFileName = "settings.json";
+
+            return Path.Combine(configDirectory, configFileName);
         }
-
-        ~Config() {
-            if (cache != null) {
-                cache.Dispose();
-            }
-        }
-
-        public string DataDirectory { get; }
-
-        public string ConfigPath { get; }
 
         public T ReadValue<T>(string valName, T def) {
             T val = def;
             try {
-                locker.EnterUpgradeableReadLock();
+                _locker.EnterUpgradeableReadLock();
                 if (!GetFromCache(valName, out val)) {
                     try {
-                        locker.EnterWriteLock();
-                        using (var cf = new ConfigFile(ConfigPath)) {
+                        var configPath = ConfigPath;
+
+                        _locker.EnterWriteLock();
+                        using (var cf = new ConfigFile(configPath)) {
                             if (!cf.Contains(valName)) {
                                 cf.Add(valName, def);
                                 cf.Save();
@@ -91,29 +188,29 @@ namespace Octgn.Library
                     } catch (Exception e) {
                         Log.Error("ReadValue", e);
                     } finally {
-                        locker.ExitWriteLock();
+                        _locker.ExitWriteLock();
                     }
                 }
-
             } catch (Exception e) {
                 Log.Error("ReadValue", e);
             } finally {
-                locker.ExitUpgradeableReadLock();
+                _locker.ExitUpgradeableReadLock();
             }
             return val;
         }
 
         public void WriteValue<T>(string valName, T value) {
             try {
-                locker.EnterWriteLock();
-                using (var cf = new ConfigFile(ConfigPath)) {
+                var configPath = ConfigPath;
+
+                _locker.EnterWriteLock();
+                using (var cf = new ConfigFile(configPath)) {
                     cf.AddOrSet(valName, value);
                     AddToCache(valName, value);
                     cf.Save();
                 }
-
             } finally {
-                locker.ExitWriteLock();
+                _locker.ExitWriteLock();
             }
         }
 
@@ -121,54 +218,74 @@ namespace Octgn.Library
 
         internal bool GetFromCache<T>(string name, out T val) {
             try {
-                this.cacheLocker.EnterReadLock();
-                if (cache.Contains(name)) {
-                    if (cache[name] is NullObject)
+                _cacheLocker.EnterReadLock();
+                if (_cache.Contains(name)) {
+                    if (_cache[name] is NullObject)
                         val = default(T);
                     else
-                        val = (T)cache[name];
+                        val = (T)_cache[name];
                     return true;
                 }
                 val = default(T);
                 return false;
             } finally {
-                this.cacheLocker.ExitReadLock();
+                _cacheLocker.ExitReadLock();
             }
         }
 
         internal void AddToCache<T>(string name, T val) {
             try {
-                this.cacheLocker.EnterWriteLock();
+                _cacheLocker.EnterWriteLock();
                 Object addObj;
                 if (typeof(T).IsValueType == false && val == null)
                     addObj = new NullObject();
                 else
                     addObj = val;
-                if (cache.Contains(name))
-                    cache.Set(name, addObj, DateTime.Now.AddMinutes(1));
+                if (_cache.Contains(name))
+                    _cache.Set(name, addObj, DateTime.Now.AddMinutes(1));
                 else
-                    cache.Add(name, addObj, DateTime.Now.AddMinutes(1));
+                    _cache.Add(name, addObj, DateTime.Now.AddMinutes(1));
             } finally {
-                this.cacheLocker.ExitWriteLock();
+                _cacheLocker.ExitWriteLock();
             }
         }
 
         internal void SetToCache<T>(string name, T val) {
             try {
-                this.cacheLocker.EnterWriteLock();
-                cache.Set(name, val, DateTime.Now.AddMinutes(1));
+                _cacheLocker.EnterWriteLock();
+                _cache.Set(name, val, DateTime.Now.AddMinutes(1));
             } finally {
-                this.cacheLocker.ExitWriteLock();
+                _cacheLocker.ExitWriteLock();
             }
         }
 
-        #endregion Cache
-    }
-    public class OctgnNotInstalledException : Exception
-    {
-        public OctgnNotInstalledException() { }
+        #region IDisposable Support
+        private bool _isDisposed; // To detect redundant calls
 
-        public OctgnNotInstalledException(string message) : base(message) { }
+        protected void VerifyNotDisposed() {
+            if (_isDisposed) throw new ObjectDisposedException(ToString());
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!_isDisposed) {
+                if (disposing) {
+                    _cacheLocker?.Dispose();
+                    _locker?.Dispose();
+                    _cache?.Dispose();
+                }
+
+                _isDisposed = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose() {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+        }
+        #endregion
+
+        #endregion Cache
     }
 
     internal class NullObject

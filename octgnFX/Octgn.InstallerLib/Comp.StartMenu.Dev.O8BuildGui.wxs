@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="Dir.StartMenu.Dev">
+      <Component Id="Comp.StartMenu.Dev.O8BuildGui" Guid="{1334AE82-6298-4049-9E69-9AE442BEC7E7}" Location="local">
+        <Shortcut Id="Comp.StartMenu.Dev.O8BuildGui.Shortcut"
+                  Name="O8Build Gui"
+                  Description="o8build gui"
+                  Target="[#fil1867AEB40FE12C433049BEB9C91F1DB5]"
+                  WorkingDirectory="INSTALLDIR"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

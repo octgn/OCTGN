@@ -10,9 +10,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OCTGN")]
 [assembly: AssemblyProduct("Octgn.Online.StandAloneServer")]
-[assembly: AssemblyCopyright("Copyright © OCTGN 2017")]
+[assembly: AssemblyCopyright("Copyright © OCTGN 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
+[assembly: System.Resources.NeutralResourcesLanguageAttribute("en")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

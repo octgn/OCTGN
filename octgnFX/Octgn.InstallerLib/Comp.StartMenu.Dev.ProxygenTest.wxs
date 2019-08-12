@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="Dir.StartMenu.Dev">
+      <Component Id="Comp.StartMenu.Dev.ProxygenTest" Guid="{604CEE38-8735-4CFA-B86D-73AED0A75B82}" Location="local">
+        <Shortcut Id="Comp.StartMenu.Dev.ProxygenTest.Shortcut"
+                  Name="Proxy Tester"
+                  Description="Proxy Tester"
+                  Target="[#fil8B16167CC7454A1CA2703D872FD59E90]"
+                  WorkingDirectory="INSTALLDIR"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

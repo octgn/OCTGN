@@ -2,17 +2,18 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Markup;
 
 [assembly: AssemblyTitle("Octgn")]
-[assembly: AssemblyDescription("Octgn 3.0 client")]
+[assembly: AssemblyDescription("Octgn 3 client")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Octgn")]
 [assembly: AssemblyProduct("Octgn")]
-[assembly: AssemblyCopyright("Copyright © Octgn 2005-2019")]
+[assembly: AssemblyCopyright("Copyright © Octgn 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
+
+[assembly: System.Resources.NeutralResourcesLanguageAttribute("en")]
 
 //In order to begin building localizable applications, set
 //<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file

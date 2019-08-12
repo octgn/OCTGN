@@ -96,5 +96,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <FontFamily x:Key="Entypo" >#Entypo</FontFamily>
+    <FontFamily x:Key="Entypo">pack://application:,,,/OCTGN;component/Resources/Fonts/#Entypo</FontFamily>
 </ResourceDictionary>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="Octgn.Components.OctgnInPath" Guid="{F5AB40FC-C4C9-4094-AC02-36FBFF7D27D7}" Location="local">
+        <Environment Id="Octgn.Components.OctgnInPath.EnvironmentalVariable"
+                     Action="set" Name="Path" Part="last" Permanent="no" Separator=";"
+                     Value="[INSTALLDIR]"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

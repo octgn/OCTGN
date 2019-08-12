@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="Dir.StartMenu.Dev">
+      <Component Id="Comp.StartMenu.Dev.OctgnDeveloperMode" Guid="{20A513B7-FCA5-4514-9FE5-9041CB032572}" Location="local">
+        <Shortcut Id="Comp.StartMenu.Dev.OctgnDeveloperMode.Shortcut"
+                  Name="OCTGN (Developer Mode)"
+                  Description="Run OCTGN in Developer Mode (-x)"
+                  Target="[#fil59E2C7E4B79381DF45FA80A2BB35088F]"
+                  Arguments="-x"
+                  WorkingDirectory="INSTALLDIR"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

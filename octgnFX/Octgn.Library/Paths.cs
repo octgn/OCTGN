@@ -1,12 +1,15 @@
-﻿namespace Octgn.Library
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
+using System.IO.Abstractions;
+using System.Reflection;
+using System.Threading.Tasks;
+using log4net;
+
+namespace Octgn.Library
 {
-    using System;
-    using System.IO.Abstractions;
-    using System.Reflection;
-    using System.Threading.Tasks;
-
-    using log4net;
-
     public interface IPaths
     {
         /// <summary>
@@ -23,7 +26,6 @@
         string PluginPath { get; }
         string DataDirectory { get; }
         string DatabasePath { get; }
-        string ImageDatabasePath { get; }
         string ConfigDirectory { get; }
         string FeedListPath { get; }
         string LocalFeedPath { get; }
@@ -41,32 +43,18 @@
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal Paths(string dataDirectory)
+        internal Paths(string dataDirectory, string workingDirectory)
         {
             // WARN - Do Not Call Config.Instance from in here!!!
             if (FS == null)
                 FS = new FileSystem();
-            try
-            {
-                if (WorkingDirectory == null)
-                {
-                    if (Assembly.GetEntryAssembly() != null)
-                        WorkingDirectory = Assembly.GetEntryAssembly().Location;
-                    else
-                    {
-                        WorkingDirectory = Assembly.GetExecutingAssembly().Location;
-                    }
-                }
-            }
-            catch
-            {
-            }
+
+            WorkingDirectory = workingDirectory;
+
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
             DataDirectory = dataDirectory;
             PluginPath = FS.Path.Combine(DataDirectory, "Plugins");
-            //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(DataDirectory, "GameDatabase");
-            ImageDatabasePath = FS.Path.Combine(DataDirectory, "ImageDatabase");
 
             ConfigDirectory = System.IO.Path.Combine(DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
@@ -95,7 +83,6 @@
         public string PluginPath { get; private set; }
         public string DataDirectory { get; private set; }
         public string DatabasePath { get; set; }
-        public string ImageDatabasePath { get; set; }
         public string ConfigDirectory { get; set; }
         public string FeedListPath { get; set; }
         public string LocalFeedPath { get; set; }
@@ -111,10 +98,15 @@
         {
             get
             {
-                var ret = FS.Path.Combine(DataDirectory, "Garbage");
-                if (!FS.Directory.Exists(ret)) FS.Directory.CreateDirectory(ret);
-                ret = FS.Path.Combine(ret, Guid.NewGuid().ToString());
-                return ret;
+                var tempPath = FS.Path.GetTempPath();
+
+                var path = FS.Path.Combine(tempPath, "Octgn", "Garbage");
+
+                if (!FS.Directory.Exists(path)) FS.Directory.CreateDirectory(path);
+
+                path = FS.Path.Combine(path, Guid.NewGuid().ToString());
+
+                return path;
             }
         }
     }

@@ -165,16 +165,16 @@ namespace Octgn.Core.DataManagers
                 //Sets//setid//Cards//Proxies
 
                 var setsDir = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id, "Sets");
-                var imageSetsDir = Path.Combine(Config.Instance.Paths.ImageDatabasePath, package.Id, "Sets");
+                var imageSetsDir = Path.Combine(Config.Instance.ImageDirectoryFull, package.Id, "Sets");
                 if (!Directory.Exists(imageSetsDir))
                 {
                     Directory.CreateDirectory(imageSetsDir);
                 }
-                
+
                 var game = GameManager.Get().GetById(new Guid(package.Id));
                 if (game == null)
                     throw new UserMessageException(L.D.Exception__CanNotInstallGameTryRestart_Format, package.Title);
-                
+
                 Log.InfoFormat("Installing plugins {0} {1}", package.Id, package.Title);
                 if (Directory.Exists(Path.Combine(game.InstallPath, "Plugins")))
                 {
@@ -292,7 +292,7 @@ namespace Octgn.Core.DataManagers
                 X.Instance.ForEachProgress(cardImageList.Length, cardImageList,
                     x =>
                     {
-                        string copyDirPath = Path.Combine(Config.Instance.Paths.ImageDatabasePath, package.Id, "Sets", x.SetDirectory.Name, "Cards");
+                        string copyDirPath = Path.Combine(Config.Instance.ImageDirectoryFull, package.Id, "Sets", x.SetDirectory.Name, "Cards");
                         if (!Directory.Exists(copyDirPath))
                         {
                             Directory.CreateDirectory(copyDirPath);
@@ -409,11 +409,11 @@ namespace Octgn.Core.DataManagers
                     {
                         Log.DebugFormat(
                             "Should extract, so extracting {0},{1},{2}",
-                            Config.Instance.Paths.ImageDatabasePath,
+                            Config.Instance.ImageDirectoryFull,
                             entry.FileName,
                             testGuid);
-                        entry.Extract(Config.Instance.Paths.ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
-                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.Paths.ImageDatabasePath, entry.FileName, testGuid);
+                        entry.Extract(Config.Instance.ImageDirectoryFull, ExtractExistingFileAction.OverwriteSilently);
+                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectoryFull, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
