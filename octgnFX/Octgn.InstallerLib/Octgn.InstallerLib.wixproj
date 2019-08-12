@@ -22,13 +22,15 @@
     <SuppressIces>ICE91;ICE69</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Comp.Shell.CustomProtocol.wxs" />
     <Compile Include="Comp.StartMenu.Dev.OctgnDeveloperMode.wxs" />
     <Compile Include="Comp.StartMenu.Dev.wxs" />
     <Compile Include="Comp.StartMenu.Dev.O8BuildGui.wxs" />
     <Compile Include="Comp.StartMenu.Dev.ProxygenTest.wxs" />
+    <Compile Include="Comp.StartMenu.Shortcuts.wxs" />
     <Compile Include="OctgnInPath.wxs" />
     <Compile Include="HeatGeneratedFileList.wxs" />
-    <Compile Include="Library.wxs" />
+    <Compile Include="Comp.Shell.DeckIcon.wxs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn\Octgn.csproj">
