@@ -49,6 +49,9 @@
       <ComponentRef Id="Octgn.CustomProtocolSupport"/>
       <ComponentRef Id="InstallDirUninstaller" />
       <ComponentRef Id="ProgramFolderUninstaller" />
+      <Feature Id="Feat.StartMenu.Shortcuts" Title="Start Menu Shortcuts" Absent="allow" Description="Start Menu Shortcuts for OCTGN" AllowAdvertise="no">
+        <ComponentRef Id="Comp.StartMenu.Shortcuts"/>
+      </Feature>
     </Feature>
     <Feature Id="Feat.Dev" Title="Game Developer Features" Absent="allow" Level="2" Description="OCTGN game developer features" AllowAdvertise="no">
       <Component Id="Empty.Fixes.Bug" Guid="{411C356E-20F6-4D63-8A32-C25DED282F37}" Directory="INSTALLDIR">

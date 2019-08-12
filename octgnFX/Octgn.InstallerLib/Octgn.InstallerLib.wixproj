@@ -26,6 +26,7 @@
     <Compile Include="Comp.StartMenu.Dev.wxs" />
     <Compile Include="Comp.StartMenu.Dev.O8BuildGui.wxs" />
     <Compile Include="Comp.StartMenu.Dev.ProxygenTest.wxs" />
+    <Compile Include="Comp.StartMenu.Shortcuts.wxs" />
     <Compile Include="OctgnInPath.wxs" />
     <Compile Include="HeatGeneratedFileList.wxs" />
     <Compile Include="Library.wxs" />
