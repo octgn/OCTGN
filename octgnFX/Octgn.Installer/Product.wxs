@@ -37,8 +37,6 @@
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
-    <Binary Id="Octgn.Installer.CustomActions.dll" SourceFile="$(var.RootPath)octgnFX\Octgn.Installer.CustomActions\bin\$(var.Configuration)\Octgn.Installer.CustomActions.CA.dll" />
-
     <WixVariable Id="WixUILicenseRtf" Value="$(var.RootPath)\EULA.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerBanner.png" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerDialog.png" />
