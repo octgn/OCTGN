@@ -1,3 +1,6 @@
+#3.4.203.0
++ Add ability to change DataDirectory and ImageDirectory inside of OCTGN - Kelly
+
 #3.4.202.0
 + New Installer - Kelly E
 + New Data Directory Config - Kelly E
@@ -3714,6 +3717,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
