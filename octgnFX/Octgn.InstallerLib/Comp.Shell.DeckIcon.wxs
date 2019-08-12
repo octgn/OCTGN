@@ -2,21 +2,12 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
     <DirectoryRef Id="INSTALLDIR">
-      <Component Id="Octgn.DeckIconSupport" Location="local">
+      <Component Id="Comp.Shell.DeckIcon" Location="local">
         <RegistryValue Root="HKCU" Key="Software\Classes\.o8d" Type="string" Value="octgn.o8d" KeyPath="yes"/>
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d" Type="string" Value="OCTGN Deck File" KeyPath="no"/>
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\DefaultIcon" Type="string" Value="[#filCFF5B796DD323F2CD1F94F9BB1D19852]" KeyPath="no"/>
         <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\shell\open\command" Type="string" Value="&quot;[#fil59E2C7E4B79381DF45FA80A2BB35088F]&quot; &quot;%1&quot;" KeyPath="no"/>
       </Component>
-      <Component Id="Octgn.CustomProtocolSupport" Location="local">
-        <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Value="URL:OCTGN Protocol" KeyPath="yes"/>
-        <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Name="URL Protocol" Value="" KeyPath="no"/>
-        <RegistryValue Root="HKCU" Key="Software\Classes\octgn\shell\open\command" Type="string" Value="&quot;[#fil59E2C7E4B79381DF45FA80A2BB35088F]&quot; &quot;%1&quot;" KeyPath="no"/>
-      </Component>
     </DirectoryRef>
-    <ComponentGroup Id="Octgn.AppComponents" Directory="INSTALLDIR">
-      <ComponentGroupRef Id="O__HeatGenerated"/>
-      <ComponentRef Id="RemoveInstalledDirectories"/>
-    </ComponentGroup>
   </Fragment>
 </Wix>

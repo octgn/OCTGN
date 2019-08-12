@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="Comp.Shell.CustomProtocol" Location="local">
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Value="URL:OCTGN Protocol" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Name="URL Protocol" Value="" KeyPath="no"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn\shell\open\command" Type="string" Value="&quot;[#fil59E2C7E4B79381DF45FA80A2BB35088F]&quot; &quot;%1&quot;" KeyPath="no"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

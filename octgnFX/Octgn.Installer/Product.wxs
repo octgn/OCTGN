@@ -44,14 +44,17 @@
     <WixVariable Id="WixUIDialogBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerDialog.png" />
 
     <Feature Id="ProductFeature" Title="Octgn Program" Level="1" Absent="disallow" ConfigurableDirectory="INSTALLDIR" Display="expand" Description="The OCTGN application" AllowAdvertise="no">
-      <ComponentGroupRef Id="Octgn.AppComponents"/>
-      <ComponentRef Id="Octgn.DeckIconSupport"/>
-      <ComponentRef Id="Octgn.CustomProtocolSupport"/>
-      <ComponentRef Id="InstallDirUninstaller" />
-      <ComponentRef Id="ProgramFolderUninstaller" />
-      <Feature Id="Feat.StartMenu.Shortcuts" Title="Start Menu Shortcuts" Absent="allow" Description="Start Menu Shortcuts for OCTGN" AllowAdvertise="no">
-        <ComponentRef Id="Comp.StartMenu.Shortcuts"/>
-      </Feature>
+        <ComponentGroupRef Id="O__HeatGenerated"/>
+        <ComponentRef Id="RemoveInstalledDirectories"/>
+        <ComponentRef Id="InstallDirUninstaller" />
+        <ComponentRef Id="ProgramFolderUninstaller" />
+    </Feature>
+    <Feature Id="Feat.Shell.DeckIcon" Title=".o8d(Deck) File Integration" Absent="allow" Description="Allows o8d files to launch OCTGN" AllowAdvertise="no">
+      <ComponentRef Id="Comp.Shell.DeckIcon"/>
+      <ComponentRef Id="Comp.Shell.CustomProtocol"/>
+    </Feature>
+    <Feature Id="Feat.StartMenu.Shortcuts" Title="Start Menu Shortcuts" Absent="allow" Description="Start Menu Shortcuts for OCTGN" AllowAdvertise="no">
+      <ComponentRef Id="Comp.StartMenu.Shortcuts"/>
     </Feature>
     <Feature Id="Feat.Dev" Title="Game Developer Features" Absent="allow" Level="2" Description="OCTGN game developer features" AllowAdvertise="no">
       <Component Id="Empty.Fixes.Bug" Guid="{411C356E-20F6-4D63-8A32-C25DED282F37}" Directory="INSTALLDIR">
