@@ -68,7 +68,7 @@ namespace Octgn
                     {"g|game=", x => gameid = Guid.Parse(x)},
                     {"d|deck=", x => deckPath = x},
                     {"x|devmode", x => DevMode = true},
-                    {"e|editor", x=> editorOnly = true}
+                    {"e|editor", x => editorOnly = true}
                 };
                 try
                 {
