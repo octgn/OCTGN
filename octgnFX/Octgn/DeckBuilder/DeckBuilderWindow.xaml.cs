@@ -691,7 +691,9 @@ namespace Octgn.DeckBuilder
             InvokeDeckChangedEvent();
 
             // Focus section where card was added
-            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
+            var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+
             Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
             if (presenter.IsExpanded)
             {
@@ -1397,7 +1399,9 @@ namespace Octgn.DeckBuilder
             else if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
                 e.Handled = true;
-                var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+                var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
+                var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+
                 Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
                 presenter.IsExpanded = !presenter.IsExpanded;
                 if (presenter.IsExpanded)
@@ -1414,13 +1418,14 @@ namespace Octgn.DeckBuilder
 
         public void ChangeActiveSection(int delta)
         {
-            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-            var idx = PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+            var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
+            var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            var idx = activeGroup.ItemContainerGenerator.IndexFromContainer(cont);
             // Focus previous section
             idx += delta;
-            if (idx < 0 || idx >= PlayerCardSections.Items.Count)
+            if (idx < 0 || idx >= activeGroup.Items.Count)
                 return;
-            var nc = (ContentPresenter)PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+            var nc = (ContentPresenter)activeGroup.ItemContainerGenerator.ContainerFromIndex(idx);
             Expander presenter = (Expander)VisualTreeHelper.GetChild(nc, 0);
             DataGrid grid = (DataGrid)presenter.Content;
             if (presenter.IsExpanded)
