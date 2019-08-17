@@ -88,6 +88,8 @@ namespace Octgn.Launcher
             } catch (Exception ex) {
                 Log.Error("Error", ex);
 
+                MessageBox.Show($"OCTGN was unable to be launched. Please try again later: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                 Shutdown(99);
             }
         }
