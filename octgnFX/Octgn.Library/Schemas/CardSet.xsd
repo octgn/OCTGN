@@ -374,16 +374,16 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="gameVersion" type="version" use="required">
+      <xs:attribute name="gameVersion" type="version" use="optional">
         <xs:annotation>
           <xs:documentation>
-            Game version this set was created for. Major or minor version changes are set-incompatible.
+            Game version this set was created for. Major or minor version changes are set-incompatible. Depreciated.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="version" type="version" use="required">
+      <xs:attribute name="version" type="version" use="optional">
         <xs:annotation>
-          <xs:documentation>Version of this set.</xs:documentation>
+          <xs:documentation>Version of this set. Depreciated.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="hidden" type="xs:boolean" use="optional" default="false">

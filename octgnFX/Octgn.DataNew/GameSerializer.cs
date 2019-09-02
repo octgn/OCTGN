@@ -1330,10 +1330,8 @@ namespace Octgn.DataNew
                 ret.Filename = fileName;
                 ret.GameId = new Guid(root.Attribute("gameId").Value);
                 ret.Cards = new List<Card>();
-                ret.GameVersion = new Version(root.Attribute("gameVersion").Value);
                 ret.Markers = new List<Marker>();
                 ret.Packs = new List<Pack>();
-                ret.Version = new Version(root.Attribute("version").Value);
                 ret.PackageName = "";
                 ret.InstallPath = directory;
                 ret.DeckPath = Path.Combine(ret.InstallPath, "Decks");
@@ -1682,8 +1680,6 @@ namespace Octgn.DataNew
                 id = set.Id.ToString(),
                 gameId = set.GameId.ToString(),
                 hidden = set.Hidden,
-                version = set.Version.ToString(),
-                gameVersion = set.GameVersion.ToString()
             };
 
             var packs = new List<setPack>();

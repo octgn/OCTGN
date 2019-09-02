@@ -60,11 +60,6 @@
                 var gameId = new Guid(gi);
                 ret.GameId = GameManager.Get().GetById(gameId).Id;
             }
-            string gv = reader.GetAttribute("gameVersion");
-            if (gv != null) ret.GameVersion = new Version(gv);
-            Version ver;
-            Version.TryParse(reader.GetAttribute("version"), out ver);
-            ret.Version = ver ?? new Version(0, 0);
             reader.ReadStartElement("set");
             ret.Markers = new List<Marker>();
             ret.Packs = new List<Pack>();
@@ -103,16 +98,11 @@
                     ret.Name = reader.GetAttribute("name");
                     string gaid = reader.GetAttribute("id");
                     if (gaid != null) ret.Id = new Guid(gaid);
-                    string gv = reader.GetAttribute("gameVersion");
-                    if (gv != null) ret.GameVersion = new Version(gv);
                     string gi = reader.GetAttribute("gameId");
                     if (gi != null)
                     {
                         ret.GameId = new Guid(gi);
                     }
-                    Version ver;
-                    Version.TryParse(reader.GetAttribute("version"), out ver);
-                    ret.Version = ver ?? new Version(0, 0);
                     reader.ReadStartElement("set");
 
                     return ret;

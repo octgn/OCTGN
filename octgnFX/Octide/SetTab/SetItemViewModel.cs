@@ -27,8 +27,6 @@ namespace Octide.ViewModel
                 Name = "Set",
                 Id = Guid.NewGuid(),
                 GameId = ViewModelLocator.GameLoader.Game.Id,
-                Version = Version.Parse("1.0"),
-                GameVersion = ViewModelLocator.GameLoader.Game.Version,
                 Hidden = false,
                 Cards = new List<Card>(),
                 Packs = new List<Pack>()
@@ -99,8 +97,6 @@ namespace Octide.ViewModel
                 Name = s._set.Name,
                 Id = id,
                 GameId = s._set.GameId,
-                Version = s._set.Version,
-                GameVersion = s._set.GameVersion,
                 Hidden = s._set.Hidden,
                 InstallPath = installPath,
                 Filename = Path.Combine(installPath, "set.xml"),
