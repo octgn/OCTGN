@@ -1329,6 +1329,11 @@ namespace Octgn.DataNew
                 ret.Name = root.Attribute("name").Value;
                 ret.Filename = fileName;
                 ret.GameId = new Guid(root.Attribute("gameId").Value);
+                if (root.Attribute("code") != null)
+                    ret.Code = root.Attribute("code").Value;
+                ret.ReleaseDate = root.Attribute("releaseDate") == null ? new DateTime(0) : DateTime.Parse(root.Attribute("releaseDate").Value);
+                if (root.Attribute("description") != null)
+                    ret.Description = root.Attribute("description").Value;
                 ret.Cards = new List<Card>();
                 ret.Markers = new List<Marker>();
                 ret.Packs = new List<Pack>();
@@ -1680,6 +1685,9 @@ namespace Octgn.DataNew
                 id = set.Id.ToString(),
                 gameId = set.GameId.ToString(),
                 hidden = set.Hidden,
+                code = set.Code,
+                releaseDate = set.ReleaseDate,
+                description = set.Description
             };
 
             var packs = new List<setPack>();

@@ -360,6 +360,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="code" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            An abbreviation of the set's name.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="id" type="guid" use="required">
         <xs:annotation>
           <xs:documentation>
@@ -371,6 +378,20 @@
         <xs:annotation>
           <xs:documentation>
             Unique identifier of the game this set belongs to.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="releaseDate" type="xs:date" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            The release date of the set, for sorting purposes.  Use XML date format  YYYY-MM-DD
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="description" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Text to describe the set.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

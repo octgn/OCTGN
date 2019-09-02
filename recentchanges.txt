@@ -1,1 +1,2 @@
 Removed Version and GameVersion requirements from set XMLs
+Add optional attributes Code, Description, ReleaseDate to set XML

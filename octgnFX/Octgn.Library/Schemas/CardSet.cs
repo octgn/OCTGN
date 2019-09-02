@@ -533,9 +533,17 @@ public partial class set {
     
     private string nameField;
     
+    private string codeField;
+    
     private string idField;
     
     private string gameIdField;
+    
+    private System.DateTime releaseDateField;
+    
+    private bool releaseDateFieldSpecified;
+    
+    private string descriptionField;
     
     private string gameVersionField;
     
@@ -596,6 +604,17 @@ public partial class set {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string code {
+        get {
+            return this.codeField;
+        }
+        set {
+            this.codeField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
     public string id {
         get {
             return this.idField;
@@ -613,6 +632,39 @@ public partial class set {
         }
         set {
             this.gameIdField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="date")]
+    public System.DateTime releaseDate {
+        get {
+            return this.releaseDateField;
+        }
+        set {
+            this.releaseDateField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIgnoreAttribute()]
+    public bool releaseDateSpecified {
+        get {
+            return this.releaseDateFieldSpecified;
+        }
+        set {
+            this.releaseDateFieldSpecified = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string description {
+        get {
+            return this.descriptionField;
+        }
+        set {
+            this.descriptionField = value;
         }
     }
     

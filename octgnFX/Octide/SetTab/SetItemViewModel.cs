@@ -98,6 +98,9 @@ namespace Octide.ViewModel
                 Id = id,
                 GameId = s._set.GameId,
                 Hidden = s._set.Hidden,
+                Code = s._set.Code,
+                Description = s._set.Description,
+                ReleaseDate = s._set.ReleaseDate,
                 InstallPath = installPath,
                 Filename = Path.Combine(installPath, "set.xml"),
                 PackUri = Path.Combine(installPath, "Cards")
@@ -207,6 +210,45 @@ namespace Octide.ViewModel
             }
         }
 
+        public string Code
+        {
+            get
+            {
+                return _set.Code;
+            }
+            set
+            {
+                if (value == _set.Code) return;
+                _set.Code = value;
+                RaisePropertyChanged("Code");
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return _set.Description;
+            }
+            set
+            {
+                if (value == _set.Description) return;
+                _set.Description = value;
+                RaisePropertyChanged("Description");
+            }
+        }
+        public DateTime ReleaseDate
+        {
+            get
+            {
+                return _set.ReleaseDate;
+            }
+            set
+            {
+                if (value == _set.ReleaseDate) return;
+                _set.ReleaseDate = value;
+                RaisePropertyChanged("ReleaseDate");
+            }
+        }
         public bool Hidden
         {
             get
