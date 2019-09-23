@@ -146,6 +146,7 @@ namespace Octgn.Core.DataExtensionMethods
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());
             }
             ret.Add("SetName", card.GetSet().Name);
+            ret.Add("Name", GetName(card));
             ret.Add("CardSizeName", card.Size.Name);
             ret.Add("CardSizeHeight", card.Size.Height.ToString());
             ret.Add("CardSizeWidth", card.Size.Width.ToString());
@@ -179,7 +180,7 @@ namespace Octgn.Core.DataExtensionMethods
                 card.Size = card.PropertySets[propertyType].Size;
             }
         }
-        public static string GetName(this Card card)
+        public static string GetName(this ICard card)
         {
             return card.PropertySets[card.Alternate].Name;
         }
