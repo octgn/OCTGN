@@ -61,8 +61,7 @@ namespace Octgn.DeckBuilder
             var source = 
                 Enumerable.Repeat<object>("First", 1)
                      .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1))
-                     .Union(Enumerable.Repeat<object>(new PropertyDef() { Name = "Name", Type = PropertyType.String}, 1))
-                     .Union(game.CustomProperties.Where(p => !p.Hidden));
+                     .Union(game.AllProperties().Where(p => !p.Hidden));
 
             filtersList.ItemsSource = source;
             GenerateColumns(game);
@@ -93,7 +92,6 @@ namespace Octgn.DeckBuilder
             filtersList.ItemsSource =
                 Enumerable.Repeat<object>("First", 1)
                     .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1))
-                    .Union(Enumerable.Repeat<object>(new PropertyDef() { Name = "Name", Type = PropertyType.String }, 1))
                     .Union(game.AllProperties().Where(p => !p.Hidden));
             this.GenerateColumns(game);
             FileName = "";
@@ -112,8 +110,7 @@ namespace Octgn.DeckBuilder
                     }
                     else
                     {
-                        prop =
-                            loadedGame.CustomProperties.FirstOrDefault(
+                        prop = loadedGame.AllProperties().FirstOrDefault(
                                 x => x.Name.Equals(filter.PropertyName, StringComparison.InvariantCultureIgnoreCase));
                     }
                     if (prop == null) continue;
