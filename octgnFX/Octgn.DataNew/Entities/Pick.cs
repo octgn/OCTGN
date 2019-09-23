@@ -53,18 +53,18 @@
 
                 foreach (var p in picked.Include.Properties)
                 {
-                    var key = picked.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+                    var key = picked.Card.PropertySets[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
                     if (key != null) // if the include property name isn't a defined custom property, ignore it
                     {
                         if (key.Type is PropertyType.RichText)
                         {
                             var span = new RichSpan();
                             span.Items.Add(new RichText() { Text = p.Item2 });
-                            card.Properties[""].Properties[key] = new RichTextPropertyValue() { Value = span };
+                            card.PropertySets[""].Properties[key] = new RichTextPropertyValue() { Value = span };
                         }
                         else
                         {
-                            card.Properties[""].Properties[key] = p.Item2;
+                            card.PropertySets[""].Properties[key] = p.Item2;
                         }
                     }
                 }
@@ -81,7 +81,7 @@
                 var list = (
                     from card in cardList
                     where
-                        card.Properties.Where(x => x.Key == "").SelectMany(x => x.Value.Properties).Any(
+                        card.PropertySets.Where(x => x.Key == "").SelectMany(x => x.Value.Properties).Any(
                             x =>
                             x.Key.Name.ToLower() == Key.ToLower()
                             && x.Value.ToString().ToLower() == Value.ToLower())

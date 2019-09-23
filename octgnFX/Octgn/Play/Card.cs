@@ -255,12 +255,12 @@ namespace Octgn.Play
 
         public override string Name
         {
-            get { return FaceUp && _type.Model != null ? _type.Model.PropertyName() : "Card"; }
+            get { return FaceUp && _type.Model != null ? _type.Model.GetName() : "Card"; }
         }
 
         public string RealName
         {
-            get { return _type.Model != null ? _type.Model.PropertyName() : "Card"; }
+            get { return _type.Model != null ? _type.Model.GetName() : "Card"; }
         }
         public bool CardMoved
         {
@@ -552,7 +552,7 @@ namespace Octgn.Play
         public string[] Alternates()
         {
             if (_type.Model == null) return new string[0];
-            return _type.Model.Properties.Select(x => x.Key).ToArray();
+            return _type.Model.PropertySets.Select(x => x.Key).ToArray();
         }
 
         public string Alternate()
@@ -578,7 +578,7 @@ namespace Octgn.Play
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
         {
             if (_type.Model == null) return defaultReturn;
-            if (name.Equals("Name", scompare)) return _type.Model.PropertyName();
+            if (name.Equals("Name", scompare)) return _type.Model.GetName();
             if (name.Equals("Id", scompare)) return _type.Model.Id;
 
             //check if python has changed the default property value
@@ -587,17 +587,18 @@ namespace Octgn.Play
                 return PropertyOverrides[name][alternate];
             }
 
+            //TODO: use cardextension to find alt properties
             //check if the card has a default property value from the set data
-            var prop = _type.Model.Properties[alternate].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (prop.Key != null && !prop.Key.IsUndefined)
+            var prop = _type.Model.PropertySets[alternate].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            if (prop.Key != null && prop.Value != null)
             {
                 return prop.Value;
             }
 
             //if the alternate didn't have a property defined, use the base card's property.
             //note that if the card is already in its base state, it'll just repeat the same code as above to the same end result
-            var baseProp = _type.Model.Properties[""].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (baseProp.Key != null && !baseProp.Key.IsUndefined)
+            var baseProp = _type.Model.PropertySets[""].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            if (baseProp.Key != null && baseProp.Value != null)
             {
                 return baseProp.Value;
             }

@@ -24,7 +24,6 @@
         public PropertyType Type { get; set; }
         public bool IgnoreText { get; set; }
         public bool Hidden { get; set; }
-        public bool IsUndefined { get; set; }
         public PropertyTextKind TextKind { get; set; }
 
         public bool Equals(PropertyDef other)
@@ -57,7 +56,6 @@
                 Type = this.Type,
                 TextKind = this.TextKind,
                 IgnoreText = this.IgnoreText,
-                IsUndefined = this.IsUndefined
             };
             return newprop;
         }

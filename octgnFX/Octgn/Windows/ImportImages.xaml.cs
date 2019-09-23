@@ -109,11 +109,11 @@ namespace Octgn.Windows
 
             foreach (var c in selectedSet.Cards)
             {
-                foreach (var alternate in c.Properties)
+                foreach (var alternate in c.PropertySets)
                 {
                     var card = new Card(c);
                     card.Alternate = alternate.Key;
-                    var cardPropertyValue = card.Properties[card.Alternate].Properties[selectedProperty].ToString();
+                    var cardPropertyValue = card.PropertySets[card.Alternate].Properties[selectedProperty].ToString();
                     var sanitizedValue = SanitizeString(cardPropertyValue);
 
                     // first check for exact matches, then if none show up we check for partial matches
@@ -243,7 +243,7 @@ namespace Octgn.Windows
         {
             get
             {
-                return _card.Properties[_card.Alternate].Properties.Where(x => x.Key.Name == "Name").First().Value.ToString();
+                return _card.GetName();
             }
         }
         

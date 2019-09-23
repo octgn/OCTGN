@@ -14,7 +14,7 @@ namespace Octgn.DataNew.Entities
         string ImageUri { get; }
         string Alternate { get; }
         CardSize Size { get; }
-        IDictionary<string , CardPropertySet> Properties { get; } 
+        IDictionary<string , CardPropertySet> PropertySets { get; } 
     }
 
     public class Card : ICard
@@ -31,7 +31,7 @@ namespace Octgn.DataNew.Entities
 
         public CardSize Size { get; set; }
 
-        public IDictionary<string , CardPropertySet> Properties { get; set; }
+        public IDictionary<string , CardPropertySet> PropertySets { get; set; }
 
         public Card(Guid id, Guid setId, string name, string imageuri, string alternate, CardSize size, IDictionary<string,CardPropertySet> properties )
         {
@@ -41,8 +41,8 @@ namespace Octgn.DataNew.Entities
             ImageUri = imageuri.Clone() as string;
             Alternate = alternate.Clone() as string;
             Size = size.Clone() as CardSize;
-            Properties = properties;
-            this.Properties = this.CloneProperties();
+            PropertySets = properties;
+            this.PropertySets = this.CloneProperties();
         }
 
         public Card(ICard card)
@@ -54,6 +54,7 @@ namespace Octgn.DataNew.Entities
 
     public class CardPropertySet : ICloneable
     {
+        public string Name { get; set; }
         public string Type { get; set; }
         public CardSize Size { get; set; }
         public IDictionary<PropertyDef, object> Properties { get; set; }
@@ -62,6 +63,7 @@ namespace Octgn.DataNew.Entities
         {
             var ret = new CardPropertySet()
                           {
+                              Name = this.Name.Clone() as string,
                               Type = this.Type.Clone() as string,
                               Size = this.Size.Clone() as CardSize,
                               Properties =

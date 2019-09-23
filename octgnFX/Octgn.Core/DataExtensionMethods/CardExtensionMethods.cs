@@ -114,7 +114,7 @@ namespace Octgn.Core.DataExtensionMethods
 
         public static bool HasProperty(this Card card, string name)
         {
-            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefined == false);
+            return card.GetCardProperties().Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static void GenerateProxyImage(this ICard card, Set set, string uri)
@@ -141,7 +141,7 @@ namespace Octgn.Core.DataExtensionMethods
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            foreach (KeyValuePair<PropertyDef, object> kvi in card.PropertySet())
+            foreach (KeyValuePair<PropertyDef, object> kvi in card.GetCardProperties())
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());
             }
@@ -152,37 +152,44 @@ namespace Octgn.Core.DataExtensionMethods
             return (ret);
         }
 
-
-        public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
+        public static IDictionary<PropertyDef, object> GetBaseCardProperties(this ICard card)
         {
-            var ret = card.Properties[card.Alternate].Properties.Where(x => x.Key.IsUndefined == false).ToDictionary(x => x.Key, x => x.Value);
+            var ret = card.PropertySets[""].Properties.ToDictionary(x => x.Key, x => x.Value);
+            return ret;
+        }
+        public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card)
+        {
+            var ret = GetBaseCardProperties(card);
+            if (card.Alternate != "")
+            {
+                foreach (var altProperty in card.PropertySets[card.Alternate].Properties)
+                {
+                    ret[altProperty.Key] = altProperty.Value;
+                }
+            }
             return ret;
         }
 
         public static void SetPropertySet(this Card card, string propertyType = "")
         {
             if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";
-            if (card.Properties.Any(x => x.Key.Equals(propertyType, StringComparison.InvariantCultureIgnoreCase)))
+            if (card.PropertySets.Any(x => x.Key.Equals(propertyType, StringComparison.InvariantCultureIgnoreCase)))
             {
                 card.Alternate = propertyType;
-                card.Size = card.Properties[propertyType].Size;
+                card.Size = card.PropertySets[propertyType].Size;
             }
         }
-
-        public static string PropertyName(this Card card)
+        public static string GetName(this Card card)
         {
-            return
-                card.PropertySet()
-                    .First(x => x.Key.Name.Equals("name", StringComparison.InvariantCultureIgnoreCase))
-                    .Value as string;
+            return card.PropertySets[card.Alternate].Name;
         }
 
         public static MultiCard Clone(this MultiCard card)
         {
             var ret = new MultiCard(card);
-            foreach (var p in card.Properties)
+            foreach (var p in card.PropertySets)
             {
-                ret.Properties.Add(p.Key, p.Value);
+                ret.PropertySets.Add(p.Key, p.Value);
             }
             return ret;
         }

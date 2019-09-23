@@ -47,7 +47,7 @@ namespace Octgn.Play
 
         public override string ToString()
         {
-            return Model == null ? "Card" : Model.PropertyName();
+            return Model == null ? "Card" : Model.GetName();
         }
     }
 }

@@ -165,7 +165,7 @@ namespace Octgn.DeckBuilder
             Name = card.Name;
             ImageUri = card.ImageUri;
             Alternate = card.Alternate;
-            Properties = card.Properties;
+            PropertySets = card.PropertySets;
             Quantity = card.Quantity;
             IsVisible = true;
             Size = card.Size;
@@ -176,7 +176,7 @@ namespace Octgn.DeckBuilder
         public string Name { get; private set; }
         public string ImageUri { get; private set; }
         public string Alternate { get; private set; }
-        public IDictionary<string, CardPropertySet> Properties { get; private set; }
+        public IDictionary<string, CardPropertySet> PropertySets { get; private set; }
         public int Quantity { get; set; }
         public CardSize Size { get; private set; }
         public event PropertyChangedEventHandler PropertyChanged;

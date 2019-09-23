@@ -1028,12 +1028,12 @@ namespace Octgn.Scripting.Versions
                     {
                         if (match)
                             tlist.AddRange(query
-                                .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                .Where(x => x.PropertySets.SelectMany(y => y.Value.Properties)
                                 .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                 && y.Value.ToString().ToLower() == v.ToLower())).ToList());
                         else
                             tlist.AddRange(query
-                                .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                .Where(x => x.PropertySets.SelectMany(y => y.Value.Properties)
                                 .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                 && y.Value.ToString().ToLower().Contains(v.ToLower()))).ToList());
 

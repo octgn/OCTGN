@@ -125,7 +125,7 @@ namespace Octgn.DeckBuilder
                     var b1 = c.Name.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0;
                     if (b1) return true;
                     var b2 =
-                        c.Properties.SelectMany(x => x.Value.Properties)
+                        c.PropertySets.SelectMany(x => x.Value.Properties)
                             .Any(
                                 x => x.Value.ToString().IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0);
                     return b2;

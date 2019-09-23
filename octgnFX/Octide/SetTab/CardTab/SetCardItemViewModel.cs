@@ -66,7 +66,7 @@ namespace Octide.ItemModel
             AddAltCommand = new RelayCommand(AddAlt);
             _card = c;
             Items = new ObservableCollection<IdeListBoxItemBase>();
-            foreach (var alt in c.Properties)
+            foreach (var alt in c.PropertySets)
             {
                 var AltItem = new SetCardAltItemViewModel(alt.Value)
                 {
@@ -152,8 +152,8 @@ namespace Octide.ItemModel
 
         public void UpdateCardAlts()
         {
-            _card.Properties = Items.Select(x => (x as SetCardAltItemViewModel)._altDef).ToDictionary(x => x.Type, x => x);
-            _card.Properties.Add(BaseCardAlt.Name, BaseCardAlt._altDef);
+            _card.PropertySets = Items.Select(x => (x as SetCardAltItemViewModel)._altDef).ToDictionary(x => x.Type, x => x);
+            _card.PropertySets.Add(BaseCardAlt.Name, BaseCardAlt._altDef);
         }
 
         public override object Clone()

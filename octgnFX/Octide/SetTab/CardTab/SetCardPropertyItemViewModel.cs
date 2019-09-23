@@ -21,7 +21,7 @@ namespace Octide.ItemModel
         {
             Parent = parent;
             Property = prop;
-            _isDefined = !propDef.Key.IsUndefined;
+          //TODO  _isDefined = !propDef.Key.IsUndefined;
             _value = propDef.Value;
         }
 

@@ -97,19 +97,19 @@ namespace Octide.ItemModel
                 var storedProp = Items.FirstOrDefault(x => x.Property == customProp);
                 if (storedProp == null)
                 {
-                    clonedProp.IsUndefined = true;
+                  //TODO  clonedProp.IsUndefined = true;
                     NewAltPropSet.Add(clonedProp, "");
                 }
                 else
                 {
                     if (storedProp.IsDefined)
                     {
-                        clonedProp.IsUndefined = false;
+                   //TODO     clonedProp.IsUndefined = false;
                         NewAltPropSet.Add(clonedProp, storedProp.Value);
                     }
                     else
                     {
-                        clonedProp.IsUndefined = true;
+                    //TODO    clonedProp.IsUndefined = true;
                         NewAltPropSet.Add(clonedProp, "");
                     }
                 }
