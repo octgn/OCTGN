@@ -24,6 +24,7 @@ namespace Octgn.DeckBuilder
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
 
     public partial class SearchControl : INotifyPropertyChanged
     {
@@ -58,9 +59,10 @@ namespace Octgn.DeckBuilder
             Game = game;
             InitializeComponent();
             var source = 
-                Enumerable.Repeat<object>("First", 1).Union(
-                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1).Union(
-                        game.CustomProperties.Where(p => !p.Hidden)));
+                Enumerable.Repeat<object>("First", 1)
+                     .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1))
+                     .Union(Enumerable.Repeat<object>(new PropertyDef() { Name = "Name", Type = PropertyType.String}, 1))
+                     .Union(game.CustomProperties.Where(p => !p.Hidden));
 
             filtersList.ItemsSource = source;
             GenerateColumns(game);
@@ -89,9 +91,10 @@ namespace Octgn.DeckBuilder
             Game = loadedGame;
             InitializeComponent();
             filtersList.ItemsSource =
-                Enumerable.Repeat<object>("First", 1).Union(
-                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1).Union(
-                        game.AllProperties().Where(p => !p.Hidden)));
+                Enumerable.Repeat<object>("First", 1)
+                    .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1))
+                    .Union(Enumerable.Repeat<object>(new PropertyDef() { Name = "Name", Type = PropertyType.String }, 1))
+                    .Union(game.AllProperties().Where(p => !p.Hidden));
             this.GenerateColumns(game);
             FileName = "";
             if (save != null)
