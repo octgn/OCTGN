@@ -360,7 +360,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="code" type="xs:string" use="optional">
+      <xs:attribute name="shortName" type="xs:string" use="optional">
         <xs:annotation>
           <xs:documentation>
             An abbreviation of the set's name.

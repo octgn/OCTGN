@@ -1329,8 +1329,8 @@ namespace Octgn.DataNew
                 ret.Name = root.Attribute("name").Value;
                 ret.Filename = fileName;
                 ret.GameId = new Guid(root.Attribute("gameId").Value);
-                if (root.Attribute("code") != null)
-                    ret.Code = root.Attribute("code").Value;
+                if (root.Attribute("shortName") != null)
+                    ret.ShortName = root.Attribute("shortName").Value;
                 ret.ReleaseDate = root.Attribute("releaseDate") == null ? new DateTime(0) : DateTime.Parse(root.Attribute("releaseDate").Value);
                 if (root.Attribute("description") != null)
                     ret.Description = root.Attribute("description").Value;
@@ -1685,7 +1685,7 @@ namespace Octgn.DataNew
                 id = set.Id.ToString(),
                 gameId = set.GameId.ToString(),
                 hidden = set.Hidden,
-                code = set.Code,
+                shortName = set.ShortName,
                 releaseDate = set.ReleaseDate,
                 description = set.Description
             };

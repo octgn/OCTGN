@@ -9,7 +9,7 @@
         public string Name { get; set; }
         public Boolean Hidden { get; set; }
         public string Description { get; set; }
-        public string Code { get; set; }
+        public string ShortName { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Filename { get; set; }
         public string PackageName { get; set; }

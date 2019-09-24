@@ -533,7 +533,7 @@ public partial class set {
     
     private string nameField;
     
-    private string codeField;
+    private string shortNameField;
     
     private string idField;
     
@@ -604,12 +604,12 @@ public partial class set {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string code {
+    public string shortName {
         get {
-            return this.codeField;
+            return this.shortNameField;
         }
         set {
-            this.codeField = value;
+            this.shortNameField = value;
         }
     }
     

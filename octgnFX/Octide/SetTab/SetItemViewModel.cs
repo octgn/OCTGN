@@ -98,7 +98,7 @@ namespace Octide.ViewModel
                 Id = id,
                 GameId = s._set.GameId,
                 Hidden = s._set.Hidden,
-                Code = s._set.Code,
+                ShortName = s._set.ShortName,
                 Description = s._set.Description,
                 ReleaseDate = s._set.ReleaseDate,
                 InstallPath = installPath,
@@ -214,12 +214,12 @@ namespace Octide.ViewModel
         {
             get
             {
-                return _set.Code;
+                return _set.ShortName;
             }
             set
             {
-                if (value == _set.Code) return;
-                _set.Code = value;
+                if (value == _set.ShortName) return;
+                _set.ShortName = value;
                 RaisePropertyChanged("Code");
             }
         }
