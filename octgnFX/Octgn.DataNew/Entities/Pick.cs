@@ -9,6 +9,7 @@
     using log4net;
 
     using Octgn.Library.ExtensionMethods;
+    using Octgn.Core.DataExtensionMethods;
 
     public class Pick : IPackItem
     {
@@ -53,7 +54,7 @@
 
                 foreach (var p in picked.Include.Properties)
                 {
-                    var key = picked.Card.PropertySets[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+                    var key = picked.Card.GetFullCardProperties().Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
                     if (key != null) // if the include property name isn't a defined custom property, ignore it
                     {
                         if (key.Type is PropertyType.RichText)
@@ -81,7 +82,7 @@
                 var list = (
                     from card in cardList
                     where
-                        card.PropertySets.Where(x => x.Key == "").SelectMany(x => x.Value.Properties).Any(
+                        card.GetFullCardProperties().Any(
                             x =>
                             x.Key.Name.ToLower() == Key.ToLower()
                             && x.Value.ToString().ToLower() == Value.ToLower())
