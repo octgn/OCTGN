@@ -171,6 +171,13 @@ namespace Octgn.Core.DataExtensionMethods
             return ret;
         }
 
+        public static IDictionary<PropertyDef, object> GetFullCardProperties(this ICard card)
+        {
+            var ret = GetCardProperties(card);
+            ret.Add(GameExtensionMethods.NameProperty, card.Name);
+            return ret;
+        }
+
         public static void SetPropertySet(this Card card, string propertyType = "")
         {
             if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";

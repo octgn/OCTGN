@@ -32,6 +32,22 @@ namespace Octgn.Core.DataExtensionMethods
         }
         private static IFileSystem io;
 
+        public static PropertyDef _nameProperty;
+
+        public static PropertyDef NameProperty
+        {
+            get
+            {
+                if (_nameProperty == null)
+                    _nameProperty = new PropertyDef()
+                    {
+                        Name = "Name",
+                        Type = PropertyType.String
+                    };
+                return _nameProperty;
+            }
+        }
+
         public static IEnumerable<Set> Sets(this Game game)
         {
             var ret = SetManager.Get().GetByGameId(game.Id);
@@ -111,7 +127,7 @@ namespace Octgn.Core.DataExtensionMethods
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<PropertyDef>();
-            return Enumerable.Repeat(new PropertyDef { Name = "Name", Type = PropertyType.String }, 1).Union(game.CustomProperties);
+            return Enumerable.Repeat(NameProperty, 1).Union(game.CustomProperties);
         }
 
         public static IEnumerable<Card> AllCards(this Game game)
