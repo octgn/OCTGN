@@ -587,20 +587,12 @@ namespace Octgn.Play
                 return PropertyOverrides[name][alternate];
             }
 
-            //TODO: use cardextension to find alt properties
             //check if the card has a default property value from the set data
-            var prop = _type.Model.PropertySets[alternate].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (prop.Key != null && prop.Value != null)
+            //if the alternate didn't have a property defined, it will use the base card's property.
+            var prop = _type.Model.GetCardProperties().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            if (prop.Key != null)
             {
                 return prop.Value;
-            }
-
-            //if the alternate didn't have a property defined, use the base card's property.
-            //note that if the card is already in its base state, it'll just repeat the same code as above to the same end result
-            var baseProp = _type.Model.PropertySets[""].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (baseProp.Key != null && baseProp.Value != null)
-            {
-                return baseProp.Value;
             }
 
             //return the default value if the card didnt have a value for this property
