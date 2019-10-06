@@ -17,6 +17,8 @@ namespace Octgn.Launcher
 
         private const string DotNetDownloadUrl = "http://go.microsoft.com/fwlink/?LinkId=2085155";
 
+        private static bool IsDebugMode;
+
         protected override void OnStartup(StartupEventArgs e) {
             Log.Info("Startup");
 
@@ -24,16 +26,56 @@ namespace Octgn.Launcher
                 this.DispatcherUnhandledException += App_DispatcherUnhandledException;
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-                var computerInfo = new ComputerInfo();
+                {
+                    var debugVariable = Environment.GetEnvironmentVariable("OCTGN_LAUNCHER_DEBUG", EnvironmentVariableTarget.Process)
+                                     ?? Environment.GetEnvironmentVariable("OCTGN_LAUNCHER_DEBUG", EnvironmentVariableTarget.User)
+                                     ?? Environment.GetEnvironmentVariable("OCTGN_LAUNCHER_DEBUG", EnvironmentVariableTarget.Machine);
 
-                var ver = Version.Parse(computerInfo.OSVersion);
+                    IsDebugMode = debugVariable != null || Debugger.IsAttached;
+                    Log.Info("IsDebugMode=" + IsDebugMode);
 
-                Log.Info("OS Version=" + computerInfo.OSVersion);
+                    if (IsDebugMode && !Debugger.IsAttached) {
+                        Log.Info("Launching Debugger");
+                        var launched = Debugger.Launch();
 
-                if (ver < Windows7Version) {
+                        if (launched) {
+                            Log.Info("Debugger attached");
+                        } else {
+                            Log.Info("Debugger did not attach");
+                        }
+                    }
+                }
+
+                Version osVersion;
+                string osName;
+                {
+                    var computerInfo = new ComputerInfo();
+
+                    osVersion = Version.Parse(computerInfo.OSVersion);
+                    osName = computerInfo.OSFullName;
+
+                    Log.Info($"OS:{osName}:{osVersion}");
+                }
+
+                var workingDirectory = Environment.CurrentDirectory;
+                Log.Info("Working Dir=" + workingDirectory);
+
+                string commandLineArgs;
+                {
+                    var exe = Environment.GetCommandLineArgs()[0];
+                    var fullCommandLine = Environment.CommandLine;
+                    commandLineArgs = fullCommandLine.Remove(fullCommandLine.IndexOf(exe), exe.Length).TrimStart('"').Substring(1);
+
+                    Log.Info($"Args={commandLineArgs}");
+                }
+
+                var octgnPath = GetOctgnPath(IsDebugMode);
+                Log.Info($"Octgn Path={octgnPath}");
+
+                if (osVersion < Windows7Version) {
                     Log.Warn("Windows version is too low to run OCTGN.");
 
-                    MessageBox.Show($"OCTGN is incompatible with {computerInfo.OSFullName} {computerInfo.OSVersion} at this time.{Environment.NewLine}{Environment.NewLine}OCTGN will now exit.", "Incompatible OS", MessageBoxButton.OK, MessageBoxImage.Stop);
+                    MessageBox.Show($"OCTGN is incompatible with {osName} {osVersion} at this time.{Environment.NewLine}{Environment.NewLine}OCTGN will now exit.", "Incompatible OS", MessageBoxButton.OK, MessageBoxImage.Stop);
 
                     Shutdown(2);
 
@@ -72,7 +114,7 @@ namespace Octgn.Launcher
                     }
                 }
 
-                if (!LaunchOctgn()) {
+                if (!LaunchOctgn(octgnPath, workingDirectory, commandLineArgs)) {
                     Log.Warn("Could not launch OCTGN");
 
                     MessageBox.Show($"OCTGN was unable to be launched. Please try again later", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -87,6 +129,8 @@ namespace Octgn.Launcher
                 Shutdown(0);
             } catch (Exception ex) {
                 Log.Error("Error", ex);
+
+                MessageBox.Show($"OCTGN was unable to be launched. Please try again later: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Shutdown(99);
             }
@@ -150,23 +194,25 @@ namespace Octgn.Launcher
             }
         }
 
-        private static bool LaunchOctgn() {
+        private static string GetOctgnPath(bool isDebug) {
+            var appFile = new FileInfo(typeof(App).Assembly.Location);
+
+            var rootDirectory = appFile.Directory.FullName;
+
+            var octgnPath = Path.Combine(rootDirectory, "Octgn.exe");
+
+            if (isDebug) {
+                octgnPath = "..\\..\\..\\Octgn\\bin\\Debug\\Octgn.exe";
+            }
+
+            return octgnPath;
+        }
+
+        private static bool LaunchOctgn(string octgnPath, string workingDirectory, string commandLineArgs) {
             try {
-                var appFile = new FileInfo(typeof(App).Assembly.Location);
-
-                var rootDirectory = appFile.Directory.FullName;
-
-                var octgnPath = Path.Combine(rootDirectory, "Octgn.exe");
-
-                if (Debugger.IsAttached) {
-                    octgnPath = "..\\..\\..\\Octgn\\bin\\Debug\\Octgn.exe";
-                }
-
-                Log.Info("Octgn Path: " + octgnPath);
-
                 var psi = new ProcessStartInfo(octgnPath);
-                psi.Arguments = string.Join(" ", Environment.GetCommandLineArgs().Skip(1));
-                psi.WorkingDirectory = Environment.CurrentDirectory;
+                psi.Arguments = commandLineArgs;
+                psi.WorkingDirectory = workingDirectory;
 
                 Process.Start(psi);
 
