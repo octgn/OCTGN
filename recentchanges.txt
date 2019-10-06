@@ -1,4 +1,1 @@
-fixed decks being falsely flagged as unsaved when moving the cursor over the deck - Ben
-removed card counts from player/global editor tabs if they have no sections - Ben
-disabled editor deck tabs when no deck is loaded - Ben
-Fixed crashes related to shared deck sections in the editor - Ben
+
