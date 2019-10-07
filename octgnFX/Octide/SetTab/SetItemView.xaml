@@ -18,10 +18,16 @@
         <TabItem Header="Summary" >
             <ScrollViewer VerticalScrollBarVisibility="Auto" >
                 <ItemsControl Style="{StaticResource OctideInputPanel}">
-                    <TextBlock Text="Set Name" />
+                    <TextBlock Text="Name" />
                     <TextBox Text="{Binding Name}" />
-                    <TextBlock Text="Set GUID" />
+                    <TextBlock Text="GUID" />
                     <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
+                    <TextBlock Text="Abbreviation Code" />
+                    <TextBox Text="{Binding Code}" />
+                    <TextBlock Text="Description" />
+                    <TextBox Text="{Binding Description}" />
+                    <TextBlock Text="Release Date" />
+                    <DatePicker Foreground="WhiteSmoke" SelectedDate="{Binding ReleaseDate}" HorizontalAlignment="Left" SelectedDateFormat="Long"/>
                     <TextBlock Text="Hide Set from Deck Editor" />
                     <StackPanel Orientation="Horizontal">
                         <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>

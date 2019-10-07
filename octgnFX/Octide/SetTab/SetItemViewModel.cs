@@ -27,8 +27,6 @@ namespace Octide.ViewModel
                 Name = "Set",
                 Id = Guid.NewGuid(),
                 GameId = ViewModelLocator.GameLoader.Game.Id,
-                Version = Version.Parse("1.0"),
-                GameVersion = ViewModelLocator.GameLoader.Game.Version,
                 Hidden = false,
                 Cards = new List<Card>(),
                 Packs = new List<Pack>()
@@ -99,9 +97,10 @@ namespace Octide.ViewModel
                 Name = s._set.Name,
                 Id = id,
                 GameId = s._set.GameId,
-                Version = s._set.Version,
-                GameVersion = s._set.GameVersion,
                 Hidden = s._set.Hidden,
+                ShortName = s._set.ShortName,
+                Description = s._set.Description,
+                ReleaseDate = s._set.ReleaseDate,
                 InstallPath = installPath,
                 Filename = Path.Combine(installPath, "set.xml"),
                 PackUri = Path.Combine(installPath, "Cards")
@@ -211,6 +210,45 @@ namespace Octide.ViewModel
             }
         }
 
+        public string Code
+        {
+            get
+            {
+                return _set.ShortName;
+            }
+            set
+            {
+                if (value == _set.ShortName) return;
+                _set.ShortName = value;
+                RaisePropertyChanged("Code");
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return _set.Description;
+            }
+            set
+            {
+                if (value == _set.Description) return;
+                _set.Description = value;
+                RaisePropertyChanged("Description");
+            }
+        }
+        public DateTime ReleaseDate
+        {
+            get
+            {
+                return _set.ReleaseDate;
+            }
+            set
+            {
+                if (value == _set.ReleaseDate) return;
+                _set.ReleaseDate = value;
+                RaisePropertyChanged("ReleaseDate");
+            }
+        }
         public bool Hidden
         {
             get

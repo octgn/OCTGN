@@ -7,9 +7,10 @@
         public Guid Id { get; set; }
         public Guid GameId { get; set; }
         public string Name { get; set; }
-        public Version GameVersion { get; set; }
-        public Version Version { get; set; }
         public Boolean Hidden { get; set; }
+        public string Description { get; set; }
+        public string ShortName { get; set; }
+        public DateTime ReleaseDate { get; set; }
         public string Filename { get; set; }
         public string PackageName { get; set; }
         public IEnumerable<Pack> Packs { get; set; }
