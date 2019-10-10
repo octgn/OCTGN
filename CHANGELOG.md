@@ -1,3 +1,13 @@
+#3.4.209.0
++ Removed Version and GameVersion requirements from set XMLs
++ Add optional attributes ShortName, Description, ReleaseDate to set XML
+
+#3.4.208.0
++ fixed decks being falsely flagged as unsaved when moving the cursor over the deck - Ben
++ removed card counts from player/global editor tabs if they have no sections - Ben
++ disabled editor deck tabs when no deck is loaded - Ben
++ Fixed crashes related to shared deck sections in the editor - Ben
+
 #3.4.207.0
 
 #3.4.206.0
@@ -3722,6 +3732,8 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
 
 
 

@@ -109,7 +109,8 @@ namespace Octgn.DeckBuilder
                 if (g != null)
                 {
                     Game = g;
-                    LoadDeck(deck);
+                    Deck = deck.AsObservable();
+                    SleeveImage = deck.Sleeve.GetImage();
                 }
                 else
                 {
@@ -276,11 +277,14 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public int DeckSectionsTotalCards
+        public int? DeckSectionsTotalCards
         {
             get
             {
-                return DeckSections.Aggregate(0, (total, x) => total += x.Quantity);
+                var sections = DeckSections;
+                if (sections.Count() == 0)
+                    return null;
+                return sections.Aggregate(0, (total, x) => total += x.Quantity);
             }
         }
 
@@ -293,11 +297,14 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public int DeckSharedSectionsTotalCards
+        public int? DeckSharedSectionsTotalCards
         {
             get
             {
-                return DeckSharedSections.Aggregate(0, (total, x) => total += x.Quantity);
+                var sections = DeckSharedSections;
+                if (sections.Count() == 0)
+                    return null;
+                return sections.Aggregate(0, (total, x) => total += x.Quantity);
             }
         }
 
@@ -684,7 +691,9 @@ namespace Octgn.DeckBuilder
             InvokeDeckChangedEvent();
 
             // Focus section where card was added
-            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
+            var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+
             Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
             if (presenter.IsExpanded)
             {
@@ -950,7 +959,6 @@ namespace Octgn.DeckBuilder
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
-            _unsaved = true;
             e.Handled = true;
             if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeRow != null && !dragging)
             {
@@ -959,6 +967,7 @@ namespace Octgn.DeckBuilder
                     ObservableMultiCard getCard = (ObservableMultiCard)activeRow.Item;
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
                     dragging = true;
+                    _unsaved = true;
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
                         dragSection.Cards.RemoveCard(getCard);
@@ -1085,7 +1094,9 @@ namespace Octgn.DeckBuilder
 
         public void SetLoadedGame(Game game)
         {
-            Game = game;
+            if (game == _game)
+                return;
+            NewDeck(game);
         }
 
         public Game GetLoadedGame()
@@ -1095,8 +1106,22 @@ namespace Octgn.DeckBuilder
 
         public void LoadDeck(IDeck deck)
         {
-            Deck = deck.AsObservable();
-            SleeveImage = deck.Sleeve.GetImage();
+            if (_unsaved)
+            {
+                MessageBoxResult result = TopMostMessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
+                                                            MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        Save();
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                    default:
+                        return;
+                }
+            }
+            SetupAndLoadDeck(deck);
         }
 
         public IDeck GetLoadedDeck()
@@ -1374,7 +1399,9 @@ namespace Octgn.DeckBuilder
             else if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
                 e.Handled = true;
-                var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+                var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
+                var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+
                 Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
                 presenter.IsExpanded = !presenter.IsExpanded;
                 if (presenter.IsExpanded)
@@ -1391,13 +1418,14 @@ namespace Octgn.DeckBuilder
 
         public void ChangeActiveSection(int delta)
         {
-            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-            var idx = PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+            var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
+            var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            var idx = activeGroup.ItemContainerGenerator.IndexFromContainer(cont);
             // Focus previous section
             idx += delta;
-            if (idx < 0 || idx >= PlayerCardSections.Items.Count)
+            if (idx < 0 || idx >= activeGroup.Items.Count)
                 return;
-            var nc = (ContentPresenter)PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+            var nc = (ContentPresenter)activeGroup.ItemContainerGenerator.ContainerFromIndex(idx);
             Expander presenter = (Expander)VisualTreeHelper.GetChild(nc, 0);
             DataGrid grid = (DataGrid)presenter.Content;
             if (presenter.IsExpanded)

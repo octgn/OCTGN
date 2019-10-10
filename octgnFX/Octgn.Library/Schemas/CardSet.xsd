@@ -360,6 +360,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="shortName" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            An abbreviation of the set's name.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="id" type="guid" use="required">
         <xs:annotation>
           <xs:documentation>
@@ -374,16 +381,30 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="gameVersion" type="version" use="required">
+      <xs:attribute name="releaseDate" type="xs:date" use="optional">
         <xs:annotation>
           <xs:documentation>
-            Game version this set was created for. Major or minor version changes are set-incompatible.
+            The release date of the set, for sorting purposes.  Use XML date format  YYYY-MM-DD
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="version" type="version" use="required">
+      <xs:attribute name="description" type="xs:string" use="optional">
         <xs:annotation>
-          <xs:documentation>Version of this set.</xs:documentation>
+          <xs:documentation>
+            Text to describe the set.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="gameVersion" type="version" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Game version this set was created for. Major or minor version changes are set-incompatible. Depreciated.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="version" type="version" use="optional">
+        <xs:annotation>
+          <xs:documentation>Version of this set. Depreciated.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="hidden" type="xs:boolean" use="optional" default="false">
