@@ -1,1 +1,1 @@
-
+Fixed incorrect totals for player/global sections when editing card counts directly - Ben
