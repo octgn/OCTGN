@@ -9,8 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 
-using NuGet;
-
 using Octgn.Library;
 using Octgn.Library.Exceptions;
 using Octgn.Library.ExtensionMethods;
@@ -21,7 +19,6 @@ using Octgn.Library.Localization;
 
 namespace Octgn.Core
 {
-
     public interface IGameFeedManager : IDisposable
     {
         event Action<String> OnUpdateMessage;
