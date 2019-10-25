@@ -178,6 +178,22 @@ namespace Octgn.Core.DataExtensionMethods
             return ret;
         }
 
+        public static bool MatchesPropertyValue(this ICard card, PropertyDef prop, object value)
+        {
+            var cardProperties = GetFullCardProperties(card);
+            if (cardProperties.ContainsKey(prop))
+            {
+                if (string.IsNullOrWhiteSpace(cardProperties[prop].ToString()) && string.IsNullOrWhiteSpace(value.ToString()))
+                    return true;
+                return cardProperties[prop].ToString().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            }
+            else
+            {
+                // if the property is missing then its treated as null for match requests
+                return string.IsNullOrWhiteSpace(value.ToString());
+            }
+        }
+
         public static void SetPropertySet(this Card card, string propertyType = "")
         {
             if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";

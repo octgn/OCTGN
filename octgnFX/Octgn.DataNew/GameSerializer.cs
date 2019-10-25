@@ -1341,21 +1341,22 @@ namespace Octgn.DataNew
                 if (!Directory.Exists(ret.PackUri)) Directory.CreateDirectory(ret.PackUri);
                 if (!Directory.Exists(ret.ImagePackUri)) Directory.CreateDirectory(ret.ImagePackUri);
                 if (!Directory.Exists(ret.ProxyPackUri)) Directory.CreateDirectory(ret.ProxyPackUri);
-                var game = Game ?? DbContext.Get().Games.First(x => x.Id == ret.GameId);
+                if (Game == null)
+                    Game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var cardXml in doc.Document.Descendants("card"))
                 {
-                    var card = new Card(new Guid(cardXml.Attribute("id").Value), ret.Id, cardXml.Attribute("name").Value, cardXml.Attribute("id").Value, "", game.CardSizes[""], new Dictionary<string, CardPropertySet>());
+                    var card = new Card(new Guid(cardXml.Attribute("id").Value), ret.Id, cardXml.Attribute("name").Value, cardXml.Attribute("id").Value, "", Game.CardSizes[""], new Dictionary<string, CardPropertySet>());
 
                     var cardSize = cardXml.Attribute("size");
                     if (cardSize != null)
                     {
-                        if (game.CardSizes.ContainsKey(cardSize.Value) == false)
-                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+                        if (Game.CardSizes.ContainsKey(cardSize.Value) == false)
+                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
 
-                        card.Size = game.CardSizes[cardSize.Value];
+                        card.Size = Game.CardSizes[cardSize.Value];
                     }
                     else
-                        card.Size = game.CardSize;
+                        card.Size = Game.CardSize;
 
                     var baseCardPropertySet = new CardPropertySet
                     {
@@ -1367,7 +1368,7 @@ namespace Octgn.DataNew
 
                     // deserialize the base card properties
                     var xmlBaseCardProperties = cardXml.Descendants("property").Where(x => x.Parent.Name == "card");
-                    DeserializeCardPropertySet(xmlBaseCardProperties, baseCardPropertySet, game);
+                    DeserializeCardPropertySet(xmlBaseCardProperties, baseCardPropertySet);
                     card.PropertySets.Add("", baseCardPropertySet);
 
                     // Add all of the other property sets
@@ -1383,16 +1384,16 @@ namespace Octgn.DataNew
                         var altSize = altXml.Attribute("size");
                         if (altSize != null)
                         {
-                            if (game.CardSizes.ContainsKey(altSize.Value) == false)
-                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+                            if (Game.CardSizes.ContainsKey(altSize.Value) == false)
+                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
 
-                            altPropertySet.Size = game.CardSizes[altSize.Value];
+                            altPropertySet.Size = Game.CardSizes[altSize.Value];
                         }
-                        else altPropertySet.Size = game.CardSize;
+                        else altPropertySet.Size = Game.CardSize;
 
                         // deserialize the alternate card properties
                         var xmlAltProperties = altXml.Descendants("property");
-                        DeserializeCardPropertySet(xmlAltProperties, altPropertySet, game);
+                        DeserializeCardPropertySet(xmlAltProperties, altPropertySet);
                         card.PropertySets.Add(altPropertySet.Type, altPropertySet);
                     }
 
@@ -1405,20 +1406,19 @@ namespace Octgn.DataNew
                         Id = new Guid(p.Attribute("id").Value),
                         Name = p.Attribute("name").Value,
                         Definition = DeserializePack(p.Elements()),
-                        SetId = ret.Id
+                        Set = ret
                     };
-                    foreach (var i in p.Elements("include"))
+                    foreach (var includeXml in p.Elements("include"))
                     {
                         var include = new Include
                         {
-                            Id = new Guid(i.Attribute("id").Value),
-                            SetId = new Guid(i.Attribute("set").Value)
+                            Id = new Guid(includeXml.Attribute("id").Value),
+                            SetId = new Guid(includeXml.Attribute("set").Value)
                         };
-                        foreach (var pr in i.Elements("property"))
-                        {
-                            var property = Tuple.Create(pr.Attribute("name").Value, pr.Attribute("value").Value);
-                            include.Properties.Add(property);
-                        }
+                        var includesPropertySet = new CardPropertySet() { Properties = new Dictionary<PropertyDef, object>() };
+                        DeserializeCardPropertySet(includeXml.Elements("property"), includesPropertySet);
+                        include.Properties = includesPropertySet.Properties;
+
                         pack.Includes.Add(include);
                     }
                     (ret.Packs as List<Pack>).Add(pack);
@@ -1444,20 +1444,20 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        private void DeserializeCardPropertySet(IEnumerable<XElement> cardPropertyElements, CardPropertySet propertySet, Game game)
+        private void DeserializeCardPropertySet(IEnumerable<XElement> cardPropertyElements, CardPropertySet propertySet)
         {
             foreach (var propertyElement in cardPropertyElements)
             {
-                var gameDefinedProperty = game.CustomProperties.FirstOrDefault(x => x.Name == propertyElement.Attribute("name").Value);
+                var gameDefinedProperty = Game.CustomProperties.FirstOrDefault(x => x.Name == propertyElement.Attribute("name").Value);
                 if (gameDefinedProperty == null)
                 {
-                    throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+                    throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
                 }
                 var cardPropertyDef = gameDefinedProperty.Clone() as PropertyDef;
                 if (cardPropertyDef.Type is PropertyType.RichText)
                 {
                     var span = new RichSpan();
-                    DeserializeRichCardProperty(span, propertyElement, game);
+                    DeserializeRichCardProperty(span, propertyElement);
                     var propertyDefValue = new RichTextPropertyValue
                     {
                         Value = span
@@ -1489,7 +1489,7 @@ namespace Octgn.DataNew
             }*/
         }
 
-        private void DeserializeRichCardProperty(RichSpan span, XElement xmlNode, Game game)
+        private void DeserializeRichCardProperty(RichSpan span, XElement xmlNode)
         {
             foreach (XNode child in xmlNode.Nodes())
             {
@@ -1505,7 +1505,7 @@ namespace Octgn.DataNew
                         case "BOLD":
                             {
                                 RichSpan boldSpan = new RichSpan();
-                                DeserializeRichCardProperty(boldSpan, element, game);
+                                DeserializeRichCardProperty(boldSpan, element);
                                 boldSpan.Type = RichSpanType.Bold;
                                 span.Items.Add(boldSpan);
                                 break;
@@ -1514,7 +1514,7 @@ namespace Octgn.DataNew
                         case "ITALIC":
                             {
                                 RichSpan italicSpan = new RichSpan();
-                                DeserializeRichCardProperty(italicSpan, element, game);
+                                DeserializeRichCardProperty(italicSpan, element);
                                 italicSpan.Type = RichSpanType.Italic;
                                 span.Items.Add(italicSpan);
                                 break;
@@ -1523,7 +1523,7 @@ namespace Octgn.DataNew
                         case "UNDERLINE":
                             {
                                 RichSpan underlineSpan = new RichSpan();
-                                DeserializeRichCardProperty(underlineSpan, element, game);
+                                DeserializeRichCardProperty(underlineSpan, element);
                                 underlineSpan.Type = RichSpanType.Underline;
                                 span.Items.Add(underlineSpan);
                                 break;
@@ -1532,7 +1532,7 @@ namespace Octgn.DataNew
                         case "COLOR":
                             {
                                 RichColor colorSpan = new RichColor();
-                                DeserializeRichCardProperty(colorSpan, element, game);
+                                DeserializeRichCardProperty(colorSpan, element);
                                 colorSpan.Type = RichSpanType.Color;
                                 var regexColorCode = new Regex.Regex("^#[a-fA-F0-9]{6}$");
                                 var color = element.Attribute("value").Value;
@@ -1546,7 +1546,7 @@ namespace Octgn.DataNew
                         case "SYMBOL":
                             {
                                 var symbolId = element.Attribute("value").Value;
-                                Symbol symbol = game.Symbols.FirstOrDefault(x => x.Id == symbolId) ?? throw new InvalidOperationException($"Could not find symbol {symbolId}");
+                                Symbol symbol = Game.Symbols.FirstOrDefault(x => x.Id == symbolId) ?? throw new InvalidOperationException($"Could not find symbol {symbolId}");
                                 RichSymbol symbolSpan = new RichSymbol
                                 {
                                     Type = RichSpanType.Symbol,
@@ -1592,7 +1592,7 @@ namespace Octgn.DataNew
                         var propertyList = new List<PickProperty>();
                         var baseProp = new PickProperty
                         {
-                            Name = e.Attribute("key").Value,
+                            Property = Game.CustomProperties.FirstOrDefault(x => x.Name == e.Attribute("key").Value),
                             Value = e.Attribute("value").Value
                         };
                         propertyList.Add(baseProp);
@@ -1600,7 +1600,7 @@ namespace Octgn.DataNew
                         {
                             var prop = new PickProperty
                             {
-                                Name = p.Attribute("key").Value,
+                                Property = Game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("key").Value),
                                 Value = p.Attribute("value").Value
                             };
                             propertyList.Add(prop);
@@ -1733,14 +1733,14 @@ namespace Octgn.DataNew
                     {
                         if (ret.key == null)
                         {
-                            ret.key = prop.Name;
+                            ret.key = prop.Property.Name;
                             ret.value = prop.Value;
                         }
                         else
                         {
                             var property = new pickProperty
                             {
-                                key = prop.Name,
+                                key = prop.Property.Name,
                                 value = prop.Value
                             };
                             propertylist.Add(property);

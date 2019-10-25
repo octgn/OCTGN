@@ -34,7 +34,7 @@ namespace Octide.ItemModel
                 Name = "Package",
                 Id = Guid.NewGuid(),
                 Includes = new List<Include>(), //todo add include support
-                SetId = (Parent as SetItemViewModel).Id,
+                Set = (Parent as SetItemViewModel)._set, //TODO fix for new format
                 Definition = new PackDefinition()
             };
             Items = new ObservableCollection<IBasePack>();
@@ -73,7 +73,7 @@ namespace Octide.ItemModel
                 Id = Guid.NewGuid(),
                 Includes = new List<Include>() //todo add include support
             };
-            _pack.SetId = p._pack.SetId;
+            _pack.Set = p._pack.Set;  //TODO - fix for new format
             _pack.Definition = new PackDefinition();
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
@@ -111,7 +111,7 @@ namespace Octide.ItemModel
 
         public void GeneratePack()
         {
-            BoosterCards = new ObservableCollection<string>(_pack.CrackOpen().LimitedCards.Select(x => x.GetPicture()));
+            BoosterCards = new ObservableCollection<string>(_pack.GenerateContent().LimitedCards.Select(x => x.GetPicture()));
         }
 
         public ObservableCollection<IBasePack> Items

@@ -1475,7 +1475,7 @@ namespace Octgn.Scripting.Versions
             {
                 var dlg = new PackDlg();
                 var result = dlg.GetPack();
-                return dlg.DialogResult.GetValueOrDefault() ? new Tuple<string, string, string>(result.Set().Name, result.Name, result.Id.ToString()) : null;
+                return dlg.DialogResult.GetValueOrDefault() ? new Tuple<string, string, string>(result.Set.Name, result.Name, result.Id.ToString()) : null;
             });
         }
 
@@ -1488,7 +1488,7 @@ namespace Octgn.Scripting.Versions
                 Program.GameMess.Warning("Pack is missing from the database. Pack is ignored.");
                 return new List<string>();
             }
-            var packContents = pack.CrackOpen().LimitedCards.Select(x => x.Id.ToString()).ToList();
+            var packContents = pack.GenerateContent().LimitedCards.Select(x => x.Id.ToString()).ToList();
             return packContents;
         }
 

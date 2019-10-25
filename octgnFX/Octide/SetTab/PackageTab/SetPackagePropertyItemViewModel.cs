@@ -31,7 +31,7 @@ namespace Octide.ItemModel
         public PackPropertyItemModel(PickProperty p) // loading item
         {
             PropertyDef = p;
-            ActiveProperty = CustomProperties.FirstOrDefault(x => (x as PropertyItemViewModel).Name == PropertyDef.Name) as PropertyItemViewModel;
+        //TODO: Update with new format    ActiveProperty = CustomProperties.FirstOrDefault(x => (x as PropertyItemViewModel).Name == PropertyDef.Name) as PropertyItemViewModel;
             RemoveCommand = new RelayCommand(Remove);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
@@ -55,7 +55,7 @@ namespace Octide.ItemModel
             var prop = m.Prop;
             if (ActiveProperty == prop)
             {
-                PropertyDef.Name = prop.Name;
+            //TODO: Update with new format    PropertyDef.Name = prop.Name;
                 RaisePropertyChanged("ActiveProperty");
             }
         }
@@ -80,7 +80,7 @@ namespace Octide.ItemModel
                     value = CustomProperties.First() as PropertyItemViewModel;
                 }
                 _activeProperty = value;
-                PropertyDef.Name = value.Name;
+               //TODO update with new format   PropertyDef.Name = value.Name;
                 RaisePropertyChanged("ActiveProperty");
             }
         }

@@ -27,21 +27,5 @@
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         
-        public Pack FromXml(Set set, string xml)
-        {
-            var ret = new Pack();
-            using (var stringReader = new StringReader(xml))
-            using (XmlReader reader = XmlReader.Create(stringReader))
-            {
-                reader.Read();
-                string guid = reader.GetAttribute("id");
-                if (guid != null) ret.Id = new Guid(guid);
-                ret.Name = reader.GetAttribute("name");
-                reader.ReadStartElement("pack");
-                ret.Definition = new PackDefinition(reader);
-                reader.ReadEndElement(); // </pack>
-            }
-            return ret;
-        }
     }
 }
