@@ -85,7 +85,7 @@ namespace Octgn.DataNew
                           };
             var defSize = new CardSize
             {
-                Name = "Default",
+                Name = "",
                 Back = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
                 Front = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front),
                 Height = int.Parse(g.card.height),
@@ -102,7 +102,6 @@ namespace Octgn.DataNew
             if (defSize.BackCornerRadius < 0)
                 defSize.BackCornerRadius = defSize.CornerRadius;
             ret.CardSize = defSize;
-            ret.CardSizes.Add("Default", defSize);
             ret.CardSizes.Add("", defSize);
 
             #region table
@@ -1448,13 +1447,12 @@ namespace Octgn.DataNew
         {
             foreach (var propertyElement in cardPropertyElements)
             {
-                var gameDefinedProperty = Game.CustomProperties.FirstOrDefault(x => x.Name == propertyElement.Attribute("name").Value);
+                PropertyDef gameDefinedProperty = Game.CustomProperties.FirstOrDefault(x => x.Name == propertyElement.Attribute("name").Value);
                 if (gameDefinedProperty == null)
                 {
                     throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
                 }
-                var cardPropertyDef = gameDefinedProperty.Clone() as PropertyDef;
-                if (cardPropertyDef.Type is PropertyType.RichText)
+                if (gameDefinedProperty.Type is PropertyType.RichText)
                 {
                     var span = new RichSpan();
                     DeserializeRichCardProperty(span, propertyElement);
@@ -1462,11 +1460,11 @@ namespace Octgn.DataNew
                     {
                         Value = span
                     };
-                    propertySet.Properties.Add(cardPropertyDef, propertyDefValue);
+                    propertySet.Properties.Add(gameDefinedProperty, propertyDefValue);
                 }
                 else
                 {
-                    propertySet.Properties.Add(cardPropertyDef, propertyElement.Attribute("value").Value);
+                    propertySet.Properties.Add(gameDefinedProperty, propertyElement.Attribute("value").Value);
                 }
 
             }
@@ -1662,7 +1660,6 @@ namespace Octgn.DataNew
                         var props = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
-                            if (p.Key.Name == "Name") continue;
                             if (p.Value == null) continue;
                             var prop = new property
                             {
@@ -1679,25 +1676,20 @@ namespace Octgn.DataNew
                     {
                         var alt = new setCardAlternate
                         {
-                            name = propset.Value.Properties.First(x => x.Key.Name == "Name").Value.ToString(),
+                            name = propset.Value.Name,
                             type = propset.Value.Type,
                             size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name
                         };
                         var altprops = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
-                            if (p.Key.Name == "Name")
-                                alt.name = p.Value.ToString();
-                            else
+                            if (p.Value == null) continue;
+                            var prop = new property
                             {
-                                if (p.Value == null) continue;
-                                var prop = new property
-                                {
-                                    name = p.Key.Name,
-                                    value = p.Value.ToString()
-                                };
-                                altprops.Add(prop);
-                            }
+                                name = p.Key.Name,
+                                value = p.Value.ToString()
+                            };
+                            altprops.Add(prop);
                         }
                         alt.property = altprops.ToArray();
                         alts.Add(alt);

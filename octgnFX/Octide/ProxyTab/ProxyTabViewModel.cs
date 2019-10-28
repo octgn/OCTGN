@@ -34,7 +34,7 @@ namespace Octide.ViewModel
         private ProxyTemplateItemModel _selectedItem;
 
         public ObservableCollection<ProxyTemplateItemModel> Templates { get; private set; }
-        public ObservableCollection<ProxyTextItemModel> TextBlocks { get; private set; }
+        public ObservableCollection<ProxyTextDefinitionItemModel> TextBlocks { get; private set; }
         public ObservableCollection<ProxyOverlayItemModel> OverlayBlocks { get; private set; }
 
         public ObservableCollection<ProxyInputPropertyItemModel> StoredProxyProperties { get; set; }
@@ -68,7 +68,7 @@ namespace Octide.ViewModel
                 }
             };
 
-            TextBlocks = new ObservableCollection<ProxyTextItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "text").Select(x => new ProxyTextItemModel(x)));
+            TextBlocks = new ObservableCollection<ProxyTextDefinitionItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "text").Select(x => new ProxyTextDefinitionItemModel(x)));
             TextBlocks.CollectionChanged += (a, b) =>
             {
                 _proxydef.BlockManager.ClearBlocks();
@@ -188,9 +188,9 @@ namespace Octide.ViewModel
                     ViewModelLocator.ProxyOverlayViewModel.SelectedItem = (ProxyOverlayItemModel)value;
                     ActiveView = ViewModelLocator.ProxyOverlayViewModel;
                 }
-                else if (value is ProxyTextItemModel)
+                else if (value is ProxyTextDefinitionItemModel)
                 {
-                    ViewModelLocator.ProxyTextBlockViewModel.SelectedItem = (ProxyTextItemModel)value;
+                    ViewModelLocator.ProxyTextBlockViewModel.SelectedItem = (ProxyTextDefinitionItemModel)value;
                     ActiveView = ViewModelLocator.ProxyTextBlockViewModel;
                 }
                 else
@@ -217,37 +217,6 @@ namespace Octide.ViewModel
         }
     }
 
-    public class ProxyTextBlockItemModel : ViewModelBase
-    {
-        public ProxyTextItemModel TextBlock { get; private set; }
-        public string Format { get; private set; }
-        public CardPropertyItemModel Property { get; set; }
-        public ObservableCollection<ProxyInputPropertyItemModel> Properties;
-
-        public LinkDefinition _linkDefinition;
-
-        public ProxyTextBlockItemModel()
-        {
-        }
-
-        public ProxyTextBlockItemModel(LinkDefinition ld)
-        {
-            _linkDefinition = ld;
-            TextBlock = ViewModelLocator.ProxyTabViewModel.TextBlocks.First(x => x.Name == ld.Block);
-        }
-
-        public string GetText(Dictionary<string, string> properties)
-        {
-            List<string> propertyValueList = new List<string>();
-            foreach (var propDef in _linkDefinition.NestedProperties)
-            {
-                if (properties.ContainsKey(propDef.Name))
-                    propertyValueList.Add(string.Format(propDef.Format, properties.First(x => x.Key == propDef.Name).Value));
-            }
-            return string.Join(_linkDefinition.Separator, propertyValueList);
-        }
-    }
-
     public class ProxyTextLinkItemModel : ViewModelBase
     {
         public LinkDefinition _linkDefinition;
@@ -260,7 +229,7 @@ namespace Octide.ViewModel
             _linkDefinition = link;
         }
 
-        public ProxyTextItemModel TextBlock
+        public ProxyTextDefinitionItemModel TextBlock
         {
             get
             {

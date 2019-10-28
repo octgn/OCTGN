@@ -106,7 +106,7 @@ namespace Octide.ItemModel
             Items = new ObservableCollection<IdeListBoxItemBase>();
             foreach (SetCardAltItemViewModel alt in c.Items)
             {
-                Items.Add(new SetCardAltItemViewModel(alt) { ItemSource = c.ItemSource, Parent = c.Parent });
+                Items.Add(new SetCardAltItemViewModel(alt) { ItemSource = c.ItemSource, Parent = this });
             }
             BaseCardAlt = new SetCardAltItemViewModel(c.BaseCardAlt);
             Items.CollectionChanged += (a, b) =>
@@ -132,7 +132,7 @@ namespace Octide.ItemModel
         {
             foreach (SetCardAltItemViewModel alt in Items)
             {
-                alt.UpdateAltPropertySet();
+              //  alt.UpdateAltPropertySet();
             }
         }
 
@@ -146,7 +146,6 @@ namespace Octide.ItemModel
 
         public void UpdateCardName()
         {
-            _card.Name = BaseCardAlt.CardName as string;
             RaisePropertyChanged("Name");
         }
 
@@ -193,12 +192,12 @@ namespace Octide.ItemModel
         {
             get
             {
-                return BaseCardAlt.CardName;
+                return BaseCardAlt.NameProperty.Value;
             }
             set
             {
-                if (BaseCardAlt.CardName == value) return;
-                BaseCardAlt.CardName = value;
+                if (BaseCardAlt.NameProperty.Value == value) return;
+                BaseCardAlt.NameProperty.Value = value;
                 RaisePropertyChanged("Name");
             }
         }

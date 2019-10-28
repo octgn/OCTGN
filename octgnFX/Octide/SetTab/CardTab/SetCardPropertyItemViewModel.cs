@@ -12,36 +12,31 @@ namespace Octide.ItemModel
         public SetCardAltItemViewModel Parent { get; set; }
         public PropertyItemViewModel Property { get; set; }
         public object _value;
-        public bool _isDefined;
+        public bool _isUndefined;
 
         public bool IsValid => ViewModelLocator.PropertyTabViewModel.Items.Contains(Property);
-        public bool IsNameProperty => Property.Name == "Name";
 
-        public CardPropertyItemModel(PropertyItemViewModel prop, KeyValuePair<PropertyDef, object> propDef, SetCardAltItemViewModel parent) // initial load of property
-        {
-            Parent = parent;
-            Property = prop;
-          //TODO  _isDefined = !propDef.Key.IsUndefined;
-            _value = propDef.Value;
+        public CardPropertyItemModel()
+        { 
         }
 
-        public CardPropertyItemModel(PropertyItemViewModel prop)
-        {
-            Property = prop;
-        }
-
-        public bool IsDefined
+        public bool IsUndefined
         {
             get
             {
-                return _isDefined;
+                return _isUndefined;
             }
             set
             {
-                if (_isDefined == value) return;
-                _isDefined = value;
-                RaisePropertyChanged("IsDefined");
-                Parent.UpdateAltPropertySet();
+                if (_isUndefined == value) return;
+                _isUndefined = value;
+                if (value == true)
+                {
+                    Parent._altDef.Properties.Remove(Property._property);
+                }
+                else
+                    Parent._altDef.Properties[Property._property] = _value;
+                RaisePropertyChanged("IsUndefined");
             }
         }
 
@@ -58,8 +53,57 @@ namespace Octide.ItemModel
                 if (_value == value) return;
                 _value = value;
 
-                Parent.UpdateAltPropertySet();
+                Parent._altDef.Properties[Property._property] = _value;
+
+               // Parent.UpdateAltPropertySet();
                 Parent.UpdateProxyTemplate();
+                RaisePropertyChanged("Value");
+            }
+        }
+    }
+
+    public class CardNamePropertyItemModel : CardPropertyItemModel
+    {
+        public CardNamePropertyItemModel()
+        {
+            Property = ViewModelLocator.PropertyTabViewModel.NameProperty;
+        }
+    
+        new public object Value  // this is the alt's actual card name
+        {
+            get
+            {
+                return Parent._altDef.Name;
+            }
+            set
+            {
+                if (Parent._altDef.Name == value.ToString()) return;
+                Parent._altDef.Name = value.ToString();
+                Parent.Parent.UpdateCardName();
+                RaisePropertyChanged("Value");
+            }
+        }
+    }
+
+    public class CardSizePropertyItemModel : CardPropertyItemModel
+    {
+        public CardSizePropertyItemModel()
+        {
+            Property = ViewModelLocator.PropertyTabViewModel.SizeProperty;
+        }
+
+        new public SizeItemViewModel _value;
+        new public SizeItemViewModel Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                if (_value == value) return;
+                _value = value ?? ViewModelLocator.PreviewTabViewModel.DefaultSize;
+                Parent._altDef.Size = _value?._size;
                 RaisePropertyChanged("Value");
             }
         }

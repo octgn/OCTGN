@@ -183,7 +183,7 @@ namespace Octgn.Core.DataExtensionMethods
             var cardProperties = GetFullCardProperties(card);
             if (cardProperties.ContainsKey(prop))
             {
-                if (string.IsNullOrWhiteSpace(cardProperties[prop].ToString()) && string.IsNullOrWhiteSpace(value.ToString()))
+                if (string.IsNullOrWhiteSpace(cardProperties[prop]?.ToString()) && string.IsNullOrWhiteSpace(value?.ToString()))
                     return true;
                 return cardProperties[prop].ToString().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
             }

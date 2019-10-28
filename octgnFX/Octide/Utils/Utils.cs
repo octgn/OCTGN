@@ -8,12 +8,12 @@ namespace Octide
 {
     public static class Utils
     {
-		/// <summary>
+        /// <summary>
         /// http://stackoverflow.com/questions/703281/getting-path-relative-to-the-current-working-directory
-		/// </summary>
-		/// <param name="workingDirectory"></param>
-		/// <param name="fullPath"></param>
-		/// <returns></returns>
+        /// </summary>
+        /// <param name="workingDirectory"></param>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
         public static string MakeRelativePath(string workingDirectory, string fullPath)
         {
             string result = string.Empty;
@@ -91,31 +91,32 @@ namespace Octide
             }
             return fullPath;
         }
+    }
 
-        [ValueConversion(typeof(bool), typeof(bool))]
-        public class InverseBooleanConverter : IValueConverter
+    [ValueConversion(typeof(bool), typeof(bool))]
+    public class InverseBooleanConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter,
+            System.Globalization.CultureInfo culture)
         {
-            #region IValueConverter Members
+            if (targetType != typeof(bool))
+                throw new InvalidOperationException("The target must be a boolean");
 
-            public object Convert(object value, Type targetType, object parameter,
-                System.Globalization.CultureInfo culture)
-            {
-                if (targetType != typeof(bool))
-                    throw new InvalidOperationException("The target must be a boolean");
-
-                return !(bool)value;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter,
-                System.Globalization.CultureInfo culture)
-            {
-                throw new NotSupportedException();
-            }
-
-            #endregion
+            return !(bool)value;
         }
 
+        public object ConvertBack(object value, Type targetType, object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion
     }
+
+    
     public class RadioButtonStateConverter : IValueConverter
     {
         #region IValueConverter Members

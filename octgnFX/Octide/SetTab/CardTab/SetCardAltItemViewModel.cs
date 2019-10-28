@@ -23,8 +23,13 @@ namespace Octide.ItemModel
 {
     public class SetCardAltItemViewModel : IdeListBoxItemBase, IDropTarget
     {
+        public new SetCardItemViewModel Parent { get; set; }
+
         public CardPropertySet _altDef;
         public SizeItemViewModel _cardSize;
+
+        public CardNamePropertyItemModel NameProperty { get; set; }
+        public CardSizePropertyItemModel SizeProperty { get; set; }
         public ObservableCollection<CardPropertyItemModel> Items { get; private set; }
 
         public ObservableCollection<IdeListBoxItemBase> CardSizes => ViewModelLocator.PreviewTabViewModel.CardSizes;
@@ -34,94 +39,90 @@ namespace Octide.ItemModel
         public SetCardAltItemViewModel() //for adding new items
         {
             DeleteImageCommand = new RelayCommand(DeleteImage);
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
 
             _altDef = new CardPropertySet
             {
+                Name = "Card",
                 Properties = new Dictionary<PropertyDef, object>(),
             };
-            CardSize = ViewModelLocator.PreviewTabViewModel.DefaultSize;
+            NameProperty = new CardNamePropertyItemModel() { Parent = this };
+            SizeProperty = new CardSizePropertyItemModel() { Parent = this, Value = ViewModelLocator.PreviewTabViewModel.DefaultSize };
             Items = new ObservableCollection<CardPropertyItemModel>();
             Items.CollectionChanged += (a, b) =>
             {
-                UpdateAltPropertySet();
+                _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y.Value);
             };
-            Items.Add(new CardPropertyItemModel(ViewModelLocator.PropertyTabViewModel.NameProperty) { Parent = this }); //adds the card name property
-            //  UpdateProxyTemplate();
         }
 
         public SetCardAltItemViewModel(CardPropertySet altData) //for loading an existing collection
         {
             DeleteImageCommand = new RelayCommand(DeleteImage);
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             _altDef = altData;
-            CardSize = (SizeItemViewModel)ViewModelLocator.PreviewTabViewModel.CardSizes.FirstOrDefault(x => altData.Size == (x as SizeItemViewModel)._size) ?? ViewModelLocator.PreviewTabViewModel.DefaultSize;
-            Items = new ObservableCollection<CardPropertyItemModel>();
+            NameProperty = new CardNamePropertyItemModel() { Parent = this };
+            SizeProperty = new CardSizePropertyItemModel()
+            {
+                Parent = this,
+                Value = ViewModelLocator.PreviewTabViewModel.CardSizes.Cast<SizeItemViewModel>().FirstOrDefault(x => altData.Size == x._size) ?? ViewModelLocator.PreviewTabViewModel.DefaultSize
+            };
+
+            Items = new ObservableCollection<CardPropertyItemModel>(
+                altData.Properties.Select(x =>
+                    new CardPropertyItemModel
+                    {
+                        Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemViewModel)._property.Equals(x.Key)) as PropertyItemViewModel,
+                        _value = x.Value,
+                        Parent = this,
+                        _isUndefined = x.Value == null
+                    }));
             Items.CollectionChanged += (a, b) =>
             {
-                UpdateAltPropertySet();
+                _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y.Value);
             };
-            foreach (var alt in altData.Properties)
-            {
-                var LinkedProperty = ViewModelLocator.PropertyTabViewModel.Items.First(x => (x as PropertyItemViewModel).Name == alt.Key.Name) as PropertyItemViewModel;
-                Items.Add(new CardPropertyItemModel(LinkedProperty, alt, this));
-            }
-          //  UpdateProxyTemplate();
         }
 
         public SetCardAltItemViewModel(SetCardAltItemViewModel a) //for copying the item
         {
             DeleteImageCommand = new RelayCommand(DeleteImage);
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Parent = a.Parent;
             ItemSource = a.ItemSource;
             _altDef = a._altDef.Clone() as CardPropertySet;
             _altDef.Type = Utils.GetUniqueName(a.Name, a.ItemSource.Select(x => (x as SetCardAltItemViewModel).Name));
-            CardSize = a.CardSize;
-            Items = new ObservableCollection<CardPropertyItemModel>();
-            Items.CollectionChanged += (x, b) =>
+            NameProperty = new CardNamePropertyItemModel() { Parent = this };
+            SizeProperty = new CardSizePropertyItemModel() { Parent = this, Value = a.SizeProperty.Value };
+            Items = new ObservableCollection<CardPropertyItemModel>(
+                _altDef.Properties.Select(x =>
+                    new CardPropertyItemModel
+                    {
+                        Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemViewModel)._property.Equals(x.Key)) as PropertyItemViewModel,
+                        _value = x.Value,
+                        Parent = this
+                    }));
+            Items.CollectionChanged += (c, b) =>
             {
-                UpdateAltPropertySet();
+                _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y.Value);
             };
-            foreach (var alt in _altDef.Properties)
-            {
-                var LinkedProperty = ViewModelLocator.PropertyTabViewModel.Items.First(x => (x as PropertyItemViewModel).Name == alt.Key.Name) as PropertyItemViewModel;
-                Items.Add(new CardPropertyItemModel(LinkedProperty, alt, this));
-            }
-           // UpdateProxyTemplate();
         }
 
-        public void UpdateAltPropertySet()
+        public void CustomPropertyChanged(CustomPropertyChangedMessage message)
         {
-            var NewAltPropSet = new Dictionary<PropertyDef, object>();
-            foreach (PropertyItemViewModel customProp in ViewModelLocator.PropertyTabViewModel.Items)
+            switch (message.Action)
             {
-                PropertyDef clonedProp = customProp._property.Clone() as PropertyDef;
-                var storedProp = Items.FirstOrDefault(x => x.Property == customProp);
-                if (storedProp == null)
-                {
-                  //TODO  clonedProp.IsUndefined = true;
-                    NewAltPropSet.Add(clonedProp, "");
-                }
-                else
-                {
-                    if (storedProp.IsDefined)
-                    {
-                   //TODO     clonedProp.IsUndefined = false;
-                        NewAltPropSet.Add(clonedProp, storedProp.Value);
-                    }
-                    else
-                    {
-                    //TODO    clonedProp.IsUndefined = true;
-                        NewAltPropSet.Add(clonedProp, "");
-                    }
-                }
+                case CustomPropertyChangedMessageAction.Remove:
+                    _altDef.Properties.Remove(message.Prop._property);
+                    break;
             }
-            _altDef.Properties = NewAltPropSet;
+            if (Parent.SelectedItem == this)
+              RaisePropertyChanged("GetProperties");
         }
 
         public void UpdateAltCardSize()
         {
-            if (!CardSizes.Contains(CardSize) || CardSize.IsDefault)
+            if (!CardSizes.Contains(SizeProperty.Value) || SizeProperty.Value.IsDefault)
             {
-                CardSize = ViewModelLocator.PreviewTabViewModel.DefaultSize;
+                SizeProperty.Value = ViewModelLocator.PreviewTabViewModel.DefaultSize;
             }
         }
 
@@ -129,36 +130,17 @@ namespace Octide.ItemModel
         {
             get
             {
-                var ret = new List<CardPropertyItemModel>();
-                foreach (PropertyItemViewModel gameProp in ViewModelLocator.PropertyTabViewModel.Items)
-                {
-                    var storedProp = Items.FirstOrDefault(x => x.Property == gameProp);
-                    if (storedProp == null)
+                return ViewModelLocator.PropertyTabViewModel.Items.Cast<PropertyItemViewModel>()
+                    .Select(x => Items.FirstOrDefault(y => y.Property == x) ?? new CardPropertyItemModel()
                     {
-                        storedProp = new CardPropertyItemModel(gameProp) { Parent = this };
-                        Items.Add(storedProp);
-                    }
-                    ret.Add(storedProp);
-                }
-                return ret;
+                        Property = x,
+                        Parent = this,
+                        _isUndefined = true
+                    })
+                    .ToList();
             }
         }
 
-        public SizeItemViewModel CardSize
-        {
-            get
-            {
-                return _cardSize;
-            }
-            set
-            {
-                if (_cardSize == value) return;
-                _cardSize = value ?? ViewModelLocator.PreviewTabViewModel.DefaultSize;
-                _altDef.Size = _cardSize?._size;
-                RaisePropertyChanged("CardSize");
-            }
-        }
-        
         public string Name  // this is the altID, NOT the alt's actual cardname
         {
             get
@@ -168,27 +150,9 @@ namespace Octide.ItemModel
             set
             {
                 if (_altDef.Type == value) return;
-                _altDef.Type = Utils.GetUniqueName(value, ((SetCardItemViewModel)Parent).Items.Select(x => (x as SetCardAltItemViewModel).Name));
-                ((SetCardItemViewModel)Parent).UpdateCardAlts();
+                _altDef.Type = Utils.GetUniqueName(value, Parent.Items.Select(x => (x as SetCardAltItemViewModel).Name));
+                Parent.UpdateCardAlts();
                 RaisePropertyChanged("Name");
-            }
-        }
-
-        public PropertyDef CardNameProperty => ViewModelLocator.PropertyTabViewModel.NameProperty._property;
-
-        public object CardName  // this is the alt's actual card name
-        {
-            get
-            {
-                return _altDef.Properties[CardNameProperty];
-            }
-            set
-            {
-                if (_altDef.Properties[CardNameProperty] == value) return;
-                _altDef.Properties[CardNameProperty] = value;
-                if (IsDefault)
-                    (Parent as SetCardItemViewModel).UpdateCardName();
-                RaisePropertyChanged("CardName");
             }
         }
 
@@ -200,20 +164,20 @@ namespace Octide.ItemModel
         public override void Copy()
         {
             if (CanCopy == false) return;
-            var index = (Parent as SetCardItemViewModel).Items.IndexOf(this);
+            var index = Parent.Items.IndexOf(this);
             ItemSource.Insert(index, Clone() as SetCardAltItemViewModel);
         }
 
         public override void Insert()
         {
             if (CanInsert == false) return;
-            var index = (Parent as SetCardItemViewModel).Items.IndexOf(this);
+            var index = Parent.Items.IndexOf(this);
             ItemSource.Insert(index, new SetCardAltItemViewModel() { ItemSource = ItemSource, Parent = Parent, Name = "Alt" });
         }
 
         public Card GetTempCard()
         {
-            var ret = (Parent as SetCardItemViewModel)._card.Clone();
+            var ret = Parent._card.Clone();
             ret.Alternate = _altDef.Type;
             return ret;
         }
@@ -419,8 +383,30 @@ namespace Octide.ItemModel
             BaseWidth = image.PixelWidth;
             BaseHeight = image.PixelHeight;
 
-            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayItemModel>(activeTemplate._def.GetOverLayBlocks(properties).Select(x => ViewModelLocator.ProxyTabViewModel.OverlayBlocks.First(y => y.Name == x.Block)));
-            ActiveTextLayers = new ObservableCollection<ProxyTextBlockItemModel>(activeTemplate._def.GetTextBlocks(properties).Select(x => new ProxyTextBlockItemModel(x) { Property = GetProperties.First(y => y.Name == x.NestedProperties.First().Name) }));
+            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayItemModel>(
+                activeTemplate._def
+                .GetOverLayBlocks(properties)
+                .Select(x => ViewModelLocator.ProxyTabViewModel.OverlayBlocks.First(y => y.Name == x.Block))
+                );
+
+            var allCardProperties = new List<CardPropertyItemModel>(GetProperties);
+            allCardProperties.Add(NameProperty);
+            allCardProperties.Add(SizeProperty);
+
+            foreach (var x in allCardProperties)
+            {
+                var y = x.Value;
+                var z = x.Name;
+            }
+
+            ActiveTextLayers = new ObservableCollection<ProxyTextBlockItemModel>(
+                activeTemplate._def
+                .GetTextBlocks(properties)
+                .Select(x => new ProxyTextBlockItemModel(x)
+                {
+                    Property = allCardProperties.First(y => y.Name == x.NestedProperties.First().Name)
+                }
+                ));
             RaisePropertyChanged("");
         }
         #endregion

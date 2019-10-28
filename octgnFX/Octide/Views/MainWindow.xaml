@@ -14,6 +14,9 @@
     <metro:Window.CommandBindings>
         <CommandBinding Command="Close" Executed="CloseCommand"/>
     </metro:Window.CommandBindings>
+    <metro:Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveCommand}" />
+    </metro:Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

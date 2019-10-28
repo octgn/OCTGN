@@ -762,26 +762,29 @@ namespace Octgn
             foreach (var section in deck.Sections)
             {
                 { // Add cards to LoadedCards deck
-                    if (!LoadedCards.Sections.Any(x => x.Name == section.Name)) {
+                    if (!LoadedCards.Sections.Any(x => x.Name == section.Name))
+                    {
                         // Add section
-                        ((ObservableCollection<ObservableSection>)LoadedCards.Sections).Add(new ObservableSection() {
+                        ((ObservableCollection<ObservableSection>)LoadedCards.Sections).Add(new ObservableSection()
+                        {
                             Name = section.Name,
                             Shared = section.Shared,
                             Cards = new ObservableCollection<ObservableMultiCard>()
                         });
-
                     }
 
                     var loadedCardsSection = LoadedCards.Sections.Single(x => x.Name == section.Name);
 
-                    foreach (var card in section.Cards) {
+                    foreach (var card in section.Cards)
+                    {
                         var existingCard = loadedCardsSection.Cards.FirstOrDefault(x => x.Id == card.Id);
-
-                        if (existingCard != null) {
+                        if (existingCard != null)
+                        {
                             existingCard.Quantity++;
-                        } else {
+                        }
+                        else
+                        {
                             var newCard = new ObservableMultiCard(card);
-
                             loadedCardsSection.Cards.AddCard(newCard);
                         }
                     }

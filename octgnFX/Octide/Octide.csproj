@@ -162,6 +162,9 @@
     <Compile Include="GameLoader.cs" />
     <Compile Include="PreviewTab\ActionItemModel.cs" />
     <Compile Include="PreviewTab\BoardItemViewModel.cs" />
+    <Compile Include="SetTab\CardTab\SetCardProxyItemView.xaml.cs">
+      <DependentUpon>SetCardProxyItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SetTab\CardTab\SetCardAltItemViewModel.cs" />
     <Compile Include="SetTab\CardTab\SetCardAltItemView.xaml.cs">
       <DependentUpon>SetCardAltItemView.xaml</DependentUpon>
@@ -364,6 +367,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PropertyTab\PropertyItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\CardTab\SetCardProxyItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

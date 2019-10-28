@@ -34,7 +34,6 @@ namespace Octide.ItemModel
                 Name = "Package",
                 Id = Guid.NewGuid(),
                 Includes = new List<Include>(), //todo add include support
-                Set = (Parent as SetItemViewModel)._set, //TODO fix for new format
                 Definition = new PackDefinition()
             };
             Items = new ObservableCollection<IBasePack>();
@@ -71,10 +70,10 @@ namespace Octide.ItemModel
             {
                 Name = p.Name,
                 Id = Guid.NewGuid(),
+                Set = p._pack.Set,
+                Definition = new PackDefinition(),
                 Includes = new List<Include>() //todo add include support
             };
-            _pack.Set = p._pack.Set;  //TODO - fix for new format
-            _pack.Definition = new PackDefinition();
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
             {
@@ -145,6 +144,14 @@ namespace Octide.ItemModel
                 if (_pack.Name == value) return;
                 _pack.Name = value;
                 RaisePropertyChanged("Name");
+            }
+        }
+
+        public Set Set
+        {
+            get
+            {
+                return (Parent as SetItemViewModel)._set;
             }
         }
 

@@ -67,7 +67,7 @@ namespace Octide.ItemModel
                 if (string.IsNullOrEmpty(value)) return;
                 _property.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as PropertyItemViewModel).Name));
                 RaisePropertyChanged("Name");
-                Messenger.Default.Send(new CustomPropertyChangedMessage());
+                Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this, Action = CustomPropertyChangedMessageAction.Modify});
             }
         }
 

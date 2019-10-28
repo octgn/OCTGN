@@ -122,7 +122,7 @@
                         </Border.ContextMenu>
                     </Border>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackPropertyItemModel}" ItemsSource="{Binding Items}" >
+                <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackPropertyItemModel}"  >
                     <Border Padding="5" Background="{StaticResource PackPropertiesBrush}">
                         <Grid>
                             <Grid.RowDefinitions>

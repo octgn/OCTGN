@@ -3,12 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"      
+             xmlns:utils="clr-namespace:Octide"
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700">
 
+    <UserControl.Resources>
+        <utils:InverseBooleanConverter x:Key="inverseBooleanConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -19,7 +25,7 @@
             <StackPanel Orientation="Vertical">
                 <ItemsControl Style="{StaticResource OctideInputPanel}" >
                     <TextBlock Text="Name" />
-                    <TextBox Text="{Binding CardName, Mode=TwoWay}" Visibility="{Binding }" />
+                    <TextBox Text="{Binding NameProperty.Value, Mode=TwoWay}" Visibility="{Binding }" />
                     <StackPanel>
                         <StackPanel.Style>
                             <Style TargetType="{x:Type StackPanel}">
@@ -34,7 +40,7 @@
                         <TextBox Text="{Binding Name, Mode=TwoWay}" />
                     </StackPanel>
                     <TextBlock Text="Size"/>
-                    <ComboBox IsReadOnly="True" ItemsSource="{Binding CardSizes}" DisplayMemberPath="Name" SelectedItem="{Binding CardSize, Mode=TwoWay}" >
+                    <ComboBox IsReadOnly="True" ItemsSource="{Binding CardSizes}" DisplayMemberPath="Name" SelectedItem="{Binding SizeProperty.Value, Mode=TwoWay}" >
                     </ComboBox>
                 </ItemsControl>
                 <ItemsControl ItemsSource="{Binding GetProperties}" ItemContainerStyle="{StaticResource OctideInputPanel}" >
@@ -42,19 +48,10 @@
                         <DataTemplate>
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding IsDefined}" ToolTip="Check this box to include this property in the XML." />
+                                    <CheckBox IsChecked="{Binding IsUndefined}" ToolTip="Check this box to ignore this property in the XML." />
                                     <TextBlock Text="{Binding Name, Mode=OneWay}"/>
                                 </StackPanel>
-                                <TextBox Text="{Binding Value, Mode=TwoWay}" IsEnabled="{Binding IsDefined}"/>
-                                <StackPanel.Style>
-                                    <Style TargetType="{x:Type StackPanel}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsNameProperty}" Value="True" >
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </StackPanel.Style>
+                                <TextBox Text="{Binding Value, Mode=TwoWay}" IsEnabled="{Binding IsUndefined, Converter={StaticResource inverseBooleanConverter }}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -101,63 +98,7 @@
                     </StackPanel>
                 </Border>
             </Grid>
-            <Viewbox Grid.Row="2" Stretch="Uniform" >
-                <Grid ClipToBounds="True" >
-                    <Image Source="{Binding BaseImage}" Width="{Binding BaseWidth}" Height="{Binding BaseHeight}" Panel.ZIndex="0" />
-
-                    <ItemsControl ItemsSource="{Binding ActiveOverlayLayers}" >
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style>
-                                <Setter Property="Canvas.Left" Value="{Binding Left}"/>
-                                <Setter Property="Canvas.Top" Value="{Binding Top}"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                    <ItemsControl ItemsSource="{Binding ActiveTextLayers}" >
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style>
-                                <Setter Property="Canvas.Left" Value="{Binding TextBlock.Left}"/>
-                                <Setter Property="Canvas.Top" Value="{Binding TextBlock.Top}"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Property.Value}" Margin="0" Padding="0" Background="#33000000" BorderThickness="1"
-                                 Width="{Binding TextBlock.Width}" Height="{Binding TextBlock.Height}"
-                                 FontSize="{Binding TextBlock.FontSize}" Foreground="{Binding TextBlock.FontColor}" FontFamily="{Binding TextBlock.Font}"
-                                 VerticalContentAlignment="{Binding TextBlock.VerticalAlignment}" HorizontalContentAlignment="{Binding TextBlock.HorizontalAlignment}"
-                                 TextWrapping="{Binding TextBlock.WordWrap}" >
-                                    <TextBox.BorderBrush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <Rectangle StrokeDashArray="2" Stroke="Black" StrokeThickness="1"
-                                             Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type TextBox}}, Path=ActualWidth}"
-                                             Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type TextBox}}, Path=ActualHeight}" />
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </TextBox.BorderBrush>
-                                </TextBox>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Grid>
-            </Viewbox>
+            <views:SetCardProxyItemView Grid.Row="2" />
         </Grid>
     </Grid>
 </UserControl>
