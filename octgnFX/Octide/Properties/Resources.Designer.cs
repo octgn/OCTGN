@@ -19,7 +19,7 @@ namespace Octide.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -103,19 +103,21 @@ namespace Octide.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;game name=&quot;Default Game&quot;
-        ///    id=&quot;263b2f19-fb22-4f32-82dd-3d1b28d3da3a&quot;
+        ///    id=&quot;{GUID}&quot;
         ///    version=&quot;1.0.0.0&quot; 
         ///    tags=&quot;game&quot;
         ///    description=&quot;A base game plugin ready to be customized&quot;
         ///    setsurl=&quot;http://www.octgn.net&quot; 
         ///	gameurl=&quot;http://www.octgn.net&quot;
         ///    authors=&quot;brine&quot;
-        ///    iconurl=&quot;https://raw.github.com/kellyelton/Standard-Playing-Cards-Octgn/master/src/images/icon.jpg&quot;
+        ///    iconurl=&quot;https://raw.githubusercontent.com/octgn/OCTGN/master/octgnFX/Octgn/Resources/logolarge.png&quot;
         ///    octgnVersion=&quot;{OCTVER}&quot;
         ///    scriptVersion=&quot;3.1.0.2&quot;
         ///    markersize=&quot;25&quot;
         ///    &gt;
-        ///    &lt;scripts&gt;        /// [rest of string was truncated]&quot;;.
+        ///    &lt;scripts&gt;
+        ///    &lt;/scripts&gt;
+        ///    &lt;events&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string definition {
             get {
