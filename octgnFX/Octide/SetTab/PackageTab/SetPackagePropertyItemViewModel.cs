@@ -88,7 +88,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public string Value
+        public object Value
         {
             get
             {

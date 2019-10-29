@@ -41,14 +41,14 @@ namespace Octide.ItemModel
             PackItem = p;
             IsUnlimited = (p as Pick).Quantity == -1 ? true : false;
             Items = new ObservableCollection<PackPropertyItemModel>();
-            Items.CollectionChanged += (a, b) =>
-            {
-                (PackItem as Pick).Properties = Items.Select(x => x.PropertyDef).ToList();
-            };
             foreach (var item in (PackItem as Pick).Properties)
             {
                 Items.Add(new PackPropertyItemModel(item) { ParentCollection = Items });
             }
+            Items.CollectionChanged += (a, b) =>
+            {
+                (PackItem as Pick).Properties = Items.Select(x => x.PropertyDef).ToList();
+            };
             AddPropertyCommand = new RelayCommand(AddProperty);
             RemoveCommand = new RelayCommand(Remove);
 

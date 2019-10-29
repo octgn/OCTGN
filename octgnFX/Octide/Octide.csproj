@@ -177,6 +177,7 @@
     <Compile Include="SetTab\CardTab\SetCardItemView.xaml.cs">
       <DependentUpon>SetCardItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SetTab\PackageTab\SetPackageIncludeItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackagePropertyItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackagePickItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackageOptionItemViewModel.cs" />
@@ -269,9 +270,6 @@
     </Compile>
     <Compile Include="SetTab\CardTab\SetCardProxyView.xaml.cs">
       <DependentUpon>SetCardProxyView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SetTab\SetMarkersView.xaml.cs">
-      <DependentUpon>SetMarkersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SetTab\PackageTab\SetPackageItemView.xaml.cs">
       <DependentUpon>SetPackageItemView.xaml</DependentUpon>
@@ -447,10 +445,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SetTab\CardTab\SetCardProxyView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SetTab\SetMarkersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

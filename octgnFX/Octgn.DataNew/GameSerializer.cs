@@ -1416,7 +1416,7 @@ namespace Octgn.DataNew
                         };
                         var includesPropertySet = new CardPropertySet() { Properties = new Dictionary<PropertyDef, object>() };
                         DeserializeCardPropertySet(includeXml.Elements("property"), includesPropertySet);
-                        include.Properties = includesPropertySet.Properties;
+                        include.Properties = includesPropertySet.Properties.Select(x => new PickProperty() { Property = x.Key, Value = x.Value }).ToList();
 
                         pack.Includes.Add(include);
                     }
@@ -1637,9 +1637,21 @@ namespace Octgn.DataNew
                 var pack = new setPack
                 {
                     name = setpack.Name.ToString(),
-                    id = setpack.Id.ToString(),
-                    Items = SerializePack(setpack.Definition.Items).ToArray()
+                    id = setpack.Id.ToString()
                 };
+
+                var packItems = SerializePack(setpack.Definition.Items).ToList();
+                foreach (Include include in setpack.Includes)
+                {
+                    packItems.Add(new include()
+                    {
+                        id = include.Id.ToString(),
+                        set = include.SetId.ToString(),
+                        property = include.Properties.Select(x => new includeProperty() { name = x.Property.Name, value = x.Value?.ToString() }).ToArray()
+                    }
+                    );
+                }
+                pack.Items = packItems.ToArray();
                 packs.Add(pack);
             }
             save.packaging = packs.ToArray();
@@ -1726,14 +1738,14 @@ namespace Octgn.DataNew
                         if (ret.key == null)
                         {
                             ret.key = prop.Property.Name;
-                            ret.value = prop.Value;
+                            ret.value = prop.Value.ToString();
                         }
                         else
                         {
                             var property = new pickProperty
                             {
                                 key = prop.Property.Name,
-                                value = prop.Value
+                                value = prop.Value.ToString()
                             };
                             propertylist.Add(property);
                         }

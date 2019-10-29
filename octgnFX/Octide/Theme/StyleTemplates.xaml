@@ -27,6 +27,11 @@
         <GradientStop Color="#DAFFFFFF" Offset="0" />
     </LinearGradientBrush>
 
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackIncludeBrush">
+        <GradientStop Color="#777777" Offset="0"/>
+        <GradientStop Color="#BB7777" Offset="1"/>
+    </LinearGradientBrush>
+    
     <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackOptionsBrush">
         <GradientStop Color="#777777" Offset="0"/>
         <GradientStop Color="#BBBB77" Offset="1"/>

@@ -42,7 +42,7 @@
             </ScrollViewer>
         </TabItem>
 
-        <TabItem Header="Package">
+        <TabItem Header="Packages">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
@@ -68,7 +68,6 @@
             </Grid>
         </TabItem>
         <TabItem Header="Markers" >
-            <views:SetMarkersView />
         </TabItem>
 
         <TabItem Header="Cards" IsSelected="True" >

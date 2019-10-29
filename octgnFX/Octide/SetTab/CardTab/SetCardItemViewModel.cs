@@ -205,5 +205,12 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Name");
             }
         }
+        public Guid Id
+        {
+            get
+            {
+                return _card.Id;
+            }
+        }
     }
 }

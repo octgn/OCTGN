@@ -22,13 +22,17 @@ namespace Octide.ItemModel
 {
     public class SetPackageItemViewModel : IdeListBoxItemBase
     {
+        new public SetItemViewModel Parent;
         public Pack _pack;
-        public ObservableCollection<IBasePack> _items;
+        public ObservableCollection<IBasePack> Items { get; private set; }
+        public ObservableCollection<IdeListBoxItemBase> Includes { get; private set; }
 
         public RelayCommand AddOptionsCommand { get; private set; }
         public RelayCommand AddPickCommand { get; private set; }
         public RelayCommand GeneratePackCommand { get; private set; }
+        public RelayCommand AddIncludeCommand { get; private set; }
         public PackageDropHandler PackageDropHandler { get; set; }
+
         public ObservableCollection<string> _boosterCards;
 
         public SetPackageItemViewModel() //new item
@@ -37,14 +41,23 @@ namespace Octide.ItemModel
             {
                 Name = "Package",
                 Id = Guid.NewGuid(),
-                Includes = new List<Include>(), //todo add include support
                 Definition = new PackDefinition()
             };
             Items = new ObservableCollection<IBasePack>();
+            Items.CollectionChanged += (a, b) =>
+            {
+                _pack.Definition.Items = Items.Select(x => x.PackItem).ToList();
+            };
+            Includes = new ObservableCollection<IdeListBoxItemBase>();
+            Includes.CollectionChanged += (a, b) =>
+            {
+                _pack.Includes = Includes.Select(x => (x as PackIncludeItemModel)._include).ToList();
+            };
             PackageDropHandler = new PackageDropHandler();
             GeneratePackCommand = new RelayCommand(GeneratePack);
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
+            AddIncludeCommand = new RelayCommand(AddInclude);
         }
 
         public SetPackageItemViewModel(Pack p) //loading item
@@ -62,10 +75,17 @@ namespace Octide.ItemModel
                 else if (item is Pick)
                     Items.Add(new PackPickItemModel(item) { ParentCollection = Items });
             }
+            Includes = new ObservableCollection<IdeListBoxItemBase>(p.Includes.Select(x => new PackIncludeItemModel(x) { Parent = this, ItemSource = Includes }));
+            Includes.CollectionChanged += (a, b) =>
+            {
+                _pack.Includes = Includes.Select(x => (x as PackIncludeItemModel)._include).ToList();
+            };
+
             PackageDropHandler = new PackageDropHandler();
             GeneratePackCommand = new RelayCommand(GeneratePack);
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
+            AddIncludeCommand = new RelayCommand(AddInclude);
         }
 
         public SetPackageItemViewModel(SetPackageItemViewModel p) //copying item
@@ -100,8 +120,13 @@ namespace Octide.ItemModel
             GeneratePackCommand = new RelayCommand(GeneratePack);
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
+            AddIncludeCommand = new RelayCommand(AddInclude);
         }
 
+        public void AddInclude()
+        {
+            Includes.Add(new PackIncludeItemModel() { Parent = this });
+        }
         public void AddPick()
         {
             Items.Add(new PackPickItemModel() { ParentCollection = Items });
@@ -115,12 +140,6 @@ namespace Octide.ItemModel
         public void GeneratePack()
         {
             BoosterCards = new ObservableCollection<string>(_pack.GenerateContent().LimitedCards.Select(x => x.GetPicture()));
-        }
-
-        public ObservableCollection<IBasePack> Items
-        {
-            get { return _items; }
-            set { Set(ref _items, value); }
         }
 
         public ObservableCollection<string> BoosterCards
@@ -155,7 +174,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                return (Parent as SetItemViewModel)._set;
+                return Parent._set;
             }
         }
 
@@ -180,6 +199,29 @@ namespace Octide.ItemModel
     }
 
     public class PackageDropHandler : IDropTarget
+    {
+        public void DragOver(IDropInfo dropInfo)
+        {
+            if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackPropertyItemModel)
+            {
+                dropInfo.Effects = System.Windows.DragDropEffects.None;
+            }
+            else if (dropInfo.DragInfo.SourceItem is PackPropertyItemModel && dropInfo.DragInfo.SourceCollection.TryGetList().Count <= 1 && !dropInfo.KeyStates.HasFlag(System.Windows.DragDropKeyStates.ControlKey))
+            {
+                dropInfo.Effects = System.Windows.DragDropEffects.None;
+            }
+            else
+            {
+                DragDrop.DefaultDropHandler.DragOver(dropInfo);
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            DragDrop.DefaultDropHandler.Drop(dropInfo);
+        }
+    }
+    public class IncludeDropHandler : IDropTarget
     {
         public void DragOver(IDropInfo dropInfo)
         {
