@@ -71,15 +71,17 @@ namespace Octide.ItemModel
                 Value = ViewModelLocator.PreviewTabViewModel.CardSizes.Cast<SizeItemViewModel>().FirstOrDefault(x => altData.Size == x._size) ?? ViewModelLocator.PreviewTabViewModel.DefaultSize
             };
 
-            Items = new ObservableCollection<CardPropertyItemModel>(
-                altData.Properties.Select(x =>
-                    new CardPropertyItemModel
-                    {
-                        Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemViewModel)._property.Equals(x.Key)) as PropertyItemViewModel,
-                        _value = x.Value,
-                        Parent = this,
-                        _isUndefined = x.Value == null
-                    }));
+            Items = new ObservableCollection<CardPropertyItemModel>();
+            foreach (var prop in altData.Properties)
+            {
+                Items.Add(new CardPropertyItemModel
+                {
+                    Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemViewModel)._property.Equals(prop.Key)) as PropertyItemViewModel,
+                    _value = prop.Value,
+                    Parent = this,
+                    _isUndefined = prop.Value == null
+                });
+            }
             Items.CollectionChanged += (a, b) =>
             {
                 _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y.Value);
@@ -96,18 +98,23 @@ namespace Octide.ItemModel
             _altDef.Type = Utils.GetUniqueName(a.Name, a.ItemSource.Select(x => (x as SetCardAltItemViewModel).Name));
             NameProperty = new CardNamePropertyItemModel() { Parent = this };
             SizeProperty = new CardSizePropertyItemModel() { Parent = this, Value = a.SizeProperty.Value };
-            Items = new ObservableCollection<CardPropertyItemModel>(
-                _altDef.Properties.Select(x =>
-                    new CardPropertyItemModel
-                    {
-                        Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemViewModel)._property.Equals(x.Key)) as PropertyItemViewModel,
-                        _value = x.Value,
-                        Parent = this
-                    }));
+            Items = new ObservableCollection<CardPropertyItemModel>();
+
+            foreach (var prop in _altDef.Properties)
+            {
+                Items.Add(new CardPropertyItemModel
+                {
+                    Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemViewModel)._property.Equals(prop.Key)) as PropertyItemViewModel,
+                    _value = prop.Value,
+                    Parent = this
+                });
+            }
+
             Items.CollectionChanged += (c, b) =>
             {
                 _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y.Value);
             };
+
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage message)

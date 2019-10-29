@@ -1745,7 +1745,7 @@ namespace Octgn.DataNew
                             var property = new pickProperty
                             {
                                 key = prop.Property.Name,
-                                value = prop.Value.ToString()
+                                value = prop.Value?.ToString()
                             };
                             propertylist.Add(property);
                         }

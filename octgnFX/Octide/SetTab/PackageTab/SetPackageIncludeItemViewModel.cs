@@ -41,7 +41,11 @@ namespace Octide.ItemModel
         {
             _include = i;
 
-            Items = new ObservableCollection<PackPropertyItemModel>(i.Properties.Select(x => new PackPropertyItemModel(x) { ParentCollection = Items }));
+            Items = new ObservableCollection<PackPropertyItemModel>();
+            foreach (var include in i.Properties)
+            {
+                Items.Add(new PackPropertyItemModel(include) { ParentCollection = Items, isIncludeProperty = true });
+            }
             Items.CollectionChanged += (a, b) =>
             {
                 _include.Properties = Items.Select(x => x.PropertyDef).ToList();
@@ -58,12 +62,15 @@ namespace Octide.ItemModel
                 SetId = i.SelectedSet.Id
             };
 
-            Items = new ObservableCollection<PackPropertyItemModel>(i.Items.Select(x => new PackPropertyItemModel(x) { ParentCollection = Items }));
+            Items = new ObservableCollection<PackPropertyItemModel>();
             Items.CollectionChanged += (a, b) =>
             {
                 _include.Properties = Items.Select(x => x.PropertyDef).ToList();
             };
-            _include.Properties = Items.Select(x => x.PropertyDef).ToList();
+            foreach (var item in i.Items)
+            {
+                Items.Add(new PackPropertyItemModel(item) { ParentCollection = Items, isIncludeProperty = true });
+            }
 
             ItemSource = i.ItemSource;
             Parent = i.Parent;
@@ -71,8 +78,8 @@ namespace Octide.ItemModel
             RemoveCommand = new RelayCommand(Remove);
         }
 
-        public ObservableCollection<IdeListBoxItemBase> Sets => ViewModelLocator.SetTabViewModel.Items;
-        public ObservableCollection<IdeListBoxItemBase> Cards => SelectedSet?.CardItems;
+        public IEnumerable<IdeListBoxItemBase> Sets => ViewModelLocator.SetTabViewModel.Items.Where(x => (x as SetItemViewModel) != Parent.Parent) ;
+        public IEnumerable<IdeListBoxItemBase> Cards => SelectedSet?.CardItems;
 
         public SetItemViewModel _selectedSet;
 
@@ -112,7 +119,7 @@ namespace Octide.ItemModel
 
         public void AddProperty()
         {
-            Items.Add(new PackPropertyItemModel() { ParentCollection = Items });
+            Items.Add(new PackPropertyItemModel() { ParentCollection = Items, isIncludeProperty = true });
         }
 
         public override object Clone()

@@ -114,7 +114,7 @@
                 </Border.ContextMenu>
             </Border>
         </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackPropertyItemModel}"  >
+        <DataTemplate DataType="{x:Type ItemModel:PackPropertyItemModel}" >
             <Border Padding="5" Background="{StaticResource PackPropertiesBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -138,7 +138,7 @@
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>
-        </HierarchicalDataTemplate>
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -156,7 +156,7 @@
             <Button Content="Add Pick" Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource PackPickBrush}"/>
         </StackPanel>
 
-        <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding Items}"
+        <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding Items}" Name="PackItems"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding PackageDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
@@ -186,7 +186,7 @@
             <Button Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource PackIncludeBrush}" />
         </StackPanel>
 
-        <TreeView Grid.Row="1" Grid.Column="1" Background="Transparent" ItemsSource="{Binding Includes}"
+        <TreeView Grid.Row="1" Grid.Column="1" Background="Transparent" ItemsSource="{Binding Includes}"  Name="Includes"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding IncludeDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">

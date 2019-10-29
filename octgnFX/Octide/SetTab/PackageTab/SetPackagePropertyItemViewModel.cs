@@ -17,6 +17,7 @@ namespace Octide.ItemModel
 
     public class PackPropertyItemModel : ViewModelBase, ICloneable
     {
+        public bool isIncludeProperty { get; set; }
         public ObservableCollection<PackPropertyItemModel> ParentCollection { get; set; }
         public PickProperty PropertyDef { get; set; }
         public PropertyItemViewModel _activeProperty;
@@ -65,7 +66,7 @@ namespace Octide.ItemModel
 
         public void Remove()
         {
-            if (ParentCollection.Count > 1)
+            if (isIncludeProperty || ParentCollection.Count > 1)
                 ParentCollection.Remove(this);
         }
 

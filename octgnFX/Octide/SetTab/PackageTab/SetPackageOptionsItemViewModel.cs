@@ -28,6 +28,7 @@ namespace Octide.ItemModel
             {
                 (PackItem as OptionsList).Options = Items.Select(x => x.Option).ToList();
             };
+            Items.Add(new PackOptionItemModel() { ParentCollection = Items });
             AddOptionCommand = new RelayCommand(AddOption);
             RemoveCommand = new RelayCommand(Remove);
         }
