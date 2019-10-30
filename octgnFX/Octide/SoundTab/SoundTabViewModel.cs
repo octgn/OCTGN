@@ -4,22 +4,13 @@
 
 using System;
 using System.Linq;
-using System.ComponentModel;
-using System.Windows;
-using System.IO;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 
-using Octide.Messages;
-using Octgn.DataNew.Entities;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GongSolutions.Wpf.DragDrop;
-using System.Collections.Specialized;
 using Octide.ItemModel;
-using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Octide.ViewModel
 {
@@ -30,10 +21,12 @@ namespace Octide.ViewModel
 
         public RelayCommand AddCommand { get; private set; }
 
+        private MediaPlayer _mediaPlayer;
 
         public SoundTabViewModel()
         {
             AddCommand = new RelayCommand(AddItem);
+            _mediaPlayer = new MediaPlayer();
 
             Items = new ObservableCollection<IdeListBoxItemBase>();
             foreach (var sound in ViewModelLocator.GameLoader.Game.Sounds)
@@ -59,11 +52,24 @@ namespace Octide.ViewModel
                 
         public void AddItem()
         {
-            var ret = new SoundItemViewModel();
+            var ret = new SoundItemViewModel() { ItemSource = Items, Name = "Sound" };
             Items.Add(ret);
             SelectedItem = ret;
         }
         
+        public void PlaySound(Asset sound)
+        {
+            _mediaPlayer.Open(new Uri(sound.FullPath));
+
+            _mediaPlayer.Play();
+        }
+        
+        public void StopSound()
+        {
+
+            _mediaPlayer.Stop();
+        }
+
     }
 
 }

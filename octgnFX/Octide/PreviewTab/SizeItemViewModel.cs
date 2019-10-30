@@ -75,7 +75,6 @@ namespace Octide.ItemModel
         {
             if (CanRemove == false) return;
             ItemSource.Remove(this);
-            Messenger.Default.Send(new CardSizeChangedMesssage());
         }
 
         public string Name
@@ -91,7 +90,7 @@ namespace Octide.ItemModel
                 _size.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as SizeItemViewModel).Name));
                 RaisePropertyChanged("Name");
                 //has to update the card data when the size name changes
-                //Messenger.Default.Send(new CardSizeChangedMesssage() { Size = this });
+                Messenger.Default.Send(new CardSizeChangedMesssage() { Size = this, Action = PropertyChangedMessageAction.Modify });
             }
         }
 

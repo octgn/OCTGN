@@ -226,7 +226,7 @@ namespace Octide.ItemModel
             }
             else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackPropertyItemModel)
             {
-        //        dropInfo.Effects = System.Windows.DragDropEffects.None;
+                dropInfo.Effects = System.Windows.DragDropEffects.None;
             }
             else if (dropInfo.DragInfo.SourceItem is PackPropertyItemModel && dropInfo.DragInfo.SourceCollection.TryGetList().Count <= 1 && !dropInfo.KeyStates.HasFlag(System.Windows.DragDropKeyStates.ControlKey))
             {

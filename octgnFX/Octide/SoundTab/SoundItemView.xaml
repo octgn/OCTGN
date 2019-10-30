@@ -10,6 +10,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
              mc:Ignorable="d" 
+             xmlns:ely="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
@@ -20,7 +21,11 @@
             <TextBox Text="{Binding Name, Mode=TwoWay}"/>
 
             <TextBlock Text="Sound Asset"/>
-            <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Sound" />
+            <StackPanel Orientation="Horizontal">
+                <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Sound" />
+                <Button Margin="5" Content="Play" Command="{Binding PlayCommand }"/>
+                <Button Margin="5" Content="Stop" Command="{Binding StopCommand }"/>
+            </StackPanel>
         </ItemsControl>
     </ScrollViewer>
 </UserControl>

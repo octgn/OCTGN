@@ -108,6 +108,7 @@ namespace Octide.ViewModel
                 _game.Player.Groups = Piles.Select(x => (x as GroupItemViewModel)._group).ToList();
                 RaisePropertyChanged("CollapsedPiles");
                 RaisePropertyChanged("VisiblePiles");
+                Messenger.Default.Send(new GroupChangedMessage(b));
             };
             AddPileCommand = new RelayCommand(AddPile);
 
@@ -132,6 +133,7 @@ namespace Octide.ViewModel
                 _game.GlobalPlayer.Groups = Piles.Select(x => (x as GroupItemViewModel)._group).ToList();
                 RaisePropertyChanged("CollapsedGlobalPiles");
                 RaisePropertyChanged("VisibleGlobalPiles");
+                Messenger.Default.Send(new GroupChangedMessage(b));
             };
             AddGlobalPileCommand = new RelayCommand(AddGlobalPile);
 
@@ -160,7 +162,11 @@ namespace Octide.ViewModel
             }
             CardSizes.CollectionChanged += (a, b) =>
             {
-                UpdateSizes();
+                ViewModelLocator.GameLoader.Game.CardSizes = CardSizes.ToDictionary(
+                                                            x => x.IsDefault ? "" : (x as SizeItemViewModel).Name,
+                                                            y => (y as SizeItemViewModel)._size
+                                                            );
+                Messenger.Default.Send(new CardSizeChangedMesssage(b));
             };
             AddSizeCommand = new RelayCommand(AddSize);
 
@@ -244,14 +250,6 @@ namespace Octide.ViewModel
             ViewModelLocator.GameLoader.Game.GameBoards = Boards.ToDictionary(
                                                         x => (x as BoardItemViewModel).IsDefault ? "" : (x as BoardItemViewModel).Name,
                                                         y => (y as BoardItemViewModel)._board
-                                                        );
-        }
-
-        public void UpdateSizes()
-        {
-            ViewModelLocator.GameLoader.Game.CardSizes = CardSizes.ToDictionary(
-                                                        x => x.IsDefault ? "" : (x as SizeItemViewModel).Name,
-                                                        y => (y as SizeItemViewModel)._size
                                                         );
         }
 

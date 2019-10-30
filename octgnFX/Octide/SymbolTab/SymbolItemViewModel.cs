@@ -25,13 +25,9 @@ namespace Octide.ItemModel
 
         public SymbolItemViewModel() // new item
         {
-            _symbol = new Symbol
-            {
-                Id = Utils.GetUniqueName("Symbol", ItemSource.Select(x => (x as SymbolItemViewModel).Id)),
-                Name = "Symbol",
-                //Source = ViewModelLocator.GameLoader.GamePath
-                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
-            };
+            _symbol = new Symbol();
+
+            Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
         }
 
         public SymbolItemViewModel(Symbol s) // load item
@@ -112,7 +108,7 @@ namespace Octide.ItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SymbolItemViewModel() { Parent = Parent, ItemSource = ItemSource });
+            ItemSource.Insert(index, new SymbolItemViewModel() { Parent = Parent, ItemSource = ItemSource, Name= "Symbol", Id = "Symbol" });
         }
     }
 }

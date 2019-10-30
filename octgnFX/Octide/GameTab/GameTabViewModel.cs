@@ -3,6 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,8 @@ using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-
+using GongSolutions.Wpf.DragDrop;
+using GongSolutions.Wpf.DragDrop.Utilities;
 using Octgn.DataNew.Entities;
 using Octide.ItemModel;
 
@@ -21,6 +23,45 @@ namespace Octide.ViewModel
 {
     public class GameTabViewModel : ViewModelBase
     {
+        public DeckSectionDropHandler DeckSectionDropHandler { get; set; }
+        public GameTabViewModel()
+        {
+            AddCommand = new RelayCommand(AddItem);
+            AddGlobalCommand = new RelayCommand(AddGlobalItem);
+            DeckSectionDropHandler = new DeckSectionDropHandler();
+
+            Items = new ObservableCollection<IdeListBoxItemBase>();
+            foreach (var deckSection in ViewModelLocator.GameLoader.Game.DeckSections.Values)
+            {
+                Items.Add(new DeckSectionItemViewModel(deckSection) { ItemSource = Items });
+            }
+            Items.CollectionChanged += (a, b) =>
+            {
+                ViewModelLocator.GameLoader.Game.DeckSections = Items.Cast<DeckSectionItemViewModel>().ToDictionary(x => x.Name, y => y._deckSection);
+            };
+            GlobalItems = new ObservableCollection<IdeListBoxItemBase>();
+            foreach (var globalDeckSection in ViewModelLocator.GameLoader.Game.SharedDeckSections.Values)
+            {
+                GlobalItems.Add(new DeckSectionItemViewModel(globalDeckSection) { ItemSource = Items });
+            }
+            GlobalItems.CollectionChanged += (a, b) =>
+            {
+                ViewModelLocator.GameLoader.Game.SharedDeckSections = GlobalItems.Cast<DeckSectionItemViewModel>().ToDictionary(x => x.Name, y => y._deckSection);
+            };
+
+            DeckEditorFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.DeckEditorFont);
+            ContextFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.ContextFont);
+            NotesFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.NoteFont);
+            ChatFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.ChatFont);
+
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
+                x =>
+                {
+                    this.RaisePropertyChanged(string.Empty);
+                });
+
+
+        }
         public string Name
         {
             get
@@ -193,19 +234,6 @@ namespace Octide.ViewModel
         public GameFontItemModel ChatFont { get; set; }
         public GameFontItemModel NotesFont { get; set; }
 
-        public GameTabViewModel()
-        {
-            DeckEditorFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.DeckEditorFont);
-            ContextFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.ContextFont);
-            NotesFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.NoteFont);
-            ChatFont = new GameFontItemModel(ViewModelLocator.GameLoader.Game.ChatFont);
-            
-            Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
-                x =>
-                {
-                    this.RaisePropertyChanged(string.Empty);
-                });
-        }
 
         public void UpdateFonts()
         {
@@ -214,71 +242,42 @@ namespace Octide.ViewModel
             ViewModelLocator.GameLoader.Game.NoteFont = NotesFont._font;
             ViewModelLocator.GameLoader.Game.ChatFont = ChatFont._font;
         }
+
+
+        public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
+        public ObservableCollection<IdeListBoxItemBase> GlobalItems { get; private set; }
+
+        public RelayCommand AddCommand { get; private set; }
+        public RelayCommand AddGlobalCommand { get; private set; }
+        public void AddItem()
+        {
+            var ret = new DeckSectionItemViewModel() { ItemSource = Items, Name = "Section", Global = false };
+            Items.Add(ret);
+        }
+        public void AddGlobalItem()
+        {
+            var ret = new DeckSectionItemViewModel() {ItemSource = GlobalItems, Name = "Section", Global = true };
+            GlobalItems.Add(ret);
+        }
+
     }
-
-    public class GameFontItemModel : ViewModelBase
+    public class DeckSectionDropHandler : IDropTarget
     {
-        public Font _font;
-        public RelayCommand RemoveFontCommand { get; set; }
-
-        public GameFontItemModel(Font f)
+        public void DragOver(IDropInfo dropInfo)
         {
-            _font = f;
-            RemoveFontCommand = new RelayCommand(RemoveFont);
-            RaisePropertyChanged("FontControlVisibility");
-        }
-
-        public int Size
-        {
-            get
+            if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget)
             {
-                if (_font == null) return 0;
-                return _font.Size;
+                dropInfo.Effects = DragDropEffects.None;
             }
-            set
+            else
             {
-                if (_font.Size == value) return;
-                _font.Size = value;
-                RaisePropertyChanged("Size");
-            }
-        }
-       
-        public Asset Asset
-        {
-            get
-            {
-                if (_font == null) return null;
-
-                return Asset.Load(_font.Src);
-            }
-            set
-            {
-                if (_font == null)
-                    _font = new Font();
-                _font.Src = value?.FullPath;
-                ViewModelLocator.GameTabViewModel.UpdateFonts();
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("Path");
-                RaisePropertyChanged("Size");
-                RaisePropertyChanged("FontControlVisibility");
+                GongSolutions.Wpf.DragDrop.DragDrop.DefaultDropHandler.DragOver(dropInfo);
             }
         }
 
-        public void RemoveFont()
+        public void Drop(IDropInfo dropInfo)
         {
-            _font = null;
-            ViewModelLocator.GameTabViewModel.UpdateFonts();
-            RaisePropertyChanged("FontControlVisibility");
-            RaisePropertyChanged("Size");
-            RaisePropertyChanged("Asset");
-        }
-
-        public Visibility FontControlVisibility
-        {
-            get
-            {
-                return _font == null ? Visibility.Hidden : Visibility.Visible;
-            }
+            GongSolutions.Wpf.DragDrop.DragDrop.DefaultDropHandler.Drop(dropInfo);
         }
     }
 }

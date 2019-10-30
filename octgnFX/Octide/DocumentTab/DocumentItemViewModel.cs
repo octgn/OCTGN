@@ -14,12 +14,9 @@ namespace Octide.ItemModel
 
         public DocumentItemViewModel() // new item
         {
-            _document = new Document
-            {
-                Name = "Document",
-                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Document)?.FullPath,
-                Icon = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath
-            };
+            _document = new Document();
+            DocumentAsset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Document);
+            IconAsset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
         }
 
         public DocumentItemViewModel(Document d) // load item
@@ -36,7 +33,6 @@ namespace Octide.ItemModel
                 Icon = d.IconAsset.FullPath
             };
             ItemSource = d.ItemSource;
-            Parent = d.Parent;
         }
 
         public string Name
@@ -98,7 +94,7 @@ namespace Octide.ItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new DocumentItemViewModel() { Parent = Parent, ItemSource = ItemSource });
+            ItemSource.Insert(index, new DocumentItemViewModel() { ItemSource = ItemSource, Name = "Document" });
         }
     }
 }

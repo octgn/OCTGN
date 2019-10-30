@@ -56,7 +56,6 @@ namespace Octide.ItemModel
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
             ItemSource.Insert(index, new PropertyItemViewModel() { Parent = Parent, ItemSource = ItemSource, Name = "Property" });
-            base.Insert();
         }
        
         public string Name
@@ -71,7 +70,7 @@ namespace Octide.ItemModel
                 if (string.IsNullOrEmpty(value)) return;
                 _property.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as PropertyItemViewModel).Name));
                 RaisePropertyChanged("Name");
-                Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this, Action = CustomPropertyChangedMessageAction.Modify});
+                Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this, Action = PropertyChangedMessageAction.Modify});
             }
         }
 

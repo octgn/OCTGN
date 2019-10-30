@@ -160,6 +160,7 @@
       <DependentUpon>DocumentItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameLoader.cs" />
+    <Compile Include="GameTab\GameFontItemModel.cs" />
     <Compile Include="PreviewTab\ActionItemModel.cs" />
     <Compile Include="PreviewTab\BoardItemViewModel.cs" />
     <Compile Include="SetTab\CardTab\SetCardProxyItemView.xaml.cs">
@@ -203,6 +204,7 @@
     <Compile Include="SoundTab\SoundTabView.xaml.cs">
       <DependentUpon>SoundTabView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameTab\DeckSectionItemViewModel.cs" />
     <Compile Include="SymbolTab\SymbolItemViewModel.cs" />
     <Compile Include="SymbolTab\SymbolItemView.xaml.cs">
       <DependentUpon>SymbolItemView.xaml</DependentUpon>
@@ -225,7 +227,7 @@
     <Compile Include="ProxyTab\ProxyTabViewModel.cs" />
     <Compile Include="SetTab\SetTabViewModel.cs" />
     <Compile Include="PropertyTab\PropertyTabViewModel.cs" />
-    <Compile Include="ViewModel\GameTabViewModel.cs" />
+    <Compile Include="GameTab\GameTabViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\LoaderViewModel.cs" />
     <Compile Include="PreviewTab\PreviewTabViewModel.cs" />
@@ -298,7 +300,7 @@
     <Compile Include="PreviewTab\TableItemView.xaml.cs">
       <DependentUpon>TableItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GameTabView.xaml.cs">
+    <Compile Include="GameTab\GameTabView.xaml.cs">
       <DependentUpon>GameTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -484,7 +486,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\GameTabView.xaml">
+    <Page Include="GameTab\GameTabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

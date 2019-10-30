@@ -33,6 +33,7 @@ namespace Octide.ItemModel
             {
                 _include.Properties = Items.Select(x => x.PropertyDef).ToList();
             };
+            SelectedSet = Sets.First() as SetItemViewModel;
             AddPropertyCommand = new RelayCommand(AddProperty);
             RemoveCommand = new RelayCommand(Remove);
         }

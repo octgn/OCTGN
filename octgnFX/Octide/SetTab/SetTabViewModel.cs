@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using Octide.ItemModel;
 using Octide.Messages;
 using System.Windows;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Octide.ViewModel
 {
@@ -34,22 +35,6 @@ namespace Octide.ViewModel
             {
                 ViewModelLocator.GameLoader.Sets = Items.Select(x => (x as SetItemViewModel)._set).ToList();
             };
-            MessengerInstance.Register<CustomPropertyChangedMessage>(this, action => RebuildSets());
-        }
-
-        public void RebuildSets()
-        {
-            foreach (SetItemViewModel set in Items)
-            {
-                foreach (SetCardItemViewModel card in set.CardItems)
-                {
-                    foreach (SetCardAltItemViewModel alt in card.Items)
-                    {
-                        //alt.UpdatePropertyDef(null);
-                    }
-                }
-            }
-          //  SelectedItem?.SelectedCard?.SelectedItem?.RaisePropertyChanged("GetProperties");
         }
 
         public SetItemViewModel SelectedItem

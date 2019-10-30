@@ -26,7 +26,6 @@ namespace Octide.ViewModel
     public class DocumentTabViewModel : ViewModelBase
     {
 
-        private Visibility _panelVisibility;
         private DocumentItemViewModel _selectedItem;
         public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
 
@@ -36,7 +35,6 @@ namespace Octide.ViewModel
         public DocumentTabViewModel()
         {
             AddCommand = new RelayCommand(AddItem);
-            PanelVisibility = Visibility.Collapsed;
 
             Items = new ObservableCollection<IdeListBoxItemBase>();
             foreach (var document in ViewModelLocator.GameLoader.Game.Documents)
@@ -55,25 +53,13 @@ namespace Octide.ViewModel
             {
                 if (value == _selectedItem) return;
                 _selectedItem = value;
-                PanelVisibility = (value == null) ? Visibility.Collapsed : Visibility.Visible;
                 RaisePropertyChanged("SelectedItem");
             }
         }
 
-        public Visibility PanelVisibility
-        {
-            get { return _panelVisibility; }
-            set
-            {
-                if (value == _panelVisibility) return;
-                _panelVisibility = value;
-                RaisePropertyChanged("PanelVisibility");
-            }
-        }
-        
         public void AddItem()
         {
-            var ret = new DocumentItemViewModel();
+            var ret = new DocumentItemViewModel() { ItemSource = Items, Name = "Document" };
             Items.Add(ret);
             SelectedItem = ret;
         }

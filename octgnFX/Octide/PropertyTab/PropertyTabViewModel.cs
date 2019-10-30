@@ -48,20 +48,7 @@ namespace Octide.ViewModel
             Items.CollectionChanged += (a, b) =>
             {
                 ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => (x as PropertyItemViewModel)._property).ToList();
-                PropertyItemViewModel item = null;
-                var action = new CustomPropertyChangedMessageAction();
-                switch (b.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        action = CustomPropertyChangedMessageAction.Add;
-                        item = b.NewItems[0] as PropertyItemViewModel;
-                        break;
-                    case NotifyCollectionChangedAction.Remove:
-                        action = CustomPropertyChangedMessageAction.Remove;
-                        item = b.OldItems[0] as PropertyItemViewModel;
-                        break;
-                }
-                MessengerInstance.Send(new CustomPropertyChangedMessage() { Prop = item, Action = action }) ;
+                Messenger.Default.Send(new CustomPropertyChangedMessage(b)) ;
             };
             AddCommand = new RelayCommand(AddItem);
             NameProperty = new PropertyItemViewModel();

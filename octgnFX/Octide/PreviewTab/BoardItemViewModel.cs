@@ -18,7 +18,6 @@ namespace Octide.ItemModel
             _board = new GameBoard
             {
                 Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
-          //      Name = Utils.GetUniqueName("New Board", source.Select(x => (x as BoardItemModel).Name)),
                 Height = 15,
                 Width = 15,
             };
@@ -33,17 +32,18 @@ namespace Octide.ItemModel
 
         public BoardItemViewModel(BoardItemViewModel b)
         {
+            Parent = b.Parent;
+            ItemSource = b.ItemSource;
+
             _board = new GameBoard
             {
-                Name = Utils.GetUniqueName(b.Name, b.ItemSource.Select(x => (x as BoardItemViewModel).Name)),
                 Height = b.Height,
                 Width = b.Width,
                 XPos = b.XPos,
                 YPos = b.YPos,
                 Source = b.Asset.FullPath
             };
-            Parent = b.Parent;
-            ItemSource = b.ItemSource;
+            Name = b.Name;
         }
 
         public override object Clone()

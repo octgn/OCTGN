@@ -121,7 +121,7 @@ namespace Octide.ItemModel
         {
             switch (message.Action)
             {
-                case CustomPropertyChangedMessageAction.Remove:
+                case PropertyChangedMessageAction.Remove:
                     _altDef.Properties.Remove(message.Prop._property);
                     break;
             }
