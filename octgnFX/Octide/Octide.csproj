@@ -178,6 +178,10 @@
     <Compile Include="SetTab\CardTab\SetCardItemView.xaml.cs">
       <DependentUpon>SetCardItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SetTab\MarkerTab\SetMarkerItemView.xaml.cs">
+      <DependentUpon>SetMarkerItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\MarkerTab\SetMarkerItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackageIncludeItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackagePropertyItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackagePickItemViewModel.cs" />
@@ -379,6 +383,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SetTab\CardTab\SetCardItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SetTab\MarkerTab\SetMarkerItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

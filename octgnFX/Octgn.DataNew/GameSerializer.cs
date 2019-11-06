@@ -1656,6 +1656,19 @@ namespace Octgn.DataNew
             }
             save.packaging = packs.ToArray();
 
+            var markers = new List<setMarker>();
+            foreach (Marker m in set.Markers)
+            {
+                var marker = new setMarker
+                {
+                    name = m.Name.ToString(),
+                    id = m.Id.ToString()
+                };
+                markers.Add(marker);
+            }
+            save.markers = markers.ToArray();
+
+
             var cards = new List<setCard>();
             foreach (var c in set.Cards)
             {
