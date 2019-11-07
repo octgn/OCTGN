@@ -157,7 +157,7 @@
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException("Script", path, s.src);
+                        throw GenerateFileDoesNotExistException(path, "Script", s.src, "src", s.src);
                     }
                 }
             }
@@ -173,7 +173,7 @@
 
                         if (!File.Exists(path))
                         {
-                            throw GenerateFileDoesNotExistException("Font", path, font.src);
+                            throw GenerateFileDoesNotExistException(path, "Font", font.target.ToString(), "src", font.src);
                         }
                     }
                     if (font.size != null && int.Parse(font.size) < 1)
@@ -202,7 +202,7 @@
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException("symbol", path, symbol.src);
+                        throw GenerateFileDoesNotExistException(path, "symbol", symbol.name, "src", symbol.src);
                     }
                 }
             }
@@ -219,7 +219,7 @@
 
                 if (!File.Exists(path))
                 {
-                    throw GenerateFileDoesNotExistException("Board", path, game.gameboards.src);
+                    throw GenerateFileDoesNotExistException(path, "Default Board", game.gameboards.name, "src", game.gameboards.src);
                 }
                 if (game.gameboards.gameboard != null)
                 {
@@ -235,12 +235,39 @@
 
                         if (!File.Exists(path))
                         {
-                            throw GenerateFileDoesNotExistException("Board", path, board.src);
+                            throw GenerateFileDoesNotExistException(path, "Board", board.name, "src", board.src);
                         }
                     }
                 }
             }
 
+            if (game.markers != null)
+            {
+                foreach (var marker in game.markers)
+                {
+                    // Check for valid attributes
+                    if (string.IsNullOrWhiteSpace(marker.id))
+                    {
+                        throw GenerateEmptyAttributeException("Marker", "id", marker.name);
+                    }
+                    var defaultMarkersList = new List<string>(Enumerable.Range(1, 10).Select(x => new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte)x).ToString())); //TODO: Make the original static list accessible
+                    if (defaultMarkersList.Contains(marker.id))
+                    {
+                        throw GenerateReservedAttributeValueException("Marker", "id", marker.id);
+                    }
+                    if (string.IsNullOrWhiteSpace(marker.src))
+                    {
+                        throw GenerateEmptyAttributeException("Marker", "src", marker.name);
+                    }
+                    // See if the paths specified exist
+                    path = Path.Combine(Directory.FullName, marker.src);
+
+                    if (File.Exists(path) == false)
+                    {
+                        throw GenerateFileDoesNotExistException(path, "Marker", marker.name, "src", marker.src);
+                    }
+                }
+            }
             if (game.documents != null)
             {
                 foreach (var doc in game.documents)
@@ -255,7 +282,7 @@
 
                     if (File.Exists(path) == false)
                     {
-                        throw GenerateFileDoesNotExistException("Document", path, doc.src);
+                        throw GenerateFileDoesNotExistException(path, "Document", doc.name, "src", doc.src);
                     }
                     if (!String.IsNullOrWhiteSpace(doc.icon))
                     {
@@ -263,7 +290,7 @@
 
                         if (File.Exists(path) == false)
                         {
-                            throw GenerateFileDoesNotExistException("Document", path, doc.icon);
+                            throw GenerateFileDoesNotExistException(path, "Document", doc.name, "icon", doc.icon);
                         }
                     }
                 }
@@ -281,7 +308,7 @@
 
                 if (!File.Exists(path))
                 {
-                    throw GenerateFileDoesNotExistException("ProxyGen", path, game.proxygen.definitionsrc);
+                    throw GenerateFileDoesNotExistException(path, "Proxygen", game.proxygen.definitionsrc, "definitionsrc", game.proxygen.definitionsrc);
                 }
             }
 
@@ -320,14 +347,14 @@
 
             if (!File.Exists(path))
             {
-                throw GenerateFileDoesNotExistException("Card front", path, game.card.front);
+                throw GenerateFileDoesNotExistException(path, "Card", "Default", "front", game.card.front);
             }
 
             path = Path.Combine(Directory.FullName, game.card.back);
 
             if (!File.Exists(path))
             {
-                throw GenerateFileDoesNotExistException("Card back", path, game.card.back);
+                throw GenerateFileDoesNotExistException(path, "Card", "Default", "back", game.card.back);
             }
 
             if (game.card.size != null)
@@ -343,7 +370,7 @@
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException("Size card back", path, sizeDef.back);
+                        throw GenerateFileDoesNotExistException(path, "Card Size", sizeDef.name, "back", sizeDef.back);
                     }
 
                     if (String.IsNullOrWhiteSpace(sizeDef.front))
@@ -355,7 +382,7 @@
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException("Size card front", path, sizeDef.front);
+                        throw GenerateFileDoesNotExistException(path, "Card Size", sizeDef.name, "front", sizeDef.front);
                     }
                 }
             }
@@ -384,7 +411,7 @@
 
                 if (!File.Exists(path))
                 {
-                    throw GenerateFileDoesNotExistException("Table", path, game.table.board);
+                    throw GenerateFileDoesNotExistException(path, "Table", "Default", "board", game.table.board);
                 }
             }
             if (String.IsNullOrWhiteSpace(game.table.background))
@@ -396,7 +423,7 @@
 
             if (!File.Exists(path))
             {
-                throw GenerateFileDoesNotExistException("Table", path, game.table.background);
+                throw GenerateFileDoesNotExistException(path, "Table", "Default", "Background", game.table.background);
             }
             //setup for deck section target testing.
             List<string> groups = new List<string>();
@@ -415,26 +442,26 @@
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException("Counter icon", path, counter.icon);
+                        throw GenerateFileDoesNotExistException(path, "Counter", counter.name, "icon", counter.icon);
                     }
                 }
 
-                foreach (var hand in game.player.Items.OfType<group>())
+                foreach (var group in game.player.Items.OfType<group>())
                 {
                     // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(hand.icon))
+                    if (String.IsNullOrWhiteSpace(group.icon))
                     {
-                        throw GenerateEmptyAttributeException("Group", "icon", hand.name);
+                        throw GenerateEmptyAttributeException("Group", "icon", group.name);
                     }
 
-                    path = Path.Combine(Directory.FullName, hand.icon);
+                    path = Path.Combine(Directory.FullName, group.icon);
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException("Group icon", path, hand.icon);
+                        throw GenerateFileDoesNotExistException(path, "Group", group.name, "icon", group.icon);
                     }
 
-                    groups.Add(hand.name);
+                    groups.Add(group.name);
                 }
             }
 
@@ -462,32 +489,32 @@
                         // Check for valid attributes
                         if (String.IsNullOrWhiteSpace(counter.icon))
                         {
-                            throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
+                            throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
                         }
 
                         path = Path.Combine(Directory.FullName, counter.icon);
 
                         if (!File.Exists(path))
                         {
-                            throw GenerateFileDoesNotExistException("Counter icon", path, counter.icon);
+                            throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
                         }
                     }
                 }
                 if (game.shared.group != null)
                 {
-                    foreach (var hand in game.shared.group)
+                    foreach (var group in game.shared.group)
                     {
                         // Check for valid attributes
-                        if (String.IsNullOrWhiteSpace(hand.icon))
+                        if (String.IsNullOrWhiteSpace(group.icon))
                         {
-                            throw GenerateEmptyAttributeException("Group", "icon", hand.name);
+                            throw GenerateEmptyAttributeException("Global Group", "icon", group.name);
                         }
 
-                        path = Path.Combine(Directory.FullName, hand.icon);
+                        path = Path.Combine(Directory.FullName, group.icon);
 
                         if (!File.Exists(path))
                         {
-                            throw GenerateFileDoesNotExistException("Group icon", path, hand.icon);
+                            throw GenerateFileDoesNotExistException(path, "Global Group", group.name, "icon", group.icon);
                         }
                     }
                 }
@@ -586,7 +613,6 @@
                     var setFile = dir.GetFiles().First();
                     TestSetXml(setFile.FullName);
                     CheckSetXML(setFile.FullName);
-                    CheckMarkerPaths(setFile.FullName);
                 }
             }
         }
@@ -727,9 +753,15 @@
             doc.Load(fileName);
             
             var setGameId = doc.GetElementsByTagName("set").Item(0).Attributes["gameId"].Value?.ToLower();
+            var setName = doc.GetElementsByTagName("set").Item(0).Attributes["name"].Value;
             if (!gameId.Equals(setGameId))
             {
                 throw new UserMessageException("the gameId value '{0}' does not match the game's GUID in set file '{1}'", setGameId, fileName);
+            }
+
+            if (doc.GetElementsByTagName("markers").Count > 0)
+            {
+                throw new UserMessageException("The set '{0}' from '{1}' contains markers, which are no longer supported. Markers must now be listed in the game definition.xml", setName, fileName);
             }
             
             foreach (XmlNode cardNode in doc.GetElementsByTagName("card"))
@@ -903,34 +935,6 @@
             return (ret);
         }
 
-        public void CheckMarkerPaths(string fileName)
-        {
-            DirectoryInfo markerDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(fileName), "Markers"));
-            XmlDocument doc = new XmlDocument();
-            doc.Load(fileName);
-            if (doc.GetElementsByTagName("markers").Count == 0) return;
-            XmlNodeList markerList = doc.GetElementsByTagName("marker");
-            if (markerList.Count > 0)
-            {
-                foreach (XmlNode node in markerList)
-                {
-                    if (node.Attributes == null || node.Attributes["id"] == null)
-                        throw new UserMessageException("Marker id doesn't exist for 'Marker' element in file {1}", fileName);
-                    if (node.Attributes == null || node.Attributes["name"] == null)
-                        throw new UserMessageException("Marker name doesn't exist for 'Marker' element in file {1}", fileName);
-                    string id = node.Attributes["id"].Value;
-                    string name = node.Attributes["name"].Value;
-                    FileInfo[] f = markerDir.GetFiles(string.Format("{0}.*", id), SearchOption.TopDirectoryOnly);
-                    if (f.Length == 0)
-                    {
-                        throw new UserMessageException("Marker image not found with id {0} and name {1} in file {2}", id, name, fileName);
-                    }
-                }
-            }
-            doc.RemoveAll();
-            doc = null;
-        }
-
 
         [GameValidatorAttribute]
         public void VerifyProxyDef()
@@ -986,7 +990,7 @@
 
                 if (!File.Exists(path))
                 {
-                    throw GenerateFileDoesNotExistException("Block id: " + kvi.Key, path, kvi.Value);
+                    throw GenerateFileDoesNotExistException(path, "Block id: " + kvi.Key, "", "", kvi.Value);  //TODO: better description for exception
                 }
             }
 
@@ -997,7 +1001,7 @@
 
                 if (!File.Exists(path))
                 {
-                    throw GenerateFileDoesNotExistException("Template", path, source);
+                    throw GenerateFileDoesNotExistException(path, "Proxy Template", "", "", source);  //TODO: better description for exception
                 }
             }
         }
@@ -1066,14 +1070,30 @@
         /// This method throws an UserMessageException with the provided information to notify the user
         /// what file/path is misconfigured.
         /// </summary>
-        /// <param name="elementName">The name of the element that contains the invalid path</param>
         /// <param name="fullPath">The full file path checked</param>
-        /// <param name="providedPath">The path that was configured</param>
+        /// <param name="elementType">The type of element that contains the invalid path</param>
+        /// <param name="elementName">The name of the element that contains the invalid path</param>
+        /// <param name="attributeName">The name of the attribute that contains the invalid path</param>
+        /// <param name="providedPath">The path that was provided</param>
         /// <returns>A UserMessageException containing the generated message</returns>
-        private static UserMessageException GenerateFileDoesNotExistException(string elementName, string fullPath, string providedPath)
+        private static UserMessageException GenerateFileDoesNotExistException(string fullPath, string elementType, string elementName, string attributeName, string providedPath)
         {
-            return new UserMessageException("{0} does not exist at '{1}'. '{2}' was configured.  Remember paths cannot start with / or \\",
-                elementName, fullPath, providedPath);
+            return new UserMessageException("File {0} does not exist for {1} '{2}' attribute '{3}'. '{4}' was provided.  Remember paths cannot start with / or \\",
+                fullPath, elementType, elementName, attributeName, providedPath);
+        }
+
+        /// <summary>
+        /// This method throws an UserMessageException with the provided information to notify the user
+        /// that the supplied value is reserved by OCTGN.
+        /// </summary>
+        /// <param name="elementType">The name of the element that contains the invalid attribute</param>
+        /// <param name="attributeType">The name of the invalid attribute</attributeName>
+        /// <param name="attributeValue">The value of the invalid attribute</attributeName>
+        /// <returns>A UserMessageException containing the generated message</returns>
+        private static UserMessageException GenerateReservedAttributeValueException(string elementType, string attributeType, string attributeValue)
+        {
+            return new UserMessageException("'{0}' attribute '{1}' value '{2}' is invalid: Reserved for use by OCTGN.",
+                elementType, attributeType, attributeValue);
         }
 
         /// <summary>
