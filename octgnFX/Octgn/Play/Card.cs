@@ -855,7 +855,7 @@ namespace Octgn.Play
         //        return markertuple;
         //    }
         //}
-        internal void AddMarker(DataNew.Entities.Marker model, ushort count)
+        internal void AddMarker(GameMarker model, ushort count)
         {
             Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
             if (marker != null)
@@ -864,7 +864,7 @@ namespace Octgn.Play
                 _markers.Add(new Marker(this, model, count));
         }
 
-        internal void AddMarker(DataNew.Entities.Marker model)
+        internal void AddMarker(GameMarker model)
         {
             AddMarker(model, 1);
         }
@@ -891,21 +891,21 @@ namespace Octgn.Play
             _removedMarkers.Add(marker);
         }
 
-        internal Marker FindMarker(Guid lId, string name)
+        internal Marker FindMarker(string lId, string name)
         {
             return _markers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
                                            (m.Model.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
-        internal Marker FindRemovedMarker(Guid lId, string name)
+        internal Marker FindRemovedMarker(string lId, string name)
         {
             return _removedMarkers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
                                            (m.Model.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
-        internal void SetMarker(Player player, Guid lId, string name, int count, bool notify = true)
+        internal void SetMarker(Player player, string lId, string name, int count, bool notify = true)
         {
             int oldCount = 0;
             Marker marker = FindMarker(lId, name);
@@ -916,7 +916,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(lId);
+                GameMarker model = Program.GameEngine.GetMarkerModel(lId);
                 model.Name = name;
                 AddMarker(model, (ushort)count);
             }

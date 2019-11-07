@@ -161,6 +161,10 @@
     </Compile>
     <Compile Include="GameLoader.cs" />
     <Compile Include="GameTab\GameFontItemModel.cs" />
+    <Compile Include="MarkerTab\MarkerTabView.xaml.cs">
+      <DependentUpon>MarkerTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MarkerTab\MarkerTabViewModel.cs" />
     <Compile Include="PreviewTab\ActionItemModel.cs" />
     <Compile Include="PreviewTab\BoardItemViewModel.cs" />
     <Compile Include="SetTab\CardTab\SetCardProxyItemView.xaml.cs">
@@ -178,10 +182,10 @@
     <Compile Include="SetTab\CardTab\SetCardItemView.xaml.cs">
       <DependentUpon>SetCardItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetTab\MarkerTab\SetMarkerItemView.xaml.cs">
-      <DependentUpon>SetMarkerItemView.xaml</DependentUpon>
+    <Compile Include="MarkerTab\MarkerItemView.xaml.cs">
+      <DependentUpon>MarkerItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetTab\MarkerTab\SetMarkerItemViewModel.cs" />
+    <Compile Include="MarkerTab\MarkerItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackageIncludeItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackagePropertyItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\SetPackagePickItemViewModel.cs" />
@@ -370,6 +374,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MarkerTab\MarkerTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PropertyTab\PropertyItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -386,7 +394,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SetTab\MarkerTab\SetMarkerItemView.xaml">
+    <Page Include="MarkerTab\MarkerItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

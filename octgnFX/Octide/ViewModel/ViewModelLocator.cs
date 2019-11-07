@@ -62,6 +62,7 @@ namespace Octide.ViewModel
 			ViewModelLocator.ViewModelKernel.Bind<AssetsTabViewModel>().To<AssetsTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SymbolTabViewModel>().To<SymbolTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<DocumentTabViewModel>().To<DocumentTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<MarkerTabViewModel>().To<MarkerTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SoundTabViewModel>().To<SoundTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
@@ -78,6 +79,7 @@ namespace Octide.ViewModel
 		public static ActionMenuViewModel ActionMenuViewModel => ServiceLocator.Current.GetInstance<ActionMenuViewModel>();
 		public static AssetsTabViewModel AssetsTabViewModel => ServiceLocator.Current.GetInstance<AssetsTabViewModel>();
 		public static SoundTabViewModel SoundTabViewModel => ServiceLocator.Current.GetInstance<SoundTabViewModel>();
+		public static MarkerTabViewModel MarkerTabViewModel => ServiceLocator.Current.GetInstance<MarkerTabViewModel>();
 		public static DocumentTabViewModel DocumentTabViewModel => ServiceLocator.Current.GetInstance<DocumentTabViewModel>();
 		public static SymbolTabViewModel SymbolTabViewModel => ServiceLocator.Current.GetInstance<SymbolTabViewModel>();
 		public static PropertyTabViewModel PropertyTabViewModel => ServiceLocator.Current.GetInstance<PropertyTabViewModel>();
@@ -96,6 +98,7 @@ namespace Octide.ViewModel
 			ServiceLocator.Current.GetInstance<AssetsTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SoundTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<DocumentTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<MarkerTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SymbolTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<PropertyTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SetTabViewModel>().Cleanup();

@@ -67,6 +67,7 @@ namespace Octgn.DataNew
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               MarkerSize = int.Parse(g.markersize),
+                              Markers = new Dictionary<string, GameMarker>(),
                               Phases = new List<GamePhase>(),
                               Documents = new List<Document>(),
                               Symbols = new List<Symbol>(),
@@ -347,6 +348,21 @@ namespace Octgn.DataNew
                 }
             }
             #endregion deck
+            #region markers
+            if (g.markers != null)
+            {
+                foreach (var m in g.markers)
+                {
+                    var marker = new GameMarker
+                    {
+                        Name = m.name,
+                        Source = Path.Combine(directory, m.src),
+                        Id = m.id
+                    };
+                    ret.Markers.Add(marker.Id, marker);
+                }
+            }
+            #endregion markers
             #region card
             if (g.card != null)
             {
@@ -956,6 +972,23 @@ namespace Octgn.DataNew
                 save.sharedDeck = deckSectionList.ToArray();
             }
             #endregion deck
+            #region markers
+            if (game.Markers != null)
+            {
+                var markersList = new List<gameMarker>();
+                foreach (var m in game.Markers.Values)
+                {
+                    var marker = new gameMarker
+                    {
+                        name = m.Name,
+                        src = (m.Source ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        id = m.Id
+                    };
+                    markersList.Add(marker);
+                }
+                if (markersList.Count > 0) save.markers = markersList.ToArray();
+            }
+            #endregion markers
             #region card
 
             if (game.CustomProperties != null)
@@ -1326,7 +1359,6 @@ namespace Octgn.DataNew
                 if (root.Attribute("description") != null)
                     ret.Description = root.Attribute("description").Value;
                 ret.Cards = new List<Card>();
-                ret.Markers = new List<Marker>();
                 ret.Packs = new List<Pack>();
                 ret.PackageName = "";
                 ret.InstallPath = directory;
@@ -1424,20 +1456,21 @@ namespace Octgn.DataNew
                 }
                 foreach (var m in doc.Document.Descendants("marker"))
                 {
-                    var marker = new Marker
+                    // set sourced markers are obsolete, must import them into the game for backwards compatibility
+                    var marker = new GameMarker
                     {
-                        Id = new Guid(m.Attribute("id").Value),
+                        Id = m.Attribute("id").Value,
                         Name = m.Attribute("name").Value
                     };
                     var markerDirectory = new DirectoryInfo(Path.Combine(directory, "Markers"));
                     var markerPath = markerDirectory.Exists == false ? null : markerDirectory.GetFiles(marker.Id.ToString() + ".*", SearchOption.TopDirectoryOnly).First();
-                    marker.IconUri = markerPath == null ? null : Path.Combine(directory, "Markers", markerPath.FullName);
-                    (ret.Markers as List<Marker>).Add(marker);
+                    marker.Source = markerPath == null ? null : Path.Combine(directory, "Markers", markerPath.FullName);
+                    Game.Markers.Add(marker.Id, marker);
                 }
             }
 
             if (ret.Cards == null) ret.Cards = new Card[0];
-            if (ret.Markers == null) ret.Markers = new Marker[0];
+           // if (ret.Markers == null) ret.Markers = new Marker[0];
             if (ret.Packs == null) ret.Packs = new Pack[0];
             //Console.WriteLine(timer.ElapsedMilliseconds);
             return ret;
@@ -1655,19 +1688,6 @@ namespace Octgn.DataNew
                 packs.Add(pack);
             }
             save.packaging = packs.ToArray();
-
-            var markers = new List<setMarker>();
-            foreach (Marker m in set.Markers)
-            {
-                var marker = new setMarker
-                {
-                    name = m.Name.ToString(),
-                    id = m.Id.ToString()
-                };
-                markers.Add(marker);
-            }
-            save.markers = markers.ToArray();
-
 
             var cards = new List<setCard>();
             foreach (var c in set.Cards)

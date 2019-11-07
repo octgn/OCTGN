@@ -251,7 +251,7 @@ namespace Octgn.Play.State
 
     public class MarkerSaveState : SaveState<Play.Marker, MarkerSaveState>
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public int Count { get; set; }
         public string Name { get; set; }
 

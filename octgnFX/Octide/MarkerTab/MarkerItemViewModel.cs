@@ -9,35 +9,35 @@ using System.Linq;
 
 namespace Octide.ItemModel
 {
-    public class SetMarkerItemViewModel : IdeListBoxItemBase
+    public class MarkerItemViewModel : IdeListBoxItemBase
     {
-        public Marker _marker;
+        public GameMarker _marker;
 
         public object _parent;
 
-        public SetMarkerItemViewModel()
+        public MarkerItemViewModel()
         {
-            _marker = new Marker
+            _marker = new GameMarker
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(), //TODO: Proper ID generation, not as a GUID
                 Name = "Marker",
-                IconUri = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
+                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
             };
             RaisePropertyChanged("Asset");
         }
 
-        public SetMarkerItemViewModel(Marker m)
+        public MarkerItemViewModel(GameMarker m)
         {
             _marker = m;
         }
 
-        public SetMarkerItemViewModel(SetMarkerItemViewModel m)
+        public MarkerItemViewModel(MarkerItemViewModel m)
         {
-            _marker = new Marker
+            _marker = new GameMarker
             {
-                IconUri = m.Asset.FullPath,
+                Source = m.Asset.FullPath,
                 Name = m.Name,
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid().ToString() //TODO: Proper ID generation, not as a GUID
             };
             ItemSource = m.ItemSource;
             Parent = m.Parent;
@@ -45,21 +45,21 @@ namespace Octide.ItemModel
 
         public override object Clone()
         {
-            return new SetMarkerItemViewModel(this);
+            return new MarkerItemViewModel(this);
         }
 
         public override void Copy()
         {
             if (CanCopy == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as SetMarkerItemViewModel);
+            ItemSource.Insert(index, Clone() as MarkerItemViewModel);
         }
 
         public override void Insert()
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SetMarkerItemViewModel() { Parent = Parent, ItemSource = ItemSource });
+            ItemSource.Insert(index, new MarkerItemViewModel() { Parent = Parent, ItemSource = ItemSource });
         }
 
         public string Name
@@ -81,11 +81,11 @@ namespace Octide.ItemModel
         {
             get
             {
-                return Asset.Load(_marker.IconUri);
+                return Asset.Load(_marker.Source);
             }
             set
             {
-                _marker.IconUri = value?.FullPath;
+                _marker.Source = value?.FullPath;
                 RaisePropertyChanged("Asset");
             }
         }

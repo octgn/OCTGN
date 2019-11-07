@@ -61,7 +61,6 @@
                 ret.GameId = GameManager.Get().GetById(gameId).Id;
             }
             reader.ReadStartElement("set");
-            ret.Markers = new List<Marker>();
             ret.Packs = new List<Pack>();
             ret.Cards = new List<Card>();
             return ret;

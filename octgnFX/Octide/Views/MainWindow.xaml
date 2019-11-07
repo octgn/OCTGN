@@ -51,6 +51,9 @@
             <TabItem Header="Documents">
                 <views:DocumentTabView/>
             </TabItem>
+            <TabItem Header="Markers">
+                <views:MarkerTabView/>
+            </TabItem>
             <TabItem Header="Symbols">
                 <views:SymbolTabView/>
             </TabItem>

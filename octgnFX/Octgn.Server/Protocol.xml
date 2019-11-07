@@ -280,7 +280,7 @@
   </msg>
   <msg name="AddMarkerReq" server="true">
     <param name="card" type="Card" />
-    <param name="id" type="Guid" />
+    <param name="id" type="string" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
     <param name="origCount" type="ushort"/>
@@ -289,7 +289,7 @@
   <msg name="AddMarker" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
-    <param name="id" type="Guid" />
+    <param name="id" type="string" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
     <param name="origCount" type="ushort"/>
@@ -297,7 +297,7 @@
   </msg>
   <msg name="RemoveMarkerReq" server="true">
     <param name="card" type="Card" />
-    <param name="id" type="Guid" />
+    <param name="id" type="string" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
     <param name="origCount" type="ushort"/>
@@ -306,7 +306,7 @@
   <msg name="RemoveMarker" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
-    <param name="id" type="Guid" />
+    <param name="id" type="string" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
     <param name="origCount" type="ushort"/>
@@ -315,7 +315,7 @@
   <msg name="TransferMarkerReq" server="true">
     <param name="from" type="Card" />
     <param name="to" type="Card" />
-    <param name="id" type="Guid" />
+    <param name="id" type="string" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
     <param name="origCount" type="ushort"/>
@@ -325,7 +325,7 @@
     <param name="player" type="Player" />
     <param name="from" type="Card" />
     <param name="to" type="Card" />
-    <param name="id" type="Guid" />
+    <param name="id" type="string" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
     <param name="origCount" type="ushort"/>

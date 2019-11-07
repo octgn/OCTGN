@@ -409,15 +409,15 @@ namespace Octgn.Server
             _context.Broadcaster.MoveCardAt(_player.Id, card, x, y, idx, faceUp, isScriptMove);
         }
 
-        public void AddMarkerReq(int card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange) {
+        public void AddMarkerReq(int card, string id, string name, ushort count, ushort oldCount, bool isScriptChange) {
             _context.Broadcaster.AddMarker(_player.Id, card, id, name, count, oldCount, isScriptChange);
         }
 
-        public void RemoveMarkerReq(int card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange) {
+        public void RemoveMarkerReq(int card, string id, string name, ushort count, ushort oldCount, bool isScriptChange) {
             _context.Broadcaster.RemoveMarker(_player.Id, card, id, name, count, oldCount, isScriptChange);
         }
 
-        public void TransferMarkerReq(int from, int to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange) {
+        public void TransferMarkerReq(int from, int to, string id, string name, ushort count, ushort oldCount, bool isScriptChange) {
             _context.Broadcaster.TransferMarker(_player.Id, from, to, id, name, count, oldCount, isScriptChange);
         }
 

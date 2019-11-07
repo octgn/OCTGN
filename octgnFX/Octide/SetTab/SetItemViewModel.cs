@@ -20,11 +20,9 @@ namespace Octide.ViewModel
 
         public RelayCommand AddCardCommand { get; private set; }
         public RelayCommand AddPackageCommand { get; private set; }
-        public RelayCommand AddMarkerCommand { get; private set; }
 
         public ObservableCollection<IdeListBoxItemBase> CardItems { get; private set; }
         public ObservableCollection<IdeListBoxItemBase> PackageItems { get; private set; }
-        public ObservableCollection<IdeListBoxItemBase> MarkerItems { get; private set; }
 
         public SetItemViewModel() //for creating a new set
         {
@@ -35,8 +33,7 @@ namespace Octide.ViewModel
                 GameId = ViewModelLocator.GameLoader.Game.Id,
                 Hidden = false,
                 Cards = new List<Card>(),
-                Packs = new List<Pack>(),
-                Markers = new List<Marker>()
+                Packs = new List<Pack>()
             };
             string installPath = Path.Combine(ViewModelLocator.GameLoader.GamePath, "Sets", _set.Id.ToString());
             _set.InstallPath = installPath;
@@ -50,13 +47,6 @@ namespace Octide.ViewModel
             };
             RaisePropertyChanged("CardItems");
 
-            MarkerItems = new ObservableCollection<IdeListBoxItemBase>();
-            MarkerItems.CollectionChanged += (a, b) =>
-            {
-                _set.Markers = MarkerItems.Select(x => (x as SetMarkerItemViewModel)._marker).ToList();
-            };
-            RaisePropertyChanged("MarkerItems");
-
             PackageItems = new ObservableCollection<IdeListBoxItemBase>();
             PackageItems.CollectionChanged += (a, b) =>
             {
@@ -67,7 +57,6 @@ namespace Octide.ViewModel
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-            AddMarkerCommand = new RelayCommand(AddMarker);
 
             CanDragDrop = false;
         }
@@ -86,17 +75,6 @@ namespace Octide.ViewModel
             };
             RaisePropertyChanged("CardItems");
 
-            MarkerItems = new ObservableCollection<IdeListBoxItemBase>();
-            foreach (var marker in _set.Markers)
-            {
-                MarkerItems.Add(new SetMarkerItemViewModel(marker) {ItemSource = MarkerItems, Parent = this });
-            }
-            MarkerItems.CollectionChanged += (a, b) =>
-            {
-                _set.Markers = MarkerItems.Select(x => (x as SetMarkerItemViewModel)._marker).ToList();
-            };
-            RaisePropertyChanged("MarkerItems");
-
             PackageItems = new ObservableCollection<IdeListBoxItemBase>();
             foreach (var package in _set.Packs)
             {
@@ -110,7 +88,6 @@ namespace Octide.ViewModel
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-            AddMarkerCommand = new RelayCommand(AddMarker);
 
             CanDragDrop = false;
         }
@@ -143,17 +120,6 @@ namespace Octide.ViewModel
             }
             RaisePropertyChanged("CardItems");
 
-            MarkerItems = new ObservableCollection<IdeListBoxItemBase>();
-            MarkerItems.CollectionChanged += (a, b) =>
-            {
-                _set.Markers = MarkerItems.Select(x => (x as SetMarkerItemViewModel)._marker).ToList();
-            };
-            foreach (SetPackageItemViewModel marker in s.MarkerItems)
-            {
-                MarkerItems.Add(new SetPackageItemViewModel(marker) {ItemSource = MarkerItems, Parent = this });
-            }
-            RaisePropertyChanged("MarkerItems");
-
             PackageItems = new ObservableCollection<IdeListBoxItemBase>();
             PackageItems.CollectionChanged += (a, b) =>
             {
@@ -167,7 +133,6 @@ namespace Octide.ViewModel
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-            AddMarkerCommand = new RelayCommand(AddMarker);
 
             ItemSource = s.ItemSource;
             Parent = s.Parent;
@@ -209,34 +174,12 @@ namespace Octide.ViewModel
             }
         }
 
-        private SetMarkerItemViewModel _selectedMarker;
-        public SetMarkerItemViewModel SelectedMarker
-        {
-            get
-            {
-                return _selectedMarker;
-            }
-            set
-            {
-                if (_selectedMarker == value) return;
-                _selectedMarker = value;
-                RaisePropertyChanged("SelectedMarker");
-            }
-        }
-
         public void AddPackage()
         {
             var ret = new SetPackageItemViewModel() {ItemSource = PackageItems, Parent = this };
             PackageItems.Add(ret);
             SelectedPackage = ret;
             RaisePropertyChanged("SelectedPackage");
-        }
-        public void AddMarker()
-        {
-            var ret = new SetMarkerItemViewModel() {ItemSource = MarkerItems, Parent = this };
-            MarkerItems.Add(ret);
-            SelectedMarker = ret;
-            RaisePropertyChanged("SelectedMarker");
         }
 
         public void AddCard()

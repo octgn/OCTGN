@@ -108,14 +108,6 @@ namespace Octgn.Core.DataExtensionMethods
             if (g == null) return null;
             return g.Sets().FirstOrDefault(x => x.Id == id);
         }
-
-        public static IEnumerable<Marker> GetAllMarkers(this Game game)
-        {
-            var g = GameManager.Get().GetById(game.Id);
-            if (g == null) return new List<Marker>();
-            return g.Sets().SelectMany(x => x.Markers);
-        }
-
         public static Pack GetPackById(this Game game, Guid id)
         {
             var g = GameManager.Get().GetById(game.Id);

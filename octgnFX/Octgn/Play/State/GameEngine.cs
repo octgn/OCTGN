@@ -55,10 +55,8 @@ namespace Octgn
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
-        private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
-
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
-        private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
+        private readonly List<GameMarker> _recentMarkers = new List<GameMarker>(MaxRecentMarkers);
         private readonly Dictionary<string, Tuple<BitmapImage, BitmapImage>> _cardFrontsBacksCache = new Dictionary<string, Tuple<BitmapImage, BitmapImage>>();
         private readonly Table _table;
         internal readonly string Password;
@@ -161,13 +159,6 @@ namespace Octgn
             ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
 
-            // Load all game markers
-            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers()) {
-                if (!_markersById.ContainsKey(m.Id)) {
-                    _markersById.Add(m.Id, m);
-                }
-            }
-
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
@@ -257,14 +248,6 @@ namespace Octgn
                         retNick = i.GetString();
                     }));
                 this.Nickname = retNick;
-            }
-            // Load all game markers
-            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
-            {
-                if (!_markersById.ContainsKey(m.Id))
-                {
-                    _markersById.Add(m.Id, m);
-                }
             }
             // Init fields
             CurrentUniqueId = 1;
@@ -375,12 +358,7 @@ namespace Octgn
             }
         }
 
-        public IList<DataNew.Entities.Marker> Markers
-        {
-            get { return _markersById.Values; }
-        }
-
-        public IList<DataNew.Entities.Marker> RecentMarkers
+        public IList<GameMarker> RecentMarkers
         {
             get { return _recentMarkers; }
         }
@@ -912,7 +890,7 @@ namespace Octgn
             _recentCards.Insert(0, card);
         }
 
-        internal void AddRecentMarker(DataNew.Entities.Marker marker)
+        internal void AddRecentMarker(GameMarker marker)
         {
             int idx = _recentMarkers.IndexOf(marker);
             if (idx == 0) return;
@@ -928,27 +906,24 @@ namespace Octgn
             _recentMarkers.Insert(0, marker);
         }
 
-        internal DataNew.Entities.Marker GetMarkerModel(Guid id)
+        internal GameMarker GetMarkerModel(string id)
         {
-            DataNew.Entities.Marker model;
-            if (id.CompareTo(new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10)) < 0)
-            {
-                // Get a standard model
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
-                model = (DefaultMarkerModel)defaultModel.Clone();
-                model.Id = id;
-                return model;
-            }
+            GameMarker model;
             // Try to find the marker model
-            if (!_markersById.TryGetValue(id, out model))
+            if (Definition.Markers.TryGetValue(id, out model))
             {
+                return model.Clone() as GameMarker;
+            }
+            else
+            {
+                // Use a default marker model
                 Program.GameMess.GameDebug("Marker model '{0}' not found, using default marker instead", id);
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
+                
+                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.FirstOrDefault(x => x.Id == id) ?? Marker.DefaultMarkers[Crypto.Random(7)];
                 model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;
                 return model;
             }
-            return model.Clone() as DataNew.Entities.Marker;
         }
 
         private void OnPropertyChanged(string propertyName)

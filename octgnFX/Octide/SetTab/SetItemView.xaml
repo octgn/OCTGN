@@ -67,31 +67,6 @@
                 </ContentControl>
             </Grid>
         </TabItem>
-        <TabItem Header="Markers" >
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Button Content="New Marker" Margin="1" Command="{Binding AddMarkerCommand}" />
-                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding MarkerItems}" SelectedItem="{Binding SelectedMarker}" >
-                    <ListBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding SelectedMarker.RemoveCommand}" />
-                    </ListBox.InputBindings>
-                </ListBox>
-                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding SelectedMarker}">
-                    <ContentControl.Resources>
-                        <DataTemplate DataType="{x:Type model:SetMarkerItemViewModel}" >
-                            <views:SetMarkerItemView />
-                        </DataTemplate>
-                    </ContentControl.Resources>
-                </ContentControl>
-            </Grid>
-        </TabItem>
 
         <TabItem Header="Cards" IsSelected="True" >
             <Grid>

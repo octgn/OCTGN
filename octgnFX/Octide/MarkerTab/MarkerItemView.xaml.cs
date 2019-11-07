@@ -7,11 +7,11 @@ using System.Windows.Controls;
 namespace Octide.Views
 {
     /// <summary>
-    /// Interaction logic for SetMarkerItemView.xaml
+    /// Interaction logic for MarkerItemView.xaml
     /// </summary>
-    public partial class SetMarkerItemView : UserControl
+    public partial class MarkerItemView : UserControl
     {
-        public SetMarkerItemView()
+        public MarkerItemView()
         {
             InitializeComponent();
         }
