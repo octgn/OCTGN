@@ -890,8 +890,11 @@ namespace Octgn.DeckBuilder
                     ActiveSection.Cards.RemoveCard(item);
                 }
             }
-            InvokeDeckChangedEvent();
+        }
 
+        private void SectionGrid_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            InvokeDeckChangedEvent();
         }
 
         private void SetActiveSection(object sender, RoutedEventArgs e)
