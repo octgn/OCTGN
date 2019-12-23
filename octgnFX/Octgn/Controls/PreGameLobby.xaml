@@ -104,7 +104,7 @@
 
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <CheckBox VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding Spectator}" IsEnabled="{Binding CanChangeSettings, ElementName=me}"
+                    <CheckBox VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding Spectator}" IsEnabled="{Binding CanChangePlayerSettings}"
                                             Visibility="{Binding AllowSpectators,Source={x:Static o:Program.GameSettings},Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CheckBox.Template>
                             <ControlTemplate TargetType="CheckBox">
@@ -122,7 +122,7 @@
                         </CheckBox.Template>
                     </CheckBox>
 
-                    <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding InvertedTable}" IsEnabled="{Binding CanChangeSettings, ElementName=me}"
+                    <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding InvertedTable}" IsEnabled="{Binding CanChangePlayerSettings}"
                                             Visibility="{Binding UseTwoSidedTable,Source={x:Static o:Program.GameSettings},Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CheckBox.Template>
                             <ControlTemplate TargetType="CheckBox">

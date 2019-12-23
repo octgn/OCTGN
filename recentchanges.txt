@@ -1,1 +1,2 @@
+Non-host players can toggle their own spectator or table side settings in pre-game lobby
 
