@@ -1,3 +1,6 @@
+#3.4.213.0
++ Non-host players can toggle their own spectator or table side settings in pre-game lobby
+
 #3.4.211.0
 + Fixed incorrect totals for player/global sections when editing card counts directly - Ben
 + Improve scaling quality for images in game manager - Ben
@@ -3738,6 +3741,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
