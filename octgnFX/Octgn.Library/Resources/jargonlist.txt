@@ -1,8 +1,6 @@
 AFAIK
 AFAIKs
 AI
-AIDS
-AIDSes
 AIs
 ANSI
 ANSIs
@@ -349,8 +347,6 @@ compressed
 compresses
 compressing
 con
-condom
-condoms
 confuser
 confusers
 cons
@@ -449,10 +445,6 @@ demon
 demons
 demos
 deprecated
-diddle
-diddled
-diddles
-diddling
 die
 died
 dies
@@ -462,10 +454,6 @@ diffing
 diffs
 digit
 digits
-dike
-diked
-dikes
-diking
 ding
 dings
 dink
@@ -544,8 +532,6 @@ epoch
 epochs
 epsilon
 epsilons
-erotics
-eroticses
 evil
 eviler
 evilest
@@ -585,8 +571,6 @@ fine
 finer
 finest
 finger
-fingered
-fingering
 fingers
 firefighting
 firefightings
@@ -603,8 +587,6 @@ flakiest
 flaky
 flame
 flamed
-flamer
-flamers
 flames
 flaming
 flap
@@ -764,7 +746,6 @@ gunning
 guns
 guru
 gurus
-h
 hack
 hacked
 hacker
@@ -827,10 +808,6 @@ hoses
 hosing
 hotlink
 hotlinks
-huff
-huffed
-huffing
-huffs
 hung
 hyperspace
 hyperspaces
@@ -864,7 +841,6 @@ ironmonger
 ironmongers
 irons
 jaggies
-jaggieses
 jello
 jellos
 jiffies
@@ -909,8 +885,6 @@ leeches
 legal
 legalese
 legaleses
-letterbomb
-letterbombs
 life
 lightweight
 lint
@@ -943,10 +917,6 @@ macrology
 macros
 magic
 magics
-mailbomb
-mailbombed
-mailbombing
-mailbombs
 mainframe
 mainframes
 management
@@ -976,9 +946,7 @@ meta
 mickey
 mickeys
 microfloppies
-microfloppieses
 minifloppies
-minifloppieses
 misfeature
 misfeatures
 mockingbird
@@ -1049,10 +1017,6 @@ notworks
 nude
 nuder
 nudest
-nuke
-nuked
-nukes
-nuking
 numbers
 numberses
 nybble
@@ -1071,8 +1035,6 @@ opens
 ops
 optimism
 optimisms
-orphan
-orphans
 orthogonal
 overrun
 overruns
@@ -1111,8 +1073,6 @@ pinging
 pings
 pipe
 pipes
-pistol
-pistols
 playpen
 playpens
 plonk
@@ -1161,10 +1121,6 @@ prowler
 prowlers
 pseudo
 pseudos
-puff
-puffed
-puffing
-puffs
 punt
 punted
 punting
@@ -1188,10 +1144,6 @@ random
 randomness
 randomnesses
 randoms
-rape
-raped
-rapes
-raping
 rave
 raved
 raves
@@ -1259,8 +1211,6 @@ scratches
 scratching
 screen
 screens
-screw
-screws
 scribble
 scribbles
 scrog
@@ -1280,7 +1230,6 @@ servers
 shareware
 sharewares
 shebang
-shebangs
 shell
 shells
 shim
@@ -1431,7 +1380,6 @@ sysop
 sysops
 system
 systems
-tanked
 taste
 tastes
 tee
@@ -1439,8 +1387,6 @@ tees
 tense
 tenser
 tensest
-tentacle
-tentacles
 test
 tests
 text
@@ -1574,10 +1520,6 @@ walling
 wallpaper
 wallpapers
 walls
-wank
-wanked
-wanking
-wanks
 wannabee
 wannabees
 warez
@@ -1594,13 +1536,6 @@ weedses
 weenie
 weenies
 wetware
-wetwares
-whack
-whacked
-whacker
-whackers
-whacking
-whacks
 whales
 whaleses
 wheel
