@@ -50,7 +50,7 @@
                           CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                           VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
                           Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" AllowDrop="True" x:Name="sectionGrid"
-                          CanUserSortColumns="False" CanUserReorderColumns="False">
+                          CanUserSortColumns="False" CanUserReorderColumns="False" DataContextChanged="SectionGrid_DataContextChanged">
                     <DataGrid.RowStyle>
                         <Style>
                             <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />

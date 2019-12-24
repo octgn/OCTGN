@@ -245,6 +245,14 @@ namespace Octgn.Play
             }
         }
 
+        public bool CanChangePlayerSettings
+        {
+            get
+            {
+                return IsHostOrLocal && !Program.GameEngine.IsReplay;
+            }
+        }
+
         public bool Spectator
         {
             get { return _spectator; }
