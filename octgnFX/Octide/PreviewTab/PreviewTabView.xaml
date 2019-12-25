@@ -376,9 +376,9 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <GridSplitter Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+        <GridSplitter Grid.Column="1" Grid.RowSpan="4"  ResizeDirection="Columns"  />
 
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows"  />
 
         <ContentControl Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="4" Content="{Binding Selection}" >
             <ContentControl.Resources>
