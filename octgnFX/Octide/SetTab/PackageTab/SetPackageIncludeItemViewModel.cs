@@ -21,8 +21,9 @@ namespace Octide.ItemModel
         public ObservableCollection<PackPropertyItemModel> Items { get; private set; }
 
         public RelayCommand AddPropertyCommand { get; private set; }
-        public PackIncludeItemModel()
+        public PackIncludeItemModel(SetPackageItemViewModel parent)
         {
+            Parent = parent;
             _include = new Include()
             {
                 Properties = new List<PickProperty>()
@@ -33,9 +34,10 @@ namespace Octide.ItemModel
             {
                 _include.Properties = Items.Select(x => x.PropertyDef).ToList();
             };
-            SelectedSet = Sets.First() as SetItemViewModel;
             AddPropertyCommand = new RelayCommand(AddProperty);
             RemoveCommand = new RelayCommand(Remove);
+            SelectedSet = Sets.First();
+
         }
 
         public PackIncludeItemModel(Include i)
@@ -59,8 +61,9 @@ namespace Octide.ItemModel
         {
             _include = new Include()
             {
-                Id = i.SelectedCard.Id,
-                SetId = i.SelectedSet.Id
+                Id = i._include.Id,
+                SetId = i._include.SetId,
+                Properties = new List<PickProperty>()
             };
 
             Items = new ObservableCollection<PackPropertyItemModel>();
@@ -79,11 +82,9 @@ namespace Octide.ItemModel
             RemoveCommand = new RelayCommand(Remove);
         }
 
-        public IEnumerable<IdeListBoxItemBase> Sets => ViewModelLocator.SetTabViewModel.Items.Where(x => (x as SetItemViewModel) != Parent.Parent) ;
-        public IEnumerable<IdeListBoxItemBase> Cards => SelectedSet?.CardItems;
+        public IEnumerable<SetItemViewModel> Sets => ViewModelLocator.SetTabViewModel.Items.Cast<SetItemViewModel>().Where(x => x != Parent.Parent && x.CardItems.Count > 0);
 
-        public SetItemViewModel _selectedSet;
-
+        public IEnumerable<SetCardItemViewModel> Cards => SelectedSet?.CardItems.Cast<SetCardItemViewModel>();
         public SetItemViewModel SelectedSet
         {
             get
@@ -94,11 +95,11 @@ namespace Octide.ItemModel
             }
             set
             {
-                if (SelectedSet == value) return;
+                if (_include.SetId == value.Id) return;
                 _include.SetId = value.Id;
                 RaisePropertyChanged("SelectedSet");
+                SelectedCard = Cards.First();
                 RaisePropertyChanged("Cards");
-                SelectedCard = (SetCardItemViewModel)Cards.FirstOrDefault();
             }
         }
         public SetCardItemViewModel SelectedCard
@@ -112,7 +113,7 @@ namespace Octide.ItemModel
             set
             {
 
-                if (SelectedCard == value) return;
+                if (_include.Id == value.Id) return;
                 _include.Id = value.Id;
                 RaisePropertyChanged("SelectedCard");
             }
@@ -139,7 +140,7 @@ namespace Octide.ItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new PackIncludeItemModel() { ItemSource = ItemSource, Parent = Parent });
+            ItemSource.Insert(index, new PackIncludeItemModel(Parent) { ItemSource = ItemSource });
         }
     }
 }

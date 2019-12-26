@@ -17,22 +17,22 @@
              params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700">
     <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Foreground" Value="Yellow" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="20" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackIncludeItemModel}" ItemsSource="{Binding Items}" >
-            <Border Padding="5" Background="{StaticResource PackIncludeBrush}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Set: " FontWeight="Bold" />
-                    <TextBlock Grid.Row="1" Text="Card: " />
-                    <ComboBox Grid.Column="1" IsReadOnly="True" Padding="1" FontSize="12" ItemsSource="{Binding Sets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSet, Mode=TwoWay}" />
-                    <ComboBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Padding="1" FontSize="12" ItemsSource="{Binding Cards}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCard, Mode=TwoWay}" />
-                </Grid>
+            <Border Padding="3" Margin="1" Background="{StaticResource PackIncludeBrush}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="INCLUDE" FontWeight="Bold" />
+                    <TextBlock Text="set:" Margin="3,0,3,0 "/>
+                    <ComboBox IsReadOnly="True" Padding="1" FontSize="11" MinWidth="100" ItemsSource="{Binding Sets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSet, Mode=TwoWay}" />
+                    <TextBlock Text="card:" Margin="3,0,3,0"  />
+                    <ComboBox IsReadOnly="True" Padding="1" FontSize="11" MinWidth="100" ItemsSource="{Binding Cards}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCard, Mode=TwoWay}" />
+                </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Add Property" Background="{StaticResource PackPropertiesBrush}" Command="{Binding AddPropertyCommand}" />
@@ -42,7 +42,7 @@
             </Border>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackOptionsItemModel}" ItemsSource="{Binding Items}" >
-            <Border Padding="5" Background="{StaticResource PackOptionsBrush}">
+            <Border Margin="1" Padding="3" Background="{StaticResource PackOptionsBrush}">
                 <TextBlock Text="OPTIONS" FontWeight="Bold" />
                 <Border.ContextMenu>
                     <ContextMenu>
@@ -53,20 +53,12 @@
             </Border>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackOptionItemModel}" ItemsSource="{Binding Items}" >
-            <Border Padding="5" Background="{StaticResource PackOptionBrush}" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="OPTION" FontWeight="Bold" Grid.ColumnSpan="2" />
-                    <TextBlock Grid.Row="1" Text="Probability: " />
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Probability}" />
-                </Grid>
+            <Border Margin="1" Padding="3" Background="{StaticResource PackOptionBrush}" >
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="OPTION" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Text="probability:" Margin="3,0,3,0" />
+                    <TextBox Grid.Column="2" Text="{Binding Probability}" MinWidth="50" />
+                </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Add Options" Background="{StaticResource PackOptionsBrush}" Command="{Binding AddOptionsCommand}" />
@@ -77,21 +69,11 @@
             </Border>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackPickItemModel}" ItemsSource="{Binding Items}" >
-            <Border Padding="5" Background="{StaticResource PackPickBrush}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="PICK" FontWeight="Bold" Grid.ColumnSpan="4" />
-                    <TextBlock Text="Qty: " Grid.Row="1" />
-                    <TextBox Text="{Binding Quantity}" Grid.Row="1" Grid.Column="1" >
+            <Border Margin="1" Padding="3" Background="{StaticResource PackPickBrush}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="PICK" FontWeight="Bold" />
+                    <TextBlock Text="quantity:" Margin="3,0,3,0"/>
+                    <TextBox Text="{Binding Quantity}" MinWidth="20" >
                         <TextBox.Style>
                             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
                                 <Setter Property="IsEnabled" Value="True" />
@@ -103,9 +85,9 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <TextBlock Text=" &#x221E;" Grid.Row="1" Grid.Column="2" />
-                    <CheckBox x:Name="UnlimitedBox" IsChecked="{Binding IsUnlimited, Mode=TwoWay}" Grid.Row="1" Grid.Column="3" />
-                </Grid>
+                    <TextBlock Text="unlimited:" Margin="3,0,3,0" />
+                    <CheckBox x:Name="UnlimitedBox" IsChecked="{Binding IsUnlimited, Mode=TwoWay}" />
+                </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Add Property" Background="{StaticResource PackPropertiesBrush}" Command="{Binding AddPropertyCommand}" />
@@ -115,23 +97,14 @@
             </Border>
         </HierarchicalDataTemplate>
         <DataTemplate DataType="{x:Type ItemModel:PackPropertyItemModel}" >
-            <Border Padding="5" Background="{StaticResource PackPropertiesBrush}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="PROPERTY" Grid.ColumnSpan="2" FontWeight="Bold" />
-                    <TextBlock Text="Name: " Grid.Row="1" />
-                    <ComboBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Padding="1" FontSize="12" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding ActiveProperty, Mode=TwoWay}" />
-                    <TextBlock Grid.Row="2" Text="Value: " />
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Value}" />
-                </Grid>
+            <Border Padding="3" Margin="1" Background="{StaticResource PackPropertiesBrush}" >
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="PROPERTY" FontWeight="Bold" />
+                    <TextBlock Text="name:" Margin="3,0,3,0"/>
+                    <ComboBox IsReadOnly="True" Padding="1" FontSize="11" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding ActiveProperty, Mode=TwoWay}" />
+                    <TextBlock Text="value:" Margin="3,0,3,0"/>
+                    <TextBox Text="{Binding Value}" MinWidth="100"/>
+                </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
@@ -143,93 +116,77 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="100"/>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*" MinHeight="100"/>
         </Grid.RowDefinitions>
 
-        <StackPanel>
-            <Button Content="Add Options" Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource PackOptionsBrush}" />
-            <Button Content="Add Pick" Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource PackPickBrush}"/>
-        </StackPanel>
-
-        <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding Items}" Name="PackItems"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.ColumnSpan="2" Text="Pack Items"  HorizontalAlignment="Center" FontSize="20"/>
+            <Button Grid.Row="1" Content="Add Options"  Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource PackOptionsBrush}" />
+            <Button Grid.Row="1" Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource PackPickBrush}"/>
+            <TreeView Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent" ItemsSource="{Binding Items}" Name="PackItems"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding PackageDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="True" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.Resources>
-                <Style TargetType="{x:Type TextBox}">
-                    <Setter Property="Foreground" Value="Yellow" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="MinWidth" Value="20" />
-                    <Setter Property="FontSize" Value="12" />
-                </Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Width" Value="15" />
-                    <Setter Property="Height" Value="15" />
-                    <Setter Property="Content" Value="+" />
-                    <Setter Property="FontSize" Value="15" />
-                    <Setter Property="Margin" Value="5,0,0,0" />
-                    <Setter Property="Padding" Value="0,-4,0,0" />
-                </Style>
-            </TreeView.Resources>
-        </TreeView>
-        
-        <StackPanel Grid.Column="1">
-            <Button Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource PackIncludeBrush}" />
-        </StackPanel>
-
-        <TreeView Grid.Row="1" Grid.Column="1" Background="Transparent" ItemsSource="{Binding Includes}"  Name="Includes"
-                              gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding IncludeDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="True" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.Resources>
-                <Style TargetType="{x:Type TextBox}">
-                    <Setter Property="Foreground" Value="Yellow" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="MinWidth" Value="20" />
-                    <Setter Property="FontSize" Value="12" />
-                </Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Width" Value="15" />
-                    <Setter Property="Height" Value="15" />
-                    <Setter Property="Content" Value="+" />
-                    <Setter Property="FontSize" Value="15" />
-                    <Setter Property="Margin" Value="5,0,0,0" />
-                    <Setter Property="Padding" Value="0,-4,0,0" />
-                </Style>
-            </TreeView.Resources>
-        </TreeView>
-
-        <Grid Grid.Column="2" >
-            <Button Content="Generate Pack" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding GeneratePackCommand}" />
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
         </Grid>
 
-        <ListBox Grid.Column="2" Grid.Row="1" ItemsSource="{Binding BoosterCards}"
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Include cards (from other sets)"  HorizontalAlignment="Center" FontSize="20"/>
+            <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource PackIncludeBrush}" />
+
+            <TreeView Grid.Row="2" Background="Transparent" ItemsSource="{Binding Includes}"  Name="Includes"
+                              gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding IncludeDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+        </Grid>
+
+        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.RowSpan="3">
+            <Button Content="Generate Pack" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding GeneratePackCommand}" />
+
+
+            <ListBox ItemsSource="{Binding BoosterCards}"
                  Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <Image Source="{Binding }" Height="180" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Image Source="{Binding }" Height="180" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
     </Grid>
 </UserControl>

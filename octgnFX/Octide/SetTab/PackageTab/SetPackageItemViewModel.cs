@@ -22,7 +22,8 @@ namespace Octide.ItemModel
 {
     public class SetPackageItemViewModel : IdeListBoxItemBase
     {
-        new public SetItemViewModel Parent;
+        public new SetItemViewModel Parent;
+
         public Pack _pack;
         public ObservableCollection<IBasePack> Items { get; private set; }
         public ObservableCollection<IdeListBoxItemBase> Includes { get; private set; }
@@ -104,7 +105,7 @@ namespace Octide.ItemModel
                 Id = Guid.NewGuid(),
                 Set = p._pack.Set,
                 Definition = new PackDefinition(),
-                Includes = new List<Include>() //todo add include support
+                Includes = new List<Include>()
             };
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
@@ -143,7 +144,7 @@ namespace Octide.ItemModel
 
         public void AddInclude()
         {
-            Includes.Add(new PackIncludeItemModel() { Parent = this });
+            Includes.Add(new PackIncludeItemModel(this) { ItemSource = Includes});
         }
         public void AddPick()
         {
@@ -192,7 +193,13 @@ namespace Octide.ItemModel
         {
             get
             {
-                return Parent._set;
+                return _pack.Set;
+            }
+            set
+            {
+                if (_pack.Set == value) return;
+                _pack.Set = value;
+                RaisePropertyChanged("Set");
             }
         }
 
@@ -212,7 +219,7 @@ namespace Octide.ItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SetPackageItemViewModel() { ItemSource = ItemSource, Parent = Parent});
+            ItemSource.Insert(index, new SetPackageItemViewModel() { ItemSource = ItemSource, Parent = Parent, Set = Parent._set });
         }
     }
 

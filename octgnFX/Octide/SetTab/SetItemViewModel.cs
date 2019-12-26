@@ -176,7 +176,7 @@ namespace Octide.ViewModel
 
         public void AddPackage()
         {
-            var ret = new SetPackageItemViewModel() {ItemSource = PackageItems, Parent = this };
+            var ret = new SetPackageItemViewModel() {ItemSource = PackageItems, Parent = this, Set = _set  };
             PackageItems.Add(ret);
             SelectedPackage = ret;
             RaisePropertyChanged("SelectedPackage");
