@@ -69,23 +69,30 @@
             }
             Document = new XmlDocument();
             Document.Load(path);
-            LoadTemplates();
-        }
 
-        internal void LoadTemplates()
-        {
             XmlNodeList blockList = Document.GetElementsByTagName("blocks");
             BlockManager = new BlockManager(RootPath);
-            BlockManager.LoadBlocks(blockList[0]);
+            foreach (XmlNode block in blockList[0])
+            {
+                if (block.Name != "block")
+                {
+                    continue;
+                }
+                BlockDefinition blockDef = ProxyDeserializer.DeserializeBlock(BlockManager, block);
+                BlockManager.AddBlock(blockDef);
+            }
 
             XmlNodeList templateList = Document.GetElementsByTagName("template");
             foreach (XmlNode template in templateList)
             {
-                TemplateDefinition templateDef = TemplateDefinition.LoadCardDefinition(template);
+                if (template.Name != "template")
+                {
+                    continue;
+                }
+                TemplateDefinition templateDef = ProxyDeserializer.DeserializeTemplate(template);
                 templateDef.rootPath = RootPath;
                 TemplateSelector.AddTemplate(templateDef);
             }
-
         }
 
         public static Dictionary<string, string> GetBlockSources(string path)
@@ -120,7 +127,7 @@
             string ret = string.Empty;
             foreach (XmlNode subNode in node.ChildNodes)
             {
-                if (TemplateDefinition.SkipNode(subNode))
+                if (ProxyDeserializer.SkipNode(subNode))
                 {
                     continue;
                 }

@@ -8,47 +8,23 @@ namespace Octgn.ProxyGenerator.Definitions
 {
     using Octgn.Library.Exceptions;
 
+    public class CaseDefinition
+    {
+        public string property = null;
+        public string value = null;
+        public string contains = null;
+        public bool switchBreak = true;
+        public List<LinkDefinition> linkList = new List<LinkDefinition>();
+
+    }
     public class ConditionalDefinition
     {
-        public XmlNode ifNode = null;
-        public List<XmlNode> elseifNodeList = new List<XmlNode>();
-        public XmlNode elseNode = null;
-        public XmlNode switchNode = null;
+        public CaseDefinition ifNode = null;
+        public List<CaseDefinition> elseifNodeList = new List<CaseDefinition>();
+        public CaseDefinition elseNode = null;
+        public List<CaseDefinition> switchNodeList = new List<CaseDefinition>();
+        public string switchProperty = null;
         private string NullConstant = "#NULL#";
-
-        public static ConditionalDefinition LoadConditional(XmlNode node)
-        {
-            ConditionalDefinition ret = new ConditionalDefinition();
-
-            foreach (XmlNode subNode in node.ChildNodes)
-            {
-                if (TemplateDefinition.SkipNode(subNode))
-                {
-                    continue;
-                }
-                if (ret.ifNode != null && subNode.Name == "if")
-                {
-                    break;
-                }
-                if (subNode.Name == "if")
-                {
-                    ret.ifNode = subNode;
-                }
-                if (subNode.Name == "elseif")
-                {
-                    ret.elseifNodeList.Add(subNode);
-                }
-                if (subNode.Name == "else")
-                {
-                    ret.elseNode = subNode;
-                }
-                if (subNode.Name == "switch")
-                {
-                    ret.switchNode = subNode;
-                }
-            }
-            return (ret);
-        }
 
         public List<LinkDefinition> ResolveConditional(Dictionary<string, string> values)
         {
@@ -57,7 +33,7 @@ namespace Octgn.ProxyGenerator.Definitions
             {
                 return (ResolveIf(values));
             }
-            if (switchNode != null)
+            if (switchProperty != null)
             {
                 return(ResolveSwitch(values));
             }
@@ -89,69 +65,53 @@ namespace Octgn.ProxyGenerator.Definitions
             {
                 return (ret);
             }
-            foreach (XmlNode node in this.elseifNodeList)
+            foreach (CaseDefinition caseDef in this.elseifNodeList)
             {
-                found = this.IfValue(values, node, out ret);
+                found = this.IfValue(values, caseDef, out ret);
                 if (found)
                 {
                     return (ret);
                 }
             }
-            if (this.elseNode != null && ifNode.Attributes["contains"] == null)
+            if (this.elseNode != null && ifNode.contains == null)
             {
-                ret.AddRange(this.LoadLinksFromNode(this.elseNode));
+                ret.AddRange(elseNode.linkList);
                 return (ret);
             }
             return (ret);
         }
 
-        internal bool IfValue(Dictionary<string, string> values, XmlNode node, out List<LinkDefinition> links)
+        internal bool IfValue(Dictionary<string, string> values, CaseDefinition caseDef, out List<LinkDefinition> links)
         {
             links = new List<LinkDefinition>();
-            if (node.Attributes["property"] == null) return false;
-            if (node.Attributes["value"] == null) return false;
-            string property = node.Attributes["property"].Value;
-            string value = node.Attributes["value"].Value;
-            links.AddRange(IfValueList(values, node, property, value));
+            if (caseDef.property == null) return false;
+            if (caseDef.value == null) return false;
+            string property = caseDef.property;
+            string value = caseDef.value;
+            links.AddRange(IfValueList(values, caseDef, property, value));
             return (links.Count > 0);
         }
 
-        internal List<LinkDefinition> IfValueList(Dictionary<string,string> values, XmlNode node, string property, string value)
+        internal List<LinkDefinition> IfValueList(Dictionary<string,string> values, CaseDefinition caseDef, string property, string value)
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
             if (values.ContainsKey(property) && values[property] == value)
             {
-                return LoadLinksFromNode(node);
+                return caseDef.linkList;
             }
             if (value.Equals(NullConstant) && CheckNullConstant(values, property))
             {
-                return LoadLinksFromNode(node);
+                return caseDef.linkList;
             }
             return (ret);
         }
 
-        internal List<LinkDefinition> LoadLinksFromNode(XmlNode node)
-        {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
-
-            foreach (XmlNode subNode in node.ChildNodes)
-            {
-                if (TemplateDefinition.SkipNode(subNode))
-                {
-                    continue;
-                }
-                LinkDefinition link = LinkDefinition.LoadLink(subNode);
-                ret.Add(link);
-            }
-
-            return (ret);
-        }
 
         private List<LinkDefinition> ResolveContainsValue(Dictionary<string, string> values)
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
             bool found = false;
-            if (ifNode.Attributes["contains"] != null)
+            if (ifNode.contains != null)
             {
                 found = IfContains(values, ifNode, out ret);
             }
@@ -161,9 +121,9 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             if (!found)
             {
-                foreach (XmlNode node in elseifNodeList)
+                foreach (CaseDefinition caseDef in elseifNodeList)
                 {
-                    found = IfContains(values, node, out ret);
+                    found = IfContains(values, caseDef, out ret);
                     if (found)
                     {
                         return (ret);
@@ -174,32 +134,32 @@ namespace Octgn.ProxyGenerator.Definitions
             {
                 if (elseNode != null)
                 {
-                    ret.AddRange(LoadLinksFromNode(elseNode));
+                    ret.AddRange(elseNode.linkList);
                     return (ret);
                 }
             }
             return (ret);
         }
 
-        internal bool IfContains(Dictionary<string, string> values, XmlNode node, out List<LinkDefinition> links)
+        internal bool IfContains(Dictionary<string, string> values, CaseDefinition caseDef, out List<LinkDefinition> links)
         {
             links = new List<LinkDefinition>();
-            string property = node.Attributes["property"].Value;
-            if (node.Attributes["contains"] == null)
+            string property = caseDef.property;
+            if (caseDef.contains == null)
             {
                 return (false);
             }
-            string contains = node.Attributes["contains"].Value;
-            links.AddRange(IfContainsList(values, node, property, contains));
+            string contains = caseDef.contains;
+            links.AddRange(IfContainsList(values, caseDef, property, contains));
             return (links.Count > 0);
         }
 
-        internal List<LinkDefinition> IfContainsList(Dictionary<string, string> values, XmlNode node, string property, string contains)
+        internal List<LinkDefinition> IfContainsList(Dictionary<string, string> values, CaseDefinition caseDef, string property, string contains)
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
             if (values.ContainsKey(property) && values[property].Contains(contains))
             {
-                ret = LoadLinksFromNode(node);
+                ret = caseDef.linkList;
             }
 
             return (ret);
@@ -225,107 +185,52 @@ namespace Octgn.ProxyGenerator.Definitions
         internal List<LinkDefinition> ResolveSwitch(Dictionary<string, string> values)
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
-            string property = switchNode.Attributes["property"].Value;
 
             bool currentBreak = true;
             bool foundMatch = false;
-            foreach (XmlNode childNode in switchNode.ChildNodes)
+            foreach (CaseDefinition caseDef in switchNodeList)
             {
-                if (TemplateDefinition.SkipNode(childNode))
-                {
-                    continue;
-                }
-                if (childNode.Name == "case")
-                {
-                    List<LinkDefinition> list = ResolveCase(values, childNode, property, out currentBreak);
-                    foundMatch = (list.Count > 0);
-                    ret.AddRange(list);
-                }
-                if ((!foundMatch || !currentBreak) && childNode.Name == "default")
-                {
-                    foreach (XmlNode node in childNode.ChildNodes)
-                    {
-                        if (TemplateDefinition.SkipNode(node))
-                        {
-                            continue;
-                        }
-                        LinkDefinition link = LinkDefinition.LoadLink(node);
-                        ret.Add(link);
-                    }
-                    foundMatch = true;
-                    currentBreak = true;
-                }
+                List<LinkDefinition> list = ResolveCase(values, caseDef, switchProperty, out currentBreak);
+                foundMatch = (list.Count > 0);
+                ret.AddRange(list);
+
                 if (foundMatch && currentBreak)
                 {
                     break;
                 }
             }
 
+            if (!foundMatch && elseNode != null)
+            {
+                ret.AddRange(elseNode.linkList);
+            }
+
             return (ret);
         }
 
-        private List<LinkDefinition> ResolveCase(Dictionary<string, string> values, XmlNode node, string property, out bool breakValue)
+        private List<LinkDefinition> ResolveCase(Dictionary<string, string> values, CaseDefinition caseDef, string property, out bool breakValue)
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
 
-            string value = null;
-            string contains = null;
-            breakValue = true;
-            if (node.Attributes["value"] != null)
-            {
-                value = node.Attributes["value"].Value;
-            }
-            if (node.Attributes["contains"] != null)
-            {
-                contains = node.Attributes["contains"].Value;
-            }
-            if (node.Attributes["break"] != null)
-            {
-                breakValue = bool.Parse(node.Attributes["break"].Value);
-            }
+            breakValue = caseDef.switchBreak;
 
-            if (value != null)
+            if (caseDef.value != null)
             {
 
-                if (values.ContainsKey(property) && values[property] == value)
+                if (values.ContainsKey(property) && values[property] == caseDef.value)
                 {
-                    foreach (XmlNode subNode in node.ChildNodes)
-                    {
-                        if (TemplateDefinition.SkipNode(subNode))
-                        {
-                            continue;
-                        }
-                        LinkDefinition link = LinkDefinition.LoadLink(subNode);
-                        ret.Add(link);
-                    }
+                    ret.AddRange(caseDef.linkList);
                 }
-                if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                if (caseDef.value.Equals(NullConstant) && CheckNullConstant(values, property))
                 {
-                    foreach (XmlNode subNode in node.ChildNodes)
-                    {
-                        if (TemplateDefinition.SkipNode(subNode))
-                        {
-                            continue;
-                        }
-                        LinkDefinition link = LinkDefinition.LoadLink(subNode);
-                        ret.Add(link);
-                    }
+                    ret.AddRange(caseDef.linkList);
                 }
             }
-            if (contains != null)
+            if (caseDef.contains != null)
             {
-
-                if (values.ContainsKey(property) && values[property].Contains(contains))
+                if (values.ContainsKey(property) && values[property].Contains(caseDef.contains))
                 {
-                    foreach (XmlNode subNode in node.ChildNodes)
-                    {
-                        if (TemplateDefinition.SkipNode(subNode))
-                        {
-                            continue;
-                        }
-                        LinkDefinition link = LinkDefinition.LoadLink(subNode);
-                        ret.Add(link);
-                    }
+                    ret.AddRange(caseDef.linkList);
                 }
             }
 
