@@ -148,26 +148,12 @@ namespace Octgn.ProxyGenerator
                 {
                     foreach (XmlNode overlayBlockNode in subNode.ChildNodes)
                     {
-                        if (SkipNode(overlayBlockNode))
+                        if (SkipNode(node))
                         {
                             continue;
                         }
-                        LinkDefinition.LinkWrapper wrapper = new LinkDefinition.LinkWrapper();
-                        if (overlayBlockNode.Name == "link")
-                        {
-                            LinkDefinition link = DeserializeLink(overlayBlockNode);
-                            wrapper.Link = link;
-                        }
-                        if (overlayBlockNode.Name == "conditional")
-                        {
-                            ConditionalDefinition conditional = DeserializeConditional(overlayBlockNode);
-                            wrapper.Conditional = conditional;
-                        }
-                        if (overlayBlockNode.Name == "artoverlay")
-                        {
-                            BlockDefinition b = DeserializeArtOverlayBlock(overlayBlockNode);
-                            wrapper.CardArtCrop = b;
-                        }
+
+                        var wrapper = DeserializeLinkWrapper(overlayBlockNode);
 
                         ret.OverlayBlocks.Add(wrapper);
                     }
@@ -180,17 +166,7 @@ namespace Octgn.ProxyGenerator
                         {
                             continue;
                         }
-                        LinkDefinition.LinkWrapper wrapper = new LinkDefinition.LinkWrapper();
-                        if (textBlocksNode.Name == "link")
-                        {
-                            LinkDefinition link = DeserializeLink(textBlocksNode);
-                            wrapper.Link = link;
-                        }
-                        if (textBlocksNode.Name == "conditional")
-                        {
-                            ConditionalDefinition conditional = DeserializeConditional(textBlocksNode);
-                            wrapper.Conditional = conditional;
-                        }
+                        var wrapper = DeserializeLinkWrapper(textBlocksNode);
 
                         ret.TextBlocks.Add(wrapper);
                     }
@@ -200,6 +176,26 @@ namespace Octgn.ProxyGenerator
             return (ret);
         }
 
+        public static LinkDefinition.LinkWrapper DeserializeLinkWrapper(XmlNode node)
+        {
+            var ret = new LinkDefinition.LinkWrapper();
+            if (node.Name == "link")
+            {
+                LinkDefinition link = DeserializeLink(node);
+                ret.Link = link;
+            }
+            if (node.Name == "conditional")
+            {
+                ConditionalDefinition conditional = DeserializeConditional(node);
+                ret.Conditional = conditional;
+            }
+            if (node.Name == "artoverlay")
+            {
+                BlockDefinition b = DeserializeArtOverlayBlock(node);
+                ret.CardArtCrop = b;
+            }
+            return ret;
+        }
 
         public static ConditionalDefinition DeserializeConditional(XmlNode node)
         {
@@ -275,7 +271,12 @@ namespace Octgn.ProxyGenerator
             }
             foreach (XmlNode linkNode in node.ChildNodes)
             {
-                ret.linkList.Add(DeserializeLink(linkNode));
+                if (SkipNode(linkNode))
+                {
+                    continue;
+                }
+                var wrapper = DeserializeLinkWrapper(linkNode);
+                ret.linkList.Add(wrapper);
             }
             return ret;
         }

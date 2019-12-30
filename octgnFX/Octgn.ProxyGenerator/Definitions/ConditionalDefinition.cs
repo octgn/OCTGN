@@ -14,7 +14,7 @@ namespace Octgn.ProxyGenerator.Definitions
         public string value = null;
         public string contains = null;
         public bool switchBreak = true;
-        public List<LinkDefinition> linkList = new List<LinkDefinition>();
+        public List<LinkDefinition.LinkWrapper> linkList = new List<LinkDefinition.LinkWrapper>();
 
     }
     public class ConditionalDefinition
@@ -26,9 +26,9 @@ namespace Octgn.ProxyGenerator.Definitions
         public string switchProperty = null;
         private string NullConstant = "#NULL#";
 
-        public List<LinkDefinition> ResolveConditional(Dictionary<string, string> values)
+        public List<LinkDefinition.LinkWrapper> ResolveConditional(Dictionary<string, string> values)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
             if (ifNode != null)
             {
                 return (ResolveIf(values));
@@ -40,9 +40,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (ret);
         }
 
-        internal List<LinkDefinition> ResolveIf(Dictionary<string, string> values)
+        internal List<LinkDefinition.LinkWrapper> ResolveIf(Dictionary<string, string> values)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
 
             ret.AddRange(ResolveIfValue(values));
             if (ret.Count > 0)
@@ -56,9 +56,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (ret);
         }
 
-        internal List<LinkDefinition> ResolveIfValue(Dictionary<string, string> values)
+        internal List<LinkDefinition.LinkWrapper> ResolveIfValue(Dictionary<string, string> values)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
             bool found = false;
 			found = IfValue(values, ifNode, out ret);
             if (found)
@@ -81,9 +81,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (ret);
         }
 
-        internal bool IfValue(Dictionary<string, string> values, CaseDefinition caseDef, out List<LinkDefinition> links)
+        internal bool IfValue(Dictionary<string, string> values, CaseDefinition caseDef, out List<LinkDefinition.LinkWrapper> links)
         {
-            links = new List<LinkDefinition>();
+            links = new List<LinkDefinition.LinkWrapper>();
             if (caseDef.property == null) return false;
             if (caseDef.value == null) return false;
             string property = caseDef.property;
@@ -92,9 +92,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (links.Count > 0);
         }
 
-        internal List<LinkDefinition> IfValueList(Dictionary<string,string> values, CaseDefinition caseDef, string property, string value)
+        internal List<LinkDefinition.LinkWrapper> IfValueList(Dictionary<string,string> values, CaseDefinition caseDef, string property, string value)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
             if (values.ContainsKey(property) && values[property] == value)
             {
                 return caseDef.linkList;
@@ -107,9 +107,9 @@ namespace Octgn.ProxyGenerator.Definitions
         }
 
 
-        private List<LinkDefinition> ResolveContainsValue(Dictionary<string, string> values)
+        private List<LinkDefinition.LinkWrapper> ResolveContainsValue(Dictionary<string, string> values)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
             bool found = false;
             if (ifNode.contains != null)
             {
@@ -141,9 +141,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (ret);
         }
 
-        internal bool IfContains(Dictionary<string, string> values, CaseDefinition caseDef, out List<LinkDefinition> links)
+        internal bool IfContains(Dictionary<string, string> values, CaseDefinition caseDef, out List<LinkDefinition.LinkWrapper> links)
         {
-            links = new List<LinkDefinition>();
+            links = new List<LinkDefinition.LinkWrapper>();
             string property = caseDef.property;
             if (caseDef.contains == null)
             {
@@ -154,9 +154,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (links.Count > 0);
         }
 
-        internal List<LinkDefinition> IfContainsList(Dictionary<string, string> values, CaseDefinition caseDef, string property, string contains)
+        internal List<LinkDefinition.LinkWrapper> IfContainsList(Dictionary<string, string> values, CaseDefinition caseDef, string property, string contains)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
             if (values.ContainsKey(property) && values[property].Contains(contains))
             {
                 ret = caseDef.linkList;
@@ -182,15 +182,15 @@ namespace Octgn.ProxyGenerator.Definitions
             return (ret);
         }
 
-        internal List<LinkDefinition> ResolveSwitch(Dictionary<string, string> values)
+        internal List<LinkDefinition.LinkWrapper> ResolveSwitch(Dictionary<string, string> values)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
 
             bool currentBreak = true;
             bool foundMatch = false;
             foreach (CaseDefinition caseDef in switchNodeList)
             {
-                List<LinkDefinition> list = ResolveCase(values, caseDef, switchProperty, out currentBreak);
+                List<LinkDefinition.LinkWrapper> list = ResolveCase(values, caseDef, switchProperty, out currentBreak);
                 foundMatch = (list.Count > 0);
                 ret.AddRange(list);
 
@@ -208,9 +208,9 @@ namespace Octgn.ProxyGenerator.Definitions
             return (ret);
         }
 
-        private List<LinkDefinition> ResolveCase(Dictionary<string, string> values, CaseDefinition caseDef, string property, out bool breakValue)
+        private List<LinkDefinition.LinkWrapper> ResolveCase(Dictionary<string, string> values, CaseDefinition caseDef, string property, out bool breakValue)
         {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
+            List<LinkDefinition.LinkWrapper> ret = new List<LinkDefinition.LinkWrapper>();
 
             breakValue = caseDef.switchBreak;
 

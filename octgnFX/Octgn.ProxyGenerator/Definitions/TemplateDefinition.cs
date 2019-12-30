@@ -28,7 +28,8 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 if (wrapper.Conditional != null)
                 {
-                    ret.AddRange(wrapper.Conditional.ResolveConditional(values));
+                    foreach (var item in wrapper.Conditional.ResolveConditional(values))
+                        ret.Add(item.Link);
                 }
                 if (wrapper.CardArtCrop != null)
                 {
@@ -53,7 +54,8 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 if (wrapper.Conditional != null)
                 {
-                    ret.AddRange(wrapper.Conditional.ResolveConditional(values));
+                    foreach (var item in wrapper.Conditional.ResolveConditional(values))
+                        ret.Add(item.Link);
                 }
             }
 
