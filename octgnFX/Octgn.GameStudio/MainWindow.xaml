@@ -1,0 +1,51 @@
+﻿<Window x:Class="Octgn.GameStudio.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Octgn.GameStudio"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Game Studio" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="New">
+                    <MenuItem Header="Empty Game"/>
+                    <MenuItem Header="Game Building Wizard..."/>
+                    <MenuItem Header="From Exisiting Game">
+                        <MenuItem Header="o8g..."/>
+                        <MenuItem Header="Folder..."/>
+                        <MenuItem Header="From Feed..."/>
+                        <MenuItem Header="Installed Game">
+                            <MenuItem Header="Dominos"/>
+                            <MenuItem Header="Solitare"/>
+                        </MenuItem>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Open">
+                    <MenuItem Header="o8g..."/>
+                    <MenuItem Header="Folder..."/>
+                    <MenuItem Header="From Feed..."/>
+                    <MenuItem Header="Installed Game">
+                        <MenuItem Header="Dominos"/>
+                        <MenuItem Header="Solitare"/>
+                    </MenuItem>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Save"/>
+                <MenuItem Header="Save As..."/>
+                <Separator/>
+                <MenuItem Header="Build Game Package..."/>
+                <Separator/>
+                <MenuItem Header="Exit"/>
+            </MenuItem>
+        </Menu>
+        <Border Grid.Row="1" Background="DarkGray">
+
+        </Border>
+    </Grid>
+</Window>
