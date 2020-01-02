@@ -11,6 +11,7 @@ namespace Octgn.ProxyGenerator.Definitions
         public string Block { get; set; }
         public List<Property> NestedProperties = new List<Property>();
         public string Separator = " ";
+        public bool IsTextLink = false;
 
         public BlockDefinition SpecialBlock = null;
 

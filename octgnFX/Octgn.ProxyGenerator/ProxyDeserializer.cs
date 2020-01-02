@@ -153,7 +153,7 @@ namespace Octgn.ProxyGenerator
                             continue;
                         }
 
-                        var wrapper = DeserializeLinkWrapper(overlayBlockNode);
+                        var wrapper = DeserializeLinkWrapper(overlayBlockNode, false);
 
                         ret.OverlayBlocks.Add(wrapper);
                     }
@@ -166,7 +166,7 @@ namespace Octgn.ProxyGenerator
                         {
                             continue;
                         }
-                        var wrapper = DeserializeLinkWrapper(textBlocksNode);
+                        var wrapper = DeserializeLinkWrapper(textBlocksNode, true);
 
                         ret.TextBlocks.Add(wrapper);
                     }
@@ -176,17 +176,17 @@ namespace Octgn.ProxyGenerator
             return (ret);
         }
 
-        public static LinkDefinition.LinkWrapper DeserializeLinkWrapper(XmlNode node)
+        public static LinkDefinition.LinkWrapper DeserializeLinkWrapper(XmlNode node, bool isTextBlock)
         {
             var ret = new LinkDefinition.LinkWrapper();
             if (node.Name == "link")
             {
-                LinkDefinition link = DeserializeLink(node);
+                LinkDefinition link = DeserializeLink(node, isTextBlock);
                 ret.Link = link;
             }
             if (node.Name == "conditional")
             {
-                ConditionalDefinition conditional = DeserializeConditional(node);
+                ConditionalDefinition conditional = DeserializeConditional(node, isTextBlock);
                 ret.Conditional = conditional;
             }
             if (node.Name == "artoverlay")
@@ -197,7 +197,7 @@ namespace Octgn.ProxyGenerator
             return ret;
         }
 
-        public static ConditionalDefinition DeserializeConditional(XmlNode node)
+        public static ConditionalDefinition DeserializeConditional(XmlNode node, bool isTextBlock)
         {
             ConditionalDefinition ret = new ConditionalDefinition();
 
@@ -206,24 +206,6 @@ namespace Octgn.ProxyGenerator
                 if (SkipNode(subNode))
                 {
                     continue;
-                }
-                if (ret.ifNode != null && subNode.Name == "if")
-                {
-                    break;
-                }
-
-                if (subNode.Name == "if")
-                {
-
-                    ret.ifNode = DeserializeCase(subNode);
-                }
-                if (subNode.Name == "elseif")
-                {
-                    ret.elseifNodeList.Add(DeserializeCase(subNode));
-                }
-                if (subNode.Name == "else")
-                {
-                    ret.elseNode = DeserializeCase(subNode);
                 }
                 if (subNode.Name == "switch")
                 {
@@ -237,20 +219,47 @@ namespace Octgn.ProxyGenerator
                         }
                         if (switchNode.Name == "default")
                         {
-                            ret.elseNode = DeserializeCase(switchNode);
+                            ret.elseNode = DeserializeCase(switchNode, isTextBlock);
                         }
                         if (switchNode.Name == "case")
                         {
-                            CaseDefinition switchCase = DeserializeCase(switchNode);
+                            CaseDefinition switchCase = DeserializeCase(switchNode, isTextBlock);
                             ret.switchNodeList.Add(switchCase);
                         }
+                    }
+                }
+                else
+                {
+                    if (ret.ifNode != null && subNode.Name == "if")
+                    {
+                        //when there are two if cases, ignore all but the first
+                        //TODO: properly split apart conditional from switch in the XSD to enforce 1 minimum if
+                        continue;
+                    }
+                    if (ret.ifNode == null && subNode.Name == "elseif")
+                    {
+                        //when there's no if case, convert the first elif to an if
+                        ret.ifNode = DeserializeCase(subNode, isTextBlock);
+                        continue;
+                    }
+                    if (subNode.Name == "if")
+                    {
+                        ret.ifNode = DeserializeCase(subNode, isTextBlock);
+                    }
+                    if (subNode.Name == "elseif")
+                    {
+                        ret.elseifNodeList.Add(DeserializeCase(subNode, isTextBlock));
+                    }
+                    if (subNode.Name == "else")
+                    {
+                        ret.elseNode = DeserializeCase(subNode, isTextBlock);
                     }
                 }
             }
             return (ret);
         }
 
-        public static CaseDefinition DeserializeCase(XmlNode node)
+        public static CaseDefinition DeserializeCase(XmlNode node, bool isTextBlock)
         {
             var ret = new CaseDefinition();
             if (node.Attributes["contains"] != null)
@@ -275,15 +284,16 @@ namespace Octgn.ProxyGenerator
                 {
                     continue;
                 }
-                var wrapper = DeserializeLinkWrapper(linkNode);
+                var wrapper = DeserializeLinkWrapper(linkNode, isTextBlock);
                 ret.linkList.Add(wrapper);
             }
             return ret;
         }
 
-        public static LinkDefinition DeserializeLink(XmlNode node)
+        public static LinkDefinition DeserializeLink(XmlNode node, bool isTextBlock)
         {
             LinkDefinition ret = new LinkDefinition();
+            ret.IsTextLink = isTextBlock;
             ret.Block = node.Attributes["block"].Value;
             if (node.Attributes["separator"] != null)
             {
