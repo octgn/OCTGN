@@ -23,12 +23,12 @@ namespace Octide.ItemModel
         public PropertyItemViewModel _activeProperty;
         public RelayCommand RemoveCommand { get; private set; }
 
-        public ObservableCollection<IdeListBoxItemBase> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
+        public ObservableCollection<PropertyItemViewModel> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
 
         public PackPropertyItemModel() // new item
         {
             PropertyDef = new PickProperty();
-            ActiveProperty = CustomProperties.First() as PropertyItemViewModel;
+            ActiveProperty = CustomProperties.First();
             RemoveCommand = new RelayCommand(Remove);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
@@ -36,7 +36,7 @@ namespace Octide.ItemModel
         public PackPropertyItemModel(PickProperty p) // loading item
         {
             PropertyDef = p;
-            ActiveProperty = CustomProperties.FirstOrDefault(x => (x as PropertyItemViewModel)._property == PropertyDef.Property) as PropertyItemViewModel;
+            ActiveProperty = CustomProperties.FirstOrDefault(x => x._property == PropertyDef.Property);
             RemoveCommand = new RelayCommand(Remove);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
@@ -81,7 +81,7 @@ namespace Octide.ItemModel
                 if (_activeProperty == value) return;
                 if (value == null)
                 {
-                    value = CustomProperties.First() as PropertyItemViewModel;
+                    value = CustomProperties.First();
                 }
                 _activeProperty = value;
                 PropertyDef.Property = value._property;

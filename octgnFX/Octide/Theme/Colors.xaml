@@ -6,4 +6,56 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <SolidColorBrush Color="#333333" x:Key="WindowBack"/>
+    <SolidColorBrush Color="#FF171717" x:Key="DarkBackground"/>
+    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" x:Key="ControlFillBrush">
+        <GradientStop Color="#A2EEEEEE" Offset="0.663" />
+        <GradientStop Color="#C3FFFFFF" Offset="0.995" />
+        <GradientStop Color="#9DF8F8F8" Offset="0" />
+        <GradientStop Color="#B1FFFFFF" Offset="0.418" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1" x:Key="ControlBorderBrush">
+        <GradientStop Color="#E0888888" Offset="1" />
+        <GradientStop Color="#DAFFFFFF" Offset="0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushRed">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#BB7777" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushYellow">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#BBBB77" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushGreen">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#77BB77" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushPink">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#BB77BB" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushPurple">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#725BA2" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushBlue">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#6886D4" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushOrange">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#D49968" Offset="0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushBrown">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#805D41" Offset="0"/>
+    </LinearGradientBrush>
 </ResourceDictionary>

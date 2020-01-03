@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using Octgn.Core.DataExtensionMethods;
 using System.Drawing.Text;
 using Octide.ItemModel;
+using Octide.ProxyTab.TemplateItemModel;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -34,16 +35,14 @@ namespace Octide.ViewModel
     {
         
         private ProxyDefinition _proxydef => ViewModelLocator.GameLoader.ProxyDef;
-
-        private ProxyTemplateItemModel _selectedItem;
-
-        public ObservableCollection<ProxyTemplateItemModel> Templates { get; private set; }
+        public ObservableCollection<TemplateModel> Templates { get; private set; }
         public ObservableCollection<ProxyTextDefinitionItemModel> TextBlocks { get; private set; }
-        public ObservableCollection<ProxyOverlayItemModel> OverlayBlocks { get; private set; }
+        public ObservableCollection<ProxyOverlayDefinitionItemModel> OverlayBlocks { get; private set; }
 
         public ObservableCollection<ProxyInputPropertyItemModel> StoredProxyProperties { get; set; }
 
-        public RelayCommand AddCommand { get; private set; }
+        public RelayCommand AddTextBlockCommand { get; private set; }
+        public RelayCommand AddTemplateCommand { get; private set; }
         public RelayCommand AddOverlayCommand { get; private set; }
 
         public ProxyTabViewModel()
@@ -59,10 +58,10 @@ namespace Octide.ViewModel
             
             StoredProxyProperties.CollectionChanged += (a, b) =>
             {
-                UpdateProxyTemplate();
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
 
-            Templates = new ObservableCollection<ProxyTemplateItemModel>(_proxydef.TemplateSelector.GetTemplates().Select(x => new ProxyTemplateItemModel(x)));
+            Templates = new ObservableCollection<TemplateModel>(_proxydef.TemplateSelector.GetTemplates().Select(x => new TemplateModel(x)));
             Templates.CollectionChanged += (a, b) =>
             {
                 _proxydef.TemplateSelector.ClearTemplates();
@@ -86,7 +85,7 @@ namespace Octide.ViewModel
                 }
             };
 
-            OverlayBlocks = new ObservableCollection<ProxyOverlayItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay").Select(x => new ProxyOverlayItemModel(x)));
+            OverlayBlocks = new ObservableCollection<ProxyOverlayDefinitionItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay").Select(x => new ProxyOverlayDefinitionItemModel(x)));
             OverlayBlocks.CollectionChanged += (a, b) =>
             {
                 _proxydef.BlockManager.ClearBlocks();
@@ -100,19 +99,21 @@ namespace Octide.ViewModel
                 }
             };
 
-            AddCommand = new RelayCommand(AddTemplate);
+            AddTextBlockCommand = new RelayCommand(AddTextBlock);
+            AddTemplateCommand = new RelayCommand(AddTemplate);
             AddOverlayCommand = new RelayCommand(AddOverlay);
             RaisePropertyChanged("StoredProxyProperties");
+            Messenger.Default.Register<ProxyTemplateChangedMessage>(this, action => UpdateProxyTemplate(action));
         }
         
-        public void UpdateProxyTemplate()
+        public void UpdateProxyTemplate(ProxyTemplateChangedMessage message)
         {
-            if (SelectedItem == null) return;
+            if (SelectedTemplate == null) return;
 
             var properties = StoredProxyProperties.Where(x => x.Name != null).ToDictionary(x => x.Name, x => x.Value);
 
             //this stuff generates the real proxy image, maybe we'll need to keep it in for more accurate image
-            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, _proxydef.RootPath, SelectedItem._def, properties, null);
+            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, _proxydef.RootPath, SelectedTemplate._def, properties, null);
             using (var ms = new MemoryStream())
             {
                 proxy.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -126,12 +127,12 @@ namespace Octide.ViewModel
             }
             proxy.Dispose();
 
-            BaseImage = new BitmapImage(new Uri(Path.Combine(SelectedItem._def.rootPath, SelectedItem._def.src)));
-            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayItemModel>(
-                SelectedItem._def.GetOverLayBlocks(properties).Select(
+            BaseImage = new BitmapImage(new Uri(Path.Combine(SelectedTemplate._def.rootPath, SelectedTemplate._def.src)));
+            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayDefinitionItemModel>(
+                SelectedTemplate._def.GetOverLayBlocks(properties).Select(
                     x => OverlayBlocks.First(y => y.Name == x.Block)));
             ActiveTextLayers = new ObservableCollection<ProxyTextLinkItemModel>(
-                SelectedItem._def.GetTextBlocks(properties).Select(
+                SelectedTemplate._def.GetTextBlocks(properties).Select(
                     x => new ProxyTextLinkItemModel(x) ));
 
             RaisePropertyChanged("BaseImage");
@@ -148,33 +149,27 @@ namespace Octide.ViewModel
 
         public double BaseHeight => BaseImage?.PixelHeight ?? 0;
         
-        public ObservableCollection<ProxyOverlayItemModel> ActiveOverlayLayers { get; private set; }
+        public ObservableCollection<ProxyOverlayDefinitionItemModel> ActiveOverlayLayers { get; private set; }
         public ObservableCollection<ProxyTextLinkItemModel> ActiveTextLayers { get; private set; }
 
-        public ProxyTemplateItemModel SelectedItem
+        public TemplateModel _selectedTemplate;
+
+        public TemplateModel SelectedTemplate
         {
-            get { return _selectedItem; }
+            get
+            {
+                return _selectedTemplate;
+            }
             set
             {
-                if (value == _selectedItem) return;
-                _selectedItem = value;
-                UpdateProxyTemplate();
-                RaisePropertyChanged("SelectedItem");
+                if (value == _selectedTemplate) return;
+                _selectedTemplate = value;
+                Selection = null;
+                RaisePropertyChanged("SelectedTemplate");
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
         
-        private ViewModelBase _activeView;
-
-        public ViewModelBase ActiveView
-        {
-            get { return _activeView; }
-            set
-            {
-                _activeView = value;
-                RaisePropertyChanged("ActiveView");
-            }
-        }
-
         public object _selection;
 
         public object Selection
@@ -187,37 +182,28 @@ namespace Octide.ViewModel
             {
                 if (value == _selection) return;
                 _selection = value;
-                if (value is ProxyOverlayItemModel)
-                {
-                    ViewModelLocator.ProxyOverlayViewModel.SelectedItem = (ProxyOverlayItemModel)value;
-                    ActiveView = ViewModelLocator.ProxyOverlayViewModel;
-                }
-                else if (value is ProxyTextDefinitionItemModel)
-                {
-                    ViewModelLocator.ProxyTextBlockViewModel.SelectedItem = (ProxyTextDefinitionItemModel)value;
-                    ActiveView = ViewModelLocator.ProxyTextBlockViewModel;
-                }
-                else
-                {
-                    ActiveView = null;
-                }
                 RaisePropertyChanged("Selection");
-                RaisePropertyChanged("ActiveView");
             }
         }
 
         public void AddTemplate()
         {
-            var ret = new ProxyTemplateItemModel() { Name = "Template" };
+            var ret = new TemplateModel() { ItemSource = Templates };
             Templates.Add(ret);
-            SelectedItem = ret;
+            SelectedTemplate = ret;
         }
 
         public void AddOverlay()
         {
-            var ret = new ProxyOverlayItemModel();
+            var ret = new ProxyOverlayDefinitionItemModel() { ItemSource = OverlayBlocks };
             OverlayBlocks.Add(ret);
-            RaisePropertyChanged("OverlayBlocks");
+            Selection = ret;
+        }
+        public void AddTextBlock()
+        {
+            var ret = new ProxyTextDefinitionItemModel() { ItemSource = TextBlocks };
+            TextBlocks.Add(ret);
+            Selection = ret;
         }
     }
 
@@ -279,8 +265,8 @@ namespace Octide.ViewModel
                 if (value == _name) return;
                 if (ViewModelLocator.ProxyTabViewModel.StoredProxyProperties.FirstOrDefault(x => x.Name == value) != null) return;
                 _name = value;
-                ViewModelLocator.ProxyTabViewModel.UpdateProxyTemplate();
                 RaisePropertyChanged("Name");
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
 
@@ -294,8 +280,8 @@ namespace Octide.ViewModel
             {
                 if (value == _value) return;
                 _value = value;
-                ViewModelLocator.ProxyTabViewModel.UpdateProxyTemplate();
                 RaisePropertyChanged("Value");
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
     }

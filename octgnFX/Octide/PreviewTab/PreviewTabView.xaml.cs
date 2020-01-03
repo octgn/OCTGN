@@ -275,6 +275,21 @@ namespace Octide.Views
         {
             Cursor = Cursors.Arrow;
         }
-        
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs args)
+        {
+            ScrollViewer scrollViewer = sender as ScrollViewer;
+
+            if (scrollViewer == null)
+                return;
+
+            if (args.Delta < 0)
+                scrollViewer.LineRight();
+            else
+                scrollViewer.LineLeft();
+
+            args.Handled = true;
+
+        }
     }
 }

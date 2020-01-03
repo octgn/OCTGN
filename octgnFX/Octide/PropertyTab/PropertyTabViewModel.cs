@@ -26,17 +26,21 @@ namespace Octide.ViewModel
     {
 
         private PropertyItemViewModel _selectedItem;
-        public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
+        public ObservableCollection<PropertyItemViewModel> Items { get; private set; }
 
         public PropertyItemViewModel NameProperty;
 
         public PropertyItemViewModel SizeProperty;
+        public PropertyItemViewModel SizeNameProperty;
+        public PropertyItemViewModel SizeHeightProperty;
+        public PropertyItemViewModel SizeWidthProperty;
+        public PropertyItemViewModel ProxyNameProperty;
 
         public RelayCommand AddCommand { get; private set; }
 
         public PropertyTabViewModel()
         {
-            Items = new ObservableCollection<IdeListBoxItemBase>();
+            Items = new ObservableCollection<PropertyItemViewModel>();
             foreach (var property in ViewModelLocator.GameLoader.Game.CustomProperties)
             {
                 Items.Add(
@@ -47,7 +51,7 @@ namespace Octide.ViewModel
             }
             Items.CollectionChanged += (a, b) =>
             {
-                ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => (x as PropertyItemViewModel)._property).ToList();
+                ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => x._property).ToList();
                 Messenger.Default.Send(new CustomPropertyChangedMessage(b)) ;
             };
             AddCommand = new RelayCommand(AddItem);
@@ -55,6 +59,15 @@ namespace Octide.ViewModel
             NameProperty._property.Name = "Name";
             SizeProperty = new PropertyItemViewModel();
             SizeProperty._property.Name = "CardSize";
+            //Proxy Properties
+            ProxyNameProperty = new PropertyItemViewModel();
+            ProxyNameProperty._property.Name = "CardName";
+            SizeNameProperty = new PropertyItemViewModel();
+            SizeNameProperty._property.Name = "CardSizeName";
+            SizeHeightProperty = new PropertyItemViewModel();
+            SizeHeightProperty._property.Name = "CardSizeHeight";
+            SizeWidthProperty = new PropertyItemViewModel();
+            SizeWidthProperty._property.Name = "CardSizeWidth";
         }
         
         public PropertyItemViewModel SelectedItem

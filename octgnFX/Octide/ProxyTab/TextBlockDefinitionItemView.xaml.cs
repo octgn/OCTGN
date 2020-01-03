@@ -12,11 +12,11 @@ using System.Text;
 namespace Octide.Views
 {
     /// <summary>
-    /// Interaction logic for ProxyTextBlockView.xaml
+    /// Interaction logic for ProxyTextBlockDefinitionItemView.xaml
     /// </summary>
-    public partial class ProxyTextBlockView : UserControl
+    public partial class ProxyTextBlockDefinitionItemView : UserControl
     {
-        public ProxyTextBlockView()
+        public ProxyTextBlockDefinitionItemView()
         {
             InitializeComponent();
         }

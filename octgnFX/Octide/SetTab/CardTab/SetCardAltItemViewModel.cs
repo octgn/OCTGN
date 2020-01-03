@@ -10,6 +10,7 @@ using Octgn.Core.DataExtensionMethods;
 using Octgn.DataNew.Entities;
 using Octgn.Library;
 using Octide.Messages;
+using Octide.ProxyTab.TemplateItemModel;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -299,7 +300,7 @@ namespace Octide.ItemModel
 
         #region proxy
 
-        private ObservableCollection<ProxyOverlayItemModel> _activeOverlayLayers;
+        private ObservableCollection<ProxyOverlayDefinitionItemModel> _activeOverlayLayers;
         private ObservableCollection<ProxyTextBlockItemModel> _activeTextLayers;
         public int _baseWidth;
         public int _baseHeight;
@@ -334,7 +335,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public ObservableCollection<ProxyOverlayItemModel> ActiveOverlayLayers
+        public ObservableCollection<ProxyOverlayDefinitionItemModel> ActiveOverlayLayers
         {
             get
             {
@@ -370,7 +371,7 @@ namespace Octide.ItemModel
         {
             var tempCard = GetTempCard();
             var properties = tempCard.GetProxyMappings();
-            ProxyTemplateItemModel activeTemplate = ViewModelLocator.ProxyTabViewModel.Templates.First(x => x._def.defaultTemplate == true);
+            TemplateModel activeTemplate = ViewModelLocator.ProxyTabViewModel.Templates.First(x => x._def.defaultTemplate == true);
 
             foreach (var template in ViewModelLocator.ProxyTabViewModel.Templates)
             {
@@ -394,7 +395,7 @@ namespace Octide.ItemModel
             BaseWidth = image.PixelWidth;
             BaseHeight = image.PixelHeight;
 
-            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayItemModel>(
+            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayDefinitionItemModel>(
                 activeTemplate._def
                 .GetOverLayBlocks(properties)
                 .Select(x => ViewModelLocator.ProxyTabViewModel.OverlayBlocks.First(y => y.Name == x.Block))

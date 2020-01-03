@@ -5,52 +5,14 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:ctrl="clr-namespace:Octgn.Controls;assembly=OCTGN"
                     xmlns:gong="urn:gong-wpf-dragdrop"
                     xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
-
                     xmlns:local="clr-namespace:Octide"
                     xmlns:model="clr-namespace:Octide.ItemModel"
                     xmlns:metro="http://schemas.codeplex.com/elysium"
                     xmlns:params="http://schemas.codeplex.com/elysium/params">
 
     <local:RadioButtonStateConverter x:Key="RadioConverter"/>
-    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" x:Key="ControlFillBrush">
-        <GradientStop Color="#A2EEEEEE" Offset="0.663" />
-        <GradientStop Color="#C3FFFFFF" Offset="0.995" />
-        <GradientStop Color="#9DF8F8F8" Offset="0" />
-        <GradientStop Color="#B1FFFFFF" Offset="0.418" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1" x:Key="ControlBorderBrush">
-        <GradientStop Color="#E0888888" Offset="1" />
-        <GradientStop Color="#DAFFFFFF" Offset="0" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackIncludeBrush">
-        <GradientStop Color="#777777" Offset="0"/>
-        <GradientStop Color="#BB7777" Offset="1"/>
-    </LinearGradientBrush>
-    
-    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackOptionsBrush">
-        <GradientStop Color="#777777" Offset="0"/>
-        <GradientStop Color="#BBBB77" Offset="1"/>
-    </LinearGradientBrush>
-    
-    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackOptionBrush">
-        <GradientStop Color="#777777" Offset="0"/>
-        <GradientStop Color="#77BB77" Offset="1"/>
-    </LinearGradientBrush>
-    
-    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackPickBrush">
-        <GradientStop Color="#777777" Offset="0"/>
-        <GradientStop Color="#BB77BB" Offset="1"/>
-    </LinearGradientBrush>
-    
-    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="PackPropertiesBrush">
-        <GradientStop Color="#777777" Offset="0"/>
-        <GradientStop Color="#7777BB" Offset="1"/>
-    </LinearGradientBrush>
 
     <Style x:Key="OctideInputPanel" >
         <Style.Resources>
@@ -265,6 +227,25 @@
         </MenuItem>
     </ContextMenu>
 
+    <DataTemplate x:Key="IdeAssetItemAdorner">
+        <Border Padding="5" Background="{StaticResource DarkBackground}" BorderBrush="WhiteSmoke" BorderThickness="2">
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Image Source="{Binding Asset.FullPath}" Stretch="Uniform"/>
+                <TextBlock Foreground="WhiteSmoke" Grid.Row="1" Text="{Binding Name}" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="IdeTextItemAdorner">
+        <Border Background="{StaticResource DarkBackground}" BorderThickness="2" BorderBrush="WhiteSmoke" Padding="3">
+            <TextBlock Foreground="WhiteSmoke" FontSize="13" Grid.Row="1" Text="{Binding Name}" />
+        </Border>
+    </DataTemplate>
+
     <Style x:Key="GenericIdeListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
         <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
         <Style.Triggers>
@@ -280,16 +261,15 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style x:Key="GenericIdeListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}" >
         <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
         <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
-        <Setter Property="gong:DragDrop.UseDefaultDragAdorner" Value="True" />
         <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
+        <Setter Property="gong:DragDrop.UseDefaultEffectDataTemplate" Value="True" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource GenericIdeListBoxItemStyle}" />
     </Style>
 
-    
     <Style x:Key="IdeListBoxItemControl" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource GenericIdeListBoxItemStyle}">
         <Setter Property="Template">
             <Setter.Value>
@@ -304,10 +284,23 @@
     </Style>
 
     <Style x:Key="IdeListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource GenericIdeListBoxStyle}" >
-        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource IdeListBoxItemControl}" />
+    </Style>
+
+    <Style x:Key="IdeHorizontalListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource GenericIdeListBoxStyle}">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="local:ScrollViewerHelper.ShiftWheelScrollsHorizontally" Value="True" />
     </Style>
 
     <Style TargetType="Border" x:Key="PanelControl">
@@ -379,4 +372,11 @@
         <Setter Property="Margin" Value="1" />
     </Style>
 
+    <Style x:Key="ProxyTemplateAddButton" TargetType="{x:Type Button}" >
+        <Setter Property="Padding" Value="2,0,2,0" />
+        <Setter Property="Margin" Value="3,0,3,0" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderBrush" Value="Black" />
+    </Style>
 </ResourceDictionary>

@@ -64,7 +64,20 @@ namespace Octide
         
         public AssetControl()
         {
-            AssetView = new ListCollectionView(AssetManager.Instance.Assets);
+            if (!IsInDesignMode)
+            {
+                AssetView = new ListCollectionView(AssetManager.Instance.Assets);
+            }
+        }
+        public bool IsInDesignMode
+        {
+            get
+            {
+                var prop = DesignerProperties.IsInDesignModeProperty;
+                return (bool)DependencyPropertyDescriptor
+                    .FromProperty(prop, typeof(FrameworkElement))
+                    .Metadata.DefaultValue;
+            }
         }
 
         public override void OnApplyTemplate()

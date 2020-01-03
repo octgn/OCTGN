@@ -283,7 +283,7 @@
                     </ListBox>
                     <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
 
-                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
+                    <ScrollViewer PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
                         <DockPanel>
                             <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource GroupPanel}" ItemsSource="{Binding Piles, Mode=TwoWay}" SelectedValue="{Binding Selection}"
                                          Focusable="False" VerticalAlignment="Stretch" DockPanel.Dock="Right" VerticalContentAlignment="Stretch">
@@ -331,13 +331,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}" 
-                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
+                    <ListBox Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}" >
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type ListBoxItem}">
                                 <DockPanel >
@@ -356,13 +350,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding Boards}" SelectedValue="{Binding Selection}"
-                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
+                    <ListBox Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding Boards}" SelectedValue="{Binding Selection}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type ListBoxItem}">
                                 <DockPanel>

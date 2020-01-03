@@ -67,8 +67,6 @@ namespace Octide.ViewModel
 			ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<ProxyTabViewModel>().To<ProxyTabViewModel>().InSingletonScope();
-			ViewModelLocator.ViewModelKernel.Bind<ProxyOverlayViewModel>().To<ProxyOverlayViewModel>().InSingletonScope();
-			ViewModelLocator.ViewModelKernel.Bind<ProxyTextBlockViewModel>().To<ProxyTextBlockViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<PreviewTabViewModel>().To<PreviewTabViewModel>().InSingletonScope();
 		}
 
@@ -85,8 +83,6 @@ namespace Octide.ViewModel
 		public static PropertyTabViewModel PropertyTabViewModel => ServiceLocator.Current.GetInstance<PropertyTabViewModel>();
 		public static SetTabViewModel SetTabViewModel => ServiceLocator.Current.GetInstance<SetTabViewModel>();
 		public static ProxyTabViewModel ProxyTabViewModel => ServiceLocator.Current.GetInstance<ProxyTabViewModel>();
-		public static ProxyOverlayViewModel ProxyOverlayViewModel => ServiceLocator.Current.GetInstance<ProxyOverlayViewModel>();
-		public static ProxyTextBlockViewModel ProxyTextBlockViewModel => ServiceLocator.Current.GetInstance<ProxyTextBlockViewModel>();
 		public static PreviewTabViewModel PreviewTabViewModel => ServiceLocator.Current.GetInstance<PreviewTabViewModel>();
 
 		public static void Cleanup()
@@ -103,8 +99,6 @@ namespace Octide.ViewModel
 			ServiceLocator.Current.GetInstance<PropertyTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SetTabViewModel>().Cleanup();
 		//	ServiceLocator.Current.GetInstance<ProxyTabViewModel>().Cleanup();
-			ServiceLocator.Current.GetInstance<ProxyOverlayViewModel>().Cleanup();
-			ServiceLocator.Current.GetInstance<ProxyTextBlockViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<PreviewTabViewModel>().Cleanup();
 		}
 	}

@@ -58,6 +58,7 @@ namespace Octide.Messages
         }
         public GroupItemViewModel Group { get; set; }
     }
+
     public class CustomPropertyChangedMessage : PropertyChangedMessage
     {
         public CustomPropertyChangedMessage() { }
@@ -80,5 +81,13 @@ namespace Octide.Messages
 
         public SizeItemViewModel Size { get; set; }
     }
-    
+
+
+    public class ProxyTemplateChangedMessage
+    {
+        public ProxyTemplateChangedMessage()
+        {
+
+        }
+    }
 }

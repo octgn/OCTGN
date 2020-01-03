@@ -25,7 +25,7 @@
             <Setter Property="FontSize" Value="12" />
         </Style>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackIncludeItemModel}" ItemsSource="{Binding Items}" >
-            <Border Padding="3" Margin="1" Background="{StaticResource PackIncludeBrush}">
+            <Border Padding="3" Margin="1" Background="{StaticResource BlendBrushRed}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="INCLUDE" FontWeight="Bold" />
                     <TextBlock Text="set:" Margin="3,0,3,0 "/>
@@ -35,25 +35,25 @@
                 </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add Property" Background="{StaticResource PackPropertiesBrush}" Command="{Binding AddPropertyCommand}" />
+                        <MenuItem Header="Add Property" Background="{StaticResource BlendBrushYellow}" Command="{Binding AddPropertyCommand}" />
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackOptionsItemModel}" ItemsSource="{Binding Items}" >
-            <Border Margin="1" Padding="3" Background="{StaticResource PackOptionsBrush}">
+            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushPurple}">
                 <TextBlock Text="OPTIONS" FontWeight="Bold" />
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add Option" Background="{StaticResource PackOptionBrush}" Command="{Binding AddOptionCommand}" />
+                        <MenuItem Header="Add Option" Background="{StaticResource BlendBrushBlue}" Command="{Binding AddOptionCommand}" />
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackOptionItemModel}" ItemsSource="{Binding Items}" >
-            <Border Margin="1" Padding="3" Background="{StaticResource PackOptionBrush}" >
+            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushBlue}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="OPTION" FontWeight="Bold"/>
                     <TextBlock Grid.Column="1" Text="probability:" Margin="3,0,3,0" />
@@ -61,15 +61,15 @@
                 </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add Options" Background="{StaticResource PackOptionsBrush}" Command="{Binding AddOptionsCommand}" />
-                        <MenuItem Header="Add Pick" Background="{StaticResource PackPickBrush}" Command="{Binding AddPickCommand}" />
+                        <MenuItem Header="Add Options" Background="{StaticResource BlendBrushPurple}" Command="{Binding AddOptionsCommand}" />
+                        <MenuItem Header="Add Pick" Background="{StaticResource BlendBrushGreen}" Command="{Binding AddPickCommand}" />
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type ItemModel:PackPickItemModel}" ItemsSource="{Binding Items}" >
-            <Border Margin="1" Padding="3" Background="{StaticResource PackPickBrush}">
+            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushGreen}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="PICK" FontWeight="Bold" />
                     <TextBlock Text="quantity:" Margin="3,0,3,0"/>
@@ -90,14 +90,14 @@
                 </StackPanel>
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add Property" Background="{StaticResource PackPropertiesBrush}" Command="{Binding AddPropertyCommand}" />
+                        <MenuItem Header="Add Property" Background="{StaticResource BlendBrushYellow}" Command="{Binding AddPropertyCommand}" />
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
                     </ContextMenu>
                 </Border.ContextMenu>
             </Border>
         </HierarchicalDataTemplate>
         <DataTemplate DataType="{x:Type ItemModel:PackPropertyItemModel}" >
-            <Border Padding="3" Margin="1" Background="{StaticResource PackPropertiesBrush}" >
+            <Border Padding="3" Margin="1" Background="{StaticResource BlendBrushYellow}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="PROPERTY" FontWeight="Bold" />
                     <TextBlock Text="name:" Margin="3,0,3,0"/>
@@ -135,8 +135,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.ColumnSpan="2" Text="Pack Items"  HorizontalAlignment="Center" FontSize="20"/>
-            <Button Grid.Row="1" Content="Add Options"  Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource PackOptionsBrush}" />
-            <Button Grid.Row="1" Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource PackPickBrush}"/>
+            <Button Grid.Row="1" Content="Add Options"  Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
+            <Button Grid.Row="1" Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushYellow}"/>
             <TreeView Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent" ItemsSource="{Binding Items}" Name="PackItems"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding PackageDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
                 <TreeView.ItemContainerStyle>
@@ -156,7 +156,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Include cards (from other sets)"  HorizontalAlignment="Center" FontSize="20"/>
-            <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource PackIncludeBrush}" />
+            <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
 
             <TreeView Grid.Row="2" Background="Transparent" ItemsSource="{Binding Includes}"  Name="Includes"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding IncludeDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >

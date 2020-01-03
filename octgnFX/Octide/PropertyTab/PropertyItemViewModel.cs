@@ -10,6 +10,7 @@ using Octide.Messages;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Octide.ItemModel
     {
         public PropertyDef _property { get; set; }
 
+        public new ObservableCollection<PropertyItemViewModel> ItemSource { get; set; }
         public PropertyItemViewModel()
         {
             _property = new PropertyDef();
@@ -36,7 +38,7 @@ namespace Octide.ItemModel
             ItemSource = p.ItemSource;
             Parent = p.Parent;
             _property = p._property.Clone() as PropertyDef;
-            _property.Name = Utils.GetUniqueName(p.Name, ItemSource.Select(x => (x as PropertyItemViewModel).Name));
+            _property.Name = Utils.GetUniqueName(p.Name, ItemSource.Select(x => x.Name));
         }
 
         public override object Clone()
@@ -68,7 +70,7 @@ namespace Octide.ItemModel
             {
                 if (value == _property.Name) return;
                 if (string.IsNullOrEmpty(value)) return;
-                _property.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as PropertyItemViewModel).Name));
+                _property.Name = Utils.GetUniqueName(value, ItemSource.Select(x => x.Name));
                 RaisePropertyChanged("Name");
                 Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this, Action = PropertyChangedMessageAction.Modify});
             }

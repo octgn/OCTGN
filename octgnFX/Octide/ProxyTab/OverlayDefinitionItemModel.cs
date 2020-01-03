@@ -21,80 +21,13 @@ using System.Windows.Media;
 
 namespace Octide.ItemModel
 {
-    public class ProxyTemplateItemModel : IdeListBoxItemBase
-    {
-        public TemplateDefinition _def;
 
-        public ProxyTemplateItemModel()
-        {
-            _def = new TemplateDefinition();
-        }
-
-        public ProxyTemplateItemModel(TemplateDefinition t)
-        {
-            _def = t;
-        }
-
-        public ProxyTemplateItemModel(ProxyTemplateItemModel p)
-        {
-            _def = new TemplateDefinition()
-            {
-                OverlayBlocks = p._def.OverlayBlocks,
-                TextBlocks = p._def.TextBlocks,
-                Matches = p._def.Matches,
-                rootPath = p._def.rootPath
-            };
-        }
-        public string Name
-        {
-            get { return _def.src; }
-            set
-            {
-                if (value == _def.src) return;
-                _def.src = value;
-                RaisePropertyChanged("Name");
-            }
-        }
-
-        public bool Default
-        {
-            get
-            {
-                return _def.defaultTemplate;
-            }
-            set
-            {
-                if (value == _def.defaultTemplate) return;
-                _def.defaultTemplate = value;
-                RaisePropertyChanged("Default");
-            }
-        }
-
-        public override object Clone()
-        {
-            return new ProxyTemplateItemModel(this);
-        }
-
-        public override void Copy()
-        {
-            if (CanCopy == false) return;
-            var index = ViewModelLocator.ProxyTabViewModel.Templates.IndexOf(this);
-            ViewModelLocator.ProxyTabViewModel.Templates.Insert(index, Clone() as ProxyTemplateItemModel);
-        }
-
-        public override void Insert()
-        {
-            if (CanInsert == false) return;
-            var index = ViewModelLocator.ProxyTabViewModel.Templates.IndexOf(this);
-            ViewModelLocator.ProxyTabViewModel.Templates.Insert(index, new ProxyTemplateItemModel());
-        }
-    }
-
-    public class ProxyOverlayItemModel : IdeListBoxItemBase
+    public class ProxyOverlayDefinitionItemModel : IdeListBoxItemBase
     {
         public BlockDefinition _def;
+        public new ObservableCollection<ProxyOverlayDefinitionItemModel> ItemSource { get; set; }
 
-        public ProxyOverlayItemModel() // new overlay
+        public ProxyOverlayDefinitionItemModel() // new overlay
         {
             _def = new BlockDefinition
             {
@@ -104,12 +37,12 @@ namespace Octide.ItemModel
             };
         }
 
-        public ProxyOverlayItemModel(BlockDefinition b) // load overlay
+        public ProxyOverlayDefinitionItemModel(BlockDefinition b) // load overlay
         {
             _def = b;
         }
 
-        public ProxyOverlayItemModel(ProxyOverlayItemModel o)
+        public ProxyOverlayDefinitionItemModel(ProxyOverlayDefinitionItemModel o)
         {
             _def = new BlockDefinition
             {
@@ -198,21 +131,21 @@ namespace Octide.ItemModel
 
         public override object Clone()
         {
-            return new ProxyOverlayItemModel(this);
+            return new ProxyOverlayDefinitionItemModel(this);
         }
 
         public override void Copy()
         {
             if (CanCopy == false) return;
             var index = ViewModelLocator.ProxyTabViewModel.OverlayBlocks.IndexOf(this);
-            ViewModelLocator.ProxyTabViewModel.OverlayBlocks.Insert(index, Clone() as ProxyOverlayItemModel);
+            ViewModelLocator.ProxyTabViewModel.OverlayBlocks.Insert(index, Clone() as ProxyOverlayDefinitionItemModel);
         }
 
         public override void Insert()
         {
             if (CanInsert == false) return;
             var index = ViewModelLocator.ProxyTabViewModel.OverlayBlocks.IndexOf(this);
-            ViewModelLocator.ProxyTabViewModel.OverlayBlocks.Insert(index, new ProxyOverlayItemModel());
+            ViewModelLocator.ProxyTabViewModel.OverlayBlocks.Insert(index, new ProxyOverlayDefinitionItemModel());
         }
     }
 

@@ -236,6 +236,8 @@ namespace Octide
             {
                 s.Serialize(set);
             }
+            var p = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id);
+            p.Serialize(ProxyDef);
             NeedsSave = false;
             DidManualSave = true;
         }

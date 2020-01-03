@@ -21,43 +21,14 @@ using Microsoft.Win32;
 using GongSolutions.Wpf.DragDrop;
 using System.Windows.Data;
 using Octgn.ProxyGenerator.Definitions;
+using Octide.ViewModel;
 
-namespace Octide.ViewModel
+namespace Octide.ItemModel
 {
-    public class ProxyTextBlockViewModel : ViewModelBase
-    {
-        private ProxyTextDefinitionItemModel _selectedItem;
-
-        public RelayCommand DeleteCommand { get; private set; }
-
-        public ProxyTextBlockViewModel()
-        {
-            DeleteCommand = new RelayCommand(DeleteItem);
-        }
-
-        public void DeleteItem()
-        {
-            if (SelectedItem == null) return;
-            ViewModelLocator.ProxyTabViewModel.TextBlocks.Remove(SelectedItem);
-        }
-
-        public ProxyTextDefinitionItemModel SelectedItem
-        {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                if (_selectedItem == value) return;
-                _selectedItem = value;
-                RaisePropertyChanged("SelectedItem");
-            }
-        }
-    }
     public class ProxyTextDefinitionItemModel : IdeListBoxItemBase
     {
         public BlockDefinition _def;
+        public new ObservableCollection<ProxyTextDefinitionItemModel> ItemSource { get; set; }
 
         public ProxyTextDefinitionItemModel() // new text definition
         {

@@ -57,10 +57,10 @@
             <TabItem Header="Symbols">
                 <views:SymbolTabView/>
             </TabItem>
-        <!--    <TabItem Header="Proxies" >
+            <TabItem Header="Proxies" IsSelected="True">
                 <views:ProxyTabView/>
-            </TabItem> -->
-            <TabItem Header="Sets" IsSelected="True">
+            </TabItem>
+            <TabItem Header="Sets">
                 <views:SetTabView/>
             </TabItem>
             <TabItem Header="Assets">
