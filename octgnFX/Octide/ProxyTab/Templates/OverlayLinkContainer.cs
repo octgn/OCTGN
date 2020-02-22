@@ -2,63 +2,64 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Octide.ProxyTab.TemplateItemModel
 {
     public class OverlayLinkContainer : IBaseBlock
     {
         public TemplateLinkContainerDropHandler DropHandler { get; set; }
-        public ObservableCollection<IBaseLink> Items { get; set; }
+        public ObservableCollection<OverlayLinkModel> Items { get; set; }
 
         public OverlayLinkContainer()
         {
             CanDragDrop = false;
-            DropHandler = new TemplateLinkContainerDropHandler();
-            Items = new ObservableCollection<IBaseLink>();
-            Items.CollectionChanged += (a, b) =>
+            DropHandler = new TemplateLinkContainerDropHandler()
             {
-                if (Items.Count == 0)
-                    Remove();
+                Container = this
             };
+            Items = new ObservableCollection<OverlayLinkModel>();
+            Items.CollectionChanged += LinkContainerUpdated;
         }
 
         public OverlayLinkContainer(OverlayLinkContainer lc) //copy
         {
             CanDragDrop = false;
-            DropHandler = new TemplateLinkContainerDropHandler();
-
-            Items = new ObservableCollection<IBaseLink>();
-            foreach (IBaseLink link in lc.Items)
+            DropHandler = new TemplateLinkContainerDropHandler()
             {
-                if (link is OverlayLinkModel)
-                {
-                    Items.Add(new OverlayLinkModel(link as OverlayLinkModel));
-                }
-            //    else if (link is TextLinkModel)
-            //    {
-            //        Items.Add(new TextLinkModel(link as TextLinkModel));
-            //    }
-            }
-            Items.CollectionChanged += (a, b) =>
-            {
-                if (Items.Count == 0)
-                    Remove();
+                Container = this
             };
-            ItemSource = lc.ItemSource;
-            Parent = lc;
+
+            Items = new ObservableCollection<OverlayLinkModel>();
+            foreach (OverlayLinkModel link in lc.Items)
+            {
+                Items.Add(new OverlayLinkModel(link as OverlayLinkModel));
+            }
+            Items.CollectionChanged += LinkContainerUpdated;
         }
-        public void AddLink(IBaseLink link)
+
+        public void LinkContainerUpdated(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            // updates parent container data for newly-added items (usually from drag-drops)
+            if (args.Action == NotifyCollectionChangedAction.Add) 
+            {
+                foreach (OverlayLinkModel item in args.NewItems)
+                {
+                    item.Parent = this;
+                    item.ItemSource = Items;
+                }
+            }
+            if (Items.Count == 0)
+                Remove();
+        }
+
+        public void AddLink(OverlayLinkModel link)
         {
             if (link is OverlayLinkModel)
             {
-                Items.Add(new OverlayLinkModel(link as OverlayLinkModel) { Parent = this, ItemSource = Items });
+                Items.Add(new OverlayLinkModel(link as OverlayLinkModel));
             }
-           // if (link is TextLinkModel)
-           // {
-           //     Items.Add(new TextLinkModel(link as TextLinkModel) { Parent = this, ItemSource = Items });
-           // }
         }
     }
 }

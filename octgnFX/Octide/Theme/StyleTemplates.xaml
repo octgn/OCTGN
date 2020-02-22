@@ -374,9 +374,19 @@
 
     <Style x:Key="ProxyTemplateAddButton" TargetType="{x:Type Button}" >
         <Setter Property="Padding" Value="2,0,2,0" />
-        <Setter Property="Margin" Value="3,0,3,0" />
-        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontSize" Value="9" />
         <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderBrush" Value="Black" />
+    </Style>
+
+    <Style x:Key="ProxyTemplatePropertyDropDown" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}" >
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="MinWidth" Value="70"/>
+        <Setter Property="DisplayMemberPath" Value="Name"/>
+        <Setter Property="FontSize" Value="9"/>
     </Style>
 </ResourceDictionary>

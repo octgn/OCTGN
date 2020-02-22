@@ -129,7 +129,7 @@ namespace Octide.ViewModel
 
             BaseImage = new BitmapImage(new Uri(Path.Combine(SelectedTemplate._def.rootPath, SelectedTemplate._def.src)));
             ActiveOverlayLayers = new ObservableCollection<ProxyOverlayDefinitionItemModel>(
-                SelectedTemplate._def.GetOverLayBlocks(properties).Select(
+                SelectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
                     x => OverlayBlocks.First(y => y.Name == x.Block)));
             ActiveTextLayers = new ObservableCollection<ProxyTextLinkItemModel>(
                 SelectedTemplate._def.GetTextBlocks(properties).Select(

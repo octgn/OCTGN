@@ -26,18 +26,44 @@
             <Setter Property="FontSize" Value="12" />
         </Style>
         <ControlTemplate x:Key="MatchHeader" TargetType="ContentControl">
-            <Border Padding="3" Margin="1" Background="{StaticResource BlendBrushBrown}" >
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushBrown}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="MATCH" FontWeight="Bold" />
                     <TextBlock Margin="1,0,1,0" Text="property:" />
-                    <ComboBox Margin="1,0,1,0" IsReadOnly="True" Padding="1" FontSize="11" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox Margin="1,0,1,0" Style="{StaticResource ProxyTemplatePropertyDropDown}" ItemsSource="{Binding CustomProperties}" SelectedItem="{Binding Property, Mode=TwoWay}" />
                     <TextBlock Margin="1,0,1,0" Text="value:" />
                     <TextBox Margin="1,0,1,0" Text="{Binding Value}" MinWidth="100" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
+        <ControlTemplate x:Key="ArtCropHeader" TargetType="ContentControl">
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushGray}" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.RowSpan="2" VerticalAlignment="Center"  Margin="1,0,1,0" Text="ART CROP" FontWeight="Bold" />
+                    <TextBlock Grid.Column="1" Margin="1,0,1,0" HorizontalAlignment="Right" Text="X:"/>
+                    <TextBlock Grid.Column="3" Margin="1,0,1,0" HorizontalAlignment="Right" Text="width:"/>
+                    <TextBlock Grid.Column="1" Grid.Row="1" Margin="1,0,1,0" HorizontalAlignment="Right" Text="Y:"/>
+                    <TextBlock Grid.Column="3" Grid.Row="1" Margin="1,0,1,0" HorizontalAlignment="Right" Text="height:"/>
+                    <TextBox Grid.Column="2" Margin="1,0,1,0" Text="{Binding X}" />
+                    <TextBox Grid.Column="4" Margin="1,0,1,0" Text="{Binding Width}"  />
+                    <TextBox Grid.Column="2" Grid.Row="1" Margin="1,0,1,0" Text="{Binding Y}"  />
+                    <TextBox Grid.Column="4" Grid.Row="1" Margin="1,0,1,0" Text="{Binding Height}"  />
+                </Grid>
+            </Border>
+        </ControlTemplate>
         <ControlTemplate x:Key="TextLinkHeader" TargetType="ContentControl">
-            <Border Padding="3" Margin="1" Background="{StaticResource BlendBrushOrange}" >
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushOrange}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="LINK" FontWeight="Bold" />
                     <Border Margin="1,0,1,0" BorderThickness="1" BorderBrush="Black" >
@@ -51,15 +77,15 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="TextLinkPropertyHeader" TargetType="ContentControl">
-            <Border Padding="3" Margin="1" Background="{StaticResource BlendBrushYellow}" >
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushYellow}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="PROPERTY" FontWeight="Bold" />
-                    <ComboBox Margin="1,0,1,0" IsReadOnly="True" Padding="1" FontSize="11" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding ActiveProperty, Mode=TwoWay}" />
+                    <ComboBox Margin="1,0,1,0" Style="{StaticResource ProxyTemplatePropertyDropDown}" ItemsSource="{Binding CustomProperties}" SelectedItem="{Binding ActiveProperty, Mode=TwoWay}" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="IfBlockHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushPurple}" >
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushPurple}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="CONDITIONAL" FontWeight="Bold" />
                     <Button Margin="1,0,1,0" Content="+ElseIf" Style="{StaticResource ProxyTemplateAddButton}" Background="{StaticResource BlendBrushRed}" Command="{Binding AddElseIfCommand}" />
@@ -68,10 +94,10 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="IfCaseHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushPink}" >
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushPink}" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="IF" FontWeight="Bold" />
-                    <ComboBox Margin="1,0,1,0" IsReadOnly="True" Padding="1" FontSize="11" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox Margin="1,0,1,0" Style="{StaticResource ProxyTemplatePropertyDropDown}" ItemsSource="{Binding CustomProperties}" SelectedItem="{Binding Property, Mode=TwoWay}" />
                     <TextBlock Margin="1,0,1,0" Text="value:" />
                     <TextBox Margin="1,0,1,0" Text="{Binding Value}" MinWidth="50" />
                     <TextBlock Margin="1,0,1,0" Text="exact:" />
@@ -80,10 +106,10 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="ElseIfCaseHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushRed}">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushRed}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="ELSE IF" FontWeight="Bold" />
-                    <ComboBox Margin="1,0,1,0" IsReadOnly="True" Padding="1" FontSize="11" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox Margin="1,0,1,0" Style="{StaticResource ProxyTemplatePropertyDropDown}" ItemsSource="{Binding CustomProperties}" SelectedItem="{Binding Property, Mode=TwoWay}" />
                     <TextBlock Margin="1,0,1,0" Text="value:" />
                     <TextBox Margin="1,0,1,0" Text="{Binding Value}" MinWidth="50" />
                     <TextBlock Margin="1,0,1,0" Text="exact:" />
@@ -92,25 +118,25 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="ElseCaseHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushBrown}">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBrown}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="ELSE" FontWeight="Bold" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="SwitchBlockHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushBlue}">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBlue}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="SWITCH" FontWeight="Bold" />
                     <TextBlock Margin="1,0,1,0" Text="property:" />
-                    <ComboBox Margin="1,0,1,0" IsReadOnly="True" Padding="1" FontSize="11" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedItem="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox Margin="1,0,1,0" Style="{StaticResource ProxyTemplatePropertyDropDown}" ItemsSource="{Binding CustomProperties}" SelectedItem="{Binding Property, Mode=TwoWay}" />
                     <Button Margin="1,0,1,0" Content="+Case" Style="{StaticResource ProxyTemplateAddButton}" Background="{StaticResource BlendBrushGreen}" Command="{Binding AddCaseCommand}" />
                     <Button Margin="1,0,1,0" Content="+Default" Style="{StaticResource ProxyTemplateAddButton}" Background="{StaticResource  BlendBrushBrown}" Visibility="{Binding CanAddDefault}" Command="{Binding AddDefaultCommand}" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="SwitchCaseHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushGreen}">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushGreen}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="1,0,1,0" Text="CASE" FontWeight="Bold" />
                     <TextBlock Margin="1,0,1,0"  Text="value:" />
@@ -123,7 +149,7 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="DefaultCaseHeader" TargetType="ContentControl">
-            <Border Margin="1" Padding="3" Background="{StaticResource BlendBrushBrown}">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBrown}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="DEFAULT" FontWeight="Bold" Margin="1,0,1,0"/>
                 </StackPanel>
@@ -131,6 +157,15 @@
         </ControlTemplate>
         <DataTemplate DataType="{x:Type item:MatchModel}" >
             <ContentControl Template="{StaticResource MatchHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type item:ArtOverlayBlockModel}" >
+            <ContentControl Template="{StaticResource ArtCropHeader}" >
                 <ContentControl.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
@@ -152,7 +187,7 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type item:OverlayLinkModel}">
             <Border BorderBrush="Black" Margin="1" BorderThickness="2">
-                <Image Source="{Binding LinkedBlock.Asset.FullPath, TargetNullValue={x:Null}}" MaxHeight="50" Stretch="Uniform"/>
+                <Image Source="{Binding LinkedBlock.Asset.FullPath, TargetNullValue={x:Null}}" MaxHeight="40" Stretch="Uniform"/>
                 <Border.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
@@ -249,6 +284,9 @@
                 <DataTemplate DataType="{x:Type item:SwitchCaseModel}">
                     <ContentControl Template="{StaticResource SwitchCaseHeader}" />
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type item:ArtOverlayBlockModel}">
+                    <ContentControl Template="{StaticResource ArtCropHeader}" />
+                </DataTemplate>
             </DataTemplate.Resources>
             <ContentControl Content="{Binding }"/>
         </DataTemplate>
@@ -307,7 +345,7 @@
                 </TreeView>
             </Grid>
         </TabItem>
-        <TabItem Header="Text Blocks">
+        <TabItem Header="Text Links">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

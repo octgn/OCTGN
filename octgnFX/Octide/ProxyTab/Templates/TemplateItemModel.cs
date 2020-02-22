@@ -10,6 +10,7 @@ using Octgn.ProxyGenerator.Definitions;
 using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
@@ -46,17 +47,17 @@ namespace Octide.ProxyTab.TemplateItemModel
             Matches = new ObservableCollection<MatchModel>();
             Matches.CollectionChanged += (a, b) =>
             {
-                _def.Matches = Matches.Select(x => x._match).ToList();
+                BuildMatchDef(b);
             };
             OverlayContainer = new BlockContainer();
             OverlayContainer.OnContainerChanged += (a, b) =>
             {
-                _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef();
+                _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef(b);
             };
             TextBlockContainer = new BlockContainer();
             TextBlockContainer.OnContainerChanged += (a, b) =>
             {
-                _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef();
+                _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef(b);
             };
             Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
             AddMatchCommand = new RelayCommand(AddMatch);
@@ -80,17 +81,17 @@ namespace Octide.ProxyTab.TemplateItemModel
             }
             Matches.CollectionChanged += (a, b) =>
             {
-                _def.Matches = Matches.Select(x => x._match).ToList();
+                BuildMatchDef(b);
             };
             OverlayContainer = new BlockContainer(t.OverlayBlocks);
             OverlayContainer.OnContainerChanged += (a, b) =>
             {
-                _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef();
+                _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef(b);
             };
             TextBlockContainer = new BlockContainer(t.TextBlocks);
             TextBlockContainer.OnContainerChanged += (a, b) =>
             {
-                _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef();
+                _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef(b);
             };
             AddMatchCommand = new RelayCommand(AddMatch);
             AddOverlayConditionalCommand = new RelayCommand(AddOverlayConditional);
@@ -119,25 +120,25 @@ namespace Octide.ProxyTab.TemplateItemModel
             Matches = new ObservableCollection<MatchModel>();
             Matches.CollectionChanged += (a, b) =>
             {
-                _def.Matches = Matches.Select(x => x._match).ToList();
+                BuildMatchDef(b);
             };
             foreach (var match in p.Matches)
             {
-                Matches.Add(new MatchModel(match) { ItemSource = Matches, Parent = this });
+                Matches.Add(new MatchModel(match));
             }
 
             OverlayContainer = new BlockContainer(p.OverlayContainer);
             OverlayContainer.OnContainerChanged += (a, b) =>
             {
-                _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef();
+                _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef(b);
             };
-            _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef();
+            _def.OverlayBlocks = OverlayContainer.BuildTemplateBlockDef(null);
             TextBlockContainer = new BlockContainer(p.TextBlockContainer);
             TextBlockContainer.OnContainerChanged += (a, b) =>
             {
-                _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef();
+                _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef(b);
             };
-            _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef();
+            _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef(null);
 
             AddMatchCommand = new RelayCommand(AddMatch);
             AddOverlayConditionalCommand = new RelayCommand(AddOverlayConditional);
@@ -149,35 +150,45 @@ namespace Octide.ProxyTab.TemplateItemModel
             TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false, Container = TextBlockContainer };
             DragHandler = new TemplateMainDragHandler();
 
-            Parent = p.Parent;
-            ItemSource = p.ItemSource;
-
         }
+        public void BuildMatchDef(NotifyCollectionChangedEventArgs args)
+        {
+            if (args?.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (MatchModel x in args.NewItems)
+                {
+                    x.ItemSource = Matches;
+                    x.Parent = this;
+                }
+            }
+            _def.Matches = Matches.Select(x => x._match).ToList();
+        }
+
 
         public void AddMatch()
         {
-            var ret = new MatchModel() { ItemSource = Matches, Parent = this };
+            var ret = new MatchModel();
             Matches.Add(ret);
         }
 
         public void AddOverlayConditional()
         {
-            var ret = new ConditionalBlockModel() { ItemSource = OverlayContainer.Items, Parent = this };
+            var ret = new ConditionalBlockModel();
             OverlayContainer.Items.Add(ret);
         }
         public void AddOverlaySwitch()
         {
-            var ret = new SwitchBlockModel() { ItemSource = OverlayContainer.Items, Parent = this };
+            var ret = new SwitchBlockModel();
             OverlayContainer.Items.Add(ret);
         }
         public void AddTextConditional()
         {
-            var ret = new ConditionalBlockModel() { ItemSource = TextBlockContainer.Items, Parent = this };
+            var ret = new ConditionalBlockModel();
             TextBlockContainer.Items.Add(ret);
         }
         public void AddTextSwitch()
         {
-            var ret = new SwitchBlockModel() { ItemSource = TextBlockContainer.Items, Parent = this };
+            var ret = new SwitchBlockModel();
             TextBlockContainer.Items.Add(ret);
         }
 
@@ -236,7 +247,7 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new TemplateModel() { ItemSource = ItemSource, Parent = Parent });
+            ItemSource.Insert(index, new TemplateModel());
         }
     }
 

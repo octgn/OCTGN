@@ -17,68 +17,9 @@ using Octide.Messages;
 
 namespace Octide.ProxyTab.TemplateItemModel
 {
-    public class OverlayLinkContainer : IBaseBlock
+
+    public class OverlayLinkModel : IBaseBlock
     {
-        public TemplateLinkContainerDropHandler DropHandler { get; set; }
-        public ObservableCollection<OverlayLinkModel> Items { get; set; }
-
-        public OverlayLinkContainer()
-        {
-            CanDragDrop = false;
-            DropHandler = new TemplateLinkContainerDropHandler()
-            {
-                Container = this
-            };
-            Items = new ObservableCollection<OverlayLinkModel>();
-            Items.CollectionChanged += LinkContainerUpdated;
-        }
-
-        public OverlayLinkContainer(OverlayLinkContainer lc) //copy
-        {
-            CanDragDrop = false;
-            DropHandler = new TemplateLinkContainerDropHandler()
-            {
-                Container = this
-            };
-
-            Items = new ObservableCollection<OverlayLinkModel>();
-            foreach (OverlayLinkModel link in lc.Items)
-            {
-                Items.Add(new OverlayLinkModel(link as OverlayLinkModel));
-            }
-            Items.CollectionChanged += LinkContainerUpdated;
-            ItemSource = lc.ItemSource;
-            Parent = lc;
-        }
-
-        public void LinkContainerUpdated(object sender, NotifyCollectionChangedEventArgs args)
-        {
-            // updates parent container data for newly-added items (usually from drag-drops)
-            if (args.Action == NotifyCollectionChangedAction.Add) 
-            {
-                foreach (OverlayLinkModel item in args.NewItems)
-                {
-                    item.Parent = this;
-                    item.ItemSource = Items;
-                }
-            }
-            if (Items.Count == 0)
-                Remove();
-        }
-
-        public void AddLink(OverlayLinkModel link)
-        {
-            if (link is OverlayLinkModel)
-            {
-                Items.Add(new OverlayLinkModel(link as OverlayLinkModel) { Parent = this, ItemSource = Items });
-            }
-        }
-    }
-
-
-    public class OverlayLinkModel : IdeListBoxItemBase
-    {
-        public LinkDefinition.LinkWrapper _wrapper;
         public new ObservableCollection<OverlayLinkModel> ItemSource { get; set; }
         public OverlayLinkModel() //new
         {
@@ -103,8 +44,6 @@ namespace Octide.ProxyTab.TemplateItemModel
                 NestedProperties = new List<Property>()
             };
             _wrapper = new LinkDefinition.LinkWrapper() { Link = _linkDefinition };
-            Parent = link.Parent;
-            ItemSource = link.ItemSource;
 
         }
         public ProxyOverlayDefinitionItemModel LinkedBlock
@@ -142,7 +81,7 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new OverlayLinkModel() { ItemSource = ItemSource, Parent = Parent, });
+            ItemSource.Insert(index, new OverlayLinkModel());
         }
     }
 
@@ -161,7 +100,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<TextLinkPropertyModel>();
             Items.CollectionChanged += (a, b) =>
             {
-                _wrapper.Link.NestedProperties = Items.Select(x => x._property).ToList();
+                BuildPropertyDefinition(b);
             };
             AddPropertyCommand = new RelayCommand(AddProperty);
         }
@@ -172,11 +111,11 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<TextLinkPropertyModel>();
             foreach (var property in lw.Link.NestedProperties)
             {
-                Items.Add(new TextLinkPropertyModel(property) { Parent = this, ItemSource = Items });
+                Items.Add(new TextLinkPropertyModel(property) { ItemSource = Items, Parent = this });
             }
             Items.CollectionChanged += (a, b) =>
             {
-                _wrapper.Link.NestedProperties = Items.Select(x => x._property).ToList();
+                BuildPropertyDefinition(b);
             };
             AddPropertyCommand = new RelayCommand(AddProperty);
         }
@@ -195,18 +134,27 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<TextLinkPropertyModel>();
             Items.CollectionChanged += (a, b) =>
             {
-                _wrapper.Link.NestedProperties = Items.Select(x => x._property).ToList();
-                RaisePropertyChanged("Items");
+                BuildPropertyDefinition(b);
             };
             foreach (var property in link.Items)
             {
-                Items.Add(new TextLinkPropertyModel(property) { Parent = this, ItemSource = Items });
+                Items.Add(new TextLinkPropertyModel(property));
             }
-            Parent = link.Parent;
-            ItemSource = link.ItemSource;
             AddPropertyCommand = new RelayCommand(AddProperty);
-
         }
+        public void BuildPropertyDefinition(NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (TextLinkPropertyModel x in args.NewItems)
+                {
+                    x.ItemSource = Items;
+                    x.Parent = this;
+                }
+            }
+            _wrapper.Link.NestedProperties = Items.Select(x => x._property).ToList();
+        }
+
         public override object Clone()
         {
             return new TextLinkModel(this);
@@ -223,12 +171,12 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new TextLinkModel() { ItemSource = ItemSource, Parent = Parent, });
+            ItemSource.Insert(index, new TextLinkModel());
         }
 
         public void AddProperty()
         {
-            Items.Add(new TextLinkPropertyModel() { Parent = this, ItemSource = Items });
+            Items.Add(new TextLinkPropertyModel());
         }
         public ProxyTextDefinitionItemModel LinkedBlock
         {
@@ -338,7 +286,12 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new TextLinkPropertyModel() { ItemSource = ItemSource, Parent = Parent });
+            ItemSource.Insert(index, new TextLinkPropertyModel());
+        }
+        public override void Remove()
+        {
+            if (!CanRemove) return;
+            ItemSource.Remove(this);
         }
     }
 }

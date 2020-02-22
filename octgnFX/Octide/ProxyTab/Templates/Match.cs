@@ -55,8 +55,6 @@ namespace Octide.ProxyTab.TemplateItemModel
                 Format = property.Format
             };
             Property = property.Property;
-            Parent = property.Parent;
-            ItemSource = property.ItemSource;
             RemoveCommand = new RelayCommand(Remove);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
 
@@ -78,7 +76,7 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new MatchModel() { Parent = Parent, ItemSource = ItemSource });
+            ItemSource.Insert(index, new MatchModel());
         }
         public override void Remove()
         {

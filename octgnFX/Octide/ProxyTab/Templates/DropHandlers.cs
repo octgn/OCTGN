@@ -14,8 +14,7 @@ namespace Octide.ProxyTab.TemplateItemModel
     {
         public bool CanStartDrag(IDragInfo dragInfo)
         {
-            IdeListBoxItemBase item = dragInfo.SourceItem as IdeListBoxItemBase;
-            if (item == null)
+            if (!(dragInfo.SourceItem is IdeListBoxItemBase item))
             {
                 return false;
             }
@@ -59,8 +58,7 @@ namespace Octide.ProxyTab.TemplateItemModel
 
         public void DragOver(IDropInfo dropInfo)
         {
-            var item = dropInfo.Data as IdeListBoxItemBase;
-            if (item == null)
+            if (!(dropInfo.Data is IdeListBoxItemBase item))
             {
                 return;
             }
@@ -68,7 +66,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             {
                 return;
             }
-            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && (dropInfo.TargetItem is OverlayLinkModel || dropInfo.TargetItem is TextLinkPropertyModel))
+            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && (dropInfo.TargetItem is OverlayLinkModel || dropInfo.TargetItem is TextLinkPropertyModel || dropInfo.TargetItem is ArtOverlayBlockModel))
             {
                 //can't nest within these types
                 return;
@@ -174,21 +172,15 @@ namespace Octide.ProxyTab.TemplateItemModel
                     };
                     if (dropInfo.TargetItem is IBaseConditionalCase conditionalCase)
                     {
-                        link.Parent = conditionalCase.BlockContainer;
-                        link.ItemSource = conditionalCase.BlockContainer.Items;
                         conditionalCase.BlockContainer.Items.Add(link);
                     }
                     else if (dropInfo.TargetItem is IBaseBlock block)
                     {
                         int insertIndex = dropInfo.UnfilteredInsertIndex;
-                        link.Parent = block.Parent;
-                        link.ItemSource = block.ItemSource;
                         (block.Parent as BlockContainer).Items.Insert(insertIndex, link);
                     }
                     else if (dropInfo.TargetItem == null)
                     {
-                        link.Parent = Container;
-                        link.ItemSource = Container.Items;
                         Container.Items.Add(link);
                     }
                 }
@@ -235,11 +227,23 @@ namespace Octide.ProxyTab.TemplateItemModel
         public OverlayLinkContainer Container { get; set; }
         public void DragOver(IDropInfo dropInfo)
         {
-            if (dropInfo.Data is ProxyOverlayDefinitionItemModel)
+            if (dropInfo.Data is ProxyOverlayDefinitionItemModel item)
             {
-                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-                dropInfo.Effects = System.Windows.DragDropEffects.Copy;
+                if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter))
+                {
+                    dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+                 //   dropInfo.EffectText = String.Format("Replace {0}", ((dropInfo.TargetItem as OverlayLinkModel).LinkedBlock.Name));
+                    dropInfo.Effects = System.Windows.DragDropEffects.Copy;
+                }
+                else
+                {
+                    dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+                 //   dropInfo.EffectText = String.Format("Insert {0}", item.Name);
+                    dropInfo.Effects = System.Windows.DragDropEffects.Copy;
+                }
+
             }
+
             else if (dropInfo.TargetCollection == dropInfo.DragInfo.SourceCollection && dropInfo.TargetCollection.TryGetList().Count == 1)
             {
                 //stops the linkcontainer from collapsing
@@ -254,14 +258,21 @@ namespace Octide.ProxyTab.TemplateItemModel
 
         public void Drop(IDropInfo dropInfo)
         {
-
             if (dropInfo.Data is ProxyOverlayDefinitionItemModel dropItem)
             {
-                var item = new OverlayLinkModel()
+                if (dropInfo.TargetItem is OverlayLinkModel overlayLink && dropInfo.DropTargetAdorner == DropTargetAdorners.Highlight)
                 {
-                    LinkedBlock = dropItem
-                };
-                Container.Items.Insert(dropInfo.UnfilteredInsertIndex, item);
+                    // change the link definition of an existing text link item
+                    overlayLink.LinkedBlock = dropItem;
+                }
+                else
+                {
+                    var item = new OverlayLinkModel()
+                    {
+                        LinkedBlock = dropItem
+                    };
+                    Container.Items.Insert(dropInfo.UnfilteredInsertIndex, item);
+                }
             }
             else if (dropInfo.Data is OverlayLinkModel)
             {

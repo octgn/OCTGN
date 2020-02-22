@@ -53,6 +53,11 @@
         <GradientStop Color="#777777" Offset="1"/>
         <GradientStop Color="#D49968" Offset="0"/>
     </LinearGradientBrush>
+    
+    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushGray">
+        <GradientStop Color="#777777" Offset="1"/>
+        <GradientStop Color="#CCCCCC" Offset="0"/>
+    </LinearGradientBrush>
 
     <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" x:Key="BlendBrushBrown">
         <GradientStop Color="#777777" Offset="1"/>

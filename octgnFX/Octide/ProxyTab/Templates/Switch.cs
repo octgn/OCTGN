@@ -12,6 +12,7 @@ using Octide.Messages;
 using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Xml;
@@ -44,7 +45,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<IBaseConditionalCase>();
             Items.CollectionChanged += (a, b) =>
             {
-                BuildCaseDefinitions();
+                BuildSwitchDefinitions(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             AddCaseCommand = new RelayCommand(AddCase);
@@ -60,15 +61,15 @@ namespace Octide.ProxyTab.TemplateItemModel
             {
                 foreach (var switchcase in lw.Conditional.switchNodeList)
                 {
-                    Items.Add(new SwitchCaseModel(switchcase) { Parent = this, ItemSource = Items });
+                    Items.Add(new SwitchCaseModel(switchcase) { ItemSource = Items, Parent = this });
                 }
             }
             Items.CollectionChanged += (a, b) =>
             {
-                BuildCaseDefinitions();
+                BuildSwitchDefinitions(b);
             };
             if (lw.Conditional.elseNode != null)
-                Items.Add(new DefaultCaseModel(lw.Conditional.elseNode) { Parent = this, ItemSource = Items });
+                Items.Add(new DefaultCaseModel(lw.Conditional.elseNode) { ItemSource = Items, Parent = this });
 
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             AddCaseCommand = new RelayCommand(AddCase);
@@ -87,25 +88,30 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<IBaseConditionalCase>();
             Items.CollectionChanged += (a, b) =>
             {
-                BuildCaseDefinitions();
+                BuildSwitchDefinitions(b);
             };
             foreach (IBaseConditionalCase caseItem in switchItem.Items)
             {
-                if (caseItem is SwitchCaseModel)
-                    Items.Add(new SwitchCaseModel(caseItem as SwitchCaseModel) { Parent = this, ItemSource = Items });
-                if (caseItem is DefaultCaseModel)
-                    Items.Add(new DefaultCaseModel(caseItem as DefaultCaseModel) { Parent = this, ItemSource = Items });
+                if (caseItem is SwitchCaseModel switchCase)
+                    Items.Add(new SwitchCaseModel(switchCase));
+                if (caseItem is DefaultCaseModel defaultCase)
+                    Items.Add(new DefaultCaseModel(defaultCase));
             }
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             AddCaseCommand = new RelayCommand(AddCase);
             AddDefaultCommand = new RelayCommand(AddDefault);
-
-            Parent = switchItem.Parent;
-            ItemSource = switchItem.ItemSource;
         }
         
-        public void BuildCaseDefinitions()
+        public void BuildSwitchDefinitions(NotifyCollectionChangedEventArgs args)
         {
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (IBaseConditionalCase x in args.NewItems)
+                {
+                    x.ItemSource = Items;
+                    x.Parent = this;
+                }
+            }
             _wrapper.Conditional.switchNodeList = Items.Where(x => x is SwitchCaseModel).Select(x => x._case).ToList();
             _wrapper.Conditional.elseNode = Items.FirstOrDefault(x => x is DefaultCaseModel)?._case;
         }
@@ -114,16 +120,16 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (DefaultCase == null)
 
-                Items.Add(new SwitchCaseModel() { Parent = this, ItemSource = Items });
+                Items.Add(new SwitchCaseModel());
             else
             {
-                Items.Insert(Items.IndexOf(DefaultCase), new SwitchCaseModel() { Parent = this, ItemSource = Items });
+                Items.Insert(Items.IndexOf(DefaultCase), new SwitchCaseModel());
             }
         }
         public void AddDefault()
         {
             if (DefaultCase != null) return;
-            Items.Add(new DefaultCaseModel() { Parent = this, ItemSource = Items });
+            Items.Add(new DefaultCaseModel());
             RaisePropertyChanged("CanAddDefault");
         }
 
@@ -158,7 +164,7 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SwitchBlockModel() { ItemSource = ItemSource, Parent = Parent });
+            ItemSource.Insert(index, new SwitchBlockModel());
         }
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
         {
@@ -191,7 +197,6 @@ namespace Octide.ProxyTab.TemplateItemModel
 
     public class SwitchCaseModel : IBaseConditionalCase
     {
-        public new ObservableCollection<IBaseConditionalCase> ItemSource { get; set; }
         public SwitchCaseModel() //new
         {
             _case = new CaseDefinition
@@ -201,7 +206,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
         }
 
@@ -211,7 +216,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
         }
 
@@ -227,11 +232,9 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(switchcase.BlockContainer);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            _case.linkList = BlockContainer.BuildTemplateBlockDef();
-            Parent = switchcase.Parent;
-            ItemSource = switchcase.ItemSource;
+            _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
         }
 
         public override void Remove()
@@ -274,14 +277,13 @@ namespace Octide.ProxyTab.TemplateItemModel
 
     public class DefaultCaseModel : IBaseConditionalCase
     {
-        public new ObservableCollection<IBaseConditionalCase> ItemSource { get; set; }
         public DefaultCaseModel() //new
         {
             _case = new CaseDefinition();
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
         }
@@ -292,7 +294,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
         }
@@ -309,12 +311,10 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(switchcase.BlockContainer);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            _case.linkList = BlockContainer.BuildTemplateBlockDef();
+            _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
             CanDragDrop = false;
-            Parent = switchcase.Parent;
-            ItemSource = switchcase.ItemSource;
         }
 
         public override void Remove()

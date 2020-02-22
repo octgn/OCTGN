@@ -45,7 +45,7 @@
             <StackPanel>
                 <Button Content="New Template" Margin="1" Command="{Binding AddTemplateCommand}" />
             </StackPanel>
-            <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Templates}" SelectedValue="{Binding SelectedTemplate}" >
+            <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Templates}" SelectedValue="{Binding SelectedTemplate, Mode=TwoWay}" >
                 <ListBox.InputBindings>
                     <KeyBinding Key="Delete" Command="{Binding SelectedItem.RemoveCommand}" />
                 </ListBox.InputBindings>
@@ -113,16 +113,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="130"/>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock Text="Text Blocks" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold"/>
-            <ListBox Grid.Row="1" ItemsSource="{Binding TextBlocks}" SelectedValue="{Binding Selection}" Style="{StaticResource IdeListBoxControl}"
+            <ListBox Grid.Row="1" ItemsSource="{Binding TextBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}" Style="{StaticResource IdeListBoxControl}"
                      gong:DragDrop.DragAdornerTemplate="{StaticResource IdeTextItemAdorner}">
             </ListBox>
+            <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+
             <TextBlock Text="Overlay Blocks" Grid.Column="2" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold" />
-            <ListBox Grid.Row="1" Grid.Column="2" Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection}"
+            <ListBox Grid.Row="1" Grid.Column="2" Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
                         
                          gong:DragDrop.DragAdornerTemplate="{StaticResource IdeAssetItemAdorner}">
 

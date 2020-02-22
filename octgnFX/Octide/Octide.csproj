@@ -179,8 +179,12 @@
     <Compile Include="MarkerTab\MarkerTabViewModel.cs" />
     <Compile Include="PreviewTab\ActionItemModel.cs" />
     <Compile Include="PreviewTab\BoardItemViewModel.cs" />
-    <Compile Include="ProxyTab\Templates\Block.cs" />
+    <Compile Include="ProxyTab\Templates\ArtOverlay.cs" />
+    <Compile Include="ProxyTab\Templates\BlockContainer.cs" />
     <Compile Include="ProxyTab\Templates\Conditional.cs" />
+    <Compile Include="ProxyTab\Templates\IBaseBlock.cs" />
+    <Compile Include="ProxyTab\Templates\IBaseConditionalCase.cs" />
+    <Compile Include="ProxyTab\Templates\OverlayLinkContainer.cs" />
     <Compile Include="ProxyTab\Templates\Switch.cs" />
     <Compile Include="ProxyTab\Templates\DropHandlers.cs" />
     <Compile Include="ProxyTab\Templates\Match.cs" />

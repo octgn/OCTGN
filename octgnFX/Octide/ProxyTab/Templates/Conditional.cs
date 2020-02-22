@@ -12,6 +12,7 @@ using Octide.Messages;
 using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -48,9 +49,9 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<IBaseConditionalCase>();
             Items.CollectionChanged += (a, b) =>
             {
-                BuildCaseDefinitions();
+                BuildConditionalDefinitions(b);
             };
-            Items.Add(new IfCaseModel() { Parent = this, ItemSource = Items });
+            Items.Add(new IfCaseModel());
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
         }
@@ -60,19 +61,19 @@ namespace Octide.ProxyTab.TemplateItemModel
             _wrapper = lw;
             Items = new ObservableCollection<IBaseConditionalCase>();
             if (lw.Conditional.ifNode != null)
-                Items.Add(new IfCaseModel(lw.Conditional.ifNode) { Parent = this });
+                Items.Add(new IfCaseModel(lw.Conditional.ifNode) { ItemSource = Items, Parent = this });
             if (lw.Conditional.elseifNodeList != null)
             {
                 foreach (var elseif in lw.Conditional.elseifNodeList)
                 {
-                    Items.Add(new ElseIfCaseModel(elseif) { Parent = this, ItemSource = Items });
+                    Items.Add(new ElseIfCaseModel(elseif) { ItemSource = Items, Parent = this });
                 }
             }
             if (lw.Conditional.elseNode != null)
-                Items.Add(new ElseCaseModel(lw.Conditional.elseNode) { Parent = this, ItemSource = Items });
+                Items.Add(new ElseCaseModel(lw.Conditional.elseNode) { ItemSource = Items, Parent = this });
             Items.CollectionChanged += (a, b) =>
             {
-                BuildCaseDefinitions();
+                BuildConditionalDefinitions(b);
             };
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
@@ -85,25 +86,31 @@ namespace Octide.ProxyTab.TemplateItemModel
             Items = new ObservableCollection<IBaseConditionalCase>();
             Items.CollectionChanged += (a, b) =>
             {
-                BuildCaseDefinitions();
+                BuildConditionalDefinitions(b);
             };
             foreach (IBaseConditionalCase caseItem in conditional.Items)
             {
-                if (caseItem is IfCaseModel)
-                    Items.Add(new IfCaseModel(caseItem as IfCaseModel) { Parent = this, ItemSource = Items });
-                if (caseItem is ElseIfCaseModel)
-                    Items.Add(new ElseIfCaseModel(caseItem as ElseIfCaseModel) { Parent = this, ItemSource = Items });
-                if (caseItem is ElseCaseModel)
-                    Items.Add(new ElseCaseModel(caseItem as ElseCaseModel) { Parent = this, ItemSource = Items });
+                if (caseItem is IfCaseModel ifCase)
+                    Items.Add(new IfCaseModel(ifCase) );
+                if (caseItem is ElseIfCaseModel elseIfCase)
+                    Items.Add(new ElseIfCaseModel(elseIfCase));
+                if (caseItem is ElseCaseModel elseCase)
+                    Items.Add(new ElseCaseModel(elseCase));
             }
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
 
-            Parent = conditional.Parent;
-            ItemSource = conditional.ItemSource;
         }
-        public void BuildCaseDefinitions()
+        public void BuildConditionalDefinitions(NotifyCollectionChangedEventArgs args)
         {
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (IBaseConditionalCase x in args.NewItems)
+                {
+                    x.ItemSource = Items;
+                    x.Parent = this;
+                }
+            }
             _wrapper.Conditional.ifNode = Items.FirstOrDefault(x => x is IfCaseModel)?._case;
             _wrapper.Conditional.elseifNodeList = Items.Where(x => x is ElseIfCaseModel).Select(x => x._case).ToList();
             _wrapper.Conditional.elseNode = Items.FirstOrDefault(x => x is ElseCaseModel)?._case;
@@ -113,16 +120,16 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (ElseCase == null)
 
-                Items.Add(new ElseIfCaseModel() { Parent = this, ItemSource = Items });
+                Items.Add(new ElseIfCaseModel() );
             else
             {
-                Items.Insert(Items.IndexOf(ElseCase), new ElseIfCaseModel() { Parent = this, ItemSource = Items });
+                Items.Insert(Items.IndexOf(ElseCase), new ElseIfCaseModel() );
             }
         }
         public void AddElse()
         {
             if (ElseCase != null) return;
-            Items.Add(new ElseCaseModel() { Parent = this, ItemSource = Items });
+            Items.Add(new ElseCaseModel());
             RaisePropertyChanged("CanAddElse");
         }
 
@@ -157,14 +164,12 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new ConditionalBlockModel() { ItemSource = ItemSource, Parent = Parent });
+            ItemSource.Insert(index, new ConditionalBlockModel() );
         }
     }
 
     public class IfCaseModel : IBaseConditionalCase
     {
-        public new ConditionalBlockModel Parent { get; set; }
-
         public IfCaseModel() //new
         {
             _case = new CaseDefinition()
@@ -175,7 +180,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             CanDragDrop = false;
@@ -190,7 +195,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             CanDragDrop = false;
@@ -209,11 +214,9 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(conditionalCase.BlockContainer);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            _case.linkList = BlockContainer.BuildTemplateBlockDef();
-            Parent = conditionalCase.Parent;
-            ItemSource = conditionalCase.ItemSource;
+            _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             CanDragDrop = false;
             CanRemove = false;
@@ -241,14 +244,13 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new IfCaseModel() { ItemSource = ItemSource, Parent = Parent });
+            ItemSource.Insert(index, new IfCaseModel() );
         }
     }
 
 
     public class ElseIfCaseModel : IBaseConditionalCase
     {
-        public new ObservableCollection<IBaseConditionalCase> ItemSource { get; set; }
         public ElseIfCaseModel() //new
         {
             _case = new CaseDefinition
@@ -259,7 +261,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
@@ -271,7 +273,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
@@ -287,13 +289,11 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(conditionalCase.BlockContainer);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            _case.linkList = BlockContainer.BuildTemplateBlockDef();
+            _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
             Property = conditionalCase.Property;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            Parent = conditionalCase.Parent;
-            ItemSource = conditionalCase.ItemSource;
         }
 
         public override void Remove()
@@ -318,7 +318,7 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new ElseIfCaseModel() { Parent = Parent });
+            ItemSource.Insert(index, new ElseIfCaseModel());
         }
 
     }
@@ -331,7 +331,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
         }
@@ -342,7 +342,7 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
         }
@@ -359,12 +359,10 @@ namespace Octide.ProxyTab.TemplateItemModel
             BlockContainer = new BlockContainer(caseItem.BlockContainer);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
-                _case.linkList = BlockContainer.BuildTemplateBlockDef();
+                _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            _case.linkList = BlockContainer.BuildTemplateBlockDef();
+            _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
             CanDragDrop = false;
-            Parent = caseItem.Parent;
-            ItemSource = caseItem.ItemSource;
         }
         public override void Remove()
         {
@@ -388,7 +386,7 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new ElseCaseModel() { Parent = Parent });
+            ItemSource.Insert(index, new ElseCaseModel());
         }
     }
 }
