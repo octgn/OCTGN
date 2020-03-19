@@ -26,6 +26,7 @@ namespace Octide.ViewModel
     using GongSolutions.Wpf.DragDrop;
     using System.Windows;
     using Octide.ItemModel;
+    using System.Collections.Specialized;
 
     public class PreviewTabViewModel : ViewModelBase
     {
@@ -42,7 +43,7 @@ namespace Octide.ViewModel
         public GroupItemViewModel TableGroup { get; set; }
         public ObservableCollection<IdeListBoxItemBase> Counters { get; set; }
         public ObservableCollection<IdeListBoxItemBase> GlobalCounters { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> CardSizes { get; set; }
+        public ObservableCollection<SizeItemViewModel> CardSizes { get; set; }
         public ObservableCollection<IdeListBoxItemBase> Boards { get; set; }
         public BoardItemViewModel DefaultBoard { get; set; }
         public BoardItemViewModel ActiveBoard { get; set; }
@@ -149,7 +150,7 @@ namespace Octide.ViewModel
             };
             AddGlobalCounterCommand = new RelayCommand(AddGlobalCounter);
 
-            CardSizes = new ObservableCollection<IdeListBoxItemBase>();
+            CardSizes = new ObservableCollection<SizeItemViewModel>();
             foreach (var sizeDef in _game.CardSizes)
             {
                 var size = new SizeItemViewModel(sizeDef.Value) { ItemSource = CardSizes };
@@ -160,13 +161,22 @@ namespace Octide.ViewModel
                 }
                 CardSizes.Add(size);
             }
-            CardSizes.CollectionChanged += (a, b) =>
+            CardSizes.CollectionChanged += (sender, args) =>
             {
+
+                if (args.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (SizeItemViewModel x in args.NewItems)
+                    {
+                        x.ItemSource = CardSizes;
+                        x.Parent = this;
+                    }
+                }
                 ViewModelLocator.GameLoader.Game.CardSizes = CardSizes.ToDictionary(
                                                             x => x.IsDefault ? "" : (x as SizeItemViewModel).Name,
                                                             y => (y as SizeItemViewModel)._size
                                                             );
-                Messenger.Default.Send(new CardSizeChangedMesssage(b));
+                Messenger.Default.Send(new CardSizeChangedMesssage(args));
             };
             AddSizeCommand = new RelayCommand(AddSize);
 

@@ -5,6 +5,7 @@
 using GongSolutions.Wpf.DragDrop;
 using GongSolutions.Wpf.DragDrop.Utilities;
 using Octide.ItemModel;
+using Octide.SetTab.PackageItemModel;
 using System;
 using System.Collections.ObjectModel;
 
@@ -289,11 +290,11 @@ namespace Octide.ProxyTab.TemplateItemModel
             {
                 dropInfo.Effects = System.Windows.DragDropEffects.None;
             }
-            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackPropertyItemModel)
+            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PropertyModel)
             {
                 dropInfo.Effects = System.Windows.DragDropEffects.None;
             }
-            else if (dropInfo.DragInfo.SourceItem is PackPropertyItemModel && dropInfo.DragInfo.SourceCollection.TryGetList().Count <= 1 && !dropInfo.KeyStates.HasFlag(System.Windows.DragDropKeyStates.ControlKey))
+            else if (dropInfo.DragInfo.SourceItem is PropertyModel && dropInfo.DragInfo.SourceCollection.TryGetList().Count <= 1 && !dropInfo.KeyStates.HasFlag(System.Windows.DragDropKeyStates.ControlKey))
             {
                 dropInfo.Effects = System.Windows.DragDropEffects.None;
             }

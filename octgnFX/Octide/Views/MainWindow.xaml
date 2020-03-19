@@ -57,7 +57,7 @@
             <TabItem Header="Symbols">
                 <views:SymbolTabView/>
             </TabItem>
-            <TabItem Header="Proxies" IsSelected="True">
+            <TabItem Header="Proxies">
                 <views:ProxyTabView/>
             </TabItem>
             <TabItem Header="Sets">

@@ -29,6 +29,8 @@ namespace Octide.ViewModel
         public ObservableCollection<PropertyItemViewModel> Items { get; private set; }
 
         public PropertyItemViewModel NameProperty;
+        public PropertyItemViewModel IdProperty;
+        public PropertyItemViewModel AlternateProperty;
 
         public PropertyItemViewModel SizeProperty;
         public PropertyItemViewModel SizeNameProperty;
@@ -49,14 +51,26 @@ namespace Octide.ViewModel
                         ItemSource = Items,
                     });
             }
-            Items.CollectionChanged += (a, b) =>
+            Items.CollectionChanged += (sender, args) =>
             {
+                if (args.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (PropertyItemViewModel x in args.NewItems)
+                    {
+                        x.ItemSource = Items;
+                        x.Parent = this;
+                    }
+                }
                 ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => x._property).ToList();
-                Messenger.Default.Send(new CustomPropertyChangedMessage(b)) ;
+                Messenger.Default.Send(new CustomPropertyChangedMessage(args)) ;
             };
             AddCommand = new RelayCommand(AddItem);
             NameProperty = new PropertyItemViewModel();
             NameProperty._property.Name = "Name";
+            IdProperty = new PropertyItemViewModel();
+            IdProperty._property.Name = "Id";
+            AlternateProperty = new PropertyItemViewModel();
+            AlternateProperty._property.Name = "Alternate";
             SizeProperty = new PropertyItemViewModel();
             SizeProperty._property.Name = "CardSize";
             //Proxy Properties
@@ -83,7 +97,7 @@ namespace Octide.ViewModel
 
         public void AddItem()
         {
-            var ret = new PropertyItemViewModel() { ItemSource = Items, Parent = this, Name = "Property" };
+            var ret = new PropertyItemViewModel() { Name = "Property" };
             Items.Add(ret);
             SelectedItem = ret;
         }

@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
 using Octide.Messages;
 using Octide.ViewModel;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -14,6 +15,7 @@ namespace Octide.ItemModel
     {
         public CardSize _size;
 
+        public new ObservableCollection<SizeItemViewModel> ItemSource { get; set; }
         public SizeItemViewModel() // new item
         {
             _size = new CardSize
@@ -38,7 +40,7 @@ namespace Octide.ItemModel
         {
             _size = new CardSize
             {
-                Name = Utils.GetUniqueName(s.Name, s.ItemSource.Select(x => (x as SizeItemViewModel).Name)),
+                Name = Utils.GetUniqueName(s.Name, s.ItemSource.Select(x => x.Name)),
                 Front = s.Front.FullPath,
                 Height = s.Height,
                 Width = s.Width,
@@ -48,8 +50,6 @@ namespace Octide.ItemModel
                 BackWidth = s.BackWidth,
                 BackCornerRadius = s.BackCornerRadius
             };
-            ItemSource = s.ItemSource;
-            Parent = s.Parent;
         }
 
         public override object Clone()
@@ -68,7 +68,7 @@ namespace Octide.ItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SizeItemViewModel() { Parent = Parent, ItemSource = ItemSource, Name = "Size"});
+            ItemSource.Insert(index, new SizeItemViewModel() { Name = "Size"});
         }
 
         public override void Remove()
@@ -87,7 +87,7 @@ namespace Octide.ItemModel
             {
                 if (_size.Name == value) return;
                 if (string.IsNullOrEmpty(value)) return;
-                _size.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as SizeItemViewModel).Name));
+                _size.Name = Utils.GetUniqueName(value, ItemSource.Select(x => x.Name));
                 RaisePropertyChanged("Name");
                 //has to update the card data when the size name changes
                 Messenger.Default.Send(new CardSizeChangedMesssage() { Size = this, Action = PropertyChangedMessageAction.Modify });

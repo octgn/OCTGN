@@ -28,6 +28,7 @@ using Octide.ItemModel;
 using Octide.ProxyTab.TemplateItemModel;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using System.Collections.Specialized;
 
 namespace Octide.ViewModel
 {
@@ -61,9 +62,22 @@ namespace Octide.ViewModel
                 Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
 
-            Templates = new ObservableCollection<TemplateModel>(_proxydef.TemplateSelector.GetTemplates().Select(x => new TemplateModel(x)));
-            Templates.CollectionChanged += (a, b) =>
+            Templates = new ObservableCollection<TemplateModel>();
+            foreach (var template in _proxydef.TemplateSelector.GetTemplates())
             {
+                Templates.Add(new TemplateModel(template) { ItemSource = Templates, Parent = this });
+            }
+
+            Templates.CollectionChanged += (sender, args) =>
+            {
+                if (args.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (TemplateModel x in args.NewItems)
+                    {
+                        x.ItemSource = Templates;
+                        x.Parent = this;
+                    }
+                }
                 _proxydef.TemplateSelector.ClearTemplates();
                 foreach (var x in Templates)
                 {
@@ -71,9 +85,21 @@ namespace Octide.ViewModel
                 }
             };
 
-            TextBlocks = new ObservableCollection<ProxyTextDefinitionItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "text").Select(x => new ProxyTextDefinitionItemModel(x)));
-            TextBlocks.CollectionChanged += (a, b) =>
+            TextBlocks = new ObservableCollection<ProxyTextDefinitionItemModel>();
+            foreach (var textblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "text"))
             {
+                TextBlocks.Add(new ProxyTextDefinitionItemModel(textblock) { ItemSource = TextBlocks, Parent = this });
+            }
+            TextBlocks.CollectionChanged += (sender, args) =>
+            {
+                if (args.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (ProxyTextDefinitionItemModel x in args.NewItems)
+                    {
+                        x.ItemSource = TextBlocks;
+                        x.Parent = this;
+                    }
+                }
                 _proxydef.BlockManager.ClearBlocks();
                 foreach (var x in TextBlocks)
                 {
@@ -85,9 +111,21 @@ namespace Octide.ViewModel
                 }
             };
 
-            OverlayBlocks = new ObservableCollection<ProxyOverlayDefinitionItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay").Select(x => new ProxyOverlayDefinitionItemModel(x)));
-            OverlayBlocks.CollectionChanged += (a, b) =>
+            OverlayBlocks = new ObservableCollection<ProxyOverlayDefinitionItemModel>();
+            foreach (var overlayblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay"))
             {
+                OverlayBlocks.Add(new ProxyOverlayDefinitionItemModel(overlayblock) { ItemSource = OverlayBlocks, Parent = this });
+            }
+            OverlayBlocks.CollectionChanged += (sender, args) =>
+            {
+                if (args.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (ProxyOverlayDefinitionItemModel x in args.NewItems)
+                    {
+                        x.ItemSource = OverlayBlocks;
+                        x.Parent = this;
+                    }
+                }
                 _proxydef.BlockManager.ClearBlocks();
                 foreach (var x in TextBlocks)
                 {
@@ -188,20 +226,20 @@ namespace Octide.ViewModel
 
         public void AddTemplate()
         {
-            var ret = new TemplateModel() { ItemSource = Templates };
+            var ret = new TemplateModel();
             Templates.Add(ret);
             SelectedTemplate = ret;
         }
 
         public void AddOverlay()
         {
-            var ret = new ProxyOverlayDefinitionItemModel() { ItemSource = OverlayBlocks };
+            var ret = new ProxyOverlayDefinitionItemModel();
             OverlayBlocks.Add(ret);
             Selection = ret;
         }
         public void AddTextBlock()
         {
-            var ret = new ProxyTextDefinitionItemModel() { ItemSource = TextBlocks };
+            var ret = new ProxyTextDefinitionItemModel();
             TextBlocks.Add(ret);
             Selection = ret;
         }

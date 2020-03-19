@@ -4,14 +4,14 @@
 
 using System.Windows.Controls;
 
-namespace Octide.Views
+namespace Octide.SetTab
 {
     /// <summary>
-    /// Interaction logic for SetPackageItemView.xaml
+    /// Interaction logic for PackageItemView.xaml
     /// </summary>
-    public partial class SetPackageItemView : UserControl
+    public partial class PackageItemView : UserControl
     {
-        public SetPackageItemView()
+        public PackageItemView()
         {
             InitializeComponent();
         }

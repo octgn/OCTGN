@@ -11,20 +11,30 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using Octide.SetTab.CardItemModel;
+using Octide.SetTab.PackageItemModel;
+using System.Collections.Specialized;
+using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Messaging;
+using Octide.Messages;
+using Octide.Views;
 
-namespace Octide.ViewModel
+namespace Octide.SetTab
 {
-    public class SetItemViewModel : IdeListBoxItemBase
+    public class SetModel : IdeListBoxItemBase
     {
         public Set _set;
 
+        public new ObservableCollection<SetModel> ItemSource { get; set; }
+
         public RelayCommand AddCardCommand { get; private set; }
         public RelayCommand AddPackageCommand { get; private set; }
+        public RelayCommand ImportCSVCommand { get; private set; }
 
-        public ObservableCollection<IdeListBoxItemBase> CardItems { get; private set; }
-        public ObservableCollection<IdeListBoxItemBase> PackageItems { get; private set; }
+        public ObservableCollection<CardModel> CardItems { get; private set; }
+        public ObservableCollection<PackageModel> PackageItems { get; private set; }
 
-        public SetItemViewModel() //for creating a new set
+        public SetModel() //for creating a new set
         {
             _set = new Set
             {
@@ -40,59 +50,57 @@ namespace Octide.ViewModel
             _set.Filename = Path.Combine(installPath, "set.xml");
             _set.PackUri = Path.Combine(installPath, "Cards");
 
-            CardItems = new ObservableCollection<IdeListBoxItemBase>();
+            CardItems = new ObservableCollection<CardModel>();
             CardItems.CollectionChanged += (a, b) =>
             {
-                _set.Cards = CardItems.Select(x => (x as SetCardItemViewModel)._card).ToList();
+                BuildCardDef(b);
             };
-            RaisePropertyChanged("CardItems");
 
-            PackageItems = new ObservableCollection<IdeListBoxItemBase>();
+            PackageItems = new ObservableCollection<PackageModel>();
             PackageItems.CollectionChanged += (a, b) =>
             {
-                _set.Packs = PackageItems.Select(x => (x as SetPackageItemViewModel)._pack).ToList();
+                BuildPackageDef(b);
             };
 
-            RaisePropertyChanged("PackItems");
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
+            ImportCSVCommand = new RelayCommand(ImportCSV);
 
             CanDragDrop = false;
         }
 
-        public SetItemViewModel(Set s) // For loading existing set data
+        public SetModel(Set s) // For loading existing set data
         {
             _set = s;
-            CardItems = new ObservableCollection<IdeListBoxItemBase>();
+            CardItems = new ObservableCollection<CardModel>();
             foreach (var card in _set.Cards)
             {
-                CardItems.Add(new SetCardItemViewModel(card) {ItemSource = CardItems, Parent = this });
+                CardItems.Add(new CardModel(card) {ItemSource = CardItems, Parent = this });
             }
             CardItems.CollectionChanged += (a, b) =>
             {
-                _set.Cards = CardItems.Select(x => (x as SetCardItemViewModel)._card).ToList();
+                BuildCardDef(b);
             };
-            RaisePropertyChanged("CardItems");
 
-            PackageItems = new ObservableCollection<IdeListBoxItemBase>();
+            PackageItems = new ObservableCollection<PackageModel>();
             foreach (var package in _set.Packs)
             {
-                PackageItems.Add(new SetPackageItemViewModel(package) {ItemSource = PackageItems, Parent = this });
+                PackageItems.Add(new PackageModel(package) {ItemSource = PackageItems, Parent = this });
             }
             PackageItems.CollectionChanged += (a, b) =>
             {
-                _set.Packs = PackageItems.Select(x => (x as SetPackageItemViewModel)._pack).ToList();
+                BuildPackageDef(b);
             };
-            RaisePropertyChanged("PackItems");
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
+            ImportCSVCommand = new RelayCommand(ImportCSV);
 
             CanDragDrop = false;
         }
 
-        public SetItemViewModel(SetItemViewModel s) //for copying the item
+        public SetModel(SetModel s) //for copying the item
         {
             var id = Guid.NewGuid();
             string installPath = Path.Combine(ViewModelLocator.GameLoader.GamePath, "Sets", id.ToString());
@@ -109,40 +117,110 @@ namespace Octide.ViewModel
                 Filename = Path.Combine(installPath, "set.xml"),
                 PackUri = Path.Combine(installPath, "Cards")
             };
-            CardItems = new ObservableCollection<IdeListBoxItemBase>();
+            CardItems = new ObservableCollection<CardModel>();
             CardItems.CollectionChanged += (a, b) =>
             {
-                _set.Cards = CardItems.Select(x => (x as SetCardItemViewModel)._card).ToList();
+                BuildCardDef(b);
             };
-            foreach (SetCardItemViewModel card in s.CardItems)
+            foreach (CardModel card in s.CardItems)
             {
-                CardItems.Add(new SetCardItemViewModel(card) {ItemSource = CardItems, Parent = this });
+                CardItems.Add(new CardModel(card) );
             }
-            RaisePropertyChanged("CardItems");
 
-            PackageItems = new ObservableCollection<IdeListBoxItemBase>();
+            PackageItems = new ObservableCollection<PackageModel>();
             PackageItems.CollectionChanged += (a, b) =>
             {
-                _set.Packs = PackageItems.Select(x => (x as SetPackageItemViewModel)._pack).ToList();
+                BuildPackageDef(b);
             };
-            foreach (SetPackageItemViewModel package in s.PackageItems)
+            foreach (PackageModel package in s.PackageItems)
             {
-                PackageItems.Add(new SetPackageItemViewModel(package) {ItemSource = PackageItems, Parent = this });
+                PackageItems.Add(new PackageModel(package));
             }
-            RaisePropertyChanged("PackItems");
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-
-            ItemSource = s.ItemSource;
-            Parent = s.Parent;
+            ImportCSVCommand = new RelayCommand(ImportCSV);
 
             CanDragDrop = false;
         }
 
-        private SetPackageItemViewModel _selectedPackage;
+        public void AddPackage()
+        {
+            var ret = new PackageModel();
+            PackageItems.Add(ret);
+            SelectedPackage = ret;
+        }
 
-        public SetPackageItemViewModel SelectedPackage
+        public void AddCard()
+        {
+            var ret = new CardModel();
+            CardItems.Add(ret);
+            SelectedCard = ret;
+        }
+
+        public void ImportCSV()
+        {
+            var dlg = new ImportCardsWindow();
+            dlg.DataContext = new ImportCardsViewModel() { Parent = this };
+            dlg.ShowDialog();
+
+        }
+
+        public void BuildCardDef(NotifyCollectionChangedEventArgs args)
+        {
+            if (args?.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (CardModel x in args.NewItems)
+                {
+                    x.ItemSource = CardItems;
+                    x.Parent = this;
+                }
+            }
+            _set.Cards = CardItems.Select(x => x._card).ToList();
+        }
+
+        public void BuildPackageDef(NotifyCollectionChangedEventArgs args)
+        {
+            if (args?.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (PackageModel x in args.NewItems)
+                {
+                    x.ItemSource = PackageItems;
+                    x.Parent = this;
+                    x.Set = _set;
+                }
+            }
+            _set.Packs = PackageItems.Select(x => x._pack).ToList();
+        }
+
+        public override object Clone()
+        {
+            return new SetModel(this);
+        }
+
+        public override void Copy()
+        {
+            if (CanCopy == false) return;
+            var index = ItemSource.IndexOf(this);
+            ItemSource.Insert(index, Clone() as SetModel);
+        }
+
+        public override void Insert()
+        {
+            if (CanInsert == false) return;
+            var index = ItemSource.IndexOf(this);
+            ItemSource.Insert(index, new SetModel());
+        }
+
+        public override void Remove()
+        {
+            if (CanRemove == false) return;
+            ItemSource.Remove(this);
+        }
+
+        private PackageModel _selectedPackage;
+
+        public PackageModel SelectedPackage
         {
             get
             {
@@ -156,9 +234,9 @@ namespace Octide.ViewModel
             }
         }
 
-        private SetCardItemViewModel _selectedCard;
+        private CardModel _selectedCard;
 
-        public SetCardItemViewModel SelectedCard
+        public CardModel SelectedCard
         {
             get
             {
@@ -172,22 +250,6 @@ namespace Octide.ViewModel
                     _selectedCard.SelectedItem = _selectedCard.BaseCardAlt;
                 RaisePropertyChanged("SelectedCard");
             }
-        }
-
-        public void AddPackage()
-        {
-            var ret = new SetPackageItemViewModel() {ItemSource = PackageItems, Parent = this, Set = _set  };
-            PackageItems.Add(ret);
-            SelectedPackage = ret;
-            RaisePropertyChanged("SelectedPackage");
-        }
-
-        public void AddCard()
-        {
-            var ret = new SetCardItemViewModel() {ItemSource = CardItems, Parent = this };
-            CardItems.Add(ret);
-            SelectedCard = ret;
-            RaisePropertyChanged("SelectedCard");
         }
 
         public Guid Id
@@ -265,23 +327,5 @@ namespace Octide.ViewModel
             }
         }
 
-        public override object Clone()
-        {
-            return new SetItemViewModel(this);
-        }
-
-        public override void Copy()
-        {
-            if (CanCopy == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as SetItemViewModel);
-        }
-
-        public override void Insert()
-        {
-            if (CanInsert == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SetItemViewModel() { Parent = Parent, ItemSource = ItemSource });
-        }
     }
 }

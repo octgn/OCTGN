@@ -4,14 +4,14 @@
 
 using System.Windows.Controls;
 
-namespace Octide.Views
+namespace Octide.SetTab
 {
     /// <summary>
-    /// Interaction logic for SetCardAltItemView.xaml
+    /// Interaction logic for AlternateItemView.xaml
     /// </summary>
-    public partial class SetCardAltItemView : UserControl
+    public partial class AlternateItemView : UserControl
     {
-        public SetCardAltItemView()
+        public AlternateItemView()
         {
             InitializeComponent();
         }

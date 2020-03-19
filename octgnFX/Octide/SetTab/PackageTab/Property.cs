@@ -6,26 +6,25 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
+using Octide.ItemModel;
 using Octide.Messages;
 using Octide.ViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Octide.ItemModel
+namespace Octide.SetTab.PackageItemModel
 {
-
-    public class PackPropertyItemModel : ViewModelBase, ICloneable
+    public class PropertyModel : IdeListBoxItemBase
     {
         public bool isIncludeProperty { get; set; }
-        public ObservableCollection<PackPropertyItemModel> ParentCollection { get; set; }
+        public new ObservableCollection<PropertyModel> ItemSource { get; set; }
         public PickProperty PropertyDef { get; set; }
         public PropertyItemViewModel _activeProperty;
-        public RelayCommand RemoveCommand { get; private set; }
 
         public ObservableCollection<PropertyItemViewModel> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
 
-        public PackPropertyItemModel() // new item
+        public PropertyModel() // new item
         {
             PropertyDef = new PickProperty();
             ActiveProperty = CustomProperties.First();
@@ -33,7 +32,7 @@ namespace Octide.ItemModel
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
-        public PackPropertyItemModel(PickProperty p) // loading item
+        public PropertyModel(PickProperty p) // loading item
         {
             PropertyDef = p;
             ActiveProperty = CustomProperties.FirstOrDefault(x => x._property == PropertyDef.Property);
@@ -41,18 +40,13 @@ namespace Octide.ItemModel
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
-        public PackPropertyItemModel(PackPropertyItemModel p) // copy item
+        public PropertyModel(PropertyModel p) // copy item
         {
             PropertyDef = new PickProperty();
             ActiveProperty = p.ActiveProperty;
             PropertyDef.Value = p.PropertyDef.Value;
             RemoveCommand = new RelayCommand(Remove);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-        }
-
-        public object Clone()
-        {
-            return new PackPropertyItemModel(this) { ParentCollection = ParentCollection };
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
@@ -64,12 +58,29 @@ namespace Octide.ItemModel
             }
         }
 
-        public void Remove()
+        public override object Clone()
         {
-            if (isIncludeProperty || ParentCollection.Count > 1)
-                ParentCollection.Remove(this);
+            return new PropertyModel(this);
+        }
+        public override void Copy()
+        {
+            if (CanCopy == false) return;
+            var index = ItemSource.IndexOf(this);
+            ItemSource.Insert(index, Clone() as PropertyModel);
+        }
+        public override void Insert()
+        {
+            if (CanInsert == false) return;
+            var index = ItemSource.IndexOf(this);
+            ItemSource.Insert(index, new PropertyModel());
         }
 
+        public override void Remove()
+        {
+            if (!CanRemove) return;
+            if (isIncludeProperty || ItemSource.Count > 1)
+                ItemSource.Remove(this);
+        }
         public PropertyItemViewModel ActiveProperty
         {
             get

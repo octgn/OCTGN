@@ -9,8 +9,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             xmlns:vm="clr-namespace:Octide.ViewModel"
-             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:set="clr-namespace:Octide.SetTab"
              d:DesignHeight="700" d:DesignWidth="1100"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
@@ -36,8 +35,8 @@
         </ListBox>
         <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding SelectedItem}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type vm:SetItemViewModel}" >
-                    <views:SetItemView />
+                <DataTemplate DataType="{x:Type set:SetModel}" >
+                    <set:SetItemView />
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

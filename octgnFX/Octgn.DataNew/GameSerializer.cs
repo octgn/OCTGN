@@ -1695,7 +1695,7 @@ namespace Octgn.DataNew
             {
                 var card = new setCard
                 {
-                    name = c.Name.ToString(),
+                //    name = c.Name.ToString(),
                     id = c.Id.ToString(),
                 };
                 List<setCardAlternate> alts = new List<setCardAlternate>();
@@ -1714,9 +1714,11 @@ namespace Octgn.DataNew
                             };
                             props.Add(prop);
                         }
+                        card.name = propset.Value.Name;
                         card.property = props.ToArray();
-                        card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
-                        if (game.CardSize.Name != propset.Value.Size.Name) card.size = propset.Value.Size.Name;
+                      //  card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
+                        if (game.CardSize.Name != propset.Value.Size.Name)
+                            card.size = propset.Value.Size.Name;
                     }
                     else
                     {

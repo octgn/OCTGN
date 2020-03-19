@@ -22,6 +22,7 @@ using GongSolutions.Wpf.DragDrop;
 using System.Windows.Data;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ViewModel;
+using Octide.SetTab.CardItemModel;
 
 namespace Octide.ItemModel
 {
@@ -361,7 +362,7 @@ namespace Octide.ItemModel
     {
         public ProxyTextDefinitionItemModel LinkedTextBlock { get; private set; }
         public string Format { get; private set; }
-        public CardPropertyItemModel Property { get; set; }
+        public PropertyModel Property { get; set; }
 
         public ObservableCollection<ProxyInputPropertyItemModel> EditableProperties;
 

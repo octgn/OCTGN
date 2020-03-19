@@ -193,35 +193,40 @@
     <Compile Include="ProxyTab\Templates\TemplateItemView.xaml.cs">
       <DependentUpon>TemplateItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetTab\CardTab\SetCardProxyItemView.xaml.cs">
-      <DependentUpon>SetCardProxyItemView.xaml</DependentUpon>
+    <Compile Include="SetTab\CardTab\ProxyItemView.xaml.cs">
+      <DependentUpon>ProxyItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetTab\CardTab\SetCardAltItemViewModel.cs" />
-    <Compile Include="SetTab\CardTab\SetCardAltItemView.xaml.cs">
-      <DependentUpon>SetCardAltItemView.xaml</DependentUpon>
+    <Compile Include="SetTab\CardTab\Alternate.cs" />
+    <Compile Include="SetTab\CardTab\AlternateItemView.xaml.cs">
+      <DependentUpon>AlternateItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetTab\CardTab\SetCardPropertyItemViewModel.cs" />
-    <Compile Include="SetTab\CardTab\SetCardItemViewModel.cs" />
+    <Compile Include="SetTab\CardTab\Property.cs" />
+    <Compile Include="SetTab\CardTab\Card.cs" />
     <Compile Include="PreviewTab\CounterItemViewModel.cs" />
     <Compile Include="PreviewTab\GroupItemViewModel.cs" />
     <Compile Include="ItemModel\AssetItemModel.cs" />
-    <Compile Include="SetTab\CardTab\SetCardItemView.xaml.cs">
-      <DependentUpon>SetCardItemView.xaml</DependentUpon>
+    <Compile Include="SetTab\CardTab\CardItemView.xaml.cs">
+      <DependentUpon>CardItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MarkerTab\MarkerItemView.xaml.cs">
       <DependentUpon>MarkerItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MarkerTab\MarkerItemViewModel.cs" />
-    <Compile Include="SetTab\PackageTab\SetPackageIncludeItemViewModel.cs" />
-    <Compile Include="SetTab\PackageTab\SetPackagePropertyItemViewModel.cs" />
-    <Compile Include="SetTab\PackageTab\SetPackagePickItemViewModel.cs" />
-    <Compile Include="SetTab\PackageTab\SetPackageOptionItemViewModel.cs" />
-    <Compile Include="SetTab\PackageTab\SetPackageOptionsItemViewModel.cs" />
-    <Compile Include="SetTab\PackageTab\SetPackageItemViewModel.cs" />
+    <Compile Include="SetTab\PackageTab\DropHandlers.cs" />
+    <Compile Include="SetTab\PackageTab\IBasePack.cs" />
+    <Compile Include="Views\ImportCardsWindow.xaml.cs">
+      <DependentUpon>ImportCardsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SetTab\PackageTab\Include.cs" />
+    <Compile Include="SetTab\PackageTab\Property.cs" />
+    <Compile Include="SetTab\PackageTab\Pick.cs" />
+    <Compile Include="SetTab\PackageTab\Option.cs" />
+    <Compile Include="SetTab\PackageTab\Options.cs" />
+    <Compile Include="SetTab\PackageTab\Package.cs" />
     <Compile Include="PreviewTab\PhaseItemViewModel.cs" />
     <Compile Include="PropertyTab\PropertyItemViewModel.cs" />
     <Compile Include="ProxyTab\OverlayDefinitionItemModel.cs" />
-    <Compile Include="SetTab\SetItemViewModel.cs" />
+    <Compile Include="SetTab\Set.cs" />
     <Compile Include="PreviewTab\SizeItemViewModel.cs" />
     <Compile Include="Messages\PropertyChangeMessages.cs" />
     <Compile Include="Messages\MouseWheelTableZoom.cs" />
@@ -262,6 +267,7 @@
     <Compile Include="SetTab\SetTabViewModel.cs" />
     <Compile Include="PropertyTab\PropertyTabViewModel.cs" />
     <Compile Include="GameTab\GameTabViewModel.cs" />
+    <Compile Include="ViewModel\ImportCardsViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\LoaderViewModel.cs" />
     <Compile Include="PreviewTab\PreviewTabViewModel.cs" />
@@ -304,11 +310,8 @@
     <Compile Include="ProxyTab\ProxyTabView.xaml.cs">
       <DependentUpon>ProxyTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetTab\CardTab\SetCardProxyView.xaml.cs">
-      <DependentUpon>SetCardProxyView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SetTab\PackageTab\SetPackageItemView.xaml.cs">
-      <DependentUpon>SetPackageItemView.xaml</DependentUpon>
+    <Compile Include="SetTab\PackageTab\PackageItemView.xaml.cs">
+      <DependentUpon>PackageItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SetTab\SetTabView.xaml.cs">
       <DependentUpon>SetTabView.xaml</DependentUpon>
@@ -412,21 +415,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SetTab\CardTab\SetCardProxyItemView.xaml">
+    <Page Include="SetTab\CardTab\ProxyItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SetTab\CardTab\SetCardAltItemView.xaml">
+    <Page Include="SetTab\CardTab\AlternateItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SetTab\CardTab\SetCardItemView.xaml">
+    <Page Include="SetTab\CardTab\CardItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MarkerTab\MarkerItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ImportCardsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SetTab\SetItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -492,11 +499,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SetTab\CardTab\SetCardProxyView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SetTab\PackageTab\SetPackageItemView.xaml">
+    <Page Include="SetTab\PackageTab\PackageItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -607,7 +610,9 @@
   <ItemGroup>
     <None Include="Resources\score.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="SetTab\ImportCardsDlg\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

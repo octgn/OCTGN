@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 using Octide.ItemModel;
+using Octide.SetTab;
 using Octide.Messages;
 using System.Windows;
 using GalaSoft.MvvmLight.Messaging;
@@ -15,9 +16,9 @@ namespace Octide.ViewModel
 {
     public class SetTabViewModel : ViewModelBase
     {
-        private SetItemViewModel _selectedItem;
+        private SetModel _selectedItem;
 
-        public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
+        public ObservableCollection<SetModel> Items { get; private set; }
 
         public RelayCommand AddSetCommand { get; private set; }
 
@@ -25,19 +26,19 @@ namespace Octide.ViewModel
         {
             AddSetCommand = new RelayCommand(AddSet);
 
-            Items = new ObservableCollection<IdeListBoxItemBase>();
+            Items = new ObservableCollection<SetModel>();
             foreach (var set in ViewModelLocator.GameLoader.Sets)
             {
-                Items.Add(new SetItemViewModel(set) { ItemSource = Items });
+                Items.Add(new SetModel(set) { ItemSource = Items, Parent = this });
             }
 
             Items.CollectionChanged += (a, b) =>
             {
-                ViewModelLocator.GameLoader.Sets = Items.Select(x => (x as SetItemViewModel)._set).ToList();
+                ViewModelLocator.GameLoader.Sets = Items.Select(x => x._set).ToList();
             };
         }
 
-        public SetItemViewModel SelectedItem
+        public SetModel SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -50,7 +51,7 @@ namespace Octide.ViewModel
 
         public void AddSet()
         {
-            var ret = new SetItemViewModel() {ItemSource = Items };
+            var ret = new SetModel() {ItemSource = Items };
             Items.Add(ret);
             SelectedItem = ret;
         }

@@ -5,23 +5,24 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
+using Octide.ItemModel;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 
-namespace Octide.ItemModel
+namespace Octide.SetTab.PackageItemModel
 {
-    public class PackOptionItemModel : ViewModelBase, ICloneable
+    public class OptionModel : IdeListBoxItemBase
     {
-        public ObservableCollection<PackOptionItemModel> ParentCollection { get; set; }
+        public new ObservableCollection<OptionModel> ItemSource { get; set; }
         public Option Option { get; set; }
         public RelayCommand AddPickCommand { get; private set; }
         public RelayCommand AddOptionsCommand { get; private set; }
-        public RelayCommand RemoveCommand { get; private set; }
 
         public ObservableCollection<IBasePack> _items;
 
-        public PackOptionItemModel() // new item
+        public OptionModel() // new item
         {
             Option = new Option
             {
@@ -31,34 +32,34 @@ namespace Octide.ItemModel
 
             Items.CollectionChanged += (a, b) =>
             {
-                Option.Definition.Items = Items.Select(x => x.PackItem).ToList();
+                BuildOptionDef(b);
             };
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
             RemoveCommand = new RelayCommand(Remove);
         }
 
-        public PackOptionItemModel(Option o) // load item
+        public OptionModel(Option o) // load item
         {
             Option = o;
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
             {
-                Option.Definition.Items = Items.Select(x => x.PackItem).ToList();
+                BuildOptionDef(b);
             };
             foreach (var item in o.Definition.Items)
             {
-                if (item is OptionsList)
-                    Items.Add(new PackOptionsItemModel(item) { ParentCollection = Items });
-                else if (item is Pick)
-                    Items.Add(new PackPickItemModel(item) { ParentCollection = Items });
+                if (item is OptionsList options)
+                    Items.Add(new OptionsModel(options) { ItemSource = Items });
+                else if (item is Pick pick)
+                    Items.Add(new PickModel(pick) { ItemSource = Items });
             }
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
             RemoveCommand = new RelayCommand(Remove);
         }
 
-        public PackOptionItemModel(PackOptionItemModel p) // copy item
+        public OptionModel(OptionModel p) // copy item
         {
             Option = new Option
             {
@@ -68,38 +69,61 @@ namespace Octide.ItemModel
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
             {
-                Option.Definition.Items = Items.Select(x => x.PackItem).ToList();
+                BuildOptionDef(b);
             };
             foreach (var packItem in p.Items)
             {
-                if (packItem is PackPickItemModel)
-                    Items.Add(new PackPickItemModel(packItem as PackPickItemModel) { ParentCollection = Items });
-                if (packItem is PackOptionsItemModel)
-                    Items.Add(new PackOptionsItemModel(packItem as PackOptionsItemModel) { ParentCollection = Items });
+                if (packItem is PickModel)
+                    Items.Add(new PickModel(packItem as PickModel) );
+                if (packItem is OptionsModel)
+                    Items.Add(new OptionsModel(packItem as OptionsModel) );
             }
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
             RemoveCommand = new RelayCommand(Remove);
         }
-
-        public object Clone()
+        public void BuildOptionDef(NotifyCollectionChangedEventArgs args)
         {
-            return new PackOptionItemModel(this) { ParentCollection = ParentCollection };
-        }
-
-        public void Remove()
-        {
-            ParentCollection.Remove(this);
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (IBasePack x in args.NewItems)
+                {
+                    x.ItemSource = Items;
+                }
+            }
+            Option.Definition.Items = Items.Select(x => x._packItem).ToList();
         }
 
         public void AddPick()
         {
-            Items.Add(new PackPickItemModel() { ParentCollection = Items });
+            Items.Add(new PickModel() );
         }
 
         public void AddOptions()
         {
-            Items.Add(new PackOptionsItemModel() { ParentCollection = Items });
+            Items.Add(new OptionsModel());
+        }
+        public override object Clone()
+        {
+            return new OptionModel(this);
+        }
+        public override void Copy()
+        {
+            if (CanCopy == false) return;
+            var index = ItemSource.IndexOf(this);
+            ItemSource.Insert(index, Clone() as OptionModel);
+        }
+        public override void Insert()
+        {
+            if (CanInsert == false) return;
+            var index = ItemSource.IndexOf(this);
+            ItemSource.Insert(index, new OptionModel());
+        }
+
+        public override void Remove()
+        {
+            if (!CanRemove) return;
+            ItemSource.Remove(this);
         }
 
         public double Probability

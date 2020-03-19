@@ -10,23 +10,26 @@ using GongSolutions.Wpf.DragDrop.Utilities;
 using Octgn.Core.DataExtensionMethods;
 using Octgn.DataNew.Entities;
 using Octide.Messages;
+using Octide.SetTab;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Octide.ItemModel
+namespace Octide.SetTab.PackageItemModel
 {
-    public class SetPackageItemViewModel : IdeListBoxItemBase
+    public class PackageModel : IdeListBoxItemBase
     {
-        public new SetItemViewModel Parent;
+        public new SetModel Parent;
 
         public Pack _pack;
+        public new ObservableCollection<PackageModel> ItemSource { get; set; }
         public ObservableCollection<IBasePack> Items { get; private set; }
-        public ObservableCollection<IdeListBoxItemBase> Includes { get; private set; }
+        public ObservableCollection<IncludeModel> Includes { get; private set; }
 
         public RelayCommand AddOptionsCommand { get; private set; }
         public RelayCommand AddPickCommand { get; private set; }
@@ -37,7 +40,7 @@ namespace Octide.ItemModel
 
         public ObservableCollection<string> _boosterCards;
 
-        public SetPackageItemViewModel() //new item
+        public PackageModel() //new item
         {
             _pack = new Pack
             {
@@ -48,12 +51,12 @@ namespace Octide.ItemModel
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
             {
-                _pack.Definition.Items = Items.Select(x => x.PackItem).ToList();
+                BuildPackDef(b);
             };
-            Includes = new ObservableCollection<IdeListBoxItemBase>();
+            Includes = new ObservableCollection<IncludeModel>();
             Includes.CollectionChanged += (a, b) =>
             {
-                _pack.Includes = Includes.Select(x => (x as PackIncludeItemModel)._include).ToList();
+                BuildIncludesDef(b);
             };
             PackageDropHandler = new PackageDropHandler();
             IncludeDropHandler = new IncludeDropHandler();
@@ -63,30 +66,30 @@ namespace Octide.ItemModel
             AddIncludeCommand = new RelayCommand(AddInclude);
         }
 
-        public SetPackageItemViewModel(Pack p) //loading item
+        public PackageModel(Pack p) //loading item
         {
             _pack = p;
             Items = new ObservableCollection<IBasePack>();
             foreach (var item in p.Definition.Items)
             {
-                if (item is OptionsList)
-                    Items.Add(new PackOptionsItemModel(item) { ParentCollection = Items });
-                else if (item is Pick)
-                    Items.Add(new PackPickItemModel(item) { ParentCollection = Items });
+                if (item is OptionsList options)
+                    Items.Add(new OptionsModel(options) { ItemSource = Items });
+                else if (item is Pick pick)
+                    Items.Add(new PickModel(pick) { ItemSource = Items });
             }
             Items.CollectionChanged += (a, b) =>
             {
-                _pack.Definition.Items = Items.Select(x => x.PackItem).ToList();
+                BuildPackDef(b);
             };
 
-            Includes = new ObservableCollection<IdeListBoxItemBase>();
+            Includes = new ObservableCollection<IncludeModel>();
             foreach (var include in p.Includes)
             {
-                Includes.Add(new PackIncludeItemModel(include) { Parent = this, ItemSource = Includes });
+                Includes.Add(new IncludeModel(include) { Parent = this, ItemSource = Includes });
             }       
             Includes.CollectionChanged += (a, b) =>
             {
-                _pack.Includes = Includes.Select(x => (x as PackIncludeItemModel)._include).ToList();
+                BuildIncludesDef(b);
             };
 
             PackageDropHandler = new PackageDropHandler();
@@ -97,7 +100,7 @@ namespace Octide.ItemModel
             AddIncludeCommand = new RelayCommand(AddInclude);
         }
 
-        public SetPackageItemViewModel(SetPackageItemViewModel p) //copying item
+        public PackageModel(PackageModel p) //copying item
         {
             _pack = new Pack
             {
@@ -110,30 +113,28 @@ namespace Octide.ItemModel
             Items = new ObservableCollection<IBasePack>();
             Items.CollectionChanged += (a, b) =>
             {
-                _pack.Definition.Items = Items.Select(x => x.PackItem).ToList();
+                BuildPackDef(b);
             };
             foreach (var packItem in p.Items)
             {
-                if (packItem is PackPickItemModel)
+                if (packItem is PickModel pick)
                 {
-                    Items.Add(new PackPickItemModel(packItem as PackPickItemModel) { ParentCollection = Items });
+                    Items.Add(new PickModel(pick) );
                 }
-                else if (packItem is PackOptionsItemModel)
+                else if (packItem is OptionsModel options)
                 {
-                    Items.Add(new PackOptionsItemModel(packItem as PackOptionsItemModel) { ParentCollection = Items });
+                    Items.Add(new OptionsModel(options) );
                 }
             }
-            Includes = new ObservableCollection<IdeListBoxItemBase>();
+            Includes = new ObservableCollection<IncludeModel>();
             Includes.CollectionChanged += (a, b) =>
             {
-                _pack.Includes = Includes.Select(x => (x as PackIncludeItemModel)._include).ToList();
+                BuildIncludesDef(b);
             };
-            foreach (PackIncludeItemModel include in p.Includes)
+            foreach (IncludeModel include in p.Includes)
             {
-                Includes.Add(new PackIncludeItemModel(include) { Parent = this, ItemSource = Includes });
+                Includes.Add(new IncludeModel(include));
             }
-            ItemSource = p.ItemSource;
-            Parent = p.Parent;
             PackageDropHandler = new PackageDropHandler();
             IncludeDropHandler = new IncludeDropHandler();
             GeneratePackCommand = new RelayCommand(GeneratePack);
@@ -142,18 +143,42 @@ namespace Octide.ItemModel
             AddIncludeCommand = new RelayCommand(AddInclude);
         }
 
+        public void BuildPackDef(NotifyCollectionChangedEventArgs args)
+        {
+            if (args?.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (IBasePack x in args.NewItems)
+                {
+                    x.ItemSource = Items;
+                }
+            }
+            _pack.Definition.Items = Items.Select(x => x._packItem).ToList();
+        }
+        
+        public void BuildIncludesDef(NotifyCollectionChangedEventArgs args)
+        {
+            if (args?.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (IncludeModel x in args.NewItems)
+                {
+                    x.ItemSource = Includes;
+                }
+            }
+            _pack.Includes = Includes.Select(x => x._include).ToList();
+        }
+
         public void AddInclude()
         {
-            Includes.Add(new PackIncludeItemModel(this) { ItemSource = Includes});
+            Includes.Add(new IncludeModel(this));
         }
         public void AddPick()
         {
-            Items.Add(new PackPickItemModel() { ParentCollection = Items });
+            Items.Add(new PickModel());
         }
 
         public void AddOptions()
         {
-            Items.Add(new PackOptionsItemModel() { ParentCollection = Items });
+            Items.Add(new OptionsModel());
         }
 
         public void GeneratePack()
@@ -205,78 +230,21 @@ namespace Octide.ItemModel
 
         public override object Clone()
         {
-            return new SetPackageItemViewModel(this);
+            return new PackageModel(this);
         }
 
         public override void Copy()
         {
             if (CanCopy == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as SetPackageItemViewModel);
+            ItemSource.Insert(index, Clone() as PackageModel);
         }
 
         public override void Insert()
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SetPackageItemViewModel() { ItemSource = ItemSource, Parent = Parent, Set = Parent._set });
+            ItemSource.Insert(index, new PackageModel());
         }
-    }
-
-    public class PackageDropHandler : IDropTarget
-    {
-        public void DragOver(IDropInfo dropInfo)
-        {
-            if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget)
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackPropertyItemModel)
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else if (dropInfo.DragInfo.SourceItem is PackPropertyItemModel && dropInfo.DragInfo.SourceCollection.TryGetList().Count <= 1 && !dropInfo.KeyStates.HasFlag(System.Windows.DragDropKeyStates.ControlKey))
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else
-            {
-                DragDrop.DefaultDropHandler.DragOver(dropInfo);
-            }
-        }
-
-        public void Drop(IDropInfo dropInfo)
-        {
-            DragDrop.DefaultDropHandler.Drop(dropInfo);
-        }
-    }
-
-    public class IncludeDropHandler : IDropTarget
-    {
-        public void DragOver(IDropInfo dropInfo)
-        {
-            if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget)
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackPropertyItemModel)
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else
-            {
-                DragDrop.DefaultDropHandler.DragOver(dropInfo);
-            }
-        }
-
-        public void Drop(IDropInfo dropInfo)
-        {
-            DragDrop.DefaultDropHandler.Drop(dropInfo);
-        }
-    }
-
-    public interface IBasePack
-    {
-        IPackItem PackItem { get; set; }
     }
 }

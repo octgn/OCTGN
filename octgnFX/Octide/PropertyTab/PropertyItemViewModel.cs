@@ -35,8 +35,6 @@ namespace Octide.ItemModel
 
         public PropertyItemViewModel(PropertyItemViewModel p)
         {
-            ItemSource = p.ItemSource;
-            Parent = p.Parent;
             _property = p._property.Clone() as PropertyDef;
             _property.Name = Utils.GetUniqueName(p.Name, ItemSource.Select(x => x.Name));
         }
@@ -57,9 +55,14 @@ namespace Octide.ItemModel
         {
             if (CanInsert == false) return;
             var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new PropertyItemViewModel() { Parent = Parent, ItemSource = ItemSource, Name = "Property" });
+            ItemSource.Insert(index, new PropertyItemViewModel() { Name = "Property" });
         }
-       
+        public override void Remove()
+        {
+            if (CanRemove == false) return;
+            ItemSource.Remove(this);
+        }
+
         public string Name
         {
             get
