@@ -1,1 +1,3 @@
-
+Cleaned up logging for o8c image pack installing
+Rework of image pack install code
+Fixed a few weird cases that broke image pack installs

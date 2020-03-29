@@ -9,6 +9,10 @@ namespace Octgn.Utils
 	{
 		public string Filename { get; set; }
 		public ImportFileStatus Status { get; set; }
+
+		public int Items { get; set; }
+
+		public List<string> ErrorList { get; set; }
 		public string Message { get; set; }
 
 		public string SafeFileName

@@ -308,43 +308,70 @@ namespace Octgn.Core.DataManagers
             }
         }
 
-        public void Installo8c(string filename)
+        internal struct O8cEntry
+        {
+            public Guid gameGuid;
+            public Guid setGuid;
+            public Guid cardGuid;
+            public string cardExtension;
+            public string cardAlternateId;
+            public bool IsCrop;
+        }
+
+        public void Installo8c(string filename, out int items, out List<string> errorList)
         {
             try
             {
-                Log.InfoFormat("Checking if zip file {0}", filename);
+                Log.InfoFormat("Checking for valid zip file {0}", filename);
                 if (!Ionic.Zip.ZipFile.IsZipFile(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
-                Log.InfoFormat("Checking if zip file {0}", filename);
+                Log.InfoFormat("Checking for consistent zip directory");
                 if (!ZipFile.CheckZip(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
 
-                Guid gameGuid = Guid.Empty;
 
                 Log.InfoFormat("Reading zip file {0}", filename);
                 using (var zip = ZipFile.Read(filename))
                 {
-                    Log.InfoFormat("Getting zip files {0}", filename);
+                    Log.InfoFormat("Getting zip files");
                     var selection = from e in zip.Entries where !e.IsDirectory select e;
+                    items = selection.Count();
+                    errorList = new List<string>();
+                    Log.InfoFormat("Found {0} files", items);
 
-                    foreach (var e in selection)
+                    foreach (ZipEntry file in selection)
                     {
-                        Log.DebugFormat("Checking zip file {0} {1}", e.FileName, filename);
-                        if (e.FileName.ToLowerInvariant().EndsWith("db"))
+                        Log.DebugFormat("Checking file '{0}'", file.FileName);
+
+                        var entry = new O8cEntry();
+                        if (!ParseO8cFilePath(file, out entry))
                         {
+                            Log.WarnFormat("Could not parse string file path '{0}'.", file.FileName);
+
+                            errorList.Add(file.FileName);
+                            //  throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
                             continue;
                         }
-                        bool extracted = extract(e, out gameGuid, gameGuid);
-                        if (!extracted)
+                        if (!MatchO8cImageToDatabase(entry))
                         {
-                            Log.Warn(string.Format("Invalid entry in {0}. Entry: {1}.", filename, e.FileName));
-                            throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
+                            Log.WarnFormat("Could not find matching card in database for file '{0}'.", file.FileName);
+                            errorList.Add(file.FileName);
+                            continue;
                         }
-                        Log.DebugFormat("Extracted {0} {1}", e.FileName, filename);
+                        try
+                        {
+                            file.Extract(Config.Instance.ImageDirectoryFull, ExtractExistingFileAction.OverwriteSilently);
+                        }
+                        catch (IOException e)
+                        {
+                            throw new UserMessageException(L.D.Exception__CanNotExtract_Format, file.FileName, Config.Instance.Paths.DatabasePath, e.Message);
+                        }
+                        Log.DebugFormat("Successfully extracted image to '{0}'/'{1}'", Config.Instance.ImageDirectoryFull, file.FileName);
                     }
                 }
-                Log.InfoFormat("Installed successfully {0}", filename);
+                Log.InfoFormat("Successful extraction of zip file '{0}'", filename);
 
                 //zipFile.ExtractAll(Config.Instance.Paths.DatabasePath,ExtractExistingFileAction.OverwriteSilently);
             }
+
             catch (ZipException e)
             {
                 throw new UserMessageException(String.Format(L.D.Exception__CanNotInstallo8cInvalid_Format, filename),e);
@@ -356,112 +383,98 @@ namespace Octgn.Core.DataManagers
             }
         }
 
-        internal struct O8cEntry
+        internal bool ParseO8cFilePath(ZipEntry file, out O8cEntry entry)
         {
-            public string gameGuid;
-            public string setsDir;
-            public string setGuid;
-            public string cardsDir;
-            public string cardImage;
+            entry = default;
+            Log.DebugFormat("Parsing string file path '{0}'", file.FileName);
+            string[] split = file.FileName.Split('/');
+            if (split.Length < 5)
+            {
+                Log.DebugFormat("Directory structure is too short for file '{0}'", file.FileName);
+                return false;
+            }
+            if (Guid.TryParse(split[0], out Guid gameGuid))
+            {
+                entry.gameGuid = gameGuid;
+            }
+            else
+            {
+                Log.WarnFormat("First Directory '{0}' is not a valid GUID for file '{1}'", split[0], file.FileName);
+                return false;
+            }
+            if (split[1].ToLowerInvariant() != "sets")
+            {
+                Log.WarnFormat("Second Directory '{0}' must be named `Sets` for file '{1}'", split[1], file.FileName);
+                return false;
+            }
+            if (Guid.TryParse(split[2], out Guid setGuid))
+            {
+                entry.setGuid = setGuid;
+            }
+            else
+            {
+                Log.WarnFormat("Third Directory '{0}' is not a valid GUID for file '{1}'", split[2], file.FileName);
+                return false;
+            }
+            if (split[3].ToLowerInvariant() != "cards")
+            {
+                Log.WarnFormat("Second Directory '{0}' must be named `Cards` for file '{1}'", split[3], file.FileName);
+                return false;
+            }
+            string cardImage = split[4];
+            if (split[4].ToLowerInvariant() == "crops")
+            {
+                entry.IsCrop = true;
+                cardImage = split[5];
+            }
+            string[] imageSplit = cardImage.Split('.');
+            if (imageSplit.Length < 2 || imageSplit.Length > 3)
+            {
+                Log.WarnFormat("Card image filename '{0}' is an invalid structure for file '{0}'", file.FileName);
+                return false;
+            }
+
+            if (Guid.TryParse(imageSplit[0], out Guid cardGuid))
+            {
+                entry.cardGuid = cardGuid;
+                entry.cardExtension = imageSplit[1];
+                if (imageSplit.Length > 2)
+                {
+                    entry.cardAlternateId = imageSplit[1];
+                    entry.cardExtension = imageSplit[2];
+                }
+            }
+            else
+            {
+                Log.WarnFormat("Card image filename '{0}' is not a valid GUID for file '{1}'", imageSplit[0], file.FileName);
+                return false;
+            }
+            Log.DebugFormat("Successfully parsed string file path '{0}'", file.FileName);
+            return true;
+
         }
 
-
-        internal bool extract(ZipEntry entry, out Guid gameGuid, Guid testGuid)
+        internal bool MatchO8cImageToDatabase(O8cEntry entry)
         {
-            try
+            Log.DebugFormat("Searching Database for matching card for image '{0}'", entry.cardGuid);
+            var game = GetById(entry.gameGuid);
+            if (game == null)
             {
-                Log.DebugFormat("Extracting {0},{1}", entry.FileName, testGuid);
-                bool ret = false;
-                gameGuid = testGuid;
-                string[] split = entry.FileName.Split('/');
-                Log.DebugFormat("Split file name {0},{1}", entry.FileName, testGuid);
-                if (split.Length == 5 || (split.Length == 6 && split.Contains("Crops")))
-                {
-                    Log.DebugFormat("File name right count {0},{1}", entry.FileName, testGuid);
-                    O8cEntry o8cEntry = new O8cEntry()
-                                            {
-                                                gameGuid = split[0],
-                                                setsDir = split[1],
-                                                setGuid = split[2],
-                                                cardsDir = split[3],
-                                                cardImage = split[4]
-                                            };
-                    if(split.Contains("Crops"))
-                    {
-                        o8cEntry.cardImage = split[5];
-                    }
-                    Log.DebugFormat("Checking if testGuid is empty {0},{1}", entry.FileName, testGuid);
-                    if (testGuid.Equals(Guid.Empty))
-                    {
-                        Log.DebugFormat("testGuid is empty {0},{1}", entry.FileName, testGuid);
-                        testGuid = Guid.Parse(o8cEntry.gameGuid);
-                        gameGuid = Guid.Parse(o8cEntry.gameGuid);
-                        Log.DebugFormat("Setting gameguid and testguid {0},{1},{2}", entry.FileName, testGuid, gameGuid);
-                    }
-                    Log.DebugFormat("Checking if {0}=={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
-                    if (!testGuid.Equals(Guid.Parse(o8cEntry.gameGuid)))
-                    {
-                        Log.DebugFormat("{0}!={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
-                        return (ret);
-                    }
-                    Log.DebugFormat("Checking if should extract part {0},{1}", entry.FileName, testGuid);
-                    if (ShouldExtract(o8cEntry))
-                    {
-                        Log.DebugFormat(
-                            "Should extract, so extracting {0},{1},{2}",
-                            Config.Instance.ImageDirectoryFull,
-                            entry.FileName,
-                            testGuid);
-                        entry.Extract(Config.Instance.ImageDirectoryFull, ExtractExistingFileAction.OverwriteSilently);
-                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectoryFull, entry.FileName, testGuid);
-                        ret = true;
-                    }
-                }
-                Log.DebugFormat("Finishing {0},{1},{2}", ret, entry.FileName, testGuid);
-                return (ret);
-
+                Log.WarnFormat("Game with GUID '{0}' is not installed.", entry.gameGuid);
+                return false;
             }
-            catch (IOException e)
+            var card = game.GetCardById(entry.cardGuid);
+            if (card == null)
             {
-                throw new UserMessageException(L.D.Exception__CanNotExtract_Format, entry.FileName, Config.Instance.Paths.DatabasePath, e.Message);
+                Log.WarnFormat("Card with GUID '{0}' is not a part of game '{1}'", entry.cardGuid, game.Name);
+                return false;
             }
-            finally
+            if (card.SetId != entry.setGuid)
             {
-                Log.InfoFormat("Finished {0},{1}", entry.FileName, testGuid);
+                Log.WarnFormat("Card with GUID '{0}' is not included in set with GUID '{1}'", entry.cardGuid, entry.setGuid);
             }
-        }
-
-        internal bool ShouldExtract(O8cEntry o8centry)
-        {
-            try
-            {
-                Log.InfoFormat("Checking if should extract {0}", o8centry.cardImage);
-                bool ret = false;
-                Log.InfoFormat("Grabbing game {0},{1}", o8centry.gameGuid, o8centry.cardImage);
-                var game = GetById(Guid.Parse(o8centry.gameGuid));
-                if (game != null)
-                {
-                    Log.InfoFormat("Game exists {0},{1}", o8centry.gameGuid, o8centry.cardImage);
-                    Guid cardGuid = Guid.Parse(o8centry.cardImage.Split('.')[0]);
-                    Log.InfoFormat("Checking Paths {0},{1},{2}", o8centry.setsDir, o8centry.cardsDir, o8centry.cardImage);
-                    if (o8centry.setsDir == "Sets" && o8centry.cardsDir == "Cards")
-                    {
-                        Log.InfoFormat("Paths good {0},{1},{2}", o8centry.setsDir, o8centry.cardsDir, o8centry.cardImage);
-                        ret = true;
-                    }
-                }
-                else
-                {
-                    Log.InfoFormat("Couldn't find game {0},{1}", o8centry.gameGuid, o8centry.cardImage);
-                }
-                Log.InfoFormat("Finishing {0}", o8centry.cardImage);
-                return (ret);
-
-            }
-            finally
-            {
-                Log.InfoFormat("Finished {0}", o8centry.cardImage);
-            }
+            Log.DebugFormat("image matched to Card '{0}' of Game '{1}'", card.Name, game.Name);
+            return true;
         }
 
         public void UninstallGame(Game game)

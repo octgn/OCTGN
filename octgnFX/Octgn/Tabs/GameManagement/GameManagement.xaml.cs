@@ -259,7 +259,7 @@ namespace Octgn.Tabs.GameManagement
 			var result = of.ShowDialog();
 			if(result == DialogResult.OK) {
 				var filesToImport = (from f in of.FileNames
-									 select new ImportFile { Filename = f, Status = ImportFileStatus.Unprocessed }).ToList();
+									 select new ImportFile { Filename = f, Status = ImportFileStatus.Unprocessed, ErrorList = new List<string>() }).ToList();
 				this.ProcessTask(
 							() => {
 
@@ -270,9 +270,13 @@ namespace Octgn.Tabs.GameManagement
 											f.Message = "File not found.";
 											continue;
 										}
-										GameManager.Get().Installo8c( f.Filename );
+										int count;
+										List<string> errors;
+										GameManager.Get().Installo8c( f.Filename, out count, out errors);
 										f.Status = ImportFileStatus.Imported;
 										f.Message = "Installed Successfully";
+										f.Items = count;
+										f.ErrorList = errors;
 									} catch(UserMessageException ex) {
 										var message = ex.Message;
 										Log.Warn( message, ex );
@@ -289,13 +293,13 @@ namespace Octgn.Tabs.GameManagement
 							() => {
 								this.installo8cprocessing = false;
 
-								var message = "The following image packs were installed:\n\n{0}"
-									.With( filesToImport.Where( f => f.Status == ImportFileStatus.Imported ).Aggregate( "",
+								var message = "The following image packs were installed successfully:\n\n{0}"
+									.With( filesToImport.Where( f => f.Status == ImportFileStatus.Imported && f.ErrorList.Count == 0).Aggregate( "",
 																  ( current, file ) =>
 																  current +
 																  "· {0}\n".With( file.SafeFileName ) ) );
 								if(filesToImport.Any( f => f.Status != ImportFileStatus.Imported )) {
-									message += "\nThe following image packs could not be installed:\n\n{0}"
+									message += "\nThe following image packs contained critical errors:\n\n{0}"
 										.With( filesToImport.Where( f => f.Status != ImportFileStatus.Imported )
 														   .Aggregate( "", ( current, file ) => current +
 																	   "· {0}: {1}\n".With( file.SafeFileName, file.Message ) ) );
