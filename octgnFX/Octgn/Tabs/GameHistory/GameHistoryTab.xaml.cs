@@ -187,6 +187,8 @@ namespace Octgn.Tabs.GameHistory
 
                 var history = History.Deserialize(historyFileContents);
 
+                if (history == null) continue;
+
                 string gameName = "UNKNOWN";
 
                 if (dbgames.ContainsKey(history.GameId)) {
