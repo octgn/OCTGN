@@ -1,1 +1,2 @@
-
+Fix crash caused by SetPoint software - Ben
+Add hotkey to move cards between sections in editor - Ben
