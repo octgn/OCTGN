@@ -227,7 +227,8 @@ class Card(object):
     _api.CardSetIndex(self._id,index, True)
   @property
   def getIndex(self): return _api.CardGetIndex(self._id)
-  def select(self): _api.CardSelect(self._id)
+  def select(self, clearSelection = False): _api.CardSelect(self._id, clearSelection)
+  def deselect(self): _api.CardDeselect(self._id)
   def peek(self): _api.CardPeek(self._id)
   def target(self, active = True): _api.CardTarget(self._id, active)
   def arrow(self, targetCard, active = True): _api.CardTargetArrow(self._id, targetCard._id, active)

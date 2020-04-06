@@ -654,14 +654,29 @@ namespace Octgn.Scripting.Versions
                 });
         }
 
-        public void CardSelect(int id)
+        public void CardSelect(int id, bool clearSelection)
+        {
+            Card c = Card.Find(id);
+            // At the moment, only table and hand support multiple selection
+            QueueAction(() =>
+            {
+                if (clearSelection)
+                    Selection.Clear();
+                if (c.Group is Table || c.Group is Hand)
+                    Selection.Add(c);
+                else
+                    Selection.Clear();
+            });
+        }
+
+        public void CardDeselect(int id)
         {
             Card c = Card.Find(id);
             // At the moment, only table and hand support multiple selection
             QueueAction(() =>
             {
                 if (c.Group is Table || c.Group is Hand)
-                    Selection.Add(c);
+                    Selection.Remove(c);
                 else
                     Selection.Clear();
             });
