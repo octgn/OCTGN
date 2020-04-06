@@ -10,35 +10,49 @@ using Octgn.Online.Hosting;
 
 namespace Octgn.Library.Communication
 {
-    public class Client : Octgn.Communication.Client {
-        private static ILogger Log = LoggerFactory.Create(MethodBase.GetCurrentMethod().DeclaringType);
+    public class Client : Octgn.Communication.Client
+    {
+        private static readonly ILogger Log = LoggerFactory.Create(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IClientConfig _config;
 
-        public Client(IClientConfig config, Version octgnVersion) : base(new Octgn.Communication.Serializers.XmlSerializer(), new ClientAuthenticator()) {
-            _config = config;
+        public Client(IClientConfig config, Version octgnVersion) : base(new ConnectionCreator(config), new Octgn.Communication.Serializers.XmlSerializer()) {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+
             this.InitializeSubscriptionModule();
             this.InitializeHosting(octgnVersion);
             this.InitializeStatsModule();
         }
 
         public void ConfigureSession(string sessionKey, User user, string deviceId) {
+            this.Attach(new ClientAuthenticator());
+
             var authenticator = Authenticator as ClientAuthenticator;
             authenticator.SessionKey = sessionKey;
             authenticator.UserId = user.Id;
             authenticator.DeviceId = deviceId;
         }
 
-        public void Stop()
-        {
+        public void Stop() {
             Log.Info(nameof(Stop));
-            var connection = Connection;
-            if (connection != null) {
-                connection.IsClosed = true;
-            }
+
+            Connection?.Close();
         }
 
-        protected override IConnection CreateConnection()
-            => _config.CreateConnection(_config.ChatHost);
+        private class ConnectionCreator : IConnectionCreator
+        {
+            private readonly IClientConfig _config;
+
+            public ConnectionCreator(IClientConfig config) {
+                _config = config ?? throw new ArgumentNullException(nameof(config));
+            }
+
+            public IConnection Create(string host)
+                => _config.CreateConnection(_config.ChatHost);
+
+            public void Initialize(Octgn.Communication.Client client) {
+
+            }
+        }
     }
 }

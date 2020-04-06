@@ -4,11 +4,12 @@
 using System.Threading.Tasks;
 using Octgn.Communication;
 using System.Threading;
+using Octgn.Communication.Packets;
 
 namespace Octgn.Library.Communication
 {
 
-    public class ClientAuthenticator : IAuthenticator
+    public class ClientAuthenticator : Module
     {
         public string SessionKey { get; set; }
         public string UserId { get; set; }
@@ -16,6 +17,14 @@ namespace Octgn.Library.Communication
 
         public ClientAuthenticator() {
 
+        }
+
+        public override Task<ProcessResult> Process(object obj, CancellationToken cancellationToken = default) {
+            if(!(obj is RequestPacket request)) return base.Process(obj, cancellationToken));
+
+
+
+            return base.Process(obj, cancellationToken);
         }
 
         public async Task<AuthenticationResult> Authenticate(Octgn.Communication.Client client, IConnection connection, CancellationToken cancellationToken) {
