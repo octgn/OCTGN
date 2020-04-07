@@ -398,6 +398,16 @@ namespace Octgn.Scripting.Versions
             }
         }
 
+        public void GroupClearSelection(int id)
+        {
+            var g = Group.Find(id);
+            // At the moment, only table and hand support multiple selection
+            QueueAction(() =>
+            {
+                if (g is Table || g is Hand)
+                    Selection.Clear();
+            });
+        }
 
         #endregion Group API
 
@@ -654,31 +664,20 @@ namespace Octgn.Scripting.Versions
                 });
         }
 
-        public void CardSelect(int id, bool clearSelection)
-        {
-            Card c = Card.Find(id);
-            // At the moment, only table and hand support multiple selection
-            QueueAction(() =>
-            {
-                if (clearSelection)
-                    Selection.Clear();
-                if (c.Group is Table || c.Group is Hand)
-                    Selection.Add(c);
-                else
-                    Selection.Clear();
-            });
-        }
-
-        public void CardDeselect(int id)
+        public void CardSelect(int id, bool selected)
         {
             Card c = Card.Find(id);
             // At the moment, only table and hand support multiple selection
             QueueAction(() =>
             {
                 if (c.Group is Table || c.Group is Hand)
-                    Selection.Remove(c);
-                else
-                    Selection.Clear();
+                {
+                    if (selected)
+                        Selection.Add(c);
+                    else
+                        Selection.Remove(c);
+                }
+                    
             });
         }
 
