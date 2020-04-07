@@ -398,17 +398,6 @@ namespace Octgn.Scripting.Versions
             }
         }
 
-        public void GroupClearSelection(int id)
-        {
-            var g = Group.Find(id);
-            // At the moment, only table and hand support multiple selection
-            QueueAction(() =>
-            {
-                if (g is Table || g is Hand)
-                    Selection.Clear();
-            });
-        }
-
         #endregion Group API
 
         #region Cards API
@@ -1543,6 +1532,11 @@ namespace Octgn.Scripting.Versions
             while (true) {
                 yield return _rnd.Next(min, max + 1);
             }
+        }
+
+        public void ClearSelection()
+        {
+            QueueAction(() => Selection.Clear());
         }
     }
 }

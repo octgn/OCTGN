@@ -133,6 +133,9 @@ def convertToString(obj):
     return "\"{}\"".format(obj);
   return str(obj)
 
+def clearSelection(): 
+	_api.ClearSelection()
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
@@ -295,7 +298,6 @@ class Group(NamedObject):
       return [Card(id) for id in ids]
     else:
       return Card(ids[0]) if len(ids) == 1 else None
-  def clearSelection(self): _api.GroupClearSelection(self._id)
 
 class Table(Group):
   def __init__(self):
