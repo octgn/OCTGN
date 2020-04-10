@@ -1,3 +1,7 @@
+// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using GalaSoft.MvvmLight;
 
 namespace Octide.ViewModel
@@ -24,19 +28,47 @@ namespace Octide.ViewModel
 		public RelayCommand NewGameCommand { get; private set; }
 		public RelayCommand ImportGameCommand { get; private set; }
 		public RelayCommand LoadGameCommand { get; private set; }
-		public bool firstTimeLoaded { get; private set; }
 		public Game SelectedFile { get; set; }
 		public LoaderViewModel()
 		{
 			NewGameCommand = new RelayCommand(NewGame);
 			ImportGameCommand = new RelayCommand(ImportGame);
 			LoadGameCommand = new RelayCommand(LoadGame);
-			firstTimeLoaded = true;
+
+			var config = new FileDbConfiguration()
+				.SetDirectory(Path.Combine(Config.Instance.Paths.DataDirectory, "IdeDevDatabase"))
+				.SetExternalDb()
+				.DefineCollection<Game>("Game")
+				.OverrideRoot(x => x.Directory(""))
+				.SetPart(x => x.Property(y => y.Id))
+				.SetPart(x => x.File("definition.xml"))
+				.SetSerializer<GameSerializer>()
+				.Conf()
+				.DefineCollection<Set>("Sets")
+				.OverrideRoot(x => x.Directory(""))
+				.SetPart(x => x.Property(y => y.GameId))
+				.SetPart(x => x.Directory("Sets"))
+				.SetPart(x => x.Property(y => y.Id))
+				.SetPart(x => x.File("set.xml"))
+				.SetSerializer<SetSerializer>()
+				.Conf()
+				.DefineCollection<GameScript>("Scripts")
+				.OverrideRoot(x => x.Directory(""))
+				.SetSteril()
+				.Conf()
+				.DefineCollection<ProxyDefinition>("Proxies")
+				.OverrideRoot(x => x.Directory(""))
+				.SetSteril()
+				.Conf()
+				.SetCacheProvider<FullCacheProvider>();
+
+			DbContext.SetContext(config);
 
 		}
 		public void NewGame()
 		{
 			ViewModelLocator.GameLoader.New();
+			RaisePropertyChanged("IdeDevDatabaseGames");
 
 		}
 		public void ImportGame()
@@ -60,6 +92,13 @@ namespace Octide.ViewModel
 
 
 		}
+		public ObservableCollection<Game> IdeDevDatabaseGames
+		{
+			get
+			{
+				return new ObservableCollection<Game>(DbContext.Get().Games);
+			}
+		}
 
 		public string Title
 		{
@@ -79,9 +118,7 @@ namespace Octide.ViewModel
 
 		private void LoadMainWindow()
 		{
-			if (firstTimeLoaded)
-				Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Create));
-			firstTimeLoaded = false;
+			Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Create));
 			Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Show));
 			Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.SetMain));
 			Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Close));

@@ -1,39 +1,38 @@
-﻿
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using Octgn.DataNew.Entities;
 using Octide.ViewModel;
 using System;
 using System.Linq;
 namespace Octide.ItemModel
 {
-     public class DocumentItemViewModel : IdeListBoxItemBase
+     public class DocumentItemModel : IdeBaseItem
     {
         public Document _document;
 
-        public DocumentItemViewModel() // new item
+        public DocumentItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
-            _document = new Document
-            {
-                Name = "Document",
-                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Document)?.FullPath,
-                Icon = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath
-            };
+            _document = new Document();
+            DocumentAsset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Document);
+            IconAsset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
+            Name = "New Document";
         }
 
-        public DocumentItemViewModel(Document d) // load item
+        public DocumentItemModel(Document d, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _document = d;
         }
 
-        public DocumentItemViewModel(DocumentItemViewModel d) // copy item
+        public DocumentItemModel(DocumentItemModel d, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _document = new Document()
             {
-                Name = d.Name,
                 Source = d.DocumentAsset.FullPath,
                 Icon = d.IconAsset.FullPath
             };
-            ItemSource = d.ItemSource;
-            Parent = d.Parent;
+            Name = d.Name;
         }
 
         public string Name
@@ -78,24 +77,14 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Icon");
             }
         }
-
         public override object Clone()
         {
-            return new DocumentItemViewModel(this);
+            return new DocumentItemModel(this, Source);
         }
 
-        public override void Copy()
+        public override object Create()
         {
-            if (CanCopy == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as DocumentItemViewModel);
-        }
-
-        public override void Insert()
-        {
-            if (CanInsert == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new DocumentItemViewModel() { Parent = Parent, ItemSource = ItemSource });
+            return new DocumentItemModel(Source);
         }
     }
 }

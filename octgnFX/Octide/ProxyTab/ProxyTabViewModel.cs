@@ -1,4 +1,8 @@
-﻿using System;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows;
@@ -21,8 +25,10 @@ using System.Windows.Controls;
 using Octgn.Core.DataExtensionMethods;
 using System.Drawing.Text;
 using Octide.ItemModel;
+using Octide.ProxyTab.TemplateItemModel;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using System.Collections.Specialized;
 
 namespace Octide.ViewModel
 {
@@ -30,16 +36,14 @@ namespace Octide.ViewModel
     {
         
         private ProxyDefinition _proxydef => ViewModelLocator.GameLoader.ProxyDef;
-
-        private ProxyTemplateItemModel _selectedItem;
-
-        public ObservableCollection<ProxyTemplateItemModel> Templates { get; private set; }
-        public ObservableCollection<ProxyTextItemModel> TextBlocks { get; private set; }
-        public ObservableCollection<ProxyOverlayItemModel> OverlayBlocks { get; private set; }
+        public IdeCollection<IdeBaseItem> Templates { get; private set; }
+        public IdeCollection<IdeBaseItem> TextBlocks { get; private set; }
+        public IdeCollection<IdeBaseItem> OverlayBlocks { get; private set; }
 
         public ObservableCollection<ProxyInputPropertyItemModel> StoredProxyProperties { get; set; }
 
-        public RelayCommand AddCommand { get; private set; }
+        public RelayCommand AddTextBlockCommand { get; private set; }
+        public RelayCommand AddTemplateCommand { get; private set; }
         public RelayCommand AddOverlayCommand { get; private set; }
 
         public ProxyTabViewModel()
@@ -55,60 +59,85 @@ namespace Octide.ViewModel
             
             StoredProxyProperties.CollectionChanged += (a, b) =>
             {
-                UpdateProxyTemplate();
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
 
-            Templates = new ObservableCollection<ProxyTemplateItemModel>(_proxydef.TemplateSelector.GetTemplates().Select(x => new ProxyTemplateItemModel(x)));
-            Templates.CollectionChanged += (a, b) =>
+            Templates = new IdeCollection<IdeBaseItem>(this);
+            foreach (TemplateDefinition templateDef in _proxydef.TemplateSelector.GetTemplates())
+            {
+                var template = new TemplateModel(templateDef, Templates);
+                Templates.Add(template);
+                if (templateDef.defaultTemplate)
+                {
+                    Templates.DefaultItem = template;
+                }
+            }
+
+            Templates.CollectionChanged += (sender, args) =>
             {
                 _proxydef.TemplateSelector.ClearTemplates();
-                foreach (var x in Templates)
+                foreach (TemplateModel x in Templates)
                 {
                     _proxydef.TemplateSelector.AddTemplate(x._def);
                 }
             };
+            Templates.DefaultItemChanged += (sender, args) =>
+            {
+                ((TemplateModel)args.OldItem)._def.defaultTemplate = false;
+                ((TemplateModel)args.NewItem)._def.defaultTemplate = true;
+            };
 
-            TextBlocks = new ObservableCollection<ProxyTextItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "text").Select(x => new ProxyTextItemModel(x)));
-            TextBlocks.CollectionChanged += (a, b) =>
+            TextBlocks = new IdeCollection<IdeBaseItem>(this);
+            foreach (var textblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "text"))
+            {
+                TextBlocks.Add(new ProxyTextDefinitionItemModel(textblock, TextBlocks));
+            }
+            TextBlocks.CollectionChanged += (sender, args) =>
             {
                 _proxydef.BlockManager.ClearBlocks();
-                foreach (var x in TextBlocks)
+                foreach (ProxyTextDefinitionItemModel x in TextBlocks)
                 {
                     _proxydef.BlockManager.AddBlock(x._def);
                 }
-                foreach (var x in OverlayBlocks)
+                foreach (ProxyOverlayDefinitionItemModel x in OverlayBlocks)
                 {
                     _proxydef.BlockManager.AddBlock(x._def);
                 }
             };
 
-            OverlayBlocks = new ObservableCollection<ProxyOverlayItemModel>(_proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay").Select(x => new ProxyOverlayItemModel(x)));
-            OverlayBlocks.CollectionChanged += (a, b) =>
+            OverlayBlocks = new IdeCollection<IdeBaseItem>(this);
+            foreach (var overlayblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay"))
+            {
+                OverlayBlocks.Add(new ProxyOverlayDefinitionItemModel(overlayblock, OverlayBlocks));
+            }
+            OverlayBlocks.CollectionChanged += (sender, args) =>
             {
                 _proxydef.BlockManager.ClearBlocks();
-                foreach (var x in TextBlocks)
+                foreach (ProxyTextDefinitionItemModel x in TextBlocks)
                 {
                     _proxydef.BlockManager.AddBlock(x._def);
                 }
-                foreach (var x in OverlayBlocks)
+                foreach (ProxyOverlayDefinitionItemModel x in OverlayBlocks)
                 {
                     _proxydef.BlockManager.AddBlock(x._def);
                 }
             };
 
-            AddCommand = new RelayCommand(AddTemplate);
+            AddTextBlockCommand = new RelayCommand(AddTextBlock);
+            AddTemplateCommand = new RelayCommand(AddTemplate);
             AddOverlayCommand = new RelayCommand(AddOverlay);
             RaisePropertyChanged("StoredProxyProperties");
+            Messenger.Default.Register<ProxyTemplateChangedMessage>(this, action => UpdateProxyTemplate(action));
         }
         
-        public void UpdateProxyTemplate()
+        public void UpdateProxyTemplate(ProxyTemplateChangedMessage message)
         {
-            if (SelectedItem == null) return;
+            if (SelectedTemplate == null) return;
 
             var properties = StoredProxyProperties.Where(x => x.Name != null).ToDictionary(x => x.Name, x => x.Value);
 
             //this stuff generates the real proxy image, maybe we'll need to keep it in for more accurate image
-            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, _proxydef.RootPath, SelectedItem._def, properties, null);
+            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, _proxydef.RootPath, SelectedTemplate._def, properties, null);
             using (var ms = new MemoryStream())
             {
                 proxy.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -122,12 +151,12 @@ namespace Octide.ViewModel
             }
             proxy.Dispose();
 
-            BaseImage = new BitmapImage(new Uri(Path.Combine(SelectedItem._def.rootPath, SelectedItem._def.src)));
-            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayItemModel>(
-                SelectedItem._def.GetOverLayBlocks(properties).Select(
-                    x => OverlayBlocks.First(y => y.Name == x.Block)));
+            BaseImage = new BitmapImage(new Uri(Path.Combine(SelectedTemplate._def.rootPath, SelectedTemplate._def.src)));
+            ActiveOverlayLayers = new ObservableCollection<ProxyOverlayDefinitionItemModel>(
+                SelectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
+                    x => (ProxyOverlayDefinitionItemModel)OverlayBlocks.First(y => ((ProxyOverlayDefinitionItemModel)y).Name == x.Block)));
             ActiveTextLayers = new ObservableCollection<ProxyTextLinkItemModel>(
-                SelectedItem._def.GetTextBlocks(properties).Select(
+                SelectedTemplate._def.GetTextBlocks(properties).Select(
                     x => new ProxyTextLinkItemModel(x) ));
 
             RaisePropertyChanged("BaseImage");
@@ -144,33 +173,27 @@ namespace Octide.ViewModel
 
         public double BaseHeight => BaseImage?.PixelHeight ?? 0;
         
-        public ObservableCollection<ProxyOverlayItemModel> ActiveOverlayLayers { get; private set; }
+        public ObservableCollection<ProxyOverlayDefinitionItemModel> ActiveOverlayLayers { get; private set; }
         public ObservableCollection<ProxyTextLinkItemModel> ActiveTextLayers { get; private set; }
 
-        public ProxyTemplateItemModel SelectedItem
+        public TemplateModel _selectedTemplate;
+
+        public TemplateModel SelectedTemplate
         {
-            get { return _selectedItem; }
+            get
+            {
+                return _selectedTemplate;
+            }
             set
             {
-                if (value == _selectedItem) return;
-                _selectedItem = value;
-                UpdateProxyTemplate();
-                RaisePropertyChanged("SelectedItem");
+                if (value == _selectedTemplate) return;
+                _selectedTemplate = value;
+                Selection = null;
+                RaisePropertyChanged("SelectedTemplate");
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
         
-        private ViewModelBase _activeView;
-
-        public ViewModelBase ActiveView
-        {
-            get { return _activeView; }
-            set
-            {
-                _activeView = value;
-                RaisePropertyChanged("ActiveView");
-            }
-        }
-
         public object _selection;
 
         public object Selection
@@ -183,68 +206,28 @@ namespace Octide.ViewModel
             {
                 if (value == _selection) return;
                 _selection = value;
-                if (value is ProxyOverlayItemModel)
-                {
-                    ViewModelLocator.ProxyOverlayViewModel.SelectedItem = (ProxyOverlayItemModel)value;
-                    ActiveView = ViewModelLocator.ProxyOverlayViewModel;
-                }
-                else if (value is ProxyTextItemModel)
-                {
-                    ViewModelLocator.ProxyTextBlockViewModel.SelectedItem = (ProxyTextItemModel)value;
-                    ActiveView = ViewModelLocator.ProxyTextBlockViewModel;
-                }
-                else
-                {
-                    ActiveView = null;
-                }
                 RaisePropertyChanged("Selection");
-                RaisePropertyChanged("ActiveView");
             }
         }
 
         public void AddTemplate()
         {
-            var ret = new ProxyTemplateItemModel() { Name = "Template" };
+            var ret = new TemplateModel(Templates);
             Templates.Add(ret);
-            SelectedItem = ret;
+            SelectedTemplate = ret;
         }
 
         public void AddOverlay()
         {
-            var ret = new ProxyOverlayItemModel();
+            var ret = new ProxyOverlayDefinitionItemModel(OverlayBlocks);
             OverlayBlocks.Add(ret);
-            RaisePropertyChanged("OverlayBlocks");
+            Selection = ret;
         }
-    }
-
-    public class ProxyTextBlockItemModel : ViewModelBase
-    {
-        public ProxyTextItemModel TextBlock { get; private set; }
-        public string Format { get; private set; }
-        public CardPropertyItemModel Property { get; set; }
-        public ObservableCollection<ProxyInputPropertyItemModel> Properties;
-
-        public LinkDefinition _linkDefinition;
-
-        public ProxyTextBlockItemModel()
+        public void AddTextBlock()
         {
-        }
-
-        public ProxyTextBlockItemModel(LinkDefinition ld)
-        {
-            _linkDefinition = ld;
-            TextBlock = ViewModelLocator.ProxyTabViewModel.TextBlocks.First(x => x.Name == ld.Block);
-        }
-
-        public string GetText(Dictionary<string, string> properties)
-        {
-            List<string> propertyValueList = new List<string>();
-            foreach (var propDef in _linkDefinition.NestedProperties)
-            {
-                if (properties.ContainsKey(propDef.Name))
-                    propertyValueList.Add(string.Format(propDef.Format, properties.First(x => x.Key == propDef.Name).Value));
-            }
-            return string.Join(_linkDefinition.Separator, propertyValueList);
+            var ret = new ProxyTextDefinitionItemModel(TextBlocks);
+            TextBlocks.Add(ret);
+            Selection = ret;
         }
     }
 
@@ -260,11 +243,11 @@ namespace Octide.ViewModel
             _linkDefinition = link;
         }
 
-        public ProxyTextItemModel TextBlock
+        public ProxyTextDefinitionItemModel TextBlock
         {
             get
             {
-                return ViewModelLocator.ProxyTabViewModel.TextBlocks.First(x => x.Name == _linkDefinition.Block);
+                return (ProxyTextDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.TextBlocks.First(x => ((ProxyTextDefinitionItemModel)x).Name == _linkDefinition.Block);
             }
         }
 
@@ -306,8 +289,8 @@ namespace Octide.ViewModel
                 if (value == _name) return;
                 if (ViewModelLocator.ProxyTabViewModel.StoredProxyProperties.FirstOrDefault(x => x.Name == value) != null) return;
                 _name = value;
-                ViewModelLocator.ProxyTabViewModel.UpdateProxyTemplate();
                 RaisePropertyChanged("Name");
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
 
@@ -321,8 +304,8 @@ namespace Octide.ViewModel
             {
                 if (value == _value) return;
                 _value = value;
-                ViewModelLocator.ProxyTabViewModel.UpdateProxyTemplate();
                 RaisePropertyChanged("Value");
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
     }

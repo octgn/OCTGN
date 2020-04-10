@@ -1,4 +1,8 @@
-﻿using System;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows;
@@ -22,9 +26,7 @@ namespace Octide.ViewModel
     public class DocumentTabViewModel : ViewModelBase
     {
 
-        private Visibility _panelVisibility;
-        private DocumentItemViewModel _selectedItem;
-        public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
+        public IdeCollection<IdeBaseItem> Items { get; private set; }
 
         public RelayCommand AddCommand { get; private set; }
 
@@ -32,46 +34,23 @@ namespace Octide.ViewModel
         public DocumentTabViewModel()
         {
             AddCommand = new RelayCommand(AddItem);
-            PanelVisibility = Visibility.Collapsed;
 
-            Items = new ObservableCollection<IdeListBoxItemBase>();
+            Items = new IdeCollection<IdeBaseItem>(this);
             foreach (var document in ViewModelLocator.GameLoader.Game.Documents)
             {
-                Items.Add(new DocumentItemViewModel(document) { ItemSource = Items });
+                Items.Add(new DocumentItemModel(document, Items));
             }
-            Items.CollectionChanged += (a, b) => {
-                ViewModelLocator.GameLoader.Game.Documents = Items.Select(x => (x as DocumentItemViewModel)._document).ToList();
+            Items.CollectionChanged += (a, b) => 
+            {
+                ViewModelLocator.GameLoader.Game.Documents = Items.Select(x => (x as DocumentItemModel)._document).ToList();
             };
         }
-        
-        public DocumentItemViewModel SelectedItem
-        {
-            get { return _selectedItem; }
-            set
-            {
-                if (value == _selectedItem) return;
-                _selectedItem = value;
-                PanelVisibility = (value == null) ? Visibility.Collapsed : Visibility.Visible;
-                RaisePropertyChanged("SelectedItem");
-            }
-        }
 
-        public Visibility PanelVisibility
-        {
-            get { return _panelVisibility; }
-            set
-            {
-                if (value == _panelVisibility) return;
-                _panelVisibility = value;
-                RaisePropertyChanged("PanelVisibility");
-            }
-        }
-        
         public void AddItem()
         {
-            var ret = new DocumentItemViewModel();
+            var ret = new DocumentItemModel(Items);
             Items.Add(ret);
-            SelectedItem = ret;
+            Items.SelectedItem = ret;
         }
     }
 

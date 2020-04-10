@@ -1,10 +1,16 @@
-﻿<UserControl x:Class="Octide.Views.SoundItemView"
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.SoundItemView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
              mc:Ignorable="d" 
+             xmlns:ely="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
@@ -12,10 +18,30 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <ItemsControl Style="{StaticResource OctideInputPanel}">
             <TextBlock Text="Sound Name"/>
-            <TextBox Text="{Binding Name, Mode=TwoWay}"/>
+            <TextBox>
+                <TextBox.Resources>
+                    <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                </TextBox.Resources>
+                <TextBox.Text>
+                    <Binding Path="Name" >
+                        <Binding.ValidationRules>
+                            <local:StringRestrictionValidationRule />
+                            <local:UniqueValueValidationRule>
+                                <local:UniqueValueValidationRule.Wrapper>
+                                    <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                </local:UniqueValueValidationRule.Wrapper>
+                            </local:UniqueValueValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
             <TextBlock Text="Sound Asset"/>
-            <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Sound" />
+            <StackPanel Orientation="Horizontal">
+                <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Sound" />
+                <Button Margin="5" Content="Play" Command="{Binding PlayCommand }"/>
+                <Button Margin="5" Content="Stop" Command="{Binding StopCommand }"/>
+            </StackPanel>
         </ItemsControl>
     </ScrollViewer>
 </UserControl>

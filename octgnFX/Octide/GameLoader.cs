@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Octide
@@ -19,6 +23,8 @@ namespace Octide
     using Octgn.ProxyGenerator;
     using System.Windows;
     using System.Collections.ObjectModel;
+    using NuGet.Packaging;
+    using NuGet.Versioning;
 
     public class GameLoader : ViewModelBase
     {
@@ -115,48 +121,8 @@ namespace Octide
 
         public bool DidManualSave { get; set; }
 
-		public ObservableCollection<Game> IdeDevDatabaseGames
-		{
-			get
-			{
-				return new ObservableCollection<Game>(DbContext.Get().Games);
-			}
-		}
 		public GameLoader()
 		{
-			SetFileDb();
-		}
-
-		public void SetFileDb()
-		{
-			var config = new FileDbConfiguration()
-				.SetDirectory(Path.Combine(Config.Instance.Paths.DataDirectory, "IdeDevDatabase"))
-				.SetExternalDb()
-				.DefineCollection<Game>("Game")
-				.OverrideRoot(x => x.Directory(""))
-				.SetPart(x => x.Property(y => y.Id))
-				.SetPart(x => x.File("definition.xml"))
-				.SetSerializer<GameSerializer>()
-				.Conf()
-				.DefineCollection<Set>("Sets")
-				.OverrideRoot(x => x.Directory(""))
-				.SetPart(x => x.Property(y => y.GameId))
-				.SetPart(x => x.Directory("Sets"))
-				.SetPart(x => x.Property(y => y.Id))
-				.SetPart(x => x.File("set.xml"))
-				.SetSerializer<SetSerializer>()
-				.Conf()
-				.DefineCollection<GameScript>("Scripts")
-				.OverrideRoot(x => x.Directory(""))
-				.SetSteril()
-				.Conf()
-				.DefineCollection<ProxyDefinition>("Proxies")
-				.OverrideRoot(x => x.Directory(""))
-				.SetSteril()
-				.Conf()
-				.SetCacheProvider<FullCacheProvider>();
-
-			DbContext.SetContext(config);
 		}
 
         public void New()
@@ -232,8 +198,37 @@ namespace Octide
             {
                 s.Serialize(set);
             }
+            var p = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id);
+            p.Serialize(ProxyDef);
             NeedsSave = false;
             DidManualSave = true;
+        }
+
+        public void ExportGame()
+        {
+            var builder = new PackageBuilder()
+            {
+                Id = Game.Id.ToString(),
+                Description = Game.Description,
+                ProjectUrl = new Uri(Game.GameUrl),
+                Version = new NuGetVersion(Game.Version),
+                Title = Game.Name,
+                IconUrl = new Uri(Game.IconUrl),
+
+            };
+            foreach (var a in Game.Authors) builder.Authors.Add(a);
+            foreach (var t in Game.Tags) builder.Authors.Add(t);
+
+            var g = new GameSerializer();
+            g.Serialize(Game);
+
+
+            var feedPath = Path.Combine(GamePath, Game.Name + '-' + Game.Version + ".nupkg");
+            var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+            builder.Save(filestream);
+            filestream.Flush(true);
+            filestream.Close();
+
         }
 
         public void DeleteGame()

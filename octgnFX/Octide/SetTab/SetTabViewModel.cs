@@ -1,18 +1,17 @@
-﻿using System.Linq;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using System.Collections.ObjectModel;
-using Octide.ItemModel;
-using Octide.Messages;
-using System.Windows;
+using Octide.SetTab.ItemModel;
 
 namespace Octide.ViewModel
 {
     public class SetTabViewModel : ViewModelBase
     {
-        private SetItemViewModel _selectedItem;
-
-        public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
+        public IdeCollection<IdeBaseItem> Items { get; private set; }
 
         public RelayCommand AddSetCommand { get; private set; }
 
@@ -20,50 +19,23 @@ namespace Octide.ViewModel
         {
             AddSetCommand = new RelayCommand(AddSet);
 
-            Items = new ObservableCollection<IdeListBoxItemBase>();
+            Items = new IdeCollection<IdeBaseItem>(this);
             foreach (var set in ViewModelLocator.GameLoader.Sets)
             {
-                Items.Add(new SetItemViewModel(set) { ItemSource = Items });
+                Items.Add(new SetModel(set, Items));
             }
 
             Items.CollectionChanged += (a, b) =>
             {
-                ViewModelLocator.GameLoader.Sets = Items.Select(x => (x as SetItemViewModel)._set).ToList();
+                ViewModelLocator.GameLoader.Sets = Items.Select(x => ((SetModel)x)._set);
             };
-            MessengerInstance.Register<CustomPropertyChangedMessage>(this, action => RebuildSets());
-        }
-
-        public void RebuildSets()
-        {
-            foreach (SetItemViewModel set in Items)
-            {
-                foreach (SetCardItemViewModel card in set.CardItems)
-                {
-                    foreach (SetCardAltItemViewModel alt in card.Items)
-                    {
-                        //alt.UpdatePropertyDef(null);
-                    }
-                }
-            }
-          //  SelectedItem?.SelectedCard?.SelectedItem?.RaisePropertyChanged("GetProperties");
-        }
-
-        public SetItemViewModel SelectedItem
-        {
-            get { return _selectedItem; }
-            set
-            {
-                if (value == _selectedItem) return;
-                _selectedItem = value;
-                RaisePropertyChanged("SelectedItem");
-            }
         }
 
         public void AddSet()
         {
-            var ret = new SetItemViewModel() {ItemSource = Items };
+            var ret = new SetModel(Items);
             Items.Add(ret);
-            SelectedItem = ret;
+            Items.SelectedItem = ret;
         }
         
     }

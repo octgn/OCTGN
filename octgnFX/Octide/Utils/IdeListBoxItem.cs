@@ -1,59 +1,89 @@
-﻿using GalaSoft.MvvmLight;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GongSolutions.Wpf.DragDrop;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Runtime.CompilerServices;
 
 namespace Octide
 {
-    public abstract class IdeListBoxItemBase : ViewModelBase, ICloneable
+    public abstract class IdeBaseItem : ViewModelBase, ICloneable
     {
         private bool _canEdit = true;
         private bool _canRemove = true;
         private bool _canCopy = true;
         private bool _canInsert = true;
         private bool _canDragDrop = true;
-        private bool _isDefault = false;
+        private bool _canBeDefault = false;
         private bool _isVisible = true;
         private string _icon = null;
-        public object Parent;
 
         public RelayCommand RemoveCommand { get; set; }
         public RelayCommand CopyCommand { get; set; }
         public RelayCommand InsertCommand { get; set; }
+        public RelayCommand MakeDefaultCommand { get; set; }
 
-        public ObservableCollection<IdeListBoxItemBase> ItemSource { get; set; }
+        public IdeCollection<IdeBaseItem> Source { get; set; }
 
-
-        public IdeListBoxItemBase()
+        public IdeBaseItem(IdeCollection<IdeBaseItem> src)
         {
-            RemoveCommand = new RelayCommand(Remove);
-            CopyCommand = new RelayCommand(Copy);
-            InsertCommand = new RelayCommand(Insert);
+            Source = src;
+            Source.DefaultItemChanged += (sender, args) =>
+            {
+                if (args.OldItem == this)
+                {
+                    RaisePropertyChanged("IsDefault");
+                }
+            };
+            RemoveCommand = new RelayCommand(RemoveItem);
+            CopyCommand = new RelayCommand(CopyItem);
+            InsertCommand = new RelayCommand(InsertItem);
+            MakeDefaultCommand = new RelayCommand(MakeDefault);
+
         }
 
-        public virtual void Remove()
+        public void RemoveItem()
         {
             if (CanRemove == false) return;
-            ItemSource.Remove(this);
+            Source.Remove(this);
         }
 
-        public virtual void Copy()
+        public void CopyItem()
         {
-
+            if (CanCopy == false) return;
+            var index = Source.IndexOf(this);
+            Source.Insert(index, Clone() as IdeBaseItem);
         }
 
-        public virtual void Insert()
+        public void InsertItem()
         {
+            if (CanInsert == false) return;
+            var index = Source.IndexOf(this);
+            Source.Insert(index, Create() as IdeBaseItem);
+        }
+
+        public void MakeDefault()
+        {
+            if (CanBeDefault == false) return;
+            if (Source.DefaultItem == this) return;
+            Source.DefaultItem = this;
+            RaisePropertyChanged("IsDefault");
 
         }
 
         public virtual object Clone()
+        {
+            return this;
+        }
+
+        public virtual object Create()
         {
             return this;
         }
@@ -92,6 +122,7 @@ namespace Octide
             }
             set
             {
+                if (IsDefault) return;
                 if (_canRemove == value) return;
                 _canRemove = value;
             }
@@ -123,16 +154,30 @@ namespace Octide
             }
         }
 
+        public bool CanBeDefault
+        {
+            get
+            {
+                return _canBeDefault;
+            }
+            set
+            {
+                if (_canBeDefault == value) return;
+                _canBeDefault = value;
+            }
+        }
+
         public bool IsDefault
         {
             get
             {
-                return _isDefault;
+                return Source?.DefaultItem == this;
             }
             set
             {
-                if (_isDefault == value) return;
-                _isDefault = value;
+                if (Source.DefaultItem == this) return;
+                Source.DefaultItem = this;
+                RaisePropertyChanged("IsDefault");
             }
         }
 

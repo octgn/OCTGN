@@ -1,4 +1,8 @@
-﻿using System;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows;
@@ -20,50 +24,53 @@ namespace Octide.ViewModel
 {
     public class PropertyTabViewModel : ViewModelBase
     {
+        public IdeCollection<IdeBaseItem> Items { get; private set; }
 
-        private PropertyItemViewModel _selectedItem;
-        public ObservableCollection<IdeListBoxItemBase> Items { get; private set; }
+        public PropertyItemModel NameProperty;
+        public PropertyItemModel IdProperty;
+        public PropertyItemModel AlternateProperty;
 
-        public PropertyItemViewModel NameProperty => Items.First(x => (x as PropertyItemViewModel).Name == "Name") as PropertyItemViewModel;
+        public PropertyItemModel SizeProperty;
+        public PropertyItemModel SizeNameProperty;
+        public PropertyItemModel SizeHeightProperty;
+        public PropertyItemModel SizeWidthProperty;
+        public PropertyItemModel ProxyNameProperty;
 
         public RelayCommand AddCommand { get; private set; }
 
         public PropertyTabViewModel()
         {
-            Items = new ObservableCollection<IdeListBoxItemBase>();
+            Items = new IdeCollection<IdeBaseItem>(this);
             foreach (var property in ViewModelLocator.GameLoader.Game.CustomProperties)
             {
-                Items.Add(
-                    new PropertyItemViewModel(property)
-                    {
-                        ItemSource = Items,
-                        IsVisible = property.Name != "Name"
-                    });
+                Items.Add(new PropertyItemModel(property, Items));
             }
-            Items.CollectionChanged += (a, b) =>
+            Items.CollectionChanged += (sender, args) =>
             {
-                ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => (x as PropertyItemViewModel)._property).ToList();
-                MessengerInstance.Send<CustomPropertyChangedMessage>(new CustomPropertyChangedMessage());
+                ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => ((PropertyItemModel)x)._property).ToList();
+                Messenger.Default.Send(new CustomPropertyChangedMessage(args)) ;
             };
             AddCommand = new RelayCommand(AddItem);
+            
+            //TODO: Make sure these property names aren't already set
+
+            NameProperty = new PropertyItemModel(new PropertyDef() { Name = "Name" }, Items);
+            IdProperty = new PropertyItemModel(new PropertyDef() { Name = "Id" }, Items);
+            AlternateProperty = new PropertyItemModel(new PropertyDef() { Name = "Alternate" }, Items);
+            SizeProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSize" }, Items);
+            //Proxy Properties
+            ProxyNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardName" }, Items);
+            SizeNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeName" }, Items);
+            SizeHeightProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeHeight" }, Items);
+            SizeWidthProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeWidth" }, Items);
         }
         
-        public PropertyItemViewModel SelectedItem
-        {
-            get { return _selectedItem; }
-            set
-            {
-                if (value == _selectedItem) return;
-                _selectedItem = value;
-                RaisePropertyChanged("SelectedItem");
-            }
-        }
 
         public void AddItem()
         {
-            var ret = new PropertyItemViewModel() { ItemSource = Items, Parent = this, Name = "Property" };
+            var ret = new PropertyItemModel(Items);
             Items.Add(ret);
-            SelectedItem = ret;
+            Items.SelectedItem = ret;
         }
     }
 

@@ -8,3 +8,4 @@ XML format for game markers: <marker name="Damage Counter" id="damage" src="Mark
 Re-structuring of some proxy generator files, with some undiscoverd bug fixes.
 Proxy templates can now theoretically support nested conditional elements
 Default Game Board and Card Size can now accept an optional name (defaults to 'Default')
+Significant changes to the IDE (OCTGN game editor), not quite finished yet but it is relatively stable

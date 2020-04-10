@@ -1,41 +1,56 @@
-﻿using Octgn.DataNew.Entities;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using GalaSoft.MvvmLight.Command;
+using Octgn.DataNew.Entities;
 using Octide.ViewModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Octide.ItemModel
 {
  
-    public class SoundItemViewModel : IdeListBoxItemBase
+    public class SoundItemModel : IdeBaseItem
     {
         public GameSound _sound { get; private set; }
+        public RelayCommand PlayCommand { get; private set; }
+        public RelayCommand StopCommand { get; private set; }
 
-        public SoundItemViewModel() // new item
+        public SoundItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
-            _sound = new GameSound
-            {
-                Name = Utils.GetUniqueName("Sound", ItemSource.Select(x => (x as SoundItemViewModel).Name)),
-                Gameid = ViewModelLocator.GameLoader.Game.Id,
-                //Src = ViewModelLocator.GameLoader.GamePath
-                Src = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Sound)?.FullPath,
-            };
+            PlayCommand = new RelayCommand(PlaySound);
+            StopCommand = new RelayCommand(StopSound);
+
+            _sound = new GameSound();
+            Name = "New Sound";
+
+            Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Sound);
+
         }
 
-        public SoundItemViewModel(GameSound s) // load item
+        public SoundItemModel(GameSound s, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
+            PlayCommand = new RelayCommand(PlaySound);
+            StopCommand = new RelayCommand(StopSound);
+
             _sound = s;
         }
 
-        public SoundItemViewModel(SoundItemViewModel s) // copy item
+        public SoundItemModel(SoundItemModel s, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
+            PlayCommand = new RelayCommand(PlaySound);
+            StopCommand = new RelayCommand(StopSound);
+
             _sound = new GameSound()
             {
-                Name = Utils.GetUniqueName(s.Name, s.ItemSource.Select(x => (x as SoundItemViewModel).Name)),
                 Gameid = s._sound.Gameid,
                 Src = s.Asset.FullPath
             };
-            ItemSource = s.ItemSource;
-            Parent = s.Parent;
+            Name = s.Name;
         }
+
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((SoundItemModel)x).Name);
 
         public string Name
         {
@@ -46,8 +61,7 @@ namespace Octide.ItemModel
             set
             {
                 if (_sound.Name == value) return;
-                if (string.IsNullOrEmpty(value)) return;
-                _sound.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as SoundItemViewModel).Name));
+                _sound.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
             }
         }
@@ -61,27 +75,26 @@ namespace Octide.ItemModel
             set
             {
                 _sound.Src = value?.FullPath;
-                RaisePropertyChanged("DocumentAsset");
+                RaisePropertyChanged("Asset");
             }
         }
 
         public override object Clone()
         {
-            return new SoundItemViewModel(this);
+            return new SoundItemModel(this, Source);
         }
-        
-        public override void Copy()
+        public override object Create()
         {
-            if (CanCopy == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as SoundItemViewModel);
+            return new SoundItemModel(Source);
         }
 
-        public override void Insert()
+        public void PlaySound()
         {
-            if (CanInsert == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SoundItemViewModel() { Parent = Parent, ItemSource = ItemSource });
+            ViewModelLocator.SoundTabViewModel.PlaySound(Asset);
+        }
+        public void StopSound()
+        {
+            ViewModelLocator.SoundTabViewModel.StopSound();
         }
     }
 }

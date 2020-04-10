@@ -1,4 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
@@ -15,36 +19,40 @@ using System.Threading.Tasks;
 
 namespace Octide.ItemModel
 {
-    public class SymbolItemViewModel : IdeListBoxItemBase
+    public class SymbolItemModel : IdeBaseItem
     {
         public Symbol _symbol;
 
-        public SymbolItemViewModel() // new item
+        public SymbolItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
-            _symbol = new Symbol
-            {
-                Id = Utils.GetUniqueName("Symbol", ItemSource.Select(x => (x as SymbolItemViewModel).Id)),
-                Name = "Symbol",
-                //Source = ViewModelLocator.GameLoader.GamePath
-                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
-            };
+            _symbol = new Symbol();
+            Name = "New Symbol";
+            Id = "symbol";
+            Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
         }
 
-        public SymbolItemViewModel(Symbol s) // load item
+        public SymbolItemModel(Symbol s, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _symbol = s;
         }
 
-        public SymbolItemViewModel(SymbolItemViewModel s) // copy item
+        public SymbolItemModel(SymbolItemModel s, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _symbol = new Symbol()
             {
-                Id = Utils.GetUniqueName(s.Id, ItemSource.Select(x => (x as SymbolItemViewModel).Name)),
-                Name = s.Name,
                 Source = s.Asset.FullPath
             };
-            Parent = s.Parent;
-            ItemSource = s.ItemSource;
+            Name = s.Name;
+            Id = s.Id;
+        }
+
+        public override object Clone()
+        {
+            return new SymbolItemModel(this, Source);
+        }
+        public override object Create()
+        {
+            return new SymbolItemModel(Source);
         }
 
         public string Name
@@ -61,6 +69,8 @@ namespace Octide.ItemModel
             }
         }
 
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((SymbolItemModel)x).Id);
+
         public string Id
         {
             get
@@ -70,8 +80,7 @@ namespace Octide.ItemModel
             set
             {
                 if (_symbol.Id == value) return;
-                if (string.IsNullOrEmpty(value)) return;
-                _symbol.Id = Utils.GetUniqueName(value, ItemSource.Select(x => (x as SymbolItemViewModel).Id));
+                _symbol.Id = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Id");
             }
         }
@@ -92,23 +101,5 @@ namespace Octide.ItemModel
             }
         }
 
-        public override object Clone()
-        {
-            return new SymbolItemViewModel(this);
-        }
-
-        public override void Copy()
-        {
-            if (CanCopy == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as SymbolItemViewModel);
-        }
-
-        public override void Insert()
-        {
-            if (CanInsert == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new SymbolItemViewModel() { Parent = Parent, ItemSource = ItemSource });
-        }
     }
 }

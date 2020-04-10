@@ -1,0 +1,135 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.SetTab.AlternateItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"      
+             xmlns:local="clr-namespace:Octide"
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:model="clr-namespace:Octide.ItemModel"
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             mc:Ignorable="d" 
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
+             d:DesignHeight="500" d:DesignWidth="700">
+
+    <UserControl.Resources>
+        <local:InverseBooleanConverter x:Key="inverseBooleanConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+                <ItemsControl Style="{StaticResource OctideInputPanel}" >
+                    <TextBlock Text="Name" />
+                    <TextBox>
+                        <TextBox.Text>
+                            <Binding Path="CardName" >
+                                <Binding.ValidationRules>
+                                    <local:StringRestrictionValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDefault}" Value="True" >
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="Alternate Identifier" />
+                        <TextBox>
+                            <TextBox.Resources>
+                                <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <Binding Path="Name" >
+                                    <Binding.ValidationRules>
+                                        <local:StringRestrictionValidationRule />
+                                        <local:UniqueValueValidationRule>
+                                            <local:UniqueValueValidationRule.Wrapper>
+                                                <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                            </local:UniqueValueValidationRule.Wrapper>
+                                        </local:UniqueValueValidationRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+                    
+                    <TextBlock Text="Size"/>
+                    <ComboBox IsReadOnly="True" ItemsSource="{Binding CardSizes}" DisplayMemberPath="Name" SelectedItem="{Binding SizeProperty, Mode=TwoWay}" >
+                    </ComboBox>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding GetProperties}" ItemContainerStyle="{StaticResource OctideInputPanel}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding IsDefined}" ToolTip="Check this box to include this property in the XML." />
+                                    <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                                </StackPanel>
+                                <TextBox Text="{Binding Value, Mode=TwoWay}" IsEnabled="{Binding IsDefined}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Button VerticalAlignment="Top" BorderThickness="1,0,1,1" Height="Auto" Width="90" Command="{Binding DeleteImageCommand}">
+                <TextBlock Text="Delete Image" HorizontalAlignment="Center" Foreground="White"/>
+            </Button>
+            <Grid Grid.Row="1" >
+                <Image Source="{Binding CardImage, Mode=OneWay}" gong:DragDrop.DropHandler="{Binding }" gong:DragDrop.IsDropTarget="True" />
+                <Border x:Name="ReplaceIcon" Background="Black" Opacity="0.4" CornerRadius="20" VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" Padding="10" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Foreground="White" FontWeight="Bold" FontSize="24" Text="Replace Image"/>
+                        <Grid Height="9.334" Width="27"/>
+                        <Rectangle Width="100" Height="80" RenderTransformOrigin="0.5,0.5">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                            <Rectangle.Fill>
+                                <DrawingBrush Stretch="Uniform">
+                                    <DrawingBrush.Drawing>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Children>
+                                                <GeometryDrawing Brush="White" Geometry="F1 M 85.7631,138.267L 68.4351,120.939C 67.8271,120.331 66.9125,120.148 66.1178,120.478C 65.3231,120.807 64.8058,121.584 64.8058,122.443L 64.8058,131.691L 39.9031,131.691L 39.9031,147.85L 64.8058,147.85L 64.8058,157.077C 64.8058,157.96 65.3231,158.736 66.1178,159.064C 66.3805,159.172 66.6565,159.224 66.9298,159.224C 67.4845,159.224 68.0285,159.01 68.4351,158.602L 85.7631,141.274C 86.1591,140.878 86.3871,140.331 86.3871,139.77C 86.3871,139.211 86.1591,138.662 85.7631,138.267 Z "/>
+                                            </DrawingGroup.Children>
+                                        </DrawingGroup>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <views:SetCardProxyItemView Grid.Row="2" />
+        </Grid>
+    </Grid>
+</UserControl>

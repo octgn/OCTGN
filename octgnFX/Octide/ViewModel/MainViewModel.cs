@@ -1,3 +1,7 @@
+// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -22,9 +26,11 @@ namespace Octide.ViewModel
 	{
 		public RelayCommand LoadCommand { get; private set; }
 		public RelayCommand SaveCommand { get; private set; }
+		public RelayCommand ExportCommand { get; private set; }
 
 		public MainViewModel()
 		{
+			ExportCommand = new RelayCommand(ExportPackage);
 			SaveCommand = new RelayCommand(SaveGame);
 			LoadCommand = new RelayCommand(LoadLoaderWindow);
 		}
@@ -34,32 +40,53 @@ namespace Octide.ViewModel
 			ViewModelLocator.GameLoader.SaveGame();
 		}
 
+        private void ExportPackage()
+        {
+            if (AskToSave())
+            {
+				ViewModelLocator.GameLoader.ExportGame();
+			}
+
+        }
+
 		private void LoadLoaderWindow()
 		{
 			//TODO: Make this work -- app doesn't like showing previously-closed windows.
 			if (CleanupCurrentGame())
 			{
+				ViewModelLocator.Cleanup();
 				Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Create));
 				Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Show));
 				Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.SetMain));
 				Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Close));
-				ViewModelLocator.Cleanup();
 			}
 		}
+
+        public bool AskToSave()
+        {
+            bool ret = true;
+            if (ViewModelLocator.GameLoader.NeedsSave && ViewModelLocator.GameLoader.DidManualSave)
+            {
+                switch (MessageBox.Show("You have unsaved changes. Would you like to save first?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                {
+                    case MessageBoxResult.Cancel:
+                        ret = false;
+                        break;
+                    case MessageBoxResult.Yes:
+                        ViewModelLocator.GameLoader.SaveGame();
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                }
+            }
+            return ret;
+        }
 		public bool CleanupCurrentGame()
 		{
-			if (ViewModelLocator.GameLoader.NeedsSave && ViewModelLocator.GameLoader.DidManualSave)
-			{
-				var res = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-				if (res == MessageBoxResult.Yes)
-				{
-					ViewModelLocator.GameLoader.SaveGame();
-				}
-				else if (res == MessageBoxResult.Cancel)
-				{
-					return false;
-				}
-			}
+            if (!AskToSave())
+            {
+                return false;
+            }
 			if (ViewModelLocator.GameLoader.DidManualSave == false)
 			{
 				ViewModelLocator.GameLoader.DeleteGame();

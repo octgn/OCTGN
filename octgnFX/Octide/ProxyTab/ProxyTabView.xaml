@@ -1,4 +1,9 @@
-﻿<UserControl x:Class="Octide.Views.ProxyTabView"
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.ProxyTabView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,6 +13,7 @@
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
              xmlns:itemModel="clr-namespace:Octide.ItemModel"
+             xmlns:item="clr-namespace:Octide.ProxyTab.TemplateItemModel"
              xmlns:local="clr-namespace:Octide"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
@@ -15,14 +21,6 @@
              d:DesignHeight="600" d:DesignWidth="900"
              DataContext="{Binding ProxyTabViewModel, Source={StaticResource Locator}}">
 
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type viewModel:ProxyOverlayViewModel}">
-            <views:ProxyOverlayView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:ProxyTextBlockViewModel}">
-            <views:ProxyTextBlockView />
-        </DataTemplate>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -32,7 +30,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="300" MinWidth="300" />
+            <ColumnDefinition Width="300" MinWidth="250" />
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
@@ -41,20 +39,26 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <Button Content="New Template" Margin="1" Command="{Binding AddCommand}" />
+                <Button Content="New Template" Margin="1" Command="{Binding AddTemplateCommand}" />
             </StackPanel>
-            <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedItem}" >
+            <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Templates}" SelectedValue="{Binding SelectedTemplate, Mode=TwoWay}" >
                 <ListBox.InputBindings>
                     <KeyBinding Key="Delete" Command="{Binding SelectedItem.RemoveCommand}" />
                 </ListBox.InputBindings>
             </ListBox>
-            <Viewbox Stretch="Uniform" Grid.Row="1" Grid.Column="1" >
-                <Grid ClipToBounds="True">
-                    <!-- <Image Source="{Binding ProxyImage}" Width="300"/> -->
+            <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding SelectedTemplate}">
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type item:TemplateModel}" >
+                        <views:ProxyTemplateItemView />
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+            <Viewbox Stretch="Uniform" Grid.Row="1" Grid.Column="2" >
+                <Grid ClipToBounds="True" >
                     <Image Source="{Binding BaseImage}" Width="{Binding BaseWidth}" Height="{Binding BaseHeight}" Panel.ZIndex="0" />
 
                     <ItemsControl ItemsSource="{Binding ActiveOverlayLayers}" x:Name="OverlayBlocks" >
@@ -70,7 +74,7 @@
                             </Style>
                         </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type itemModel:ProxyOverlayItemModel}">
+                            <DataTemplate DataType="{x:Type itemModel:ProxyOverlayDefinitionItemModel}">
                                 <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -101,30 +105,6 @@
                     </ItemsControl>
                 </Grid>
             </Viewbox>
-            <DataGrid BorderThickness="0" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding StoredProxyProperties}"
-                      AutoGenerateColumns="False" Background="Transparent" RowBackground="DarkGray" AlternatingRowBackground="Gray" CanUserAddRows="True" CanUserDeleteRows="True" x:Name="ProxyDataGrid" >
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
-                        <Setter Property="Foreground" Value="Black" />
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Property" Width="60" CanUserResize="False" Binding="{Binding Name}" IsReadOnly="False" Foreground="WhiteSmoke">
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Value" Width="100" CanUserResize="False" Binding="{Binding Value}" IsReadOnly="False" Foreground="WhiteSmoke">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style>
-                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                        <DataGridTextColumn.EditingElementStyle>
-                            <Style>
-                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
-                            </Style>
-                        </DataGridTextColumn.EditingElementStyle>
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
         </Grid>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
         <Grid Grid.Row="2">
@@ -133,38 +113,78 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="130"/>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock Text="Text Blocks" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold"/>
-            <ListBox Grid.Row="1" ItemsSource="{Binding TextBlocks}" SelectedValue="{Binding Selection}" Style="{StaticResource IdeListBoxControl}"
-                                gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.UseDefaultDragAdorner="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+            <ListBox Grid.Row="1" ItemsSource="{Binding TextBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}" Style="{StaticResource IdeListBoxControl}"
+                     gong:DragDrop.DragAdornerTemplate="{StaticResource IdeTextItemAdorner}">
             </ListBox>
+            <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+
             <TextBlock Text="Overlay Blocks" Grid.Column="2" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold" />
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Background="Transparent" Grid.Row="1" Grid.Column="2" >
-                <ListBox Style="{StaticResource GenericIdeListBoxStyle}" 
-                                 ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection}" VerticalContentAlignment="Stretch"
-                                 gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.UseDefaultDragAdorner="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type itemModel:ProxyOverlayItemModel}">
-                            <Grid Margin="4">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Image Source="{Binding Asset.FullPath, TargetNullValue={x:Null}}" Stretch="Uniform" Margin="0,0,0,4" />
-                                <TextBlock Text="{Binding Name}" Grid.Row="1" Foreground="White" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </ScrollViewer>
+            <ListBox Grid.Row="1" Grid.Column="2" Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
+                        
+                         gong:DragDrop.DragAdornerTemplate="{StaticResource IdeAssetItemAdorner}">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type itemModel:ProxyOverlayDefinitionItemModel}">
+                        <Grid Margin="4" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Image Source="{Binding Asset.FullPath, TargetNullValue={x:Null}}" Stretch="Uniform" Margin="0,0,0,4" />
+                            <TextBlock Text="{Binding Name}" Grid.Row="1" Foreground="White" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
 
 
-        <ContentControl Margin="10,0,10,0" Content="{Binding ActiveView}" Grid.Column="2" Grid.RowSpan="3" />
+        <ContentControl Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="3">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type itemModel:ProxyOverlayDefinitionItemModel}">
+                    <views:ProxyOverlayDefinitionItemView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type itemModel:ProxyTextDefinitionItemModel}">
+                    <views:ProxyTextBlockDefinitionItemView />
+                </DataTemplate>
+            </ContentControl.Resources>
+            <ContentControl.Content>
+                <Binding Path="Selection">
+                    <Binding.TargetNullValue>
+                        <DataGrid BorderThickness="0" ItemsSource="{Binding StoredProxyProperties }" 
+                      AutoGenerateColumns="False" Background="Transparent" RowBackground="DarkGray" AlternatingRowBackground="Gray" CanUserAddRows="True" CanUserDeleteRows="True" x:Name="ProxyDataGrid" >
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Property" Width="*" CanUserResize="False" Binding="{Binding Name}" IsReadOnly="False" Foreground="WhiteSmoke">
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Value" Width="*" CanUserResize="False" Binding="{Binding Value}" IsReadOnly="False" Foreground="WhiteSmoke">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style>
+                                            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Binding.TargetNullValue>
+                </Binding>
+            </ContentControl.Content>
+        </ContentControl>
     </Grid>
 </UserControl>

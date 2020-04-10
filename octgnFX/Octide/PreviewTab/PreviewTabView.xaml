@@ -1,4 +1,9 @@
-﻿<UserControl x:Class="Octide.Views.PreviewTabView"
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.PreviewTabView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -13,15 +18,12 @@
              params:Design.Theme="Dark"
              d:DesignHeight="600" d:DesignWidth="800"
              DataContext="{Binding PreviewTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True"
-             PreviewMouseUp="ControlMouseUp"
+             PreviewMouseLeftButtonUp="ControlMouseUp"
              >
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type viewModel:ActionMenuViewModel}" >
-            <views:ActionMenuView />
-        </DataTemplate>
-        
+
         <DataTemplate x:Key="GroupPanel" >
-            <Border Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonDown="CreateActionsMenu">
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonUp="CreateActionsMenu" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -34,15 +36,16 @@
                         <Image Source="{Binding Asset.FullPath}" Height="16" HorizontalAlignment="Left" />
                         <local:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" MinWidth="25" VerticalAlignment="Center" ClipToBounds="False" />
                     </StackPanel>
+
                 </Grid>
             </Border>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="CollapsedGroupPanel" >
-            <Border Style="{StaticResource PanelControl}" MinWidth="100" >
-                <StackPanel Orientation="Horizontal" >
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonUp="CreateActionsMenu">
+                <Grid >
                     <Image Source="{Binding Asset.FullPath}" Height="16" ToolTip="{Binding Name}"/>
-                </StackPanel>
+                </Grid>
             </Border>
         </DataTemplate>
 
@@ -60,7 +63,7 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBox Text="{Binding Default}" BorderThickness="1" BorderBrush="Gray" Background="#11000000" FontWeight="Bold"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+                        <TextBox Text="{Binding DefaultValue}" BorderThickness="1" Foreground="Black" BorderBrush="Gray" Background="#11000000" FontWeight="Bold"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
                         <RepeatButton Content="+" Command="{Binding IncreaseCommand}" Style="{StaticResource SpinUp}" Focusable="False" Grid.Column="1" Grid.Row="0" />
                         <RepeatButton Content="-" Command="{Binding DecreaseCommand}" Style="{StaticResource SpinDown}" Focusable="False" Grid.Column="1" Grid.Row="1" />
                     </Grid>
@@ -68,8 +71,8 @@
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
-    
-    
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -81,7 +84,7 @@
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="300" MinWidth="300"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid ClipToBounds="False" >
             <Border x:Name="PhaseControl" Panel.ZIndex="3" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <Grid>
@@ -91,7 +94,7 @@
                     </Grid.RowDefinitions>
                     <Button Content="Add Phase" Foreground="Black" Padding="0" HorizontalAlignment="Stretch" Height="25" VerticalContentAlignment="Center"
                             Background="{StaticResource ControlFillBrush}" BorderBrush="{StaticResource ControlBorderBrush}" Command="{Binding AddPhaseCommand}" />
-                    <ListBox Grid.Row="1" Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding Phases}" SelectedValue="{Binding Selection}" 
+                    <ListBox Grid.Row="1" Style="{StaticResource IdeBaseItemContainerStyle}" ItemsSource="{Binding Phases}" SelectedValue="{Binding Selection}" 
                      Padding="0" HorizontalContentAlignment="Right" Background="Transparent" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -107,7 +110,7 @@
                 </Grid>
             </Border>
             <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickTable, Mode=TwoWay}"  gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" >
-                <Border DataContext="{Binding TableGroup}" Background="{Binding PreviewTabViewModel.Table.BackgroundImage, Source={StaticResource Locator}}" PreviewMouseRightButtonDown="CreateActionsMenu" />
+                <Border DataContext="{Binding Table}" Background="{Binding PreviewTabViewModel.Table.BackgroundImage, Source={StaticResource Locator}}" PreviewMouseRightButtonUp="CreateActionsMenu" />
             </ToggleButton>
             <Viewbox Stretch="Uniform">
                 <AdornerDecorator >
@@ -122,7 +125,7 @@
                     <Grid ClipToBounds="False">
                         <Canvas x:Name="boardView" Focusable="False" MouseMove="BoardViewMove" MouseLeave="ResetCursor" Width="{Binding Table.Width}" Height="{Binding Table.Height}" 
                                 gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
-                            <Canvas DataContext="{Binding ActiveBoard}" Left="{Binding XPos, Mode=TwoWay}" Top="{Binding YPos, Mode=TwoWay}" MouseDown="BoardMouseDown" PreviewMouseUp="BoardMouseUp" >
+                            <Canvas DataContext="{Binding ActiveBoard}" Left="{Binding XPos, Mode=TwoWay}" Top="{Binding YPos, Mode=TwoWay}" MouseLeftButtonDown="BoardMouseDown" PreviewMouseLeftButtonUp="BoardMouseUp" >
                                 <Border Width="{Binding Width}" Height="{Binding Height}" Canvas.ZIndex="2" Background="Transparent"
                                                 BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
                                     <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
@@ -143,8 +146,8 @@
                                       gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" >
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Canvas Left="{Binding X, Mode=TwoWay}" Top="{Binding Y,Mode=TwoWay}" PreviewMouseMove="CardMouseMove" MouseDown="CardMouseDown" PreviewMouseUp="CardMouseUp" >
-                                        <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" PreviewMouseRightButtonDown="CreateActionsMenu"
+                                    <Canvas Left="{Binding X, Mode=TwoWay}" Top="{Binding Y,Mode=TwoWay}" PreviewMouseMove="CardMouseMove" MouseLeftButtonDown="CardMouseDown" PreviewMouseLeftButtonUp="CardMouseUp" >
+                                        <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" PreviewMouseRightButtonUp="CreateActionsMenu" 
                                                 BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False" Background="Transparent">
                                             <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
                                                 <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
@@ -182,40 +185,13 @@
             </Viewbox>
         </Grid>
 
-        <TabControl Grid.Row="2" Style="{x:Null}" Background="Black" Margin="0" Padding="0" BorderThickness="0">
-            <TabControl.Resources>
-                <Style TargetType="TabItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="TabItem">
-                                <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,4,4" Margin="2,0,2,2">
-                                    <ContentPresenter x:Name="ContentSite"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        ContentSource="Header"
-                                        Margin="10,2"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="White" />
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="False">
-                                        <Setter TargetName="Border" Property="Background" Value="DarkGray" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </TabControl.Resources>
-
-
+        <TabControl Grid.Row="2" Style="{x:Null}" Background="Black" Margin="0" Padding="0" BorderThickness="0" ItemContainerStyle="{StaticResource IdeTabItemStyle}" >
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" >
-                        <TextBlock Text="Global Tab" />
-                        <Border BorderBrush="Black" BorderThickness="1" Background="White">
-                            <local:EditableTextBlock Text="{Binding GlobalSummary}" Margin="5,0,0,0" FontSize="12" Height="16" MinWidth="25" VerticalAlignment="Center" Foreground="Black" />
+                        <TextBlock Text="Global Tab" VerticalAlignment="Center" Margin="0,0,5,0" />
+                        <Border BorderBrush="Black" BorderThickness="2" Padding="1" Background="#DDDDDD" >
+                            <local:EditableTextBlock Text="{Binding GlobalSummary}" Margin="5,0,0,0" FontSize="11" MinWidth="25" VerticalAlignment="Center" Foreground="Black" />
                         </Border>
                     </StackPanel>
                 </TabItem.Header>
@@ -228,7 +204,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding GlobalCounters}" ItemTemplate="{StaticResource CounterPanel}" SelectedValue="{Binding Selection}"
+                    <ListBox Style="{StaticResource IdeBaseItemContainerStyle}" ItemsSource="{Binding GlobalCounters}" ItemTemplate="{StaticResource CounterPanel}" SelectedValue="{Binding Selection}"
                              Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -237,7 +213,7 @@
                         </ListBox.ItemsPanel>
                     </ListBox>
                     <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddGlobalCounterCommand}" />
-                    <ListBox Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Disabled" Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource GroupPanel}" SelectedValue="{Binding Selection}" ItemsSource="{Binding GlobalPiles, Mode=TwoWay}"
+                    <ListBox Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Disabled" Style="{StaticResource IdeBaseItemContainerStyle}" ItemTemplate="{StaticResource GroupPanel}" SelectedValue="{Binding Selection}" ItemsSource="{Binding GlobalPiles, Mode=TwoWay}"
                                          VerticalAlignment="Stretch" Focusable="False" VerticalContentAlignment="Stretch" >
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -253,9 +229,9 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" >
-                        <TextBlock Text="Player Tab" />
-                        <Border BorderBrush="Black" BorderThickness="1" Background="White">
-                            <local:EditableTextBlock Text="{Binding Summary}" Margin="5,0,0,0" FontSize="12" Height="16" MinWidth="25" VerticalAlignment="Center" Foreground="Black" />
+                        <TextBlock Text="Player Tab" VerticalAlignment="Center" Margin="0,0,5,0" />
+                        <Border BorderBrush="Black" BorderThickness="2" Padding="1" Background="#DDDDDD" >
+                            <local:EditableTextBlock Text="{Binding Summary}" FontSize="11" MinWidth="25" VerticalAlignment="Center" Foreground="Black" />
                         </Border>
                     </StackPanel>
                 </TabItem.Header>
@@ -268,7 +244,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource CounterPanel}" ItemsSource="{Binding Counters}" SelectedValue="{Binding Selection}" 
+                    <ListBox Style="{StaticResource IdeBaseItemContainerStyle}" ItemTemplate="{StaticResource CounterPanel}" ItemsSource="{Binding Counters}" SelectedValue="{Binding Selection}" 
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" Focusable="False">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -278,10 +254,10 @@
                     </ListBox>
                     <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
 
-                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
+                    <ScrollViewer PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
                         <DockPanel>
-                            <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemTemplate="{StaticResource GroupPanel}" ItemsSource="{Binding Piles, Mode=TwoWay}" SelectedValue="{Binding Selection}"
-                                         Focusable="False" VerticalAlignment="Stretch" DockPanel.Dock="Right" VerticalContentAlignment="Stretch">
+                            <ListBox ItemTemplate="{StaticResource GroupPanel}" ItemsSource="{Binding Piles, Mode=TwoWay}" SelectedValue="{Binding Selection}"
+                                        Focusable="False" VerticalAlignment="Stretch" DockPanel.Dock="Right" VerticalContentAlignment="Stretch">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -326,13 +302,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}" 
-                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
+                    <ListBox Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}" >
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type ListBoxItem}">
                                 <DockPanel >
@@ -351,13 +321,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ListBox Style="{StaticResource GenericIdeListBoxStyle}" ItemsSource="{Binding Boards}" SelectedValue="{Binding Selection}"
-                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
+                    <ListBox Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding Boards}" SelectedValue="{Binding Selection}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type ListBoxItem}">
                                 <DockPanel>
@@ -371,55 +335,170 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <GridSplitter Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+        <GridSplitter Grid.Column="1" Grid.RowSpan="4"  ResizeDirection="Columns"  />
 
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows"  />
 
         <ContentControl Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="4" Content="{Binding Selection}" >
             <ContentControl.Resources>
 
 
-                <DataTemplate DataType="{x:Type model:GroupItemViewModel}" >
+                <DataTemplate DataType="{x:Type model:GroupItemModel}" >
                     <views:GroupItemView />
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type model:CounterItemViewModel}" >
+                <DataTemplate DataType="{x:Type model:CounterItemModel}" >
                     <views:CounterItemView />
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type model:SizeItemViewModel}" >
+                <DataTemplate DataType="{x:Type model:SizeItemModel}" >
                     <views:SizeItemView />
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type model:BoardItemViewModel}" >
+                <DataTemplate DataType="{x:Type model:BoardItemModel}" >
                     <views:BoardItemView />
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type model:PhaseItemViewModel}" >
+                <DataTemplate DataType="{x:Type model:PhaseItemModel}" >
                     <views:PhaseItemView />
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewModel:TableItemViewModel}" >
+                <DataTemplate DataType="{x:Type model:TableItemModel}" >
                     <views:TableItemView />
                 </DataTemplate>
-                
+
                 <DataTemplate DataType="{x:Type model:ActionItemModel}" >
-                    <views:ActionView />
+                    <views:ActionItemView />
                 </DataTemplate>
-                
+
                 <DataTemplate DataType="{x:Type model:ActionSeparatorItemModel}" >
-                    <views:ActionSeparatorView />
+                    <views:ActionSeparatorItemView />
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type model:ActionSubmenuItemModel}" >
-                    <views:ActionSubmenuView />
+                    <views:ActionSubmenuItemView />
                 </DataTemplate>
-                
+
             </ContentControl.Resources>
         </ContentControl>
 
-        <Popup Grid.RowSpan="5" Grid.ColumnSpan="5" x:Name="ActionMenuPopup" Placement="MousePoint" IsOpen="False" StaysOpen="False" Focusable="False">
+        <Popup x:Name="ActionMenuPopup" Placement="MousePoint" StaysOpen="False" Focusable="True">
+            <Popup.Resources>
+                <Style TargetType="{x:Type TreeView}">
+                    <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+                    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+                    <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
+                    <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
+                    <Setter Property="gong:DragDrop.DropHandler" Value="{Binding ActionsDropHandler }" />
+                    <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
+                    <Setter Property="ItemContainerStyle">
+                        <Setter.Value>
+                            <Style TargetType="{x:Type TreeViewItem}" >
+                                <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource HighlightBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="SkyBlue"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsVisible}" Value="False" >
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <DataTemplate DataType="{x:Type model:ActionItemModel}" >
+                    <Grid ContextMenu="{StaticResource ListBoxContextMenu}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="A" Width="*" />
+                            <ColumnDefinition SharedSizeGroup="B" Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <local:EditableTextBlock Text="{Binding Name}" Margin="0,0,4,0" FontSize="12" Foreground="WhiteSmoke">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </local:EditableTextBlock>
+                        <TextBlock Text="{Binding Shortcut}" Margin="0,0,4,0" Grid.Column="1" FontSize="10" Foreground="#999999"/>
+                    </Grid>
+                </DataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type model:ActionSubmenuItemModel}" ItemsSource="{Binding Items}" >
+                    <local:EditableTextBlock Text="{Binding Name}" ContextMenu="{StaticResource ListBoxContextMenu}" Margin="0,0,4,0" FontSize="12" Foreground="WhiteSmoke"/>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type model:ActionSeparatorItemModel}" >
+                    <Separator HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="50" Grid.ColumnSpan="2" ContextMenu="{StaticResource ListBoxContextMenu}" />
+                </DataTemplate>
+            </Popup.Resources>
 
+            <StackPanel Orientation="Vertical" Background="#333333" >
+                <StackPanel x:Name="GroupActionsPanel" Orientation="Vertical" Margin="3">
+                    <TextBlock Padding="6,3,6,3" Text="{Binding Name}" Background="#555555" FontSize="12" FontWeight="Bold" HorizontalAlignment="Stretch" />
+                    <Rectangle Height="1" Fill="WhiteSmoke" />
+                    <TreeView x:Name="GroupActionsTreeView" BorderThickness="0" Background="Transparent" ItemsSource="{Binding GroupActions, Mode=TwoWay}" SelectedItemChanged="ClickGroupAction" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource NewActionButton}" Content="Add Action" Command="{Binding NewActionCommand}" CommandParameter="{Binding GroupActions}"/>
+                        <Button Style="{StaticResource NewActionButton}" Content="Add Submenu" Command="{Binding NewSubmenuCommand}" CommandParameter="{Binding GroupActions}"/>
+                        <Button Style="{StaticResource NewActionButton}" Content="Add Separator" Command="{Binding NewSeparatorCommand}" CommandParameter="{Binding GroupActions}"/>
+                    </StackPanel>
+
+                </StackPanel>
+                <StackPanel x:Name="CardActionsPanel" Orientation="Vertical" Margin="3" HorizontalAlignment="Stretch" >
+                    <TextBlock Padding="6,3,6,3" Text="Card" Background="#555555" FontSize="12" FontWeight="Bold" HorizontalAlignment="Stretch" />
+                    <Rectangle Height="1" Fill="WhiteSmoke" />
+                    <TreeView x:Name="CardActionsTreeView" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" ItemsSource="{Binding CardActions, Mode=TwoWay}" SelectedItemChanged="ClickCardAction"  />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource NewActionButton}" Content="Add Action" Command="{Binding NewActionCommand}" CommandParameter="{Binding CardActions}"/>
+                        <Button Style="{StaticResource NewActionButton}" Content="Add Submenu" Command="{Binding NewSubmenuCommand}" CommandParameter="{Binding CardActions}"/>
+                        <Button Style="{StaticResource NewActionButton}" Content="Add Separator" Command="{Binding NewSeparatorCommand}" CommandParameter="{Binding CardActions}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Rectangle Height="1" Margin="5,10,5,10" Fill="WhiteSmoke" />
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Remove Group" Command="{Binding RemoveCommand}" >
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanRemove}" Value="False">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="Copy Group" Command="{Binding CopyCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanCopy}" Value="False">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="Insert Group" Command="{Binding InsertCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanInsert}" Value="False">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
         </Popup>
     </Grid>
 </UserControl>

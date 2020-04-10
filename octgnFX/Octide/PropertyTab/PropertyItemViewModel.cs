@@ -1,4 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
@@ -6,6 +10,7 @@ using Octide.Messages;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,48 +18,38 @@ using System.Windows;
 
 namespace Octide.ItemModel
 {
-    public class PropertyItemViewModel : IdeListBoxItemBase
+    public class PropertyItemModel : IdeBaseItem
     {
         public PropertyDef _property { get; set; }
 
-        public PropertyItemViewModel()
+        public PropertyItemModel(IdeCollection<IdeBaseItem> source) : base(source)
         {
             _property = new PropertyDef();
+            Name = "New Property";
         }
 
-        public PropertyItemViewModel(PropertyDef p)
+        public PropertyItemModel(PropertyDef p, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _property = p;
         }
 
-        public PropertyItemViewModel(PropertyItemViewModel p)
+        public PropertyItemModel(PropertyItemModel p, IdeCollection<IdeBaseItem> source) : base(source)
         {
-            ItemSource = p.ItemSource;
-            Parent = p.Parent;
             _property = p._property.Clone() as PropertyDef;
-            _property.Name = Utils.GetUniqueName(p.Name, ItemSource.Select(x => (x as PropertyItemViewModel).Name));
+            Name = p.Name;
         }
 
         public override object Clone()
         {
-            return new PropertyItemViewModel(this);
+            return new PropertyItemModel(this, Source);
         }
-        
-        public override void Copy()
+        public override object Create()
         {
-            if (CanCopy == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, Clone() as PropertyItemViewModel);
+            return new PropertyItemModel(Source);
         }
 
-        public override void Insert()
-        {
-            if (CanInsert == false) return;
-            var index = ItemSource.IndexOf(this);
-            ItemSource.Insert(index, new PropertyItemViewModel() { Parent = Parent, ItemSource = ItemSource, Name = "Property" });
-            base.Insert();
-        }
-       
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((PropertyItemModel)x).Name);
+
         public string Name
         {
             get
@@ -64,10 +59,9 @@ namespace Octide.ItemModel
             set
             {
                 if (value == _property.Name) return;
-                if (string.IsNullOrEmpty(value)) return;
-                _property.Name = Utils.GetUniqueName(value, ItemSource.Select(x => (x as PropertyItemViewModel).Name));
+                _property.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
-                Messenger.Default.Send(new CustomPropertyChangedMessage());
+                Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this, Action = PropertyChangedMessageAction.Modify});
             }
         }
 

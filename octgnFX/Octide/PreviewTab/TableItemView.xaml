@@ -1,4 +1,9 @@
-﻿<UserControl x:Class="Octide.Views.TableItemView"
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.TableItemView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,22 +26,38 @@
             <TextBlock Text="Background Style"/>
 
             <StackPanel Orientation="Horizontal">
-                <RadioButton Content="Tile" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=tile}"/>
-                <RadioButton Content="Uniform" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=uniform}"/>
-                <RadioButton Content="UniformToFill" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=uniformToFill}"/>
-                <RadioButton Content="Stretch" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=stretch}"/>
+                <RadioButton Content="Tile" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Tile}"/>
+                <RadioButton Content="Uniform" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Uniform}"/>
+                <RadioButton Content="UniformToFill" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=UniformToFill}"/>
+                <RadioButton Content="Stretch" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Stretch}"/>
             </StackPanel>
 
             <TextBlock Text="Minimum Viewable Grid Width"/>
             <DockPanel>
-                <TextBox Text="{Binding Width, Mode=TwoWay}" Width="60"/>
-                <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="100" Maximum="3000"/>
+                <TextBox Width="60">
+                    <TextBox.Text>
+                        <Binding Path="Width" >
+                            <Binding.ValidationRules>
+                                <local:IntegerValidationRule Minimum="50" Maximum="3000" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="50" Maximum="3000"/>
             </DockPanel>
 
             <TextBlock Text="Minimum Viewable Grid Height"/>
             <DockPanel>
-                <TextBox Text="{Binding Height, Mode=TwoWay}" Width="60"/>
-                <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="100" Maximum="3000"/>
+                <TextBox Width="60">
+                    <TextBox.Text>
+                        <Binding Path="Height" >
+                            <Binding.ValidationRules>
+                                <local:IntegerValidationRule Minimum="50" Maximum="3000" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="50" Maximum="3000"/>
             </DockPanel>
         </ItemsControl>
     </ScrollViewer>

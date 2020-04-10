@@ -1,0 +1,226 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.SetTab.Views.PackageItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             mc:Ignorable="d" 
+             xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
+             d:DesignHeight="500" d:DesignWidth="700">
+    <UserControl.Resources>
+        
+        <ControlTemplate x:Key="IncludeHeader" TargetType="ContentControl" >
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushRed}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="INCLUDE" FontWeight="Bold" />
+                    <TextBlock Text="set:" />
+                    <ComboBox IsReadOnly="True" MinWidth="100" ItemsSource="{Binding Sets}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedSet, Mode=TwoWay}" />
+                    <TextBlock Text="card:" />
+                    <ComboBox IsReadOnly="True" MinWidth="100" ItemsSource="{Binding Cards}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedCard, Mode=TwoWay}" />
+                    <Button Content="+Property" Background="{StaticResource BlendBrushYellow}" Command="{Binding AddPropertyCommand}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="OptionsHeader" TargetType="ContentControl" >
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushPurple}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="OPTIONS" FontWeight="Bold" />
+                    <Button Content="+Option" Background="{StaticResource BlendBrushBlue}" Command="{Binding AddOptionCommand}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="OptionHeader" TargetType="ContentControl" >
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBlue}"  Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="OPTION" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Text="probability:" />
+                    <TextBox MinWidth="50" >
+                    <TextBox.Text>
+                        <Binding Path="Probability" >
+                            <Binding.ValidationRules>
+                                <local:DoubleValidationRule Minimum="0" Maximum="1" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                    </TextBox>
+                    <Button Content="+Options" Background="{StaticResource BlendBrushPurple}" Command="{Binding AddOptionsCommand}" />
+                    <Button Content="+Pick" Background="{StaticResource BlendBrushGreen}" Command="{Binding AddPickCommand}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="PickHeader" TargetType="ContentControl" >
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushGreen}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="PICK" FontWeight="Bold" />
+                    <TextBlock Text="quantity:" />
+                    <TextBox MinWidth="20" >
+                        <TextBox.Text>
+                            <Binding Path="Quantity" >
+                                <Binding.ValidationRules>
+                                    <local:IntegerValidationRule Minimum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                        <TextBox.Style>
+                            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=UnlimitedBox, Path=IsChecked}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <TextBlock Text="unlimited:" />
+                    <CheckBox x:Name="UnlimitedBox" IsChecked="{Binding IsUnlimited, Mode=TwoWay}" />
+                    <Button Content="+Property" Background="{StaticResource BlendBrushYellow}" Command="{Binding AddPropertyCommand}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="PropertyHeader" TargetType="ContentControl"  >
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushYellow}" Style="{StaticResource OctideTreeViewItemStyle}" >
+                <StackPanel >
+                    <TextBlock Text="PROPERTY" FontWeight="Bold" />
+                    <TextBlock Text="name:" />
+                    <ComboBox IsReadOnly="True" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
+                    <TextBlock Text="value:" />
+                    <TextBox Text="{Binding Value}" MinWidth="100"/>
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        
+        <HierarchicalDataTemplate DataType="{x:Type item:IncludeModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource IncludeHeader}">
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:OptionsModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource OptionsHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:OptionModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource OptionHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:PickModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource PickHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <DataTemplate DataType="{x:Type item:PackagePropertyModel}" >
+            <ContentControl Template="{StaticResource PropertyHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="100"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="100"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.ColumnSpan="2" Text="Pack Items"  HorizontalAlignment="Center" FontSize="20"/>
+            <Button Grid.Row="1" Content="Add Options"  Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
+            <Button Grid.Row="1" Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushYellow}"/>
+            <TreeView Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent" 
+                      ItemsSource="{Binding Items}" 
+                      gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
+                      gong:DragDrop.DropHandler="{Binding PackageDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+        </Grid>
+
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Include cards (from other sets)"  HorizontalAlignment="Center" FontSize="20"/>
+            <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
+
+            <TreeView Grid.Row="2" Background="Transparent" ItemsSource="{Binding Includes}"
+                      gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
+                      gong:DragDrop.DropHandler="{Binding IncludeDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+        </Grid>
+
+        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.RowSpan="3">
+            <Button Content="Generate Pack" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding GeneratePackCommand}" />
+
+
+            <ListBox ItemsSource="{Binding BoosterCards}"
+                 Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Image Source="{Binding }" Height="180" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

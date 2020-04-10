@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System.Collections.ObjectModel;
 
 namespace Octide.ViewModel
 {
@@ -22,29 +26,28 @@ namespace Octide.ViewModel
     using GongSolutions.Wpf.DragDrop;
     using System.Windows;
     using Octide.ItemModel;
+    using System.Collections.Specialized;
 
     public class PreviewTabViewModel : ViewModelBase
     {
-        public ObservableCollection<CardViewModel> Cards { get; set; }
+        public ObservableCollection<SampleCardItemModel> Cards { get; set; }
 
 
-        public ObservableCollection<IdeListBoxItemBase> Piles { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> VisiblePiles => new ObservableCollection<IdeListBoxItemBase>(Piles.Where(x => (x as GroupItemViewModel).Collapsed == false));
-        public ObservableCollection<IdeListBoxItemBase> CollapsedPiles => new ObservableCollection<IdeListBoxItemBase>(Piles.Where(x => (x as GroupItemViewModel).Collapsed == true));
-        public ObservableCollection<IdeListBoxItemBase> GlobalPiles { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> VisibleGlobalPiles => new ObservableCollection<IdeListBoxItemBase>(GlobalPiles.Where(x => (x as GroupItemViewModel).Collapsed == false));
-        public ObservableCollection<IdeListBoxItemBase> CollapsedGlobalPiles => new ObservableCollection<IdeListBoxItemBase>(GlobalPiles.Where(x => (x as GroupItemViewModel).Collapsed == true));
-        public IdeListBoxItemBase Hand { get; set; }
-        public GroupItemViewModel TableGroup { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> Counters { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> GlobalCounters { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> CardSizes { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> Boards { get; set; }
-        public BoardItemViewModel DefaultBoard { get; set; }
-        public BoardItemViewModel ActiveBoard { get; set; }
-        public ObservableCollection<IdeListBoxItemBase> Phases { get; set; }
+        public IdeCollection<IdeBaseItem> Piles { get; set; }
+    //    public ObservableCollection<GroupItemModel> VisiblePiles => new ObservableCollection<GroupItemModel>(Piles.Where(x => x.Collapsed == false));
+    //    public ObservableCollection<GroupItemModel> CollapsedPiles => new ObservableCollection<GroupItemModel>(Piles.Where(x => x.Collapsed == true));
+        public IdeCollection<IdeBaseItem> GlobalPiles { get; set; }
+    //    public ObservableCollection<GroupItemModel> VisibleGlobalPiles => new ObservableCollection<GroupItemModel>(GlobalPiles.Where(x => x.Collapsed == false));
+    //    public ObservableCollection<GroupItemModel> CollapsedGlobalPiles => new ObservableCollection<GroupItemModel>(GlobalPiles.Where(x => x.Collapsed == true));
+        public GroupItemModel Hand { get; set; }
+        public IdeCollection<IdeBaseItem> Counters { get; set; }
+        public IdeCollection<IdeBaseItem> GlobalCounters { get; set; }
+        public IdeCollection<IdeBaseItem> CardSizes { get; set; }
+        public IdeCollection<IdeBaseItem> Boards { get; set; }
+        public BoardItemModel ActiveBoard { get; set; }
+        public IdeCollection<IdeBaseItem> Phases { get; set; }
 
-        public TableItemViewModel Table { get; set; }
+        public TableItemModel Table { get; set; }
 
         public RelayCommand AddPileCommand { get; private set; }
         public RelayCommand AddGlobalPileCommand { get; private set; }
@@ -57,7 +60,6 @@ namespace Octide.ViewModel
         public CardsizeDropHandler CardsizeDropHandler{ get; set; } = new CardsizeDropHandler();
         public TableDropHandler TableDropHandler{ get; set; } = new TableDropHandler();
 
-        public SizeItemViewModel DefaultSize => CardSizes.FirstOrDefault(x => x.IsDefault) as SizeItemViewModel;
 
         public string Summary
         {
@@ -92,112 +94,142 @@ namespace Octide.ViewModel
                     Groups = new List<Group>()
                 };
             }
-            Hand = _game.Player.Hand == null ? null : new GroupItemViewModel(_game.Player.Hand);
-            TableGroup = new GroupItemViewModel(_game.Table);
-            Piles = new ObservableCollection<IdeListBoxItemBase>();
+            Table = new TableItemModel(_game.Table, new IdeCollection<IdeBaseItem>(this))
+            {
+                CanRemove = false,
+                CanCopy = false,
+                CanInsert = false
+            };
+
+            Piles = new IdeCollection<IdeBaseItem>(this);
             foreach (var pile in _game.Player.Groups)
             {
-                Piles.Add(new GroupItemViewModel(pile) { ItemSource = Piles });
+                Piles.Add(new GroupItemModel(pile, Piles));
             }
-            Piles.CollectionChanged += (a, b) =>
+            Piles.CollectionChanged += (sender, args) =>
             {
-                _game.Player.Groups = Piles.Select(x => (x as GroupItemViewModel)._group).ToList();
+                _game.Player.Groups = Piles.Select(x => ((GroupItemModel)x)._group);
                 RaisePropertyChanged("CollapsedPiles");
                 RaisePropertyChanged("VisiblePiles");
+                Messenger.Default.Send(new GroupChangedMessage(args));
             };
             AddPileCommand = new RelayCommand(AddPile);
 
-            Counters = new ObservableCollection<IdeListBoxItemBase>();
+            Hand = _game.Player.Hand == null ? null : new GroupItemModel(_game.Player.Hand, Piles);
+
+            Counters = new IdeCollection<IdeBaseItem>(this);
             foreach (var counter in _game.Player.Counters)
             {
-                Counters.Add(new CounterItemViewModel(counter) { ItemSource = Counters });
+                Counters.Add(new CounterItemModel(counter, Counters));
             }
-            Counters.CollectionChanged += (a, b) =>
+            Counters.CollectionChanged += (sender, args) =>
             {
-                _game.Player.Counters = Counters.Select(x => (x as CounterItemViewModel)._counter).ToList();
+                _game.Player.Counters = Counters.Select(x => ((CounterItemModel)x)._counter);
             };
             AddCounterCommand = new RelayCommand(AddCounter);
 
-            GlobalPiles = new ObservableCollection<IdeListBoxItemBase>();
+            GlobalPiles = new IdeCollection<IdeBaseItem>(this);
             foreach (var pile in _game.GlobalPlayer.Groups)
             {
-                GlobalPiles.Add(new GroupItemViewModel(pile) { ItemSource = GlobalPiles });
+                GlobalPiles.Add(new GroupItemModel(pile, GlobalPiles));
             }
-            GlobalPiles.CollectionChanged += (a, b) =>
+            GlobalPiles.CollectionChanged += (sender, args) =>
             {
-                _game.GlobalPlayer.Groups = Piles.Select(x => (x as GroupItemViewModel)._group).ToList();
+                _game.GlobalPlayer.Groups = GlobalPiles.Select(x => ((GroupItemModel)x)._group);
                 RaisePropertyChanged("CollapsedGlobalPiles");
                 RaisePropertyChanged("VisibleGlobalPiles");
+                Messenger.Default.Send(new GroupChangedMessage(args));
             };
             AddGlobalPileCommand = new RelayCommand(AddGlobalPile);
 
-            GlobalCounters = new ObservableCollection<IdeListBoxItemBase>();
+            GlobalCounters = new IdeCollection<IdeBaseItem>(this);
             foreach (var counter in _game.GlobalPlayer.Counters)
             {
-                GlobalCounters.Add(new CounterItemViewModel(counter) { ItemSource = GlobalCounters });
+                GlobalCounters.Add(new CounterItemModel(counter, GlobalCounters));
             }
-
-            GlobalCounters.CollectionChanged += (a, b) =>
+            GlobalCounters.CollectionChanged += (sender, args) =>
             {
-                _game.GlobalPlayer.Counters = GlobalCounters.Select(x => (x as CounterItemViewModel)._counter).ToList();
+                _game.GlobalPlayer.Counters = GlobalCounters.Select(x => ((CounterItemModel)x)._counter);
             };
             AddGlobalCounterCommand = new RelayCommand(AddGlobalCounter);
 
-            CardSizes = new ObservableCollection<IdeListBoxItemBase>();
+            CardSizes = new IdeCollection<IdeBaseItem>(this);
             foreach (var sizeDef in _game.CardSizes)
             {
-                var size = new SizeItemViewModel(sizeDef.Value) { ItemSource = CardSizes };
+                var size = new SizeItemModel(sizeDef.Value, CardSizes);
+                CardSizes.Add(size);
                 if (sizeDef.Key == "")
                 {
-                    size.IsDefault = true;
-                    size.CanRemove = false;
+                    CardSizes.DefaultItem = size;
                 }
-                CardSizes.Add(size);
             }
-            CardSizes.CollectionChanged += (a, b) =>
+            CardSizes.CollectionChanged += (sender, args) =>
             {
-                UpdateSizes();
+                UpdateCardSizesDef();
+                Messenger.Default.Send(new CardSizeChangedMesssage(args));
+            };
+            CardSizes.DefaultItemChanged += (sender, args) =>
+            {
+                UpdateCardSizesDef();
             };
             AddSizeCommand = new RelayCommand(AddSize);
 
-            Phases = new ObservableCollection<IdeListBoxItemBase>();
+            Phases = new IdeCollection<IdeBaseItem>(this);
             foreach (var phase in _game.Phases)
             {
-                Phases.Add(new PhaseItemViewModel(phase) { ItemSource = Phases });
+                Phases.Add(new PhaseItemModel(phase, Phases));
             }
-            Phases.CollectionChanged += (a, b) =>
+            Phases.CollectionChanged += (sender, args) =>
             {
-                _game.Phases = Phases.Select(x => (x as PhaseItemViewModel)._phase).ToList();
+                _game.Phases = Phases.Select(x => ((PhaseItemModel)x)._phase).ToList();
             };
             AddPhaseCommand = new RelayCommand(AddPhase);
 
-            Boards = new ObservableCollection<IdeListBoxItemBase>();
+            Boards = new IdeCollection<IdeBaseItem>(this);
             foreach (var boardDef in _game.GameBoards)
             {
-                var board = new BoardItemViewModel(boardDef.Value) { ItemSource = Boards };
+                var board = new BoardItemModel(boardDef.Value, Boards);
+                Boards.Add(board);
                 if (boardDef.Key == "")
                 {
-                    DefaultBoard = board;
+                    Boards.DefaultItem = board;
                 }
-                Boards.Add(board);
             }
-            ActiveBoard = DefaultBoard;
-            Boards.CollectionChanged += (a, b) =>
+            ActiveBoard = (BoardItemModel)Boards.DefaultItem;
+            Boards.CollectionChanged += (sender, args) =>
             {
-                UpdateBoards();
+                UpdateBoardsDef();
+            };
+            Boards.DefaultItemChanged += (sender, args) =>
+            {
+                UpdateBoardsDef();
             };
             AddBoardCommand = new RelayCommand(AddBoard);
 
-            Table = new TableItemViewModel();
-
-            Cards = new ObservableCollection<CardViewModel>();
-            var card = new CardViewModel
+            Cards = new ObservableCollection<SampleCardItemModel>();
+            var card = new SampleCardItemModel
             {
-                Size = DefaultSize
+                Size = (SizeItemModel)CardSizes.DefaultItem
             };
             Cards.Add(card);
 
             RaisePropertyChanged("Cards");
+        }
+
+        public void UpdateCardSizesDef()
+        {
+            ViewModelLocator.GameLoader.Game.CardSizes = CardSizes.ToDictionary(
+                                                            x => x.IsDefault ? "" : ((SizeItemModel)x).Name,
+                                                            y => ((SizeItemModel)y)._size
+                                                            );
+            ViewModelLocator.GameLoader.Game.CardSize = ViewModelLocator.GameLoader.Game.CardSizes[""];
+        }
+        public void UpdateBoardsDef()
+        {
+            ViewModelLocator.GameLoader.Game.GameBoards = Boards.ToDictionary(
+                                                    x => x.IsDefault ? "" : ((BoardItemModel)x).Name,
+                                                    y => ((BoardItemModel)y)._board
+                                                    );
         }
 
         public bool ClickHand
@@ -210,11 +242,9 @@ namespace Octide.ViewModel
             {
                 if (Hand == null)
                 {
-                    Hand = new GroupItemViewModel
-                    {
-                        Name = "Hand"
-                    };
-                    ViewModelLocator.GameLoader.Game.Player.Hand = (Hand as GroupItemViewModel)._group;
+                    Hand = new GroupItemModel(null);
+                    Hand.Name = "Hand";
+                    ViewModelLocator.GameLoader.Game.Player.Hand = Hand._group;
                     RaisePropertyChanged("Hand");
                 }
                 Selection = Hand;
@@ -235,25 +265,10 @@ namespace Octide.ViewModel
             }
         }
 
-        public void UpdateBoards()
-        {
-            ViewModelLocator.GameLoader.Game.GameBoards = Boards.ToDictionary(
-                                                        x => (x as BoardItemViewModel).IsDefault ? "" : (x as BoardItemViewModel).Name,
-                                                        y => (y as BoardItemViewModel)._board
-                                                        );
-        }
-
-        public void UpdateSizes()
-        {
-            ViewModelLocator.GameLoader.Game.CardSizes = CardSizes.ToDictionary(
-                                                        x => x.IsDefault ? "" : (x as SizeItemViewModel).Name,
-                                                        y => (y as SizeItemViewModel)._size
-                                                        );
-        }
 
         public void AddPile()
         {
-            var ret = new GroupItemViewModel() { ItemSource = Piles };
+            var ret = new GroupItemModel(Piles);
             Piles.Add(ret);
             Selection = ret;
             RaisePropertyChanged("Piles");
@@ -261,7 +276,7 @@ namespace Octide.ViewModel
 
         public void AddGlobalPile()
         {
-            var ret = new GroupItemViewModel() { ItemSource = GlobalPiles };
+            var ret = new GroupItemModel(GlobalPiles);
             GlobalPiles.Add(ret);
             Selection = ret;
             RaisePropertyChanged("GlobalPiles");
@@ -269,7 +284,7 @@ namespace Octide.ViewModel
 
         public void AddCounter()
         {
-            var ret = new CounterItemViewModel() { ItemSource = Counters };
+            var ret = new CounterItemModel(Counters);
             Counters.Add(ret);
             Selection = ret;
             RaisePropertyChanged("Counters");
@@ -277,7 +292,7 @@ namespace Octide.ViewModel
 
         public void AddGlobalCounter()
         {
-            var ret = new CounterItemViewModel() { ItemSource = GlobalCounters };
+            var ret = new CounterItemModel(GlobalCounters);
             GlobalCounters.Add(ret);
             Selection = ret;
             RaisePropertyChanged("GlobalCounters");
@@ -285,7 +300,7 @@ namespace Octide.ViewModel
 
         public void AddSize()
         {
-            var ret = new SizeItemViewModel() { ItemSource = CardSizes, Name = "Size"};
+            var ret = new SizeItemModel(CardSizes);
             CardSizes.Add(ret);
             Selection = ret;
             RaisePropertyChanged("CardSizes");
@@ -293,7 +308,7 @@ namespace Octide.ViewModel
 
         public void AddPhase()
         {
-            var ret = new PhaseItemViewModel() { ItemSource = Phases };
+            var ret = new PhaseItemModel(Phases);
             Phases.Add(ret);
             Selection = ret;
             RaisePropertyChanged("Phases");
@@ -301,11 +316,7 @@ namespace Octide.ViewModel
 
         public void AddBoard()
         {
-            var ret = new BoardItemViewModel()
-            {
-                ItemSource = Boards,
-                Name = Utils.GetUniqueName("New Board", Boards.Select(x => (x as BoardItemViewModel).Name))
-            };
+            var ret = new BoardItemModel(Boards);
             Boards.Add(ret);
             Selection = ret;
         }
@@ -331,15 +342,13 @@ namespace Octide.ViewModel
             {
                 if (value == _selection) return;
                 _selection = value;
-                if (value is BoardItemViewModel)
+                if (value is BoardItemModel)
                 {
-                    ActiveBoard = (BoardItemViewModel)value;
+                    ActiveBoard = (BoardItemModel)value;
                 }
                 RaisePropertyChanged("Selection");
                 RaisePropertyChanged("ClickHand");
                 RaisePropertyChanged("ClickTable");
-                RaisePropertyChanged("ClickSize");
-                RaisePropertyChanged("ClickBoard");
                 RaisePropertyChanged("ActiveBoard");
             }
         }
@@ -363,7 +372,7 @@ namespace Octide.ViewModel
     {
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
-            if (dropInfo.Data is SizeItemViewModel)
+            if (dropInfo.Data is SizeItemModel)
             {
                 dropInfo.Effects = DragDropEffects.Move;
 
@@ -372,10 +381,10 @@ namespace Octide.ViewModel
 
         void IDropTarget.Drop(IDropInfo dropInfo)
         {
-            if (dropInfo.Data is SizeItemViewModel)
+            if (dropInfo.Data is SizeItemModel)
             {
-                SizeItemViewModel item = dropInfo.Data as SizeItemViewModel;
-                var card = new CardViewModel
+                SizeItemModel item = dropInfo.Data as SizeItemModel;
+                var card = new SampleCardItemModel
                 {
                     Size = item
                 };

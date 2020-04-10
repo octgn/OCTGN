@@ -1,4 +1,9 @@
-﻿<UserControl x:Class="Octide.Views.GroupItemView"
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.GroupItemView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,6 +12,8 @@
              xmlns:local="clr-namespace:Octide"
              xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              mc:Ignorable="d" 
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600" >
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" >
@@ -14,7 +21,24 @@
             <TextBlock Text="Pile Editor" />
 
             <TextBlock Text="Group Name"/>
-            <TextBox Text="{Binding Name, Mode=TwoWay}"/>
+            <TextBox>
+                <TextBox.Resources>
+                    <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                </TextBox.Resources>
+                <TextBox.Text>
+                    <Binding Path="Name" UpdateSourceTrigger="LostFocus" >
+                        <Binding.ValidationRules>
+                            <local:StringRestrictionValidationRule />
+                            <local:UniqueValueValidationRule>
+                                <local:UniqueValueValidationRule.Wrapper>
+                                    <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                </local:UniqueValueValidationRule.Wrapper>
+                            </local:UniqueValueValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Icon"/>
                 <Image Source="{Binding Asset.FullPath, Mode=OneWay}" />
@@ -23,11 +47,11 @@
 
             <TextBlock Text="Group Visibility"/>
             <StackPanel Orientation="Horizontal">
-                <RadioButton Content="Everybody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter={x:Static entities:GroupVisibility.Everybody}}"/>
-                <RadioButton Content="Nobody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter={x:Static entities:GroupVisibility.Nobody}}"/>
-                <RadioButton Content="Owner" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter={x:Static entities:GroupVisibility.Owner}}"/>
-                <RadioButton Content="Undefined" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter={x:Static entities:GroupVisibility.Undefined}}"/>
-                <RadioButton Content="Custom" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter={x:Static entities:GroupVisibility.Custom}}"/>
+                <RadioButton Content="Everybody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Everybody}"/>
+                <RadioButton Content="Nobody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Nobody}"/>
+                <RadioButton Content="Owner" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Owner}"/>
+                <RadioButton Content="Undefined" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Undefined}"/>
+                <RadioButton Content="Custom" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Custom}"/>
             </StackPanel>
 
             <TextBlock Text="Keyboard Shortcut"/>
