@@ -58,7 +58,7 @@ namespace Octgn.DataNew
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new Dictionary<string, DeckSection>(),
                               SharedDeckSections = new Dictionary<string, DeckSection>(),
-                              GlobalVariables = new List<GlobalVariable>(),
+                              GlobalVariables = new Dictionary<string, GlobalVariable>(),
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
                               Filename = fileName,
@@ -554,7 +554,13 @@ namespace Octgn.DataNew
             {
                 foreach (var item in g.globalvariables)
                 {
-                    ret.GlobalVariables.Add(new GlobalVariable { Name = item.name, Value = item.value, DefaultValue = item.value });
+                    var globalVariable = new GlobalVariable()
+                    {
+                        Name = item.name,
+                        Value = item.value,
+                        DefaultValue = item.value
+                    };
+                    ret.GlobalVariables.Add(item.name, globalVariable);
                 }
             }
             #endregion globalvariables
@@ -1169,8 +1175,8 @@ namespace Octgn.DataNew
                 {
                     var globalVariable = new gameGlobalvariable
                     {
-                        name = g.Name,
-                        value = g.Value
+                        name = g.Value.Name,
+                        value = g.Value.Value
                     };
                     globalVariableList.Add(globalVariable);
                 }

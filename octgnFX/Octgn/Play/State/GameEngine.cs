@@ -155,7 +155,7 @@ namespace Octgn
             }
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
-                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+                GlobalVariables.Add(varDef.Key, varDef.Value.DefaultValue);
             ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
 
@@ -234,7 +234,7 @@ namespace Octgn
             }
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
-                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+                GlobalVariables.Add(varDef.Key, varDef.Value.DefaultValue);
             ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
             while (String.IsNullOrWhiteSpace(this.Nickname))
@@ -679,7 +679,7 @@ namespace Octgn
             Selection.Clear();
 
             foreach (var g in Definition.GlobalVariables)
-                GlobalVariables[g.Name] = g.DefaultValue;
+                GlobalVariables[g.Key] = g.Value.DefaultValue;
 
             DeckStats.Reset();
 

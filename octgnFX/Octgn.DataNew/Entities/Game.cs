@@ -32,7 +32,7 @@
         public Dictionary<string,DeckSection> DeckSections { get; set; }
         public Dictionary<string,DeckSection> SharedDeckSections { get; set; }
         public List<PropertyDef> CustomProperties { get; set; }
-        public List<GlobalVariable> GlobalVariables { get; set; }
+        public Dictionary<string, GlobalVariable> GlobalVariables { get; set; }
         public Font ChatFont { get; set; }
         public Font ContextFont { get; set; }
         public Font NoteFont { get; set; }
