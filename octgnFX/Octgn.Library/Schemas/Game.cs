@@ -1954,6 +1954,8 @@ public partial class gameCard {
     
     private cardsizeDef[] sizeField;
     
+    private string nameField;
+    
     private string backField;
     
     private string frontField;
@@ -1971,6 +1973,7 @@ public partial class gameCard {
     private string backHeightField;
     
     public gameCard() {
+        this.nameField = "Default";
         this.cornerRadiusField = "0";
         this.backCornerRadiusField = "-1";
         this.backWidthField = "-1";
@@ -1996,6 +1999,18 @@ public partial class gameCard {
         }
         set {
             this.sizeField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("Default")]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
         }
     }
     

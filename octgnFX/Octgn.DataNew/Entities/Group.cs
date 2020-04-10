@@ -10,7 +10,7 @@
         public string Shortcut { get; set; }
         public bool MoveTo { get; set; }
         public string Background { get; set; }
-        public string BackgroundStyle { get; set; }
+        public BackgroundStyle BackgroundStyle { get; set; }
         public GroupVisibility Visibility { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }

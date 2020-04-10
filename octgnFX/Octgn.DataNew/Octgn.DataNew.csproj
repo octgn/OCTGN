@@ -71,6 +71,7 @@
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\CardSize.cs" />
+    <Compile Include="Entities\BackgroundStyle.cs" />
     <Compile Include="Entities\ISleeve.cs" />
     <Compile Include="Entities\GameMarker.cs" />
     <Compile Include="Entities\Sleeve.cs" />

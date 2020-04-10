@@ -87,7 +87,7 @@ namespace Octgn.DataNew
                           };
             var defSize = new CardSize
             {
-                Name = "",
+                Name = g.card.name,
                 Back = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
                 Front = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front),
                 Height = int.Parse(g.card.height),
@@ -110,7 +110,24 @@ namespace Octgn.DataNew
 
             ret.Table = this.DeserialiseGroup(g.table, 0);
             ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
-            ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
+
+            switch (g.table.backgroundStyle)
+            {
+                case tableBackgroundStyle.stretch:
+                    ret.Table.BackgroundStyle = BackgroundStyle.Stretch;
+                    break;
+                case tableBackgroundStyle.tile:
+                    ret.Table.BackgroundStyle = BackgroundStyle.Tile;
+                    break;
+                case tableBackgroundStyle.uniform:
+                    ret.Table.BackgroundStyle = BackgroundStyle.Uniform;
+                    break;
+                case tableBackgroundStyle.uniformToFill:
+                    ret.Table.BackgroundStyle = BackgroundStyle.UniformToFill;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             ret.Table.Height = Int32.Parse(g.table.height);
             ret.Table.Width = Int32.Parse(g.table.width);
             #endregion table
@@ -338,14 +355,18 @@ namespace Octgn.DataNew
             {
                 foreach (var d in g.deck)
                 {
-                    ret.DeckSections.Add(d.name, new DeckSection { Group = d.group, Name = d.name, Shared = false });
+                    var group = ret.Player.Groups.FirstOrDefault(x => x.Name == d.group);
+                    if (group != null)
+                        ret.DeckSections.Add(d.name, new DeckSection { Group = group, Name = d.name, Shared = false });
                 }
             }
             if (g.sharedDeck != null)
             {
                 foreach (var s in g.sharedDeck)
                 {
-                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name, Shared = true });
+                    var group = ret.GlobalPlayer.Groups.FirstOrDefault(x => x.Name == s.group);
+                    if (group != null)
+                        ret.SharedDeckSections.Add(s.name, new DeckSection { Group = group, Name = s.name, Shared = true });
                 }
             }
             #endregion deck
@@ -951,7 +972,7 @@ namespace Octgn.DataNew
                     var deckSection = new deckSection
                     {
                         name = s.Value.Name,
-                        group = s.Value.Group
+                        group = s.Value.Group.Name
                     };
                     deckSectionList.Add(deckSection);
                 }
@@ -966,7 +987,7 @@ namespace Octgn.DataNew
                     var deckSection = new deckSection
                     {
                         name = s.Value.Name,
-                        group = s.Value.Group
+                        group = s.Value.Group.Name
                     };
                     deckSectionList.Add(deckSection);
                 }
@@ -1025,12 +1046,13 @@ namespace Octgn.DataNew
                 {
                     if (c.Key == "")
                     {
-                        save.card.back = game.CardSize.Back.Replace(parsedRootPath, "").Replace(rootPath, "");
-                        save.card.front = game.CardSize.Front.Replace(parsedRootPath, "").Replace(rootPath, "");
-                        save.card.height = game.CardSize.Height.ToString();
-                        save.card.width = game.CardSize.Width.ToString();
-                        save.card.cornerRadius = game.CardSize.CornerRadius.ToString();
-                        save.card.backCornerRadius = game.CardSize.BackCornerRadius.ToString();
+                        save.card.name = c.Value.Name;
+                        save.card.back = c.Value.Back.Replace(parsedRootPath, "").Replace(rootPath, "");
+                        save.card.front = c.Value.Front.Replace(parsedRootPath, "").Replace(rootPath, "");
+                        save.card.height = c.Value.Height.ToString();
+                        save.card.width = c.Value.Width.ToString();
+                        save.card.cornerRadius = c.Value.CornerRadius.ToString();
+                        save.card.backCornerRadius = c.Value.BackCornerRadius.ToString();
                         continue;
             }
                     if (c.Value.Front == null || c.Value.Back == null) continue;
@@ -1196,7 +1218,6 @@ namespace Octgn.DataNew
             {
                 name = group.Name,
                 background = group.Background == null ? null : (group.Background ?? "").Replace(rootPath, ""),
-                backgroundStyle = (tableBackgroundStyle)Enum.Parse(typeof(tableBackgroundStyle), group.BackgroundStyle),
                 height = group.Height.ToString(),
                 width = group.Width.ToString(),
                 ordered = group.Ordered ? boolean.True : boolean.False,
@@ -1205,9 +1226,24 @@ namespace Octgn.DataNew
             };
             if (group.CardActions != null)
             {
-            var itemList = SerializeActions(group.CardActions).ToList();
-            itemList.AddRange(SerializeActions(group.GroupActions).ToArray());
-            ret.Items = itemList.ToArray();
+                var itemList = SerializeActions(group.CardActions, false).ToList();
+                itemList.AddRange(SerializeActions(group.GroupActions, true).ToArray());
+                ret.Items = itemList.ToArray();
+            }
+            switch (group.BackgroundStyle)
+            {
+                case BackgroundStyle.Stretch:
+                    ret.backgroundStyle = tableBackgroundStyle.stretch;
+                    break;
+                case BackgroundStyle.Tile:
+                    ret.backgroundStyle = tableBackgroundStyle.tile;
+                    break;
+                case BackgroundStyle.Uniform:
+                    ret.backgroundStyle = tableBackgroundStyle.uniform;
+                    break;
+                case BackgroundStyle.UniformToFill:
+                    ret.backgroundStyle = tableBackgroundStyle.uniformToFill;
+                    break;
             }
             switch (group.Visibility)
             {
@@ -1239,8 +1275,8 @@ namespace Octgn.DataNew
             ret.moveto = group.MoveTo ? boolean.True : boolean.False;
             if (group.CardActions != null)
             {
-                var itemList = SerializeActions(group.CardActions).ToList();
-                itemList.AddRange(SerializeActions(group.GroupActions).ToArray());
+                var itemList = SerializeActions(group.CardActions, false).ToList();
+                itemList.AddRange(SerializeActions(group.GroupActions, true).ToArray());
                 ret.Items = itemList.ToArray();
             }
             switch (group.Visibility)
@@ -1261,14 +1297,14 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        internal IEnumerable<baseAction> SerializeActions(IEnumerable<IGroupAction> actions)
+        internal IEnumerable<baseAction> SerializeActions(IEnumerable<IGroupAction> actions, bool IsGroup)
         {
             foreach (var a in actions)
             {
                 if (a is GroupAction)
                 {
                     var i = a as GroupAction;
-                    action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
+                    action ret = IsGroup ? (action)new groupAction() : new cardAction();
                     ret.@default = i.DefaultAction ? boolean.True : boolean.False;
                     ret.showIf = i.ShowExecute;
                     ret.getName = i.HeaderExecute;
@@ -1281,18 +1317,18 @@ namespace Octgn.DataNew
                 else if (a is GroupActionGroup)
                 {
                     var i = a as GroupActionGroup;
-                    var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
+                    var ret = IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
                     ret.menu = i.Name;
                     ret.showIf = i.ShowExecute;
                     ret.getName = i.HeaderExecute;
-                    ret.Items = SerializeActions(i.Children).ToArray();
+                    ret.Items = SerializeActions(i.Children, IsGroup).ToArray();
                     ret.ItemsElementName = i.Children.Select(x =>
                     {
-                        if (x.IsGroup && x is GroupAction) return ItemsChoiceType.groupaction;
-                        else if (x.IsGroup && x is GroupActionGroup) return ItemsChoiceType.groupactions;
-                        else if (x.IsGroup && x is GroupActionSeparator) return ItemsChoiceType.groupseparator;
-                        else if (!x.IsGroup && x is GroupAction) return ItemsChoiceType.cardaction;
-                        else if (!x.IsGroup && x is GroupActionGroup) return ItemsChoiceType.cardactions;
+                        if (IsGroup && x is GroupAction) return ItemsChoiceType.groupaction;
+                        else if (IsGroup && x is GroupActionGroup) return ItemsChoiceType.groupactions;
+                        else if (IsGroup && x is GroupActionSeparator) return ItemsChoiceType.groupseparator;
+                        else if (!IsGroup && x is GroupAction) return ItemsChoiceType.cardaction;
+                        else if (!IsGroup && x is GroupActionGroup) return ItemsChoiceType.cardactions;
                         else return ItemsChoiceType.cardseparator;
                     }).ToArray();
                     yield return ret;
@@ -1300,7 +1336,7 @@ namespace Octgn.DataNew
                 else if (a is GroupActionSeparator)
                 {
                     var i = a as GroupActionSeparator;
-                    var ret = i.IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
+                    var ret = IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
                     ret.showIf = i.ShowExecute;
                     yield return ret;
                 }
@@ -1373,8 +1409,7 @@ namespace Octgn.DataNew
                 if (!Directory.Exists(ret.PackUri)) Directory.CreateDirectory(ret.PackUri);
                 if (!Directory.Exists(ret.ImagePackUri)) Directory.CreateDirectory(ret.ImagePackUri);
                 if (!Directory.Exists(ret.ProxyPackUri)) Directory.CreateDirectory(ret.ProxyPackUri);
-                if (Game == null)
-                    Game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
+                Game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var cardXml in doc.Document.Descendants("card"))
                 {
                     var card = new Card(new Guid(cardXml.Attribute("id").Value), ret.Id, cardXml.Attribute("name").Value, cardXml.Attribute("id").Value, "", Game.CardSizes[""], new Dictionary<string, CardPropertySet>());
@@ -1695,7 +1730,7 @@ namespace Octgn.DataNew
             {
                 var card = new setCard
                 {
-                    name = c.Name.ToString(),
+                //    name = c.Name.ToString(),
                     id = c.Id.ToString(),
                 };
                 List<setCardAlternate> alts = new List<setCardAlternate>();
@@ -1714,9 +1749,11 @@ namespace Octgn.DataNew
                             };
                             props.Add(prop);
                         }
+                        card.name = propset.Value.Name;
                         card.property = props.ToArray();
-                        card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
-                        if (game.CardSize.Name != propset.Value.Size.Name) card.size = propset.Value.Size.Name;
+                      //  card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
+                        if (game.CardSize.Name != propset.Value.Size.Name)
+                            card.size = propset.Value.Size.Name;
                     }
                     else
                     {

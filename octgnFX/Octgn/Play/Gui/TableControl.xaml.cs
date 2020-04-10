@@ -81,7 +81,7 @@ namespace Octgn.Play.Gui
             var subbed = SubscriptionModule.Get().IsSubscribed ?? false;
             if (subbed && !String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
             {
-                SetBackground(Prefs.DefaultGameBack, "uniformToFill");
+                SetBackground(Prefs.DefaultGameBack, BackgroundStyle.UniformToFill);
             }
             else
             {
@@ -265,7 +265,7 @@ namespace Octgn.Play.Gui
             SetBackground(tableDef.Background, tableDef.BackgroundStyle);
         }
 
-        internal void SetBackground(string url, string bs)
+        internal void SetBackground(string url, BackgroundStyle bs)
         {
             var bim = new BitmapImage();
             bim.BeginInit();
@@ -275,21 +275,20 @@ namespace Octgn.Play.Gui
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
-            if (!String.IsNullOrWhiteSpace(bs))
                 switch (bs)
                 {
-                    case "tile":
+                    case BackgroundStyle.Tile:
                         backBrush.TileMode = TileMode.Tile;
                         backBrush.Viewport = new Rect(0, 0, backBrush.ImageSource.Width, backBrush.ImageSource.Height);
                         backBrush.ViewportUnits = BrushMappingMode.Absolute;
                         break;
-                    case "uniform":
+                    case BackgroundStyle.Uniform:
                         backBrush.Stretch = Stretch.Uniform;
                         break;
-                    case "uniformToFill":
+                    case BackgroundStyle.UniformToFill:
                         backBrush.Stretch = Stretch.UniformToFill;
                         break;
-                    case "stretch":
+                    case BackgroundStyle.Stretch:
                         backBrush.Stretch = Stretch.Fill;
                         break;
                 }

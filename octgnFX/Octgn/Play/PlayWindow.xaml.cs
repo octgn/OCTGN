@@ -1059,7 +1059,7 @@ namespace Octgn.Play
             {
                 if (File.Exists(fo.FileName))
                 {
-                    this.table.SetBackground(fo.FileName, "uniformToFill");
+                    this.table.SetBackground(fo.FileName, BackgroundStyle.UniformToFill);
                     Prefs.DefaultGameBack = fo.FileName;
                 }
             }

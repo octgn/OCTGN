@@ -773,7 +773,7 @@ namespace Octgn
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
                 var player = section.Shared ? Player.GlobalPlayer : Player.LocalPlayer;
-                Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group);
+                Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group.Name);  //TODO: match directly to SectionDef Group instead of name matching
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
