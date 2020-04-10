@@ -6,7 +6,7 @@
     public class Pack
     {
         public Guid Id { get; set; }
-        public Guid SetId { get; set; }
+        public Set Set { get; set; }
         public string Name { get; set; }
         public List<Include> Includes { get; set; }
         public PackDefinition Definition { get; set; }

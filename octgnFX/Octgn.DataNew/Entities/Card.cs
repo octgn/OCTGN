@@ -68,7 +68,7 @@ namespace Octgn.DataNew.Entities
                               Size = this.Size.Clone() as CardSize,
                               Properties =
                                   this.Properties.ToDictionary(
-                                      x => x.Key.Clone() as PropertyDef, x => x.Value)
+                                      x => x.Key, x => x.Value)
                           };
             return ret;
         }

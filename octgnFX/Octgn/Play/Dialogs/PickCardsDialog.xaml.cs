@@ -74,7 +74,7 @@ namespace Octgn.Play.Dialogs
                             Program.GameMess.Warning("Received pack is missing from the database. Pack is ignored.");
                             continue;
                         }
-                        PackContent content = pack.CrackOpen();
+                        PackContent content = pack.GenerateContent();
                         foreach (ObservableMultiCard c in content.LimitedCards.Select(x => x.ToMultiCard().AsObservable()))
                         {
                             Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
@@ -115,7 +115,7 @@ namespace Octgn.Play.Dialogs
                     Program.GameMess.Warning("Received pack is missing from the database. Pack is ignored.");
                     continue;
                 }
-                returnString += string.Format("[{0} - {1}],", pack.Set().Name, pack.Name);
+                returnString += string.Format("[{0} - {1}],", pack.Set.Name, pack.Name);
             }
             return returnString.Trim(new Char[] { ',', ' '});
         }

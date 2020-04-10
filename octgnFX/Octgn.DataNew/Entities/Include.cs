@@ -7,11 +7,7 @@
     {
         public Guid Id { get; set; }
         public Guid SetId { get; set; }
-        public List<Tuple<string, string>> Properties { get; set; }
+        public IDictionary<PropertyDef, object> Properties { get; set; }
 
-        public Include()
-        {
-            Properties = new List<Tuple<string, string>>();
-        }
     }
 }
