@@ -1,13 +1,17 @@
-﻿using System.Text;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System.Text;
 namespace Octgn.DataNew.Entities
 {
     using System;
 
-    public class Marker : ICloneable
+    public class GameMarker : ICloneable
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
-        public string IconUri { get; set; }
+        public string Source { get; set; }
 
         public string ModelString()
         {
@@ -16,7 +20,7 @@ namespace Octgn.DataNew.Entities
             return sb.ToString();
         }
 
-        public bool Equals(Marker other)
+        public bool Equals(GameMarker other)
         {
             if (other == null) return false;
             if (other.Id != Id) return false;
@@ -27,10 +31,10 @@ namespace Octgn.DataNew.Entities
 
         public virtual object Clone()
         {
-            var ret = new Marker();
+            var ret = new GameMarker();
             ret.Id = this.Id;
             ret.Name = this.Name.Clone() as string;
-            ret.IconUri = IconUri;
+            ret.Source = Source;
             return ret;
         }
     }

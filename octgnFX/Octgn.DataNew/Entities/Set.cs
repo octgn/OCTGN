@@ -14,7 +14,6 @@
         public string Filename { get; set; }
         public string PackageName { get; set; }
         public IEnumerable<Pack> Packs { get; set; }
-        public IEnumerable<Marker> Markers { get; set; }
         public IEnumerable<Card> Cards { get; set; }
         public string InstallPath { get; set; }
         public string DeckPath { get; set; }

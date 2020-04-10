@@ -743,7 +743,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void AddMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+		public void AddMarkerReq(Card card, string id, string name, ushort count, ushort origCount, bool isScriptChange)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(AddMarkerReq)}");
 		    if(Program.Client == null)return;
@@ -754,7 +754,7 @@ namespace Octgn.Networking
 			writer.Write(Program.Client.Muted);
 			writer.Write((byte)54);
 			writer.Write(card.Id);
-			writer.Write(id.ToByteArray());
+			writer.Write(id);
 			writer.Write(name);
 			writer.Write(count);
 			writer.Write(origCount);
@@ -765,7 +765,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void RemoveMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+		public void RemoveMarkerReq(Card card, string id, string name, ushort count, ushort origCount, bool isScriptChange)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(RemoveMarkerReq)}");
 		    if(Program.Client == null)return;
@@ -776,7 +776,7 @@ namespace Octgn.Networking
 			writer.Write(Program.Client.Muted);
 			writer.Write((byte)56);
 			writer.Write(card.Id);
-			writer.Write(id.ToByteArray());
+			writer.Write(id);
 			writer.Write(name);
 			writer.Write(count);
 			writer.Write(origCount);
@@ -787,7 +787,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+		public void TransferMarkerReq(Card from, Card to, string id, string name, ushort count, ushort origCount, bool isScriptChange)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(TransferMarkerReq)}");
 		    if(Program.Client == null)return;
@@ -799,7 +799,7 @@ namespace Octgn.Networking
 			writer.Write((byte)58);
 			writer.Write(from.Id);
 			writer.Write(to.Id);
-			writer.Write(id.ToByteArray());
+			writer.Write(id);
 			writer.Write(name);
 			writer.Write(count);
 			writer.Write(origCount);

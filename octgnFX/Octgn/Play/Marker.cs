@@ -7,7 +7,7 @@ namespace Octgn.Play
 {
     using System.Threading;
     using System.Threading.Tasks;
-
+    using Octgn.DataNew.Entities;
     using Octgn.Utils;
 
     public class Marker : INotifyPropertyChanged
@@ -18,61 +18,61 @@ namespace Octgn.Play
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 1)),
+                                                                                                               0, 1).ToString()),
                                                                                new DefaultMarkerModel("blue",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 2)),
+                                                                                                               0, 2).ToString()),
                                                                                new DefaultMarkerModel("black",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 3)),
+                                                                                                               0, 3).ToString()),
                                                                                new DefaultMarkerModel("red",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 4)),
+                                                                                                               0, 4).ToString()),
                                                                                new DefaultMarkerModel("green",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 5)),
+                                                                                                               0, 5).ToString()),
                                                                                new DefaultMarkerModel("orange",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 6)),
+                                                                                                               0, 6).ToString()),
                                                                                new DefaultMarkerModel("brown",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 7)),
+                                                                                                               0, 7).ToString()),
                                                                                new DefaultMarkerModel("yellow",
                                                                                                       new Guid(0, 0, 0,
                                                                                                                0, 0, 0,
                                                                                                                0, 0, 0,
-                                                                                                               0, 8))
+                                                                                                               0, 8).ToString())
                                                                            };
 
         private readonly Card _card;
-        private readonly DataNew.Entities.Marker _model;
+        private readonly GameMarker _model;
         private ushort _count = 1;
 
-        public Marker(Card card, DataNew.Entities.Marker model)
+        public Marker(Card card, GameMarker model)
         {
             _card = card;
             _model = model;
         }
 
-        public Marker(Card card, DataNew.Entities.Marker model, ushort count)
+        public Marker(Card card, GameMarker model, ushort count)
             : this(card, model)
         {
             _count = count;
         }
 
-        public DataNew.Entities.Marker Model
+        public GameMarker Model
         {
             get { return _model; }
         }

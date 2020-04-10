@@ -497,7 +497,7 @@ namespace Octgn.Networking
 					var arg1 = Card.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[AddMarker] Card not found."); return; }
-					var arg2 = new Guid(reader.ReadBytes(16));
+					var arg2 = reader.ReadString();
 					var arg3 = reader.ReadString();
 					var arg4 = reader.ReadUInt16();
 					var arg5 = reader.ReadUInt16();
@@ -514,7 +514,7 @@ namespace Octgn.Networking
 					var arg1 = Card.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[RemoveMarker] Card not found."); return; }
-					var arg2 = new Guid(reader.ReadBytes(16));
+					var arg2 = reader.ReadString();
 					var arg3 = reader.ReadString();
 					var arg4 = reader.ReadUInt16();
 					var arg5 = reader.ReadUInt16();
@@ -534,7 +534,7 @@ namespace Octgn.Networking
 					var arg2 = Card.Find(reader.ReadInt32());
 					if (arg2 == null)
 					{ Debug.WriteLine("[TransferMarker] Card not found."); return; }
-					var arg3 = new Guid(reader.ReadBytes(16));
+					var arg3 = reader.ReadString();
 					var arg4 = reader.ReadString();
 					var arg5 = reader.ReadUInt16();
 					var arg6 = reader.ReadUInt16();

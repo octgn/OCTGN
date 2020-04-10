@@ -11,8 +11,11 @@ using Octgn.Play;
 
 namespace Octgn.Scripting.Controls
 {
+    using Octgn.DataNew.Entities;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Windows.Media.Imaging;
 
     public partial class MarkerDlg
@@ -27,10 +30,10 @@ namespace Octgn.Scripting.Controls
         public MarkerDlg()
         {
             InitializeComponent();
-            _allMarkersView = CollectionViewSource.GetDefaultView(Program.GameEngine.Markers);
+            _allMarkersView = CollectionViewSource.GetDefaultView(Program.GameEngine.Definition.Markers.Values.ToList());
             _allMarkersView.Filter =
                 marker =>
-                ((DataNew.Entities.Marker)marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+                ((GameMarker)marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
             _allMarkersView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             allList.ItemsSource = _allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;
@@ -43,7 +46,7 @@ namespace Octgn.Scripting.Controls
             set { SetValue(IsModelSelectedProperty, value); }
         }
 
-        public DataNew.Entities.Marker MarkerModel { get; private set; }
+        public GameMarker MarkerModel { get; private set; }
 
         public int Quantity
         {
@@ -55,11 +58,11 @@ namespace Octgn.Scripting.Controls
             e.Handled = true;
 
             // A double-click can only select a marker in its own list
-            // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
+            // (TODO bug - double-clicking in the empty zone of a list with a selected marker adds it)
             if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
 
-            if (recentList.SelectedIndex != -1) MarkerModel = (DataNew.Entities.Marker)recentList.SelectedItem;
-            if (allList.SelectedIndex != -1) MarkerModel = (DataNew.Entities.Marker)allList.SelectedItem;
+            if (recentList.SelectedIndex != -1) MarkerModel = (GameMarker)recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) MarkerModel = (GameMarker)allList.SelectedItem;
             if (defaultList.SelectedIndex != -1)
             {
                 var m = ((DefaultMarkerModel) defaultList.SelectedItem);

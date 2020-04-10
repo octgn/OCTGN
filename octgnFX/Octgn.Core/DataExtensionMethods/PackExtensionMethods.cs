@@ -41,7 +41,7 @@
             .Select(picked =>
             {
                 var card = new Card(picked.Card);
-                picked.Include.Properties.Select(include => card.PropertySets[""].Properties[include.Key] = include.Value);
+                picked.Include.Properties.Select(include => card.PropertySets[""].Properties[include.Property] = include.Value);
                 return card;
             });
 

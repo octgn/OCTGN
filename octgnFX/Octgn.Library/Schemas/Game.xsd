@@ -277,7 +277,6 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        
         <xs:element name="documents" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -407,6 +406,47 @@
                     <xs:annotation>
                       <xs:documentation>
                         The default value for the global variable.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="markers" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines a list of markers used by the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="marker" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single marker
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="src" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to the marker image to be used.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The displayed name of the marker.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="id" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The identifier name to reference the marker in scripts.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>

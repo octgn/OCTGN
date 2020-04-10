@@ -175,11 +175,9 @@ namespace Octgn.Test.DataNew.FileDB
             timer.Reset();
             timer.Start();
             var cardCount = 0;
-            var markerCount = 0;
             foreach (var s in dbconfig.Query<Set>())
             {
                 cardCount += s.Cards.Count();
-                markerCount += s.Markers.Count();
             }
             foreach (var s in dbconfig.Query<GameScript>())
             {
@@ -191,7 +189,6 @@ namespace Octgn.Test.DataNew.FileDB
             }
             timer.Stop();
             Console.WriteLine("TotalCards: {0}",cardCount);
-            Console.WriteLine("TotalMarkers: {0}",markerCount);
             Console.WriteLine("TotalLoadTime: {0}",timer.ElapsedMilliseconds);
 
             //Assert.Fail();

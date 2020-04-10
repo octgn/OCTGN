@@ -535,7 +535,7 @@ namespace Octgn.Networking
             new MoveCards( player, playCards, x, y, idx, faceUp, isScriptMove).Do();
         }
 
-        public void AddMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
+        public void AddMarker(Player player, Card card, string id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             WriteReplayAction(player.Id);
             var model = Program.GameEngine.GetMarkerModel(id);
@@ -569,7 +569,7 @@ namespace Octgn.Networking
             }
         }
 
-        public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
+        public void RemoveMarker(Player player, Card card, string id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             WriteReplayAction(player.Id);
             var marker = card.FindMarker(id, name);
@@ -616,7 +616,7 @@ namespace Octgn.Networking
 
         }
 
-        public void TransferMarker(Player player, Card from, Card to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
+        public void TransferMarker(Player player, Card from, Card to, string id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             var marker = from.FindMarker(id, name);
             if (player == null)

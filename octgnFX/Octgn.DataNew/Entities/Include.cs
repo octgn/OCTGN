@@ -7,7 +7,7 @@
     {
         public Guid Id { get; set; }
         public Guid SetId { get; set; }
-        public IDictionary<PropertyDef, object> Properties { get; set; }
+        public List<PickProperty> Properties { get; set; }
 
     }
 }

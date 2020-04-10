@@ -671,7 +671,7 @@ namespace Octgn.Scripting.Versions
         public int MarkerGetCount(int cardId, string markerName, string markerId)
         {
             Card card = Card.Find(cardId);
-            Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
+            Marker marker = card.FindMarker(markerId, markerName);
             return marker == null ? 0 : marker.Count;
         }
 
@@ -679,8 +679,7 @@ namespace Octgn.Scripting.Versions
         {
             if (count < 0) count = 0;
             Card card = Card.Find(cardId);
-            Guid guid = Guid.Parse(markerId);
-            Marker marker = card.FindMarker(guid, markerName);
+            Marker marker = card.FindMarker(markerId, markerName);
             int origCount = 0;
 
             /*if (card.Controller != Player.LocalPlayer)
@@ -691,10 +690,10 @@ namespace Octgn.Scripting.Versions
             {
                 if (marker == null)
                 {
-                    DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(guid);
+                    GameMarker model = Program.GameEngine.GetMarkerModel(markerId);
                     model.Name = markerName;
                     //card.SetMarker(Player.LocalPlayer, guid, markerName, count);
-                    Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count, (ushort)origCount, true);
+                    Program.Client.Rpc.AddMarkerReq(card, markerId, markerName, (ushort)count, (ushort)origCount, true);
                     card.AddMarker(model, (ushort)count);
                 }
                 else
@@ -702,12 +701,12 @@ namespace Octgn.Scripting.Versions
                     origCount = marker.Count;
                     if (origCount < count)
                     {
-                        Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)(count - origCount), (ushort)origCount, true);
+                        Program.Client.Rpc.AddMarkerReq(card, markerId, markerName, (ushort)(count - origCount), (ushort)origCount, true);
                         card.AddMarker(marker.Model, (ushort)(count - origCount));
                     }
                     else if (origCount > count)
                     {
-                        Program.Client.Rpc.RemoveMarkerReq(card, guid, markerName, (ushort)(origCount - count), (ushort)origCount, true);
+                        Program.Client.Rpc.RemoveMarkerReq(card, markerId, markerName, (ushort)(origCount - count), (ushort)origCount, true);
                         card.RemoveMarker(marker, (ushort)(origCount - count));
                     }
                 }

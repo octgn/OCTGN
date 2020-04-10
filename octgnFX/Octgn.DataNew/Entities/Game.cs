@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Game : IEqualityComparer<Game>, IEquatable<Game>,IComparable<Game>
+    public class Game : IEqualityComparer<Game>, IEquatable<Game>, IComparable<Game>
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -14,6 +14,7 @@
         public string IconUrl { get; set; }
         public string Filename { get; set; }
         public int MarkerSize { get; set; }
+        public Dictionary<string, GameMarker> Markers { get; set; }
         public Version Version { get; set; }
         public Version OctgnVersion { get; set; }
         //public int CardWidth { get; set; }
