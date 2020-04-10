@@ -15,6 +15,7 @@ using Octgn.DataNew.FileDB;
 using Octgn.Library;
 using Octgn.Library.Exceptions;
 using Octgn.ProxyGenerator;
+using Octgn.ProxyGenerator.Definitions;
 using Regex = System.Text.RegularExpressions;
 
 namespace Octgn.DataNew
@@ -524,7 +525,7 @@ namespace Octgn.DataNew
                     if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
                     else coll.SetPart(x => x.Directory(pathParts[i]));
                 }
-                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id, g.proxygen));
+                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id));
             }
             #endregion proxygen
             #region globalvariables
@@ -1839,7 +1840,6 @@ namespace Octgn.DataNew
     public class ProxyGeneratorSerializer : IFileDbSerializer
     {
         public ICollectionDefinition Def { get; set; }
-        internal gameProxygen ProxyGenFromDef { get; set; }
         internal Guid GameId { get; set; }
 
         /// <summary>
@@ -1848,9 +1848,8 @@ namespace Octgn.DataNew
         /// this <see cref="Octgn.DataNew.Entities.Game"/>, reguardless of what the data says.
         /// </summary>
         public Game Game { get; set; }
-        public ProxyGeneratorSerializer(Guid gameId, gameProxygen proxygen)
+        public ProxyGeneratorSerializer(Guid gameId)
         {
-            ProxyGenFromDef = proxygen;
             GameId = gameId;
         }
 
@@ -1863,7 +1862,315 @@ namespace Octgn.DataNew
 
         public byte[] Serialize(object obj)
         {
-            throw new NotImplementedException();
+            if ((obj is ProxyDefinition) == false)
+                throw new InvalidOperationException("obj must be typeof ProxyDefinition");
+            var proxyDef = obj as ProxyDefinition;
+            var game = Game ?? DbContext.Get().Games.First(x => x.Id == (Guid)proxyDef.Key);
+            var rootPath = new DirectoryInfo(proxyDef.RootPath).FullName;
+            var parsedRootPath = string.Join("", rootPath, "\\");
+            var fullPath = Path.Combine(game.InstallPath, game.ProxyGenSource);
+
+            var save = new templates
+            {
+            };
+
+            #region blocks
+            var blocks = new List<templatesBlock>();
+            foreach (BlockDefinition blockdef in proxyDef.BlockManager.GetBlocks())
+            {
+                var block = new templatesBlock();
+                if (blockdef.type == "overlay")
+                    block.type = blocktype.overlay;
+                else if (blockdef.type == "text")
+                    block.type = blocktype.text;
+                block.id = blockdef.id;
+                block.src = blockdef.src;
+
+                var location = new templatesBlockLocation
+                {
+                    x = blockdef.location.x.ToString(),
+                    y = blockdef.location.y.ToString()
+                };
+                if (blockdef.location.rotate != 0)
+                {
+                    location.rotate = blockdef.location.rotate.ToString();
+                }
+                if (blockdef.location.flip)
+                {
+                    location.flip = proxyBoolean.True;
+                }
+                if (blockdef.location.altrotate)
+                {
+                    location.altrotate = proxyBoolean.True;
+                }
+                block.location = location;
+                if (block.type == blocktype.text)
+                {
+                    if (blockdef.border.size != 0)
+                    {
+                        var border = new templatesBlockBorder
+                        {
+                            size = blockdef.border.size.ToString(),
+                            color = System.Drawing.ColorTranslator.ToHtml(blockdef.border.color)
+                        };
+                        block.border = border;
+                    }
+                    var wordwrap = new templatesBlockWordwrap();
+                    if (blockdef.wordwrap.height != 0)
+                    {
+                        wordwrap.height = blockdef.wordwrap.height.ToString();
+                    }
+                    if (blockdef.wordwrap.width != 0)
+                    {
+                        wordwrap.width = blockdef.wordwrap.width.ToString();
+                    }
+                    switch (blockdef.wordwrap.align)
+                    {
+                        case "center":
+                            wordwrap.align = alignment.center;
+                            break;
+                        case "far":
+                            wordwrap.align = alignment.far;
+                            break;
+                        default:
+                            wordwrap.align = alignment.near;
+                            break;
+                    }
+                    switch (blockdef.wordwrap.valign)
+                    {
+                        case "center":
+                            wordwrap.valign = alignment.center;
+                            break;
+                        case "far":
+                            wordwrap.valign = alignment.far;
+                            break;
+                        default:
+                            wordwrap.valign = alignment.near;
+                            break;
+                    }
+                    if (blockdef.wordwrap.shrinkToFit)
+                    {
+                        wordwrap.shrinktofit = proxyBoolean.True;
+                    }
+                    block.wordwrap = wordwrap;
+
+                    var text = new templatesBlockText();
+                    if (blockdef.text.color != null)
+                    {
+                        text.color = System.Drawing.ColorTranslator.ToHtml(blockdef.text.color);
+                    };
+                    if (blockdef.text.font != null)
+                    {
+                        text.font = blockdef.text.font;
+                    }
+                    if (blockdef.text.size != 0)
+                    {
+                        text.size = blockdef.text.size.ToString();
+                    }
+                    block.text = text;
+                }
+                blocks.Add(block);
+            }           
+            save.blocks = blocks.ToArray();
+            #endregion
+
+            #region templates
+            var templates = new List<templatesTemplate>();
+            foreach (TemplateDefinition templatedef in proxyDef.TemplateSelector.GetTemplates())
+            {
+                var template = new templatesTemplate();
+                if (templatedef.defaultTemplate)
+                {
+                    template.@default = proxyBoolean.True;
+                }
+                template.src = templatedef.src;
+
+                var matches = new List<templatesTemplateMatch>();
+                foreach (Property matchdef in templatedef.Matches)
+                {
+                    var match = new templatesTemplateMatch()
+                    {
+                        name = matchdef.Name,
+                        value = matchdef.Value
+                    };
+                    matches.Add(match);
+                }
+                template.matches = matches.ToArray();
+
+                var overlayblocks = new List<object>();
+                foreach (LinkDefinition.LinkWrapper overlaydef in templatedef.OverlayBlocks)
+                {
+                    var item = SerializeLinkWrapper(overlaydef);
+                    overlayblocks.Add(item);
+                };
+                template.overlayblocks = overlayblocks.ToArray();
+
+                var textblocks = new List<object>();
+                foreach (LinkDefinition.LinkWrapper textdef in templatedef.TextBlocks)
+                {
+                    var item = SerializeLinkWrapper(textdef);
+                    textblocks.Add(item);
+                };
+                template.textblocks = textblocks.ToArray();
+                templates.Add(template);
+            }
+            
+
+            save.template = templates.ToArray();
+            #endregion
+
+            ///END
+            ///
+
+            var serializer = new XmlSerializer(typeof(templates));
+            Directory.CreateDirectory(new FileInfo(fullPath).Directory.FullName);
+
+            using (var fs = File.Open(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                serializer.Serialize(fs, save);
+            }
+            return File.ReadAllBytes(fullPath);
+        }
+
+        public object SerializeLinkWrapper(LinkDefinition.LinkWrapper wrapper)
+        {
+            if (wrapper.Conditional != null)
+            {
+                if (wrapper.Conditional.ifNode != null)
+                {
+                    var conditional = new conditional();
+                    var conditionalitems = new List<object>();
+                    var ifCondition = new conditionalIF
+                    {
+                        property = wrapper.Conditional.ifNode.property
+                    };
+                    if (wrapper.Conditional.ifNode.value != null)
+                    {
+                        ifCondition.value = wrapper.Conditional.ifNode.value;
+                    }
+                    if (wrapper.Conditional.ifNode.contains != null)
+                    {
+                        ifCondition.contains = wrapper.Conditional.ifNode.contains;
+                    }
+                    var ifConditionItems = new List<link>();
+                    foreach (var linkItem in wrapper.Conditional.ifNode.linkList)
+                    {
+                        ifConditionItems.Add(SerializeLink(linkItem.Link));
+                    }
+                    ifCondition.link = ifConditionItems.ToArray();
+                    conditionalitems.Add(ifCondition);
+
+                    foreach (var conditionaldef in wrapper.Conditional.elseifNodeList)
+                    {
+                        var elseIfCondition = new conditionalElseif
+                        {
+                            property = conditionaldef.property
+                        };
+                        if (conditionaldef.value != null)
+                        {
+                            elseIfCondition.value = conditionaldef.value;
+                        }
+                        if (conditionaldef.contains != null)
+                        {
+                            elseIfCondition.contains = conditionaldef.contains;
+                        }
+                        var elseIfConditionItems = new List<link>();
+                        foreach (var linkItem in conditionaldef.linkList)
+                        {
+                            elseIfConditionItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        elseIfCondition.link = elseIfConditionItems.ToArray();
+                        conditionalitems.Add(elseIfCondition);
+
+                    }
+
+                    if (wrapper.Conditional.elseNode != null)
+                    {
+                        var elseCondition = new conditionalElse();
+                        var elseConditionItems = new List<link>();
+                        foreach (var linkItem in wrapper.Conditional.elseNode.linkList)
+                        {
+                            elseConditionItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        elseCondition.link = elseConditionItems.ToArray();
+                        conditionalitems.Add(elseCondition);
+                    }
+                    conditional.Items = conditionalitems.ToArray();
+                    return conditional;
+                }
+                if (wrapper.Conditional.switchProperty != null)
+                {
+                    var conditionalswitch = new conditionalSwitch
+                    {
+                        property = wrapper.Conditional.switchProperty
+                    };
+                    var switchitems = new List<conditionalSwitchCase>();
+
+                    foreach (CaseDefinition switchdef in wrapper.Conditional.switchNodeList)
+                    {
+                        var switchCase = new conditionalSwitchCase();
+                        if (switchdef.value != null)
+                        {
+                            switchCase.value = switchdef.value;
+                        }
+                        if (switchdef.contains != null)
+                        {
+                            switchCase.contains = switchdef.contains;
+                        }
+                        if (switchdef.switchBreak == false)
+                        {
+                            switchCase.@break = proxyBoolean.False;
+                        }
+                        var switchItems = new List<link>();
+                        foreach (var linkItem in switchdef.linkList)
+                        {
+                            switchItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        switchCase.link = switchItems.ToArray();
+                        switchitems.Add(switchCase);
+                    }
+
+                    conditionalswitch.@case = switchitems.ToArray();
+                    if (wrapper.Conditional.elseNode != null)
+                    {
+                        var defaultCaseItems = new List<link>();
+                        foreach (var linkItem in wrapper.Conditional.elseNode.linkList)
+                        {
+                            defaultCaseItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        conditionalswitch.@default = defaultCaseItems.ToArray();
+                    }
+                    var conditional = new conditional();
+                    conditional.Items = new List<conditionalSwitch>() { conditionalswitch }.ToArray();
+                    return conditional;
+                }
+            }
+            if (wrapper.Link != null)
+            {
+                return SerializeLink(wrapper.Link);
+            }
+            return null;
+        }
+
+        public link SerializeLink(LinkDefinition linkdef)
+        {
+            link link = new link
+            {
+                separator = linkdef.Separator,
+                block = linkdef.Block
+            };
+            var linkItems = new List<linkProperty>();
+            foreach (var propertydef in linkdef.NestedProperties)
+            {
+                var property = new linkProperty
+                {
+                    format = propertydef.Format,
+                    name = propertydef.Name
+                };
+                linkItems.Add(property);
+            }
+            link.property = linkItems.ToArray();
+            return link;
         }
     }
 }
