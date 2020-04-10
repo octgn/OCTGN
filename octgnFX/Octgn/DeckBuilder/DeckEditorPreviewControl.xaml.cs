@@ -260,7 +260,7 @@ namespace Octgn.DeckBuilder
                 get
                 {
                     if (Card == null) return false;
-                    return Card.Properties.Count != 1;
+                    return Card.PropertySets.Count != 1;
                 }
             }
 
@@ -277,7 +277,7 @@ namespace Octgn.DeckBuilder
                 get
                 {
                     if (Card == null) return 0;
-                    return Card.Properties.Count;
+                    return Card.PropertySets.Count;
                 }
             }
 
@@ -321,7 +321,7 @@ namespace Octgn.DeckBuilder
                     else if (value >= AlternateCount) index = 0;
                     else index = value;
 
-                    Card.SetPropertySet(Card.Properties.ToArray()[index].Key);
+                    Card.SetPropertySet(Card.PropertySets.ToArray()[index].Key);
 
                     for (var i = 0; i < Alternates.Count; i++)
                     {
@@ -352,7 +352,7 @@ namespace Octgn.DeckBuilder
                 Alternates.Clear();
                 if (Card == null) return;
                 var i = 0;
-                foreach (var a in c.Properties)
+                foreach (var a in c.PropertySets)
                 {
                     if (c.Alternate == a.Key)
                         Index = i;

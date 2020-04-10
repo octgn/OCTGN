@@ -57,7 +57,7 @@ namespace Octgn.Scripting.Controls
                                 foreach (var v in p.Value)
                                 {
                                     var tlist = game.AllCards()
-                                        .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                        .Where(x => x.GetFullCardProperties()
                                             .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                                 && y.Value.ToString().ToLower() == v.ToLower())).ToList();
                                     _allCards.AddRange(tlist);
@@ -77,7 +77,7 @@ namespace Octgn.Scripting.Controls
                                 foreach (var v in p.Value)
                                 {
                                     tlist.AddRange(query
-                                        .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                        .Where(x => x.GetFullCardProperties()
                                             .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                                 && y.Value.ToString().ToLower() == v.ToLower())).ToList());
                                 }
@@ -110,7 +110,7 @@ namespace Octgn.Scripting.Controls
                           foreach (var p in properties)
                           {
                               var tlist = game.AllCards()
-                                  .Where(x => x.Properties.SelectMany(y=>y.Value.Properties)
+                                  .Where(x => x.GetFullCardProperties()
                                       .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
                                           && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
                               _allCards.AddRange(tlist);
@@ -122,7 +122,7 @@ namespace Octgn.Scripting.Controls
                           {
                               query = query
                                   .Where(
-                                  x => x.Properties.SelectMany(y=>y.Value.Properties)
+                                  x => x.GetFullCardProperties()
                                       .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
                                           && y.Value.ToString().ToLower() == p.Value.ToLower()));
                           }

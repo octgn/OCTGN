@@ -24,6 +24,7 @@ namespace Octgn.DeckBuilder
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
 
     public partial class SearchControl : INotifyPropertyChanged
     {
@@ -57,18 +58,18 @@ namespace Octgn.DeckBuilder
             NumMod = "";
             Game = game;
             InitializeComponent();
-            filtersList.ItemsSource =
-                Enumerable.Repeat<object>("First", 1).Union(
-                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1).Union(
-                        game.AllProperties().Where(p => !p.Hidden)));
+            var source = 
+                Enumerable.Repeat<object>("First", 1)
+                     .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1))
+                     .Union(game.AllProperties().Where(p => !p.Hidden));
+
+            filtersList.ItemsSource = source;
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
             UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
             FileName = "";
             UpdateCount();
-        }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
-        // Why are we poluting the code with snide comments instead of fixing the problem or making a generic TODO (V)_V
-        // Actually, the more that I think about it, the more I think that the first comment is actually a bad idea. (V)_V
+        }
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
         {
@@ -89,9 +90,9 @@ namespace Octgn.DeckBuilder
             Game = loadedGame;
             InitializeComponent();
             filtersList.ItemsSource =
-                Enumerable.Repeat<object>("First", 1).Union(
-                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1).Union(
-                        game.AllProperties().Where(p => !p.Hidden)));
+                Enumerable.Repeat<object>("First", 1)
+                    .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1))
+                    .Union(game.AllProperties().Where(p => !p.Hidden));
             this.GenerateColumns(game);
             FileName = "";
             if (save != null)
@@ -109,8 +110,7 @@ namespace Octgn.DeckBuilder
                     }
                     else
                     {
-                        prop =
-                            loadedGame.CustomProperties.FirstOrDefault(
+                        prop = loadedGame.AllProperties().FirstOrDefault(
                                 x => x.Name.Equals(filter.PropertyName, StringComparison.InvariantCultureIgnoreCase));
                     }
                     if (prop == null) continue;

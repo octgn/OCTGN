@@ -122,7 +122,7 @@
             }
         }
 
-        public IDictionary<string, CardPropertySet> Properties
+        public IDictionary<string, CardPropertySet> PropertySets
         {
             get
             {
@@ -173,7 +173,7 @@
             ImageUri = imageuri.Clone() as string;
             Alternate = alternate.Clone() as string;
             Size = size.Clone() as CardSize;
-            Properties = properties;
+            PropertySets = properties;
             this.properties = this.CloneProperties();
         }
 

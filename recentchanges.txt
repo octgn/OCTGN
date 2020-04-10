@@ -1,1 +1,3 @@
-
+Card Name now a standard property within the PropertySet, no longer deserialized as a custom property.
+Cleaned up how OCTGN manages card alternate properties and inheritance
+Added a few extension methods to manage fetching card property sets

@@ -32,6 +32,22 @@ namespace Octgn.Core.DataExtensionMethods
         }
         private static IFileSystem io;
 
+        public static PropertyDef _nameProperty;
+
+        public static PropertyDef NameProperty
+        {
+            get
+            {
+                if (_nameProperty == null)
+                    _nameProperty = new PropertyDef()
+                    {
+                        Name = "Name",
+                        Type = PropertyType.String
+                    };
+                return _nameProperty;
+            }
+        }
+
         public static IEnumerable<Set> Sets(this Game game)
         {
             var ret = SetManager.Get().GetByGameId(game.Id);
@@ -111,7 +127,7 @@ namespace Octgn.Core.DataExtensionMethods
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<PropertyDef>();
-            return Enumerable.Repeat(new PropertyDef { Name = "Name", Type = PropertyType.String }, 1).Union(game.CustomProperties);
+            return Enumerable.Repeat(NameProperty, 1).Union(game.CustomProperties);
         }
 
         public static IEnumerable<Card> AllCards(this Game game)
@@ -132,26 +148,25 @@ namespace Octgn.Core.DataExtensionMethods
         {
             DataTable table = new DataTable();
 
-            var values = new object[game.CustomProperties.Count + 6 - 1];
-            var defaultValues = new object[game.CustomProperties.Count + 6 - 1];
+            var values = new object[game.CustomProperties.Count + 6];
+            var defaultValues = new object[game.CustomProperties.Count + 6];
             var indexes = new Dictionary<int, string>();
             var setCache = new Dictionary<Guid, string>();
-            var i = 0 + 6;
+            var i = 6;
             table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("SetName", typeof(string));
-            table.Columns.Add("set_id", typeof(String));
-            table.Columns.Add("img_uri", typeof(String));
-            table.Columns.Add("id", typeof(string));
-            table.Columns.Add("Alternates", typeof(string));
             defaultValues[0] = "";
+            table.Columns.Add("SetName", typeof(string));
             defaultValues[1] = "";
+            table.Columns.Add("set_id", typeof(string));
             defaultValues[2] = "";
+            table.Columns.Add("img_uri", typeof(string));
             defaultValues[3] = "";
+            table.Columns.Add("id", typeof(string));
             defaultValues[4] = "";
+            table.Columns.Add("Alternates", typeof(string));
             defaultValues[5] = "";
             foreach (var prop in game.CustomProperties)
             {
-                if (prop.Name == "Name") continue;
                 switch (prop.Type)
                 {
                     case PropertyType.String:
@@ -193,26 +208,19 @@ namespace Octgn.Core.DataExtensionMethods
                 values[2] = item.SetId;
                 values[3] = item.GetImageUri();
                 values[4] = item.Id;
-                var alternates = item.Properties.Keys;
-                foreach (string alt in alternates)
+                foreach (CardPropertySet alt in item.PropertySets.Values)
                 {
-                    values[5] = alt;
-                    Card altCard = item.Clone();
-                    altCard.Alternate = alt;
-                    foreach (var prop in altCard.PropertySet())
+                    values[5] = alt.Type;
+                    values[0] = alt.Name;
+                    foreach (var prop in alt.Properties)
                     {
-                        if (prop.Key.Name == "Name")
-                        {
-                            values[0] = prop.Value;
-                            continue;
-                        }
-                        var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { Key = x.Key, Value = x.Value }).FirstOrDefault();
+                        var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { x.Key, x.Value }).FirstOrDefault();
                         if (ix == null)
                             throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
                         if (prop.Key.Type == PropertyType.Integer)
                         {
                             int garbo;
-                            if (prop.Key.IsUndefined || !int.TryParse(prop.Value as string, out garbo))
+                            if (prop.Value == null || !int.TryParse(prop.Value as string, out garbo))
                             {
                                 values[ix.Key] = null;
                                 continue;
