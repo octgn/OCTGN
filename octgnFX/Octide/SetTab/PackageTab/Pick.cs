@@ -10,16 +10,17 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public partial class PickModel : IBasePack
+    public partial class PickModel : IdeBaseItem
     {
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public bool _isUnlimited;
+        public Pick _pick;
         public RelayCommand AddPropertyCommand { get; private set; }
 
 
         public PickModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
-            _packItem = new Pick()
+            _pick = new Pick()
             {
                 Properties = new List<PickProperty>()
             };
@@ -34,8 +35,8 @@ namespace Octide.SetTab.ItemModel
 
         public PickModel(Pick p, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
-            _packItem = p;
-            IsUnlimited = (p as Pick).Quantity == -1 ? true : false;
+            _pick = p;
+            IsUnlimited = p.Quantity == -1 ? true : false;
             Items = new IdeCollection<IdeBaseItem>(this);
             foreach (PickProperty item in p.Properties)
             {
@@ -51,7 +52,7 @@ namespace Octide.SetTab.ItemModel
 
         public PickModel(PickModel p, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
-            _packItem = new Pick();
+            _pick = new Pick();
             Quantity = p.Quantity;
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (a, b) =>
@@ -67,7 +68,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildPickDef(NotifyCollectionChangedEventArgs args)
         {
-            ((Pick)_packItem).Properties = Items.Select(x => ((PackagePropertyModel)x).PropertyDef).ToList();
+            _pick.Properties = Items.Select(x => ((PackagePropertyModel)x).PropertyDef).ToList();
         }
 
         public void AddProperty()
@@ -94,7 +95,7 @@ namespace Octide.SetTab.ItemModel
             {
                 if (_isUnlimited == value) return;
                 _isUnlimited = value;
-                ((Pick)_packItem).Quantity = (value == true) ? -1 : 1;
+                _pick.Quantity = (value == true) ? -1 : 1;
                 RaisePropertyChanged("IsUnlimited");
                 RaisePropertyChanged("Quantity");
             }
@@ -104,11 +105,11 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                return ((Pick)_packItem).Quantity;
+                return _pick.Quantity;
             }
             set
             {
-                if (((Pick)_packItem).Quantity == value) return;
+                if (_pick.Quantity == value) return;
                 if (value < 0)
                 {
                     IsUnlimited = true;
@@ -116,7 +117,7 @@ namespace Octide.SetTab.ItemModel
                 else
                 {
                     IsUnlimited = false;
-                    ((Pick)_packItem).Quantity = value;
+                    _pick.Quantity = value;
                 }
                 RaisePropertyChanged("Quantity");
             }

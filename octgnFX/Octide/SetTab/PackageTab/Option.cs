@@ -4,6 +4,7 @@
 
 using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace Octide.SetTab.ItemModel
         {
             Option = new Option
             {
-                Definition = new PackDefinition()
+                Items = new List<object>()
             };
             Items = new IdeCollection<IdeBaseItem>(this);
 
@@ -41,7 +42,7 @@ namespace Octide.SetTab.ItemModel
             {
                 BuildOptionDef(b);
             };
-            foreach (var item in o.Definition.Items)
+            foreach (var item in o.Items)
             {
                 if (item is OptionsList options)
                     Items.Add(new OptionsModel(options, Items));
@@ -56,7 +57,7 @@ namespace Octide.SetTab.ItemModel
         {
             Option = new Option
             {
-                Definition = new PackDefinition(),
+                Items = new List<object>(),
                 Probability = p.Probability
             };
             Items = new IdeCollection<IdeBaseItem>(this);
@@ -76,7 +77,19 @@ namespace Octide.SetTab.ItemModel
         }
         public void BuildOptionDef(NotifyCollectionChangedEventArgs args)
         {
-            Option.Definition.Items = Items.Select(x => ((IBasePack)x)._packItem).ToList();
+            List<object> items = new List<object>();
+            foreach (var packItem in Items)
+            {
+                if (packItem is PickModel pick)
+                {
+                    items.Add(pick._pick);
+                }
+                else if (packItem is OptionsModel options)
+                {
+                    items.Add(options._options);
+                }
+            }
+            Option.Items = items;
         }
 
         public void AddPick()

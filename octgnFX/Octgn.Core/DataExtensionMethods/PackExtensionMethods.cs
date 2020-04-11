@@ -47,18 +47,17 @@
 
             cardSelectionPool.AddRange(includeCards);
 
-            packContents.Merge(ProcessPackItems(pack, pack.Definition, cardSelectionPool));
+            packContents.Merge(ProcessPackItems(pack, pack.Items, cardSelectionPool));
             return packContents;
         }
 
-        private static PackContent ProcessPackItems(Pack pack, PackDefinition def, List<Card> cardPool)
+        private static PackContent ProcessPackItems(Pack pack, List<object> items, List<Card> cardPool)
         {
             PackContent content = new PackContent();
-            foreach (IPackItem item in def.Items)
+            foreach (var item in items)
             {
-                if (item is Pick)
+                if (item is Pick pick)
                 {
-                    Pick pick = item as Pick;
                     var filteredPool = new List<Card>(cardPool);
                     foreach (PickProperty pickProperty in pick.Properties)
                     {
@@ -94,10 +93,8 @@
                         }
                     }
                 }
-                else if (item is OptionsList)
+                else if (item is OptionsList optionsList)
                 {
-                    OptionsList optionsList = item as OptionsList;
-
                     double threshold = 0;
                     if (_provider == null)
                     {
@@ -119,7 +116,7 @@
                     }
                     if (selectedOption != null)
                     {
-                        content.Merge(ProcessPackItems(pack, selectedOption.Definition, cardPool));
+                        content.Merge(ProcessPackItems(pack, selectedOption.Items, cardPool));
                     }
                 }
             }

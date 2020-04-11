@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class OptionsList : IPackItem
+    public class OptionsList
     {
         public OptionsList()
         {

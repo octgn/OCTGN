@@ -211,8 +211,7 @@ namespace Octgn.Core.DataExtensionMethods
                             throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
                         if (prop.Key.Type == PropertyType.Integer)
                         {
-                            int garbo;
-                            if (prop.Value == null || !int.TryParse(prop.Value as string, out garbo))
+                            if (prop.Value == null || !int.TryParse(prop.Value as string, out _))
                             {
                                 values[ix.Key] = null;
                                 continue;

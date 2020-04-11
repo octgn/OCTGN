@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class Pick : IPackItem
+    public class Pick
     {
         public int Quantity { get; set; }
         public List<PickProperty> Properties { get; set; }

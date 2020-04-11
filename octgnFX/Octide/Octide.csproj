@@ -252,7 +252,6 @@
     </Compile>
     <Compile Include="MarkerTab\MarkerItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\DropHandlers.cs" />
-    <Compile Include="SetTab\PackageTab\IBasePack.cs" />
     <Compile Include="Utils\ValidationRules.cs" />
     <Compile Include="Utils\IdeObservableCollection.cs" />
     <Compile Include="Views\ImportCardsWindow.xaml.cs">

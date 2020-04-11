@@ -94,14 +94,12 @@
     <Compile Include="Entities\GlobalVariable.cs" />
     <Compile Include="Entities\Group.cs" />
     <Compile Include="Entities\GroupVisibility.cs" />
-    <Compile Include="Entities\IPackItem.cs" />
     <Compile Include="Entities\MultiCard.cs" />
     <Compile Include="Entities\PickProperty.cs" />
     <Compile Include="Entities\Option.cs" />
     <Compile Include="Entities\OptionsList.cs" />
     <Compile Include="Entities\Pack.cs" />
     <Compile Include="Entities\PackContent.cs" />
-    <Compile Include="Entities\PackDefinition.cs" />
     <Compile Include="Entities\Pick.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\PropertyDef.cs" />

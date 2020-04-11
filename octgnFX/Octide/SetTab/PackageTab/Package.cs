@@ -34,7 +34,7 @@ namespace Octide.SetTab.ItemModel
             {
                 Name = "Package",
                 Id = Guid.NewGuid(),
-                Definition = new PackDefinition(),
+                Items = new List<object>(),
                 Set = ((SetModel)Source.Parent)._set
             };
             Items = new IdeCollection<IdeBaseItem>(this);
@@ -59,7 +59,7 @@ namespace Octide.SetTab.ItemModel
         {
             _pack = p;
             Items = new IdeCollection<IdeBaseItem>(this);
-            foreach (var item in p.Definition.Items)
+            foreach (var item in p.Items)
             {
                 if (item is OptionsList options)
                     Items.Add(new OptionsModel(options, Items));
@@ -96,7 +96,7 @@ namespace Octide.SetTab.ItemModel
                 Name = p.Name,
                 Id = Guid.NewGuid(),
                 Set = p._pack.Set,
-                Definition = new PackDefinition(),
+                Items = new List<object>(),
                 Includes = new List<Include>()
             };
             Items = new IdeCollection<IdeBaseItem>(this);
@@ -134,7 +134,19 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildPackDef(NotifyCollectionChangedEventArgs args)
         {
-            _pack.Definition.Items = Items.Select(x => ((IBasePack)x)._packItem).ToList();
+            List<object> items = new List<object>();
+            foreach (var packItem in Items)
+            {
+                if (packItem is PickModel pick)
+                {
+                    items.Add(pick._pick);
+                }
+                else if (packItem is OptionsModel options)
+                {
+                    items.Add(options._options);
+                }
+            }
+            _pack.Items = items;
         }
         
         public void BuildIncludesDef(NotifyCollectionChangedEventArgs args)

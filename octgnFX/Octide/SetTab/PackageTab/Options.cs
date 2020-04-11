@@ -9,14 +9,15 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public partial class OptionsModel : IBasePack
+    public partial class OptionsModel : IdeBaseItem
     {
+        public OptionsList _options;
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public RelayCommand AddOptionCommand { get; private set; }
 
         public OptionsModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
-            _packItem = new OptionsList();
+            _options = new OptionsList();
 
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (a, b) =>
@@ -29,7 +30,7 @@ namespace Octide.SetTab.ItemModel
 
         public OptionsModel(OptionsList p, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
-            _packItem = p;
+            _options = p;
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (a, b) =>
             {
@@ -45,7 +46,7 @@ namespace Octide.SetTab.ItemModel
 
         public OptionsModel(OptionsModel p, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
-            _packItem = new OptionsList();
+            _options = new OptionsList();
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (a, b) =>
             {
@@ -60,7 +61,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildOptionsDef(NotifyCollectionChangedEventArgs args)
         {
-            ((OptionsList)_packItem).Options = Items.Select(x => ((OptionModel)x).Option).ToList();
+            _options.Options = Items.Select(x => ((OptionModel)x).Option).ToList();
         }
 
         public void AddOption()

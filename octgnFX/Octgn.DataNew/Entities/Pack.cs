@@ -9,11 +9,12 @@
         public Set Set { get; set; }
         public string Name { get; set; }
         public List<Include> Includes { get; set; }
-        public PackDefinition Definition { get; set; }
+        public List<object> Items { get; set; }
 
         public Pack()
         {
             Includes = new List<Include>();
+            Items = new List<object>();
         }
     }
 

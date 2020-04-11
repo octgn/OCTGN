@@ -4,12 +4,6 @@ extensions: .cs .cpp .h
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-extensions: .aspx .ascx
-<%-- 
-Copyright (c) 2011 rubicon IT GmbH
---%>
-extensions: .vb
-'Sample license text.
 extensions:  .xml .config .xsd .xaml
 <!--
 * This Source Code Form is subject to the terms of the Mozilla Public

@@ -1478,7 +1478,7 @@ namespace Octgn.DataNew
                     {
                         Id = new Guid(p.Attribute("id").Value),
                         Name = p.Attribute("name").Value,
-                        Definition = DeserializePack(p.Elements()),
+                        Items = DeserializePack(p.Elements()),
                         Set = ret
                     };
                     foreach (var includeXml in p.Elements("include"))
@@ -1642,21 +1642,21 @@ namespace Octgn.DataNew
                 var option = new Option();
                 var probAtt = op.Attributes("probability").FirstOrDefault();
                 option.Probability = double.Parse(probAtt != null ? probAtt.Value : "1", CultureInfo.InvariantCulture);
-                option.Definition = DeserializePack(op.Elements());
+                option.Items = DeserializePack(op.Elements());
                 ret.Options.Add(option);
             }
             return ret;
         }
 
-        internal PackDefinition DeserializePack(IEnumerable<XElement> element)
+        internal List<object> DeserializePack(IEnumerable<XElement> element)
         {
-            var ret = new PackDefinition();
+            var ret = new List<object>();
             foreach (var e in element)
             {
                 switch (e.Name.LocalName)
                 {
                     case "options":
-                        ret.Items.Add(this.DeserializeOptions(e));
+                        ret.Add(this.DeserializeOptions(e));
                         break;
                     case "pick":
                         var pick = new Pick();
@@ -1679,7 +1679,7 @@ namespace Octgn.DataNew
                             propertyList.Add(prop);
                         }
                         pick.Properties = propertyList;
-                        ret.Items.Add(pick);
+                        ret.Add(pick);
                         break;
                 }
             }
@@ -1715,7 +1715,7 @@ namespace Octgn.DataNew
                     id = setpack.Id.ToString()
                 };
 
-                var packItems = SerializePack(setpack.Definition.Items).ToList();
+                var packItems = SerializePack(setpack.Items).ToList();
                 foreach (Include include in setpack.Includes)
                 {
                     packItems.Add(new include()
@@ -1799,7 +1799,7 @@ namespace Octgn.DataNew
             return File.ReadAllBytes(set.Filename);
         }
 
-        public IEnumerable<object> SerializePack(List<IPackItem> packitems)
+        public IEnumerable<object> SerializePack(List<object> packitems)
         {
             foreach (var item in packitems)
             {
@@ -1841,7 +1841,7 @@ namespace Octgn.DataNew
                         var option = new optionsOption
                         {
                             probability = opt.Probability,
-                            Items = SerializePack(opt.Definition.Items).ToArray()
+                            Items = SerializePack(opt.Items).ToArray()
                         };
                         optionlist.Add(option);
                     }
