@@ -22,7 +22,19 @@ namespace Octgn.Tabs.GameHistory
     {
         private static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ObservableCollection<GameHistoryViewModel> GameHistories { get; }
+        public ObservableCollection<GameHistoryViewModel> GameHistories { get; private set; }
+
+        private int _page = 1;
+        public int Page {
+            get { return _page; }
+            set { NotifyAndUpdate(ref _page, value); }
+        }
+
+        private int _pageCount = 0;
+        public int PageCount { 
+            get { return _pageCount; }
+            private set { NotifyAndUpdate(ref _pageCount, value); }
+        }
 
         public GameHistoryTab() {
             InitializeComponent();
@@ -45,6 +57,24 @@ namespace Octgn.Tabs.GameHistory
                     win.Show();
                     win.Activate();
                 });
+            }
+        }
+
+        private void ButtonPrevClick(object sender, RoutedEventArgs e)
+        {
+            if (!IsRefreshingHistoryList && Page > 1)
+            {
+                --Page;
+                RefreshHistoryListTimer_Tick(null, null);
+            }
+        }
+
+        private void ButtonNextClick(object sender, RoutedEventArgs e)
+        {
+            if (!IsRefreshingHistoryList && Page < PageCount)
+            {
+                ++Page;
+                RefreshHistoryListTimer_Tick(null, null);
             }
         }
 
@@ -123,7 +153,6 @@ namespace Octgn.Tabs.GameHistory
 
         private Duration _currentRefreshDelay = new Duration(TimeSpan.FromDays(10));
 
-
         private void RefreshHistoryListTimer_Tick(object sender, EventArgs e) {
             try {
                 IsRefreshingHistoryList = true;
@@ -134,24 +163,12 @@ namespace Octgn.Tabs.GameHistory
                     CurrentRefreshDelay = NormalRefreshDelay;
                 }
 
-                var histories = LoadHistories().ToArray();
+                var histories = LoadHistoriesPage(Page);
 
                 // /////// Update the visual list
+                GameHistories = histories;
+                OnPropertyChanged("GameHistories");
 
-                // Remove the games that don't exist anymore
-                var removeList = GameHistories.Where(i => histories.All(x => x.Id != i.Id)).ToList();
-                removeList.ForEach(x => GameHistories.Remove(x));
-
-                // Add games that don't already exist in the list
-                var addList = histories.Where(i => this.GameHistories.All(x => x.Id != i.Id)).ToList();
-                GameHistories.AddRange(addList);
-
-                // Update all the existing items with new data
-                var dbgames = GameManager.Get().Games.ToArray();
-                foreach (var g in GameHistories) {
-                    var li = histories.FirstOrDefault(x => x.Id == g.Id);
-                    g.Update(li);
-                }
             } catch (Exception ex) {
                 Log.Warn(nameof(RefreshHistoryListTimer_Tick), ex);
             } finally {
@@ -160,9 +177,8 @@ namespace Octgn.Tabs.GameHistory
             }
         }
 
-        private IEnumerable<GameHistoryViewModel> LoadHistories() {
+        private ObservableCollection<GameHistoryViewModel> LoadHistoriesPage(int page) {
             var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
-
             if (!dir.Exists) {
                 dir.Create();
             }
@@ -171,6 +187,9 @@ namespace Octgn.Tabs.GameHistory
                 .ToDictionary(x => x.Id, x => x);
 
             var historyFiles = dir.GetFiles("*.o8h");
+
+            UpdatePageCount(historyFiles.Length);
+            
             var replayFiles = dir
                 .GetFiles("*.o8r")
                 .ToDictionary(x => Path.GetFileNameWithoutExtension(x.Name), x => x)
@@ -180,7 +199,13 @@ namespace Octgn.Tabs.GameHistory
                 .ToDictionary(x => Path.GetFileNameWithoutExtension(x.Name), x => x)
             ;
 
-            foreach (var historyFile in historyFiles) {
+            int GamesPerPage = Core.Prefs.HistoryPageSize;
+            var historyFilesPage = historyFiles.OrderByDescending(x => x.CreationTime)
+                                                .Skip((page-1) * GamesPerPage).Take(GamesPerPage);
+
+            var pageContent = new ObservableCollection<GameHistoryViewModel>();
+
+            foreach (var historyFile in historyFilesPage) {
                 var historyFileName = Path.GetFileNameWithoutExtension(historyFile.Name);
 
                 var historyFileContents = File.ReadAllBytes(historyFile.FullName);
@@ -205,8 +230,15 @@ namespace Octgn.Tabs.GameHistory
                     vm.LogFile = logFile.FullName;
                 }
 
-                yield return vm;
+                pageContent.Add(vm);
             }
+            return pageContent;
+        }
+
+        private void UpdatePageCount(int gameHistoryCount)
+        {
+            int GamesPerPage = Core.Prefs.HistoryPageSize;
+            PageCount = (int)Math.Ceiling(gameHistoryCount / (float)GamesPerPage);
         }
 
         public void VisibleChanged(bool visible) {

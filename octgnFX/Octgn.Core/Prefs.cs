@@ -287,6 +287,18 @@ namespace Octgn.Core
             }
         }
 
+        public static int HistoryPageSize
+        {
+            get
+            {
+                return Config.Instance.ReadValue("HistoryPageSize", 16);
+            }
+            set
+            {
+                Config.Instance.WriteValue("HistoryPageSize", value);
+            }
+        }
+
         public static bool EnableGameSound
         {
             get
