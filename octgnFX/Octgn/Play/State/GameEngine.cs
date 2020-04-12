@@ -168,7 +168,7 @@ namespace Octgn
             foreach (var size in Definition.CardSizes) {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front, back));
+                _cardFrontsBacksCache.Add(size.Value.Name, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() => {
                 // clear any existing players
@@ -259,7 +259,7 @@ namespace Octgn
             {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front, back));
+                _cardFrontsBacksCache.Add(size.Value.Name, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {

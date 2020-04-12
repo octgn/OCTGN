@@ -432,12 +432,14 @@ namespace Octgn.DataNew
                             Front = String.IsNullOrWhiteSpace(s.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, s.front),
                             Back = String.IsNullOrWhiteSpace(s.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, s.back)
                         };
+                        // xsd sets the default values for the back side sizes to -1 so the deserializer knows they were missing
+                        // TODO: handle this better for mising values
                         if (cardSize.BackHeight < 0)
-                            cardSize.BackHeight = ret.CardSize.Height;
+                            cardSize.BackHeight = cardSize.Height;
                         if (cardSize.BackWidth < 0)
-                            cardSize.BackWidth = ret.CardSize.Width;
+                            cardSize.BackWidth = cardSize.Width;
                         if (cardSize.BackCornerRadius < 0)
-                            cardSize.BackCornerRadius = ret.CardSize.CornerRadius;
+                            cardSize.BackCornerRadius = cardSize.CornerRadius;
                         ret.CardSizes.Add(cardSize.Name, cardSize);
                     }
                 }

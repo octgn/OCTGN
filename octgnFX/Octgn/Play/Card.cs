@@ -245,7 +245,10 @@ namespace Octgn.Play
             //numberOfSwitchWithAlternatesNotPerformed = 0;
             //_isAlternateImage = false;
             _cardMoved = false;
-            Size = Program.GameEngine.Definition.CardSizes[cardsize];
+            if (Program.GameEngine.Definition.CardSizes.ContainsKey(cardsize))
+                Size = Program.GameEngine.Definition.CardSizes[cardsize];
+            else
+                Size = Program.GameEngine.Definition.CardSize;
         }
 
         internal override int Id
