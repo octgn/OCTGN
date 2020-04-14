@@ -334,7 +334,7 @@ namespace Octgn.Scripting.Versions
 
         public Tuple<int, int> DefaultCardSize()
         {
-            return Tuple.Create(Program.GameEngine.Definition.CardSize.Width, Program.GameEngine.Definition.CardSize.Height);
+            return Tuple.Create(Program.GameEngine.Definition.DefaultSize().Width, Program.GameEngine.Definition.DefaultSize().Height);
         }
 
         public void CardSwitchTo(int id, string alternate)

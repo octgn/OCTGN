@@ -10,6 +10,7 @@ using Octgn.Library;
 namespace Octgn.DeckBuilder
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Drawing;
@@ -43,9 +44,17 @@ namespace Octgn.DeckBuilder
             }
             set
             {
-                var g = new Game() { Name = "No Game Selected"};
-				g.CardSize = new CardSize();
-                g.CardSize.Back = "pack://application:,,,/Resources/Back.jpg";
+                var g = new Game()
+                {
+                    Name = "No Game Selected",
+                    CardSizes = new Dictionary<string, CardSize>()
+                };
+                g.CardSizes.Add("", new CardSize()
+                {
+                    Back = "pack://application:,,,/Resources/Back.jpg"
+                });
+
+
                 if (value != null)
                 {
                     g = value;
@@ -54,14 +63,14 @@ namespace Octgn.DeckBuilder
 
                 {
                     Stream imageStream = null;
-                    if (g.CardSize.Back.StartsWith("pack"))
+                    if (g.DefaultSize().Back.StartsWith("pack"))
                     {
-                        var sri = Application.GetResourceStream(new Uri(g.CardSize.Back));
+                        var sri = Application.GetResourceStream(new Uri(g.DefaultSize().Back));
                         imageStream = sri.Stream;
                     }
                     else
                     {
-                        imageStream = File.OpenRead(g.CardSize.Back);
+                        imageStream = File.OpenRead(g.DefaultSize().Back);
                     }
 
                     var ret = new BitmapImage();
@@ -141,11 +150,12 @@ namespace Octgn.DeckBuilder
             Game = new Game()
             {
                 Name = "No Game Selected",
-                CardSize = new CardSize()
-                {
-					Back = "pack://application:,,,/Resources/Back.jpg"
-                }
+                CardSizes = new Dictionary<string, CardSize>()
             };
+            Game.CardSizes.Add("", new CardSize()
+            {
+                Back = "pack://application:,,,/Resources/Back.jpg"
+            });
             Card = new CardViewModel();
             //Card = new CardViewModel(new Card() { ImageUri = "pack://application:,,,/Resources/Back.jpg" });
 

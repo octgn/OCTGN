@@ -89,7 +89,7 @@ namespace Octgn.DeckBuilder
                                                      Cards = x.Cards.Select(y => new MetaMultiCard(y)).ToArray()
                                                  }).ToArray();
             this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
-            this.CardBack = GameManager.Get().GetById(this.GameId).CardSize.Back;
+            this.CardBack = GameManager.Get().GetById(this.GameId).DefaultSize().Back;
             this.Sleeve = (ISleeve)d.Sleeve?.Clone();
         }
 

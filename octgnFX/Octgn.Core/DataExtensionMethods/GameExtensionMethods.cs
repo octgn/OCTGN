@@ -231,5 +231,10 @@ namespace Octgn.Core.DataExtensionMethods
             var retdef = DbContext.Get().ProxyDefinitions.FirstOrDefault(x => (Guid)x.Key == game.Id);
             return retdef;
         }
+
+        public static CardSize DefaultSize(this Game game)
+        {
+            return game.CardSizes[""];
+        }
     }
 }

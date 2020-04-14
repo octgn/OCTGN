@@ -231,7 +231,7 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
+        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret, string cardsize) : base(owner)
         {
             _id = id;
             Type = new CardIdentity(id) { Model = model.Clone() };
@@ -248,7 +248,7 @@ namespace Octgn.Play
             if (Program.GameEngine.Definition.CardSizes.ContainsKey(cardsize))
                 Size = Program.GameEngine.Definition.CardSizes[cardsize];
             else
-                Size = Program.GameEngine.Definition.CardSize;
+                Size = Program.GameEngine.Definition.DefaultSize();
         }
 
         internal override int Id
@@ -669,19 +669,19 @@ namespace Octgn.Play
             if (!up)
             {
                 if (Owner.SleeveImage == null) {
-                    return Program.GameEngine.GetCardBack(this.Size.Name);
+                    return Program.GameEngine.GetCardBack(this.Size);
                 } else {
                     return Owner.SleeveImage;
                 }
             }
-            if (Type == null || Type.Model == null) return Program.GameEngine.GetCardFront(this.Size.Name);
+            if (Type == null || Type.Model == null) return Program.GameEngine.GetCardFront(this.Size);
             BitmapImage bmpo = null;
             Octgn.Library.X.Instance.Try(() =>
             {
                 ImageUtils.GetCardImage(Type.Model, x => bmpo = x,proxyOnly);
             });
 
-            return bmpo ?? Program.GameEngine.GetCardFront(this.Size.Name);
+            return bmpo ?? Program.GameEngine.GetCardFront(this.Size);
         }
 
         internal void SetOrientation(CardOrientation value)

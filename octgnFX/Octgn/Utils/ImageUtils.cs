@@ -61,7 +61,7 @@ namespace Octgn.Utils
                 imgsrc = new BitmapImage();
                 imgsrc.BeginInit();
                 imgsrc.CacheOption = BitmapCacheOption.None;
-                imgsrc.UriSource = Program.GameEngine.GetCardFront(Program.GameEngine.Definition.CardSize.Name).UriSource;
+                imgsrc.UriSource = Program.GameEngine.GetCardFront(Program.GameEngine.Definition.DefaultSize()).UriSource;
                 imgsrc.EndInit();              
             }
 			if(imgsrc.CanFreeze)

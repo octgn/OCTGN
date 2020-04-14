@@ -57,7 +57,7 @@ namespace Octgn
 
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
         private readonly List<GameMarker> _recentMarkers = new List<GameMarker>(MaxRecentMarkers);
-        private readonly Dictionary<string, Tuple<BitmapImage, BitmapImage>> _cardFrontsBacksCache = new Dictionary<string, Tuple<BitmapImage, BitmapImage>>();
+        private readonly Dictionary<CardSize, Tuple<BitmapImage, BitmapImage>> _cardFrontsBacksCache = new Dictionary<CardSize, Tuple<BitmapImage, BitmapImage>>();
         private readonly Table _table;
         internal readonly string Password;
 
@@ -168,7 +168,7 @@ namespace Octgn
             foreach (var size in Definition.CardSizes) {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Value.Name, new Tuple<BitmapImage, BitmapImage>(front, back));
+                _cardFrontsBacksCache.Add(size.Value, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() => {
                 // clear any existing players
@@ -259,7 +259,7 @@ namespace Octgn
             {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Value.Name, new Tuple<BitmapImage, BitmapImage>(front, back));
+                _cardFrontsBacksCache.Add(size.Value, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -707,12 +707,12 @@ namespace Octgn
             Selection.Clear();
         }
 
-        public BitmapImage GetCardFront(string name)
+        public BitmapImage GetCardFront(CardSize name)
         {
             return _cardFrontsBacksCache[name].Item1;
         }
 
-        public BitmapImage GetCardBack(string name)
+        public BitmapImage GetCardBack(CardSize name)
         {
             return _cardFrontsBacksCache[name].Item2;
         }

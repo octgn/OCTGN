@@ -272,7 +272,7 @@ namespace Octgn.Play.Gui
             {
                 var clipRect = ((RectangleGeometry)img.Clip);
                 clipRect.Rect = new Rect(img.DesiredSize);
-                var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
+                var cs = Card == null ? Program.GameEngine.Definition.DefaultSize() : Card.Size;
                 //clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / cs.Height;
                 if (IsUp)
                 {
@@ -738,7 +738,7 @@ namespace Octgn.Play.Gui
             // Starts the drag-and-drop            
             ScaleFactor = TransformToAncestor(_mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
             //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
-            var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
+            var cs = Card == null ? Program.GameEngine.Definition.DefaultSize() : Card.Size;
             if (IsUp)
             {
                 _mouseOffset = new Vector(_mousePt.X * cs.Width / ActualWidth, _mousePt.Y * cs.Height / ActualHeight);

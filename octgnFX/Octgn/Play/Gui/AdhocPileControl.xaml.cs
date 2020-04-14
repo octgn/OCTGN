@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using Octgn.Core.DataExtensionMethods;
 
 namespace Octgn.Play.Gui
 {
@@ -57,8 +58,8 @@ namespace Octgn.Play.Gui
         public AdhocPileControl()
         {
             InitializeComponent();
-            CardWidth = Program.GameEngine.Definition.CardSize.Width + Program.GameEngine.Definition.CardSize.Width * .5;
-            CardHeight = Program.GameEngine.Definition.CardSize.Height + Program.GameEngine.Definition.CardSize.Height * .5;
+            CardWidth = Program.GameEngine.Definition.DefaultSize().Width + Program.GameEngine.Definition.DefaultSize().Width * .5;
+            CardHeight = Program.GameEngine.Definition.DefaultSize().Height + Program.GameEngine.Definition.DefaultSize().Height * .5;
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)

@@ -24,6 +24,7 @@ namespace Octgn.Play.Gui
     using System.Text;
     using Octgn.Annotations;
     using Octgn.Core;
+    using Octgn.Core.DataExtensionMethods;
 
     partial class TableControl : INotifyPropertyChanged
     {
@@ -99,8 +100,8 @@ namespace Octgn.Play.Gui
             if (Player.LocalPlayer.InvertedTable)
                 transforms.Children.Insert(0, new ScaleTransform(-1, -1));
 
-            _defaultWidth = Program.GameEngine.Definition.CardSize.Width;
-            _defaultHeight = Program.GameEngine.Definition.CardSize.Height;
+            _defaultWidth = Program.GameEngine.Definition.DefaultSize().Width;
+            _defaultHeight = Program.GameEngine.Definition.DefaultSize().Height;
             SizeChanged += delegate
                                {
                                    IsCardSizeValid = false;
@@ -360,7 +361,7 @@ namespace Octgn.Play.Gui
             double mouseY = Mouse.GetPosition(cardsView).Y;
             double baseY = (cardCtrl.IsInverted ||
                             (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
-                               ? mouseY - Program.GameEngine.Definition.CardSize.Height + e.MouseOffset.Y
+                               ? mouseY - Program.GameEngine.Definition.DefaultSize().Height + e.MouseOffset.Y
                                : mouseY - e.MouseOffset.Y;
             if (baseCard == null) return;
             foreach (CardDragAdorner adorner in e.Adorners)
@@ -376,7 +377,7 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             var cardCtrl = e.OriginalSource as CardControl;
 
-            int delta = Program.GameEngine.Definition.CardSize.Height - Program.GameEngine.Definition.CardSize.Width;
+            int delta = Program.GameEngine.Definition.DefaultSize().Height - Program.GameEngine.Definition.DefaultSize().Width;
             Table table = Program.GameEngine.Table;
             Vector mouseOffset;
             if (cardCtrl != null && (cardCtrl.IsInverted || (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))

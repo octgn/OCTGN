@@ -103,7 +103,6 @@ namespace Octgn.DataNew
                 defSize.BackWidth = defSize.Width;
             if (defSize.BackCornerRadius < 0)
                 defSize.BackCornerRadius = defSize.CornerRadius;
-            ret.CardSize = defSize;
             ret.CardSizes.Add("", defSize);
 
             #region table
@@ -1420,26 +1419,14 @@ namespace Octgn.DataNew
                 Game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var cardXml in doc.Document.Descendants("card"))
                 {
-                    var card = new Card(new Guid(cardXml.Attribute("id").Value), ret.Id, cardXml.Attribute("name").Value, cardXml.Attribute("id").Value, "", Game.CardSizes[""], new Dictionary<string, CardPropertySet>());
-
-                    var cardSize = cardXml.Attribute("size");
-                    if (cardSize != null)
-                    {
-                        if (Game.CardSizes.ContainsKey(cardSize.Value) == false)
-                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
-
-                        card.Size = Game.CardSizes[cardSize.Value];
-                    }
-                    else
-                        card.Size = Game.CardSize;
-
                     var baseCardPropertySet = new CardPropertySet
                     {
-                        Name = card.Name,
+                        Name = cardXml.Attribute("name").Value,
                         Type = "",
-                        Size = card.Size,
-                        Properties = new Dictionary<PropertyDef, object>()
+                        Properties = new Dictionary<PropertyDef, object>(),
+                        Size = DeserializeCardSize(cardXml)
                     };
+                    var card = new Card(new Guid(cardXml.Attribute("id").Value), ret.Id, cardXml.Attribute("name").Value, cardXml.Attribute("id").Value, "", baseCardPropertySet.Size, new Dictionary<string, CardPropertySet>());
 
                     // deserialize the base card properties
                     var xmlBaseCardProperties = cardXml.Descendants("property").Where(x => x.Parent.Name == "card");
@@ -1453,18 +1440,9 @@ namespace Octgn.DataNew
                         {
                             Name = altXml.Attribute("name").Value,
                             Properties = new Dictionary<PropertyDef, object>(),
-                            Type = altXml.Attribute("type").Value
+                            Type = altXml.Attribute("type").Value,
+                            Size = DeserializeCardSize(altXml)
                         };
-
-                        var altSize = altXml.Attribute("size");
-                        if (altSize != null)
-                        {
-                            if (Game.CardSizes.ContainsKey(altSize.Value) == false)
-                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
-
-                            altPropertySet.Size = Game.CardSizes[altSize.Value];
-                        }
-                        else altPropertySet.Size = Game.CardSize;
 
                         // deserialize the alternate card properties
                         var xmlAltProperties = altXml.Descendants("property");
@@ -1518,6 +1496,19 @@ namespace Octgn.DataNew
             if (ret.Packs == null) ret.Packs = new Pack[0];
             //Console.WriteLine(timer.ElapsedMilliseconds);
             return ret;
+        }
+
+        private CardSize DeserializeCardSize(XElement element)
+        {
+            var altSize = element.Attribute("size");
+            if (altSize != null)
+            {
+                if (Game.CardSizes.ContainsKey(altSize.Value) == false)
+                    throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
+
+                return Game.CardSizes[altSize.Value];
+            }
+            return Game.CardSizes[""];
         }
 
         private void DeserializeCardPropertySet(IEnumerable<XElement> cardPropertyElements, CardPropertySet propertySet)
@@ -1744,7 +1735,7 @@ namespace Octgn.DataNew
                 List<setCardAlternate> alts = new List<setCardAlternate>();
                 foreach (var propset in c.PropertySets)
                 {
-                    if (propset.Key == c.Alternate)
+                    if (propset.Key == "")
                     {
                         var props = new List<property>();
                         foreach (var p in propset.Value.Properties)
@@ -1759,18 +1750,23 @@ namespace Octgn.DataNew
                         }
                         card.name = propset.Value.Name;
                         card.property = props.ToArray();
-                      //  card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
-                        if (game.CardSize.Name != propset.Value.Size.Name)
+                        //  card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
+                        if (propset.Value.Size != game.CardSizes[""])
+                        {
                             card.size = propset.Value.Size.Name;
+                        }
                     }
                     else
                     {
                         var alt = new setCardAlternate
                         {
                             name = propset.Value.Name,
-                            type = propset.Value.Type,
-                            size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name
+                            type = propset.Value.Type
                         };
+                        if (propset.Value.Size != game.CardSizes[""])
+                        {
+                            alt.size = propset.Value.Size.Name;
+                        }
                         var altprops = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {

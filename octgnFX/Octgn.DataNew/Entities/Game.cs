@@ -17,12 +17,6 @@
         public Dictionary<string, GameMarker> Markers { get; set; }
         public Version Version { get; set; }
         public Version OctgnVersion { get; set; }
-        //public int CardWidth { get; set; }
-        //public int CardHeight { get; set; }
-        //public string CardBack { get; set; }
-        //public string CardFront { get; set; }
-        public CardSize CardSize { get; set; }
-        //public int CardCornerRadius { get; set; }
         public string FileHash { get; set; }
         public Group Table { get; set; }
         public Player Player { get; set; }

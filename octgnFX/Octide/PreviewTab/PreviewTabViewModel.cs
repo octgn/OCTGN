@@ -222,7 +222,6 @@ namespace Octide.ViewModel
                                                             x => x.IsDefault ? "" : ((SizeItemModel)x).Name,
                                                             y => ((SizeItemModel)y)._size
                                                             );
-            ViewModelLocator.GameLoader.Game.CardSize = ViewModelLocator.GameLoader.Game.CardSizes[""];
         }
         public void UpdateBoardsDef()
         {
