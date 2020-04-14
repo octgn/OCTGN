@@ -48,11 +48,10 @@ namespace Octgn.DeckBuilder
                 {
                     Name = "No Game Selected",
                     CardSizes = new Dictionary<string, CardSize>()
+                    {
+                        { "", new CardSize() { Back = "pack://application:,,,/Resources/Back.jpg" } }
+                    }
                 };
-                g.CardSizes.Add("", new CardSize()
-                {
-                    Back = "pack://application:,,,/Resources/Back.jpg"
-                });
 
 
                 if (value != null)
@@ -151,11 +150,10 @@ namespace Octgn.DeckBuilder
             {
                 Name = "No Game Selected",
                 CardSizes = new Dictionary<string, CardSize>()
+                {
+                    { "", new CardSize() { Back = "pack://application:,,,/Resources/Back.jpg" } }
+                }
             };
-            Game.CardSizes.Add("", new CardSize()
-            {
-                Back = "pack://application:,,,/Resources/Back.jpg"
-            });
             Card = new CardViewModel();
             //Card = new CardViewModel(new Card() { ImageUri = "pack://application:,,,/Resources/Back.jpg" });
 

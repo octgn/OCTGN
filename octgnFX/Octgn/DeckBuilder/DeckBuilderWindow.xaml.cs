@@ -333,11 +333,10 @@ namespace Octgn.DeckBuilder
                     {
                         Name = "No Game Selected",
                         CardSizes = new Dictionary<string, CardSize>()
+                        {
+                            { "", new CardSize() { Back = "pack://application:,,,/Resources/Back.jpg" } }
+                        }
                     };
-                    g.CardSizes.Add("", new CardSize()
-                    {
-                        Back = "pack://application:,,,/Resources/Back.jpg"
-                    });
 
                     cardImageControl.SetGame(g);
                     return;
