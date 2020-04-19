@@ -77,6 +77,7 @@
     <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
     <Compile Include="EmptyPackage.cs" />
+    <Compile Include="GameFeedGame.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Play\GameMessageDispatcher.cs" />

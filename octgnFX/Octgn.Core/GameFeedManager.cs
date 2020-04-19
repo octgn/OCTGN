@@ -27,7 +27,7 @@ namespace Octgn.Core
         void AddFeed( string name, string feed, string username, string password );
         void RemoveFeed( string name );
         FeedValidationResult ValidateFeedUrl( string url, string username, string password );
-        IEnumerable<IPackage> GetPackages( NamedUrl url );
+        IEnumerable<FeedGameViewModel> GetPackages( NamedUrl url );
         void ExtractPackage( string directory, IPackage package, Action<int, int> onProgressUpdate = null );
         void AddToLocalFeed( string file );
         event EventHandler OnUpdateFeedList;
