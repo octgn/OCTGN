@@ -6,6 +6,6 @@ namespace Octgn.Library.Communication
     {
         string GameBotUsername { get; }
         string ChatHost { get; }
-        IConnection CreateConnection(string host);
+        IConnectionCreator ConnectionCreator { get; }
     }
 }

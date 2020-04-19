@@ -31,6 +31,8 @@ using log4net;
 using Octgn.Controls;
 using Octgn.Library.Communication;
 using Octgn.Online.Hosting;
+using Octgn.Communication;
+using Octgn.Online;
 
 namespace Octgn
 {
@@ -41,7 +43,7 @@ namespace Octgn
         public static GameEngine GameEngine;
 
         public static string CurrentOnlineGameName = "";
-        public static Client LobbyClient;
+        public static Library.Communication.Client LobbyClient;
 
         public static GameSettings GameSettings { get; set; }
         internal static IClient Client;
@@ -129,7 +131,12 @@ namespace Octgn
             }
 
             Log.Info("Creating Lobby Client");
-            LobbyClient = new Client(LibraryCommunicationClientConfig.Get(), typeof(Program).Assembly.GetName().Version);
+            var handshaker = new DefaultHandshaker();
+            var connectionCreator = new TcpConnectionCreator(handshaker);
+            var lobbyClientConfig = new LibraryCommunicationClientConfig(connectionCreator);
+
+            LobbyClient = new Octgn.Library.Communication.Client(lobbyClientConfig, typeof(Program).Assembly.GetName().Version);
+
             //Log.Info("Adding trace listeners");
             //Debug.Listeners.Add(DebugListener);
             //DebugTrace.Listeners.Add(DebugListener);

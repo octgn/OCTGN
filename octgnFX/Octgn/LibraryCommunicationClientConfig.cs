@@ -1,45 +1,29 @@
 ﻿using Octgn.Communication;
 using Octgn.Library.Communication;
+using System;
 
 namespace Octgn
 {
     public class LibraryCommunicationClientConfig : IClientConfig
     {
-        #region Singleton
+        public string GameBotUsername { get; }
 
-        internal static LibraryCommunicationClientConfig SingletonContext { get; set; }
+        public string ChatHost { get; }
 
-        private static readonly object LobbyConfigSingletonLocker = new object();
+        public IConnectionCreator ConnectionCreator { get; }
 
-        public static LibraryCommunicationClientConfig Get()
-        {
-            lock (LobbyConfigSingletonLocker) return SingletonContext ?? (SingletonContext = new LibraryCommunicationClientConfig());
+        public LibraryCommunicationClientConfig(IConnectionCreator connectionCreator) : this(AppConfig.ChatServerHost, "gameserv", connectionCreator) {
+
         }
 
-        internal LibraryCommunicationClientConfig()
-        {
-        }
+        public LibraryCommunicationClientConfig(string comHost, string gameBotUsername, IConnectionCreator connectionCreator) {
+            if (string.IsNullOrWhiteSpace(comHost)) throw new ArgumentNullException(nameof(comHost));
+            if (string.IsNullOrWhiteSpace(gameBotUsername)) throw new ArgumentNullException(nameof(gameBotUsername));
+            if (connectionCreator == null) throw new ArgumentNullException(nameof(connectionCreator));
 
-        #endregion Singleton
-
-        public string GameBotUsername { get { return this.GetGameBotUsername(); } }
-
-        public string ChatHost { get { return this.GetChatHost(); } }
-
-        internal string GetChatHost()
-        {
-            return AppConfig.ChatServerHost;
-        }
-
-        internal string GetGameBotUsername()
-        {
-            //if (X.Instance.Debug || X.Instance.ReleaseTest)
-            //    return "gameserv-test";
-            return "gameserv";
-        }
-
-        public IConnection CreateConnection(string host) {
-            return new TcpConnection(host);
+            GameBotUsername = gameBotUsername;
+            ChatHost = comHost;
+            ConnectionCreator = connectionCreator;
         }
     }
 }

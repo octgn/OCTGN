@@ -60,14 +60,6 @@ namespace Octgn.WindowsDesktopUtilities
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            if (Signal.Exceptions.Count > 0) {
-                while (Signal.Exceptions.Count > 0) {
-                    if (Signal.Exceptions.TryDequeue(out var result)) {
-                        Log.Error($"{nameof(Signal)} Exception: {result.Message}", result.Exception);
-                    }
-                }
-            }
-
             _programStoppedEvent.TrySetResult(null);
         }
 
