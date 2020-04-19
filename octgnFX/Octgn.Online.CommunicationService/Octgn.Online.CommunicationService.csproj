@@ -75,7 +75,6 @@
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="AuthenticationHandlers\SessionAuthenticationHandler.cs" />
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Data\UserSubscriptionModel.cs" />
     <Compile Include="Log4NetLogger.cs" />
@@ -84,7 +83,6 @@
       <DependentUpon>201710241809371_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="ConnectionProvider.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>

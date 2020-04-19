@@ -18,13 +18,23 @@ namespace Octgn.Online.GameService
     {
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public GameServiceClient() : base(new XmlSerializer(), new Octgn.Library.Communication.ClientAuthenticator()) {
+        private readonly DefaultHandshaker _handshaker;
+
+        public GameServiceClient(IConnectionCreator connectionCreator) : base(connectionCreator, new XmlSerializer()) {
+            if (connectionCreator == null) throw new ArgumentNullException(nameof(connectionCreator));
+
+            if (!(connectionCreator.Handshaker is DefaultHandshaker defaultHandshaker))
+                throw new InvalidOperationException($"{nameof(IConnectionCreator)} must use the {nameof(DefaultHandshaker)}. No other {nameof(IHandshaker)} is currently supported.");
+
+            _handshaker = defaultHandshaker;
+
             if (Serializer is XmlSerializer serializer) {
                 serializer.Include(typeof(HostedGame));
             }
 
             this.InitializeSubscriptionModule();
             this.InitializeStatsModule();
+
             RequestReceived += ChatClient_RequestReceived;
         }
 
@@ -36,16 +46,16 @@ namespace Octgn.Online.GameService
                 throw new InvalidOperationException($"Couldn't not start. Error creating session: {result.Result.Type}");
             }
 
-            var authenticator = Authenticator as Octgn.Library.Communication.ClientAuthenticator;
-            authenticator.SessionKey = result.SessionKey;
-            authenticator.UserId = result.UserId;
-            authenticator.DeviceId = AppConfig.Instance.ComDeviceId;
+            _handshaker.SessionKey = result.SessionKey;
+            _handshaker.UserId = result.UserId;
+            _handshaker.DeviceId = AppConfig.Instance.ComDeviceId;
 
-            Log.Info($"{nameof(Start)}: Connect");
-            await Connect(cancellationToken);
+            Log.Info($"{nameof(Start)}: Connecting");
+
+            await Connect(AppConfig.Instance.ComUrl, cancellationToken);
         }
 
-        private async Task ChatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
+        private async Task<object> ChatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
             if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                 try {
                     var game = HostedGame.GetFromPacket(args.Request);
@@ -57,8 +67,10 @@ namespace Octgn.Online.GameService
                     var endTime = DateTime.Now.AddSeconds(10);
                     while (SasUpdater.Instance.IsUpdating) {
                         await Task.Delay(100);
+
                         if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                     }
+
                     var id = await HostedGames.HostGame(game);
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
@@ -68,17 +80,15 @@ namespace Octgn.Online.GameService
                     if (game == null) throw new InvalidOperationException("game from HostedGames is null");
                     if (game.HostUser == null) throw new InvalidOperationException("game.HostUser is null");
 
-                    args.Response = new Communication.Packets.ResponsePacket(args.Request, game);
+                    return game;
                 } catch (Exception ex) {
                     Log.Error($"{nameof(ChatClient_RequestReceived)}", ex);
-                    args.Response = new Communication.Packets.ResponsePacket(args.Request, new ErrorResponseData(Communication.ErrorResponseCodes.UnhandledServerError, "Problem starting SAS", false));
+
+                    return new ErrorResponseData(Communication.ErrorResponseCodes.UnhandledServerError, "Problem starting SAS", false);
                 }
-
-                args.IsHandled = true;
             }
-        }
 
-        protected override IConnection CreateConnection()
-            => new TcpConnection(AppConfig.Instance.ComUrl);
+            return null;
+        }
     }
 }

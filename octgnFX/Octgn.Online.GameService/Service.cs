@@ -34,7 +34,10 @@ namespace Octgn.Online.GameService
 
                 HostedGames.Init();
 
-                Client = new GameServiceClient();
+                var handshaker = new DefaultHandshaker();
+                var connectionCreator = new TcpConnectionCreator(handshaker);
+
+                Client = new GameServiceClient(connectionCreator);
 
                 using (_service = new Service()) {
                     _service.Run(args);

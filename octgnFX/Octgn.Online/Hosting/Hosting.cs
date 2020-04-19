@@ -14,7 +14,7 @@ namespace Octgn.Online.Hosting
         private readonly string _gameServerUserId;
         private readonly RequestHandler _requestHandler = new RequestHandler();
 
-        public IClientHostingRPC ClientRPC { get; set; }
+        public IClientHostingRPC ClientRPC { get; private set; }
 
         public Hosting(Server server, string gameServerUserId) {
             _server = server ?? throw new ArgumentNullException(nameof(server));
@@ -53,7 +53,6 @@ namespace Octgn.Online.Hosting
             var sendRequest = new RequestPacket(request);
 
             var gsResp = await _server.Request(sendRequest, _gameServerUserId);
-
 
             return new ProcessResult(gsResp.Data);
         }

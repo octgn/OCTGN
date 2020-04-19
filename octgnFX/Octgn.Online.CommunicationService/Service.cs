@@ -1,9 +1,9 @@
 ﻿using log4net;
-using Octgn.Authenticators;
 using Octgn.ChatService.Data;
 using Octgn.Communication;
 using Octgn.Communication.Modules;
 using Octgn.Communication.Serializers;
+using Octgn.Online;
 using Octgn.Online.Hosting;
 using Octgn.WindowsDesktopUtilities;
 using System;
@@ -57,23 +57,25 @@ namespace Octgn
 
         private readonly int _port;
         private readonly Server _server;
+        private readonly DefaultHandshaker _handshaker = new DefaultHandshaker();
+
         public Service(IPAddress hostIp, int port, string gameServerUserId)
         {
             _port = port;
             var endpoint = new IPEndPoint(hostIp, _port);
-            _server = new Server(new TcpListener(endpoint), new ConnectionProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
-            _server.Attach(new ServerHostingModule(_server, gameServerUserId));
+            _server = new Server(new TcpListener(endpoint, _handshaker), new XmlSerializer());
+            _server.Attach(new Hosting(_server, gameServerUserId));
             _server.InitializeStatsModule();
         }
 
         protected override void OnStart(string[] args)
         {
-            _server.IsEnabled = true;
+            _server.Initialize();
         }
 
         protected override void OnStop()
         {
-            _server.IsEnabled = false;
+            _server.Dispose();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
