@@ -6,6 +6,7 @@ using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using System;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Login
@@ -113,7 +114,7 @@ namespace Octgn.Tabs.Login
 
                 Program.LobbyClient.ConfigureSession(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
 
-                await Program.LobbyClient.Connect(default); //TODO: Cancellation for login timeouts, but only if it's not already built into the com library
+                await Program.LobbyClient.Connect(default(CancellationToken)); //TODO: Cancellation for login timeouts, but only if it's not already built into the com library
 
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {
