@@ -54,37 +54,51 @@
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
-            <WrapPanel Orientation="Horizontal">
-                <!--<Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
+            <DockPanel>
+                <Border DockPanel.Dock="Right" Height="35">
+                    <Border Padding="5,0,5,0" CornerRadius="5" Background="#dd333333" Visibility="Visible">
+                        <Grid Margin="10 1 10 5">
+                            <Label HorizontalAlignment="Center" FontSize="8"
+                                   Content="{Binding GameCount, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}"
+                                   />
+                            <Label Content="Games" FontSize="12"
+                                   FontWeight="Bold"
+                                   Margin="0 15 0 0"/>
+                        </Grid>
+                    </Border>
+                </Border>
+                <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <!--<Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List">&#10227;</Button>-->
-                <Button Click="ButtonHostClick" Content="Start" MinWidth="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                <Button Click="ButtonJoinClick" Content="Join" MinWidth="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
+                    <Button Click="ButtonHostClick" Content="Start" MinWidth="80" Height="34" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                    <Button Click="ButtonJoinClick" Content="Join" MinWidth="80" Height="34" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}"/>
-                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" MinWidth="80" Padding="5,0"
-                        Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
-                    <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                        <TextBlock Text="Show Uninstalled Games" TextWrapping="Wrap"></TextBlock>
-                    </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                    <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                        <TextBlock Text="Hide Uninstalled Games" TextWrapping="Wrap"></TextBlock>
-                    </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                </toggleSwitch:HorizontalToggleSwitch>
-                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=Spectate, Mode=TwoWay}">
-                    <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                        <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
-                    </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                    <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                        <TextBlock Text="Play" TextWrapping="Wrap"></TextBlock>
-                    </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                </toggleSwitch:HorizontalToggleSwitch>
-                <Grid Width="6"></Grid>
-                <Button Click="ButtonKillGame" Content="Kill Game" MinWidth="80" Padding="5,0"
+                    <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" MinWidth="80" Padding="5,0"
+                        Height="34" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                    <toggleSwitch:HorizontalToggleSwitch Width="220" Height="34" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                        <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                            <TextBlock Text="Show Uninstalled Games" TextWrapping="Wrap"></TextBlock>
+                        </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                        <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                            <TextBlock Text="Hide Uninstalled Games" TextWrapping="Wrap"></TextBlock>
+                        </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                    </toggleSwitch:HorizontalToggleSwitch>
+                    <toggleSwitch:HorizontalToggleSwitch Width="200" Height="34" IsChecked="{Binding ElementName=Me,Path=Spectate, Mode=TwoWay}">
+                        <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                            <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
+                        </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                        <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                            <TextBlock Text="Play" TextWrapping="Wrap"></TextBlock>
+                        </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                    </toggleSwitch:HorizontalToggleSwitch>
+                    <Grid Width="6"></Grid>
+                    <Button Click="ButtonKillGame" Content="Kill Game" MinWidth="80" Padding="5,0"
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkRedButtonStyle}"
                         Visibility="{Binding ElementName=Me,Path=ShowKillGameButton,Converter={StaticResource BooleanToVisibilityConverter}}"
                         />
-            </WrapPanel>
+                </WrapPanel>
+            </DockPanel>
         </Border>
         <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0" Foreground="CornflowerBlue">
             <ProgressBar.Style>

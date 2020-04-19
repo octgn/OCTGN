@@ -65,11 +65,18 @@ namespace Octgn.Tabs.Play
             set => NotifyAndUpdate(ref _showKillGameButton, value);
         }
 
+        public int GameCount {
+            get => _gameCount;
+            set => NotifyAndUpdate(ref _gameCount, value);
+        }
+
         private readonly GameBroadcastListener broadcastListener;
 
         private bool _spectate;
         private bool _showUninstalledGames;
         private bool _showKillGameButton;
+        private int _gameCount;
+
         public PlayTab() {
             InitializeComponent();
             broadcastListener = new GameBroadcastListener();
@@ -151,6 +158,8 @@ namespace Octgn.Tabs.Play
                     var li = games.FirstOrDefault(x => x.Id == g.Id);
                     g.Update(li, dbgames);
                 }
+
+                GameCount = HostedGameList.Count;
             } catch (Exception ex) {
                 Log.Warn(nameof(RefreshGameListTimer_Tick), ex);
             } finally {
