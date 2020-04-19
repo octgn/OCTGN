@@ -80,9 +80,9 @@ namespace Octgn.Online
                 };
             }
 
-            var sessionKey = (string)request["sessionKey"];
-            var userId = (string)request["userId"];
-            var deviceId = (string)request["deviceId"];
+            var sessionKey = (string)request[nameof(SessionKey)];
+            var userId = (string)request[nameof(UserId)];
+            var deviceId = (string)request[nameof(DeviceId)];
 
             if (!Validate(sessionKey, userId, deviceId, out var errors)) {
                 return new HandshakeResult() {
