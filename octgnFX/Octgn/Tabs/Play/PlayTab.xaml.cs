@@ -179,7 +179,7 @@ namespace Octgn.Tabs.Play
 
         void LobbyClient_OnDisconnect(object sender, DisconnectedEventArgs e) {
             Log.Info("Disconnected");
-            Dispatcher.Invoke(new Action(() => this.HostedGameList.Clear()));
+            Dispatcher.InvokeAsync(new Action(() => this.HostedGameList.Clear()));
         }
 
         #endregion Game List Refreshing
