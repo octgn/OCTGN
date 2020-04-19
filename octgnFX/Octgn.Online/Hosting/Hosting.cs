@@ -35,7 +35,7 @@ namespace Octgn.Online.Hosting
             ClientRPC = new ClientHostingRPC(_client, octgnVersion);
         }
 
-        public override Task<ProcessResult> Process(object obj, CancellationToken cancellationToken = default) {
+        public override Task<ProcessResult> Process(object obj, CancellationToken cancellationToken = default(CancellationToken)) {
             if (!(obj is RequestPacket request)) return base.Process(obj, cancellationToken);
 
             if (_server != null) {
