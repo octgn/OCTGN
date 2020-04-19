@@ -112,7 +112,8 @@ namespace Octgn.Tabs.Login
                     return;
 
                 Program.LobbyClient.ConfigureSession(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
-                await Program.LobbyClient.Connect();
+
+                await Program.LobbyClient.Connect(default); //TODO: Cancellation for login timeouts, but only if it's not already built into the com library
 
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {
