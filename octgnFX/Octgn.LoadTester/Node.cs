@@ -57,7 +57,7 @@ namespace Octgn.LoadTester
 
             _client.ConfigureSession(result.SessionKey, new User(result.UserId, "username"), deviceId);
 
-            await _client.Connect(default);
+            await _client.Connect(default(CancellationToken));
         }
 
         protected virtual HostedGame GenerateHostedGame() {
