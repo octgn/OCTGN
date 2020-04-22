@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading;
 
 namespace Octgn.Server
@@ -91,29 +90,12 @@ namespace Octgn.Server
             }
         }
 
-        public bool SaidHello(ServerSocket socket) {
-            return SaidHello(socket.Client);
-        }
-
-        public bool SaidHello(TcpClient client) {
-            try {
-                _locker.EnterReadLock();
-                var p = _players.FirstOrDefault(x => x.Equals(client));
-                if (p == null) return false;
-                return p.SaidHello;
-            } finally {
-                _locker.ExitReadLock();
-            }
-        }
-
         private readonly Timer _pingTimer;
         private readonly Timer _disconnectedPlayerTimer;
 
         private readonly GameContext _context;
 
-        public PlayerCollection(GameContext context) {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-
+        public PlayerCollection() {
             _pingTimer = new Timer(PingTimer_Tick, this, 5000, 2000);
             _disconnectedPlayerTimer = new Timer(DisconnectedPlayerTimer_Tick, this, 2000, 2000);
         }
@@ -222,25 +204,5 @@ namespace Octgn.Server
             Dispose(true);
         }
         #endregion
-    }
-
-    public class PlayerDisconnectedEventArgs : EventArgs
-    {
-        public const string TimeoutReason = "TimedOut";
-        public const string DisconnectedReason = "Disconnected";
-        public const string KickedReason = "Kicked";
-        public const string ShutdownReason = "Shutdown";
-        public const string ConnectionReplacedReason = "ConnectionReplaced";
-        public const string LeaveReason = "Leave";
-
-        public Player Player { get; set; }
-        public string Reason { get; set; }
-        public string Details { get; set; }
-
-        public PlayerDisconnectedEventArgs(Player player, string reason, string details) {
-            Player = player ?? throw new ArgumentNullException(nameof(player));
-            Reason = reason ?? throw new ArgumentNullException(nameof(reason));
-            Details = details;
-        }
     }
 }
