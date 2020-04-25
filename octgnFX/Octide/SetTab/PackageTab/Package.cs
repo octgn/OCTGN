@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public class PackageModel : IdeBaseItem
+    public class PackageModel : IdeBaseItem, IDroppable
     {
         public Pack _pack;
         public IdeCollection<IdeBaseItem> Items { get; private set; }
@@ -24,7 +24,7 @@ namespace Octide.SetTab.ItemModel
         public RelayCommand GeneratePackCommand { get; private set; }
         public RelayCommand AddIncludeCommand { get; private set; }
         public PackageDropHandler PackageDropHandler { get; set; }
-        public IncludeDropHandler IncludeDropHandler { get; set; }
+        public PackageDropHandler IncludeDropHandler { get; set; }
 
         public ObservableCollection<string> _boosterCards;
 
@@ -48,7 +48,6 @@ namespace Octide.SetTab.ItemModel
                 BuildIncludesDef(b);
             };
             PackageDropHandler = new PackageDropHandler();
-            IncludeDropHandler = new IncludeDropHandler();
             GeneratePackCommand = new RelayCommand(GeneratePack);
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
@@ -82,7 +81,7 @@ namespace Octide.SetTab.ItemModel
             };
 
             PackageDropHandler = new PackageDropHandler();
-            IncludeDropHandler = new IncludeDropHandler();
+            IncludeDropHandler = new PackageDropHandler();
             GeneratePackCommand = new RelayCommand(GeneratePack);
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
@@ -125,7 +124,7 @@ namespace Octide.SetTab.ItemModel
                 Includes.Add(new IncludeModel(include, Includes));
             }
             PackageDropHandler = new PackageDropHandler();
-            IncludeDropHandler = new IncludeDropHandler();
+            IncludeDropHandler = new PackageDropHandler();
             GeneratePackCommand = new RelayCommand(GeneratePack);
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
@@ -161,6 +160,13 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new PackageModel(Source);
+        }
+
+        public bool CanAccept(object item)
+        {
+            if (item is PickModel || item is OptionsModel || item is IncludeModel)
+                return true;
+            return false;
         }
 
         public void AddInclude()

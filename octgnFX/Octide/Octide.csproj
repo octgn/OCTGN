@@ -105,6 +105,9 @@
     <Reference Include="GongSolutions.WPF.DragDrop, Version=2.0.0.0, Culture=neutral, PublicKeyToken=91f1945125b7a587, processorArchitecture=MSIL">
       <HintPath>..\..\packages\gong-wpf-dragdrop.2.2.0\lib\net47\GongSolutions.WPF.DragDrop.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.0.1.278, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AvalonEdit.6.0.1\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -166,6 +169,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -203,21 +207,45 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssetManager.cs" />
-    <Compile Include="DocumentTab\DocumentItemViewModel.cs" />
-    <Compile Include="DocumentTab\DocumentItemView.xaml.cs">
+    <Compile Include="GameTab\DeckSectionTab\DeckSectionView.xaml.cs">
+      <DependentUpon>DeckSectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameTab\DeckSectionTab\DeckSectionViewModel.cs" />
+    <Compile Include="GameTab\DocumentTab\DocumentItemViewModel.cs" />
+    <Compile Include="GameTab\DocumentTab\DocumentItemView.xaml.cs">
       <DependentUpon>DocumentItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameLoader.cs" />
-    <Compile Include="GameTab\GameFontItemModel.cs" />
-    <Compile Include="MarkerTab\MarkerTabView.xaml.cs">
+    <Compile Include="GameTab\GameFontsTab\GameFontItemModel.cs" />
+    <Compile Include="GameTab\GameFontsTab\GameFontTabView.xaml.cs">
+      <DependentUpon>GameFontTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameTab\GameFontsTab\GameFontTabViewModel.cs" />
+    <Compile Include="GameTab\InformationTab\InformationTabView.xaml.cs">
+      <DependentUpon>InformationTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameTab\InformationTab\InformationTabViewModel.cs" />
+    <Compile Include="GameTab\MarkerTab\MarkerTabView.xaml.cs">
       <DependentUpon>MarkerTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MarkerTab\MarkerTabViewModel.cs" />
+    <Compile Include="GameTab\MarkerTab\MarkerTabViewModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\ActionItemModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\ActionSeparatorItemModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\ActionSubmenuItemModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\IBaseAction.cs" />
     <Compile Include="PreviewTab\BoardItemModel.cs" />
+    <Compile Include="ProxyTab\DragDropHandlers\LinkContainerDropHandler.cs" />
+    <Compile Include="ProxyTab\DragDropHandlers\TemplateDragHandler.cs" />
+    <Compile Include="ProxyTab\DragDropHandlers\TemplateDropHandler.cs" />
+    <Compile Include="ScriptingTab\GameEventItemModel.cs" />
+    <Compile Include="ScriptingTab\ScriptItemView.xaml.cs">
+      <DependentUpon>ScriptItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptingTab\ScriptItemModel.cs" />
+    <Compile Include="ScriptingTab\ScriptsTabView.xaml.cs">
+      <DependentUpon>ScriptsTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptingTab\ScriptsTabViewModel.cs" />
     <Compile Include="ProxyTab\Templates\ArtOverlay.cs" />
     <Compile Include="ProxyTab\Templates\BlockContainer.cs" />
     <Compile Include="ProxyTab\Templates\Conditional.cs" />
@@ -225,13 +253,13 @@
     <Compile Include="ProxyTab\Templates\IBaseConditionalCase.cs" />
     <Compile Include="ProxyTab\Templates\OverlayLinkContainer.cs" />
     <Compile Include="ProxyTab\Templates\Switch.cs" />
-    <Compile Include="ProxyTab\Templates\DropHandlers.cs" />
     <Compile Include="ProxyTab\Templates\Match.cs" />
     <Compile Include="ProxyTab\Templates\Link.cs" />
     <Compile Include="ProxyTab\Templates\TemplateItemModel.cs" />
     <Compile Include="ProxyTab\Templates\TemplateItemView.xaml.cs">
       <DependentUpon>TemplateItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ScriptingTab\GlobalVariableItemModel.cs" />
     <Compile Include="SetTab\CardTab\ProxyItemView.xaml.cs">
       <DependentUpon>ProxyItemView.xaml</DependentUpon>
     </Compile>
@@ -247,10 +275,10 @@
     <Compile Include="SetTab\CardTab\CardItemView.xaml.cs">
       <DependentUpon>CardItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MarkerTab\MarkerItemView.xaml.cs">
+    <Compile Include="GameTab\MarkerTab\MarkerItemView.xaml.cs">
       <DependentUpon>MarkerItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MarkerTab\MarkerItemViewModel.cs" />
+    <Compile Include="GameTab\MarkerTab\MarkerItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\DropHandlers.cs" />
     <Compile Include="Utils\ValidationRules.cs" />
     <Compile Include="Utils\IdeObservableCollection.cs" />
@@ -264,7 +292,7 @@
     <Compile Include="SetTab\PackageTab\Options.cs" />
     <Compile Include="SetTab\PackageTab\Package.cs" />
     <Compile Include="PreviewTab\PhaseItemModel.cs" />
-    <Compile Include="PropertyTab\PropertyItemViewModel.cs" />
+    <Compile Include="GameTab\PropertyTab\PropertyItemViewModel.cs" />
     <Compile Include="ProxyTab\OverlayDefinitionItemModel.cs" />
     <Compile Include="SetTab\Set.cs" />
     <Compile Include="PreviewTab\SizeItemModel.cs" />
@@ -272,25 +300,25 @@
     <Compile Include="Messages\MouseWheelTableZoom.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="NInjectServiceLocator.cs" />
-    <Compile Include="PropertyTab\PropertyItemView.xaml.cs">
+    <Compile Include="GameTab\PropertyTab\PropertyItemView.xaml.cs">
       <DependentUpon>PropertyItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SetTab\SetItemView.xaml.cs">
       <DependentUpon>SetItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShellManager.cs" />
-    <Compile Include="SoundTab\SoundItemViewModel.cs" />
-    <Compile Include="SoundTab\SoundTabView.xaml.cs">
+    <Compile Include="GameTab\SoundTab\SoundItemViewModel.cs" />
+    <Compile Include="GameTab\SoundTab\SoundTabView.xaml.cs">
       <DependentUpon>SoundTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameTab\DeckSectionItemViewModel.cs" />
-    <Compile Include="SymbolTab\SymbolItemViewModel.cs" />
-    <Compile Include="SymbolTab\SymbolItemView.xaml.cs">
+    <Compile Include="GameTab\DeckSectionTab\DeckSectionItemViewModel.cs" />
+    <Compile Include="GameTab\SymbolTab\SymbolItemViewModel.cs" />
+    <Compile Include="GameTab\SymbolTab\SymbolItemView.xaml.cs">
       <DependentUpon>SymbolItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\AssetControl.cs" />
     <Compile Include="Utils\KeyInputTextBox.cs" />
-    <Compile Include="Utils\IdeListBoxItem.cs" />
+    <Compile Include="Utils\IdeBaseItem.cs" />
     <Compile Include="Utils\ScrollViewerHelper.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="Utils\EditableTextBlock.cs" />
@@ -298,13 +326,12 @@
     <Compile Include="ViewModel\AssetsTabViewModel.cs" />
     <Compile Include="PreviewTab\SampleCardItemModel.cs" />
     <Compile Include="ProxyTab\TextBlockDefinitionItemModel.cs" />
-    <Compile Include="SoundTab\SoundTabViewModel.cs" />
-    <Compile Include="DocumentTab\DocumentTabViewModel.cs" />
-    <Compile Include="SymbolTab\SymbolTabViewModel.cs" />
+    <Compile Include="GameTab\SoundTab\SoundTabViewModel.cs" />
+    <Compile Include="GameTab\DocumentTab\DocumentTabViewModel.cs" />
+    <Compile Include="GameTab\SymbolTab\SymbolTabViewModel.cs" />
     <Compile Include="ProxyTab\ProxyTabViewModel.cs" />
     <Compile Include="SetTab\SetTabViewModel.cs" />
-    <Compile Include="PropertyTab\PropertyTabViewModel.cs" />
-    <Compile Include="GameTab\GameTabViewModel.cs" />
+    <Compile Include="GameTab\PropertyTab\PropertyTabViewModel.cs" />
     <Compile Include="ViewModel\ImportCardsViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\LoaderViewModel.cs" />
@@ -333,13 +360,13 @@
     <Compile Include="ProxyTab\OverlayDefinitionItemView.xaml.cs">
       <DependentUpon>OverlayDefinitionItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SoundTab\SoundItemView.xaml.cs">
+    <Compile Include="GameTab\SoundTab\SoundItemView.xaml.cs">
       <DependentUpon>SoundItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DocumentTab\DocumentTabView.xaml.cs">
+    <Compile Include="GameTab\DocumentTab\DocumentTabView.xaml.cs">
       <DependentUpon>DocumentTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SymbolTab\SymbolTabView.xaml.cs">
+    <Compile Include="GameTab\SymbolTab\SymbolTabView.xaml.cs">
       <DependentUpon>SymbolTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProxyTab\ProxyTabView.xaml.cs">
@@ -360,7 +387,7 @@
     <Compile Include="PreviewTab\SizeItemView.xaml.cs">
       <DependentUpon>SizeItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PropertyTab\PropertyTabView.xaml.cs">
+    <Compile Include="GameTab\PropertyTab\PropertyTabView.xaml.cs">
       <DependentUpon>PropertyTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="PreviewTab\GroupItemView.xaml.cs">
@@ -371,9 +398,6 @@
     </Compile>
     <Compile Include="PreviewTab\TableItemView.xaml.cs">
       <DependentUpon>TableItemView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GameTab\GameTabView.xaml.cs">
-      <DependentUpon>GameTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -434,15 +458,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="DocumentTab\DocumentItemView.xaml">
+    <Page Include="GameTab\DeckSectionTab\DeckSectionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MarkerTab\MarkerTabView.xaml">
+    <Page Include="GameTab\DocumentTab\DocumentItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PropertyTab\PropertyItemView.xaml">
+    <Page Include="GameTab\GameFontsTab\GameFontTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GameTab\InformationTab\InformationTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GameTab\MarkerTab\MarkerTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ScriptingTab\ScriptItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ScriptingTab\ScriptsTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GameTab\PropertyTab\PropertyItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -462,7 +506,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MarkerTab\MarkerItemView.xaml">
+    <Page Include="GameTab\MarkerTab\MarkerItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -474,11 +518,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SoundTab\SoundTabView.xaml">
+    <Page Include="GameTab\SoundTab\SoundTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SymbolTab\SymbolItemView.xaml">
+    <Page Include="GameTab\SymbolTab\SymbolItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -514,15 +558,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SoundTab\SoundItemView.xaml">
+    <Page Include="GameTab\SoundTab\SoundItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DocumentTab\DocumentTabView.xaml">
+    <Page Include="GameTab\DocumentTab\DocumentTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SymbolTab\SymbolTabView.xaml">
+    <Page Include="GameTab\SymbolTab\SymbolTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -550,7 +594,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PropertyTab\PropertyTabView.xaml">
+    <Page Include="GameTab\PropertyTab\PropertyTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -565,10 +609,6 @@
     <Page Include="PreviewTab\TableItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="GameTab\GameTabView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
       <SubType>Designer</SubType>

@@ -16,7 +16,23 @@
                     xmlns:params="http://schemas.codeplex.com/elysium/params">
 
     <local:RadioButtonStateConverter x:Key="RadioConverter"/>
+    <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
+    <Style x:Key="OctideInputTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Margin" Value="10,15,0,0"/>
+        <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
+    </Style>
+
+    <Style x:Key="OctideInputTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Focusable" Value="True"/>
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
     <Style x:Key="OctideInputPanel" >
         <Style.Resources>
             <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type RadioButton}}">
@@ -25,17 +41,9 @@
             <Style TargetType="{x:Type StackPanel}">
                 <Setter Property="Orientation" Value="Vertical" />
             </Style>
-            <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="FontSize" Value="20"/>
-                <Setter Property="Margin" Value="10,15,0,0"/>
-                <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
+            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource OctideInputTextBlock}">
             </Style>
-            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                <Style.Triggers>
-                    <Trigger Property="Validation.HasError" Value="true">
-                        <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
-                    </Trigger>
-                </Style.Triggers>
+            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}">
             </Style>
             <Style TargetType="{x:Type Image}">
                 <Setter Property="MaxHeight" Value="20"/>
@@ -301,26 +309,6 @@
         </MenuItem>
     </ContextMenu>
 
-    <DataTemplate x:Key="IdeAssetItemAdorner">
-        <Border Padding="5" Background="{StaticResource DarkBackground}" BorderBrush="WhiteSmoke" BorderThickness="2">
-        <Grid >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="60" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Image Source="{Binding Asset.FullPath}" Stretch="Uniform"/>
-                <TextBlock Foreground="WhiteSmoke" Grid.Row="1" Text="{Binding Name}" />
-            </Grid>
-        </Border>
-    </DataTemplate>
-
-    <DataTemplate x:Key="IdeTextItemAdorner">
-        <Border Background="{StaticResource DarkBackground}" BorderThickness="2" BorderBrush="WhiteSmoke" Padding="3">
-            <TextBlock Foreground="WhiteSmoke" FontSize="13" Grid.Row="1" Text="{Binding Name}" />
-        </Border>
-    </DataTemplate>
-
-
     <Style x:Key="IdeTabItemStyle" TargetType="{x:Type TabItem}">
         <Setter Property="Template">
             <Setter.Value>
@@ -445,7 +433,9 @@
 
     <Style x:Key="IdeListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource IdeBaseItemContainerStyle}" >
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource IdeListBoxItemControl}" />
+        <Setter Property="local:ScrollViewerHelper.ScrollSelectedIntoView" Value="True" />
     </Style>
 
     <Style x:Key="IdeHorizontalListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource IdeBaseItemContainerStyle}">
@@ -685,7 +675,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollBar}">
-                    <Grid x:Name="GridRoot" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Background="{DynamicResource NormalBrush}">
+                    <Grid x:Name="GridRoot" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" >
                         <Grid.RowDefinitions>
                             <RowDefinition MaxHeight="18" />
                             <RowDefinition Height="0.00001*" />
@@ -736,27 +726,6 @@
                             <Setter Property="Command" Value="ScrollBar.PageRightCommand" TargetName="PageUp" />
                         </Trigger>
                     </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{x:Null}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid Background="{TemplateBinding Background}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <ScrollContentPresenter Grid.Column="0" Grid.Row="0" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" CanContentScroll="{TemplateBinding CanContentScroll}" />
-                        <ScrollBar Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Grid.Column="0" Grid.Row="1" x:Name="PART_HorizontalScrollBar" Orientation="Horizontal" Value="{Binding Path=HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Minimum="0" Maximum="{TemplateBinding ScrollableWidth}" AutomationProperties.AutomationId="HorizontalScrollBar" />
-                        <ScrollBar Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" x:Name="PART_VerticalScrollBar" Orientation="Vertical" Value="{Binding Path=VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Minimum="0" Maximum="{TemplateBinding ScrollableHeight}" AutomationProperties.AutomationId="VerticalScrollBar" />
-                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

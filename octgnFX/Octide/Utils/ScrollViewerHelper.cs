@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -16,6 +17,58 @@ namespace Octide
 {
     public static class ScrollViewerHelper
     {
+        #region autoscroller
+        public static bool GetScrollSelectedIntoView(ItemsControl control)
+        {
+            return (bool)control.GetValue(ScrollSelectedIntoViewProperty);
+        }
+
+        public static void SetScrollSelectedIntoView(ItemsControl control, bool value)
+        {
+            control.SetValue(ScrollSelectedIntoViewProperty, value);
+        }
+
+        public static readonly DependencyProperty ScrollSelectedIntoViewProperty =
+            DependencyProperty.RegisterAttached("ScrollSelectedIntoView", typeof(bool), typeof(ScrollViewerHelper),
+                                                new UIPropertyMetadata(false, OnScrollSelectedIntoViewChanged));
+
+        private static void OnScrollSelectedIntoViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var selector = d as Selector;
+            if (selector == null) return;
+
+            if (e.NewValue is bool == false)
+                return;
+
+            if ((bool)e.NewValue)
+            {
+                selector.AddHandler(Selector.SelectionChangedEvent, new RoutedEventHandler(SelectionChangedHandler));
+            }
+            else
+            {
+                selector.RemoveHandler(Selector.SelectionChangedEvent, new RoutedEventHandler(SelectionChangedHandler));
+            }
+        }
+
+        private static void SelectionChangedHandler(object sender, RoutedEventArgs e)
+        {
+            if (sender is ListBox listBox)
+            {
+                if (listBox.SelectedItem != null)
+                {
+                    listBox.Dispatcher.BeginInvoke(
+                        (Action)(() =>
+                        {
+                            listBox.UpdateLayout();
+                            if (listBox.SelectedItem != null)
+                                listBox.ScrollIntoView(listBox.SelectedItem);
+                        }));
+                }
+            }
+        }
+        #endregion
+
+        #region horizontalscrollwheel
         public static readonly DependencyProperty ShiftWheelScrollsHorizontallyProperty
             = DependencyProperty.RegisterAttached("ShiftWheelScrollsHorizontally",
                 typeof(bool),
@@ -73,5 +126,6 @@ namespace Octide
 
             return null;
         }
+        #endregion
     }
 }

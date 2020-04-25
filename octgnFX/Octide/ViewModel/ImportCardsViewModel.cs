@@ -198,19 +198,19 @@ namespace Octide.ViewModel
 					setCard._card.Id = guid;
 					Parent.CardItems.Add(setCard);
 				}
-				AlternateModel cardAlternate = (string.IsNullOrEmpty(alternate)) ? setCard.BaseCardAlt : (AlternateModel)setCard.Items.FirstOrDefault(x => ((AlternateModel)x).Name == alternate);
+				AlternateModel cardAlternate = (string.IsNullOrEmpty(alternate)) ? (AlternateModel)setCard.Items.DefaultItem : (AlternateModel)setCard.Items.FirstOrDefault(x => ((AlternateModel)x).Type == alternate);
 
 				if (cardAlternate == null) // no alternate matches
 				{
 					cardAlternate = new AlternateModel(Parent.CardItems)
 					{
-						Name = alternate,
+						Type = alternate,
 						SizeProperty = size,
-						CardName = name
+						Name = name
 					};
 					if (string.IsNullOrEmpty(alternate))
 					{
-						setCard.BaseCardAlt = cardAlternate;
+						setCard.Items.DefaultItem = cardAlternate;
 					}
 					else
 					{

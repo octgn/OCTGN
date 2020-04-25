@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public class IncludeModel : IdeBaseItem
+    public class IncludeModel : IdeBaseItem, IDroppable
     {
         public Include _include;
         public IdeCollection<IdeBaseItem> Items { get; private set; }
@@ -85,6 +85,13 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new IncludeModel(this, Source);
+        }
+
+        public bool CanAccept(object item)
+        {
+            if (item is PackagePropertyModel)
+                return true;
+            return false;
         }
 
         public void BuildIncludeDef(NotifyCollectionChangedEventArgs args)

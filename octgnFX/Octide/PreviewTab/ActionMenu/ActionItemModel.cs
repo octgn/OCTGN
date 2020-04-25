@@ -9,6 +9,7 @@ using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -44,11 +45,11 @@ namespace Octide.ItemModel
                 BatchExecute = ((GroupAction)a._action).BatchExecute,
                 DefaultAction = ((GroupAction)a._action).DefaultAction,
                 Execute = ((GroupAction)a._action).Execute,
-                HeaderExecute = a.HeaderExecute,
+                HeaderExecute = a._action.HeaderExecute,
                 IsGroup = a.IsGroup,
                 Name = a.Name,
                 Shortcut = a.Shortcut,
-                ShowExecute = a.ShowExecute
+                ShowExecute = a._action.HeaderExecute
             };
             if (a.Batch)
                 _batch = true;
@@ -77,29 +78,35 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Shortcut");
             }
         }
-
-
-        public string Execute
+        public PythonFunctionDefItemModel Execute
         {
             get
             {
-                return (Batch == true) ? ((GroupAction)_action).BatchExecute : ((GroupAction)_action).Execute;
+                if (Batch == true)
+                {
+                    return PythonFunctions.FirstOrDefault(x => x.Name == ((GroupAction)_action).BatchExecute);
+                }
+                else
+                {
+                    return PythonFunctions.FirstOrDefault(x => x.Name == ((GroupAction)_action).Execute);
+                }
             }
             set
             {
                 if (Batch == true)
                 {
-                    if (value == ((GroupAction)_action).BatchExecute) return;
-                    ((GroupAction)_action).BatchExecute = value;
+                    if (((GroupAction)_action).BatchExecute == value.Name) return;
+                    ((GroupAction)_action).BatchExecute = value.Name;
                 }
                 else
                 {
-                    if (value == ((GroupAction)_action).Execute) return;
-                    ((GroupAction)_action).Execute = value;
+                    if (((GroupAction)_action).Execute == value.Name) return;
+                    ((GroupAction)_action).Execute = value.Name;
                 }
                 RaisePropertyChanged("Execute");
             }
         }
+
 
         public bool Batch
         {
@@ -113,15 +120,16 @@ namespace Octide.ItemModel
                 _batch = value;
                 if (value == true)
                 {
-                    Execute = ((GroupAction)_action).Execute;
+                    ((GroupAction)_action).BatchExecute = ((GroupAction)_action).Execute;
                     ((GroupAction)_action).Execute = null;
                 }
                 else
                 {
-                    Execute = ((GroupAction)_action).BatchExecute;
+                    ((GroupAction)_action).Execute = ((GroupAction)_action).Execute;
                     ((GroupAction)_action).BatchExecute = null;
                 }
                 RaisePropertyChanged("Batch");
+                RaisePropertyChanged("Execute");
             }
         }
     }

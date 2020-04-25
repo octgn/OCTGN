@@ -4,23 +4,17 @@
 
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Octgn.ProxyGenerator;
 using Octgn.ProxyGenerator.Definitions;
-using Octide;
 using Octide.ItemModel;
 using Octide.Messages;
-using Octide.ViewModel;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
-using System.Xml;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
-    public class ConditionalBlockModel : IBaseBlock
+    public class ConditionalBlockModel : IBaseBlock, IDroppable
     {
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public RelayCommand AddElseIfCommand { get; set; }
@@ -147,6 +141,18 @@ namespace Octide.ProxyTab.TemplateItemModel
         public override object Create()
         {
             return new ConditionalBlockModel(Source);
+        }
+        public bool CanAccept(object item)
+        {
+            if (item is ElseIfCaseModel)
+            {
+                return true;
+            }
+            if (item is ElseCaseModel)
+            {
+                return (ElseCase == null) ? true : false;
+            }
+            return false;
         }
     }
 

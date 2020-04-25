@@ -10,9 +10,9 @@ using Octide.ViewModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
-    public abstract class IBaseConditionalCase : IdeBaseItem
+    public abstract class IBaseConditionalCase : IdeBaseItem, IDroppable
     {
         public CaseDefinition _case;
         public PropertyItemModel _property;
@@ -22,6 +22,12 @@ namespace Octide.ProxyTab.TemplateItemModel
         public IBaseConditionalCase(IdeCollection<IdeBaseItem> source) : base(source)
         {
 
+        }
+        public bool CanAccept(object item)
+        {
+            if (item is IBaseBlock)
+                return true;
+            return false;
         }
 
         public PropertyItemModel Property

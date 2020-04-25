@@ -18,7 +18,7 @@
              params:Design.Theme="Dark">
 
     <TabControl Margin="10,0,0,0" Grid.Column="1" >
-        <TabItem Header="Summary" IsSelected="True" >
+        <TabItem Header="Summary" >
             <ScrollViewer VerticalScrollBarVisibility="Auto" >
                 <ItemsControl Style="{StaticResource OctideInputPanel}">
                     <StackPanel Orientation="Horizontal" Visibility="Collapsed">
@@ -77,7 +77,7 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Cards" >
+        <TabItem Header="Cards" IsSelected="True" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>

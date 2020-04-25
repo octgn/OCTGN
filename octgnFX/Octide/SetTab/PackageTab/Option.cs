@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public class OptionModel : IdeBaseItem
+    public class OptionModel : IdeBaseItem, IDroppable
     {
         public Option Option { get; set; }
         public RelayCommand AddPickCommand { get; private set; }
@@ -108,6 +108,13 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new OptionModel(Source);
+        }
+
+        public bool CanAccept(object item)
+        {
+            if (item is PickModel || item is OptionsModel)
+                return true;
+            return false;
         }
 
         public double Probability

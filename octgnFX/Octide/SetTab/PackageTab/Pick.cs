@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public partial class PickModel : IdeBaseItem
+    public partial class PickModel : IdeBaseItem, IDroppable
     {
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public bool _isUnlimited;
@@ -83,6 +83,15 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new PickModel(Source);
+        }
+
+        public bool CanAccept(object item)
+        {
+            if (item is PackagePropertyModel)
+            {
+                return true;
+            }
+            return false;
         }
 
         public bool IsUnlimited

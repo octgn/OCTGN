@@ -3,18 +3,15 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using GongSolutions.Wpf.DragDrop;
-using GongSolutions.Wpf.DragDrop.Utilities;
 using Octgn.ProxyGenerator.Definitions;
+using Octide.ProxyTab.Handlers;
 using Octide.ViewModel;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
     public class TemplateModel : IdeBaseItem
     {
@@ -30,10 +27,9 @@ namespace Octide.ProxyTab.TemplateItemModel
         public BlockContainer OverlayContainer { get; set; }
         public BlockContainer TextBlockContainer { get; set; }
 
-        public TemplateMatchDropHandler MatchDropHandler { get; set; }
         public TemplateMainDropHandler OverlayDropHandler { get; set; }
-        public TemplateMainDragHandler DragHandler { get; set; }
         public TemplateMainDropHandler TextDropHandler { get; set; }
+        public TemplateMainDragHandler DragHandler { get; set; }
 
         public TemplateModel(IdeCollection<IdeBaseItem> source) : base(source) //new
         {
@@ -67,9 +63,8 @@ namespace Octide.ProxyTab.TemplateItemModel
             AddOverlaySwitchCommand = new RelayCommand(AddOverlaySwitch);
             AddTextConditionalCommand = new RelayCommand(AddTextConditional);
             AddTextSwitchCommand = new RelayCommand(AddTextSwitch);
-            MatchDropHandler = new TemplateMatchDropHandler();
-            OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true, Container = OverlayContainer };
-            TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false, Container = TextBlockContainer };
+            OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true };
+            TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false };
             DragHandler = new TemplateMainDragHandler();
         }
 
@@ -102,9 +97,8 @@ namespace Octide.ProxyTab.TemplateItemModel
             AddOverlaySwitchCommand = new RelayCommand(AddOverlaySwitch);
             AddTextConditionalCommand = new RelayCommand(AddTextConditional);
             AddTextSwitchCommand = new RelayCommand(AddTextSwitch);
-            MatchDropHandler = new TemplateMatchDropHandler();
-            OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true, Container = OverlayContainer };
-            TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false, Container = TextBlockContainer };
+            OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true };
+            TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false };
             DragHandler = new TemplateMainDragHandler();
         }
 
@@ -150,9 +144,8 @@ namespace Octide.ProxyTab.TemplateItemModel
             AddOverlaySwitchCommand = new RelayCommand(AddOverlaySwitch);
             AddTextConditionalCommand = new RelayCommand(AddTextConditional);
             AddTextSwitchCommand = new RelayCommand(AddTextSwitch);
-            MatchDropHandler = new TemplateMatchDropHandler();
-            OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true, Container = OverlayContainer };
-            TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false, Container = TextBlockContainer };
+            OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true };
+            TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false };
             DragHandler = new TemplateMainDragHandler();
 
         }

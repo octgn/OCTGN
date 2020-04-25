@@ -18,9 +18,6 @@ namespace Octide.SetTab.ItemModel
         public Card _card { get; private set; }
         public IdeCollection<IdeBaseItem> Items { get; private set; }
 
-     //   public SetCardAltItemViewModel BaseCardAlt => Items.FirstOrDefault(x => x.IsDefault) as SetCardAltItemViewModel;
-        public AlternateModel BaseCardAlt { get; set; }
-
         public RelayCommand AddAltCommand { get; private set; }
 
         public CardModel(IdeCollection<IdeBaseItem> src) : base(src) //for adding new items
@@ -40,17 +37,14 @@ namespace Octide.SetTab.ItemModel
             {
                 BuildCardDef(b);
             };
-            Items.SelectedItemChanged += (a, b) =>
+            var baseCardAlt = new AlternateModel(Items)
             {
-                UpdateSelectedAltTabs(a, b);
+                CanRemove = false,
+                CanDragDrop = false
             };
+            Items.DefaultItem = baseCardAlt;
+            Items.Add(baseCardAlt);
 
-            BaseCardAlt = new AlternateModel(Items)
-            {
-                IsDefault = true,
-                Name = ""
-            };
-            //TODO: Check that the base card initializes in the xml and itemsource properly
             AddAltCommand = new RelayCommand(AddAlt);
         }
 
@@ -63,24 +57,16 @@ namespace Octide.SetTab.ItemModel
                 var AltItem = new AlternateModel(alt.Value, Items);
                 if (alt.Key == "") // deals with the default card alt
                 {
-                    BaseCardAlt = AltItem;
-                    BaseCardAlt.IsDefault = true;
+                    AltItem.CanDragDrop = false;
+                    AltItem.CanRemove = false;
+                    Items.DefaultItem = AltItem;
                 }
-                else
-                {
-                    Items.Add(AltItem);
-                }
+                Items.Add(AltItem);
             }
             Items.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);
             };
-            Items.SelectedItem = BaseCardAlt;
-            Items.SelectedItemChanged += (a, b) =>
-            {
-                UpdateSelectedAltTabs(a, b);
-            };
-
             AddAltCommand = new RelayCommand(AddAlt);
         }
 
@@ -93,19 +79,21 @@ namespace Octide.SetTab.ItemModel
                 ImageUri = guid.ToString()
             };
             Items = new IdeCollection<IdeBaseItem>(this);
-            BaseCardAlt = new AlternateModel(c.BaseCardAlt, Items);
             Items.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);
             };
             foreach (AlternateModel alt in c.Items)
             {
-                Items.Add(new AlternateModel(alt, Items));
+                AlternateModel newAlt = new AlternateModel(alt, Items);
+                if (alt.IsDefault)
+                {
+                    newAlt.CanDragDrop = false;
+                    newAlt.CanRemove = false;
+                    Items.DefaultItem = newAlt;
+                }
+                Items.Add(newAlt);
             }
-            Items.SelectedItemChanged += (a, b) =>
-            {
-                UpdateSelectedAltTabs(a, b);
-            };
 
             AddAltCommand = new RelayCommand(AddAlt);
         }
@@ -119,8 +107,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildCardDef(NotifyCollectionChangedEventArgs args)
         {
-            _card.PropertySets = Items.Select(x => ((AlternateModel)x)._altDef).ToDictionary(x => x.Type, x => x);
-            _card.PropertySets.Add(BaseCardAlt.Name, BaseCardAlt._altDef);
+            _card.PropertySets = Items.Select(x => (AlternateModel)x).ToDictionary(x => (x.IsDefault) ? "" : x.Type, x => x._altDef);
         }
 
         public override object Clone()
@@ -132,27 +119,8 @@ namespace Octide.SetTab.ItemModel
             return new CardModel(Source);
         }
 
-        private void UpdateSelectedAltTabs(object sender, NotifySelectedItemChangedEventArgs args)
-        {
-            RaisePropertyChanged("ClickBaseCard");
-        }
-        public bool ClickBaseCard
-        {
-            get
-            {
-                return (Items.SelectedItem != null && Items.SelectedItem == BaseCardAlt);
-            }
-            set
-            {
-                if (Items.SelectedItem == BaseCardAlt) return;
-                Items.SelectedItem = BaseCardAlt;
-                RaisePropertyChanged("ClickBaseCard");
-            }
-        }
-
         public void UpdateCardName()
         {
-            _card.Name = BaseCardAlt.Name;
             RaisePropertyChanged("Name");
         }
 
@@ -161,12 +129,12 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                return BaseCardAlt.CardName;
+                return ((AlternateModel)Items.DefaultItem).Name;
             }
             set
             {
-                if (BaseCardAlt.CardName == value) return;
-                BaseCardAlt.CardName = value;
+                if (((AlternateModel)Items.DefaultItem).Name == value) return;
+                ((AlternateModel)Items.DefaultItem).Name = value;
                 RaisePropertyChanged("Name");
             }
         }

@@ -242,7 +242,7 @@ namespace Octgn.DataNew
                 var player = new Player
                                  {
                                      Groups = new List<Group>(),
-                                     GlobalVariables = new List<GlobalVariable>(),
+                                     GlobalVariables = new Dictionary<string, GlobalVariable>(),
                                      Counters = new List<Counter>(),
                                      IndicatorsFormat = g.player.summary
                                  };
@@ -252,36 +252,36 @@ namespace Octgn.DataNew
                 {
                 foreach (var item in g.player.Items)
                 {
-                    if (item is counter)
-                    {
-                        var i = item as counter;
-                        (player.Counters as List<Counter>)
-                            .Add(new Counter
-                                     {
-                                         Id = (byte)curCounter,
-                                         Name = i.name,
-                                         Icon = Path.Combine(directory, i.icon ?? ""),
-                                         Reset = bool.Parse(i.reset.ToString()),
-                                         Start = int.Parse(i.@default)
-                                     });
-                        curCounter++;
-                    }
-                    else if (item is gamePlayerGlobalvariable)
-                    {
-                        var i = item as gamePlayerGlobalvariable;
-                        var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
-                        (player.GlobalVariables as List<GlobalVariable>).Add(to);
-                    }
-                    else if (item is hand)
-                    {
-                        player.Hand = this.DeserialiseGroup(item as hand, 1);
-                    }
-                    else if (item is group)
-                    {
-                        var i = item as group;
-                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                        curGroup++;
-                    }
+                        if (item is counter counter)
+                        {
+                            (player.Counters as List<Counter>)
+                                .Add(new Counter
+                                {
+                                    Id = (byte)curCounter,
+                                    Name = counter.name,
+                                    Icon = Path.Combine(directory, counter.icon ?? ""),
+                                    Reset = bool.Parse(counter.reset.ToString()),
+                                    Start = int.Parse(counter.@default)
+                                });
+                            curCounter++;
+                        }
+                        else if (item is gamePlayerGlobalvariable globalvariable)
+                        {
+                            player.GlobalVariables.Add(globalvariable.name, new GlobalVariable()
+                                                                            {
+                                                                                Name = globalvariable.name,
+                                                                                Value = globalvariable.value
+                                                                            });
+                        }
+                        else if (item is hand hand)
+                        {
+                            player.Hand = this.DeserialiseGroup(hand, 1);
+                        }
+                        else if (item is group group)
+                        {
+                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(group, curGroup));
+                            curGroup++;
+                        }
                 }
                 }
                 ret.Player = player;
@@ -558,8 +558,7 @@ namespace Octgn.DataNew
                     var globalVariable = new GlobalVariable()
                     {
                         Name = item.name,
-                        Value = item.value,
-                        DefaultValue = item.value
+                        Value = item.value
                     };
                     ret.GlobalVariables.Add(item.name, globalVariable);
                 }
@@ -896,8 +895,8 @@ namespace Octgn.DataNew
                 {
                     var gamePlayerGlobalVariable = new gamePlayerGlobalvariable
                     {
-                        name = v.Name,
-                        value = v.Value
+                        name = v.Value.Name,
+                        value = v.Value.Value
                     };
                     ilist.Add(gamePlayerGlobalVariable);
                 }
@@ -1487,7 +1486,8 @@ namespace Octgn.DataNew
                     var markerDirectory = new DirectoryInfo(Path.Combine(directory, "Markers"));
                     var markerPath = markerDirectory.Exists == false ? null : markerDirectory.GetFiles(marker.Id.ToString() + ".*", SearchOption.TopDirectoryOnly).First();
                     marker.Source = markerPath == null ? null : Path.Combine(directory, "Markers", markerPath.FullName);
-                    Game.Markers.Add(marker.Id, marker);
+                    if (!Game.Markers.ContainsKey(marker.Id))
+                        Game.Markers.Add(marker.Id, marker);
                 }
             }
 
@@ -1715,7 +1715,7 @@ namespace Octgn.DataNew
                     {
                         id = include.Id.ToString(),
                         set = include.SetId.ToString(),
-                        property = include.Properties.Select(x => new includeProperty() { name = x.Property.Name, value = x.Value?.ToString() }).ToArray()
+                        property = include.Properties.Select(x => new includeProperty() { name = x.Property.Name.ToString(), value = x.Value?.ToString() }).ToArray()
                     }
                     );
                 }
@@ -1855,6 +1855,7 @@ namespace Octgn.DataNew
         public ICollectionDefinition Def { get; set; }
 
         internal Guid GameId { get; set; }
+        public Game Game { get; set; }
 
         public GameScriptSerializer(Guid gameId)
         {
@@ -1874,7 +1875,20 @@ namespace Octgn.DataNew
 
         public byte[] Serialize(object obj)
         {
-            throw new NotImplementedException();
+            if ((obj is GameScript) == false)
+                throw new InvalidOperationException("obj must be typeof GameScript");
+            var Script = obj as GameScript;
+
+            var save = new gameScript()
+            {
+                src = Script.Script
+            };
+
+
+            Directory.CreateDirectory(new FileInfo(Script.Path).Directory.FullName);
+
+            File.WriteAllText(Script.Path, Script.Script);
+            return File.ReadAllBytes(Script.Path);
         }
     }
 

@@ -5,15 +5,15 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Octide
 {
+    public interface IDroppable
+    {
+        bool CanAccept(object item);
+    }
+
     public abstract class IdeBaseItem : ViewModelBase, ICloneable
     {
         private bool _canEdit = true;
@@ -46,32 +46,53 @@ namespace Octide
             CopyCommand = new RelayCommand(CopyItem);
             InsertCommand = new RelayCommand(InsertItem);
             MakeDefaultCommand = new RelayCommand(MakeDefault);
+        }
 
+        public void SetSource(IdeCollection<IdeBaseItem> src) 
+        {
+            Source = src;
+            Source.DefaultItemChanged += (sender, args) =>
+            {
+                if (args.OldItem == this)
+                {
+                    RaisePropertyChanged("IsDefault");
+                }
+            };
         }
 
         public void RemoveItem()
         {
             if (CanRemove == false) return;
+            if (Source == null) return;
+            var index = Source.IndexOf(this);
             Source.Remove(this);
+            Source.SelectedItem = (Source.Count > index) ? Source[index] : Source.Last();
         }
 
         public void CopyItem()
         {
             if (CanCopy == false) return;
+            if (Source == null) return;
             var index = Source.IndexOf(this);
-            Source.Insert(index, Clone() as IdeBaseItem);
+            var item = Clone() as IdeBaseItem;
+            Source.Insert(index + 1, item);
+            Source.SelectedItem = item;
         }
 
         public void InsertItem()
         {
             if (CanInsert == false) return;
+            if (Source == null) return;
             var index = Source.IndexOf(this);
-            Source.Insert(index, Create() as IdeBaseItem);
+            var item = Create() as IdeBaseItem;
+            Source.Insert(index, item);
+            Source.SelectedItem = item;
         }
 
         public void MakeDefault()
         {
             if (CanBeDefault == false) return;
+            if (Source == null) return;
             if (Source.DefaultItem == this) return;
             Source.DefaultItem = this;
             RaisePropertyChanged("IsDefault");
@@ -175,6 +196,7 @@ namespace Octide
             }
             set
             {
+                if (Source == null) return;
                 if (Source.DefaultItem == this) return;
                 Source.DefaultItem = this;
                 RaisePropertyChanged("IsDefault");

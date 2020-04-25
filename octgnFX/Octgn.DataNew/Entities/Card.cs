@@ -40,13 +40,13 @@ namespace Octgn.DataNew.Entities
             Name = name.Clone() as string;
             ImageUri = imageuri.Clone() as string;
             Alternate = alternate.Clone() as string;
-            Size = size.Clone() as CardSize;
+            Size = size;
             PropertySets = properties;
             this.PropertySets = this.CloneProperties();
         }
 
         public Card(ICard card)
-			:this(card.Id,card.SetId,card.Name.Clone() as string, card.ImageUri.Clone() as string, card.Alternate.Clone() as string,card.Size.Clone() as CardSize,card.CloneProperties())
+			:this(card.Id,card.SetId,card.Name.Clone() as string, card.ImageUri.Clone() as string, card.Alternate.Clone() as string,card.Size,card.CloneProperties())
         {
             
         }
@@ -65,7 +65,7 @@ namespace Octgn.DataNew.Entities
                           {
                               Name = this.Name.Clone() as string,
                               Type = this.Type.Clone() as string,
-                              Size = this.Size.Clone() as CardSize,
+                              Size = this.Size as CardSize,
                               Properties =
                                   this.Properties.ToDictionary(
                                       x => x.Key.Clone() as PropertyDef, x => x.Value)

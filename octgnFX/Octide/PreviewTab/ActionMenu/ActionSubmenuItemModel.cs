@@ -48,10 +48,10 @@ namespace Octide.ItemModel
             _action = new GroupActionGroup
             {
 
-                HeaderExecute = a.HeaderExecute,
+                HeaderExecute = a._action.HeaderExecute,
                 IsGroup = a.IsGroup,
                 Name = a.Name,
-                ShowExecute = a.ShowExecute
+                ShowExecute = a._action.ShowExecute
             };
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (b, c) =>

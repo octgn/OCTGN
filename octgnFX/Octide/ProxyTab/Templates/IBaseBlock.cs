@@ -5,7 +5,7 @@
 using Octgn.ProxyGenerator.Definitions;
 using System.Collections.ObjectModel;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
     public abstract class IBaseBlock : IdeBaseItem
     {

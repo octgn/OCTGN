@@ -146,6 +146,7 @@ namespace Octide
         public string FullPath => File?.FullName;
         public string Folder => File?.Directory.FullName;
         public string FileName => File?.Name.Substring(0, File.Name.Length - File.Extension.Length);
+        public string FullFileName => File?.Name;
         public string Extension => File?.Extension.Substring(1);
         public string RelativePath => File == null ? null : Utils.MakeRelativePath(ViewModelLocator.GameLoader.GamePath, File.FullName);
 

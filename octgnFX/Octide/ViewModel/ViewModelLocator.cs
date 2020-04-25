@@ -38,13 +38,16 @@ namespace Octide.ViewModel
 			ServiceLocator.SetLocatorProvider(new ServiceLocatorProvider(() => CurrentServiceLocator));
 
 			ViewModelLocator.ViewModelKernel.Bind<GameLoader>().To<GameLoader>().InSingletonScope();
-			ViewModelLocator.ViewModelKernel.Bind<GameTabViewModel>().To<GameTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<GameInformationTabViewModel>().To<GameInformationTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<DeckSectionTabViewModel>().To<DeckSectionTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<GameFontTabViewModel>().To<GameFontTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<AssetsTabViewModel>().To<AssetsTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SymbolTabViewModel>().To<SymbolTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<DocumentTabViewModel>().To<DocumentTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<MarkerTabViewModel>().To<MarkerTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SoundTabViewModel>().To<SoundTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<ScriptsTabViewModel>().To<ScriptsTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<ProxyTabViewModel>().To<ProxyTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<PreviewTabViewModel>().To<PreviewTabViewModel>().InSingletonScope();
@@ -70,13 +73,16 @@ namespace Octide.ViewModel
 
 
 		public static GameLoader GameLoader => ServiceLocator.Current.GetInstance<GameLoader>();
-		public static GameTabViewModel GameTabViewModel => ServiceLocator.Current.GetInstance<GameTabViewModel>();
+		public static GameInformationTabViewModel GameInformationTabViewModel => ServiceLocator.Current.GetInstance<GameInformationTabViewModel>();
+		public static DeckSectionTabViewModel DeckSectionTabViewModel => ServiceLocator.Current.GetInstance<DeckSectionTabViewModel>();
+		public static GameFontTabViewModel GameFontTabViewModel => ServiceLocator.Current.GetInstance<GameFontTabViewModel>();
 		public static AssetsTabViewModel AssetsTabViewModel => ServiceLocator.Current.GetInstance<AssetsTabViewModel>();
 		public static SoundTabViewModel SoundTabViewModel => ServiceLocator.Current.GetInstance<SoundTabViewModel>();
 		public static MarkerTabViewModel MarkerTabViewModel => ServiceLocator.Current.GetInstance<MarkerTabViewModel>();
 		public static DocumentTabViewModel DocumentTabViewModel => ServiceLocator.Current.GetInstance<DocumentTabViewModel>();
 		public static SymbolTabViewModel SymbolTabViewModel => ServiceLocator.Current.GetInstance<SymbolTabViewModel>();
 		public static PropertyTabViewModel PropertyTabViewModel => ServiceLocator.Current.GetInstance<PropertyTabViewModel>();
+		public static ScriptsTabViewModel ScriptsTabViewModel => ServiceLocator.Current.GetInstance<ScriptsTabViewModel>();
 		public static SetTabViewModel SetTabViewModel => ServiceLocator.Current.GetInstance<SetTabViewModel>();
 		public static ProxyTabViewModel ProxyTabViewModel => ServiceLocator.Current.GetInstance<ProxyTabViewModel>();
 		public static PreviewTabViewModel PreviewTabViewModel => ServiceLocator.Current.GetInstance<PreviewTabViewModel>();
@@ -85,13 +91,16 @@ namespace Octide.ViewModel
 		{
 			ServiceLocator.Current.GetInstance<GameLoader>().Cleanup();
 			ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
-			ServiceLocator.Current.GetInstance<GameTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<GameInformationTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<DeckSectionTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<GameFontTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<AssetsTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SoundTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<DocumentTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<MarkerTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SymbolTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<PropertyTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<ScriptsTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SetTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<ProxyTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<PreviewTabViewModel>().Cleanup();

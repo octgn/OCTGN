@@ -4,7 +4,7 @@
 
 using System.Windows.Controls;
 
-namespace Octide.SetTab
+namespace Octide.SetTab.Views
 {
     /// <summary>
     /// Interaction logic for AlternateItemView.xaml

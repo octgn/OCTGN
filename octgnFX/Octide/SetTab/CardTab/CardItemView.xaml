@@ -10,7 +10,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
-             xmlns:set="clr-namespace:Octide.SetTab"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:set="clr-namespace:Octide.SetTab.Views"
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
@@ -22,107 +23,84 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" >
-            <ToggleButton IsChecked="{Binding ClickBaseCard}" >
-                <ToggleButton.Style>
-                    <Style TargetType="{x:Type ToggleButton}">
+        <ScrollViewer Style="{StaticResource NuclearScrollViewer}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <StackPanel Orientation="Horizontal" >
 
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                                <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-                            </Trigger>
-                        </Style.Triggers>
-                        <Setter Property="FontSize" Value="12" />
-                        <Setter Property="Background" Value="{StaticResource WindowBack}" />
-                        <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
-                        <Setter Property="Focusable" Value="True" />
-                        <Setter Property="SnapsToDevicePixels" Value="True" />
-
-                        <Setter Property="Template" >
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ToggleButton}" >
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="10,10,0,0" Padding="10,5,10,5" Margin="5,0,0,0" >
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Base Card" FontWeight="Bold" />
-                                            <TextBlock Text="{Binding Name}" />
-                                        </StackPanel>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ToggleButton.Style>
-            </ToggleButton>
-            <ListBox Style="{StaticResource IdeBaseItemContainerStyle}" 
-                     ItemsSource="{Binding Items}" SelectedValue="{Binding Items.SelectedItem}">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                                <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-                            </Trigger>
-                        </Style.Triggers>
-                        <Setter Property="FontSize" Value="12" />
-                        <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
-                        <Setter Property="Focusable" Value="True" />
-                        <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
-                        <Setter Property="SnapsToDevicePixels" Value="True" />
-                        <Setter Property="Template" >
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="10,10,0,0" Padding="10,5,10,5" Margin="5,0,0,0" >
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding CardName}"  />
-                                        </StackPanel>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
-            <Button Command="{Binding AddAltCommand}">
-                <Button.Style>
-                    <Style TargetType="{x:Type Button}">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed"  Value="true">
-                                <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                                <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-                            </Trigger>
-                        </Style.Triggers>
-                        <Setter Property="Background" Value="{StaticResource WindowBack}" />
-                        <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Grid Margin="10,0,0,0" Width="24" Height="24">
-                                        <Ellipse Fill="{TemplateBinding Background}" />
-                                        <Path HorizontalAlignment="Center" VerticalAlignment="Center" Data="M6,0 L6,12 M0,6 L12,6" StrokeThickness="2" Stroke="{TemplateBinding Foreground}" />
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </StackPanel>
+                <ListBox Style="{StaticResource IdeBaseItemContainerStyle}"
+                     ItemsSource="{Binding Items}" SelectedValue="{Binding Items.SelectedItem}"  >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="BorderThickness" Value="3,3,3,0" />
+                                    <Setter Property="BorderBrush" Value="DarkRed" />
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
+                                    <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
+                            <Setter Property="Focusable" Value="True" />
+                            <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
+                            <Setter Property="SnapsToDevicePixels" Value="True" />
+                            <Setter Property="Template" >
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}"  >
+                                        <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="10,10,0,0" Padding="15,1,15,1" Margin="5,0,0,0" >
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding Type}" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Name}"  />
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+                <Button Command="{Binding AddAltCommand}" ToolTip="Add a new Alternate">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"  Value="true">
+                                    <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
+                                    <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Setter Property="Background" Value="{StaticResource WindowBack}" />
+                            <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Grid Margin="10,0,0,0" Width="24" Height="24">
+                                            <Ellipse Fill="{TemplateBinding Background}" />
+                                            <Path HorizontalAlignment="Center" VerticalAlignment="Center" Data="M6,0 L6,12 M0,6 L12,6" StrokeThickness="2" Stroke="{TemplateBinding Foreground}" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
         <ContentControl Grid.Row="1" Content="{Binding Items.SelectedItem}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type item:AlternateModel}" >

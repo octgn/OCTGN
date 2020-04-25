@@ -500,7 +500,7 @@ namespace Octgn.Play
             // Create global variables
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varD in g.Player.GlobalVariables)
-                GlobalVariables.Add(varD.Name, varD.Value);
+                GlobalVariables.Add(varD.Value.Name, varD.Value.Value);
             // Create a hand, if any
             if (g.Player.Hand != null)
                 _hand = new Hand(this, g.Player.Hand);
@@ -553,7 +553,7 @@ namespace Octgn.Play
                 // Create global variables
                 GlobalVariables = new Dictionary<string, string>();
                 foreach (var varD in g.Player.GlobalVariables)
-                    GlobalVariables.Add(varD.Name, varD.Value);
+                    GlobalVariables.Add(varD.Value.Name, varD.Value.Value);
             }
             // Create counters
             _counters = new Counter[0];

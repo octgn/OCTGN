@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public partial class OptionsModel : IdeBaseItem
+    public partial class OptionsModel : IdeBaseItem, IDroppable
     {
         public OptionsList _options;
         public IdeCollection<IdeBaseItem> Items { get; private set; }
@@ -78,5 +78,11 @@ namespace Octide.SetTab.ItemModel
             return new OptionsModel(Source);
         }
 
+        public bool CanAccept(object item)
+        {
+            if (item is OptionModel)
+                return true;
+            return false;
+        }
     }
 }

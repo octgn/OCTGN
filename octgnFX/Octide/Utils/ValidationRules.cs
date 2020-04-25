@@ -63,19 +63,6 @@ namespace Octide
         }
     }
 
-    public class UniqueValueValidationWrapper : DependencyObject
-    {
-        public static readonly DependencyProperty UniqueValuseProperty =
-             DependencyProperty.Register("UniqueValues", typeof(IEnumerable<string>),
-             typeof(UniqueValueValidationWrapper), new FrameworkPropertyMetadata(default(IEnumerable<string>)));
-
-        public IEnumerable<string> UniqueValues
-        {
-            get { return (IEnumerable<string>)GetValue(UniqueValuseProperty); }
-            set { SetValue(UniqueValuseProperty, value); }
-        }
-    }
-
     public class UniqueValueValidationRule : ValidationRule
     {
         public UniqueValueValidationWrapper Wrapper { get; set; }
@@ -86,6 +73,19 @@ namespace Octide
                 return new ValidationResult(false, "An item with this name already exists!");
 
             return ValidationResult.ValidResult;
+        }
+    }
+
+    public class UniqueValueValidationWrapper : DependencyObject
+    {
+        public static readonly DependencyProperty UniqueValueProperty =
+             DependencyProperty.Register("UniqueValues", typeof(IEnumerable<string>),
+             typeof(UniqueValueValidationWrapper), new FrameworkPropertyMetadata(default(IEnumerable<string>)));
+
+        public IEnumerable<string> UniqueValues
+        {
+            get { return (IEnumerable<string>)GetValue(UniqueValueProperty); }
+            set { SetValue(UniqueValueProperty, value); }
         }
     }
 

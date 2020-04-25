@@ -3,53 +3,42 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GongSolutions.Wpf.DragDrop;
-using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace Octide.SetTab.ItemModel
 {
+
     public class PackageDropHandler : IDropTarget
     {
         public void DragOver(IDropInfo dropInfo)
         {
-            if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget)
+            if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget) //Prevents items from outside the list to be dropped
             {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
+                return;
             }
-            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackagePropertyModel)
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else if (dropInfo.DragInfo.SourceItem is PackagePropertyModel && dropInfo.DragInfo.SourceCollection.TryGetList().Count <= 1 && !dropInfo.KeyStates.HasFlag(System.Windows.DragDropKeyStates.ControlKey))
-            {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else
-            {
-                DragDrop.DefaultDropHandler.DragOver(dropInfo);
-            }
-        }
 
-        public void Drop(IDropInfo dropInfo)
-        {
-            DragDrop.DefaultDropHandler.Drop(dropInfo);
-        }
-    }
+            if (!(dropInfo.Data is IdeBaseItem sourceItem))
+            {
+                return;
+            }
+            else if (!sourceItem.CanDragDrop)
+            {
+                return;
+            }
 
-    public class IncludeDropHandler : IDropTarget
-    {
-        public void DragOver(IDropInfo dropInfo)
-        {
-            if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget)
+            //checks the eligibility of the parent to accept dropped item
+            if (dropInfo.TargetCollection is IdeCollection<IdeBaseItem> collection && collection.Parent is IDroppable parent)
             {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
+                if (parent.CanAccept(sourceItem))
+                {
+                    DragDrop.DefaultDropHandler.DragOver(dropInfo);
+                }
             }
-            else if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dropInfo.TargetItem is PackagePropertyModel)
+            else if (dropInfo.TargetItem is IDroppable item)
             {
-                dropInfo.Effects = System.Windows.DragDropEffects.None;
-            }
-            else
-            {
-                DragDrop.DefaultDropHandler.DragOver(dropInfo);
+                if (item.CanAccept(sourceItem))
+                {
+                    DragDrop.DefaultDropHandler.DragOver(dropInfo);
+                }
             }
         }
 

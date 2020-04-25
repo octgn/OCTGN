@@ -2,12 +2,13 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using Octide.ProxyTab.Handlers;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
-    public class OverlayLinkContainer : IBaseBlock
+    public class OverlayLinkContainer : IBaseBlock, IDroppable
     {
         public TemplateLinkContainerDropHandler DropHandler { get; set; }
         public IdeCollection<IdeBaseItem> Items { get; set; }
@@ -45,12 +46,17 @@ namespace Octide.ProxyTab.TemplateItemModel
                 RemoveItem();
         }
 
-        public void AddLink(OverlayLinkModel link)
+        public void AddLink(int index, OverlayLinkModel link)
         {
-            if (link is OverlayLinkModel)
+            Items.Insert(index, new OverlayLinkModel(link, Items));
+        }
+        public bool CanAccept(object item)
+        {
+            if (item is OverlayLinkModel)
             {
-                Items.Add(new OverlayLinkModel(link, Items));
+                return true;
             }
+            return false;
         }
     }
 }

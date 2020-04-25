@@ -22,11 +22,11 @@ using System.Windows.Media;
 namespace Octide.ItemModel
 {
 
-    public class ProxyOverlayDefinitionItemModel : IdeBaseItem
+    public class OverlayBlockDefinitionItemModel : IdeBaseItem
     {
         public BlockDefinition _def;
 
-        public ProxyOverlayDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new overlay
+        public OverlayBlockDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new overlay
         {
             _def = new BlockDefinition
             {
@@ -36,12 +36,12 @@ namespace Octide.ItemModel
             Name = "overlay";
         }
 
-        public ProxyOverlayDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // load overlay
+        public OverlayBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // load overlay
         {
             _def = b;
         }
 
-        public ProxyOverlayDefinitionItemModel(ProxyOverlayDefinitionItemModel o, IdeCollection<IdeBaseItem> source) : base(source)
+        public OverlayBlockDefinitionItemModel(OverlayBlockDefinitionItemModel o, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _def = new BlockDefinition
             {
@@ -52,13 +52,13 @@ namespace Octide.ItemModel
         }
         public override object Clone()
         {
-            return new ProxyOverlayDefinitionItemModel(this, Source);
+            return new OverlayBlockDefinitionItemModel(this, Source);
         }
         public override object Create()
         {
-            return new ProxyOverlayDefinitionItemModel(Source);
+            return new OverlayBlockDefinitionItemModel(Source);
         }
-        public IEnumerable<string> UniqueNames => Source.Select(x => ((ProxyOverlayDefinitionItemModel)x).Name);
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((OverlayBlockDefinitionItemModel)x).Name);
 
         public string Name
         {

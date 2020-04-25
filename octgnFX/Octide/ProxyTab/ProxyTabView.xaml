@@ -13,14 +13,33 @@
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
              xmlns:itemModel="clr-namespace:Octide.ItemModel"
-             xmlns:item="clr-namespace:Octide.ProxyTab.TemplateItemModel"
+             xmlns:item="clr-namespace:Octide.ProxyTab.ItemModel"
              xmlns:local="clr-namespace:Octide"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="600" d:DesignWidth="900"
              DataContext="{Binding ProxyTabViewModel, Source={StaticResource Locator}}">
-
+    <UserControl.Resources>
+        <DataTemplate x:Key="IdeAssetItemAdorner">
+            <Border Padding="5" Background="{StaticResource DarkBackground}" BorderBrush="WhiteSmoke" BorderThickness="2">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Image Source="{Binding Asset.FullPath}" Stretch="Uniform"/>
+                    <TextBlock Foreground="WhiteSmoke" Grid.Row="1" Text="{Binding Name}" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="IdeTextItemAdorner">
+            <Border Background="{StaticResource DarkBackground}" BorderThickness="2" BorderBrush="WhiteSmoke" Padding="3">
+                <TextBlock Foreground="WhiteSmoke" FontSize="13" Grid.Row="1" Text="{Binding Name}" />
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -74,7 +93,7 @@
                             </Style>
                         </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type itemModel:ProxyOverlayDefinitionItemModel}">
+                            <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
                                 <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -124,12 +143,11 @@
             <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
 
             <TextBlock Text="Overlay Blocks" Grid.Column="2" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold" />
-            <ListBox Grid.Row="1" Grid.Column="2" Style="{StaticResource IdeHorizontalListBoxControl}" ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
-                        
-                         gong:DragDrop.DragAdornerTemplate="{StaticResource IdeAssetItemAdorner}">
-
+            <ListBox Grid.Row="1" Grid.Column="2" Style="{StaticResource IdeHorizontalListBoxControl}" 
+                     ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
+                     gong:DragDrop.DragAdornerTemplate="{StaticResource IdeAssetItemAdorner}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type itemModel:ProxyOverlayDefinitionItemModel}">
+                    <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
                         <Grid Margin="4" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -148,11 +166,11 @@
 
         <ContentControl Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="3">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type itemModel:ProxyOverlayDefinitionItemModel}">
-                    <views:ProxyOverlayDefinitionItemView />
+                <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
+                    <views:OverlayBlockDefinitionItemView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type itemModel:ProxyTextDefinitionItemModel}">
-                    <views:ProxyTextBlockDefinitionItemView />
+                <DataTemplate DataType="{x:Type itemModel:TextBlockDefinitionItemModel}">
+                    <views:TextBlockDefinitionItemView />
                 </DataTemplate>
             </ContentControl.Resources>
             <ContentControl.Content>

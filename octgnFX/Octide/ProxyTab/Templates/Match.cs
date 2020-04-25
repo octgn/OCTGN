@@ -12,7 +12,7 @@ using Octide.ViewModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
     public class MatchModel : IdeBaseItem
     {

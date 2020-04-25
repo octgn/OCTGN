@@ -7,11 +7,11 @@ using System.Windows.Controls;
 namespace Octide.Views
 {
     /// <summary>
-    /// Interaction logic for GameTabView.xaml
+    /// Interaction logic for ScriptsTabView.xaml
     /// </summary>
-    public partial class GameTabView : UserControl
+    public partial class ScriptsTabView : UserControl
     {
-        public GameTabView()
+        public ScriptsTabView()
         {
             InitializeComponent();
         }

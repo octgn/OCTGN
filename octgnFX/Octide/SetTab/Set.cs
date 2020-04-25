@@ -46,6 +46,10 @@ namespace Octide.SetTab.ItemModel
             {
                 BuildCardDef(b);
             };
+            CardItems.SelectedItemChanged += (a, b) =>
+            {
+                SelectDefaultAlt(b);
+            };
 
             PackageItems = new IdeCollection<IdeBaseItem>(this);
             PackageItems.CollectionChanged += (a, b) =>
@@ -72,6 +76,10 @@ namespace Octide.SetTab.ItemModel
             CardItems.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);
+            };
+            CardItems.SelectedItemChanged += (a, b) =>
+            {
+                SelectDefaultAlt(b);
             };
 
             PackageItems = new IdeCollection<IdeBaseItem>(this);
@@ -113,6 +121,10 @@ namespace Octide.SetTab.ItemModel
             {
                 BuildCardDef(b);
             };
+            CardItems.SelectedItemChanged += (a, b) =>
+            {
+                SelectDefaultAlt(b);
+            };
             foreach (CardModel card in s.CardItems)
             {
                 CardItems.Add(new CardModel(card, CardItems) );
@@ -126,7 +138,7 @@ namespace Octide.SetTab.ItemModel
             foreach (PackageModel package in s.PackageItems)
             {
                 PackageItems.Add(new PackageModel(package, PackageItems));
-            }
+            };
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
@@ -155,6 +167,12 @@ namespace Octide.SetTab.ItemModel
             dlg.DataContext = new ImportCardsViewModel() { Parent = this };
             dlg.ShowDialog();
 
+        }
+
+        public void SelectDefaultAlt(NotifySelectedItemChangedEventArgs args)
+        {
+            if (args.NewItem is CardModel selectedCard)
+                selectedCard.Items.SelectedItem = selectedCard.Items.DefaultItem;
         }
 
         public void BuildCardDef(NotifyCollectionChangedEventArgs args)

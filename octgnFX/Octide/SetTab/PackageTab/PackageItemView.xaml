@@ -16,7 +16,7 @@
              params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700">
     <UserControl.Resources>
-        
+
         <ControlTemplate x:Key="IncludeHeader" TargetType="ContentControl" >
             <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushRed}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel >
@@ -43,13 +43,13 @@
                     <TextBlock Text="OPTION" FontWeight="Bold"/>
                     <TextBlock Grid.Column="1" Text="probability:" />
                     <TextBox MinWidth="50" >
-                    <TextBox.Text>
-                        <Binding Path="Probability" >
-                            <Binding.ValidationRules>
-                                <local:DoubleValidationRule Minimum="0" Maximum="1" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
+                        <TextBox.Text>
+                            <Binding Path="Probability" >
+                                <Binding.ValidationRules>
+                                    <local:DoubleValidationRule Minimum="0" Maximum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
                     </TextBox>
                     <Button Content="+Options" Background="{StaticResource BlendBrushPurple}" Command="{Binding AddOptionsCommand}" />
                     <Button Content="+Pick" Background="{StaticResource BlendBrushGreen}" Command="{Binding AddPickCommand}" />
@@ -61,24 +61,14 @@
                 <StackPanel >
                     <TextBlock Text="PICK" FontWeight="Bold" />
                     <TextBlock Text="quantity:" />
-                    <TextBox MinWidth="20" >
+                    <TextBox MinWidth="20" x:Name="TextBox" IsEnabled="{Binding IsUnlimited, Converter={StaticResource InverseBooleanConverter}}">
                         <TextBox.Text>
                             <Binding Path="Quantity" >
                                 <Binding.ValidationRules>
-                                    <local:IntegerValidationRule Minimum="1" />
+                                    <local:IntegerValidationRule Minimum="0" />
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
-                        <TextBox.Style>
-                            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                                <Setter Property="IsEnabled" Value="True" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=UnlimitedBox, Path=IsChecked}" Value="True">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
                     </TextBox>
                     <TextBlock Text="unlimited:" />
                     <CheckBox x:Name="UnlimitedBox" IsChecked="{Binding IsUnlimited, Mode=TwoWay}" />
@@ -97,7 +87,7 @@
                 </StackPanel>
             </Border>
         </ControlTemplate>
-        
+
         <HierarchicalDataTemplate DataType="{x:Type item:IncludeModel}" ItemsSource="{Binding Items}" >
             <ContentControl Template="{StaticResource IncludeHeader}">
                 <ContentControl.ContextMenu>
@@ -143,66 +133,92 @@
                 </ContentControl.ContextMenu>
             </ContentControl>
         </DataTemplate>
+
+
+        <DataTemplate x:Key="DragAdorner">
+            <DataTemplate.Resources>
+                <DataTemplate DataType="{x:Type item:OptionsModel}">
+                    <ContentControl Template="{StaticResource OptionsHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:OptionModel}">
+                    <ContentControl Template="{StaticResource OptionsHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:PickModel}">
+                    <ContentControl Template="{StaticResource PickHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:PackagePropertyModel}">
+                    <ContentControl Template="{StaticResource PropertyHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:IncludeModel}">
+                    <ContentControl Template="{StaticResource IncludeHeader}" />
+                </DataTemplate>
+            </DataTemplate.Resources>
+            <ContentControl Content="{Binding }"/>
+        </DataTemplate>
+
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" MinHeight="100"/>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" MinHeight="100"/>
-        </Grid.RowDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.ColumnSpan="2" Text="Pack Items"  HorizontalAlignment="Center" FontSize="20"/>
-            <Button Grid.Row="1" Content="Add Options"  Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
-            <Button Grid.Row="1" Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushYellow}"/>
-            <TreeView Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent" 
-                      ItemsSource="{Binding Items}" 
-                      gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
-                      gong:DragDrop.DropHandler="{Binding PackageDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsExpanded" Value="True" />
-                    </Style>
-                </TreeView.ItemContainerStyle>
-            </TreeView>
-        </Grid>
+        <TabControl>
+            <TabItem Header="Pick Selectors">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Add Options" Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
+                    <Button Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushGreen}"/>
+                    <TreeView Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent" 
+                              ItemsSource="{Binding Items}"
+                              gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True"
+                              gong:DragDrop.DropHandler="{Binding PackageDropHandler}"
+                              gong:DragDrop.DragDropCopyKeyState="ControlKey" 
+                              gong:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Included Cards">
 
-        <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
 
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Text="Include cards (from other sets)"  HorizontalAlignment="Center" FontSize="20"/>
-            <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
+                    <TreeView Grid.Row="1" Background="Transparent"
+                              ItemsSource="{Binding Includes}"
+                              gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
+                              gong:DragDrop.DropHandler="{Binding IncludeDropHandler}"
+                              gong:DragDrop.DragDropCopyKeyState="ControlKey"
+                              gong:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}" >
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                </Grid>
+            </TabItem>
+        </TabControl>
 
-            <TreeView Grid.Row="2" Background="Transparent" ItemsSource="{Binding Includes}"
-                      gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
-                      gong:DragDrop.DropHandler="{Binding IncludeDropHandler}" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsExpanded" Value="True" />
-                    </Style>
-                </TreeView.ItemContainerStyle>
-            </TreeView>
-        </Grid>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
 
-        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.RowSpan="3">
+        <StackPanel Orientation="Vertical" Grid.Column="2">
             <Button Content="Generate Pack" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding GeneratePackCommand}" />
 
 

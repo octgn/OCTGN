@@ -16,10 +16,12 @@
             <TextBlock Text="Action Separator Editor" />
 
             <TextBlock Text="Custom Submenu Name Command"  />
-            <TextBox Text="{Binding HeaderExecute, Mode=TwoWay}" />
+            <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding HeaderExecute}" />
+
 
             <TextBlock Text="Conditional Display Command" />
-            <TextBox Text="{Binding ShowExecute, Mode=TwoWay}" />
+            <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding ShowExecute}" />
+
 
         </ItemsControl>
     </ScrollViewer>

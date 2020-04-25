@@ -18,11 +18,11 @@ using Octide.SetTab.ItemModel;
 
 namespace Octide.ItemModel
 {
-    public class ProxyTextDefinitionItemModel : IdeBaseItem
+    public class TextBlockDefinitionItemModel : IdeBaseItem
     {
         public BlockDefinition _def;
 
-        public ProxyTextDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new text definition
+        public TextBlockDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new text definition
         {
             _def = new BlockDefinition
             {
@@ -31,7 +31,7 @@ namespace Octide.ItemModel
             Name = "text";
         }
 
-        public ProxyTextDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // copy from 
+        public TextBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // copy from 
         {
             _def = b;
 
@@ -43,7 +43,7 @@ namespace Octide.ItemModel
         }
 
 
-        public ProxyTextDefinitionItemModel(ProxyTextDefinitionItemModel t, IdeCollection<IdeBaseItem> source) : base(source)
+        public TextBlockDefinitionItemModel(TextBlockDefinitionItemModel t, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _def = new BlockDefinition
             {
@@ -52,14 +52,14 @@ namespace Octide.ItemModel
         }
         public override object Clone()
         {
-            return new ProxyTextDefinitionItemModel(this, Source);
+            return new TextBlockDefinitionItemModel(this, Source);
         }
         public override object Create()
         {
-            return new ProxyTextDefinitionItemModel(Source);
+            return new TextBlockDefinitionItemModel(Source);
         }
 
-        public IEnumerable<string> UniqueNames => Source.Select(x => ((ProxyTextDefinitionItemModel)x).Name);
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((TextBlockDefinitionItemModel)x).Name);
 
         public string Name
         {
@@ -384,7 +384,7 @@ namespace Octide.ItemModel
 
     public class ProxyTextBlockItemModel : ViewModelBase
     {
-        public ProxyTextDefinitionItemModel LinkedTextBlock { get; private set; }
+        public TextBlockDefinitionItemModel LinkedTextBlock { get; private set; }
         public string Format { get; private set; }
         public CardPropertyModel Property { get; set; }
 
@@ -399,7 +399,7 @@ namespace Octide.ItemModel
         public ProxyTextBlockItemModel(LinkDefinition ld)
         {
             _linkDefinition = ld;
-            LinkedTextBlock = (ProxyTextDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.TextBlocks.First(x => ((ProxyTextDefinitionItemModel)x).Name == ld.Block);
+            LinkedTextBlock = (TextBlockDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.TextBlocks.First(x => ((TextBlockDefinitionItemModel)x).Name == ld.Block);
         }
 
 

@@ -13,6 +13,7 @@ using System.IO;
 
 namespace Octide.ViewModel
 {
+    //TODO: Fix asset always setting a default value for missing font def
     public class GameFontItemModel : ViewModelBase
     {
         public Font _font;
@@ -23,6 +24,7 @@ namespace Octide.ViewModel
             _font = f;
             RemoveFontCommand = new RelayCommand(RemoveFont);
             RaisePropertyChanged("FontControlVisibility");
+            RaisePropertyChanged("Asset");
         }
 
         public int Size
@@ -40,7 +42,7 @@ namespace Octide.ViewModel
                 RaisePropertyChanged("Size");
             }
         }
-       
+
         public Asset Asset
         {
             get
@@ -54,7 +56,7 @@ namespace Octide.ViewModel
                 if (_font == null)
                     _font = new Font();
                 _font.Src = value?.FullPath;
-                ViewModelLocator.GameTabViewModel.UpdateFonts();
+                ViewModelLocator.GameFontTabViewModel.UpdateFonts();
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("FontAsset");
                 RaisePropertyChanged("Size");
@@ -66,6 +68,7 @@ namespace Octide.ViewModel
         {
             get
             {
+                if (_font == null) return null;
                 using (var pf = new PrivateFontCollection())
                 {
                     pf.AddFontFile(Asset.FullPath);
@@ -82,7 +85,7 @@ namespace Octide.ViewModel
         public void RemoveFont()
         {
             _font = null;
-            ViewModelLocator.GameTabViewModel.UpdateFonts();
+            ViewModelLocator.GameFontTabViewModel.UpdateFonts();
             RaisePropertyChanged("FontControlVisibility");
             RaisePropertyChanged("Size");
             RaisePropertyChanged("Asset");
@@ -97,6 +100,6 @@ namespace Octide.ViewModel
         }
         public static void SetFont(Asset font)
         {
-            }
         }
+    }
 }

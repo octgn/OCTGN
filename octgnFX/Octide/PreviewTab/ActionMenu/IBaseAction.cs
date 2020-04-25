@@ -3,7 +3,10 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using Octgn.DataNew.Entities;
+using Octide.ViewModel;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace Octide.ItemModel
@@ -11,6 +14,7 @@ namespace Octide.ItemModel
     public abstract class IBaseAction : IdeBaseItem
     {
         public IGroupAction _action;
+        public List<PythonFunctionDefItemModel> PythonFunctions => ViewModelLocator.ScriptsTabViewModel.PythonFunctions;
 
         public IBaseAction(IdeCollection<IdeBaseItem> source) : base(source)
         {
@@ -70,30 +74,30 @@ namespace Octide.ItemModel
 
         }
 
-        public string HeaderExecute
+        public PythonFunctionDefItemModel HeaderExecute
         {
             get
             {
-                return _action.HeaderExecute;
+                return PythonFunctions.FirstOrDefault(x => x.Name == _action.HeaderExecute);
             }
             set
             {
-                if (value == _action.HeaderExecute) return;
-                _action.HeaderExecute = value;
+                if (_action.HeaderExecute == value.Name) return;
+                _action.HeaderExecute = value.Name;
                 RaisePropertyChanged("HeaderExecute");
             }
         }
 
-        public string ShowExecute
+        public PythonFunctionDefItemModel ShowExecute
         {
             get
             {
-                return _action.ShowExecute;
+                return PythonFunctions.FirstOrDefault(x => x.Name == _action.ShowExecute);
             }
             set
             {
-                if (value == _action.ShowExecute) return;
-                _action.ShowExecute = value;
+                if (_action.ShowExecute == value.Name) return;
+                _action.ShowExecute = value.Name;
                 RaisePropertyChanged("ShowExecute");
             }
         }

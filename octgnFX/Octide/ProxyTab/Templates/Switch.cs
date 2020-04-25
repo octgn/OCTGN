@@ -17,9 +17,9 @@ using System.Linq;
 using System.Windows;
 using System.Xml;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
-    public class SwitchBlockModel : IBaseBlock
+    public class SwitchBlockModel : IBaseBlock, IDroppable
     {
         public PropertyItemModel _property;
         public IdeCollection<IdeBaseItem> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
@@ -146,6 +146,19 @@ namespace Octide.ProxyTab.TemplateItemModel
         public override object Create()
         {
             return new SwitchBlockModel(Source);
+        }
+
+        public bool CanAccept(object item)
+        {
+            if (item is SwitchCaseModel)
+            {
+                return true;
+            }
+            if (item is DefaultCaseModel)
+            {
+                return (DefaultCase == null) ? true : false;
+            }
+            return false;
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)

@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public class PackagePropertyModel : IdeBaseItem
+    public class PackagePropertyModel : IdeBaseItem, IDroppable
     {
         public bool isIncludeProperty { get; set; }
         public PickProperty PropertyDef { get; set; }
@@ -61,6 +61,11 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new PackagePropertyModel(Source);
+        }
+
+        public bool CanAccept(object item)
+        {
+            return false;
         }
 
         public PropertyItemModel ActiveProperty

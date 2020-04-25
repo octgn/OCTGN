@@ -4,15 +4,13 @@
 
 using GalaSoft.MvvmLight;
 using Octgn.ProxyGenerator.Definitions;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
-    public class BlockContainer : ViewModelBase
+    public class BlockContainer : ViewModelBase, IDroppable
     {
         public delegate void ContainerChangeEventHandler(object sender, NotifyCollectionChangedEventArgs e);
 
@@ -136,18 +134,27 @@ namespace Octide.ProxyTab.TemplateItemModel
 
         public void AddLink(OverlayLinkModel link, int index)
         {
-            OverlayLinkContainer container = FindAdjacentLinkContainer(index);
-            if (container == null)
+            // if the next item is the OverlayLinkContainer
+            if (index < Items.Count && Items[index] is OverlayLinkContainer nextContainer)
             {
-                container = new OverlayLinkContainer(Items);
-                container.Items.CollectionChanged += (a, b) =>
+                nextContainer.AddLink(0, link);
+            }
+            // if the previous item is the OverlayLinkContainer
+            else if (index > 0 && Items[index - 1] is OverlayLinkContainer previousContainer)
+            {
+                previousContainer.AddLink(previousContainer.Items.Count, link);
+            }
+            // if there isn't any adjacent OverlayLinkContainers
+            else
+            {
+                var newContainer = new OverlayLinkContainer(Items);
+                newContainer.Items.CollectionChanged += (a, b) =>
                 {
                     OnContainerChanged?.Invoke(this, b);
                 };
-                Items.Insert(index, container);
+                Items.Insert(index, newContainer);
+                newContainer.AddLink(0, link);
             }
-
-            container.AddLink(link);
         }
 
         public OverlayLinkContainer FindAdjacentLinkContainer(int index)
@@ -159,6 +166,13 @@ namespace Octide.ProxyTab.TemplateItemModel
                 return Items[index - 1] as OverlayLinkContainer;
             return null;
             
+        }
+
+        public bool CanAccept(object item)
+        {
+            if (item is IBaseBlock)
+                return true;
+            return false;
         }
     }
 

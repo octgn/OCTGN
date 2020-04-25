@@ -15,10 +15,10 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Octide.Messages;
 
-namespace Octide.ProxyTab.TemplateItemModel
+namespace Octide.ProxyTab.ItemModel
 {
 
-    public class OverlayLinkModel : IBaseBlock
+    public class OverlayLinkModel : IBaseBlock, IDroppable
     {
         public OverlayLinkModel(IdeCollection<IdeBaseItem> source) : base(source) //new
         {
@@ -45,11 +45,11 @@ namespace Octide.ProxyTab.TemplateItemModel
             _wrapper = new LinkDefinition.LinkWrapper() { Link = _linkDefinition };
 
         }
-        public ProxyOverlayDefinitionItemModel LinkedBlock
+        public OverlayBlockDefinitionItemModel LinkedBlock
         {
             get
             {
-                return (ProxyOverlayDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.OverlayBlocks.FirstOrDefault(x => ((ProxyOverlayDefinitionItemModel)x)._def.id == _wrapper.Link.Block);
+                return (OverlayBlockDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.OverlayBlocks.FirstOrDefault(x => ((OverlayBlockDefinitionItemModel)x)._def.id == _wrapper.Link.Block);
             }
             set
             {
@@ -67,12 +67,22 @@ namespace Octide.ProxyTab.TemplateItemModel
             return new OverlayLinkModel(Source);
         }
 
+        public bool CanAccept(object item)
+        {
+            if (item is OverlayBlockDefinitionItemModel)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
-    public class TextLinkModel : IBaseBlock
+    public class TextLinkModel : IBaseBlock, IDroppable
     {
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public RelayCommand AddPropertyCommand { get; set; }
+
+
         public TextLinkModel(IdeCollection<IdeBaseItem> source) : base(source) //new
         {
             var _linkDefinition = new LinkDefinition()
@@ -140,16 +150,24 @@ namespace Octide.ProxyTab.TemplateItemModel
         {
             return new TextLinkModel(Source);
         }
+        public bool CanAccept(object item)
+        {
+            if (item is TextLinkPropertyModel || item is TextBlockDefinitionItemModel)
+            {
+                return true;
+            }
+            return false;
+        }
 
         public void AddProperty()
         {
             Items.Add(new TextLinkPropertyModel(Items));
         }
-        public ProxyTextDefinitionItemModel LinkedBlock
+        public TextBlockDefinitionItemModel LinkedBlock
         {
             get
             {
-                return (ProxyTextDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.TextBlocks.FirstOrDefault(x => ((ProxyTextDefinitionItemModel)x)._def.id == _wrapper.Link.Block);
+                return (TextBlockDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.TextBlocks.FirstOrDefault(x => ((TextBlockDefinitionItemModel)x)._def.id == _wrapper.Link.Block);
             }
             set
             {

@@ -14,9 +14,9 @@ namespace Octide.Views
     /// <summary>
     /// Interaction logic for ProxyTextBlockDefinitionItemView.xaml
     /// </summary>
-    public partial class ProxyTextBlockDefinitionItemView : UserControl
+    public partial class TextBlockDefinitionItemView : UserControl
     {
-        public ProxyTextBlockDefinitionItemView()
+        public TextBlockDefinitionItemView()
         {
             InitializeComponent();
         }

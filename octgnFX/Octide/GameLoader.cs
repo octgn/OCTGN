@@ -25,11 +25,14 @@ namespace Octide
     using System.Collections.ObjectModel;
     using NuGet.Packaging;
     using NuGet.Versioning;
+    using System.Xml.Linq;
 
     public class GameLoader : ViewModelBase
     {
         private Game game;
         private IEnumerable<Set> sets;
+        private IEnumerable<GameScript> scripts;
+        private IEnumerable<string> events;
         private ProxyDefinition proxyDef;
         private String gamePath;
         private bool needsSave;
@@ -63,6 +66,36 @@ namespace Octide
                 this.sets = value;
                 this.RaisePropertyChanged("Sets");
                 Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<Set>>(this, this.sets, value, "Sets")));
+            }
+        }
+        public IEnumerable<GameScript> Scripts
+        {
+            get
+            {
+                return this.scripts;
+            }
+            set
+            {
+                if (value == this.scripts) return;
+                this.scripts = value;
+                this.RaisePropertyChanged("Scripts");
+                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<GameScript>>(this, this.scripts, value, "Scripts")));
+            }
+        }
+
+        public IEnumerable<string> Events
+        {
+            get
+            {
+                return this.Events;
+            }
+            set
+            {
+                if (value == this.Events) return;
+                this.Events = value;
+                this.RaisePropertyChanged("Events");
+                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<string>>(this, this.Events, value, "Events")));
+
             }
         }
 
@@ -122,8 +155,8 @@ namespace Octide
         public bool DidManualSave { get; set; }
 
 		public GameLoader()
-		{
-		}
+        {
+        }
 
         public void New()
         {
@@ -185,21 +218,27 @@ namespace Octide
 			Game = game;
 			GamePath = Game.InstallPath;
 			Sets = Game.Sets().ToList();
+			Scripts = Game.GetScripts().ToList();
 			ProxyDef = Game.GetCardProxyDef();
 		}
         public void SaveGame()
         {
          //   if (!NeedsSave)
          //       return;
-            var g = new Octgn.DataNew.GameSerializer();
-            g.Serialize(Game);
-            var s = new Octgn.DataNew.SetSerializer();
+            var gameSerializer = new Octgn.DataNew.GameSerializer();
+            gameSerializer.Serialize(Game);
+            var setSerializer = new Octgn.DataNew.SetSerializer() { Game = Game };
             foreach(Set set in this.Sets)
             {
-                s.Serialize(set);
+                setSerializer.Serialize(set);
             }
-            var p = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id);
-            p.Serialize(ProxyDef);
+            var scriptSerializer = new Octgn.DataNew.GameScriptSerializer(Game.Id) { Game = Game };
+            foreach(GameScript script in this.Scripts)
+            {
+                scriptSerializer.Serialize(script);
+            }
+            var proxySerializer = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id) { Game = Game };
+            proxySerializer.Serialize(ProxyDef);
             NeedsSave = false;
             DidManualSave = true;
         }
