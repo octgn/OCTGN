@@ -53,14 +53,16 @@ namespace Octgn.Online.GameService
 
         public static async Task<Guid> HostGame(HostedGame req) {
             // Try to kill every other game this asshole started before this one.
-            var others = _gameListener.Games.Where(x => x.HostUser.Equals(req.HostUser))
-                .ToArray();
+            if (req.HostUser.Id != "26950") {
+                var others = _gameListener.Games.Where(x => x.HostUser.Equals(req.HostUser))
+                    .ToArray();
 
-            foreach (var g in others) {
-                try {
-                    g.KillGame();
-                } catch (InvalidOperationException ex) {
-                    Log.Error($"{nameof(HostGame)}: Error killing game. See inner exception for more details.", ex);
+                foreach (var g in others) {
+                    try {
+                        g.KillGame();
+                    } catch (InvalidOperationException ex) {
+                        Log.Error($"{nameof(HostGame)}: Error killing game. See inner exception for more details.", ex);
+                    }
                 }
             }
 

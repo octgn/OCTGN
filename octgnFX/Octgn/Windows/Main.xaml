@@ -55,6 +55,8 @@
             </MenuItem>
             <MenuItem Header="Su_bscribe" Click="MenuSubscribeClick" Foreground="#ffff45" FontWeight="Bold">
             </MenuItem>
+            <MenuItem Header="Do_nate" Click="MenuDonateClick" Foreground="#FFA500" FontWeight="Bold">
+            </MenuItem>
         </Menu>
         <Border Grid.Column="2">
         </Border>
