@@ -1212,12 +1212,12 @@
     <xs:complexContent>
       <xs:extension base="baseAction">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="cardaction" type="action" />
-          <xs:element name="groupaction" type="action" />
-          <xs:element name="cardactions" type="actionSubmenu" />
-          <xs:element name="groupactions" type="actionSubmenu" />
-          <xs:element name="cardseparator" type="cardActionSeparator" />
+          <xs:element name="groupaction" type="groupAction" />
+          <xs:element name="groupactions" type="groupActionSubmenu" />
+          <xs:element name="cardaction" type="cardAction" />
+          <xs:element name="cardactions" type="cardActionSubmenu" />
           <xs:element name="groupseparator" type="groupActionSeparator" />
+          <xs:element name="cardseparator" type="cardActionSeparator" />
         </xs:choice>
       </xs:extension>
     </xs:complexContent>

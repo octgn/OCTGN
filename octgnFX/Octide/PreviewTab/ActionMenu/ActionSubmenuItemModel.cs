@@ -19,17 +19,17 @@ namespace Octide.ItemModel
 
         public ActionSubmenuItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
-            _action = new GroupActionGroup();
+            _action = new GroupActionSubmenu();
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (a, b) =>
             {
-                ((GroupActionGroup)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
+                ((GroupActionSubmenu)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
             };
             Name = "New Submenu";
             Items.Add(new ActionItemModel(Items));
         }
 
-        public ActionSubmenuItemModel(GroupActionGroup a, IdeCollection<IdeBaseItem> source) : base(source)  //load item
+        public ActionSubmenuItemModel(GroupActionSubmenu a, IdeCollection<IdeBaseItem> source) : base(source)  //load item
         {
             _action = a;
             Items = new IdeCollection<IdeBaseItem>(this);
@@ -39,13 +39,13 @@ namespace Octide.ItemModel
             }
             Items.CollectionChanged += (b, c) =>
             {
-                ((GroupActionGroup)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
+                ((GroupActionSubmenu)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
             };
         }
 
         public ActionSubmenuItemModel(ActionSubmenuItemModel a, IdeCollection<IdeBaseItem> source) : base(source)  //copy item
         {
-            _action = new GroupActionGroup
+            _action = new GroupActionSubmenu
             {
 
                 HeaderExecute = a._action.HeaderExecute,
@@ -56,7 +56,7 @@ namespace Octide.ItemModel
             Items = new IdeCollection<IdeBaseItem>(this);
             Items.CollectionChanged += (b, c) =>
             {
-                ((GroupActionGroup)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
+                ((GroupActionSubmenu)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
             };
             foreach (ActionSubmenuItemModel action in a.Items)
             {

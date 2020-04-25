@@ -631,10 +631,10 @@ namespace Octgn.Play
                         shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
                 if (match != null)
                 {
-                    if (match.ActionDef.AsAction().Execute != null)
+                    if (match.ActionDef.AsAction().IsBatchExecutable)
+                        ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().Execute, Selection.Cards);
+                    else
                         ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, Selection.Cards);
-                    else if (match.ActionDef.AsAction().BatchExecute != null)
-                        ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, Selection.Cards);
                     e.Handled = true;
                     return;
                 }

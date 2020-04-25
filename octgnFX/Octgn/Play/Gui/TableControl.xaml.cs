@@ -976,11 +976,11 @@ namespace Octgn.Play.Gui
         protected override void CardActionClicked(object sender, RoutedEventArgs e)
         {
             var action = (DataNew.Entities.GroupAction)((MenuItem)sender).Tag;
-            if (action.Execute != null)
-                ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard),
+            if (action.IsBatchExecutable)
+                ScriptEngine.ExecuteOnBatch(action.Execute, Selection.ExtendToSelection(ContextCard),
                                             ContextMenuPosition);
-            else if (action.BatchExecute != null)
-                ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard),
+            else
+                ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard),
                                             ContextMenuPosition);
         }
 

@@ -26,8 +26,8 @@ namespace Octide.ItemModel
             IBaseAction ret = null;
             if (action is GroupAction)
                 ret = new ActionItemModel((GroupAction)action, source);
-            else if (action is GroupActionGroup)
-                ret = new ActionSubmenuItemModel((GroupActionGroup)action, source);
+            else if (action is GroupActionSubmenu)
+                ret = new ActionSubmenuItemModel((GroupActionSubmenu)action, source);
             else if (action is GroupActionSeparator)
                 ret = new ActionSeparatorItemModel((GroupActionSeparator)action, source);
             return ret;

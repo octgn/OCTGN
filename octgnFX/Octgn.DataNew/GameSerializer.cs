@@ -625,72 +625,8 @@ namespace Octgn.DataNew
             }
             if (grp.Items != null)
             {
-                foreach (var item in grp.Items)
-                {
-                    if (item is action)
-                    {
-                        var i = item as action;
-                        var to = new GroupAction
-                                     {
-                                         Name = i.menu,
-                                         Shortcut = i.shortcut,
-                                         ShowExecute = i.showIf,
-                                         HeaderExecute = i.getName,
-                                         BatchExecute = i.batchExecute,
-                                         Execute = i.execute,
-                                         DefaultAction = bool.Parse(i.@default.ToString())
-                                     };
-                        if (item is cardAction)
-                        {
-                            to.IsGroup = false;
-                            (ret.CardActions as List<IGroupAction>).Add(to);
-                        }
-                        else if (item is groupAction)
-                        {
-                            to.IsGroup = true;
-                            (ret.GroupActions as List<IGroupAction>).Add(to);
-                        }
-                    }
-                    else if (item is actionSubmenu)
-                    {
-                        var i = item as actionSubmenu;
-                        var to = new GroupActionGroup
-                        {
-                            Children = new List<IGroupAction>(),
-                            Name = i.menu,
-                            ShowExecute = i.showIf,
-                            HeaderExecute = i.getName,
-                        };
-                        if (item is cardActionSubmenu)
-                        {
-                            to.IsGroup = false;
-                            to.Children = this.DeserializeGroupActionGroup(i, false);
-                            (ret.CardActions as List<IGroupAction>).Add(to);
-                        }
-                        else if (item is groupActionSubmenu)
-                        {
-                            to.IsGroup = true;
-                            to.Children = this.DeserializeGroupActionGroup(i, true);
-                            (ret.GroupActions as List<IGroupAction>).Add(to);
-                        }
-                    }
-                    else if (item is actionSeparator)
-                    {
-                        var separator = new GroupActionSeparator {
-                            ShowExecute = item.showIf,
-                        };
-                        if (item is groupActionSeparator)
-                        {
-                            separator.IsGroup = true;
-                            (ret.GroupActions as List<IGroupAction>).Add(separator);
-                        }
-                        else if (item is cardActionSeparator)
-                        {
-                            separator.IsGroup = false;
-                            (ret.CardActions as List<IGroupAction>).Add(separator);
-                        }
-                    }
-                }
+                ret.CardActions = DeserializeGroupActionList(grp.Items, false);
+                ret.GroupActions = DeserializeGroupActionList(grp.Items, true);
             }
             switch (grp.visibility)
             {
@@ -712,7 +648,59 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup, bool isGroup)
+        internal IEnumerable<IGroupAction> DeserializeGroupActionList(IEnumerable<baseAction> actiongroup, bool isGroup)
+        {
+            var ret = new List<IGroupAction>();
+       //     if (actiongroup.Items == null) return ret;
+            foreach (baseAction item in actiongroup)
+            {
+                if (item is action action)
+                {
+                    if ((action is cardAction) == isGroup)
+                        continue;
+                    var addAction = new GroupAction
+                    {
+                        Name = action.menu,
+                        Shortcut = action.shortcut,
+                        IsBatchExecutable = (action.batchExecute != null),
+                        ShowExecute = action.showIf,
+                        HeaderExecute = action.getName,
+                        DefaultAction = bool.Parse(action.@default.ToString())
+                    };
+                    addAction.Execute = (addAction.IsBatchExecutable) ? action.batchExecute : action.execute;
+                    addAction.IsGroup = isGroup;
+                    ret.Add(addAction);
+                }
+                else if (item is actionSubmenu submenu)
+                {
+                    if ((submenu is cardActionSubmenu) == isGroup)
+                        continue;
+                    var addgroup = new GroupActionSubmenu
+                    {
+                        Children = new List<IGroupAction>(),
+                        Name = submenu.menu,
+                        IsGroup = isGroup,
+                        ShowExecute = submenu.showIf,
+                        HeaderExecute = submenu.getName
+                    };
+                    addgroup.Children = this.DeserializeGroupActionList(submenu.Items, isGroup);
+                    ret.Add(addgroup);
+                }
+                else if (item is actionSeparator separator)
+                {
+                    if ((separator is cardActionSeparator) == isGroup)
+                        continue;
+                    var groupActionSeparator = new GroupActionSeparator
+                    {
+                        IsGroup = isGroup,
+                        ShowExecute = separator.showIf
+                    };
+                    ret.Add(groupActionSeparator);
+                }
+            }
+            return ret;
+        }
+        internal IEnumerable<IGroupAction> DeserializeGroupActionSubmenu(actionSubmenu actiongroup, bool isGroup)
         {
             var ret = new List<IGroupAction>();
             if (actiongroup.Items == null) return ret;
@@ -726,7 +714,6 @@ namespace Octgn.DataNew
                         Name = i.menu,
                         Shortcut = i.shortcut,
                         Execute = i.execute,
-                        BatchExecute = i.batchExecute,
                         ShowExecute = i.showIf,
                         HeaderExecute = i.getName,
                         DefaultAction = bool.Parse(i.@default.ToString())
@@ -737,7 +724,7 @@ namespace Octgn.DataNew
                 if (item is actionSubmenu)
                 {
                     var i = item as actionSubmenu;
-                    var addgroup = new GroupActionGroup
+                    var addgroup = new GroupActionSubmenu
                     {
                         Children = new List<IGroupAction>(),
                         Name = i.menu,
@@ -745,7 +732,7 @@ namespace Octgn.DataNew
                         ShowExecute = i.showIf,
                         HeaderExecute = i.getName
                     };
-                    addgroup.Children = this.DeserializeGroupActionGroup(i, isGroup);
+                    addgroup.Children = this.DeserializeGroupActionSubmenu(i, isGroup);
                     ret.Add(addgroup);
                 }
                 if (item is actionSeparator)
@@ -1307,43 +1294,33 @@ namespace Octgn.DataNew
         {
             foreach (var a in actions)
             {
-                if (a is GroupAction)
+                if (a is GroupAction groupAction)
                 {
-                    var i = a as GroupAction;
                     action ret = IsGroup ? (action)new groupAction() : new cardAction();
-                    ret.@default = i.DefaultAction ? boolean.True : boolean.False;
-                    ret.showIf = i.ShowExecute;
-                    ret.getName = i.HeaderExecute;
-                    ret.batchExecute = i.BatchExecute;
-                    ret.execute = i.Execute;
-                    ret.menu = i.Name;
-                    ret.shortcut = i.Shortcut;
+                    ret.@default = groupAction.DefaultAction ? boolean.True : boolean.False;
+                    ret.showIf = groupAction.ShowExecute;
+                    ret.getName = groupAction.HeaderExecute;
+                    if (groupAction.IsBatchExecutable)
+                        ret.batchExecute = groupAction.Execute;
+                    else
+                        ret.execute = groupAction.Execute;
+                    ret.menu = groupAction.Name;
+                    ret.shortcut = groupAction.Shortcut;
                     yield return ret;
                 }
-                else if (a is GroupActionGroup)
+                else if (a is GroupActionSubmenu actionSubmenu)
                 {
-                    var i = a as GroupActionGroup;
                     var ret = IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
-                    ret.menu = i.Name;
-                    ret.showIf = i.ShowExecute;
-                    ret.getName = i.HeaderExecute;
-                    ret.Items = SerializeActions(i.Children, IsGroup).ToArray();
-                    ret.ItemsElementName = i.Children.Select(x =>
-                    {
-                        if (IsGroup && x is GroupAction) return ItemsChoiceType.groupaction;
-                        else if (IsGroup && x is GroupActionGroup) return ItemsChoiceType.groupactions;
-                        else if (IsGroup && x is GroupActionSeparator) return ItemsChoiceType.groupseparator;
-                        else if (!IsGroup && x is GroupAction) return ItemsChoiceType.cardaction;
-                        else if (!IsGroup && x is GroupActionGroup) return ItemsChoiceType.cardactions;
-                        else return ItemsChoiceType.cardseparator;
-                    }).ToArray();
+                    ret.menu = actionSubmenu.Name;
+                    ret.showIf = actionSubmenu.ShowExecute;
+                    ret.getName = actionSubmenu.HeaderExecute;
+                    ret.Items = SerializeActions(actionSubmenu.Children, IsGroup).ToArray();
                     yield return ret;
                 }
-                else if (a is GroupActionSeparator)
+                else if (a is GroupActionSeparator actionSeparator)
                 {
-                    var i = a as GroupActionSeparator;
                     var ret = IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
-                    ret.showIf = i.ShowExecute;
+                    ret.showIf = actionSeparator.ShowExecute;
                     yield return ret;
                 }
             }

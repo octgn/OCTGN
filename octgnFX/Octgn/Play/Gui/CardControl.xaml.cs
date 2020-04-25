@@ -1072,10 +1072,10 @@ namespace Octgn.Play.Gui
                             Point? pos = GroupControl is TableControl
                                              ? ((TableControl)GroupControl).MousePosition()
                                              : (Point?)null;
-                            if (match.ActionDef.AsAction().Execute != null)
+                            if (match.ActionDef.AsAction().IsBatchExecutable)
+                                ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().Execute, targets, pos);
+                            else
                                 ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, targets, pos);
-                            else if (match.ActionDef.AsAction().BatchExecute != null)
-                                ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, targets, pos);
                             e.Handled = te.Handled = true;
                             break;
                         }

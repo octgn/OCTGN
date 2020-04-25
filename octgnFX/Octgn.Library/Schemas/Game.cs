@@ -629,8 +629,8 @@ public enum boolean {
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(groupAction))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(cardAction))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(actionSubmenu))]
-[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(cardActionSubmenu))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -787,8 +787,8 @@ public partial class cardAction : action {
 }
 
 /// <remarks/>
-[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(cardActionSubmenu))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -797,16 +797,13 @@ public partial class actionSubmenu : baseAction {
     
     private baseAction[] itemsField;
     
-    private ItemsChoiceType[] itemsElementNameField;
-    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("cardaction", typeof(action), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("cardactions", typeof(actionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("cardaction", typeof(cardAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("cardactions", typeof(cardActionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("cardseparator", typeof(cardActionSeparator), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("groupaction", typeof(action), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("groupactions", typeof(actionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("groupaction", typeof(groupAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("groupactions", typeof(groupActionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("groupseparator", typeof(groupActionSeparator), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
     public baseAction[] Items {
         get {
             return this.itemsField;
@@ -815,51 +812,6 @@ public partial class actionSubmenu : baseAction {
             this.itemsField = value;
         }
     }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("ItemsElementName")]
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public ItemsChoiceType[] ItemsElementName {
-        get {
-            return this.itemsElementNameField;
-        }
-        set {
-            this.itemsElementNameField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]
-public enum ItemsChoiceType {
-    
-    /// <remarks/>
-    cardaction,
-    
-    /// <remarks/>
-    cardactions,
-    
-    /// <remarks/>
-    cardseparator,
-    
-    /// <remarks/>
-    groupaction,
-    
-    /// <remarks/>
-    groupactions,
-    
-    /// <remarks/>
-    groupseparator,
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-public partial class groupActionSubmenu : actionSubmenu {
 }
 
 /// <remarks/>
@@ -868,6 +820,14 @@ public partial class groupActionSubmenu : actionSubmenu {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class cardActionSubmenu : actionSubmenu {
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class groupActionSubmenu : actionSubmenu {
 }
 
 /// <remarks/>

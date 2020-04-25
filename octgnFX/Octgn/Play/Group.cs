@@ -218,7 +218,7 @@ namespace Octgn.Play
             IEnumerable<GroupAction> actionDef = baseActionDef
                 .Flatten(x =>
                              {
-                                 var y = x as GroupActionGroup;
+                                 var y = x as GroupActionSubmenu;
                                  return y == null ? null : y.Children;
                              })
                 .OfType<GroupAction>();

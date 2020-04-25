@@ -20,8 +20,6 @@ namespace Octide.ItemModel
 
     public class ActionItemModel : IBaseAction
     {
-        public bool _batch;
-
         public ActionItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
             CanBeDefault = true;
@@ -34,7 +32,6 @@ namespace Octide.ItemModel
             CanBeDefault = true;
             _action = a;
             if (a.DefaultAction) IsDefault = true;
-            if (a.BatchExecute != null) _batch = true;
         }
 
         public ActionItemModel(ActionItemModel a, IdeCollection<IdeBaseItem> source) : base(source) //copy item
@@ -42,17 +39,15 @@ namespace Octide.ItemModel
             CanBeDefault = true;
             _action = new GroupAction
             {
-                BatchExecute = ((GroupAction)a._action).BatchExecute,
                 DefaultAction = ((GroupAction)a._action).DefaultAction,
                 Execute = ((GroupAction)a._action).Execute,
-                HeaderExecute = a._action.HeaderExecute,
+                IsBatchExecutable = a.Batch,
                 IsGroup = a.IsGroup,
                 Name = a.Name,
                 Shortcut = a.Shortcut,
-                ShowExecute = a._action.HeaderExecute
+                HeaderExecute = a._action.HeaderExecute,
+                ShowExecute = a._action.ShowExecute
             };
-            if (a.Batch)
-                _batch = true;
         }
 
         public override object Clone()
@@ -82,27 +77,12 @@ namespace Octide.ItemModel
         {
             get
             {
-                if (Batch == true)
-                {
-                    return PythonFunctions.FirstOrDefault(x => x.Name == ((GroupAction)_action).BatchExecute);
-                }
-                else
-                {
-                    return PythonFunctions.FirstOrDefault(x => x.Name == ((GroupAction)_action).Execute);
-                }
+                return PythonFunctions.FirstOrDefault(x => x.Name == ((GroupAction)_action).Execute);
             }
             set
             {
-                if (Batch == true)
-                {
-                    if (((GroupAction)_action).BatchExecute == value.Name) return;
-                    ((GroupAction)_action).BatchExecute = value.Name;
-                }
-                else
-                {
-                    if (((GroupAction)_action).Execute == value.Name) return;
-                    ((GroupAction)_action).Execute = value.Name;
-                }
+                if (((GroupAction)_action).Execute == value.Name) return;
+                ((GroupAction)_action).Execute = value.Name;
                 RaisePropertyChanged("Execute");
             }
         }
@@ -112,24 +92,13 @@ namespace Octide.ItemModel
         {
             get
             {
-                return _batch;
+                return ((GroupAction)_action).IsBatchExecutable;
             }
             set
             {
-                if (value == _batch) return;
-                _batch = value;
-                if (value == true)
-                {
-                    ((GroupAction)_action).BatchExecute = ((GroupAction)_action).Execute;
-                    ((GroupAction)_action).Execute = null;
-                }
-                else
-                {
-                    ((GroupAction)_action).Execute = ((GroupAction)_action).Execute;
-                    ((GroupAction)_action).BatchExecute = null;
-                }
+                if (((GroupAction)_action).IsBatchExecutable == value) return;
+                ((GroupAction)_action).IsBatchExecutable = value;
                 RaisePropertyChanged("Batch");
-                RaisePropertyChanged("Execute");
             }
         }
     }
