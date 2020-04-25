@@ -320,5 +320,9 @@ namespace Octgn.Windows
         {
             Program.LaunchUrl("https://play.google.com/store/apps/details?id=com.octgn.app");
         }
+
+        private void MenuDonateClick(object sender, RoutedEventArgs e) {
+            Program.LaunchUrl("http://octgn.net/Home/Donate");
+        }
     }
 }

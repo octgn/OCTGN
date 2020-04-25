@@ -67,7 +67,6 @@ namespace Octgn.Controls
             Specators = true;
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
-            Program.LobbyClient.Hosting().HostedGameReady += LobbyClient_HostedGameReady;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             TextBoxGameName.Text = Prefs.LastRoomName ?? Randomness.RandomRoomName();
@@ -158,34 +157,6 @@ namespace Octgn.Controls
             ErrorMessageBorder.Visibility = HasErrors ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        #region LobbyEvents
-
-        private async void LobbyClient_HostedGameReady(object sender, HostedGameReadyEventArgs e) {
-            try
-            {
-                var gameData = e.Game;
-                var game = this.Game;
-
-                Program.GameEngine = new GameEngine(game,Program.LobbyClient.User.DisplayName,false,this.Password);
-                Program.IsHost = true;
-
-                var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
-
-                // Should use gameData.IpAddress sometime.
-                Program.Client = new ClientSocket(hostAddress, gameData.Port);
-                await Program.Client.Connect();
-                SuccessfulHost = true;
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine(ex.StackTrace);
-            }
-
-        }
-        #endregion
-
         #region Dialog
         public void Show(Decorator placeholder)
         {
@@ -213,7 +184,6 @@ namespace Octgn.Controls
         private void Close(DialogResult result)
         {
             Program.OnOptionsChanged -= ProgramOnOptionsChanged;
-            Program.LobbyClient.Hosting().HostedGameReady -= LobbyClient_HostedGameReady;
             IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
             Gamename = TextBoxGameName.Text;
             Password = PasswordGame.Password;
@@ -418,7 +388,6 @@ namespace Octgn.Controls
                     OnClose -= (Action<object, DialogResult>)d;
                 }
             }
-            Program.LobbyClient.Hosting().HostedGameReady -= LobbyClient_HostedGameReady;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
         }

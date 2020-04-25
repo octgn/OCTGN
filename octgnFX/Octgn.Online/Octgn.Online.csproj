@@ -2,9 +2,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>3.4.217.0</Version>
-    <AssemblyVersion>3.4.217.0</AssemblyVersion>
-    <FileVersion>3.4.217.0</FileVersion>
+    <Version>3.4.225.0</Version>
+    <AssemblyVersion>3.4.225.0</AssemblyVersion>
+    <FileVersion>3.4.225.0</FileVersion>
     <Authors>Kelly Elton</Authors>
     <Company>Octgn</Company>
     <Description>Shared library for online access in OCTGN.</Description>
@@ -14,6 +14,6 @@
     <Product>Octgn.Online</Product>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Octgn.Communication" Version="2.0.83" />
+    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
   </ItemGroup>
 </Project>

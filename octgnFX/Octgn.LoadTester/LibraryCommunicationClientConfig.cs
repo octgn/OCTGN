@@ -2,7 +2,7 @@
 using Octgn.Library.Communication;
 using System;
 
-namespace Octgn
+namespace Octgn.LoadTester
 {
     public class LibraryCommunicationClientConfig : IClientConfig
     {
@@ -12,7 +12,7 @@ namespace Octgn
 
         public IConnectionCreator ConnectionCreator { get; }
 
-        public LibraryCommunicationClientConfig(IConnectionCreator connectionCreator) : this(AppConfig.ChatServerHost, "gameserv", connectionCreator) {
+        public LibraryCommunicationClientConfig(IConnectionCreator connectionCreator) : this("data.octgn.net:5223", "gameserv", connectionCreator) {
 
         }
 
@@ -26,4 +26,5 @@ namespace Octgn
             ConnectionCreator = connectionCreator;
         }
     }
+
 }
