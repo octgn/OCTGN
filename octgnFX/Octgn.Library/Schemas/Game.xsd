@@ -48,7 +48,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
         <xs:element name="scripts" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -671,7 +671,7 @@
         </xs:element>
         <xs:element name="deck" type="deck" minOccurs="0" maxOccurs="1"/>
         <xs:element name="sharedDeck" type="deck" minOccurs="0" />
-      </xs:sequence>
+      </xs:all>
       <xs:attribute name="id" use="required" type="guid">
         <xs:annotation>
           <xs:documentation>
