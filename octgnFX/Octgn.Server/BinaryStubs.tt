@@ -45,7 +45,7 @@ namespace Octgn.Server
 		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
-				writer.Write(_socket?.Server.Context.IsMuted ?? 0);
+				writer.Write(_socket?.Server.Context.State.IsMuted ?? 0);
 				writer.Write((byte)<#= msgId #>);
 <#
   PushIndent("\t\t\t\t");

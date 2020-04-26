@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Octgn.Online.Hosting;
 using Octgn.Library;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Octgn.Online.GameService
 {
@@ -66,20 +67,40 @@ namespace Octgn.Online.GameService
                 }
             }
 
-            var bport = AppConfig.Instance.GameBroadcastPort;
-
             req.Id = Guid.NewGuid();
             req.HostAddress = AppConfig.Instance.HostName + ":" + _networkHelper.NextPort.ToString();
 
             var waitTask = _gameListener.WaitForGame(req.Id);
 
-            var gameProcess = new HostedGameProcess(req, Service.IsDebug, false, AppConfig.Instance.GameBroadcastPort);
-
-            gameProcess.Start();
+            StartHostedGameProcess(req);
 
             await waitTask;
 
             return req.Id;
+        }
+
+        private static void StartHostedGameProcess(HostedGame req) {
+            var broadcastPort = AppConfig.Instance.GameBroadcastPort;
+
+            var args = HostedGameProcess.CreateArguments(req, broadcastPort, false);
+
+            var argString = string.Join(Environment.NewLine, args);
+
+            var fileName = "F:\\SASRequests";
+
+            if (!Directory.Exists(fileName)) {
+                Directory.CreateDirectory(fileName);
+            }
+
+            fileName = Path.Combine(fileName, req.Id.ToString() + ".startrequest");
+
+            using (var stream = File.Open(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            using (var writer = new StreamWriter(stream)) {
+                writer.WriteLine(req.OctgnVersion);
+                writer.Write(argString);
+
+                writer.Flush();
+            }
         }
 
         private static async void UpdateWebsiteTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs) {

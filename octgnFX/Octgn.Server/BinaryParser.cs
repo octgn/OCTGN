@@ -25,7 +25,7 @@ namespace Octgn.Server
 			MemoryStream stream = new MemoryStream(data);
 			BinaryReader reader = new BinaryReader(stream);
 			short length;
-			_socket.Server.Context.IsMuted = reader.ReadInt32();
+			_socket.Server.Context.State.IsMuted = reader.ReadInt32();
 			byte method = reader.ReadByte();
 			switch (method)
 			{
