@@ -93,11 +93,13 @@ namespace Octgn.Tabs.GameHistory
 
         private void ButtonDeleteClick(object sender, RoutedEventArgs e) {
             if (!IsRefreshingHistoryList) {
-                var selected = (GameHistoryViewModel)ListViewHistoryList.SelectedItem;
+                foreach (var selectedItem in ListViewHistoryList.SelectedItems) {
+                    var historyvm = (GameHistoryViewModel)selectedItem;
 
-                TryDelete(selected.LogFile);
-                TryDelete(selected.ReplayFile);
-                TryDelete(selected.Path);
+                    TryDelete(historyvm.LogFile);
+                    TryDelete(historyvm.ReplayFile);
+                    TryDelete(historyvm.Path);
+                }
 
                 RefreshHistoryListTimer_Tick(null, null);
             }
@@ -131,7 +133,7 @@ namespace Octgn.Tabs.GameHistory
         private bool _isHistorySelected;
 
         private void ListViewHistoryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) {
-            IsHistorySelected = ListViewHistoryList.SelectedItem != null;
+            IsHistorySelected = ListViewHistoryList.SelectedItems.Count > 0;
         }
 
         #region History List Refreshing

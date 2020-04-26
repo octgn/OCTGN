@@ -106,10 +106,9 @@
                   SelectionChanged="ListViewHistoryList_SelectionChanged"
                   ItemsSource="{Binding GameHistories, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
                   ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                  IsSynchronizedWithCurrentItem="True"
                   utils:GridViewSort.AutoSort="True"
                   Grid.RowSpan="3"
-                  SelectionMode="Single" HorizontalContentAlignment="Left"
+                  SelectionMode="Extended" HorizontalContentAlignment="Left"
                   AlternationCount="1">
             <ListView.View>
                 <GridView>
