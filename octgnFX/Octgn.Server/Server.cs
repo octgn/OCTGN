@@ -10,32 +10,31 @@ using Octgn.Online.Hosting;
 
 namespace Octgn.Server
 {
-
     public sealed class Server : IDisposable
     {
         private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(Server));
 
-        private readonly TcpListener _tcp; // Underlying windows socket
+        public GameContext Context { get; }
 
         public event EventHandler OnStop;
 
+        private Task _listenTask;
+        private bool _calledShutdown;
         private GameBroadcaster _broadcaster;
 
-        public GameContext Context { get; }
+        private readonly TcpListener _tcp; // Underlying windows socket
 
         public Server(Config config, HostedGame game, int broadcastPort) {
             Context = new GameContext(game, config);
 
-            Context.Players.PlayerDisconnected += Players_PlayerDisconnected;
-            Context.Players.AllPlayersDisconnected += Players_AllPlayersDisconnected;
+            Context.State.Players.PlayerDisconnected += Players_PlayerDisconnected;
+            Context.State.Players.AllPlayersDisconnected += Players_AllPlayersDisconnected;
 
             Log.InfoFormat("Creating server {0}", Context.Game.HostAddress);
 
             _tcp = new TcpListener(IPAddress.Any, Context.Game.Port);
             _broadcaster = new GameBroadcaster(Context.Game, broadcastPort);
         }
-
-        private Task _listenTask;
 
         public async Task Start() {
             if (_listenTask != null) throw new InvalidOperationException("Server already started.");
@@ -60,12 +59,12 @@ namespace Octgn.Server
                 case PlayerDisconnectedEventArgs.KickedReason: {
                         Context.Broadcaster.Error(string.Format(L.D.ServerMessage__PlayerKicked, e.Player.Nick, e.Details));
                         Context.Broadcaster.Leave(e.Player.Id);
-                        Context.Players.RemoveClient(e.Player);
+                        Context.State.Players.RemoveClient(e.Player);
                         break;
                     }
 
                 case PlayerDisconnectedEventArgs.ConnectionReplacedReason: {
-                        Context.Players.RemoveClient(e.Player);
+                        Context.State.Players.RemoveClient(e.Player);
                         return;
                     }
                 case PlayerDisconnectedEventArgs.DisconnectedReason: {
@@ -74,7 +73,7 @@ namespace Octgn.Server
                     }
                 case PlayerDisconnectedEventArgs.ShutdownReason: {
                         Context.Broadcaster.PlayerDisconnect(e.Player.Id);
-                        Context.Players.RemoveClient(e.Player);
+                        Context.State.Players.RemoveClient(e.Player);
                         break;
                     }
                 case PlayerDisconnectedEventArgs.TimeoutReason: {
@@ -83,7 +82,7 @@ namespace Octgn.Server
                     }
                 case PlayerDisconnectedEventArgs.LeaveReason: {
                         Context.Broadcaster.Leave(e.Player.Id);
-                        Context.Players.RemoveClient(e.Player);
+                        Context.State.Players.RemoveClient(e.Player);
                         break;
                     }
                 default: {
@@ -98,7 +97,6 @@ namespace Octgn.Server
             Shutdown();
         }
 
-        private bool _calledShutdown;
         private void Shutdown() {
             try {
                 if (_calledShutdown) return;
@@ -142,7 +140,7 @@ namespace Octgn.Server
                 if (client != null) {
                     Log.InfoFormat("New Connection {0}", client.Client.RemoteEndPoint);
                     var sc = new ServerSocket(client, this);
-                    Context.Players.AddClient(sc);
+                    Context.State.Players.AddClient(sc);
                     return;
                 }
                 throw new NotImplementedException();

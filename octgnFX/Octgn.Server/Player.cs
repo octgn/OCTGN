@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using log4net;
-using Octgn.Library.Localization;
 using Octgn.Library.Networking;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
@@ -147,16 +146,11 @@ namespace Octgn.Server
         private void Socket_DataReceived(object sender, DataReceivedEventArgs e) {
             _context.Run(() => {
                 _socket.OnPingReceived();
+
                 if (!SaidHello) {
-                    //TODO Maybe we shouldn't kill the connection here
-                    //     Basically, if someone dc's it's possible that
-                    //     a network call gets sent up on accident before HelloAgain,
-                    //     which effectivly kills the game.
-                    //     Maybe need a flag on the player saying they at least said
-                    //     hello once.
-                    // A new connection must always start with a hello message, refuse the connection
                     if (!BinaryParser.AnonymousCalls.Contains(e.Data[4])) {
-                        Kick(L.D.ServerMessage__FailedToSendHelloMessage);
+                        Log.Warn($"{this}: Packet Dropped(Hello Not Received Yet): {e.Data[4]}");
+
                         return;
                     }
                 }

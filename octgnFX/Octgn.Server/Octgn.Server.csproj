@@ -153,6 +153,7 @@
     <Compile Include="CardOrientation.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="GameContext.cs" />
+    <Compile Include="GameState.cs" />
     <Compile Include="PlayerCollection.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IClientCalls.cs">
@@ -161,6 +162,7 @@
       <DependentUpon>IClientCalls.tt</DependentUpon>
     </Compile>
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerDisconnectedEventArgs.cs" />
     <Compile Include="PlayerSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
