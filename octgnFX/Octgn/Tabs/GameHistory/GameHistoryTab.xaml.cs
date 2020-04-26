@@ -175,7 +175,11 @@ namespace Octgn.Tabs.GameHistory
                     CurrentRefreshDelay = NormalRefreshDelay;
                 }
 
-                var histories = LoadHistoriesPage(Page);
+                var page = Page;
+
+                var histories = LoadHistoriesPage(ref page);
+
+                Page = page;
 
                 // /////// Update the visual list
                 GameHistories = histories;
@@ -189,7 +193,7 @@ namespace Octgn.Tabs.GameHistory
             }
         }
 
-        private ObservableCollection<GameHistoryViewModel> LoadHistoriesPage(int page) {
+        private ObservableCollection<GameHistoryViewModel> LoadHistoriesPage(ref int page) {
             var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
             if (!dir.Exists) {
                 dir.Create();
@@ -213,7 +217,18 @@ namespace Octgn.Tabs.GameHistory
 
             int GamesPerPage = Core.Prefs.HistoryPageSize;
             var historyFilesPage = historyFiles.OrderByDescending(x => x.CreationTime)
-                                                .Skip((page - 1) * GamesPerPage).Take(GamesPerPage);
+                                                .Skip((page - 1) * GamesPerPage).Take(GamesPerPage)
+                                                .ToArray();
+
+            while (historyFilesPage.Length == 0) {
+                if (page == 1) return new ObservableCollection<GameHistoryViewModel>();
+
+                page--;
+
+                historyFilesPage = historyFiles.OrderByDescending(x => x.CreationTime)
+                                                    .Skip((page - 1) * GamesPerPage).Take(GamesPerPage)
+                                                    .ToArray();
+            }
 
             var pageContent = new ObservableCollection<GameHistoryViewModel>();
 
