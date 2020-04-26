@@ -94,12 +94,6 @@ namespace Octgn.Online.GameService
 
             fileName = Path.Combine(fileName, req.Id.ToString() + ".startrequest");
 
-            if (File.Exists(fileName)) {
-                Log.Warn($"Not starting game {req.Id}, the request already exists.");
-
-                return;
-            }
-
             using (var stream = File.Open(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             using (var writer = new StreamWriter(stream)) {
                 writer.WriteLine(req.OctgnVersion);
