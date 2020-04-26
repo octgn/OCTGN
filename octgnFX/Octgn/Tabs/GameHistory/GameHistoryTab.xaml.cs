@@ -2,12 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Collections.ObjectModel;
-using Microsoft.Scripting.Utils;
 using Octgn.Core.DataManagers;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
@@ -27,14 +25,27 @@ namespace Octgn.Tabs.GameHistory
         private int _page = 1;
         public int Page {
             get { return _page; }
-            set { NotifyAndUpdate(ref _page, value); }
+            set {
+                if (NotifyAndUpdate(ref _page, value)) {
+                    OnPropertyChanged(nameof(NextPageAvailable));
+                    OnPropertyChanged(nameof(PrevPageAvailable));
+                }
+            }
         }
 
         private int _pageCount = 0;
-        public int PageCount { 
+        public int PageCount {
             get { return _pageCount; }
-            private set { NotifyAndUpdate(ref _pageCount, value); }
+            private set {
+                if (NotifyAndUpdate(ref _pageCount, value)) {
+                    OnPropertyChanged(nameof(NextPageAvailable));
+                    OnPropertyChanged(nameof(PrevPageAvailable));
+                }
+            }
         }
+
+        public bool NextPageAvailable => Page < PageCount && !IsRefreshingHistoryList;
+        public bool PrevPageAvailable => Page > 1 && !IsRefreshingHistoryList;
 
         public GameHistoryTab() {
             InitializeComponent();
@@ -46,7 +57,7 @@ namespace Octgn.Tabs.GameHistory
         private void ListViewItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             var history = (GameHistoryViewModel)ListViewHistoryList.SelectedItem;
 
-            if(history != null) {
+            if (history != null) {
                 Dispatcher.VerifyAccess();
 
                 if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
@@ -60,19 +71,15 @@ namespace Octgn.Tabs.GameHistory
             }
         }
 
-        private void ButtonPrevClick(object sender, RoutedEventArgs e)
-        {
-            if (!IsRefreshingHistoryList && Page > 1)
-            {
+        private void ButtonPrevClick(object sender, RoutedEventArgs e) {
+            if (!IsRefreshingHistoryList && Page > 1) {
                 --Page;
                 RefreshHistoryListTimer_Tick(null, null);
             }
         }
 
-        private void ButtonNextClick(object sender, RoutedEventArgs e)
-        {
-            if (!IsRefreshingHistoryList && Page < PageCount)
-            {
+        private void ButtonNextClick(object sender, RoutedEventArgs e) {
+            if (!IsRefreshingHistoryList && Page < PageCount) {
                 ++Page;
                 RefreshHistoryListTimer_Tick(null, null);
             }
@@ -131,7 +138,12 @@ namespace Octgn.Tabs.GameHistory
 
         public bool IsRefreshingHistoryList {
             get => _isRefreshingHistoryList;
-            set => NotifyAndUpdate(ref _isRefreshingHistoryList, value);
+            set {
+                if (NotifyAndUpdate(ref _isRefreshingHistoryList, value)) {
+                    OnPropertyChanged(nameof(PrevPageAvailable));
+                    OnPropertyChanged(nameof(NextPageAvailable));
+                }
+            }
         }
 
         private bool _isRefreshingHistoryList;
@@ -189,7 +201,7 @@ namespace Octgn.Tabs.GameHistory
             var historyFiles = dir.GetFiles("*.o8h");
 
             UpdatePageCount(historyFiles.Length);
-            
+
             var replayFiles = dir
                 .GetFiles("*.o8r")
                 .ToDictionary(x => Path.GetFileNameWithoutExtension(x.Name), x => x)
@@ -201,7 +213,7 @@ namespace Octgn.Tabs.GameHistory
 
             int GamesPerPage = Core.Prefs.HistoryPageSize;
             var historyFilesPage = historyFiles.OrderByDescending(x => x.CreationTime)
-                                                .Skip((page-1) * GamesPerPage).Take(GamesPerPage);
+                                                .Skip((page - 1) * GamesPerPage).Take(GamesPerPage);
 
             var pageContent = new ObservableCollection<GameHistoryViewModel>();
 
@@ -235,15 +247,14 @@ namespace Octgn.Tabs.GameHistory
             return pageContent;
         }
 
-        private void UpdatePageCount(int gameHistoryCount)
-        {
+        private void UpdatePageCount(int gameHistoryCount) {
             int GamesPerPage = Core.Prefs.HistoryPageSize;
             PageCount = (int)Math.Ceiling(gameHistoryCount / (float)GamesPerPage);
         }
 
         public void VisibleChanged(bool visible) {
             // Switching the interval on this timer allows the list to refresh quickly initially when the tab is ever viewed, then it'll wait the normal delay
-            if(visible && (
+            if (visible && (
                 CurrentRefreshDelay != InitialRefreshDelay
                 && CurrentRefreshDelay != NormalRefreshDelay)) {
 
