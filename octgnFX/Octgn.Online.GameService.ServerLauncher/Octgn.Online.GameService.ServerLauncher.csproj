@@ -65,6 +65,10 @@
       <Project>{8BED43B1-B215-49BF-9DB7-5C72171E1CAD}</Project>
       <Name>Octgn.Online</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.WindowsDesktopUtilities\Octgn.WindowsDesktopUtilities.csproj">
+      <Project>{13EC7B30-1F41-495F-A679-49D1A745AB76}</Project>
+      <Name>Octgn.WindowsDesktopUtilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

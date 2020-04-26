@@ -1,6 +1,7 @@
 ﻿using Octgn.Communication;
 using Octgn.Library;
 using Octgn.Utils;
+using Octgn.WindowsDesktopUtilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,18 +22,17 @@ namespace Octgn.Online.GameService.ServerLauncher
         static async Task Main(string[] args) {
             using (_cancellationTokenSource = new CancellationTokenSource()) {
                 try {
+                    LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
+                    AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+                    AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                    Signal.OnException += Signal_OnException;
+
                     Console.CancelKeyPress += (_, __) => {
                         _cancellationTokenSource.Cancel();
                     };
 
-
-                    LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
-                    Signal.OnException += Signal_OnException;
-                    AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-                    AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
-                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
-                    throw new NotImplementedException("IS DEBUG NOT SET");
+                    _isDebug = OctgnProgram.IsDebug;
 
                     var proggy = new Program();
 
@@ -80,8 +80,7 @@ namespace Octgn.Online.GameService.ServerLauncher
 
         async Task Run(CancellationToken cancellationToken) {
             while (!cancellationToken.IsCancellationRequested) {
-                // check for game
-                var request = GetNextRequest();
+                var request = GetNextRequest(out var filePath);
 
                 if (request == null) {
                     await Task.Delay(1000, cancellationToken);
@@ -107,39 +106,67 @@ namespace Octgn.Online.GameService.ServerLauncher
                     args = argList.ToArray();
                 }
 
-                //TODO: Should log file name that has bad data
-                if (!Version.TryParse(octgnVersionString, out var sasVersion)) throw new InvalidOperationException($"Octgn version string in request is invalid.");
+                if (!Version.TryParse(octgnVersionString, out var sasVersion)) throw new InvalidOperationException($"Octgn version string in request is invalid in file {filePath}");
 
-                // launch game
-                LaunchGameProcess(sasVersion, args, _isDebug);
+                try {
+                    await LaunchGameProcess(sasVersion, args, _isDebug);
+                } catch (FileNotFoundException ex) {
+                    Log.Error($"Error launching game {filePath}: SAS file not found: {ex.FileName}");
+                }
             }
-
-            throw new NotImplementedException();
         }
 
-        string GetNextRequest() {
+        string GetNextRequest(out string filePath) {
             var files = Directory.GetFiles(_requestPath, "*.startrequest");
 
             foreach (var file in files) {
+                var newPath = file + ".started";
+
                 try {
-                    var contents = File.ReadAllText(file);
+                    File.Move(file, newPath);
+                } catch (FileNotFoundException) {
+                } catch (IOException) {
+                    Log.Warn($"Unable to start request, it was already started: {file}");
 
-                    File.Move(file, file + ".started");
-
-                    return contents;
-                } catch (Exception ex) {
-                    Log.Warn($"Unable to open {file}: {ex}");
+                    continue;
                 }
+
+                var contents = File.ReadAllText(newPath);
+
+                filePath = newPath;
+
+                return contents;
             }
 
+            filePath = null;
             return null;
         }
 
-        Process LaunchGameProcess(Version sasVersion, string[] args, bool isDebug) {
+        async Task<Process> LaunchGameProcess(Version sasVersion, string[] args, bool isDebug) {
             var path = HostedGameProcess.GetSASPath(sasVersion, false, isDebug);
+            var pathFileInfo = new FileInfo(path);
+
+            var completePath = Path.Combine(pathFileInfo.Directory.FullName, "complete");
+
+            // wait for file to exist
+            {
+                var waitCount = 0;
+                while (!File.Exists(path) && !File.Exists(completePath)) {
+                    if (waitCount >= 10) {
+                        if (!File.Exists(path)) {
+                            throw new FileNotFoundException($"File Not Found: {path}", path);
+                        } else if (!File.Exists(completePath)) {
+                            throw new FileNotFoundException($"File Not Found: {completePath}", completePath);
+                        } else break; // file found last minute, #tyjezus
+                    }
+
+                    await Task.Delay(1000, _cancellationTokenSource.Token);
+
+                    waitCount++;
+                }
+            }
 
             var process = new Process();
-
             process.StartInfo.Arguments = string.Join(" ", args);
             process.StartInfo.FileName = path;
 
