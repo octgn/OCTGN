@@ -86,7 +86,7 @@ namespace Octgn.Online.GameService
 
             var argString = string.Join(Environment.NewLine, args);
 
-            var fileName = Path.Combine(Path.GetTempPath(), "Octgn", "GameService", "StartSASRequests");
+            var fileName = "F:\\SASRequests";
 
             if (!Directory.Exists(fileName)) {
                 Directory.CreateDirectory(fileName);
