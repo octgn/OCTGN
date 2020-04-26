@@ -1,1 +1,1 @@
-
+Paginate Game History tab to minimize impact of large numbers of replays - Ben

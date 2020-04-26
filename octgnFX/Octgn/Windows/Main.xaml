@@ -34,10 +34,6 @@
 			<RowDefinition Height="5"/>
 		</Grid.RowDefinitions>
 		<Menu Grid.ColumnSpan="4" Grid.Row="0">
-            <MenuItem Header="_File">
-                <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" MinWidth="137" Click="MenuLogOffClick"/>-->
-                <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" MinWidth="137" Click="MenuExitClick"/>
-            </MenuItem>
             <MenuItem x:Name="menuOptions" Header="_Options" Click="MenuOptionsClick">
             </MenuItem>
             <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
@@ -69,9 +65,7 @@
                 <login:LoginTab></login:LoginTab>
             </TabItem>
             <TabItem x:Name="TabCustomGames" Header="Play or Spectate" Style="{StaticResource MainTabItem}">
-                <Border Padding="5,5,5,5">
-                    <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
-                </Border>
+                <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
             </TabItem>
             <TabItem x:Name="TabItemHistory" Header="Game History" Style="{StaticResource MainTabItem}">
                 <historytab:GameHistoryTab x:Name="TabHistory"/>
@@ -80,13 +74,13 @@
                 <watch:WatchList/>
             </TabItem>
             <TabItem Header="Games Manager" IsEnabled="true" Style="{StaticResource MainTabItem}">
-                <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
+                <gameManagement:GameManagement></gameManagement:GameManagement>
             </TabItem>
             <TabItem Header="Challenge Board" x:Name="ChallengeBoardTab" Style="{StaticResource MainTabItem}">
-                <challengeBoards:ChallengeBoards Margin="5,5,5,5" />
+                <challengeBoards:ChallengeBoards/>
             </TabItem>
             <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab" Style="{StaticResource MainTabItem}">
-                <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
+                <profile:UserProfilePage x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
         </TabControl>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" Background="Transparent" HorizontalAlignment="Right">
