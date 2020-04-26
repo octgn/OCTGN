@@ -14,7 +14,7 @@ namespace Octgn.Online.GameService.ServerLauncher
 {
     class Program
     {
-        private static ILogger Log = LoggerFactory.Create(nameof(Program));
+        private static ILogger Log;
 
         private static CancellationTokenSource _cancellationTokenSource;
         private static bool _isDebug;
@@ -23,6 +23,8 @@ namespace Octgn.Online.GameService.ServerLauncher
             using (_cancellationTokenSource = new CancellationTokenSource()) {
                 try {
                     LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
+                    Log = LoggerFactory.Create(nameof(Program));
+
                     AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                     AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -33,6 +35,8 @@ namespace Octgn.Online.GameService.ServerLauncher
                     };
 
                     _isDebug = OctgnProgram.IsDebug;
+
+                    Log.Info("Running...");
 
                     var proggy = new Program();
 
@@ -72,6 +76,7 @@ namespace Octgn.Online.GameService.ServerLauncher
 
         public Program() {
             _requestPath = Path.Combine(Path.GetTempPath(), "Octgn", "GameService", "StartSASRequests");
+            _requestPath = "F:\\SASRequests";
 
             if (!Directory.Exists(_requestPath)) {
                 Directory.CreateDirectory(_requestPath);
