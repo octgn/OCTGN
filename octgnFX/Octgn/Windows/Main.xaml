@@ -34,10 +34,6 @@
 			<RowDefinition Height="5"/>
 		</Grid.RowDefinitions>
 		<Menu Grid.ColumnSpan="4" Grid.Row="0">
-            <MenuItem Header="_File">
-                <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" MinWidth="137" Click="MenuLogOffClick"/>-->
-                <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" MinWidth="137" Click="MenuExitClick"/>
-            </MenuItem>
             <MenuItem x:Name="menuOptions" Header="_Options" Click="MenuOptionsClick">
             </MenuItem>
             <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
