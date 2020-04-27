@@ -449,6 +449,14 @@ namespace Octgn.Tabs.GameManagement
 			}
 		}
 
+		private void Image_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+		{
+			var failedImage = (sender as Image);
+			failedImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/noimage.png"));
+			failedImage.Effect = new System.Windows.Media.Effects.DropShadowEffect() { ShadowDepth=1f, Color=System.Windows.Media.Color.FromRgb(255,255,255) };
+			e.Handled = true;
+		}
+
 		#endregion Events
 
 		#region PropertyChanged

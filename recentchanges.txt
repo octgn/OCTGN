@@ -1,11 +1,15 @@
-Card Name now a standard property within the PropertySet, no longer deserialized as a custom property.
-Card names can be filtered in deck editor searches.
-Cleaned up how OCTGN manages card alternate properties and inheritance
-Added a few extension methods to manage fetching card property sets
-Moved booster pack generator code into the Octgn.Core library's Pack Extension Methods
-Markers are now defined in the game's XML definition. Existing games with set xml markers will still work, but o8build will enforce game-only markers for new packages.
-XML format for game markers: <marker name="Damage Counter" id="damage" src="Markers/damage.png">
-Re-structuring of some proxy generator files, with some undiscoverd bug fixes.
-Proxy templates can now theoretically support nested conditional elements
-Default Game Board and Card Size can now accept an optional name (defaults to 'Default')
-Significant changes to the IDE (OCTGN game editor), not quite finished yet but it is relatively stable
+Card Name now a standard property within the PropertySet, no longer deserialized as a custom property. - brine
+Card names can be filtered in deck editor searches. - brine
+Cleaned up how OCTGN manages card alternate properties and inheritance - brine
+Added a few extension methods to manage fetching card property sets - brine
+Moved booster pack generator code into the Octgn.Core library's Pack Extension Methods - brine
+Markers are now defined in the game's XML definition. Existing games with set xml markers will still work, but o8build will enforce game-only markers for new packages. - brine
+XML format for game markers: <marker name="Damage Counter" id="damage" src="Markers/damage.png"> - brine
+Re-structuring of some proxy generator files, with some undiscoverd bug fixes. - brine
+Proxy templates can now theoretically support nested conditional elements - brine
+Default Game Board and Card Size can now accept an optional name (defaults to 'Default') - brine
+Significant changes to the IDE (OCTGN game editor), not quite finished yet but it is relatively stable - brine
+Fix crash caused by SetPoint software - Ben
+Add hotkey to move cards between sections in editor - Ben
+Paginate Game History tab to minimize impact of large numbers of replays - Ben
+Fix some padding/margins = Kelly

@@ -430,6 +430,35 @@ namespace Octgn.Controls
             Program_OnOptionsChanged();
         }
 
+        #region Supress Rare Overflow Crash
+        // Logitech Setpoint software (and maybe other conditions) apparently occasionaly causes an overflow
+        // Only solution I've found is to supress the error, courtesy Dave O'Rourke here:
+        // https://developercommunity.visualstudio.com/content/problem/167357/overflow-exception-in-windowchrome.html
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            ((System.Windows.Interop.HwndSource)PresentationSource.FromVisual(this)).AddHook(HookProc);
+        }
+        private IntPtr HookProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == 0x0084 /*WM_NCHITTEST*/ )
+            {
+                // This prevents a crash in WindowChromeWorker._HandleNCHitTest
+                try
+                {
+                    lParam.ToInt32();
+                }
+                catch (OverflowException)
+                {
+                    handled = true;
+                }
+            }
+            return IntPtr.Zero;
+        }
+
+        #endregion
+
         #region Implementation of IDisposable
 
         protected override void OnClosed(EventArgs e)

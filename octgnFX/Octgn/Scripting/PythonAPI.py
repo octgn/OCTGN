@@ -133,6 +133,9 @@ def convertToString(obj):
     return "\"{}\"".format(obj);
   return str(obj)
 
+def clearSelection(): 
+	_api.ClearSelection()
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
@@ -227,7 +230,7 @@ class Card(object):
     _api.CardSetIndex(self._id,index, True)
   @property
   def getIndex(self): return _api.CardGetIndex(self._id)
-  def select(self): _api.CardSelect(self._id)
+  def select(self, selection = True): _api.CardSelect(self._id, selection)
   def peek(self): _api.CardPeek(self._id)
   def target(self, active = True): _api.CardTarget(self._id, active)
   def arrow(self, targetCard, active = True): _api.CardTargetArrow(self._id, targetCard._id, active)

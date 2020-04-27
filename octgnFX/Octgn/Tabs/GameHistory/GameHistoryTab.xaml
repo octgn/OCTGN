@@ -27,15 +27,38 @@
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
-            <WrapPanel Orientation="Horizontal">
-                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
+            <DockPanel>
+                <Button Click="ButtonNextClick" Width="35" Height="30" Margin="0,0,0,0" FontSize="35" Padding="0 -16 0 0"
+                        Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonNext"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding NextPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Delete">&#59230;</Button>
+                <Button Click="ButtonPrevClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
+                        Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonPrev"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding PrevPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Delete">&#59229;</Button>
+                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,10,0">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="Page: {0:N0} of {1:N0}">
+                            <Binding ElementName="Me" Path="Page" />
+                            <Binding ElementName="Me" Path="PageCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -18 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                        DockPanel.Dock="Left"
+                        HorizontalAlignment="Left"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh">&#10227;</Button>
                 <Button Click="ButtonDeleteClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
                         Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonDelete"
+                        DockPanel.Dock="Left"
+                        HorizontalAlignment="Left"
                         FontFamily="{StaticResource Entypo}" ToolTip="Delete"
                         IsEnabled="{Binding IsHistorySelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">&#59177;</Button>
-            </WrapPanel>
+            </DockPanel>
         </Border>
         <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0" Foreground="CornflowerBlue">
             <ProgressBar.Style>
@@ -83,10 +106,9 @@
                   SelectionChanged="ListViewHistoryList_SelectionChanged"
                   ItemsSource="{Binding GameHistories, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
                   ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                  IsSynchronizedWithCurrentItem="True"
                   utils:GridViewSort.AutoSort="True"
                   Grid.RowSpan="3"
-                  SelectionMode="Single" HorizontalContentAlignment="Left"
+                  SelectionMode="Extended" HorizontalContentAlignment="Left"
                   AlternationCount="1">
             <ListView.View>
                 <GridView>
@@ -96,16 +118,12 @@
                         </Style>
                     </GridView.ColumnHeaderContainerStyle>
                     <GridViewColumn Header="Name"
-                                    utils:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}" Width="150"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=Name}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Game"
-                                    utils:GridViewSort.PropertyName="GameName"
                                     DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Start Time"
-                                    utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=StartTime, StringFormat='{}{0:f}'}" Width="200"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=StartTime, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
                     <GridViewColumn Header="Run Time"
-                                    utils:GridViewSort.PropertyName="RunTime"
                                     DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
                 </GridView>
             </ListView.View>
