@@ -1,3 +1,5 @@
+#3.4.231.0
+
 #3.4.230.0
 + Card Name now a standard property within the PropertySet, no longer deserialized as a custom property. - brine
 + Card names can be filtered in deck editor searches. - brine
@@ -3770,6 +3772,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
