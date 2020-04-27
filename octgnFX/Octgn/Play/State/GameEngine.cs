@@ -55,11 +55,9 @@ namespace Octgn
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
-        private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
-
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
-        private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
-        private readonly Dictionary<string, Tuple<BitmapImage, BitmapImage>> _cardFrontsBacksCache = new Dictionary<string, Tuple<BitmapImage, BitmapImage>>();
+        private readonly List<GameMarker> _recentMarkers = new List<GameMarker>(MaxRecentMarkers);
+        private readonly Dictionary<CardSize, Tuple<BitmapImage, BitmapImage>> _cardFrontsBacksCache = new Dictionary<CardSize, Tuple<BitmapImage, BitmapImage>>();
         private readonly Table _table;
         internal readonly string Password;
 
@@ -157,16 +155,9 @@ namespace Octgn
             }
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
-                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+                GlobalVariables.Add(varDef.Key, varDef.Value.Value);
             ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
-
-            // Load all game markers
-            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers()) {
-                if (!_markersById.ContainsKey(m.Id)) {
-                    _markersById.Add(m.Id, m);
-                }
-            }
 
             // Init fields
             CurrentUniqueId = 1;
@@ -177,7 +168,7 @@ namespace Octgn
             foreach (var size in Definition.CardSizes) {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front, back));
+                _cardFrontsBacksCache.Add(size.Value, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() => {
                 // clear any existing players
@@ -243,7 +234,7 @@ namespace Octgn
             }
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
-                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+                GlobalVariables.Add(varDef.Key, varDef.Value.Value);
             ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
             while (String.IsNullOrWhiteSpace(this.Nickname))
@@ -258,14 +249,6 @@ namespace Octgn
                     }));
                 this.Nickname = retNick;
             }
-            // Load all game markers
-            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
-            {
-                if (!_markersById.ContainsKey(m.Id))
-                {
-                    _markersById.Add(m.Id, m);
-                }
-            }
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
@@ -276,7 +259,7 @@ namespace Octgn
             {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front, back));
+                _cardFrontsBacksCache.Add(size.Value, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -375,12 +358,7 @@ namespace Octgn
             }
         }
 
-        public IList<DataNew.Entities.Marker> Markers
-        {
-            get { return _markersById.Values; }
-        }
-
-        public IList<DataNew.Entities.Marker> RecentMarkers
+        public IList<GameMarker> RecentMarkers
         {
             get { return _recentMarkers; }
         }
@@ -688,7 +666,7 @@ namespace Octgn
                 foreach (var c in p.Counters)
                     c.Reset();
                 foreach (var g in Definition.Player.GlobalVariables)
-                    p.GlobalVariables[g.Name] = g.DefaultValue;
+                    p.GlobalVariables[g.Key] = g.Value.Value;
             }
             foreach (var p in AllPhases)
             {
@@ -701,7 +679,7 @@ namespace Octgn
             Selection.Clear();
 
             foreach (var g in Definition.GlobalVariables)
-                GlobalVariables[g.Name] = g.DefaultValue;
+                GlobalVariables[g.Key] = g.Value.Value;
 
             DeckStats.Reset();
 
@@ -729,12 +707,12 @@ namespace Octgn
             Selection.Clear();
         }
 
-        public BitmapImage GetCardFront(string name)
+        public BitmapImage GetCardFront(CardSize name)
         {
             return _cardFrontsBacksCache[name].Item1;
         }
 
-        public BitmapImage GetCardBack(string name)
+        public BitmapImage GetCardBack(CardSize name)
         {
             return _cardFrontsBacksCache[name].Item2;
         }
@@ -762,26 +740,29 @@ namespace Octgn
             foreach (var section in deck.Sections)
             {
                 { // Add cards to LoadedCards deck
-                    if (!LoadedCards.Sections.Any(x => x.Name == section.Name)) {
+                    if (!LoadedCards.Sections.Any(x => x.Name == section.Name))
+                    {
                         // Add section
-                        ((ObservableCollection<ObservableSection>)LoadedCards.Sections).Add(new ObservableSection() {
+                        ((ObservableCollection<ObservableSection>)LoadedCards.Sections).Add(new ObservableSection()
+                        {
                             Name = section.Name,
                             Shared = section.Shared,
                             Cards = new ObservableCollection<ObservableMultiCard>()
                         });
-
                     }
 
                     var loadedCardsSection = LoadedCards.Sections.Single(x => x.Name == section.Name);
 
-                    foreach (var card in section.Cards) {
+                    foreach (var card in section.Cards)
+                    {
                         var existingCard = loadedCardsSection.Cards.FirstOrDefault(x => x.Id == card.Id);
-
-                        if (existingCard != null) {
+                        if (existingCard != null)
+                        {
                             existingCard.Quantity++;
-                        } else {
+                        }
+                        else
+                        {
                             var newCard = new ObservableMultiCard(card);
-
                             loadedCardsSection.Cards.AddCard(newCard);
                         }
                     }
@@ -792,7 +773,7 @@ namespace Octgn
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
                 var player = section.Shared ? Player.GlobalPlayer : Player.LocalPlayer;
-                Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group);
+                Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group.Name);  //TODO: match directly to SectionDef Group instead of name matching
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
@@ -909,7 +890,7 @@ namespace Octgn
             _recentCards.Insert(0, card);
         }
 
-        internal void AddRecentMarker(DataNew.Entities.Marker marker)
+        internal void AddRecentMarker(GameMarker marker)
         {
             int idx = _recentMarkers.IndexOf(marker);
             if (idx == 0) return;
@@ -925,27 +906,24 @@ namespace Octgn
             _recentMarkers.Insert(0, marker);
         }
 
-        internal DataNew.Entities.Marker GetMarkerModel(Guid id)
+        internal GameMarker GetMarkerModel(string id)
         {
-            DataNew.Entities.Marker model;
-            if (id.CompareTo(new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10)) < 0)
-            {
-                // Get a standard model
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
-                model = (DefaultMarkerModel)defaultModel.Clone();
-                model.Id = id;
-                return model;
-            }
+            GameMarker model;
             // Try to find the marker model
-            if (!_markersById.TryGetValue(id, out model))
+            if (Definition.Markers.TryGetValue(id, out model))
             {
+                return model.Clone() as GameMarker;
+            }
+            else
+            {
+                // Use a default marker model
                 Program.GameMess.GameDebug("Marker model '{0}' not found, using default marker instead", id);
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
+                
+                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.FirstOrDefault(x => x.Id == id) ?? Marker.DefaultMarkers[Crypto.Random(7)];
                 model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;
                 return model;
             }
-            return model.Clone() as DataNew.Entities.Marker;
         }
 
         private void OnPropertyChanged(string propertyName)

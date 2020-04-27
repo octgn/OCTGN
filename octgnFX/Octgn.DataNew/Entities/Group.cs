@@ -10,7 +10,7 @@
         public string Shortcut { get; set; }
         public bool MoveTo { get; set; }
         public string Background { get; set; }
-        public string BackgroundStyle { get; set; }
+        public BackgroundStyle BackgroundStyle { get; set; }
         public GroupVisibility Visibility { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
@@ -26,7 +26,7 @@
         string ShowExecute { get; set; }
         string HeaderExecute { get; set; }
     }
-    public class GroupActionGroup : IGroupAction
+    public class GroupActionSubmenu : IGroupAction
     {
         public string Name { get; set; }
         public bool IsGroup { get; set; }
@@ -43,7 +43,7 @@
         public bool DefaultAction { get; set; }
         public string Shortcut { get; set; }
         public string Execute { get; set; }
-        public string BatchExecute { get; set; }
+        public bool IsBatchExecutable { get; set; }
     }
     public class GroupActionSeparator : IGroupAction
     {

@@ -2,7 +2,7 @@
 {
     public class PickProperty
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public PropertyDef Property { get; set; }
+        public object Value { get; set; }
     }
 }

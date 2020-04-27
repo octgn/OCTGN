@@ -1,4 +1,8 @@
-﻿using System.Windows.Controls;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Messaging;
@@ -144,7 +148,7 @@ namespace Octide.Views
         private void BoardMouseDown(object sender, MouseButtonEventArgs e)
         {
             DragItem = sender as Canvas;
-            BoardItemViewModel board = DragItem.DataContext as BoardItemViewModel;
+            BoardItemModel board = DragItem.DataContext as BoardItemModel;
             ViewModelLocator.PreviewTabViewModel.Selection = board;
             mouseDownOffset = e.GetPosition(DragItem);
             MouseHitType = SetHitType(new Rect(board.XPos, board.YPos, board.Width, board.Height), mouseDownOffset);
@@ -159,17 +163,17 @@ namespace Octide.Views
             if (!mouseDown)
             {
                 Canvas itemCanvas = (sender as Canvas).Children[0] as Canvas;
-                BoardItemViewModel board = itemCanvas.DataContext as BoardItemViewModel;
+                BoardItemModel board = itemCanvas.DataContext as BoardItemModel;
                 MouseHitType = SetHitType(new Rect(board.XPos, board.YPos, board.Width, board.Height), e.GetPosition(itemCanvas));
                 SetMouseCursor();
                 return;
             }
-            if (DragItem.DataContext is BoardItemViewModel)
+            if (DragItem.DataContext is BoardItemModel)
             {
                 base.OnMouseMove(e);
                 e.Handled = true;
 
-                var vm = DragItem.DataContext as BoardItemViewModel;
+                var vm = DragItem.DataContext as BoardItemModel;
                 Rect newrect = RectTransform(new Rect(vm.XPos, vm.YPos, vm.Width, vm.Height), e.GetPosition(boardView));
                 vm.XPos = Convert.ToInt32(newrect.X);
                 vm.YPos = Convert.ToInt32(newrect.Y);
@@ -182,7 +186,7 @@ namespace Octide.Views
         private void CardMouseDown(object sender, MouseButtonEventArgs e)
         {
             DragItem = sender as Canvas;
-            CardViewModel card = DragItem.DataContext as CardViewModel;
+            SampleCardItemModel card = DragItem.DataContext as SampleCardItemModel;
             if (e.ClickCount == 2)
             {
                 card.IsBack = !card.IsBack;
@@ -201,12 +205,12 @@ namespace Octide.Views
         private void CardsViewMouseMove(object sender, MouseEventArgs e)
         {
             if (!mouseDown) return;
-            if (DragItem.DataContext is CardViewModel)
+            if (DragItem.DataContext is SampleCardItemModel)
             {
                 base.OnMouseMove(e);
                 e.Handled = true;
 
-                var vm = DragItem.DataContext as CardViewModel;
+                var vm = DragItem.DataContext as SampleCardItemModel;
                 Rect rect = RectTransform(new Rect(vm.X, vm.Y, vm.CardWidth, vm.CardHeight), e.GetPosition(boardView));
                 vm.X = Convert.ToInt32(rect.X);
                 vm.Y = Convert.ToInt32(rect.Y);
@@ -219,7 +223,7 @@ namespace Octide.Views
         private void CardMouseMove(object sender, MouseEventArgs e)
         {
             if (mouseDown) return;
-            CardViewModel card = (sender as Canvas).DataContext as CardViewModel;
+            SampleCardItemModel card = (sender as Canvas).DataContext as SampleCardItemModel;
             MouseHitType = SetHitType(new Rect(card.X, card.Y, card.CardWidth, card.CardHeight), e.GetPosition(sender as Canvas));
             SetMouseCursor();
             e.Handled = true;
@@ -242,27 +246,29 @@ namespace Octide.Views
         {
 
         }
-
         private void CreateActionsMenu(object sender, MouseButtonEventArgs e)
         {
-            var data = ((Border)sender).DataContext;
-            var menu = new ContentControl
+            var data = ((FrameworkElement)sender).DataContext;
+            if (data is SampleCardItemModel)
             {
-                Content = ViewModelLocator.ActionMenuViewModel
-            };
+                ActionMenuPopup.DataContext = ViewModelLocator.PreviewTabViewModel.Table;
+                GroupActionsPanel.Visibility = Visibility.Collapsed;
+                CardActionsPanel.Visibility = Visibility.Visible;
+            }
+            else if (data is TableItemModel table)
+            {
+                ActionMenuPopup.DataContext = table;
+                GroupActionsPanel.Visibility = Visibility.Visible;
+                CardActionsPanel.Visibility = Visibility.Collapsed;
 
-            if (data is CardViewModel)
-            {
-                ViewModelLocator.ActionMenuViewModel.Group = ViewModelLocator.PreviewTabViewModel.TableGroup;
-                ViewModelLocator.ActionMenuViewModel.Card = (CardViewModel)data;
             }
-            else
+            else if (data is GroupItemModel group)
             {
-                ViewModelLocator.ActionMenuViewModel.Group = (GroupItemViewModel)data;
-                ViewModelLocator.ActionMenuViewModel.Card = null;
+                ActionMenuPopup.DataContext = group;
+                ActionMenuPopup.Tag = "group";
+                GroupActionsPanel.Visibility = Visibility.Visible;
+                CardActionsPanel.Visibility = Visibility.Visible;
             }
-      
-            ActionMenuPopup.Child = menu;
             ActionMenuPopup.IsOpen = true;
             e.Handled = true;
         }
@@ -271,6 +277,31 @@ namespace Octide.Views
         {
             Cursor = Cursors.Arrow;
         }
-        
+
+        private void ClickGroupAction(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            ViewModelLocator.PreviewTabViewModel.Selection = e.NewValue;
+        }
+
+        private void ClickCardAction(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            ViewModelLocator.PreviewTabViewModel.Selection = e.NewValue;
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs args)
+        {
+            ScrollViewer scrollViewer = sender as ScrollViewer;
+
+            if (scrollViewer == null)
+                return;
+
+            if (args.Delta < 0)
+                scrollViewer.LineRight();
+            else
+                scrollViewer.LineLeft();
+
+            args.Handled = true;
+
+        }
     }
 }

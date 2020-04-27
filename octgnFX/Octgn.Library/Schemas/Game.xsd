@@ -48,7 +48,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
         <xs:element name="scripts" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -277,7 +277,6 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        
         <xs:element name="documents" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -415,6 +414,47 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="markers" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines a list of markers used by the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="marker" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single marker
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="src" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to the marker image to be used.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The displayed name of the marker.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="id" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The identifier name to reference the marker in scripts.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
         <xs:element name="card" minOccurs="1" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -438,6 +478,13 @@
                 </xs:annotation>
               </xs:element>
             </xs:sequence>
+            <xs:attribute name="name" type="xs:string" default="Default" >
+              <xs:annotation>
+                <xs:documentation>
+                  The optional name for the default card back.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
             <xs:attribute name="back" type="xs:string">
               <xs:annotation>
                 <xs:documentation>
@@ -512,45 +559,45 @@
                 </xs:annotation>
               </xs:element>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" default="Default">
+            <xs:attribute name="name" type="xs:string" default="Default" >
               <xs:annotation>
                 <xs:documentation>
-                  The name of the board.
+                  The name of the default board.
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
             <xs:attribute name="src" type="xs:string">
               <xs:annotation>
                 <xs:documentation>
-                  An image resource for the board.
+                  An image resource for the default board.
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
             <xs:attribute name="x" type="xs:integer">
               <xs:annotation>
                 <xs:documentation>
-                  leftmost X coordinate of the board.
+                  leftmost X coordinate of the default board.
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
             <xs:attribute name="y" type="xs:integer">
               <xs:annotation>
                 <xs:documentation>
-                  topmost Y coordinate of the board.
+                  topmost Y coordinate of the default board.
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
             <xs:attribute name="width" type="xs:integer">
               <xs:annotation>
                 <xs:documentation>
-                  The width in mm of the board.
+                  The width in mm of the default board.
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
             <xs:attribute name="height" type="xs:integer">
               <xs:annotation>
                 <xs:documentation>
-                  The height in mm of the board.
+                  The height in mm of the default board.
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
@@ -624,7 +671,7 @@
         </xs:element>
         <xs:element name="deck" type="deck" minOccurs="0" maxOccurs="1"/>
         <xs:element name="sharedDeck" type="deck" minOccurs="0" />
-      </xs:sequence>
+      </xs:all>
       <xs:attribute name="id" use="required" type="guid">
         <xs:annotation>
           <xs:documentation>
@@ -1165,12 +1212,12 @@
     <xs:complexContent>
       <xs:extension base="baseAction">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="cardaction" type="action" />
-          <xs:element name="groupaction" type="action" />
-          <xs:element name="cardactions" type="actionSubmenu" />
-          <xs:element name="groupactions" type="actionSubmenu" />
-          <xs:element name="cardseparator" type="cardActionSeparator" />
+          <xs:element name="groupaction" type="groupAction" />
+          <xs:element name="groupactions" type="groupActionSubmenu" />
+          <xs:element name="cardaction" type="cardAction" />
+          <xs:element name="cardactions" type="cardActionSubmenu" />
           <xs:element name="groupseparator" type="groupActionSeparator" />
+          <xs:element name="cardseparator" type="cardActionSeparator" />
         </xs:choice>
       </xs:extension>
     </xs:complexContent>

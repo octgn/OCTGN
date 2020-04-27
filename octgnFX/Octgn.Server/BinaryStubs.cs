@@ -729,7 +729,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+    public void AddMarker(byte player, int card, string id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
 		Log.Debug($"SERVER OUT: {nameof(AddMarker)}");
 		using(var stream = new MemoryStream(512)) {
@@ -739,7 +739,7 @@ namespace Octgn.Server
 				writer.Write((byte)55);
 				writer.Write(player);
 				writer.Write(card);
-				writer.Write(id.ToByteArray());
+				writer.Write(id);
 				writer.Write(name);
 				writer.Write(count);
 				writer.Write(origCount);
@@ -752,7 +752,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+    public void RemoveMarker(byte player, int card, string id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
 		Log.Debug($"SERVER OUT: {nameof(RemoveMarker)}");
 		using(var stream = new MemoryStream(512)) {
@@ -762,7 +762,7 @@ namespace Octgn.Server
 				writer.Write((byte)57);
 				writer.Write(player);
 				writer.Write(card);
-				writer.Write(id.ToByteArray());
+				writer.Write(id);
 				writer.Write(name);
 				writer.Write(count);
 				writer.Write(origCount);
@@ -775,7 +775,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+    public void TransferMarker(byte player, int from, int to, string id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
 		Log.Debug($"SERVER OUT: {nameof(TransferMarker)}");
 		using(var stream = new MemoryStream(512)) {
@@ -786,7 +786,7 @@ namespace Octgn.Server
 				writer.Write(player);
 				writer.Write(from);
 				writer.Write(to);
-				writer.Write(id.ToByteArray());
+				writer.Write(id);
 				writer.Write(name);
 				writer.Write(count);
 				writer.Write(origCount);

@@ -315,7 +315,7 @@ namespace Octgn.Play
             _fadeOut = (Storyboard)Resources["ImageFadeOut"];
 
             // I think this is the thing that previews a card if you hover it.
-            cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardSize.Back));
+            cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.DefaultSize().Back));
             //if (Program.GameEngine.Definition.CardCornerRadius > 0)
             cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
@@ -631,10 +631,10 @@ namespace Octgn.Play
                         shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
                 if (match != null)
                 {
-                    if (match.ActionDef.AsAction().Execute != null)
+                    if (match.ActionDef.AsAction().IsBatchExecutable)
+                        ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().Execute, Selection.Cards);
+                    else
                         ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, Selection.Cards);
-                    else if (match.ActionDef.AsAction().BatchExecute != null)
-                        ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, Selection.Cards);
                     e.Handled = true;
                     return;
                 }
@@ -776,7 +776,7 @@ namespace Octgn.Play
             clipRect.Rect = new Rect(new Size(width, height));
 
             if (card == null)
-                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardSize.CornerRadius * height / Program.GameEngine.Definition.CardSize.Height;
+                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.DefaultSize().CornerRadius * height / Program.GameEngine.Definition.DefaultSize().Height;
             else
             {
                 clipRect.RadiusX = clipRect.RadiusY = card.RealCornerRadius*height/card.RealHeight;
@@ -1059,7 +1059,7 @@ namespace Octgn.Play
             {
                 if (File.Exists(fo.FileName))
                 {
-                    this.table.SetBackground(fo.FileName, "uniformToFill");
+                    this.table.SetBackground(fo.FileName, BackgroundStyle.UniformToFill);
                     Prefs.DefaultGameBack = fo.FileName;
                 }
             }

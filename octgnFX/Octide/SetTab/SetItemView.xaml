@@ -1,16 +1,19 @@
-﻿<UserControl x:Class="Octide.Views.SetItemView"
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.SetTab.Views.SetItemView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
-             xmlns:gong="urn:gong-wpf-dragdrop"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              xmlns:local="clr-namespace:Octide"
-             xmlns:views="clr-namespace:Octide.Views"
-             xmlns:vm="clr-namespace:Octide.ViewModel"
-             xmlns:model="clr-namespace:Octide.ItemModel"
+             xmlns:set="clr-namespace:Octide.SetTab.Views"
+             xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
              d:DesignHeight="700" d:DesignWidth="1100"
              params:Design.Theme="Dark">
 
@@ -18,8 +21,19 @@
         <TabItem Header="Summary" >
             <ScrollViewer VerticalScrollBarVisibility="Auto" >
                 <ItemsControl Style="{StaticResource OctideInputPanel}">
+                    <StackPanel Orientation="Horizontal" Visibility="Collapsed">
+                        <Button HorizontalAlignment="Left" Content="Import Cards from Spreadsheet" Command="{Binding ImportCSVCommand}" />
+                    </StackPanel>
                     <TextBlock Text="Name" />
-                    <TextBox Text="{Binding Name}" />
+                    <TextBox>
+                        <TextBox.Text>
+                            <Binding Path="Name" >
+                                <Binding.ValidationRules>
+                                    <local:StringRestrictionValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                     <TextBlock Text="GUID" />
                     <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
                     <TextBlock Text="Abbreviation Code" />
@@ -37,7 +51,7 @@
             </ScrollViewer>
         </TabItem>
 
-        <TabItem Header="Package">
+        <TabItem Header="Packages">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
@@ -48,22 +62,19 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Button Content="New Package" Margin="1" Command="{Binding AddPackageCommand}" />
-                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding PackageItems}" SelectedItem="{Binding SelectedPackage}" >
+                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding PackageItems}" SelectedItem="{Binding PackageItems.SelectedItem}" >
                     <ListBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding SelectedPackage.RemoveCommand}" />
+                        <KeyBinding Key="Delete" Command="{Binding PackageItems.SelectedItem.RemoveCommand}" />
                     </ListBox.InputBindings>
                 </ListBox>
-                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding SelectedPackage}">
+                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding PackageItems.SelectedItem}">
                     <ContentControl.Resources>
-                        <DataTemplate DataType="{x:Type model:SetPackageItemViewModel}" >
-                            <views:SetPackageItemView />
+                        <DataTemplate DataType="{x:Type item:PackageModel}" >
+                            <set:PackageItemView />
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>
             </Grid>
-        </TabItem>
-        <TabItem Header="Markers" >
-            <views:SetMarkersView />
         </TabItem>
 
         <TabItem Header="Cards" IsSelected="True" >
@@ -77,15 +88,15 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Button Content="New Card" Margin="1" Command="{Binding AddCardCommand}" />
-                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding CardItems}" SelectedItem="{Binding SelectedCard}" >
+                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding CardItems}" SelectedItem="{Binding CardItems.SelectedItem}" >
                     <ListBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding SelectedCard.RemoveCommand}" />
+                        <KeyBinding Key="Delete" Command="{Binding CardItems.SelectedItem.RemoveCommand}" />
                     </ListBox.InputBindings>
                 </ListBox>
-                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding SelectedCard}">
+                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding CardItems.SelectedItem}">
                     <ContentControl.Resources>
-                        <DataTemplate DataType="{x:Type model:SetCardItemViewModel}" >
-                            <views:SetCardItemView />
+                        <DataTemplate DataType="{x:Type item:CardModel}" >
+                            <set:CardItemView />
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>

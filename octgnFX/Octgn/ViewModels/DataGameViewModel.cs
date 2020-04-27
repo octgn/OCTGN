@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
+using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.DataManagers;
 namespace Octgn.ViewModels
 {
@@ -44,7 +45,7 @@ namespace Octgn.ViewModels
             Id = game.Id;
             Name = game.Name;
             Version = game.Version;
-            CardBackUri = new Uri(game.CardSize.Back);
+            CardBackUri = new Uri(game.DefaultSize().Back);
             //FullPath = game.FullPath;
             IsSelected = false;
         }

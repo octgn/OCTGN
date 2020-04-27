@@ -231,7 +231,7 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
+        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret, string cardsize) : base(owner)
         {
             _id = id;
             Type = new CardIdentity(id) { Model = model.Clone() };
@@ -245,7 +245,10 @@ namespace Octgn.Play
             //numberOfSwitchWithAlternatesNotPerformed = 0;
             //_isAlternateImage = false;
             _cardMoved = false;
-            Size = Program.GameEngine.Definition.CardSizes[cardsize];
+            if (Program.GameEngine.Definition.CardSizes.ContainsKey(cardsize))
+                Size = Program.GameEngine.Definition.CardSizes[cardsize];
+            else
+                Size = Program.GameEngine.Definition.DefaultSize();
         }
 
         internal override int Id
@@ -255,12 +258,12 @@ namespace Octgn.Play
 
         public override string Name
         {
-            get { return FaceUp && _type.Model != null ? _type.Model.PropertyName() : "Card"; }
+            get { return FaceUp && _type.Model != null ? _type.Model.GetName() : "Card"; }
         }
 
         public string RealName
         {
-            get { return _type.Model != null ? _type.Model.PropertyName() : "Card"; }
+            get { return _type.Model != null ? _type.Model.GetName() : "Card"; }
         }
         public bool CardMoved
         {
@@ -552,7 +555,7 @@ namespace Octgn.Play
         public string[] Alternates()
         {
             if (_type.Model == null) return new string[0];
-            return _type.Model.Properties.Select(x => x.Key).ToArray();
+            return _type.Model.PropertySets.Select(x => x.Key).ToArray();
         }
 
         public string Alternate()
@@ -578,7 +581,7 @@ namespace Octgn.Play
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
         {
             if (_type.Model == null) return defaultReturn;
-            if (name.Equals("Name", scompare)) return _type.Model.PropertyName();
+            if (name.Equals("Name", scompare)) return _type.Model.GetName();
             if (name.Equals("Id", scompare)) return _type.Model.Id;
 
             //check if python has changed the default property value
@@ -588,18 +591,11 @@ namespace Octgn.Play
             }
 
             //check if the card has a default property value from the set data
-            var prop = _type.Model.Properties[alternate].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (prop.Key != null && !prop.Key.IsUndefined)
+            //if the alternate didn't have a property defined, it will use the base card's property.
+            var prop = _type.Model.GetCardProperties().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            if (prop.Key != null)
             {
                 return prop.Value;
-            }
-
-            //if the alternate didn't have a property defined, use the base card's property.
-            //note that if the card is already in its base state, it'll just repeat the same code as above to the same end result
-            var baseProp = _type.Model.Properties[""].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (baseProp.Key != null && !baseProp.Key.IsUndefined)
-            {
-                return baseProp.Value;
             }
 
             //return the default value if the card didnt have a value for this property
@@ -673,19 +669,19 @@ namespace Octgn.Play
             if (!up)
             {
                 if (Owner.SleeveImage == null) {
-                    return Program.GameEngine.GetCardBack(this.Size.Name);
+                    return Program.GameEngine.GetCardBack(this.Size);
                 } else {
                     return Owner.SleeveImage;
                 }
             }
-            if (Type == null || Type.Model == null) return Program.GameEngine.GetCardFront(this.Size.Name);
+            if (Type == null || Type.Model == null) return Program.GameEngine.GetCardFront(this.Size);
             BitmapImage bmpo = null;
             Octgn.Library.X.Instance.Try(() =>
             {
                 ImageUtils.GetCardImage(Type.Model, x => bmpo = x,proxyOnly);
             });
 
-            return bmpo ?? Program.GameEngine.GetCardFront(this.Size.Name);
+            return bmpo ?? Program.GameEngine.GetCardFront(this.Size);
         }
 
         internal void SetOrientation(CardOrientation value)
@@ -862,7 +858,7 @@ namespace Octgn.Play
         //        return markertuple;
         //    }
         //}
-        internal void AddMarker(DataNew.Entities.Marker model, ushort count)
+        internal void AddMarker(GameMarker model, ushort count)
         {
             Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
             if (marker != null)
@@ -871,7 +867,7 @@ namespace Octgn.Play
                 _markers.Add(new Marker(this, model, count));
         }
 
-        internal void AddMarker(DataNew.Entities.Marker model)
+        internal void AddMarker(GameMarker model)
         {
             AddMarker(model, 1);
         }
@@ -898,21 +894,21 @@ namespace Octgn.Play
             _removedMarkers.Add(marker);
         }
 
-        internal Marker FindMarker(Guid lId, string name)
+        internal Marker FindMarker(string lId, string name)
         {
             return _markers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
                                            (m.Model.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
-        internal Marker FindRemovedMarker(Guid lId, string name)
+        internal Marker FindRemovedMarker(string lId, string name)
         {
             return _removedMarkers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
                                            (m.Model.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
-        internal void SetMarker(Player player, Guid lId, string name, int count, bool notify = true)
+        internal void SetMarker(Player player, string lId, string name, int count, bool notify = true)
         {
             int oldCount = 0;
             Marker marker = FindMarker(lId, name);
@@ -923,7 +919,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(lId);
+                GameMarker model = Program.GameEngine.GetMarkerModel(lId);
                 model.Name = name;
                 AddMarker(model, (ushort)count);
             }

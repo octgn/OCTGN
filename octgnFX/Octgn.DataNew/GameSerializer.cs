@@ -15,6 +15,7 @@ using Octgn.DataNew.FileDB;
 using Octgn.Library;
 using Octgn.Library.Exceptions;
 using Octgn.ProxyGenerator;
+using Octgn.ProxyGenerator.Definitions;
 using Regex = System.Text.RegularExpressions;
 
 namespace Octgn.DataNew
@@ -57,7 +58,7 @@ namespace Octgn.DataNew
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new Dictionary<string, DeckSection>(),
                               SharedDeckSections = new Dictionary<string, DeckSection>(),
-                              GlobalVariables = new List<GlobalVariable>(),
+                              GlobalVariables = new Dictionary<string, GlobalVariable>(),
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
                               Filename = fileName,
@@ -67,6 +68,7 @@ namespace Octgn.DataNew
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               MarkerSize = int.Parse(g.markersize),
+                              Markers = new Dictionary<string, GameMarker>(),
                               Phases = new List<GamePhase>(),
                               Documents = new List<Document>(),
                               Symbols = new List<Symbol>(),
@@ -85,7 +87,7 @@ namespace Octgn.DataNew
                           };
             var defSize = new CardSize
             {
-                Name = "Default",
+                Name = g.card.name,
                 Back = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
                 Front = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front),
                 Height = int.Parse(g.card.height),
@@ -101,15 +103,30 @@ namespace Octgn.DataNew
                 defSize.BackWidth = defSize.Width;
             if (defSize.BackCornerRadius < 0)
                 defSize.BackCornerRadius = defSize.CornerRadius;
-            ret.CardSize = defSize;
-            ret.CardSizes.Add("Default", defSize);
             ret.CardSizes.Add("", defSize);
 
             #region table
 
             ret.Table = this.DeserialiseGroup(g.table, 0);
             ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
-            ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
+
+            switch (g.table.backgroundStyle)
+            {
+                case tableBackgroundStyle.stretch:
+                    ret.Table.BackgroundStyle = BackgroundStyle.Stretch;
+                    break;
+                case tableBackgroundStyle.tile:
+                    ret.Table.BackgroundStyle = BackgroundStyle.Tile;
+                    break;
+                case tableBackgroundStyle.uniform:
+                    ret.Table.BackgroundStyle = BackgroundStyle.Uniform;
+                    break;
+                case tableBackgroundStyle.uniformToFill:
+                    ret.Table.BackgroundStyle = BackgroundStyle.UniformToFill;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             ret.Table.Height = Int32.Parse(g.table.height);
             ret.Table.Width = Int32.Parse(g.table.width);
             #endregion table
@@ -225,7 +242,7 @@ namespace Octgn.DataNew
                 var player = new Player
                                  {
                                      Groups = new List<Group>(),
-                                     GlobalVariables = new List<GlobalVariable>(),
+                                     GlobalVariables = new Dictionary<string, GlobalVariable>(),
                                      Counters = new List<Counter>(),
                                      IndicatorsFormat = g.player.summary
                                  };
@@ -235,36 +252,36 @@ namespace Octgn.DataNew
                 {
                 foreach (var item in g.player.Items)
                 {
-                    if (item is counter)
-                    {
-                        var i = item as counter;
-                        (player.Counters as List<Counter>)
-                            .Add(new Counter
-                                     {
-                                         Id = (byte)curCounter,
-                                         Name = i.name,
-                                         Icon = Path.Combine(directory, i.icon ?? ""),
-                                         Reset = bool.Parse(i.reset.ToString()),
-                                         Start = int.Parse(i.@default)
-                                     });
-                        curCounter++;
-                    }
-                    else if (item is gamePlayerGlobalvariable)
-                    {
-                        var i = item as gamePlayerGlobalvariable;
-                        var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
-                        (player.GlobalVariables as List<GlobalVariable>).Add(to);
-                    }
-                    else if (item is hand)
-                    {
-                        player.Hand = this.DeserialiseGroup(item as hand, 1);
-                    }
-                    else if (item is group)
-                    {
-                        var i = item as group;
-                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                        curGroup++;
-                    }
+                        if (item is counter counter)
+                        {
+                            (player.Counters as List<Counter>)
+                                .Add(new Counter
+                                {
+                                    Id = (byte)curCounter,
+                                    Name = counter.name,
+                                    Icon = Path.Combine(directory, counter.icon ?? ""),
+                                    Reset = bool.Parse(counter.reset.ToString()),
+                                    Start = int.Parse(counter.@default)
+                                });
+                            curCounter++;
+                        }
+                        else if (item is gamePlayerGlobalvariable globalvariable)
+                        {
+                            player.GlobalVariables.Add(globalvariable.name, new GlobalVariable()
+                                                                            {
+                                                                                Name = globalvariable.name,
+                                                                                Value = globalvariable.value
+                                                                            });
+                        }
+                        else if (item is hand hand)
+                        {
+                            player.Hand = this.DeserialiseGroup(hand, 1);
+                        }
+                        else if (item is group group)
+                        {
+                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(group, curGroup));
+                            curGroup++;
+                        }
                 }
                 }
                 ret.Player = player;
@@ -337,25 +354,37 @@ namespace Octgn.DataNew
             {
                 foreach (var d in g.deck)
                 {
-                    ret.DeckSections.Add(d.name, new DeckSection { Group = d.group, Name = d.name, Shared = false });
+                    var group = ret.Player.Groups.FirstOrDefault(x => x.Name == d.group);
+                    if (group != null)
+                        ret.DeckSections.Add(d.name, new DeckSection { Group = group, Name = d.name, Shared = false });
                 }
             }
             if (g.sharedDeck != null)
             {
                 foreach (var s in g.sharedDeck)
                 {
-                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name, Shared = true });
+                    var group = ret.GlobalPlayer.Groups.FirstOrDefault(x => x.Name == s.group);
+                    if (group != null)
+                        ret.SharedDeckSections.Add(s.name, new DeckSection { Group = group, Name = s.name, Shared = true });
                 }
             }
             #endregion deck
-            #region card
-            var namepd = new PropertyDef
+            #region markers
+            if (g.markers != null)
             {
-                Name = "Name",
-                TextKind = PropertyTextKind.FreeText,
-                Type = PropertyType.String
-            };
-            ret.CustomProperties.Add(namepd);
+                foreach (var m in g.markers)
+                {
+                    var marker = new GameMarker
+                    {
+                        Name = m.name,
+                        Source = Path.Combine(directory, m.src),
+                        Id = m.id
+                    };
+                    ret.Markers.Add(marker.Id, marker);
+                }
+            }
+            #endregion markers
+            #region card
             if (g.card != null)
             {
                 if (g.card.property != null)
@@ -402,12 +431,14 @@ namespace Octgn.DataNew
                             Front = String.IsNullOrWhiteSpace(s.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, s.front),
                             Back = String.IsNullOrWhiteSpace(s.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, s.back)
                         };
+                        // xsd sets the default values for the back side sizes to -1 so the deserializer knows they were missing
+                        // TODO: handle this better for mising values
                         if (cardSize.BackHeight < 0)
-                            cardSize.BackHeight = ret.CardSize.Height;
+                            cardSize.BackHeight = cardSize.Height;
                         if (cardSize.BackWidth < 0)
-                            cardSize.BackWidth = ret.CardSize.Width;
+                            cardSize.BackWidth = cardSize.Width;
                         if (cardSize.BackCornerRadius < 0)
-                            cardSize.BackCornerRadius = ret.CardSize.CornerRadius;
+                            cardSize.BackCornerRadius = cardSize.CornerRadius;
                         ret.CardSizes.Add(cardSize.Name, cardSize);
                     }
                 }
@@ -516,7 +547,7 @@ namespace Octgn.DataNew
                     if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
                     else coll.SetPart(x => x.Directory(pathParts[i]));
                 }
-                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id, g.proxygen));
+                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id));
             }
             #endregion proxygen
             #region globalvariables
@@ -524,7 +555,12 @@ namespace Octgn.DataNew
             {
                 foreach (var item in g.globalvariables)
                 {
-                    ret.GlobalVariables.Add(new GlobalVariable { Name = item.name, Value = item.value, DefaultValue = item.value });
+                    var globalVariable = new GlobalVariable()
+                    {
+                        Name = item.name,
+                        Value = item.value
+                    };
+                    ret.GlobalVariables.Add(item.name, globalVariable);
                 }
             }
             #endregion globalvariables
@@ -589,72 +625,8 @@ namespace Octgn.DataNew
             }
             if (grp.Items != null)
             {
-                foreach (var item in grp.Items)
-                {
-                    if (item is action)
-                    {
-                        var i = item as action;
-                        var to = new GroupAction
-                                     {
-                                         Name = i.menu,
-                                         Shortcut = i.shortcut,
-                                         ShowExecute = i.showIf,
-                                         HeaderExecute = i.getName,
-                                         BatchExecute = i.batchExecute,
-                                         Execute = i.execute,
-                                         DefaultAction = bool.Parse(i.@default.ToString())
-                                     };
-                        if (item is cardAction)
-                        {
-                            to.IsGroup = false;
-                            (ret.CardActions as List<IGroupAction>).Add(to);
-                        }
-                        else if (item is groupAction)
-                        {
-                            to.IsGroup = true;
-                            (ret.GroupActions as List<IGroupAction>).Add(to);
-                        }
-                    }
-                    else if (item is actionSubmenu)
-                    {
-                        var i = item as actionSubmenu;
-                        var to = new GroupActionGroup
-                        {
-                            Children = new List<IGroupAction>(),
-                            Name = i.menu,
-                            ShowExecute = i.showIf,
-                            HeaderExecute = i.getName,
-                        };
-                        if (item is cardActionSubmenu)
-                        {
-                            to.IsGroup = false;
-                            to.Children = this.DeserializeGroupActionGroup(i, false);
-                            (ret.CardActions as List<IGroupAction>).Add(to);
-                        }
-                        else if (item is groupActionSubmenu)
-                        {
-                            to.IsGroup = true;
-                            to.Children = this.DeserializeGroupActionGroup(i, true);
-                            (ret.GroupActions as List<IGroupAction>).Add(to);
-                        }
-                    }
-                    else if (item is actionSeparator)
-                    {
-                        var separator = new GroupActionSeparator {
-                            ShowExecute = item.showIf,
-                        };
-                        if (item is groupActionSeparator)
-                        {
-                            separator.IsGroup = true;
-                            (ret.GroupActions as List<IGroupAction>).Add(separator);
-                        }
-                        else if (item is cardActionSeparator)
-                        {
-                            separator.IsGroup = false;
-                            (ret.CardActions as List<IGroupAction>).Add(separator);
-                        }
-                    }
-                }
+                ret.CardActions = DeserializeGroupActionList(grp.Items, false);
+                ret.GroupActions = DeserializeGroupActionList(grp.Items, true);
             }
             switch (grp.visibility)
             {
@@ -676,7 +648,59 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup, bool isGroup)
+        internal IEnumerable<IGroupAction> DeserializeGroupActionList(IEnumerable<baseAction> actiongroup, bool isGroup)
+        {
+            var ret = new List<IGroupAction>();
+       //     if (actiongroup.Items == null) return ret;
+            foreach (baseAction item in actiongroup)
+            {
+                if (item is action action)
+                {
+                    if ((action is cardAction) == isGroup)
+                        continue;
+                    var addAction = new GroupAction
+                    {
+                        Name = action.menu,
+                        Shortcut = action.shortcut,
+                        IsBatchExecutable = (action.batchExecute != null),
+                        ShowExecute = action.showIf,
+                        HeaderExecute = action.getName,
+                        DefaultAction = bool.Parse(action.@default.ToString())
+                    };
+                    addAction.Execute = (addAction.IsBatchExecutable) ? action.batchExecute : action.execute;
+                    addAction.IsGroup = isGroup;
+                    ret.Add(addAction);
+                }
+                else if (item is actionSubmenu submenu)
+                {
+                    if ((submenu is cardActionSubmenu) == isGroup)
+                        continue;
+                    var addgroup = new GroupActionSubmenu
+                    {
+                        Children = new List<IGroupAction>(),
+                        Name = submenu.menu,
+                        IsGroup = isGroup,
+                        ShowExecute = submenu.showIf,
+                        HeaderExecute = submenu.getName
+                    };
+                    addgroup.Children = this.DeserializeGroupActionList(submenu.Items, isGroup);
+                    ret.Add(addgroup);
+                }
+                else if (item is actionSeparator separator)
+                {
+                    if ((separator is cardActionSeparator) == isGroup)
+                        continue;
+                    var groupActionSeparator = new GroupActionSeparator
+                    {
+                        IsGroup = isGroup,
+                        ShowExecute = separator.showIf
+                    };
+                    ret.Add(groupActionSeparator);
+                }
+            }
+            return ret;
+        }
+        internal IEnumerable<IGroupAction> DeserializeGroupActionSubmenu(actionSubmenu actiongroup, bool isGroup)
         {
             var ret = new List<IGroupAction>();
             if (actiongroup.Items == null) return ret;
@@ -690,7 +714,6 @@ namespace Octgn.DataNew
                         Name = i.menu,
                         Shortcut = i.shortcut,
                         Execute = i.execute,
-                        BatchExecute = i.batchExecute,
                         ShowExecute = i.showIf,
                         HeaderExecute = i.getName,
                         DefaultAction = bool.Parse(i.@default.ToString())
@@ -701,7 +724,7 @@ namespace Octgn.DataNew
                 if (item is actionSubmenu)
                 {
                     var i = item as actionSubmenu;
-                    var addgroup = new GroupActionGroup
+                    var addgroup = new GroupActionSubmenu
                     {
                         Children = new List<IGroupAction>(),
                         Name = i.menu,
@@ -709,7 +732,7 @@ namespace Octgn.DataNew
                         ShowExecute = i.showIf,
                         HeaderExecute = i.getName
                     };
-                    addgroup.Children = this.DeserializeGroupActionGroup(i, isGroup);
+                    addgroup.Children = this.DeserializeGroupActionSubmenu(i, isGroup);
                     ret.Add(addgroup);
                 }
                 if (item is actionSeparator)
@@ -859,8 +882,8 @@ namespace Octgn.DataNew
                 {
                     var gamePlayerGlobalVariable = new gamePlayerGlobalvariable
                     {
-                        name = v.Name,
-                        value = v.Value
+                        name = v.Value.Name,
+                        value = v.Value.Value
                     };
                     ilist.Add(gamePlayerGlobalVariable);
                 }
@@ -942,7 +965,7 @@ namespace Octgn.DataNew
                     var deckSection = new deckSection
                     {
                         name = s.Value.Name,
-                        group = s.Value.Group
+                        group = s.Value.Group.Name
                     };
                     deckSectionList.Add(deckSection);
                 }
@@ -957,13 +980,30 @@ namespace Octgn.DataNew
                     var deckSection = new deckSection
                     {
                         name = s.Value.Name,
-                        group = s.Value.Group
+                        group = s.Value.Group.Name
                     };
                     deckSectionList.Add(deckSection);
                 }
                 save.sharedDeck = deckSectionList.ToArray();
             }
             #endregion deck
+            #region markers
+            if (game.Markers != null)
+            {
+                var markersList = new List<gameMarker>();
+                foreach (var m in game.Markers.Values)
+                {
+                    var marker = new gameMarker
+                    {
+                        name = m.Name,
+                        src = (m.Source ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        id = m.Id
+                    };
+                    markersList.Add(marker);
+                }
+                if (markersList.Count > 0) save.markers = markersList.ToArray();
+            }
+            #endregion markers
             #region card
 
             if (game.CustomProperties != null)
@@ -971,7 +1011,6 @@ namespace Octgn.DataNew
                 var propertyDefList = new List<propertyDef>();
                 foreach (var p in game.CustomProperties)
                 {
-                    if (p.Name == "Name") continue;
                     var propertyDef = new propertyDef
                     {
                         name = p.Name,
@@ -1000,12 +1039,13 @@ namespace Octgn.DataNew
                 {
                     if (c.Key == "")
                     {
-                        save.card.back = game.CardSize.Back.Replace(parsedRootPath, "").Replace(rootPath, "");
-                        save.card.front = game.CardSize.Front.Replace(parsedRootPath, "").Replace(rootPath, "");
-                        save.card.height = game.CardSize.Height.ToString();
-                        save.card.width = game.CardSize.Width.ToString();
-                        save.card.cornerRadius = game.CardSize.CornerRadius.ToString();
-                        save.card.backCornerRadius = game.CardSize.BackCornerRadius.ToString();
+                        save.card.name = c.Value.Name;
+                        save.card.back = c.Value.Back.Replace(parsedRootPath, "").Replace(rootPath, "");
+                        save.card.front = c.Value.Front.Replace(parsedRootPath, "").Replace(rootPath, "");
+                        save.card.height = c.Value.Height.ToString();
+                        save.card.width = c.Value.Width.ToString();
+                        save.card.cornerRadius = c.Value.CornerRadius.ToString();
+                        save.card.backCornerRadius = c.Value.BackCornerRadius.ToString();
                         continue;
             }
                     if (c.Value.Front == null || c.Value.Back == null) continue;
@@ -1122,8 +1162,8 @@ namespace Octgn.DataNew
                 {
                     var globalVariable = new gameGlobalvariable
                     {
-                        name = g.Name,
-                        value = g.Value
+                        name = g.Value.Name,
+                        value = g.Value.Value
                     };
                     globalVariableList.Add(globalVariable);
                 }
@@ -1171,7 +1211,6 @@ namespace Octgn.DataNew
             {
                 name = group.Name,
                 background = group.Background == null ? null : (group.Background ?? "").Replace(rootPath, ""),
-                backgroundStyle = (tableBackgroundStyle)Enum.Parse(typeof(tableBackgroundStyle), group.BackgroundStyle),
                 height = group.Height.ToString(),
                 width = group.Width.ToString(),
                 ordered = group.Ordered ? boolean.True : boolean.False,
@@ -1180,9 +1219,24 @@ namespace Octgn.DataNew
             };
             if (group.CardActions != null)
             {
-            var itemList = SerializeActions(group.CardActions).ToList();
-            itemList.AddRange(SerializeActions(group.GroupActions).ToArray());
-            ret.Items = itemList.ToArray();
+                var itemList = SerializeActions(group.CardActions, false).ToList();
+                itemList.AddRange(SerializeActions(group.GroupActions, true).ToArray());
+                ret.Items = itemList.ToArray();
+            }
+            switch (group.BackgroundStyle)
+            {
+                case BackgroundStyle.Stretch:
+                    ret.backgroundStyle = tableBackgroundStyle.stretch;
+                    break;
+                case BackgroundStyle.Tile:
+                    ret.backgroundStyle = tableBackgroundStyle.tile;
+                    break;
+                case BackgroundStyle.Uniform:
+                    ret.backgroundStyle = tableBackgroundStyle.uniform;
+                    break;
+                case BackgroundStyle.UniformToFill:
+                    ret.backgroundStyle = tableBackgroundStyle.uniformToFill;
+                    break;
             }
             switch (group.Visibility)
             {
@@ -1214,8 +1268,8 @@ namespace Octgn.DataNew
             ret.moveto = group.MoveTo ? boolean.True : boolean.False;
             if (group.CardActions != null)
             {
-                var itemList = SerializeActions(group.CardActions).ToList();
-                itemList.AddRange(SerializeActions(group.GroupActions).ToArray());
+                var itemList = SerializeActions(group.CardActions, false).ToList();
+                itemList.AddRange(SerializeActions(group.GroupActions, true).ToArray());
                 ret.Items = itemList.ToArray();
             }
             switch (group.Visibility)
@@ -1236,47 +1290,37 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        internal IEnumerable<baseAction> SerializeActions(IEnumerable<IGroupAction> actions)
+        internal IEnumerable<baseAction> SerializeActions(IEnumerable<IGroupAction> actions, bool IsGroup)
         {
             foreach (var a in actions)
             {
-                if (a is GroupAction)
+                if (a is GroupAction groupAction)
                 {
-                    var i = a as GroupAction;
-                    action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
-                    ret.@default = i.DefaultAction ? boolean.True : boolean.False;
-                    ret.showIf = i.ShowExecute;
-                    ret.getName = i.HeaderExecute;
-                    ret.batchExecute = i.BatchExecute;
-                    ret.execute = i.Execute;
-                    ret.menu = i.Name;
-                    ret.shortcut = i.Shortcut;
+                    action ret = IsGroup ? (action)new groupAction() : new cardAction();
+                    ret.@default = groupAction.DefaultAction ? boolean.True : boolean.False;
+                    ret.showIf = groupAction.ShowExecute;
+                    ret.getName = groupAction.HeaderExecute;
+                    if (groupAction.IsBatchExecutable)
+                        ret.batchExecute = groupAction.Execute;
+                    else
+                        ret.execute = groupAction.Execute;
+                    ret.menu = groupAction.Name;
+                    ret.shortcut = groupAction.Shortcut;
                     yield return ret;
                 }
-                else if (a is GroupActionGroup)
+                else if (a is GroupActionSubmenu actionSubmenu)
                 {
-                    var i = a as GroupActionGroup;
-                    var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
-                    ret.menu = i.Name;
-                    ret.showIf = i.ShowExecute;
-                    ret.getName = i.HeaderExecute;
-                    ret.Items = SerializeActions(i.Children).ToArray();
-                    ret.ItemsElementName = i.Children.Select(x =>
-                    {
-                        if (x.IsGroup && x is GroupAction) return ItemsChoiceType.groupaction;
-                        else if (x.IsGroup && x is GroupActionGroup) return ItemsChoiceType.groupactions;
-                        else if (x.IsGroup && x is GroupActionSeparator) return ItemsChoiceType.groupseparator;
-                        else if (!x.IsGroup && x is GroupAction) return ItemsChoiceType.cardaction;
-                        else if (!x.IsGroup && x is GroupActionGroup) return ItemsChoiceType.cardactions;
-                        else return ItemsChoiceType.cardseparator;
-                    }).ToArray();
+                    var ret = IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
+                    ret.menu = actionSubmenu.Name;
+                    ret.showIf = actionSubmenu.ShowExecute;
+                    ret.getName = actionSubmenu.HeaderExecute;
+                    ret.Items = SerializeActions(actionSubmenu.Children, IsGroup).ToArray();
                     yield return ret;
                 }
-                else if (a is GroupActionSeparator)
+                else if (a is GroupActionSeparator actionSeparator)
                 {
-                    var i = a as GroupActionSeparator;
-                    var ret = i.IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
-                    ret.showIf = i.ShowExecute;
+                    var ret = IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
+                    ret.showIf = actionSeparator.ShowExecute;
                     yield return ret;
                 }
             }
@@ -1335,7 +1379,6 @@ namespace Octgn.DataNew
                 if (root.Attribute("description") != null)
                     ret.Description = root.Attribute("description").Value;
                 ret.Cards = new List<Card>();
-                ret.Markers = new List<Marker>();
                 ret.Packs = new List<Pack>();
                 ret.PackageName = "";
                 ret.InstallPath = directory;
@@ -1349,153 +1392,38 @@ namespace Octgn.DataNew
                 if (!Directory.Exists(ret.PackUri)) Directory.CreateDirectory(ret.PackUri);
                 if (!Directory.Exists(ret.ImagePackUri)) Directory.CreateDirectory(ret.ImagePackUri);
                 if (!Directory.Exists(ret.ProxyPackUri)) Directory.CreateDirectory(ret.ProxyPackUri);
-                var game = Game ?? DbContext.Get().Games.First(x => x.Id == ret.GameId);
-                foreach (var c in doc.Document.Descendants("card"))
+                Game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
+                foreach (var cardXml in doc.Document.Descendants("card"))
                 {
-                    var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value, c.Attribute("id").Value, "", game.CardSizes[""], new Dictionary<string, CardPropertySet>());
-
-                    var cs = c.Attribute("size");
-                    if (cs != null)
+                    var baseCardPropertySet = new CardPropertySet
                     {
-                        if (game.CardSizes.ContainsKey(cs.Value) == false)
-                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
-
-                        card.Size = game.CardSizes[cs.Value];
-                    }
-
-                    var defaultProperties = new CardPropertySet
-                    {
+                        Name = cardXml.Attribute("name").Value,
                         Type = "",
-                        Size = card.Size,
-                        Properties = new Dictionary<PropertyDef, object>()
+                        Properties = new Dictionary<PropertyDef, object>(),
+                        Size = DeserializeCardSize(cardXml)
                     };
-                    foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
-                    {
-                        var gameproperty = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
-                        if (gameproperty == null)
-                        {
-                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
-                        }
-                        var propertydef = gameproperty.Clone() as PropertyDef;
-                        if (propertydef.Type is PropertyType.RichText)
-                        {
-                            var span = new RichSpan();
-                            DeserializeCardProperty(span, p, game);
-                            var propertydefvalue = new RichTextPropertyValue
-                            {
-                                Value = span
-                            };
-                            defaultProperties.Properties.Add(propertydef, propertydefvalue);
-                        }
-                        else
-                        {
-                            defaultProperties.Properties.Add(propertydef, p.Attribute("value").Value);
-                        }
+                    var card = new Card(new Guid(cardXml.Attribute("id").Value), ret.Id, cardXml.Attribute("name").Value, cardXml.Attribute("id").Value, "", baseCardPropertySet.Size, new Dictionary<string, CardPropertySet>());
 
-                    }
-                    foreach (var cp in game.CustomProperties)
-                    {
-                        if (!defaultProperties.Properties.ContainsKey(cp))
-                        {
-                            var blankCardProperty = cp.Clone() as PropertyDef;
-                            blankCardProperty.IsUndefined = true;
-                            if (blankCardProperty.Type is PropertyType.RichText)
-                            {
-                                defaultProperties.Properties.Add(blankCardProperty, new RichTextPropertyValue() { Value = new RichSpan() });
-                            }
-                            else
-                            {
-                                defaultProperties.Properties.Add(blankCardProperty, "");
-                            }
-                        }
-                    }
-                    var nameproperty = new PropertyDef()
-                                 {
-                                     Hidden = false,
-                                     Name = "Name",
-                                     Type = PropertyType.String,
-                                     TextKind = PropertyTextKind.FreeText,
-                                     IgnoreText = false,
-                                     IsUndefined = false
-                                 };
-                    if (defaultProperties.Properties.ContainsKey(nameproperty))
-                        defaultProperties.Properties.Remove(nameproperty);
-                    defaultProperties.Properties.Add(nameproperty, card.Name);
-                    card.Properties.Add("", defaultProperties);
+                    // deserialize the base card properties
+                    var xmlBaseCardProperties = cardXml.Descendants("property").Where(x => x.Parent.Name == "card");
+                    DeserializeCardPropertySet(xmlBaseCardProperties, baseCardPropertySet);
+                    card.PropertySets.Add("", baseCardPropertySet);
 
                     // Add all of the other property sets
-                    foreach (var a in c.Descendants("alternate"))
+                    foreach (var altXml in cardXml.Descendants("alternate"))
                     {
-                        var propertySet = new CardPropertySet
+                        var altPropertySet = new CardPropertySet
                         {
+                            Name = altXml.Attribute("name").Value,
                             Properties = new Dictionary<PropertyDef, object>(),
-                            Type = a.Attribute("type").Value
+                            Type = altXml.Attribute("type").Value,
+                            Size = DeserializeCardSize(altXml)
                         };
 
-                        var acs = a.Attribute("size");
-                        if (acs != null)
-                        {
-                            if (game.CardSizes.ContainsKey(acs.Value) == false)
-                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
-                            propertySet.Size = game.CardSizes[acs.Value];
-                        }
-                        else propertySet.Size = card.Size;
-
-                        var thisName = a.Attribute("name").Value;
-                        foreach (var p in a.Descendants("property"))
-                        {
-                            var gameProperty = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
-                            if (gameProperty == null)
-                            {
-                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
-                            }
-
-                            var propertyDef = gameProperty.Clone() as PropertyDef;
-
-                            if (propertyDef.Type is PropertyType.RichText)
-                            {
-                                var span = new RichSpan();
-                                DeserializeCardProperty(span, p, game);
-                                var propertyDefValue = new RichTextPropertyValue
-                                {
-                                    Value = span
-                                };
-                                propertySet.Properties.Add(propertyDef, propertyDefValue);
-                            }
-                            else
-                            {
-                                propertySet.Properties.Add(propertyDef, p.Attribute("value").Value);
-                            }
-                        }
-                        foreach (var customProperty in game.CustomProperties)
-                        {
-                            if (!propertySet.Properties.ContainsKey(customProperty))
-                            {
-                                var blankCardProperty = customProperty.Clone() as PropertyDef;
-                                blankCardProperty.IsUndefined = true;
-                                if (blankCardProperty.Type is PropertyType.RichText)
-                                {
-                                    propertySet.Properties.Add(blankCardProperty, new RichTextPropertyValue() { Value = new RichSpan() });
-                                }
-                                else
-                                {
-                                    propertySet.Properties.Add(blankCardProperty, "");
-                                }
-                            }
-                        }
-                        var altNameProperty = new PropertyDef()
-                        {
-                            Hidden = false,
-                            Name = "Name",
-                            Type = PropertyType.String,
-                            TextKind = PropertyTextKind.FreeText,
-                            IgnoreText = false,
-                            IsUndefined = false
-                        };
-                        if (propertySet.Properties.ContainsKey(altNameProperty))
-                            propertySet.Properties.Remove(altNameProperty);
-                        propertySet.Properties.Add(altNameProperty, a.Attribute("name").Value);
-                        card.Properties.Add(propertySet.Type, propertySet);
+                        // deserialize the alternate card properties
+                        var xmlAltProperties = altXml.Descendants("property");
+                        DeserializeCardPropertySet(xmlAltProperties, altPropertySet);
+                        card.PropertySets.Add(altPropertySet.Type, altPropertySet);
                     }
 
                     (ret.Cards as List<Card>).Add(card);
@@ -1506,47 +1434,105 @@ namespace Octgn.DataNew
                     {
                         Id = new Guid(p.Attribute("id").Value),
                         Name = p.Attribute("name").Value,
-                        Definition = DeserializePack(p.Elements()),
-                        SetId = ret.Id
+                        Items = DeserializePack(p.Elements()),
+                        Set = ret
                     };
-                    foreach (var i in p.Elements("include"))
+                    foreach (var includeXml in p.Elements("include"))
                     {
                         var include = new Include
                         {
-                            Id = new Guid(i.Attribute("id").Value),
-                            SetId = new Guid(i.Attribute("set").Value)
+                            Id = new Guid(includeXml.Attribute("id").Value),
+                            SetId = new Guid(includeXml.Attribute("set").Value)
                         };
-                        foreach (var pr in i.Elements("property"))
-                        {
-                            var property = Tuple.Create(pr.Attribute("name").Value, pr.Attribute("value").Value);
-                            include.Properties.Add(property);
-                        }
+                        var includesPropertySet = new CardPropertySet() { Properties = new Dictionary<PropertyDef, object>() };
+                        DeserializeCardPropertySet(includeXml.Elements("property"), includesPropertySet);
+                        include.Properties = includesPropertySet.Properties.Select(x => new PickProperty() { Property = x.Key, Value = x.Value }).ToList();
+
                         pack.Includes.Add(include);
                     }
                     (ret.Packs as List<Pack>).Add(pack);
                 }
                 foreach (var m in doc.Document.Descendants("marker"))
                 {
-                    var marker = new Marker
+                    // set sourced markers are obsolete, must import them into the game for backwards compatibility
+                    var marker = new GameMarker
                     {
-                        Id = new Guid(m.Attribute("id").Value),
+                        Id = m.Attribute("id").Value,
                         Name = m.Attribute("name").Value
                     };
                     var markerDirectory = new DirectoryInfo(Path.Combine(directory, "Markers"));
                     var markerPath = markerDirectory.Exists == false ? null : markerDirectory.GetFiles(marker.Id.ToString() + ".*", SearchOption.TopDirectoryOnly).First();
-                    marker.IconUri = markerPath == null ? null : Path.Combine(directory, "Markers", markerPath.FullName);
-                    (ret.Markers as List<Marker>).Add(marker);
+                    marker.Source = markerPath == null ? null : Path.Combine(directory, "Markers", markerPath.FullName);
+                    if (!Game.Markers.ContainsKey(marker.Id))
+                        Game.Markers.Add(marker.Id, marker);
                 }
             }
 
             if (ret.Cards == null) ret.Cards = new Card[0];
-            if (ret.Markers == null) ret.Markers = new Marker[0];
+           // if (ret.Markers == null) ret.Markers = new Marker[0];
             if (ret.Packs == null) ret.Packs = new Pack[0];
             //Console.WriteLine(timer.ElapsedMilliseconds);
             return ret;
         }
 
-        private void DeserializeCardProperty(RichSpan span, XElement xmlNode, Game game)
+        private CardSize DeserializeCardSize(XElement element)
+        {
+            var altSize = element.Attribute("size");
+            if (altSize != null)
+            {
+                if (Game.CardSizes.ContainsKey(altSize.Value) == false)
+                    throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
+
+                return Game.CardSizes[altSize.Value];
+            }
+            return Game.CardSizes[""];
+        }
+
+        private void DeserializeCardPropertySet(IEnumerable<XElement> cardPropertyElements, CardPropertySet propertySet)
+        {
+            foreach (var propertyElement in cardPropertyElements)
+            {
+                PropertyDef gameDefinedProperty = Game.CustomProperties.FirstOrDefault(x => x.Name == propertyElement.Attribute("name").Value);
+                if (gameDefinedProperty == null)
+                {
+                    throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, Game.Name);
+                }
+                if (gameDefinedProperty.Type is PropertyType.RichText)
+                {
+                    var span = new RichSpan();
+                    DeserializeRichCardProperty(span, propertyElement);
+                    var propertyDefValue = new RichTextPropertyValue
+                    {
+                        Value = span
+                    };
+                    propertySet.Properties.Add(gameDefinedProperty, propertyDefValue);
+                }
+                else
+                {
+                    propertySet.Properties.Add(gameDefinedProperty, propertyElement.Attribute("value").Value);
+                }
+
+            }
+            /* don't add missing properties to the database
+            foreach (var gameProperties in game.CustomProperties)
+            {
+                if (!propertySet.Properties.ContainsKey(gameProperties))
+                {
+                    var blankCardProperty = gameProperties.Clone() as PropertyDef;
+                    blankCardProperty.IsUndefined = true;
+                    if (blankCardProperty.Type is PropertyType.RichText)
+                    {
+                        propertySet.Properties.Add(blankCardProperty, new RichTextPropertyValue() { Value = new RichSpan() });
+                    }
+                    else
+                    {
+                        propertySet.Properties.Add(blankCardProperty, null);
+                    }
+                }
+            }*/
+        }
+
+        private void DeserializeRichCardProperty(RichSpan span, XElement xmlNode)
         {
             foreach (XNode child in xmlNode.Nodes())
             {
@@ -1562,7 +1548,7 @@ namespace Octgn.DataNew
                         case "BOLD":
                             {
                                 RichSpan boldSpan = new RichSpan();
-                                DeserializeCardProperty(boldSpan, element, game);
+                                DeserializeRichCardProperty(boldSpan, element);
                                 boldSpan.Type = RichSpanType.Bold;
                                 span.Items.Add(boldSpan);
                                 break;
@@ -1571,7 +1557,7 @@ namespace Octgn.DataNew
                         case "ITALIC":
                             {
                                 RichSpan italicSpan = new RichSpan();
-                                DeserializeCardProperty(italicSpan, element, game);
+                                DeserializeRichCardProperty(italicSpan, element);
                                 italicSpan.Type = RichSpanType.Italic;
                                 span.Items.Add(italicSpan);
                                 break;
@@ -1580,7 +1566,7 @@ namespace Octgn.DataNew
                         case "UNDERLINE":
                             {
                                 RichSpan underlineSpan = new RichSpan();
-                                DeserializeCardProperty(underlineSpan, element, game);
+                                DeserializeRichCardProperty(underlineSpan, element);
                                 underlineSpan.Type = RichSpanType.Underline;
                                 span.Items.Add(underlineSpan);
                                 break;
@@ -1589,7 +1575,7 @@ namespace Octgn.DataNew
                         case "COLOR":
                             {
                                 RichColor colorSpan = new RichColor();
-                                DeserializeCardProperty(colorSpan, element, game);
+                                DeserializeRichCardProperty(colorSpan, element);
                                 colorSpan.Type = RichSpanType.Color;
                                 var regexColorCode = new Regex.Regex("^#[a-fA-F0-9]{6}$");
                                 var color = element.Attribute("value").Value;
@@ -1603,7 +1589,7 @@ namespace Octgn.DataNew
                         case "SYMBOL":
                             {
                                 var symbolId = element.Attribute("value").Value;
-                                Symbol symbol = game.Symbols.FirstOrDefault(x => x.Id == symbolId) ?? throw new InvalidOperationException($"Could not find symbol {symbolId}");
+                                Symbol symbol = Game.Symbols.FirstOrDefault(x => x.Id == symbolId) ?? throw new InvalidOperationException($"Could not find symbol {symbolId}");
                                 RichSymbol symbolSpan = new RichSymbol
                                 {
                                     Type = RichSpanType.Symbol,
@@ -1626,21 +1612,21 @@ namespace Octgn.DataNew
                 var option = new Option();
                 var probAtt = op.Attributes("probability").FirstOrDefault();
                 option.Probability = double.Parse(probAtt != null ? probAtt.Value : "1", CultureInfo.InvariantCulture);
-                option.Definition = DeserializePack(op.Elements());
+                option.Items = DeserializePack(op.Elements());
                 ret.Options.Add(option);
             }
             return ret;
         }
 
-        internal PackDefinition DeserializePack(IEnumerable<XElement> element)
+        internal List<object> DeserializePack(IEnumerable<XElement> element)
         {
-            var ret = new PackDefinition();
+            var ret = new List<object>();
             foreach (var e in element)
             {
                 switch (e.Name.LocalName)
                 {
                     case "options":
-                        ret.Items.Add(this.DeserializeOptions(e));
+                        ret.Add(this.DeserializeOptions(e));
                         break;
                     case "pick":
                         var pick = new Pick();
@@ -1649,7 +1635,7 @@ namespace Octgn.DataNew
                         var propertyList = new List<PickProperty>();
                         var baseProp = new PickProperty
                         {
-                            Name = e.Attribute("key").Value,
+                            Property = Game.CustomProperties.FirstOrDefault(x => x.Name == e.Attribute("key").Value),
                             Value = e.Attribute("value").Value
                         };
                         propertyList.Add(baseProp);
@@ -1657,13 +1643,13 @@ namespace Octgn.DataNew
                         {
                             var prop = new PickProperty
                             {
-                                Name = p.Attribute("key").Value,
+                                Property = Game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("key").Value),
                                 Value = p.Attribute("value").Value
                             };
                             propertyList.Add(prop);
                         }
                         pick.Properties = propertyList;
-                        ret.Items.Add(pick);
+                        ret.Add(pick);
                         break;
                 }
             }
@@ -1696,9 +1682,21 @@ namespace Octgn.DataNew
                 var pack = new setPack
                 {
                     name = setpack.Name.ToString(),
-                    id = setpack.Id.ToString(),
-                    Items = SerializePack(setpack.Definition.Items).ToArray()
+                    id = setpack.Id.ToString()
                 };
+
+                var packItems = SerializePack(setpack.Items).ToList();
+                foreach (Include include in setpack.Includes)
+                {
+                    packItems.Add(new include()
+                    {
+                        id = include.Id.ToString(),
+                        set = include.SetId.ToString(),
+                        property = include.Properties.Select(x => new includeProperty() { name = x.Property.Name.ToString(), value = x.Value?.ToString() }).ToArray()
+                    }
+                    );
+                }
+                pack.Items = packItems.ToArray();
                 packs.Add(pack);
             }
             save.packaging = packs.ToArray();
@@ -1708,19 +1706,18 @@ namespace Octgn.DataNew
             {
                 var card = new setCard
                 {
-                    name = c.Name.ToString(),
+                //    name = c.Name.ToString(),
                     id = c.Id.ToString(),
                 };
                 List<setCardAlternate> alts = new List<setCardAlternate>();
-                foreach (var propset in c.Properties)
+                foreach (var propset in c.PropertySets)
                 {
-                    if (propset.Key == c.Alternate)
+                    if (propset.Key == "")
                     {
                         var props = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
-                            if (p.Key.Name == "Name") continue;
-                            if (p.Value == null || p.Key.IsUndefined) continue;
+                            if (p.Value == null) continue;
                             var prop = new property
                             {
                                 name = p.Key.Name,
@@ -1728,33 +1725,35 @@ namespace Octgn.DataNew
                             };
                             props.Add(prop);
                         }
+                        card.name = propset.Value.Name;
                         card.property = props.ToArray();
-                        card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
-                        if (game.CardSize.Name != propset.Value.Size.Name) card.size = propset.Value.Size.Name;
+                        //  card.size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name;
+                        if (propset.Value.Size != game.CardSizes[""])
+                        {
+                            card.size = propset.Value.Size.Name;
+                        }
                     }
                     else
                     {
                         var alt = new setCardAlternate
                         {
-                            name = propset.Value.Properties.First(x => x.Key.Name == "Name").Value.ToString(),
-                            type = propset.Value.Type,
-                            size = (propset.Value.Size.Name == game.CardSize.Name) ? null : propset.Value.Size.Name
+                            name = propset.Value.Name,
+                            type = propset.Value.Type
                         };
+                        if (propset.Value.Size != game.CardSizes[""])
+                        {
+                            alt.size = propset.Value.Size.Name;
+                        }
                         var altprops = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
-                            if (p.Key.Name == "Name")
-                                alt.name = p.Value.ToString();
-                            else
+                            if (p.Value == null) continue;
+                            var prop = new property
                             {
-                                if (p.Value == null || p.Key.IsUndefined) continue;
-                                var prop = new property
-                                {
-                                    name = p.Key.Name,
-                                    value = p.Value.ToString()
-                                };
-                                altprops.Add(prop);
-                            }
+                                name = p.Key.Name,
+                                value = p.Value.ToString()
+                            };
+                            altprops.Add(prop);
                         }
                         alt.property = altprops.ToArray();
                         alts.Add(alt);
@@ -1775,7 +1774,7 @@ namespace Octgn.DataNew
             return File.ReadAllBytes(set.Filename);
         }
 
-        public IEnumerable<object> SerializePack(List<IPackItem> packitems)
+        public IEnumerable<object> SerializePack(List<object> packitems)
         {
             foreach (var item in packitems)
             {
@@ -1790,15 +1789,15 @@ namespace Octgn.DataNew
                     {
                         if (ret.key == null)
                         {
-                            ret.key = prop.Name;
-                            ret.value = prop.Value;
+                            ret.key = prop.Property.Name;
+                            ret.value = prop.Value.ToString();
                         }
                         else
                         {
                             var property = new pickProperty
                             {
-                                key = prop.Name,
-                                value = prop.Value
+                                key = prop.Property.Name,
+                                value = prop.Value?.ToString()
                             };
                             propertylist.Add(property);
                         }
@@ -1817,7 +1816,7 @@ namespace Octgn.DataNew
                         var option = new optionsOption
                         {
                             probability = opt.Probability,
-                            Items = SerializePack(opt.Definition.Items).ToArray()
+                            Items = SerializePack(opt.Items).ToArray()
                         };
                         optionlist.Add(option);
                     }
@@ -1833,6 +1832,7 @@ namespace Octgn.DataNew
         public ICollectionDefinition Def { get; set; }
 
         internal Guid GameId { get; set; }
+        public Game Game { get; set; }
 
         public GameScriptSerializer(Guid gameId)
         {
@@ -1852,14 +1852,26 @@ namespace Octgn.DataNew
 
         public byte[] Serialize(object obj)
         {
-            throw new NotImplementedException();
+            if ((obj is GameScript) == false)
+                throw new InvalidOperationException("obj must be typeof GameScript");
+            var Script = obj as GameScript;
+
+            var save = new gameScript()
+            {
+                src = Script.Script
+            };
+
+
+            Directory.CreateDirectory(new FileInfo(Script.Path).Directory.FullName);
+
+            File.WriteAllText(Script.Path, Script.Script);
+            return File.ReadAllBytes(Script.Path);
         }
     }
 
     public class ProxyGeneratorSerializer : IFileDbSerializer
     {
         public ICollectionDefinition Def { get; set; }
-        internal gameProxygen ProxyGenFromDef { get; set; }
         internal Guid GameId { get; set; }
 
         /// <summary>
@@ -1868,9 +1880,8 @@ namespace Octgn.DataNew
         /// this <see cref="Octgn.DataNew.Entities.Game"/>, reguardless of what the data says.
         /// </summary>
         public Game Game { get; set; }
-        public ProxyGeneratorSerializer(Guid gameId, gameProxygen proxygen)
+        public ProxyGeneratorSerializer(Guid gameId)
         {
-            ProxyGenFromDef = proxygen;
             GameId = gameId;
         }
 
@@ -1883,7 +1894,315 @@ namespace Octgn.DataNew
 
         public byte[] Serialize(object obj)
         {
-            throw new NotImplementedException();
+            if ((obj is ProxyDefinition) == false)
+                throw new InvalidOperationException("obj must be typeof ProxyDefinition");
+            var proxyDef = obj as ProxyDefinition;
+            var game = Game ?? DbContext.Get().Games.First(x => x.Id == (Guid)proxyDef.Key);
+            var rootPath = new DirectoryInfo(proxyDef.RootPath).FullName;
+            var parsedRootPath = string.Join("", rootPath, "\\");
+            var fullPath = Path.Combine(game.InstallPath, game.ProxyGenSource);
+
+            var save = new templates
+            {
+            };
+
+            #region blocks
+            var blocks = new List<templatesBlock>();
+            foreach (BlockDefinition blockdef in proxyDef.BlockManager.GetBlocks())
+            {
+                var block = new templatesBlock();
+                if (blockdef.type == "overlay")
+                    block.type = blocktype.overlay;
+                else if (blockdef.type == "text")
+                    block.type = blocktype.text;
+                block.id = blockdef.id;
+                block.src = blockdef.src;
+
+                var location = new templatesBlockLocation
+                {
+                    x = blockdef.location.x.ToString(),
+                    y = blockdef.location.y.ToString()
+                };
+                if (blockdef.location.rotate != 0)
+                {
+                    location.rotate = blockdef.location.rotate.ToString();
+                }
+                if (blockdef.location.flip)
+                {
+                    location.flip = proxyBoolean.True;
+                }
+                if (blockdef.location.altrotate)
+                {
+                    location.altrotate = proxyBoolean.True;
+                }
+                block.location = location;
+                if (block.type == blocktype.text)
+                {
+                    if (blockdef.border.size != 0)
+                    {
+                        var border = new templatesBlockBorder
+                        {
+                            size = blockdef.border.size.ToString(),
+                            color = System.Drawing.ColorTranslator.ToHtml(blockdef.border.color)
+                        };
+                        block.border = border;
+                    }
+                    var wordwrap = new templatesBlockWordwrap();
+                    if (blockdef.wordwrap.height != 0)
+                    {
+                        wordwrap.height = blockdef.wordwrap.height.ToString();
+                    }
+                    if (blockdef.wordwrap.width != 0)
+                    {
+                        wordwrap.width = blockdef.wordwrap.width.ToString();
+                    }
+                    switch (blockdef.wordwrap.align)
+                    {
+                        case "center":
+                            wordwrap.align = alignment.center;
+                            break;
+                        case "far":
+                            wordwrap.align = alignment.far;
+                            break;
+                        default:
+                            wordwrap.align = alignment.near;
+                            break;
+                    }
+                    switch (blockdef.wordwrap.valign)
+                    {
+                        case "center":
+                            wordwrap.valign = alignment.center;
+                            break;
+                        case "far":
+                            wordwrap.valign = alignment.far;
+                            break;
+                        default:
+                            wordwrap.valign = alignment.near;
+                            break;
+                    }
+                    if (blockdef.wordwrap.shrinkToFit)
+                    {
+                        wordwrap.shrinktofit = proxyBoolean.True;
+                    }
+                    block.wordwrap = wordwrap;
+
+                    var text = new templatesBlockText();
+                    if (blockdef.text.color != null)
+                    {
+                        text.color = System.Drawing.ColorTranslator.ToHtml(blockdef.text.color);
+                    };
+                    if (blockdef.text.font != null)
+                    {
+                        text.font = blockdef.text.font;
+                    }
+                    if (blockdef.text.size != 0)
+                    {
+                        text.size = blockdef.text.size.ToString();
+                    }
+                    block.text = text;
+                }
+                blocks.Add(block);
+            }           
+            save.blocks = blocks.ToArray();
+            #endregion
+
+            #region templates
+            var templates = new List<templatesTemplate>();
+            foreach (TemplateDefinition templatedef in proxyDef.TemplateSelector.GetTemplates())
+            {
+                var template = new templatesTemplate();
+                if (templatedef.defaultTemplate)
+                {
+                    template.@default = proxyBoolean.True;
+                }
+                template.src = templatedef.src;
+
+                var matches = new List<templatesTemplateMatch>();
+                foreach (Property matchdef in templatedef.Matches)
+                {
+                    var match = new templatesTemplateMatch()
+                    {
+                        name = matchdef.Name,
+                        value = matchdef.Value
+                    };
+                    matches.Add(match);
+                }
+                template.matches = matches.ToArray();
+
+                var overlayblocks = new List<object>();
+                foreach (LinkDefinition.LinkWrapper overlaydef in templatedef.OverlayBlocks)
+                {
+                    var item = SerializeLinkWrapper(overlaydef);
+                    overlayblocks.Add(item);
+                };
+                template.overlayblocks = overlayblocks.ToArray();
+
+                var textblocks = new List<object>();
+                foreach (LinkDefinition.LinkWrapper textdef in templatedef.TextBlocks)
+                {
+                    var item = SerializeLinkWrapper(textdef);
+                    textblocks.Add(item);
+                };
+                template.textblocks = textblocks.ToArray();
+                templates.Add(template);
+            }
+            
+
+            save.template = templates.ToArray();
+            #endregion
+
+            ///END
+            ///
+
+            var serializer = new XmlSerializer(typeof(templates));
+            Directory.CreateDirectory(new FileInfo(fullPath).Directory.FullName);
+
+            using (var fs = File.Open(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                serializer.Serialize(fs, save);
+            }
+            return File.ReadAllBytes(fullPath);
+        }
+
+        public object SerializeLinkWrapper(LinkDefinition.LinkWrapper wrapper)
+        {
+            if (wrapper.Conditional != null)
+            {
+                if (wrapper.Conditional.ifNode != null)
+                {
+                    var conditional = new conditional();
+                    var conditionalitems = new List<object>();
+                    var ifCondition = new conditionalIF
+                    {
+                        property = wrapper.Conditional.ifNode.property
+                    };
+                    if (wrapper.Conditional.ifNode.value != null)
+                    {
+                        ifCondition.value = wrapper.Conditional.ifNode.value;
+                    }
+                    if (wrapper.Conditional.ifNode.contains != null)
+                    {
+                        ifCondition.contains = wrapper.Conditional.ifNode.contains;
+                    }
+                    var ifConditionItems = new List<link>();
+                    foreach (var linkItem in wrapper.Conditional.ifNode.linkList)
+                    {
+                        ifConditionItems.Add(SerializeLink(linkItem.Link));
+                    }
+                    ifCondition.link = ifConditionItems.ToArray();
+                    conditionalitems.Add(ifCondition);
+
+                    foreach (var conditionaldef in wrapper.Conditional.elseifNodeList)
+                    {
+                        var elseIfCondition = new conditionalElseif
+                        {
+                            property = conditionaldef.property
+                        };
+                        if (conditionaldef.value != null)
+                        {
+                            elseIfCondition.value = conditionaldef.value;
+                        }
+                        if (conditionaldef.contains != null)
+                        {
+                            elseIfCondition.contains = conditionaldef.contains;
+                        }
+                        var elseIfConditionItems = new List<link>();
+                        foreach (var linkItem in conditionaldef.linkList)
+                        {
+                            elseIfConditionItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        elseIfCondition.link = elseIfConditionItems.ToArray();
+                        conditionalitems.Add(elseIfCondition);
+
+                    }
+
+                    if (wrapper.Conditional.elseNode != null)
+                    {
+                        var elseCondition = new conditionalElse();
+                        var elseConditionItems = new List<link>();
+                        foreach (var linkItem in wrapper.Conditional.elseNode.linkList)
+                        {
+                            elseConditionItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        elseCondition.link = elseConditionItems.ToArray();
+                        conditionalitems.Add(elseCondition);
+                    }
+                    conditional.Items = conditionalitems.ToArray();
+                    return conditional;
+                }
+                if (wrapper.Conditional.switchProperty != null)
+                {
+                    var conditionalswitch = new conditionalSwitch
+                    {
+                        property = wrapper.Conditional.switchProperty
+                    };
+                    var switchitems = new List<conditionalSwitchCase>();
+
+                    foreach (CaseDefinition switchdef in wrapper.Conditional.switchNodeList)
+                    {
+                        var switchCase = new conditionalSwitchCase();
+                        if (switchdef.value != null)
+                        {
+                            switchCase.value = switchdef.value;
+                        }
+                        if (switchdef.contains != null)
+                        {
+                            switchCase.contains = switchdef.contains;
+                        }
+                        if (switchdef.switchBreak == false)
+                        {
+                            switchCase.@break = proxyBoolean.False;
+                        }
+                        var switchItems = new List<link>();
+                        foreach (var linkItem in switchdef.linkList)
+                        {
+                            switchItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        switchCase.link = switchItems.ToArray();
+                        switchitems.Add(switchCase);
+                    }
+
+                    conditionalswitch.@case = switchitems.ToArray();
+                    if (wrapper.Conditional.elseNode != null)
+                    {
+                        var defaultCaseItems = new List<link>();
+                        foreach (var linkItem in wrapper.Conditional.elseNode.linkList)
+                        {
+                            defaultCaseItems.Add(SerializeLink(linkItem.Link));
+                        }
+                        conditionalswitch.@default = defaultCaseItems.ToArray();
+                    }
+                    var conditional = new conditional();
+                    conditional.Items = new List<conditionalSwitch>() { conditionalswitch }.ToArray();
+                    return conditional;
+                }
+            }
+            if (wrapper.Link != null)
+            {
+                return SerializeLink(wrapper.Link);
+            }
+            return null;
+        }
+
+        public link SerializeLink(LinkDefinition linkdef)
+        {
+            link link = new link
+            {
+                separator = linkdef.Separator,
+                block = linkdef.Block
+            };
+            var linkItems = new List<linkProperty>();
+            foreach (var propertydef in linkdef.NestedProperties)
+            {
+                var property = new linkProperty
+                {
+                    format = propertydef.Format,
+                    name = propertydef.Name
+                };
+                linkItems.Add(property);
+            }
+            link.property = linkItems.ToArray();
+            return link;
         }
     }
 }

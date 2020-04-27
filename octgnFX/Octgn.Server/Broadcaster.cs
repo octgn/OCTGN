@@ -334,7 +334,7 @@ namespace Octgn.Server
 		}
 	}
 
-	public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+	public void AddMarker(byte player, int card, string id, string name, ushort count, ushort origCount, bool isScriptChange)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
@@ -343,7 +343,7 @@ namespace Octgn.Server
 		}
 	}
 
-	public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+	public void RemoveMarker(byte player, int card, string id, string name, ushort count, ushort origCount, bool isScriptChange)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
@@ -352,7 +352,7 @@ namespace Octgn.Server
 		}
 	}
 
-	public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+	public void TransferMarker(byte player, int from, int to, string id, string name, ushort count, ushort origCount, bool isScriptChange)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){

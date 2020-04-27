@@ -1,4 +1,8 @@
-﻿namespace Octide.ViewModel
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+namespace Octide.ViewModel
 {
     using System;
     using System.Windows;
@@ -27,11 +31,13 @@
             {
                 RegisterWindowEvents<MainViewModel, MainWindow>();
 				RegisterWindowEvents<LoaderViewModel, LoaderWindow>();
+			//	RegisterWindowEvents<ImportCardsViewModel, ImportCardsWindow>();
             }
 
 
             ViewModelLocator.ViewModelKernel.Bind<MainViewModel>().To<MainViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<LoaderViewModel>().To<LoaderViewModel>().InSingletonScope();
+        //    ViewModelLocator.ViewModelKernel.Bind<ImportCardsViewModel>().To<ImportCardsViewModel>().InSingletonScope();
 
         }
 
@@ -60,11 +66,13 @@
         }
 		public static MainViewModel MainViewModel => ServiceLocator.Current.GetInstance<MainViewModel>();
 		public static LoaderViewModel LoaderViewModel => ServiceLocator.Current.GetInstance<LoaderViewModel>();
+	//	public static ImportCardsViewModel ImportCardsViewModel => ServiceLocator.Current.GetInstance<ImportCardsViewModel>();
 
 		public static void Cleanup()
         {
 			ServiceLocator.Current.GetInstance<LoaderViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
+	//		ServiceLocator.Current.GetInstance<ImportCardsViewModel>().Cleanup();
         }
     }
 }

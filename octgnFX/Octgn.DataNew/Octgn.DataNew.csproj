@@ -71,7 +71,9 @@
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\CardSize.cs" />
+    <Compile Include="Entities\BackgroundStyle.cs" />
     <Compile Include="Entities\ISleeve.cs" />
+    <Compile Include="Entities\GameMarker.cs" />
     <Compile Include="Entities\Sleeve.cs" />
     <Compile Include="Entities\SleeveSource.cs" />
     <Compile Include="Entities\Symbol.cs" />
@@ -92,15 +94,12 @@
     <Compile Include="Entities\GlobalVariable.cs" />
     <Compile Include="Entities\Group.cs" />
     <Compile Include="Entities\GroupVisibility.cs" />
-    <Compile Include="Entities\IPackItem.cs" />
-    <Compile Include="Entities\Marker.cs" />
     <Compile Include="Entities\MultiCard.cs" />
     <Compile Include="Entities\PickProperty.cs" />
     <Compile Include="Entities\Option.cs" />
     <Compile Include="Entities\OptionsList.cs" />
     <Compile Include="Entities\Pack.cs" />
     <Compile Include="Entities\PackContent.cs" />
-    <Compile Include="Entities\PackDefinition.cs" />
     <Compile Include="Entities\Pick.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\PropertyDef.cs" />
@@ -127,6 +126,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>

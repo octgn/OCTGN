@@ -1,4 +1,8 @@
-﻿namespace Octide
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+namespace Octide
 {
     using System;
     using System.Collections.Generic;
@@ -142,6 +146,7 @@
         public string FullPath => File?.FullName;
         public string Folder => File?.Directory.FullName;
         public string FileName => File?.Name.Substring(0, File.Name.Length - File.Extension.Length);
+        public string FullFileName => File?.Name;
         public string Extension => File?.Extension.Substring(1);
         public string RelativePath => File == null ? null : Utils.MakeRelativePath(ViewModelLocator.GameLoader.GamePath, File.FullName);
 

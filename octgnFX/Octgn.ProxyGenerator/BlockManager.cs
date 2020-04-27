@@ -62,19 +62,6 @@ namespace Octgn.ProxyGenerator
             return (ret);
         }
 
-        public void LoadBlocks(XmlNode node)
-        {
-            foreach (XmlNode subNode in node.ChildNodes)
-            {
-                if (TemplateDefinition.SkipNode(subNode))
-                {
-                    continue;
-                }
-                BlockDefinition blockDef = BlockDefinition.LoadSectionDefinition(this,subNode);
-                AddBlock(blockDef);
-            }
-        }
-
         public void ClearBlocks()
         {
             blocks.Clear();

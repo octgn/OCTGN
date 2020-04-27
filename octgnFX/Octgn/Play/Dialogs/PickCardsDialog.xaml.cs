@@ -74,7 +74,7 @@ namespace Octgn.Play.Dialogs
                             Program.GameMess.Warning("Received pack is missing from the database. Pack is ignored.");
                             continue;
                         }
-                        PackContent content = pack.CrackOpen();
+                        PackContent content = pack.GenerateContent();
                         foreach (ObservableMultiCard c in content.LimitedCards.Select(x => x.ToMultiCard().AsObservable()))
                         {
                             Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
@@ -115,7 +115,7 @@ namespace Octgn.Play.Dialogs
                     Program.GameMess.Warning("Received pack is missing from the database. Pack is ignored.");
                     continue;
                 }
-                returnString += string.Format("[{0} - {1}],", pack.Set().Name, pack.Name);
+                returnString += string.Format("[{0} - {1}],", pack.Set.Name, pack.Name);
             }
             return returnString.Trim(new Char[] { ',', ' '});
         }
@@ -170,7 +170,7 @@ namespace Octgn.Play.Dialogs
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.DefaultSize().Width / Program.GameEngine.Definition.DefaultSize().Height;
         }
 
         private void SetPicture(object sender, RoutedEventArgs e)
@@ -318,7 +318,7 @@ namespace Octgn.Play.Dialogs
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.PropertySet().ContainsKey(prop) ? card.PropertySet()[prop] : null
+                    let value = card.GetCardProperties().ContainsKey(prop) ? card.GetCardProperties()[prop] : null
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
@@ -407,8 +407,8 @@ namespace Octgn.Play.Dialogs
 
         private string GetCardPropertyValue(ObservableMultiCard card, PropertyDef def)
         {
-            if (!card.PropertySet().ContainsKey(def)) return null;
-            return card.PropertySet()[def].ToString();
+            if (!card.GetCardProperties().ContainsKey(def)) return null;
+            return card.GetCardProperties()[def].ToString();
         }
 
         private void CardPoolChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -551,8 +551,8 @@ namespace Octgn.Play.Dialogs
             public bool IsMatch(ObservableMultiCard c)
             {
 
-                if (!c.PropertySet().ContainsKey(Property)) return false;
-                return IsValueMatch(c.PropertySet()[Property]);
+                if (!c.GetCardProperties().ContainsKey(Property)) return false;
+                return IsValueMatch(c.GetCardProperties()[Property]);
             }
 
             protected void OnPropertyChanged(string propertyName)

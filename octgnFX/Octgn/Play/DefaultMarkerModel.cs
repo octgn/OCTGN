@@ -2,15 +2,15 @@ using System;
 
 namespace Octgn.Play
 {
-    public class DefaultMarkerModel : DataNew.Entities.Marker
+    public class DefaultMarkerModel : DataNew.Entities.GameMarker
     {
         private readonly string _key;
 
-        public DefaultMarkerModel(string key, Guid id)
+        public DefaultMarkerModel(string key, string id)
         {
             Id = id;
             _key = key;
-            this.IconUri = "pack://application:,,,/Resources/Markers/" + _key + ".png";
+            this.Source = "pack://application:,,,/Resources/Markers/" + _key + ".png";
         }
 
         public string Picture

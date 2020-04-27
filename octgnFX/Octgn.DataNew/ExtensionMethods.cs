@@ -12,7 +12,7 @@ namespace Octgn.DataNew
         public static IDictionary<string, CardPropertySet> CloneProperties(this ICard card)
         {
             var ret = new Dictionary<string, CardPropertySet>();
-            foreach (var p in card.Properties)
+            foreach (var p in card.PropertySets)
             {
                 ret.Add((string)p.Key.Clone(), p.Value.Clone() as CardPropertySet);
             }

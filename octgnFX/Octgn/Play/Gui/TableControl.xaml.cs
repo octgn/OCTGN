@@ -24,6 +24,7 @@ namespace Octgn.Play.Gui
     using System.Text;
     using Octgn.Annotations;
     using Octgn.Core;
+    using Octgn.Core.DataExtensionMethods;
 
     partial class TableControl : INotifyPropertyChanged
     {
@@ -81,7 +82,7 @@ namespace Octgn.Play.Gui
             var subbed = SubscriptionModule.Get().IsSubscribed ?? false;
             if (subbed && !String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
             {
-                SetBackground(Prefs.DefaultGameBack, "uniformToFill");
+                SetBackground(Prefs.DefaultGameBack, BackgroundStyle.UniformToFill);
             }
             else
             {
@@ -99,8 +100,8 @@ namespace Octgn.Play.Gui
             if (Player.LocalPlayer.InvertedTable)
                 transforms.Children.Insert(0, new ScaleTransform(-1, -1));
 
-            _defaultWidth = Program.GameEngine.Definition.CardSize.Width;
-            _defaultHeight = Program.GameEngine.Definition.CardSize.Height;
+            _defaultWidth = Program.GameEngine.Definition.DefaultSize().Width;
+            _defaultHeight = Program.GameEngine.Definition.DefaultSize().Height;
             SizeChanged += delegate
                                {
                                    IsCardSizeValid = false;
@@ -265,7 +266,7 @@ namespace Octgn.Play.Gui
             SetBackground(tableDef.Background, tableDef.BackgroundStyle);
         }
 
-        internal void SetBackground(string url, string bs)
+        internal void SetBackground(string url, BackgroundStyle bs)
         {
             var bim = new BitmapImage();
             bim.BeginInit();
@@ -275,21 +276,20 @@ namespace Octgn.Play.Gui
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
-            if (!String.IsNullOrWhiteSpace(bs))
                 switch (bs)
                 {
-                    case "tile":
+                    case BackgroundStyle.Tile:
                         backBrush.TileMode = TileMode.Tile;
                         backBrush.Viewport = new Rect(0, 0, backBrush.ImageSource.Width, backBrush.ImageSource.Height);
                         backBrush.ViewportUnits = BrushMappingMode.Absolute;
                         break;
-                    case "uniform":
+                    case BackgroundStyle.Uniform:
                         backBrush.Stretch = Stretch.Uniform;
                         break;
-                    case "uniformToFill":
+                    case BackgroundStyle.UniformToFill:
                         backBrush.Stretch = Stretch.UniformToFill;
                         break;
-                    case "stretch":
+                    case BackgroundStyle.Stretch:
                         backBrush.Stretch = Stretch.Fill;
                         break;
                 }
@@ -361,7 +361,7 @@ namespace Octgn.Play.Gui
             double mouseY = Mouse.GetPosition(cardsView).Y;
             double baseY = (cardCtrl.IsInverted ||
                             (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
-                               ? mouseY - Program.GameEngine.Definition.CardSize.Height + e.MouseOffset.Y
+                               ? mouseY - Program.GameEngine.Definition.DefaultSize().Height + e.MouseOffset.Y
                                : mouseY - e.MouseOffset.Y;
             if (baseCard == null) return;
             foreach (CardDragAdorner adorner in e.Adorners)
@@ -377,7 +377,7 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             var cardCtrl = e.OriginalSource as CardControl;
 
-            int delta = Program.GameEngine.Definition.CardSize.Height - Program.GameEngine.Definition.CardSize.Width;
+            int delta = Program.GameEngine.Definition.DefaultSize().Height - Program.GameEngine.Definition.DefaultSize().Width;
             Table table = Program.GameEngine.Table;
             Vector mouseOffset;
             if (cardCtrl != null && (cardCtrl.IsInverted || (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
@@ -976,11 +976,11 @@ namespace Octgn.Play.Gui
         protected override void CardActionClicked(object sender, RoutedEventArgs e)
         {
             var action = (DataNew.Entities.GroupAction)((MenuItem)sender).Tag;
-            if (action.Execute != null)
-                ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard),
+            if (action.IsBatchExecutable)
+                ScriptEngine.ExecuteOnBatch(action.Execute, Selection.ExtendToSelection(ContextCard),
                                             ContextMenuPosition);
-            else if (action.BatchExecute != null)
-                ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard),
+            else
+                ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard),
                                             ContextMenuPosition);
         }
 

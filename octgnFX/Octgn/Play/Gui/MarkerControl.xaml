@@ -6,7 +6,7 @@
              d:DesignHeight="32" d:DesignWidth="79">
 
     <StackPanel Orientation="Horizontal" ToolTip="{Binding Description}">
-        <Image x:Name="img1" Source="{Binding Model.IconUri}" HorizontalAlignment="Left" />
+        <Image x:Name="img1" Source="{Binding Model.Source}" HorizontalAlignment="Left" />
         <Border x:Name="textBorder" VerticalAlignment="Center" Background="#80000000" CornerRadius="3 3 3 3">
             <TextBox x:Name="text" Text="{Binding Count}" RenderOptions.ClearTypeHint="Enabled" BorderThickness="0" Background="{x:Null}"
                  HorizontalAlignment="Center" VerticalAlignment="Center" 

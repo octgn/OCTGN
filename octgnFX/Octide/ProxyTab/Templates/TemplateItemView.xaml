@@ -1,0 +1,379 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.ProxyTemplateItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:item="clr-namespace:Octide.ProxyTab.ItemModel"
+             mc:Ignorable="d" 
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
+             d:DesignHeight="900" d:DesignWidth="600" >
+
+    <UserControl.Resources>
+        <ControlTemplate x:Key="ArtCropHeader" TargetType="ContentControl">
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushGray}" Style="{StaticResource OctideTreeViewItemStyle}" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.RowSpan="2" Text="ART CROP" FontWeight="Bold" />
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="X:"/>
+                    <TextBlock Grid.Column="3" HorizontalAlignment="Right" Text="width:"/>
+                    <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Text="Y:"/>
+                    <TextBlock Grid.Column="3" Grid.Row="1" HorizontalAlignment="Right" Text="height:"/>
+                    <TextBox Grid.Column="2" Text="{Binding X}" />
+                    <TextBox Grid.Column="4" Text="{Binding Width}"  />
+                    <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Y}"  />
+                    <TextBox Grid.Column="4" Grid.Row="1" Text="{Binding Height}"  />
+                </Grid>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="TextLinkHeader" TargetType="ContentControl">
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushOrange}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel>
+                    <TextBlock Text="LINK" FontWeight="Bold" />
+                    <Border BorderThickness="1" BorderBrush="Black" >
+                        <TextBlock Margin="0" VerticalAlignment="Stretch" Text="{Binding LinkedBlock.Name}" Foreground="WhiteSmoke" Background="#88000000" />
+                    </Border>
+                    <TextBlock Text="separator:" />
+                    <TextBox Text="{Binding Separator}" MinWidth="25" />
+                    <Button Content="+Property" Background="{StaticResource BlendBrushYellow}" Command="{Binding AddPropertyCommand}" />
+
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="TextLinkPropertyHeader" TargetType="ContentControl">
+            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushYellow}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel>
+                    <TextBlock Text="PROPERTY" FontWeight="Bold" />
+                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="IfBlockHeader" TargetType="ContentControl">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushPurple}" Style="{StaticResource OctideTreeViewItemStyle}" >
+                <StackPanel>
+                    <TextBlock Text="CONDITIONAL" FontWeight="Bold" />
+                    <Button Content="+ElseIf" Background="{StaticResource BlendBrushRed}" Command="{Binding AddElseIfCommand}" />
+                    <Button Content="+Else" Background="{StaticResource BlendBrushBrown}" Visibility="{Binding CanAddElse}" Command="{Binding AddElseCommand}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="IfCaseHeader" TargetType="ContentControl">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushPink}" Style="{StaticResource OctideTreeViewItemStyle}" >
+                <StackPanel>
+                    <TextBlock Text="IF" FontWeight="Bold" />
+                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding Property, Mode=TwoWay}" />
+                    <TextBlock Text="value:" />
+                    <TextBox Text="{Binding Value}" MinWidth="50" />
+                    <TextBlock Text="exact:" />
+                    <CheckBox IsChecked="{Binding ExactMatch, Mode=TwoWay}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ElseIfCaseHeader" TargetType="ContentControl">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushRed}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel>
+                    <TextBlock Text="ELSE IF" FontWeight="Bold" />
+                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding Property, Mode=TwoWay}" />
+                    <TextBlock Text="value:" />
+                    <TextBox Text="{Binding Value}" MinWidth="50" />
+                    <TextBlock Text="exact:" />
+                    <CheckBox IsChecked="{Binding ExactMatch, Mode=TwoWay}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ElseCaseHeader" TargetType="ContentControl">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBrown}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="ELSE" FontWeight="Bold" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="SwitchBlockHeader" TargetType="{x:Type ContentControl}">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBlue}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="SWITCH" FontWeight="Bold" />
+                    <TextBlock Text="property:" />
+                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding Property, Mode=TwoWay}" />
+                    <Button Content="+Case" Background="{StaticResource BlendBrushGreen}" Command="{Binding AddCaseCommand}" />
+                    <Button Content="+Default" Background="{StaticResource  BlendBrushBrown}" Visibility="{Binding CanAddDefault}" Command="{Binding AddDefaultCommand}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="SwitchCaseHeader" TargetType="ContentControl" >
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushGreen}"  Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel Orientation="Horizontal" >
+                    <TextBlock Text="CASE" FontWeight="Bold" />
+                    <TextBlock Text="value:" />
+                    <TextBox Text="{Binding Value}" MinWidth="50" />
+                    <TextBlock Text="exact:" />
+                    <CheckBox IsChecked="{Binding ExactMatch, Mode=TwoWay}" />
+                    <TextBlock Text="break:" />
+                    <CheckBox IsChecked="{Binding Break, Mode=TwoWay}" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="DefaultCaseHeader" TargetType="ContentControl">
+            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBrown}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <StackPanel >
+                    <TextBlock Text="DEFAULT" FontWeight="Bold" />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <DataTemplate DataType="{x:Type item:ArtOverlayBlockModel}" >
+            <ContentControl Template="{StaticResource ArtCropHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type item:OverlayLinkContainer}" >
+            <ListBox Margin="1" Padding="0" Background="{StaticResource BlendBrushOrange}" ItemsSource="{Binding Items}"
+                          gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
+                          gong:DragDrop.DragDropCopyKeyState="ControlKey" gong:DragDrop.UseDefaultDragAdorner="True"
+                          gong:DragDrop.DropHandler="{Binding DropHandler}" gong:DragDrop.UseDefaultEffectDataTemplate="True">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ListBox>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type item:OverlayLinkModel}">
+            <Border BorderBrush="Black" Margin="1" BorderThickness="2">
+                <Image Source="{Binding LinkedBlock.Asset.FullPath, TargetNullValue={x:Null}}" MaxHeight="40" Stretch="Uniform"/>
+                <Border.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </Border.ContextMenu>
+            </Border>
+        </DataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:TextLinkModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource TextLinkHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <DataTemplate DataType="{x:Type item:TextLinkPropertyModel}"  >
+            <ContentControl Template="{StaticResource TextLinkPropertyHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </DataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:ConditionalBlockModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource IfBlockHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:IfCaseModel}" ItemsSource="{Binding BlockContainer.Items}" >
+            <ContentControl Template="{StaticResource IfCaseHeader}" />
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:ElseIfCaseModel}" ItemsSource="{Binding BlockContainer.Items}" >
+            <ContentControl Template="{StaticResource ElseIfCaseHeader}" >
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:ElseCaseModel}" ItemsSource="{Binding BlockContainer.Items}">
+            <ContentControl Template="{StaticResource ElseCaseHeader}">
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:SwitchBlockModel}" ItemsSource="{Binding Items}" >
+            <ContentControl Template="{StaticResource SwitchBlockHeader}">
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:SwitchCaseModel}" ItemsSource="{Binding BlockContainer.Items}" >
+            <ContentControl Template="{StaticResource SwitchCaseHeader}">
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type item:DefaultCaseModel}" ItemsSource="{Binding BlockContainer.Items}" >
+            <ContentControl Template="{StaticResource DefaultCaseHeader}">
+                <ContentControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </HierarchicalDataTemplate>
+        <DataTemplate x:Key="TemplateDragAdorner">
+            <DataTemplate.Resources>
+                <DataTemplate DataType="{x:Type item:ConditionalBlockModel}">
+                    <ContentControl Template="{StaticResource IfBlockHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:ElseIfCaseModel}">
+                    <ContentControl Template="{StaticResource ElseIfCaseHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:SwitchBlockModel}">
+                    <ContentControl Template="{StaticResource SwitchBlockHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:SwitchCaseModel}">
+                    <ContentControl Template="{StaticResource SwitchCaseHeader}" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type item:ArtOverlayBlockModel}">
+                    <ContentControl Template="{StaticResource ArtCropHeader}" />
+                </DataTemplate>
+            </DataTemplate.Resources>
+            <ContentControl Content="{Binding }"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <TabControl>
+        <TabItem Header="Matches">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ItemsControl Style="{StaticResource OctideInputPanel}">
+                    <StackPanel  Orientation="Vertical">
+                        <TextBlock Text="Background Image"/>
+                        <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Image"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Is Default Template:" Margin="10,0,5,0" VerticalAlignment="Center"/>
+                        <metro:ToggleSwitch IsChecked="{Binding IsDefault, Mode=TwoWay}" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </ItemsControl>
+                <Button Content="Add Match" Grid.Row="1" Margin="1" Command="{Binding AddMatchCommand}" Background="{StaticResource BlendBrushRed}" />
+                <ListBox Grid.Row="2" Grid.ColumnSpan="2" 
+                         Style="{StaticResource IdeBaseItemContainerStyle}"
+                          ItemsSource="{Binding Matches}" SelectedValue="{Binding Matches.SelectedItem}">
+                    <ListBox.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding Matches.SelectedItem.RemoveCommand}" />
+                    </ListBox.InputBindings>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border Background="{TemplateBinding Background}" >
+                                            <Grid Margin="2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="90" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" TextAlignment="Right" Text="Match" />
+                                                <TextBox Grid.Column="1" Text="{Binding Value}" />
+                                                <TextBlock VerticalAlignment="Center" Grid.Column="2" Margin="5,0,5,0" Text="to" TextAlignment="Right" />
+                                                <ComboBox Grid.Column="3" ItemsSource="{Binding CustomProperties}"
+                                                          FontSize="10" Padding="4"
+                                                          DisplayMemberPath="Name" SelectedValue="{Binding Property}" />
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style> 
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Overlays" IsSelected="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Content="Add Conditional" Margin="1" Command="{Binding AddOverlayConditionalCommand}" Background="{DynamicResource BlendBrushPurple}" />
+                <Button Grid.Column="1" Content="Add Switch" Margin="1" Command="{Binding AddOverlaySwitchCommand}" Background="{DynamicResource BlendBrushBlue}" />
+                <TreeView Grid.ColumnSpan="2"
+                          Grid.Row="1"
+                          Background="Transparent"
+                          ItemsSource="{Binding OverlayContainer.Items}"
+                          gong:DragDrop.IsDragSource="True"
+                          gong:DragDrop.IsDropTarget="True"
+                          gong:DragDrop.UseDefaultEffectDataTemplate="True"
+                          gong:DragDrop.DragDropCopyKeyState="ControlKey"
+                          gong:DragDrop.DropHandler="{Binding OverlayDropHandler}"
+                          gong:DragDrop.DragHandler="{Binding DragHandler}"
+                          gong:DragDrop.DragAdornerTemplate="{StaticResource TemplateDragAdorner}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Text Links">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Content="Add Conditional" Margin="1" Command="{Binding AddTextConditionalCommand}" Background="{DynamicResource BlendBrushPurple}" />
+                <Button Grid.Column="1" Content="Add Switch" Margin="1" Command="{Binding AddTextSwitchCommand}" Background="{DynamicResource BlendBrushBlue}" />
+                <TreeView Grid.ColumnSpan="2" Grid.Row="1" Background="Transparent" ItemsSource="{Binding TextBlockContainer.Items}"
+                      gong:DragDrop.UseDefaultDragAdorner="True"
+                          gong:DragDrop.IsDragSource="True"
+                          gong:DragDrop.IsDropTarget="True"
+                          gong:DragDrop.DragDropCopyKeyState="ControlKey"
+                          gong:DragDrop.DropHandler="{Binding TextDropHandler}" gong:DragDrop.DragHandler="{Binding DragHandler}" >
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

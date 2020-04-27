@@ -14,7 +14,7 @@
         public IEnumerable<Group> Groups { get; set; }
         public string IndicatorsFormat { get; set; }
         public Group Hand { get; set; }
-        public List<GlobalVariable> GlobalVariables { get; set; } 
+        public Dictionary<string, GlobalVariable> GlobalVariables { get; set; } 
     }
 
     public class GlobalPlayer : IPlayer

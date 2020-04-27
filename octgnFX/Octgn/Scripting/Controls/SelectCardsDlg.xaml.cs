@@ -133,7 +133,7 @@ namespace Octgn.Scripting.Controls
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.DefaultSize().Width / Program.GameEngine.Definition.DefaultSize().Height;
         }
     }
 }

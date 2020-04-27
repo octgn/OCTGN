@@ -1,0 +1,105 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.GameFontTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
+             DataContext="{Binding GameFontTabViewModel, Source={StaticResource Locator}}">
+    <UserControl.Resources>
+        <DataTemplate x:Key="FontControl" >
+            <Grid Style="{StaticResource OctideInputPanel}" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.RowSpan="2" Style="{StaticResource XButton}" Margin="5" Command="{Binding RemoveFontCommand}" Visibility="{Binding FontControlVisibility}" />
+                <local:AssetControl Grid.Column="1" Grid.ColumnSpan="2" TargetAssetType="Font" SelectedAsset="{Binding Asset, Mode=TwoWay}" Width="350" HorizontalAlignment="Left" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="Font Size:" Visibility="{Binding FontControlVisibility}" VerticalAlignment="Center" Margin="10,0,0,0" />
+                <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Size}" MinWidth="40" MaxWidth="100" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="{Binding FontControlVisibility}"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Style="{StaticResource OctideInputPanel}" Margin="0,0,50,0" >
+            <TextBlock Text="Deck Editor Font" />
+            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding DeckEditorFont}" />
+
+            <TextBlock Text="Notes Font" />
+            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding NotesFont}" />
+
+            <Grid Margin="50,5,5,5" Background="BlanchedAlmond" Height="120" Width="170" 
+                          Visibility="{Binding NotesFont.FontControlVisibility}" HorizontalAlignment="Left" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="24" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+                <Border Background="#11000000" />
+                <Border Margin="5" Grid.Row="1" >
+                    <TextBox Background="Transparent" Foreground="Black" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto"
+                                     TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
+                                     VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                     FontFamily="{Binding NotesFont.FontAsset}" FontSize="{Binding NotesFont.Size}"/>
+                </Border>
+            </Grid>
+        </StackPanel>
+        <StackPanel Style="{StaticResource OctideInputPanel}" Grid.Column="1" >
+            <TextBlock Text="Chat Font" />
+            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ChatFont}" />
+
+            <Border CornerRadius="2" Margin="50,5,5,5" HorizontalAlignment="Left" Height="200" Width="280" BorderBrush="{StaticResource ControlBorderBrush}" 
+                            BorderThickness="1" Background="{StaticResource ControlFillBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Style="{StaticResource NuclearScrollViewer}"  VerticalScrollBarVisibility="Visible" Background="Transparent">
+                        <TextBlock Text="{Binding Chat }" Margin="0" Padding="0" Background="Transparent" TextWrapping="Wrap"
+                                                   FontFamily="{Binding ChatFont.FontAsset}"
+                                     FontSize="{Binding ChatFont.Size}" Foreground="Black"  />
+                    </ScrollViewer>
+
+                    <Rectangle Fill="White" Grid.Row="1" Height="1" />
+
+                    <xctk:WatermarkTextBox Foreground="WhiteSmoke" Background="Transparent" Grid.Row="2" Watermark="Type here to chat (Ctrl+T)" Text="{Binding ChatInputText, UpdateSourceTrigger=PropertyChanged}" >
+                        <xctk:WatermarkTextBox.InputBindings>
+                            <KeyBinding Command="{Binding EnterChatCommand}" Key="Enter" />
+                            <KeyBinding Command="{Binding CancelChatCommand}" Key="Esc" />
+                        </xctk:WatermarkTextBox.InputBindings>
+                    </xctk:WatermarkTextBox>
+                </Grid>
+            </Border>
+
+
+            <TextBlock Text="Context Menu Font" />
+            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ContextFont}" />
+
+            <Border Width="200" Height="300" Style="{StaticResource OctgnActionMenuTemplate}">
+                <Menu ItemsSource="{Binding Menu}"  />
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

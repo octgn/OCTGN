@@ -1,4 +1,8 @@
-﻿using System.Windows.Controls;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -60,7 +64,20 @@ namespace Octide
         
         public AssetControl()
         {
-            AssetView = new ListCollectionView(AssetManager.Instance.Assets);
+            if (!IsInDesignMode)
+            {
+                AssetView = new ListCollectionView(AssetManager.Instance.Assets);
+            }
+        }
+        public bool IsInDesignMode
+        {
+            get
+            {
+                var prop = DesignerProperties.IsInDesignModeProperty;
+                return (bool)DependencyPropertyDescriptor
+                    .FromProperty(prop, typeof(FrameworkElement))
+                    .Metadata.DefaultValue;
+            }
         }
 
         public override void OnApplyTemplate()

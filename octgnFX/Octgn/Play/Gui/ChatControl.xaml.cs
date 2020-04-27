@@ -722,7 +722,7 @@ namespace Octgn.Play.Gui
         {
             if (this.Card == null)
                 return "[?}";
-            return this.Card.PropertyName();
+            return this.Card.GetName();
         }
     }
 
@@ -747,7 +747,7 @@ namespace Octgn.Play.Gui
             _card = card;
             _card.UpdateCardText((model, gamecard) =>
                 {
-                    (this.Inlines.FirstInline as Run).Text = model.PropertyName();
+                    (this.Inlines.FirstInline as Run).Text = model.GetName();
                 });
         }
 

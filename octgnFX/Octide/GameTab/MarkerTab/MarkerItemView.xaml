@@ -1,0 +1,38 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.MarkerItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             xmlns:local="clr-namespace:Octide"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             params:Design.Theme="Dark"
+             >
+    <ItemsControl Style="{StaticResource OctideInputPanel}" >
+
+        <TextBlock Text="Marker Name"/>
+        <TextBox>
+            <TextBox.Text>
+                <Binding Path="Name" >
+                    <Binding.ValidationRules>
+                        <local:StringRestrictionValidationRule />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Icon"/>
+            <Image Source="{Binding Asset.FullPath, Mode=OneWay}" />
+        </StackPanel>
+        <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Image"/>
+
+    </ItemsControl>
+</UserControl>

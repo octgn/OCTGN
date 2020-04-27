@@ -175,10 +175,10 @@ namespace Octgn.Play.Gui
                 return false;
             group.KeepControl();
             card.KeepControl();
-            if (defaultCardAction.Execute != null)
+            if (defaultCardAction.IsBatchExecutable)
+                ScriptEngine.ExecuteOnBatch(defaultCardAction.Execute, Selection.ExtendToSelection(card));
+            else
                 ScriptEngine.ExecuteOnCards(defaultCardAction.Execute, Selection.ExtendToSelection(card));
-            else if (defaultCardAction.BatchExecute != null)
-                ScriptEngine.ExecuteOnBatch(defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
             group.ReleaseControl();
             card.ReleaseControl();
             return true;
@@ -553,10 +553,10 @@ namespace Octgn.Play.Gui
         protected virtual void CardActionClicked(object sender, RoutedEventArgs e)
         {
             var action = (GroupAction)((MenuItem)sender).Tag;
-            if (action.Execute != null)
+            if (action.IsBatchExecutable)
+                ScriptEngine.ExecuteOnBatch(action.Execute, Selection.ExtendToSelection(ContextCard));
+            else
                 ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard));
-            else if (action.BatchExecute != null)
-                ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard));
         }
         
         private Control CreateActionMenuItem(IGroupAction baseAction, RoutedEventHandler onClick, Card card)
@@ -579,7 +579,7 @@ namespace Octgn.Play.Gui
             var item = new MenuItem { Header = newName };
 
             //action is a submenu
-            var actionGroupDef = baseAction as GroupActionGroup;
+            var actionGroupDef = baseAction as GroupActionSubmenu;
             if (actionGroupDef != null)
             {
                 foreach (var i in actionGroupDef.Children.Select(subAction => CreateActionMenuItem(subAction, onClick, card)).Where(x => x.Visibility == Visibility.Visible))

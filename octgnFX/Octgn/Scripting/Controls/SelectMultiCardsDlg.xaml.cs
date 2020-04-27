@@ -240,7 +240,7 @@ namespace Octgn.Scripting.Controls
         private void SliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             SliderHeight = slider.Value;
-            SliderWidth = slider.Value * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
+            SliderWidth = slider.Value * Program.GameEngine.Definition.DefaultSize().Width / Program.GameEngine.Definition.DefaultSize().Height;
         }
 
         #region dragDrop Stuff

@@ -425,7 +425,7 @@ namespace Octgn.Server
 				case 54:
 				{
 					int arg0 = reader.ReadInt32();
-					Guid arg1 = new Guid(reader.ReadBytes(16));
+					string arg1 = reader.ReadString();
 					string arg2 = reader.ReadString();
 					ushort arg3 = reader.ReadUInt16();
 					ushort arg4 = reader.ReadUInt16();
@@ -437,7 +437,7 @@ namespace Octgn.Server
 				case 56:
 				{
 					int arg0 = reader.ReadInt32();
-					Guid arg1 = new Guid(reader.ReadBytes(16));
+					string arg1 = reader.ReadString();
 					string arg2 = reader.ReadString();
 					ushort arg3 = reader.ReadUInt16();
 					ushort arg4 = reader.ReadUInt16();
@@ -450,7 +450,7 @@ namespace Octgn.Server
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
-					Guid arg2 = new Guid(reader.ReadBytes(16));
+					string arg2 = reader.ReadString();
 					string arg3 = reader.ReadString();
 					ushort arg4 = reader.ReadUInt16();
 					ushort arg5 = reader.ReadUInt16();
