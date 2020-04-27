@@ -255,8 +255,7 @@
                     <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
 
                     <ScrollViewer PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
-                        <DockPanel>
-                            <ListBox ItemTemplate="{StaticResource GroupPanel}" ItemsSource="{Binding Piles, Mode=TwoWay}" SelectedValue="{Binding Selection}"
+                        <ListBox ItemTemplate="{StaticResource GroupPanel}" ItemsSource="{Binding Piles, Mode=TwoWay}" SelectedValue="{Binding Selection}"
                                         Focusable="False" VerticalAlignment="Stretch" DockPanel.Dock="Right" VerticalContentAlignment="Stretch">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -264,34 +263,6 @@
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                             </ListBox>
-                            <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickHand, Mode=TwoWay}" >
-                                <Grid>
-                                    <TextBlock x:Name="NewHandLabel" Text="(Click to create a Hand group)" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Hand}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}" >
-                                        <ContentControl.Style>
-                                            <Style TargetType="{x:Type ContentControl}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Hand}" Value="{x:Null}">
-                                                        <Setter Property="Opacity" Value="0.2" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ContentControl.Style>
-                                    </ContentControl>
-                                </Grid>
-                            </ToggleButton>
-                        </DockPanel>
                     </ScrollViewer>
                     <Button Margin="6" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddPileCommand}" />
                 </Grid>

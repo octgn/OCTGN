@@ -39,7 +39,6 @@ namespace Octide.ViewModel
         public IdeCollection<IdeBaseItem> GlobalPiles { get; set; }
     //    public ObservableCollection<GroupItemModel> VisibleGlobalPiles => new ObservableCollection<GroupItemModel>(GlobalPiles.Where(x => x.Collapsed == false));
     //    public ObservableCollection<GroupItemModel> CollapsedGlobalPiles => new ObservableCollection<GroupItemModel>(GlobalPiles.Where(x => x.Collapsed == true));
-        public GroupItemModel Hand { get; set; }
         public IdeCollection<IdeBaseItem> Counters { get; set; }
         public IdeCollection<IdeBaseItem> GlobalCounters { get; set; }
         public IdeCollection<IdeBaseItem> CardSizes { get; set; }
@@ -114,8 +113,6 @@ namespace Octide.ViewModel
                 Messenger.Default.Send(new GroupChangedMessage(args));
             };
             AddPileCommand = new RelayCommand(AddPile);
-
-            Hand = _game.Player.Hand == null ? null : new GroupItemModel(_game.Player.Hand, Piles);
 
             Counters = new IdeCollection<IdeBaseItem>(this);
             foreach (var counter in _game.Player.Counters)
@@ -231,25 +228,6 @@ namespace Octide.ViewModel
                                                     );
         }
 
-        public bool ClickHand
-        {
-            get
-            {
-                return (Selection == Hand && Selection != null);
-            }
-            set
-            {
-                if (Hand == null)
-                {
-                    Hand = new GroupItemModel(null);
-                    Hand.Name = "Hand";
-                    ViewModelLocator.GameLoader.Game.Player.Hand = Hand._group;
-                    RaisePropertyChanged("Hand");
-                }
-                Selection = Hand;
-                RaisePropertyChanged("Selection");
-            }
-        }
 
         public bool ClickTable
         {
@@ -320,14 +298,6 @@ namespace Octide.ViewModel
             Selection = ret;
         }
 
-        public void RemoveHand()
-        {
-            Hand = null;
-            ViewModelLocator.GameLoader.Game.Player.Hand = null;
-            Selection = null;
-            RaisePropertyChanged("Hand");
-            RaisePropertyChanged("ClickHand");
-        }
         
         public object _selection;
 

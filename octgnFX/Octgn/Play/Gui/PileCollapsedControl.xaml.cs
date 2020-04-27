@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.Play.Gui
 {
@@ -41,7 +42,7 @@ namespace Octgn.Play.Gui
             anim.Completed += delegate
                                   {
                                       oldPile.AnimateInsertion = true;
-                                      oldPile.Collapsed = false;
+                                      oldPile.ViewState = DataNew.Entities.GroupViewState.Pile;
                                   };
 
             scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
