@@ -53,8 +53,8 @@ namespace Octgn.Server
             GameStarted = true;
             _context.Broadcaster.Start();
             // Just a precaution, shouldn't happen though.
-            if (_context.GameSettings.AllowSpectators == false) {
-                foreach (var p in _context.Players.Players) {
+            if (_context.State.Settings.AllowSpectators == false) {
+                foreach (var p in _context.State.Players.Players) {
                     if (p.Settings.IsSpectator)
                         p.Rpc.Kick(L.D.ServerMessage__SpectatorsNotAllowed);
                 }
@@ -64,7 +64,7 @@ namespace Octgn.Server
                     var c = new ApiClient();
                     var req = new PutGameHistoryReq(_context.Config.ApiKey,
                         _context.Game.Id.ToString());
-                    foreach (var p in _context.Players.Players.ToArray()) {
+                    foreach (var p in _context.State.Players.Players.ToArray()) {
                         req.Usernames.Add(p.Nick);
                     }
                     c.CreateGameHistory(req);
@@ -79,22 +79,22 @@ namespace Octgn.Server
 
             if (player.Id != Player.HOSTPLAYERID) return;
 
-            _context.GameSettings.AllowSpectators = allowSpectators;
-            _context.GameSettings.MuteSpectators = muteSpectators;
+            _context.State.Settings.AllowSpectators = allowSpectators;
+            _context.State.Settings.MuteSpectators = muteSpectators;
             _context.Game.Spectators = allowSpectators;
 
             // We can't change this after the game is started, so don't change it
             if (!GameStarted)
-                _context.GameSettings.UseTwoSidedTable = twoSidedTable;
-            
-            _context.Broadcaster.Settings(_context.GameSettings.UseTwoSidedTable, allowSpectators, muteSpectators);
+                _context.State.Settings.UseTwoSidedTable = twoSidedTable;
+
+            _context.Broadcaster.Settings(_context.State.Settings.UseTwoSidedTable, allowSpectators, muteSpectators);
         }
 
         public void PlayerSettings(byte player, bool invertedTable, bool spectator) {
             if (this.GameStarted) return;
             Player p;
             // The player may have left the game concurrently
-            p = _context.Players.GetPlayer(player);
+            p = _context.State.Players.GetPlayer(player);
             if (p == null) return;
             p.Settings = new PlayerSettings(invertedTable, spectator);
         }
@@ -104,7 +104,7 @@ namespace Octgn.Server
         }
 
         public void ChatReq(string text) {
-            if (_player.Settings.IsSpectator && _context.GameSettings.MuteSpectators) {
+            if (_player.Settings.IsSpectator && _context.State.Settings.MuteSpectators) {
                 _player.Rpc.Error(L.D.ServerMessage__SpectatorsMuted);
                 return;
             }
@@ -121,7 +121,7 @@ namespace Octgn.Server
         }
 
         public void PrintReq(string text) {
-            if (_player.Settings.IsSpectator && _context.GameSettings.MuteSpectators) {
+            if (_player.Settings.IsSpectator && _context.State.Settings.MuteSpectators) {
                 _player.Rpc.Error(L.D.ServerMessage__SpectatorsMuted);
                 return;
             }
@@ -142,7 +142,7 @@ namespace Octgn.Server
 
         private bool ValidateHello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
                           Version gameVer, string password, bool spectator) {
-            if (_context.Players.KickedPlayers.Contains(pkey)) {
+            if (_context.State.Players.KickedPlayers.Contains(pkey)) {
                 ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsMuted);
                 return false;
             }
@@ -205,12 +205,12 @@ namespace Octgn.Server
             }
             var software = client + " (" + clientVer + ')';
 
-            var aPlayers = (short)_context.Players.Players.Count(x => !x.Settings.InvertedTable);
-            var bPlayers = (short)_context.Players.Players.Count(x => x.Settings.InvertedTable);
+            var aPlayers = (short)_context.State.Players.Players.Count(x => !x.Settings.InvertedTable);
+            var bPlayers = (short)_context.State.Players.Players.Count(x => x.Settings.InvertedTable);
 
             var invertedTable = (aPlayers > bPlayers) && !playerIsSpectator;
 
-            _player.Setup(_context.NextPlayerId, nick, userId, pkey, software, invertedTable, playerIsSpectator, _context.Players);
+            _player.Setup(_context.State.NextPlayerId++, nick, userId, pkey, software, invertedTable, playerIsSpectator, _context.State.Players);
 
             _player.SaidHello = true;
 
@@ -222,11 +222,11 @@ namespace Octgn.Server
             _context.Broadcaster.NewPlayer(_player.Id, nick, userId, pkey, _player.Settings.InvertedTable, _player.Settings.IsSpectator);
 
             // Add everybody to the newcomer
-            foreach (var player in _context.Players.Players.Where(x => x.Id != _player.Id))
+            foreach (var player in _context.State.Players.Players.Where(x => x.Id != _player.Id))
                 _player.Rpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.Settings.InvertedTable, player.Settings.IsSpectator);
 
             // Notify the newcomer of table sides
-            _player.Rpc.Settings(_context.GameSettings.UseTwoSidedTable, _context.GameSettings.AllowSpectators, _context.GameSettings.MuteSpectators);
+            _player.Rpc.Settings(_context.State.Settings.UseTwoSidedTable, _context.State.Settings.AllowSpectators, _context.State.Settings.MuteSpectators);
 
             // Add it to our lists
             if (GameStarted) {
@@ -248,7 +248,7 @@ namespace Octgn.Server
         public void HelloAgain(byte pid, string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password) {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
             // Make sure the pid is one that exists
-            var oldPlayerInfo = _context.Players.GetPlayer(pid);
+            var oldPlayerInfo = _context.State.Players.GetPlayer(pid);
             if (oldPlayerInfo == null) {
                 ErrorAndCloseConnection(L.D.ServerMessage__CanNotReconnectFirstTimeConnecting);
                 return;
@@ -271,12 +271,12 @@ namespace Octgn.Server
             _context.Broadcaster.NewPlayer(oldPlayerInfo.Id, nick, userId, pkey, oldPlayerInfo.Settings.InvertedTable, oldPlayerInfo.Settings.IsSpectator);
 
             // Add everybody to the newcomer
-            foreach (var player in _context.Players.Players.Where(x => x.Id != oldPlayerInfo.Id))
+            foreach (var player in _context.State.Players.Players.Where(x => x.Id != oldPlayerInfo.Id))
                 oldPlayerInfo.Rpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.Settings.InvertedTable, player.Settings.IsSpectator);
 
             // Notify the newcomer of some shared settings
-            oldPlayerInfo.Rpc.Settings(_context.GameSettings.UseTwoSidedTable, _context.GameSettings.AllowSpectators, _context.GameSettings.MuteSpectators);
-            foreach (var player in _context.Players.Players)
+            oldPlayerInfo.Rpc.Settings(_context.State.Settings.UseTwoSidedTable, _context.State.Settings.AllowSpectators, _context.State.Settings.MuteSpectators);
+            foreach (var player in _context.State.Players.Players)
                 oldPlayerInfo.Rpc.PlayerSettings(player.Id, player.Settings.InvertedTable, player.Settings.IsSpectator);
 
             Log.Info("HelloAgain, so sending 'Start'");
@@ -321,71 +321,71 @@ namespace Octgn.Server
         public void NextTurn(byte nextPlayer, bool setActive, bool force) {
             if (!force) {
                 // find the first phase that a player has stopped
-                var firstStop = _context.PhaseStops.Where(x => x.Item1 > _context.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
+                var firstStop = _context.State.PhaseStops.Where(x => x.Item1 > _context.State.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
                 if (firstStop != null) //if there's a phase stop set
                 {
-                    var stopPlayers = _context.PhaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
-                    _context.PhaseNumber = firstStop.Item1;
-                    _context.Broadcaster.SetPhase(_context.PhaseNumber, stopPlayers.ToArray(), force);
+                    var stopPlayers = _context.State.PhaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
+                    _context.State.PhaseNumber = firstStop.Item1;
+                    _context.Broadcaster.SetPhase(_context.State.PhaseNumber, stopPlayers.ToArray(), force);
                     return;
                 }
                 // check if a player has the end of turn stopped
-                if (_context.TurnStopPlayers.Count > 0) {
-                    var stopPlayerId = _context.TurnStopPlayers.First();
-                    _context.TurnStopPlayers.Remove(stopPlayerId);
+                if (_context.State.TurnStopPlayers.Count > 0) {
+                    var stopPlayerId = _context.State.TurnStopPlayers.First();
+                    _context.State.TurnStopPlayers.Remove(stopPlayerId);
                     _context.Broadcaster.StopTurn(stopPlayerId);
                     return;
                 }
             }
-            _context.TurnNumber++;
-            _context.PhaseNumber = 0;
+            _context.State.TurnNumber++;
+            _context.State.PhaseNumber = 0;
             _context.Broadcaster.NextTurn(nextPlayer, setActive, force);
         }
 
         public void StopTurnReq(int lTurnNumber, bool stop) {
-            if (lTurnNumber != _context.TurnNumber) return; // Message StopTurn crossed a NextTurn message
+            if (lTurnNumber != _context.State.TurnNumber) return; // Message StopTurn crossed a NextTurn message
             var id = _player.Id;
             if (stop)
-                _context.TurnStopPlayers.Add(id);
+                _context.State.TurnStopPlayers.Add(id);
             else
-                _context.TurnStopPlayers.Remove(id);
+                _context.State.TurnStopPlayers.Remove(id);
         }
 
         public void StopPhaseReq(byte phase, bool stop) {
             var tuple = new Tuple<byte, byte>(phase, _player.Id);
             if (stop) {
-                if (!_context.PhaseStops.Contains(tuple))
-                    _context.PhaseStops.Add(tuple);
+                if (!_context.State.PhaseStops.Contains(tuple))
+                    _context.State.PhaseStops.Add(tuple);
             } else {
-                if (_context.PhaseStops.Contains(tuple))
-                    _context.PhaseStops.Remove(tuple);
+                if (_context.State.PhaseStops.Contains(tuple))
+                    _context.State.PhaseStops.Remove(tuple);
             }
         }
 
         public void SetPhaseReq(byte phase, bool force) {
-            if (force == false && phase > _context.PhaseNumber) {
+            if (force == false && phase > _context.State.PhaseNumber) {
                 // find the first phase that a player has stopped
-                var firstStop = _context.PhaseStops.Where(x => x.Item1 > _context.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
+                var firstStop = _context.State.PhaseStops.Where(x => x.Item1 > _context.State.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
                 if (firstStop != null && phase > firstStop.Item1) //if there's a phase stop set earlier than the desired phase
                 {
-                    var stopPlayers = _context.PhaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
-                    _context.PhaseNumber = firstStop.Item1;
-                    _context.Broadcaster.SetPhase(_context.PhaseNumber, stopPlayers.ToArray(), force);
+                    var stopPlayers = _context.State.PhaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
+                    _context.State.PhaseNumber = firstStop.Item1;
+                    _context.Broadcaster.SetPhase(_context.State.PhaseNumber, stopPlayers.ToArray(), force);
                     return;
                 }
             }
-            _context.PhaseNumber = phase;
+            _context.State.PhaseNumber = phase;
             _context.Broadcaster.SetPhase(phase, new byte[0], force);
         }
 
 
         public void SetActivePlayer(byte player) {
-            _context.TurnStopPlayers.Clear();
+            _context.State.TurnStopPlayers.Clear();
             _context.Broadcaster.SetActivePlayer(player);
         }
 
         public void ClearActivePlayer() {
-            _context.TurnStopPlayers.Clear();
+            _context.State.TurnStopPlayers.Clear();
             _context.Broadcaster.ClearActivePlayer();
         }
 
@@ -462,11 +462,11 @@ namespace Octgn.Server
         }
 
         public void TakeFromReq(int id, byte fromPlayer) {
-            _context.Players.GetPlayer(fromPlayer).Rpc.TakeFrom(id, _player.Id);
+            _context.State.Players.GetPlayer(fromPlayer).Rpc.TakeFrom(id, _player.Id);
         }
 
         public void DontTakeReq(int id, byte toPlayer) {
-            _context.Players.GetPlayer(toPlayer).Rpc.DontTake(id);
+            _context.State.Players.GetPlayer(toPlayer).Rpc.DontTake(id);
         }
 
         public void FreezeCardsVisibility(int group) {
@@ -524,7 +524,7 @@ namespace Octgn.Server
         }
 
         public void RemoteCall(byte player, string func, string args) {
-            _context.Players.GetPlayer(player).Rpc.RemoteCall(_player.Id, func, args);
+            _context.State.Players.GetPlayer(player).Rpc.RemoteCall(_player.Id, func, args);
         }
 
         public void ShuffleDeprecated(int arg0, int[] ints) {
@@ -544,11 +544,11 @@ namespace Octgn.Server
         }
 
         public void GameState(byte player, string state) {
-            _context.Players.GetPlayer(player).Rpc.GameState(_player.Id, state);
+            _context.State.Players.GetPlayer(player).Rpc.GameState(_player.Id, state);
         }
 
         public void GameStateReq(byte toPlayer) {
-            _context.Players.GetPlayer(toPlayer).Rpc.GameStateReq(_player.Id);
+            _context.State.Players.GetPlayer(toPlayer).Rpc.GameStateReq(_player.Id);
         }
 
         public void DeleteCard(int cardId, byte playerId) {
@@ -565,7 +565,7 @@ namespace Octgn.Server
 
         public void Boot(byte player, string reason) {
             var p = _player;
-            var bplayer = _context.Players.GetPlayer(player);
+            var bplayer = _context.State.Players.GetPlayer(player);
             if (bplayer == null) {
                 _context.Broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootPlayerDoesNotExist, p.Nick));
                 return;
