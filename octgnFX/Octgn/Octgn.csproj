@@ -662,6 +662,7 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Resources\noimage.png" />
     <Content Include="Sleeves\Air-Travel.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

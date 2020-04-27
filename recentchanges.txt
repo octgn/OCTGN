@@ -1,1 +1,4 @@
+Fix crash caused by SetPoint software - Ben
+Add hotkey to move cards between sections in editor - Ben
 Paginate Game History tab to minimize impact of large numbers of replays - Ben
+Fix some padding/margins = Kelly

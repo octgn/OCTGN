@@ -804,6 +804,30 @@ namespace Octgn.DeckBuilder
                         e.Handled = true;
                     }
                 }
+                // Move selected card(s) to other section
+                if (e.Key >= Key.D0 && e.Key <= Key.D9)
+                {
+                    var sections = ActiveSection.Shared ? DeckSharedSections : DeckSections;
+                    // Ctrl+Shift+Num moves to sections from other tab i.e. shared sections if on player sections
+                    if (kbd.IsKeyDown(Key.LeftShift) || kbd.IsKeyDown(Key.RightShift))
+                        sections = ActiveSection.Shared ? DeckSections : DeckSharedSections;
+
+                    // Use key as index to select section, with '0' being index 9, and '1'-'9' being indicies 0-8
+                    int index = e.Key == Key.D0 ? 10 : e.Key - Key.D1;
+
+                    if (sections.Count() > index)
+                    {
+                        var targetSection = sections.ElementAt(index);
+                        if (targetSection != ActiveSection)
+                        {
+                            ActiveSection.Cards.RemoveCard(element);
+                            targetSection.Cards.AddCard(element);
+                            _unsaved = true;
+                            InvokeDeckChangedEvent();
+                        }
+                    }
+                    e.Handled = true;
+                }
             }
             #endregion
 
