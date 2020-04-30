@@ -1,82 +1,93 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.Play.Gui
 {
-    public class PilePanel : VirtualizingPanel
+    public class PilePanel : Panel
     {
-        protected override Size MeasureOverride(Size availableSize)
+        // this derived panel handles the resizing of the expanded (hand) piles so they fill up the entire width of the screen.
+        // it is copied from the DockPanel base code, so there may be redundant sections.
+        protected override Size MeasureOverride(Size constraint)
         {
-            var desiredSize = new Size();
-            ItemsControl parent = ItemsControl.GetItemsOwner(this);
-            int count = parent != null && parent.HasItems ? parent.Items.Count : 0;
-
-            // Next line needed otherwise ItemContainerGenerator is null (bug in WinFX ?)
             UIElementCollection children = InternalChildren;
-            IItemContainerGenerator generator = ItemContainerGenerator;
 
-            if (count == 0)
+            double parentWidth = 0.0;
+            double accumulatedWidth = 0.0;
+
+            foreach (UIElement child in children)
             {
-                generator.RemoveAll();
-                if (children.Count > 0) RemoveInternalChildRange(0, children.Count);
-                return desiredSize;
+                Size childConstraint;
+                Size childDesiredSize;
+                if (child == null) continue;
+
+                childConstraint = new Size(Math.Max(0.0, constraint.Width - accumulatedWidth), constraint.Height);
+
+                child.Measure(childConstraint);
+                childDesiredSize = child.DesiredSize;
+
+                accumulatedWidth += childDesiredSize.Width;
+
             }
 
-            // Get the generator position of the first visible data item
-            GeneratorPosition startPos = generator.GeneratorPositionFromIndex(count - 1);
-            using (generator.StartAt(startPos, GeneratorDirection.Forward, true))
-            {
-                bool newlyRealized;
-                // Get or create the child
-                var child = generator.GenerateNext(out newlyRealized) as UIElement;
+            parentWidth = Math.Max(parentWidth, accumulatedWidth);
 
-                if (child != null)
+            return new Size(parentWidth, constraint.Height);
+        }
+        
+
+        protected override Size ArrangeOverride(Size arrangeSize)
+        {
+            UIElementCollection children = InternalChildren;
+
+            double accumulatedWidth = 0.0;
+            double pileTotalWidth = 0.0;
+            double expandedPileMinimumWidth = 0.0;
+
+            foreach (ContentPresenter child in children)
+            {
+                if (child == null) continue;
+                Size childDesiredSize = child.DesiredSize;
+
+                if (child.Content is Pile pile && pile.ViewState == GroupViewState.Pile)
                 {
-                    if (newlyRealized)
-                    {
-                        AddInternalChild(child);
-                        generator.PrepareItemContainer(child);
-                    }
-                    child.Measure(availableSize);
-                    desiredSize = child.DesiredSize;
+                    pileTotalWidth += childDesiredSize.Width;
+                }
+                else
+                {
+                    expandedPileMinimumWidth += childDesiredSize.Width;
                 }
             }
 
-            // Remove all other items than the top one
-            for (int i = children.Count - 1; i >= 0; i--)
-            {
-                var childGeneratorPos = new GeneratorPosition(i, 0);
-                int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
-                if (itemIndex == count - 1) continue;
-                generator.Remove(childGeneratorPos, 1);
-                RemoveInternalChildRange(i, 1);
-            }
-            return desiredSize;
-        }
+                foreach (ContentPresenter child in children)
+                {
+                    if (child == null) continue;
+                    Size childDesiredSize = child.DesiredSize;
+                    Rect rcChild = new Rect(
+                        accumulatedWidth, 
+                        0.0, 
+                        Math.Max(0.0, arrangeSize.Width - accumulatedWidth),
+                        Math.Max(0.0, arrangeSize.Height)
+                        );
+                    if (child.Content is Pile pile && pile.ViewState == GroupViewState.Pile)
+                    {
+                        accumulatedWidth += childDesiredSize.Width;
+                        rcChild.Width = childDesiredSize.Width;
+                    }
+                    else
+                    {
+                        double adjustedExpandedPileWith = childDesiredSize.Width / expandedPileMinimumWidth * (arrangeSize.Width - pileTotalWidth);
+                        accumulatedWidth += adjustedExpandedPileWith;
+                        rcChild.Width = adjustedExpandedPileWith;
+                    }
+                    child.Arrange(rcChild);
+                }
 
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (VisualChildrenCount > 0)
-            {
-                var child = GetVisualChild(0) as UIElement;
-                if (child != null) child.Arrange(new Rect(finalSize));
-            }
-            return finalSize;
-        }
-
-        protected override void OnItemsChanged(object sender, ItemsChangedEventArgs args)
-        {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Remove:
-                case NotifyCollectionChangedAction.Replace:
-                    RemoveInternalChildRange(args.Position.Index, args.ItemUICount);
-                    break;
-            }
-            base.OnItemsChanged(sender, args);
+            return arrangeSize;
         }
     }
 }

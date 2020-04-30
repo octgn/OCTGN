@@ -15,7 +15,7 @@ namespace Octgn.Play.Gui
         #region Private vars
 
         private const int SpacingWidth = 8;
-        private const double LayoutAnimationDelay = 0.1;
+        private const double LayoutAnimationDuration = 1.0;
         private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int,double>(1);
         private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
 
@@ -302,11 +302,12 @@ namespace Octgn.Play.Gui
                     translate2.BeginAnimation(TranslateTransform.XProperty, Animation, HandoffBehavior.Compose);
                     Animation.From = null;
                     Animation.BeginTime = TimeSpan.Zero;
-                    animationDelay += LayoutAnimationDelay;
+                    animationDelay += LayoutAnimationDuration / Children.Count;
                 }
                 SetXPosition(child, xposition);
 
                 int idx = Children.IndexOf(child);
+                SetZIndex(child, -idx);
                 cardLocations.Add(idx, xposition);
                 if (cardLocations.Count == Children.Count)
                     cardLocations.Add(idx + 1, xposition + child.DesiredSize.Width); // add index for dragging to end of hand

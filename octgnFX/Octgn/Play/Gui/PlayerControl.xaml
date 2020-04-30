@@ -45,19 +45,19 @@
                 </Grid.ColumnDefinitions>
                 
                 <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" ItemTemplateSelector="{DynamicResource PileControlSelector}"
-                  Margin="0,3,0,3" HorizontalAlignment="Right" VerticalAlignment="Stretch" Focusable="False" x:Name="expandedList">
+                  Margin="0,3,0,3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Focusable="False" x:Name="expandedList">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <gui:PilePanel />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.Resources>
                         <gui:PileControlSelector x:Key="PileControlSelector" />
                         <DataTemplate x:Key="ExpandedControl">
-                            <gui:PileExpandedControl Margin="3,0,0,0" MinWidth="300" />
+                            <gui:PileExpandedControl />
                         </DataTemplate>
                         <DataTemplate x:Key="PileControl">
-                            <gui:PileControl Margin="3,0,0,0" />
+                            <gui:PileControl />
                         </DataTemplate>
                     </ItemsControl.Resources>
                 </ItemsControl>

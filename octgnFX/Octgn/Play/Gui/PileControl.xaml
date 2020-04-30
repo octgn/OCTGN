@@ -64,13 +64,15 @@
               VerticalAlignment="Center" HorizontalAlignment="Center" />
             </Border>
 
-            <DockPanel Grid.Row="1" LastChildFill="True">
-                <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" />
-                
-                <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" FontWeight="Bold" Margin="5 0 0 0"
-                   Style="{x:Null}" />
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <Button VerticalAlignment="Center" HorizontalAlignment="Right" Height="16" Width="16" Margin="14,0,0,0"
+                <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Height="16" Width="16" Margin="0 0 5 0"
                 Style="{x:Null}" x:Name="expandButton" Opacity="0" Click="ExpandClicked" ToolTip="Expand" Focusable="False">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -131,8 +133,13 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                
-                <Button DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" Height="16" Width="16" Margin="14,0,0,0"
+
+                <ctrl:TextOrIcon Grid.Column="1" Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" HorizontalAlignment="Right" />
+
+                <TextBlock Grid.Column="2" Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" 
+                   Style="{x:Null}" />
+
+                <Button Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Height="16" Width="16" Margin="5 0 0 0"
                 Style="{x:Null}" x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse" Focusable="False">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -186,7 +193,7 @@
                     </Button.Template>
                 </Button>
 
-            </DockPanel>
+            </Grid>
         </Grid>
     </Border>
 

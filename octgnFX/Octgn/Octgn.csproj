@@ -304,6 +304,7 @@
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Gui\DeckStats.xaml.cs">
       <DependentUpon>DeckStats.xaml</DependentUpon>
     </Compile>
@@ -369,7 +370,6 @@
       <DependentUpon>AdhocPileControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
-    <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
