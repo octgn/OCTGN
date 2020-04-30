@@ -16,29 +16,24 @@ namespace Octgn.Play.Gui
         {
             UIElementCollection children = InternalChildren;
 
-            double parentWidth = 0.0;
             double accumulatedWidth = 0.0;
 
             foreach (UIElement child in children)
             {
-                Size childConstraint;
-                Size childDesiredSize;
                 if (child == null) continue;
 
-                childConstraint = new Size(Math.Max(0.0, constraint.Width - accumulatedWidth), constraint.Height);
+                Size childConstraint = new Size(Math.Max(0.0, constraint.Width - accumulatedWidth), constraint.Height);
 
                 child.Measure(childConstraint);
-                childDesiredSize = child.DesiredSize;
+                Size childDesiredSize = child.DesiredSize;
 
                 accumulatedWidth += childDesiredSize.Width;
 
             }
 
-            parentWidth = Math.Max(parentWidth, accumulatedWidth);
-
-            return new Size(parentWidth, constraint.Height);
+            return new Size(accumulatedWidth, constraint.Height);
         }
-        
+
 
         protected override Size ArrangeOverride(Size arrangeSize)
         {
@@ -63,29 +58,29 @@ namespace Octgn.Play.Gui
                 }
             }
 
-                foreach (ContentPresenter child in children)
+            foreach (ContentPresenter child in children)
+            {
+                if (child == null) continue;
+                Size childDesiredSize = child.DesiredSize;
+                Rect rcChild = new Rect(
+                    accumulatedWidth,
+                    0.0,
+                    Math.Max(0.0, arrangeSize.Width - accumulatedWidth),
+                    Math.Max(0.0, arrangeSize.Height)
+                    );
+                if (child.Content is Pile pile && pile.ViewState == GroupViewState.Pile)
                 {
-                    if (child == null) continue;
-                    Size childDesiredSize = child.DesiredSize;
-                    Rect rcChild = new Rect(
-                        accumulatedWidth, 
-                        0.0, 
-                        Math.Max(0.0, arrangeSize.Width - accumulatedWidth),
-                        Math.Max(0.0, arrangeSize.Height)
-                        );
-                    if (child.Content is Pile pile && pile.ViewState == GroupViewState.Pile)
-                    {
-                        accumulatedWidth += childDesiredSize.Width;
-                        rcChild.Width = childDesiredSize.Width;
-                    }
-                    else
-                    {
-                        double adjustedExpandedPileWith = childDesiredSize.Width / expandedPileMinimumWidth * (arrangeSize.Width - pileTotalWidth);
-                        accumulatedWidth += adjustedExpandedPileWith;
-                        rcChild.Width = adjustedExpandedPileWith;
-                    }
-                    child.Arrange(rcChild);
+                    accumulatedWidth += childDesiredSize.Width;
+                    rcChild.Width = childDesiredSize.Width;
                 }
+                else
+                {
+                    double adjustedExpandedPileWith = childDesiredSize.Width / expandedPileMinimumWidth * (arrangeSize.Width - pileTotalWidth);
+                    accumulatedWidth += adjustedExpandedPileWith;
+                    rcChild.Width = adjustedExpandedPileWith;
+                }
+                child.Arrange(rcChild);
+            }
 
             return arrangeSize;
         }

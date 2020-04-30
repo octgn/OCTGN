@@ -51,7 +51,7 @@
                 <ItemsControl x:Name="list" ItemsSource="{Binding Cards}" Grid.Row="0" Focusable="False">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <gui:FanPanel Loaded="SaveFanPanel" />
+                            <gui:FanPanel Loaded="SaveFanPanel" FlowDirection="LeftToRight"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -66,19 +66,12 @@
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
             </AdornerDecorator>
-
-            <Grid Grid.Row="1" x:Name="handInfo" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" HorizontalAlignment="Right" />
-
-                <TextBlock Grid.Column="1" Text="{Binding Name}" MaxWidth="150"  Margin="5 0 0 0" HorizontalAlignment="Left"/>
-                <TextBlock Grid.Column="2" Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" MinWidth="20" Style="{x:Null}" />
-
+            <DockPanel Grid.Row="1" x:Name="handInfo" LastChildFill="True">
+                <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" />
+                <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" FontWeight="Bold" Margin="5 0 0 0"
+                   Style="{x:Null}" />
+                <Slider Width="40" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="0"
+                                        LargeChange="10" SmallChange="1" TickFrequency="50" AutoToolTipPlacement="BottomRight" Thumb.DragCompleted="DensitySlider_DragCompleted" />
                 <Button Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Height="16" Width="16" Margin="5,0,0,0"
                 Style="{x:Null}" x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse" Focusable="False">
                     <Button.Template>
@@ -132,8 +125,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
-            </Grid>
+            </DockPanel>
         </Grid>
     </Border>
 

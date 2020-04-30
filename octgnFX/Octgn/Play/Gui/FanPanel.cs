@@ -35,10 +35,7 @@ namespace Octgn.Play.Gui
         private InsertAdorner _insertAdorner;
         private UIElement _mouseOverElement;
         private UIElement _spacedItem1, _spacedItem2;
-        public double handDensity
-        {
-            get { return Octgn.Core.Prefs.HandDensity / 100; }
-        }
+        public double handDensity { get; set; } = .25f;
 
         #endregion
 
@@ -224,8 +221,10 @@ namespace Octgn.Play.Gui
 
             double totalChildWidth = 0;
 
+            int zIndex = Children.Count;
             foreach (UIElement child in Children)
             {
+                Canvas.SetZIndex(child, zIndex--);
                 child.Measure(finalSize);
                 child.Arrange(new Rect(0, 0, child.DesiredSize.Width, child.DesiredSize.Height));
                 totalChildWidth += child.DesiredSize.Width;
@@ -247,12 +246,15 @@ namespace Octgn.Play.Gui
             double percentToShow = Math.Min(scaleHand * (handDensity), 1d); // show a maximum of 100% of cards
 
             cardLocations = new System.Collections.Generic.Dictionary<int, double>(); // for indexing the positions of the cards
+            cardLocations.Add(0, 0);
+
             double xposition = 0;
             double animationDelay = 0;
             UIElement newMouseOverElement = null;
 
-            foreach (UIElement child in Children)
+            for(int i = 0; i < Children.Count; i++)
             {
+                var child = Children[i];
                 var group = (TransformGroup) child.RenderTransform;
                 var scale = (ScaleTransform) group.Children[0];
                 var translate = (TranslateTransform) group.Children[1];
@@ -306,16 +308,10 @@ namespace Octgn.Play.Gui
                 }
                 SetXPosition(child, xposition);
 
-                int idx = Children.IndexOf(child);
-                SetZIndex(child, -idx);
-                cardLocations.Add(idx, xposition);
-                if (cardLocations.Count == Children.Count)
-                    cardLocations.Add(idx + 1, xposition + child.DesiredSize.Width); // add index for dragging to end of hand
-                xposition += (child.DesiredSize.Width * percentToShow); // I have no idea where the padding between cards is comming from
-                
+                cardLocations.Add(i+1, xposition + child.DesiredSize.Width);
+
+                xposition += (child.DesiredSize.Width * percentToShow);
             }
-            if (cardLocations.Count == 0)
-                cardLocations.Add(0, 0); // to place adorner in empty hand
             _mouseOverElement = newMouseOverElement;
             return finalSize;
         }

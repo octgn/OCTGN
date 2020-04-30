@@ -97,5 +97,12 @@ namespace Octgn.Play.Gui
         {
             _fanPanel = (FanPanel)sender;
         }
+
+        private void DensitySlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            _fanPanel.handDensity = (sender as Slider).Value / 100;
+            _fanPanel.InvalidateMeasure();
+            this.InvalidateArrange();
+        }
     }
 }
