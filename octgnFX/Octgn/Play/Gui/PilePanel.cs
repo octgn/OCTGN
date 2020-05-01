@@ -61,6 +61,8 @@ namespace Octgn.Play.Gui
             if (expandedPileMinimumWidth == 0) // if there's no expanded piles, then offset the accumulatedwidth so the piles align to the right side
                 accumulatedWidth += arrangeSize.Width - pileTotalWidth;
 
+            int zIndex = Children.Count;
+
             foreach (ContentPresenter child in children)
             {
                 if (child == null) continue;
@@ -83,6 +85,7 @@ namespace Octgn.Play.Gui
                     rcChild.Width = adjustedExpandedPileWith;
                 }
                 child.Arrange(rcChild);
+                SetZIndex(child, zIndex--);
             }
 
             return arrangeSize;
