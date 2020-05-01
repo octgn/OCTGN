@@ -57,7 +57,7 @@
                             <gui:PileExpandedControl Margin="3,0,0,0" />
                         </DataTemplate>
                         <DataTemplate x:Key="PileControl">
-                            <gui:PileControl />
+                            <gui:PileControl  Margin="3,0,0,0"/>
                         </DataTemplate>
                     </ItemsControl.Resources>
                 </ItemsControl>

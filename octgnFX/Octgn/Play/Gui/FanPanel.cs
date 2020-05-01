@@ -35,7 +35,7 @@ namespace Octgn.Play.Gui
         private InsertAdorner _insertAdorner;
         private UIElement _mouseOverElement;
         private UIElement _spacedItem1, _spacedItem2;
-        public double handDensity { get; set; } = .25f;
+        public double handDensity { get; set; } = Octgn.Core.Prefs.HandDensity / 100;
 
         #endregion
 
