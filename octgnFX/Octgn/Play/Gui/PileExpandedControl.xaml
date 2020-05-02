@@ -62,7 +62,7 @@
                 Style="{StaticResource RightArrowButtonStyle}" x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse Pile" Focusable="False" />
 
 
-                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Hand Density" HorizontalAlignment="Left"
+                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left"
                                         LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" Thumb.DragCompleted="DensitySlider_DragCompleted" />
 
             </DockPanel>

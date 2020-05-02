@@ -928,7 +928,7 @@ namespace Octgn.Play.Gui
                 var groupDef = groupDefs[i];
                 if (!groupDef.MoveTo)
                     continue;
-                Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
+                Group indexedGroup = Player.LocalPlayer.IndexedGroups[i];
                 var subItem = new MenuItem { Header = groupDef.Name, InputGestureText = groupDef.Shortcut };
                 subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, false), ContextCard); };
                 item.Items.Add(subItem);
