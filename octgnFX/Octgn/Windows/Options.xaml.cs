@@ -43,7 +43,7 @@ namespace Octgn.Windows
             ComboBoxZoomOptions.SelectedIndex = (int)Prefs.ZoomOption;
             ComboBoxJoinSound.SelectedIndex = (int)Prefs.SoundOption;
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
-            CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
+            CheckBoxShowLanMode.IsChecked = Prefs.EnableLanGames;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
             CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             HandDensitySlider.Value = Prefs.HandDensity;
@@ -87,7 +87,7 @@ namespace Octgn.Windows
             var chatFontSize = ChatFontSize.Value ?? 12;
             var useInstantSearch = CheckBoxUseInstantSearch.IsChecked ?? false;
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
-            var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
+            var showLanMode = CheckBoxShowLanMode.IsChecked ?? false;
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
             var handDensity = HandDensitySlider.Value;
             var useTestReleases = CheckBoxUseTestReleases.IsChecked ?? false;
@@ -141,7 +141,7 @@ namespace Octgn.Windows
                     Prefs.SoundOption = soundOption;
                     Prefs.ZoomOption = zoomOption;
                     Prefs.CardMoveNotification = animOption;
-                    Prefs.EnableAdvancedOptions = enableAdvancedOptions;
+                    Prefs.EnableLanGames = showLanMode;
                     Prefs.UseGameFonts = useGameFonts;
                     Prefs.HandDensity = handDensity;
                     if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))

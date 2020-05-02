@@ -101,7 +101,7 @@
 
                                 <Grid Height="6"/>
                                 <CheckBox x:Name="CheckBoxUseInstantSearch">
-                                    <TextBlock Foreground="White">Use Instant Style Searching (Editor Only)</TextBlock>
+                                    <TextBlock Foreground="White">Use Instant Style Searching (Deck Editor Only)</TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
@@ -112,11 +112,6 @@
                                 <Grid Height="6"/>
                                 <CheckBox x:Name="CheckBoxEnableGameFonts">
                                     <TextBlock Foreground="White">Enable Game Fonts</TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableAdvancedOptions">
-                                    <TextBlock Foreground="White">Enable Advanced Options</TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
@@ -144,34 +139,34 @@
                             </Grid.RowDefinitions>
                             <StackPanel>
                                 <Grid Height="8"/>
-                                <CheckBox x:Name="CheckBoxLightChat">
+                                <CheckBox x:Name="CheckBoxLightChat" IsEnabled="False">
                                     <TextBlock Foreground="White">Use Light Color Chat Theme</TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxUseWindowsForChat">
+                                <CheckBox x:Name="CheckBoxUseWindowsForChat" IsEnabled="False">
                                     <TextBlock Foreground="White">Use Windows Instead of Docked Chats</TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableChatImages" >
+                                <CheckBox x:Name="CheckBoxEnableChatImages" IsEnabled="False" >
                                     <TextBlock Foreground="White">Enable Images in Chat
                                         <Bold Foreground="#FFFFCC00">$</Bold>
                                     </TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableWhisperSound">
+                                <CheckBox x:Name="CheckBoxEnableWhisperSound" IsEnabled="False">
                                     <TextBlock>Enable Alert Sound When Whispered in Chat</TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" >
+                                <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" IsEnabled="False" >
                                     <TextBlock Height="30">Enable Alert Sound When Someone @username's You</TextBlock>
                                 </CheckBox>
 
                                 <Grid Height="6"/>
-                                <Grid>
+                                <Grid IsEnabled="False">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="225"/>
                                         <ColumnDefinition />
@@ -209,36 +204,39 @@
                             </StackPanel>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="TabAdvancedOptions" Header="Advanced Options" Background="Transparent"
-                             Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=CheckBoxEnableAdvancedOptions}">
+                    <TabItem x:Name="TabAdvancedOptions" Header="Advanced Options" Background="Transparent" >
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
                             </Grid.RowDefinitions>
                             <StackPanel>
                                 <Grid Height="6"/>
-                                <TextBlock Foreground="White">Card Changed Notification Type ("Card Pulse")</TextBlock>
+                                <CheckBox x:Name="CheckBoxUseTestReleases">
+                                    <TextBlock Foreground="White">Opt-In to OCTGN Development Testing Version
+                                        <Bold Foreground="#FFFF0000">*</Bold>
+                                    </TextBlock>
+                                </CheckBox>
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxShowLanMode">
+                                    <TextBlock Foreground="White">Allow LAN Game Hosting when Logged In </TextBlock>
+                                </CheckBox>
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxIgnoreSSLCertificates">
+                                    <TextBlock Foreground="White">Ignore SSL Certificate Checking (use only when experiencing consistant feed errors)
+                                        <Bold Foreground="#FFFF0000">*</Bold>
+                                    </TextBlock>
+                                </CheckBox>
+                                <Grid Height="6"/>
+                                <TextBlock Foreground="White">Card Pulsing Animation Style (when a card is moved or changed)</TextBlock>
                                 <ComboBox x:Name="ComboBoxCardMoveNotification">
                                     <ComboBoxItem Tag="1">No Animation</ComboBoxItem>
                                     <ComboBoxItem Tag="2">Normal Animation</ComboBoxItem>
                                     <ComboBoxItem Tag="3">Minimal Animation</ComboBoxItem>
                                 </ComboBox>
                                 <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxIgnoreSSLCertificates">
-                                    <TextBlock Foreground="White">Ignore SSL Certificate Checking (Use only on consistant feed errors)
-                                        <Bold Foreground="#FFFF0000">*</Bold>
-                                    </TextBlock>
-                                </CheckBox>
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxUseTestReleases">
-                                    <TextBlock Foreground="White">Download test releases
-                                        <Bold Foreground="#FFFF0000">*</Bold>
-                                    </TextBlock>
-                                </CheckBox>
-                                <Grid Height="6"/>
-                                <TextBlock Foreground="White">Hand Density (% of card to show)</TextBlock>
+                                <TextBlock Foreground="White">Default Card Density in Expanded Piles (minimum % of card to show)</TextBlock>
                                 <Slider x:Name="HandDensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1"
-                                        LargeChange="10" SmallChange="1" TickFrequency="10" AutoToolTipPlacement="TopLeft"/>
+                                        LargeChange="10" SmallChange="1" TickFrequency="10" AutoToolTipPlacement="BottomRight"/>
                             </StackPanel>
                         </Grid>
                     </TabItem>

@@ -1,1 +1,6 @@
-
+Removed the hand group as a dedicated pile type. Any pile can now be expanded in-game.  An expanded pile behaves the same as the original hand group did.
+Added ViewState property to group to define which type of pile it is ("Expanded", "Pile", "Collapsed").
+Python API can get or set the ViewState.
+Multiple piles can be expanded at once.
+Game serializer will convert existing hand groups into the new format (for backwards compatibility)
+Slight re-organization of the OCTGN Options window.
