@@ -77,7 +77,7 @@ namespace Octgn.Play.Gui
         
         private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            System.Windows.Controls.ScrollViewer scv = (System.Windows.Controls.ScrollViewer)sender;
+            ScrollViewer scv = (ScrollViewer)sender;
             scv.ScrollToHorizontalOffset(scv.HorizontalOffset - e.Delta/4);
             e.Handled = true;
         }
@@ -87,7 +87,7 @@ namespace Octgn.Play.Gui
             Size temp = base.MeasureOverride(constraint);
             temp.Height = gd.RowDefinitions[0].ActualHeight; //counters row
             temp.Height += 28;                               // + info-bars at base of card areas, cards themselves should be optional
-            if (cardScroller.ComputedHorizontalScrollBarVisibility == System.Windows.Visibility.Visible)
+            if (cardScroller.ComputedHorizontalScrollBarVisibility == Visibility.Visible)
             {
                 temp.Height += SystemParameters.ScrollHeight;
             }

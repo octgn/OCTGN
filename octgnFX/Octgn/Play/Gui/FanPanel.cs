@@ -16,8 +16,11 @@ namespace Octgn.Play.Gui
 
         private const int SpacingWidth = 8;
         private const double LayoutAnimationDuration = 1.0;
-        private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int,double>(1);
-        private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
+        private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int, double>
+                                                                                        {  
+                                                                                            { 0, 0 } 
+                                                                                        };
+    private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
 
         private static readonly DoubleAnimation Animation = new DoubleAnimation
                                                                 {
@@ -35,9 +38,10 @@ namespace Octgn.Play.Gui
         private InsertAdorner _insertAdorner;
         private UIElement _mouseOverElement;
         private UIElement _spacedItem1, _spacedItem2;
-        public double handDensity { get; set; } = Octgn.Core.Prefs.HandDensity / 100;
 
         #endregion
+
+        public double HandDensity { get; set; } = Octgn.Core.Prefs.HandDensity / 100;
 
         #region Dependency properties
 
@@ -62,8 +66,6 @@ namespace Octgn.Play.Gui
             PreviewMouseMove += FanPanelMouseMove;
             MouseEnter += MouseRequiresArrange;
             MouseLeave += MouseRequiresArrange;
-
-            cardLocations.Add(0, 0);
         }
 
         #region Insertion related
@@ -194,22 +196,28 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var idealSize = new Size(0, 0);
-            fanWidth = 0;
+            var idealSize = new Size();
+
+            if (Children == null)
+                return idealSize;
 
             // Set Height first if constrained
             if (availableSize.Height != double.PositiveInfinity)
             {
                 idealSize.Height = availableSize.Height;
             }
-            foreach (UIElement child in Children)
+
+            fanWidth = 0;
+            for(int i = 0; i < Children.Count; i++)
             {
+                var child = Children[i];
+
                 child.Measure(availableSize);
                 if (fanWidth + child.DesiredSize.Width > idealSize.Width)
                 {
                     idealSize.Width = fanWidth + child.DesiredSize.Width;
                 }
-                fanWidth += (child.DesiredSize.Width * handDensity);
+                fanWidth += (child.DesiredSize.Width * HandDensity);
             }
             return idealSize;
         }
@@ -217,48 +225,39 @@ namespace Octgn.Play.Gui
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (Children == null || Children.Count == 0)
-                return finalSize;
+                return new Size();
 
-            double totalChildWidth = 0;
-
-            int zIndex = Children.Count;
-            foreach (UIElement child in Children)
+            cardLocations = new System.Collections.Generic.Dictionary<int, double>
             {
-                Canvas.SetZIndex(child, zIndex--);
-                child.Measure(finalSize);
-                child.Arrange(new Rect(0, 0, child.DesiredSize.Width, child.DesiredSize.Height));
-                totalChildWidth += child.DesiredSize.Width;
-            }
-
-            if (Math.Abs(Children[0].DesiredSize.Height - 0) < double.Epsilon) return finalSize; //TODO remove reliance on first card, not sure what this catches
+                { 0, 0 }
+            };
 
             // starts from min. fanning from settings, fill out extra space if available
             this.InvalidateMeasure(); // fixes issues with changing the hand density mid-game, seems to casue some odd visual effects though
-            this.Measure(finalSize); // Have to re-measure after ^
+            this.Measure(finalSize);  // Have to re-measure after ^
             double scaleHand = 1;
-            if (finalSize.Width > this.DesiredSize.Width && handDensity != 1) // don't need to do anything if no extra space or not fanning
+            if (finalSize.Width > this.DesiredSize.Width && HandDensity != 1) // don't need to do anything if no extra space or not fanning
             {
-                double handPadding = this.DesiredSize.Width - fanWidth; // the space reserved after the fanning of the cards to prevent clipping
-                double paddingCard = handPadding / (1 - handDensity); // the full width of the card that the right side is padded for
+                double handPadding = this.DesiredSize.Width - fanWidth;      // the space reserved after the fanning of the cards to prevent clipping
+                double paddingCard = handPadding / (1 - HandDensity);        // the full width of the card that the right side is padded for
                 double adjustedFan = fanWidth - (paddingCard - handPadding); // the width of the fan minus the portion aloted for above card
-                scaleHand = (finalSize.Width - paddingCard) / adjustedFan; // how much to scale the hand density to fill the space
+                scaleHand = (finalSize.Width - paddingCard) / adjustedFan;   // how much to scale the hand density to fill the space
             }
-            double percentToShow = Math.Min(scaleHand * (handDensity), 1d); // show a maximum of 100% of cards
-
-            cardLocations = new System.Collections.Generic.Dictionary<int, double>(); // for indexing the positions of the cards
-            cardLocations.Add(0, 0);
+            double percentToShow = Math.Min(scaleHand * (HandDensity), 1d); // show a maximum of 100% of cards
 
             double xposition = 0;
             double animationDelay = 0;
             UIElement newMouseOverElement = null;
 
-            for(int i = 0; i < Children.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
+
+                Canvas.SetZIndex(child, -i);
                 var group = (TransformGroup) child.RenderTransform;
                 var scale = (ScaleTransform) group.Children[0];
                 var translate = (TranslateTransform) group.Children[1];
-                //scale.ScaleX = scale.ScaleY = 1;
+
                 if (child.IsMouseOver)
                 {
                     newMouseOverElement = child;
@@ -308,7 +307,8 @@ namespace Octgn.Play.Gui
                 }
                 SetXPosition(child, xposition);
 
-                cardLocations.Add(i+1, xposition + child.DesiredSize.Width);
+                if(HandDensity > 0)
+                    cardLocations.Add(i+1, xposition + child.DesiredSize.Width);
 
                 xposition += (child.DesiredSize.Width * percentToShow);
             }
