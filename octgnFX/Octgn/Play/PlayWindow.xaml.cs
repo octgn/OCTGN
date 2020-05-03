@@ -86,6 +86,8 @@ namespace Octgn.Play
         private bool _currentCardUpStatus;
         private bool _newCard;
 
+        public PreviewCardWindow _previewCardWindow;
+
         private Storyboard _showBottomBar;
 
         private TableControl table;
@@ -606,10 +608,17 @@ namespace Octgn.Play
         {
             base.OnKeyDown(e);
 
-            if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress && _newCard)
+            if (_currentCard != null
+                && _currentCardUpStatus
+                && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0
+                && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress
+                && _newCard)
             {
                 var img = _currentCard.GetBitmapImage(_currentCardUpStatus, true);
-                ShowCardPicture(_currentCard, img);
+                if (_previewCardWindow == null)
+                    ShowCardPicture(_currentCard, img);
+                else
+                    _previewCardWindow.DisplayImage(img);
                 _newCard = false;
             }
 
@@ -664,10 +673,16 @@ namespace Octgn.Play
 
                 return;
             }
-            if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress)
+            if (_currentCard != null
+                && _currentCardUpStatus
+                && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == 0
+                && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress)
             {
                 var img = _currentCard.GetBitmapImage(_currentCardUpStatus);
-                ShowCardPicture(_currentCard, img);
+                if (_previewCardWindow == null)
+                    ShowCardPicture(_currentCard, img);
+                else
+                    _previewCardWindow.DisplayImage(img);
                 _newCard = true;
             }
         }
@@ -699,19 +714,28 @@ namespace Octgn.Play
                     _currentCardUpStatus = up;
 
                     var img = e.Card.GetBitmapImage(up);
-                    double width = ShowCardPicture(e.Card, img);
-                    _newCard = true;
-
-                    if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
+                    if (_previewCardWindow == null)
                     {
-                        var proxyImg = e.Card.GetBitmapImage(true, true);
-                        ShowSecondCardPicture(e.Card, proxyImg, width);
+                        double width = ShowCardPicture(e.Card, img);
+
+                        if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
+                        {
+                            var proxyImg = e.Card.GetBitmapImage(true, true);
+                            ShowSecondCardPicture(e.Card, proxyImg, width);
+                        }
                     }
+                    else
+                        _previewCardWindow.DisplayImage(img);
+                    _newCard = true;
                 }
                 else
                 {
+                    //probably for hovering in the deck editor
                     var img = ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
-                    this.ShowCardPicture(e.Card, img);
+                    if (_previewCardWindow == null)
+                        this.ShowCardPicture(e.Card, img);
+                    else
+                        _previewCardWindow.DisplayImage(img);
                 }
             }
         }
@@ -747,8 +771,12 @@ namespace Octgn.Play
         {
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
-            else
+            else if (_previewCardWindow == null)
                 ShowCardPicture(e.CardModel.GameCard, ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
+            else
+            {
+                _previewCardWindow.DisplayImage(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
+            }
         }
 
         private double ShowCardPicture(Card card, BitmapSource img)
@@ -1004,6 +1032,17 @@ namespace Octgn.Play
             var wnd = new RulesWindow(document) { Owner = this };
             wnd.Show();
 
+        }
+
+        private void UndockCardPreview(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            if (_previewCardWindow == null)
+            {
+                _previewCardWindow = new PreviewCardWindow() { Owner = this };
+                _previewCardWindow.Closed += (a, b) => _previewCardWindow = null;
+                _previewCardWindow.Show();
+            }
         }
 
         private void KickPlayer(object sender, RoutedEventArgs e)
