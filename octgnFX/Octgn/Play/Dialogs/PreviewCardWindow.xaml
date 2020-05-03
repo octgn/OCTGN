@@ -7,8 +7,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         Title="Card Preview" ShowInTaskbar="True" MinWidth="100" MinHeight="200"
-        Icon="/OCTGN;component/Resources/search.png"  Closed="Window_Closed">
+        Icon="/OCTGN;component/Resources/search.png"  Closed="Window_Closed" Background="{StaticResource WindowBackgroundBrush}">
     <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="30" >
+            <CheckBox Margin="5 0 5 0"  Content="Show Proxy" VerticalAlignment="Center" HorizontalAlignment="Right" x:Name="ProxyCheckbox" Click="ProxyCheckbox_Click" />
+            <Button x:Name="LeftButton" Width="30" Style="{StaticResource FlatDarkButtonStyle}" Content="&#x1f844;" Click="LeftButton_Click" />
+            <TextBlock x:Name="AltLabel" Text="Alternate: " VerticalAlignment="Center" Style="{StaticResource PanelText}" />
+            <TextBlock x:Name="AltName" MinWidth="50" FontWeight="Bold" VerticalAlignment="Center" Style="{StaticResource PanelText}" />
+            <Button x:Name="RightButton" Width="30" Style="{StaticResource FlatDarkButtonStyle}" Content="&#x1f846;" Click="RightButton_Click" />
+        </StackPanel>
         <Image x:Name="cardViewer" Stretch="Uniform" />
     </DockPanel>
 </Window>

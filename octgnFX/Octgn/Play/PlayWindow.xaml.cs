@@ -614,11 +614,13 @@ namespace Octgn.Play
                 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress
                 && _newCard)
             {
-                var img = _currentCard.GetBitmapImage(_currentCardUpStatus, true);
                 if (_previewCardWindow == null)
+                {
+                    var img = _currentCard.GetBitmapImage(_currentCardUpStatus, true);
                     ShowCardPicture(_currentCard, img);
+                }
                 else
-                    _previewCardWindow.DisplayImage(img);
+                    _previewCardWindow.SetCard(_currentCard, _currentCardUpStatus, true);
                 _newCard = false;
             }
 
@@ -678,11 +680,13 @@ namespace Octgn.Play
                 && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == 0
                 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress)
             {
-                var img = _currentCard.GetBitmapImage(_currentCardUpStatus);
                 if (_previewCardWindow == null)
+                {
+                    var img = _currentCard.GetBitmapImage(_currentCardUpStatus);
                     ShowCardPicture(_currentCard, img);
+                }
                 else
-                    _previewCardWindow.DisplayImage(img);
+                    _previewCardWindow.SetCard(_currentCard, _currentCardUpStatus, false);
                 _newCard = true;
             }
         }
@@ -713,9 +717,9 @@ namespace Octgn.Play
 
                     _currentCardUpStatus = up;
 
-                    var img = e.Card.GetBitmapImage(up);
                     if (_previewCardWindow == null)
                     {
+                        var img = e.Card.GetBitmapImage(up);
                         double width = ShowCardPicture(e.Card, img);
 
                         if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
@@ -725,17 +729,19 @@ namespace Octgn.Play
                         }
                     }
                     else
-                        _previewCardWindow.DisplayImage(img);
+                        _previewCardWindow.SetCard(e.Card, up);
                     _newCard = true;
                 }
                 else
                 {
-                    //probably for hovering in the deck editor
-                    var img = ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
+                    //probably for hovering in the limited deck editor
                     if (_previewCardWindow == null)
+                    {
+                        var img = ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
                         this.ShowCardPicture(e.Card, img);
+                    }
                     else
-                        _previewCardWindow.DisplayImage(img);
+                        _previewCardWindow.SetCard(e.CardModel, true);
                 }
             }
         }
@@ -775,7 +781,7 @@ namespace Octgn.Play
                 ShowCardPicture(e.CardModel.GameCard, ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
             else
             {
-                _previewCardWindow.DisplayImage(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
+                _previewCardWindow.SetCard(e.CardModel.Card, true);
             }
         }
 
