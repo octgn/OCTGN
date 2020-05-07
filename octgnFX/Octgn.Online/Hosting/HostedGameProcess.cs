@@ -25,7 +25,7 @@ namespace Octgn.Library
 
             var arguments = CreateArguments(game, broadcastPort, isLocal);
 
-            Version.TryParse(game.OctgnVersion, out var sasVersion);
+            if (!Version.TryParse(game.OctgnVersion, out var sasVersion) && !isLocal) throw new InvalidOperationException($"{nameof(game.OctgnVersion)} '{game.OctgnVersion}' is invalid.");
 
             var path = GetSASPath(sasVersion, isLocal, isDebug);
 
