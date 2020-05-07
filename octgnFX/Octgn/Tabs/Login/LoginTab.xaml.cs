@@ -44,7 +44,7 @@ namespace Octgn.Tabs.Login
                     }
                 };
 
-            var timer = new DispatcherTimer(TimeSpan.FromMinutes(1), DispatcherPriority.Normal, RefreshNews_EventCallback, Dispatcher);
+            var timer = new DispatcherTimer(TimeSpan.FromMinutes(2), DispatcherPriority.Normal, RefreshNews_EventCallback, Dispatcher);
             timer.Start();
         }
 
