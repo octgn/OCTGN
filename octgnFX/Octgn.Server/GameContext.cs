@@ -14,7 +14,7 @@ namespace Octgn.Server
         public GameContext(HostedGame game, Config config) {
             Config = config ?? throw new ArgumentNullException(nameof(config));
 
-            State = GameState.New(game);
+            State = new GameState(game, this);
 
             Broadcaster = new Broadcaster(State.Players);
         }
