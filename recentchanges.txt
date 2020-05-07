@@ -1,1 +1,1 @@
-
+Fix a crash that occoured when the active deck section was not on the current tab in the deck editor - Ben

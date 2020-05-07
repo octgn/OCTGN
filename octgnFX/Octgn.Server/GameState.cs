@@ -19,22 +19,17 @@ namespace Octgn.Server
 
         public GameSettings Settings { get; set; } = new GameSettings();
 
-        public PlayerCollection Players { get; set; } = new PlayerCollection();
+        public PlayerCollection Players { get; set; }
 
         public HashSet<byte> TurnStopPlayers { get; set; } = new HashSet<byte>();
 
         public HashSet<Tuple<byte, byte>> PhaseStops { get; set; } = new HashSet<Tuple<byte, byte>>();
 
-        public GameState() { }
-
-        public static GameState New(HostedGame game) {
-            var state = new GameState() {
-                Game = game,
-            };
-
-            state.Settings.AllowSpectators = state.Game.Spectators;
-
-            return state;
+        public GameState(HostedGame game, GameContext context) 
+        {
+            Players = new PlayerCollection(context);
+            Game = game;
+            Settings.AllowSpectators = game.Spectators;
         }
     }
 }
