@@ -305,6 +305,9 @@
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\Gui\CardScroller.cs" />
+    <Compile Include="Play\Dialogs\PreviewCardWindow.xaml.cs">
+      <DependentUpon>PreviewCardWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\Gui\DeckStats.xaml.cs">
       <DependentUpon>DeckStats.xaml</DependentUpon>
     </Compile>
@@ -895,6 +898,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WaitingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Dialogs\PreviewCardWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

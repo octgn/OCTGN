@@ -239,6 +239,18 @@ namespace Octgn.Core
             }
         }
 
+        public static Rect PreviewCardWindowLocation
+        {
+            get
+            {
+                return Rect.Parse(Config.Instance.ReadValue("PreviewCardLoc", ("100, 100, 200, 300")));
+            }
+            set
+            {
+                Config.Instance.WriteValue("PreviewCardLoc", value.ToString());
+            }
+        }
+
         public static int LoginTimeout
         {
             get

@@ -695,34 +695,56 @@ namespace Octgn.DeckBuilder
                 var card = Game.GetCardById(e.CardId);
                 element = card.ToMultiCard();
                 ActiveSection.Cards.AddCard(element);
-                this.InvalidateVisual();
             }
             InvokeDeckChangedEvent();
+            DeckFocus(ActiveSection, element.Id);
+        }
 
-            // Focus section where card was added
-            var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
-            var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-
-            Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
-            if (presenter.IsExpanded)
+        public void DeckFocus(ObservableSection section, Guid? cardId) 
+        { 
+            // Change tab if needed
+            var targetTab = section.Shared ? GlobalTab : PlayerTab;
+            if (DeckTabs.SelectedItem != targetTab)
             {
-                // Bring change into view
-                DataGrid grid = (DataGrid)presenter.Content;
-                DataGridRow row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(element);
-                if (row == null) // new card, added at bottom
+                DeckTabs.SelectedItem = targetTab;
+                DeckTabs.UpdateLayout();
+            }
+
+            // Get target section
+            var targetGroup = section.Shared ? GlobalCardSections : PlayerCardSections;
+            var container = targetGroup.ItemContainerGenerator.ContainerFromItem(section);
+            var presenter = (Expander)VisualTreeHelper.GetChild(container, 0);
+            if (presenter.IsExpanded && cardId != null)
+            {
+                // Jump to target element in target section
+                var grid = (DataGrid)presenter.Content;
+                grid.UpdateLayout();
+
+                var element = section.Cards.FirstOrDefault(c => c.Id == cardId);
+                var row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(element);
+                if (row == null)
                 {
-                    // would be nice to get rid of the magic numbers, but don't want to fetch and measure multiple rows...
-                    grid.BringIntoView(new Rect(0, grid.ActualHeight - 30, grid.ActualWidth, 60)); // ~last two rows after new card added
+                    Log.Warn(string.Format("JumpToDeckSection: card id {0} not found in section {1}", cardId, section.Name));
+                    presenter.Focus();
+                    presenter.BringIntoView();
+
                 }
-                else
+                else // Jump to card
                 {
+                    row.Focus();
                     row.BringIntoView();
                 }
             }
-            else
+            else // Jump to header
             {
-                presenter.BringIntoView();
+                presenter.Focus();
+                (presenter.Header as FrameworkElement).BringIntoView();
             }
+        }
+
+        public void DeckFocus(ObservableSection section)
+        {
+            DeckFocus(section, null);
         }
 
         private void RemoveResultCard(object sender, SearchCardIdEventArgs e)
@@ -1038,7 +1060,7 @@ namespace Octgn.DeckBuilder
                 if (e.Effects == DragDropEffects.Copy)
                 {
                     Expander exp = FindAncestor<Expander>(sender as FrameworkElement);
-                    ObservableSection dropSection = (ObservableSection)((FrameworkElement)exp).DataContext;
+                    var dropSection = (ObservableSection) exp.DataContext;
                     var dragCard = e.Data.GetData("Card") as IMultiCard;
                     var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
                     if (element != null) //i.e. card already in section
@@ -1440,14 +1462,11 @@ namespace Octgn.DeckBuilder
 
                 Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
                 presenter.IsExpanded = !presenter.IsExpanded;
+                presenter.Focus();
                 if (presenter.IsExpanded)
                 {
                     DataGrid grid = (DataGrid)presenter.Content;
-                    grid.Focus();
-                }
-                else
-                {
-                    presenter.Focus();
+                    grid.BringIntoView();
                 }
             }
         }
@@ -1455,23 +1474,10 @@ namespace Octgn.DeckBuilder
         public void ChangeActiveSection(int delta)
         {
             var activeGroup = ActiveSection.Shared ? GlobalCardSections : PlayerCardSections;
-            var cont = activeGroup.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-            var idx = activeGroup.ItemContainerGenerator.IndexFromContainer(cont);
-            // Focus previous section
-            idx += delta;
+            var idx = activeGroup.Items.IndexOf(ActiveSection) + delta;
             if (idx < 0 || idx >= activeGroup.Items.Count)
                 return;
-            var nc = (ContentPresenter)activeGroup.ItemContainerGenerator.ContainerFromIndex(idx);
-            Expander presenter = (Expander)VisualTreeHelper.GetChild(nc, 0);
-            DataGrid grid = (DataGrid)presenter.Content;
-            if (presenter.IsExpanded)
-            {
-                grid.Focus();
-                // magic number because ActualHeight for the headder doesn't even make sense, so I eyeballed something
-                (presenter.Header as FrameworkElement).BringIntoView(new Rect(0, -5, presenter.ActualWidth, 70));
-            }
-            else
-                presenter.Focus();
+            DeckFocus((ObservableSection) activeGroup.Items.GetItemAt(idx));
         }
     }
 

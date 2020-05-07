@@ -4,3 +4,4 @@ Python API can get or set the ViewState.
 Multiple piles can be expanded at once.
 Game serializer will convert existing hand groups into the new format (for backwards compatibility)
 Slight re-organization of the OCTGN Options window.
+Fix a crash that occoured when the active deck section was not on the current tab in the deck editor - Ben

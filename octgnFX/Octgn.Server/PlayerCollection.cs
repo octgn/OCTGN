@@ -95,7 +95,8 @@ namespace Octgn.Server
 
         private readonly GameContext _context;
 
-        public PlayerCollection() {
+        public PlayerCollection(GameContext context) {
+            _context = _context = context ?? throw new ArgumentNullException(nameof(context));
             _pingTimer = new Timer(PingTimer_Tick, this, 5000, 2000);
             _disconnectedPlayerTimer = new Timer(DisconnectedPlayerTimer_Tick, this, 2000, 2000);
         }
