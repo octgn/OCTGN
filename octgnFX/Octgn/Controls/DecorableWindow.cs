@@ -272,7 +272,6 @@ namespace Octgn.Controls
             Program.OnOptionsChanged += Program_OnOptionsChanged;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             Loaded += OnLoaded;
-            LocationChanged += OnLocationChanged;
 
             Decorate();
         }
@@ -410,23 +409,8 @@ namespace Octgn.Controls
             }));
         }
 
-
-        private void OnLocationChanged(object sender, EventArgs eventArgs)
-        {
-            var widowBounds = new Rect(Left + 50, Top + 50, Width - 50, Height - 50);
-            var screenBounds = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
-            if (widowBounds.IntersectsWith(screenBounds))
-            {
-                return;
-            }
-            var primaryScreenBounds = SystemParameters.WorkArea;
-            Left = (primaryScreenBounds.Right - primaryScreenBounds.Left) / 2 - (Width / 2);
-            Top = (primaryScreenBounds.Bottom - primaryScreenBounds.Top) / 2 - (Height / 2);
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            OnLocationChanged(sender, new EventArgs());
             Program_OnOptionsChanged();
         }
 
@@ -475,7 +459,6 @@ namespace Octgn.Controls
             Program.OnOptionsChanged -= Program_OnOptionsChanged;
             SubscriptionModule.Get().IsSubbedChanged -= OnIsSubbedChanged;
             Loaded -= OnLoaded;
-            LocationChanged -= OnLocationChanged;
             PreviewKeyUp -= OnPreviewKeyUp;
             (Decorator as IDisposable)?.Dispose();
         }
