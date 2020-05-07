@@ -811,9 +811,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IServerCalls.cs</LastGenOutput>
     </None>
-    <None Include="Properties\app.manifest">
-      <SubType>Designer</SubType>
-    </None>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
