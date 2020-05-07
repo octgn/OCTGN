@@ -1,3 +1,8 @@
+#3.4.237.0
++ Fix a crash that occoured when the active deck section was not on the current tab in the deck editor - Ben
++ Fix news feed - Kelly
++ Detached card preview window - Brine
+
 #3.4.233.0
 
 #3.4.231.0
@@ -3774,6 +3779,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
