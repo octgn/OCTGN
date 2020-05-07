@@ -23,27 +23,6 @@ namespace Octgn.Play
             Name = def.Name;
             _id = def.Id;
             _defintion = def;
-
-            if (!isReplay) {
-                Player localPlayer = null;
-                if (player.IsLocal) {
-                    localPlayer = player;
-                } else {
-                    localPlayer = Player.LocalPlayer;
-                }
-
-                localPlayer.PropertyChanged += Player_PropertyChanged;
-
-                _canChange = !localPlayer.Spectator;
-            }
-        }
-
-        private void Player_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if(e.PropertyName == nameof(Player.Spectator)) {
-                var player = (Player)sender;
-
-                CanChange = !player.Spectator;
-            }
         }
 
         public Player Owner
