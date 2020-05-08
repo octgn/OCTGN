@@ -25,7 +25,20 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding CanChange}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger  Binding="{Binding Source={x:Static octgn:Program.GameEngine},Path=IsReplay}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
                         <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" />
                         <ctrl:NumericUpDown Value="{Binding Path=Value, Mode=TwoWay}" Minimum="-1000000" Maximum="1000000"
                                 Width="60" Margin="3,0,8,0" />
