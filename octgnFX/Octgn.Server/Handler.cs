@@ -210,7 +210,7 @@ namespace Octgn.Server
 
             var invertedTable = (aPlayers > bPlayers) && !playerIsSpectator;
 
-            _player.Setup(_context.State.NextPlayerId++, nick, userId, pkey, software, invertedTable, playerIsSpectator, _context.State.Players);
+            _player.Setup(_context.State.NextPlayerId(), nick, userId, pkey, software, invertedTable, playerIsSpectator, _context.State.Players);
 
             _player.SaidHello = true;
 

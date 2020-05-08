@@ -237,6 +237,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -811,9 +812,6 @@
     <None Include="Networking\IServerCalls.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IServerCalls.cs</LastGenOutput>
-    </None>
-    <None Include="Properties\app.manifest">
-      <SubType>Designer</SubType>
     </None>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -15,7 +15,7 @@ namespace Octgn.Server
 
         public int IsMuted { get; set; }
 
-        public byte NextPlayerId { get; set; }
+        public byte LastPlayerId { get; set; }
 
         public GameSettings Settings { get; set; } = new GameSettings();
 
@@ -25,11 +25,12 @@ namespace Octgn.Server
 
         public HashSet<Tuple<byte, byte>> PhaseStops { get; set; } = new HashSet<Tuple<byte, byte>>();
 
-        public GameState(HostedGame game, GameContext context) 
-        {
+        public GameState(HostedGame game, GameContext context) {
             Players = new PlayerCollection(context);
             Game = game;
             Settings.AllowSpectators = game.Spectators;
         }
+
+        public byte NextPlayerId() => ++LastPlayerId;
     }
 }

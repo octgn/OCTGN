@@ -531,7 +531,7 @@ namespace Octgn.Play
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
             lock (all)
-                all.Add(this);
+                all.Insert(0, this);
             // Init fields
             _name = "Global";
             Id = 0;

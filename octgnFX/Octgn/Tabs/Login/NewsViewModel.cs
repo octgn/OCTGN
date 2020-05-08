@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Octgn.Tabs.Login
@@ -39,20 +40,20 @@ namespace Octgn.Tabs.Login
         }
 
         private async Task<IEnumerable<NewsItemViewModel>> GetNewsItems() {
-            using (var wc = new WebClient()) {
-                var newsXml = await wc.DownloadStringTaskAsync(_newsUrl);
-                if (string.IsNullOrWhiteSpace(newsXml)) {
-                    throw new Exception("Null news feed.");
+            var feed = await Task.Run(() => {
+                using (var reader = XmlReader.Create(AppConfig.NewsFeedPath)) {
+                    return SyndicationFeed.Load(reader);
                 }
+            });
 
-                var doc = XDocument.Parse(newsXml);
-                var elements = doc.Root.Elements("item");
+            var orderedItems = feed.Items.OrderByDescending(item => item.PublishDate);
 
-                return elements
-                    .Select(e => new NewsItemViewModel(e))
-                    .OrderByDescending(ni => ni.Time)
-                    .ToArray();
-            }
+            var latest10Updates = orderedItems.Take(10);
+
+            var result = latest10Updates
+                .Select(item => new NewsItemViewModel(item));
+
+            return result;
         }
     }
 
@@ -70,8 +71,9 @@ namespace Octgn.Tabs.Login
         }
         private string _message;
 
-        public NewsItemViewModel() {
-
+        public NewsItemViewModel(SyndicationItem item) {
+            Message = item.Title.Text;
+            Time = item.PublishDate;
         }
 
         public NewsItemViewModel(XElement element) {

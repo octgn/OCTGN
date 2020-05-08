@@ -212,6 +212,8 @@ namespace Octgn.Controls
             var hostport = new Random().Next(5000,6000);
             while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
 
+            var octgnVersion = typeof(Server.Server).Assembly.GetName().Version;
+
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
@@ -221,6 +223,7 @@ namespace Octgn.Controls
                 GameVersion = game.Version.ToString(),
                 HostAddress = $"0.0.0.0:{hostport}",
                 Password = password,
+                OctgnVersion = octgnVersion.ToString(),
                 GameIconUrl = game.IconUrl,
                 Spectators = true,
             };
