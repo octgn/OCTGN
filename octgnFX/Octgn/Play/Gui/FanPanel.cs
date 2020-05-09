@@ -74,7 +74,7 @@ namespace Octgn.Play.Gui
         {
             if (Children == null || Children.Count == 0) return 0;
             int idx = cardLocations.First(x => x.Value == cardLocations.Values.OrderBy(y => Math.Abs(y - position.X)).First()).Key;
-            if (idx > Children.Count) idx = Children.Count;
+            //if (idx > Children.Count) idx = Children.Count;
             return idx;
         }
 
@@ -112,10 +112,10 @@ namespace Octgn.Play.Gui
             // Space neighbors
             if (idx >= Children.Count) return;
             _spacedItem2 = Children[idx];
-            SetSpacing(_spacedItem2, SpacingWidth);
+            SetSpacing(_spacedItem2, -SpacingWidth);
             if (idx <= 0) return;
             _spacedItem1 = Children[idx - 1];
-            SetSpacing(_spacedItem1, -SpacingWidth);
+            SetSpacing(_spacedItem1, SpacingWidth);
         }
 
         public void HideInsertIndicator()
@@ -208,7 +208,7 @@ namespace Octgn.Play.Gui
             }
 
             fanWidth = 0;
-            for(int i = 0; i < Children.Count; i++)
+            for(int i = Children.Count-1; i >= 0; i--)
             {
                 var child = Children[i];
 
@@ -227,10 +227,7 @@ namespace Octgn.Play.Gui
             if (Children == null || Children.Count == 0)
                 return new Size();
 
-            cardLocations = new System.Collections.Generic.Dictionary<int, double>
-            {
-                { 0, 0 }
-            };
+            cardLocations = new System.Collections.Generic.Dictionary<int, double>();
 
             // starts from min. fanning from settings, fill out extra space if available
             this.InvalidateMeasure(); // fixes issues with changing the hand density mid-game, seems to casue some odd visual effects though
@@ -249,7 +246,7 @@ namespace Octgn.Play.Gui
             double animationDelay = 0;
             UIElement newMouseOverElement = null;
 
-            for (int i = 0; i < Children.Count; i++)
+            for (int i = Children.Count-1; i >= 0; i--)
             {
                 var child = Children[i];
 
@@ -307,11 +304,13 @@ namespace Octgn.Play.Gui
                 }
                 SetXPosition(child, xposition);
 
-                if(HandDensity > 0)
-                    cardLocations.Add(i+1, xposition + child.DesiredSize.Width);
+                if (HandDensity > 0)
+                    cardLocations.Add(i+1, xposition);
 
                 xposition += (child.DesiredSize.Width * percentToShow);
             }
+            cardLocations.Add(0, xposition + (Children[0].DesiredSize.Width * (1-percentToShow)) );
+
             _mouseOverElement = newMouseOverElement;
             return finalSize;
         }
