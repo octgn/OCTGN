@@ -390,7 +390,7 @@ namespace Octgn.Play
                 format = Program.GameEngine.Definition.Player.IndicatorsFormat;
             }
 
-            if (format == null)
+            if (string.IsNullOrWhiteSpace(format))
             {
                 textBlock.Visibility = Visibility.Collapsed;
                 return;
@@ -426,6 +426,7 @@ namespace Octgn.Play
                                                                   return "?";
                                                               });
             multi.StringFormat = format;
+            multi.FallbackValue = format;
             textBlock.SetBinding(TextBlock.TextProperty, multi);
         }
 
