@@ -34,7 +34,10 @@ namespace Octide
         private IEnumerable<GameScript> scripts;
         private IEnumerable<string> events;
         private ProxyDefinition proxyDef;
-        private String gamePath;
+        private string gamePath;
+
+        private string tempPath;
+
         private bool needsSave;
 
         public Game Game
@@ -114,6 +117,19 @@ namespace Octide
             }
         }
 
+        public String TempPath
+        {
+            get
+            {
+                return this.tempPath;
+            }
+            set
+            {
+                if (value.Equals(this.tempPath)) return;
+                this.tempPath = value;
+                this.RaisePropertyChanged("TempPath");
+            }
+        }
         public String GamePath
         {
             get
@@ -158,10 +174,10 @@ namespace Octide
         {
         }
 
-        public void New()
+        public void CreateGame(DirectoryInfo directory)
         {
             var id = Guid.NewGuid();
-            var path = Path.Combine(Config.Instance.DataDirectoryFull, "IdeDevDatabase", id.ToString());
+            var path = directory.FullName;
             var defPath = Path.Combine(path, "definition.xml");
             var resourcePath = Path.Combine(path, "Resources");
 
@@ -195,34 +211,13 @@ namespace Octide
                 .Replace("{GUID}", id.ToString())
                 .Replace("{OCTVER}", typeof(Config).Assembly.GetName().Version.ToString()));
             definition.Save(defPath);
+            
 
-
-            XmlDocument proxydef = new XmlDocument();
             definition.LoadXml(Properties.Resources.proxydef);
             definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
+            LoadGame(new FileInfo(defPath));
         }
 
-		public void LoadGame(FileInfo path)
-		{
-			NeedsSave = false;
-			DidManualSave = true;
-
-            GamePath = path.DirectoryName;
-            var gameSerializer = new GameSerializer();
-            Game = (Game)gameSerializer.Deserialize(path.FullName);
-
-            var setPaths = path.Directory.GetFiles("set.xml", SearchOption.AllDirectories);
-            var setSerializer = new SetSerializer();
-            Sets = setPaths.Select(x => (Set)setSerializer.Deserialize(x.FullName));
-
-            var scripts = new List<GameScript>();
-            var scriptSerializer = new GameScriptSerializer(Game.Id);
-            Scripts = Game.Scripts.Select(x => (GameScript)scriptSerializer.Deserialize( Path.Combine(GamePath, x)));
-
-            var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game };
-            ProxyDef = (ProxyDefinition)proxySerializer.Deserialize(Path.Combine(GamePath, Game.ProxyGenSource));
-                        
-		}
 
 		public void ImportGame(Game game)
 		{
@@ -236,6 +231,32 @@ namespace Octide
 			Scripts = Game.GetScripts().ToList();
 			ProxyDef = Game.GetCardProxyDef();
 		}
+
+
+        public void LoadGame(FileInfo path)
+        {
+            NeedsSave = false;
+            DidManualSave = true;
+
+            TempPath = Path.Combine(Config.Instance.Paths.GraveyardPath, "IDE-" + Guid.NewGuid());
+            GamePath = path.DirectoryName;
+            var gameSerializer = new GameSerializer();
+            Game = (Game)gameSerializer.Deserialize(path.FullName);
+
+            var setPaths = path.Directory.GetFiles("set.xml", SearchOption.AllDirectories);
+            var setSerializer = new SetSerializer() { Game = Game };
+            Sets = setPaths.Select(x => (Set)setSerializer.Deserialize(x.FullName));
+
+            var scripts = new List<GameScript>();
+            var scriptSerializer = new GameScriptSerializer(Game.Id);
+            Scripts = Game.Scripts.Select(x => (GameScript)scriptSerializer.Deserialize(Path.Combine(GamePath, x)));
+
+            var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game };
+            ProxyDef = (ProxyDefinition)proxySerializer.Deserialize(Path.Combine(GamePath, Game.ProxyGenSource));
+
+        }
+
+
         public void SaveGame()
         {
          //   if (!NeedsSave)
