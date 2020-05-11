@@ -34,44 +34,13 @@ namespace Octide.ViewModel
 			NewGameCommand = new RelayCommand(NewGame);
 			ImportGameCommand = new RelayCommand(ImportGame);
 			LoadGameCommand = new RelayCommand(LoadGame);
-
-			var config = new FileDbConfiguration()
-				.SetDirectory(Path.Combine(Config.Instance.Paths.DataDirectory, "IdeDevDatabase"))
-				.SetExternalDb()
-				.DefineCollection<Game>("Game")
-				.OverrideRoot(x => x.Directory(""))
-				.SetPart(x => x.Property(y => y.Id))
-				.SetPart(x => x.File("definition.xml"))
-				.SetSerializer<GameSerializer>()
-				.Conf()
-				.DefineCollection<Set>("Sets")
-				.OverrideRoot(x => x.Directory(""))
-				.SetPart(x => x.Property(y => y.GameId))
-				.SetPart(x => x.Directory("Sets"))
-				.SetPart(x => x.Property(y => y.Id))
-				.SetPart(x => x.File("set.xml"))
-				.SetSerializer<SetSerializer>()
-				.Conf()
-				.DefineCollection<GameScript>("Scripts")
-				.OverrideRoot(x => x.Directory(""))
-				.SetSteril()
-				.Conf()
-				.DefineCollection<ProxyDefinition>("Proxies")
-				.OverrideRoot(x => x.Directory(""))
-				.SetSteril()
-				.Conf()
-				.SetCacheProvider<FullCacheProvider>();
-
-			DbContext.SetContext(config);
-
 		}
 		public void NewGame()
 		{
 			ViewModelLocator.GameLoader.New();
-			RaisePropertyChanged("IdeDevDatabaseGames");
 
 		}
-		public void ImportGame()
+		public void LoadGame()
 		{
 			var fo = new OpenFileDialog();
 			fo.Filter = "Definition File (definition.xml)|definition.xml";
@@ -80,24 +49,19 @@ namespace Octide.ViewModel
 				return;
 			}
 
-			ViewModelLocator.GameLoader.ImportGame(fo.FileName);
+			var fileInfo = new FileInfo(fo.FileName);
+
+			ViewModelLocator.GameLoader.LoadGame(fileInfo);
 			Task.Factory.StartNew(LoadMainWindow);
 
 
 		}
-		public void LoadGame()
+		public void ImportGame()
 		{
-			ViewModelLocator.GameLoader.LoadGame(SelectedFile);
+			ViewModelLocator.GameLoader.ImportGame(SelectedFile);
 			Task.Factory.StartNew(LoadMainWindow);
 
 
-		}
-		public ObservableCollection<Game> IdeDevDatabaseGames
-		{
-			get
-			{
-				return new ObservableCollection<Game>(DbContext.Get().Games);
-			}
 		}
 
 		public string Title
