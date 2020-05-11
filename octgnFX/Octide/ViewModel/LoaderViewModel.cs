@@ -37,13 +37,31 @@ namespace Octide.ViewModel
 		}
 		public void NewGame()
 		{
-			ViewModelLocator.GameLoader.New();
+			// this dialog creates a new folder for the game at the specified directory
+			var gameLocationDlg = new SaveFileDialog
+			{
+				FileName = "My OCTGN Game",
+				Title = "Choose a location for your new game.",
+				Filter = "Folder|*.",
+				AddExtension = false
+			};
+			if ((bool)gameLocationDlg.ShowDialog() == false) return;
+			if (File.Exists(gameLocationDlg.FileName))
+			{
+				var dlg = System.Windows.Forms.MessageBox.Show("Cannot create game: folder name is already in use", "Error creating game directory");
+				return;
+			}
+			ViewModelLocator.GameLoader.CreateGame(new DirectoryInfo(gameLocationDlg.FileName));
+			Task.Factory.StartNew(LoadMainWindow);
 
 		}
 		public void LoadGame()
 		{
-			var fo = new OpenFileDialog();
-			fo.Filter = "Definition File (definition.xml)|definition.xml";
+			var fo = new OpenFileDialog
+			{
+				Title = "Load a Game (select the definition.xml file within the root folder.)",
+				Filter = "Definition File|definition.xml"
+			};
 			if ((bool)fo.ShowDialog() == false)
 			{
 				return;
