@@ -136,13 +136,10 @@ namespace Octgn.DataNew
                 try
                 {
                     // if the game doesn't have the gameboards element, check for the default board in the table property
-                    var position = g.table.boardPosition?.Split(',') ?? new string[] { "0", "0", "0", "0"};
 
-                    string boardPath = null;
-                    if(g.table.board != null) {
-                        boardPath = Path.Combine(directory, g.table.board);
-                    }
+                    var boardPath = Path.Combine(directory, g.table.board);
 
+                    var position = g.table.boardPosition?.Split(',');
                     var defBoard = new GameBoard
                     {
                         Name = "Default",
