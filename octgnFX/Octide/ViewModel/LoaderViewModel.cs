@@ -28,7 +28,6 @@ namespace Octide.ViewModel
 		public RelayCommand NewGameCommand { get; private set; }
 		public RelayCommand ImportGameCommand { get; private set; }
 		public RelayCommand LoadGameCommand { get; private set; }
-		public Game SelectedFile { get; set; }
 		public LoaderViewModel()
 		{
 			NewGameCommand = new RelayCommand(NewGame);
@@ -76,7 +75,16 @@ namespace Octide.ViewModel
 		}
 		public void ImportGame()
 		{
-			ViewModelLocator.GameLoader.ImportGame(SelectedFile);
+			var fo = new OpenFileDialog
+			{
+				Title = "Import a Game Package",
+				Filter = "OCTGN Game Package (*.nupkg)|*.nupkg"
+			};
+			if (fo.ShowDialog() == false) return;
+
+			var fileInfo = new FileInfo(fo.FileName);
+
+			ViewModelLocator.GameLoader.ImportGame(fileInfo);
 			Task.Factory.StartNew(LoadMainWindow);
 
 
