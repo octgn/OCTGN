@@ -26,6 +26,7 @@ namespace Octide
     using NuGet.Packaging;
     using NuGet.Versioning;
     using System.Xml.Linq;
+    using System.IO.Compression;
 
     public class GameLoader : ViewModelBase
     {
@@ -172,6 +173,7 @@ namespace Octide
 
 		public GameLoader()
         {
+            TempPath = Path.Combine(Config.Instance.Paths.GraveyardPath, "IDE-" + Guid.NewGuid());
         }
 
         public void CreateGame(DirectoryInfo directory)
@@ -219,17 +221,16 @@ namespace Octide
         }
 
 
-		public void ImportGame(Game game)
+		public void ImportGame(FileInfo package)
 		{
-
-			NeedsSave = false;
-			DidManualSave = true;
-
-			Game = game;
-			GamePath = Game.InstallPath;
-			Sets = Game.Sets().ToList();
-			Scripts = Game.GetScripts().ToList();
-			ProxyDef = Game.GetCardProxyDef();
+            //TODO: Extracts into a temp folder, but then it needs to save to a proper location via prompt as well
+            ZipFile.ExtractToDirectory(package.FullName, TempPath);
+            TempPath = Path.Combine(TempPath, "def");
+            var definition = Path.Combine(TempPath, "definition.xml");
+            if (File.Exists(definition))
+            {
+                LoadGame(new FileInfo(definition));
+            }
 		}
 
 
@@ -238,7 +239,6 @@ namespace Octide
             NeedsSave = false;
             DidManualSave = true;
 
-            TempPath = Path.Combine(Config.Instance.Paths.GraveyardPath, "IDE-" + Guid.NewGuid());
             GamePath = path.DirectoryName;
             var gameSerializer = new GameSerializer();
             Game = (Game)gameSerializer.Deserialize(path.FullName);
