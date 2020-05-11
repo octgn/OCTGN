@@ -200,16 +200,31 @@ namespace Octide
             XmlDocument proxydef = new XmlDocument();
             definition.LoadXml(Properties.Resources.proxydef);
             definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
-			RaisePropertyChanged("IdeDevDatabaseGames");
         }
 
-		public void ImportGame(string directory)
+		public void LoadGame(FileInfo path)
 		{
 			NeedsSave = false;
 			DidManualSave = true;
+
+            GamePath = path.DirectoryName;
+            var gameSerializer = new GameSerializer();
+            Game = (Game)gameSerializer.Deserialize(path.FullName);
+
+            var setPaths = path.Directory.GetFiles("set.xml", SearchOption.AllDirectories);
+            var setSerializer = new SetSerializer();
+            Sets = setPaths.Select(x => (Set)setSerializer.Deserialize(x.FullName));
+
+            var scripts = new List<GameScript>();
+            var scriptSerializer = new GameScriptSerializer(Game.Id);
+            Scripts = Game.Scripts.Select(x => (GameScript)scriptSerializer.Deserialize( Path.Combine(GamePath, x)));
+
+            var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game };
+            ProxyDef = (ProxyDefinition)proxySerializer.Deserialize(Path.Combine(GamePath, Game.ProxyGenSource));
+                        
 		}
 
-		public void LoadGame(Game game)
+		public void ImportGame(Game game)
 		{
 
 			NeedsSave = false;

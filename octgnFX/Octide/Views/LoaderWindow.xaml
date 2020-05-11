@@ -30,10 +30,12 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <Button Content="Create a New Game" Margin="10" Command="{Binding NewGameCommand}"/>
-                <Button IsEnabled="False" Grid.Row="1" Content="Import a Game (TODO)" Margin="10" Command="{Binding ImportGameCommand}"/>
+                <Button Content="Load a Game" Margin="10" Command="{Binding LoadGameCommand}"/>
+                <Button Content="Import a Game Package" Margin="10" Command="{Binding ImportGameCommand}"/>
             </StackPanel>
             <DockPanel Grid.Column="1">
                 <TextBlock DockPanel.Dock="Top" Margin="10" FontSize="16" Text="Load a Recent Game:" Foreground="DarkGray" />
+                <!--
                 <ListBox DockPanel.Dock="Bottom" VerticalAlignment="Stretch" BorderBrush="WhiteSmoke" BorderThickness="2" Margin="10" ItemsSource="{Binding IdeDevDatabaseGames}" SelectedItem="{Binding SelectedFile}" >
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -46,6 +48,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                -->
             </DockPanel>
         </Grid>
         <Border Grid.Row="2" Margin="5" BorderThickness="0" Background="Transparent">
