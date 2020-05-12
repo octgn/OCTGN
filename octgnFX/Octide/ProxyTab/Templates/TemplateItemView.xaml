@@ -275,7 +275,7 @@
                 <ItemsControl Style="{StaticResource OctideInputPanel}">
                     <StackPanel  Orientation="Vertical">
                         <TextBlock Text="Background Image"/>
-                        <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Image"/>
+                        <local:AssetControllerView DataContext="{Binding Asset}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Is Default Template:" Margin="10,0,5,0" VerticalAlignment="Center"/>

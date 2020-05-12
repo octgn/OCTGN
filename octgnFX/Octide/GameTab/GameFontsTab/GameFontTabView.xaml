@@ -20,21 +20,15 @@
              DataContext="{Binding GameFontTabViewModel, Source={StaticResource Locator}}">
     <UserControl.Resources>
         <DataTemplate x:Key="FontControl" >
-            <Grid Style="{StaticResource OctideInputPanel}" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.RowSpan="2" Style="{StaticResource XButton}" Margin="5" Command="{Binding RemoveFontCommand}" Visibility="{Binding FontControlVisibility}" />
-                <local:AssetControl Grid.Column="1" Grid.ColumnSpan="2" TargetAssetType="Font" SelectedAsset="{Binding Asset, Mode=TwoWay}" Width="350" HorizontalAlignment="Left" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="Font Size:" Visibility="{Binding FontControlVisibility}" VerticalAlignment="Center" Margin="10,0,0,0" />
-                <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Size}" MinWidth="40" MaxWidth="100" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="{Binding FontControlVisibility}"/>
-            </Grid>
+            <StackPanel Margin="10,0,0,0" >
+                <StackPanel Orientation="Horizontal">
+                    <local:AssetControllerView DataContext="{Binding Asset}" Width="350" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource OctideInputTextBlock}" Margin="0" Text="Font Size:" />
+                    <TextBox Text="{Binding Size}" MinWidth="40" MaxWidth="100" Margin="5" VerticalAlignment="Stretch" />
+                </StackPanel>
+            </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
@@ -43,14 +37,14 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <StackPanel Style="{StaticResource OctideInputPanel}" Margin="0,0,50,0" >
-            <TextBlock Text="Deck Editor Font" />
+            <TextBlock Text="Deck Editor Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding DeckEditorFont}" />
 
-            <TextBlock Text="Notes Font" />
+            <TextBlock Text="Notes Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding NotesFont}" />
 
             <Grid Margin="50,5,5,5" Background="BlanchedAlmond" Height="120" Width="170" 
-                          Visibility="{Binding NotesFont.FontControlVisibility}" HorizontalAlignment="Left" >
+                          HorizontalAlignment="Left" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="24" />
                     <RowDefinition Height="100" />
@@ -65,7 +59,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Style="{StaticResource OctideInputPanel}" Grid.Column="1" >
-            <TextBlock Text="Chat Font" />
+            <TextBlock Text="Chat Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ChatFont}" />
 
             <Border CornerRadius="2" Margin="50,5,5,5" HorizontalAlignment="Left" Height="200" Width="280" BorderBrush="{StaticResource ControlBorderBrush}" 
@@ -94,7 +88,7 @@
             </Border>
 
 
-            <TextBlock Text="Context Menu Font" />
+            <TextBlock Text="Context Menu Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ContextFont}" />
 
             <Border Width="200" Height="300" Style="{StaticResource OctgnActionMenuTemplate}">

@@ -82,6 +82,14 @@ namespace Octide.Messages
         public SizeItemModel Size { get; set; }
     }
 
+    public class AssetFileChangedMessage : PropertyChangedMessage
+    {
+        public AssetFileChangedMessage()
+        { }
+
+        public AssetFileChangedMessage(NotifyCollectionChangedEventArgs args)
+        { }
+    }
 
     public class ProxyTemplateChangedMessage
     {

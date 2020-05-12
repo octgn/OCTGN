@@ -22,28 +22,48 @@ namespace Octide.ItemModel
     public class SymbolItemModel : IdeBaseItem
     {
         public Symbol _symbol;
+        public AssetController Asset { get; set; }
 
         public SymbolItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             _symbol = new Symbol();
             Name = "New Symbol";
             Id = "symbol";
-            Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
+            Asset = new AssetController(AssetType.Image);
+            _symbol.Source = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public SymbolItemModel(Symbol s, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _symbol = s;
+            Asset = new AssetController(AssetType.Image, s.Source);
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public SymbolItemModel(SymbolItemModel s, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
-            _symbol = new Symbol()
-            {
-                Source = s.Asset.FullPath
-            };
+            _symbol = new Symbol();
+            Asset = new AssetController(AssetType.Image, s._symbol.Source);
+            _symbol.Source = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = s.Name;
             Id = s.Id;
+        }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _symbol.Source = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
         }
 
         public override object Clone()
@@ -85,21 +105,8 @@ namespace Octide.ItemModel
             }
         }
 
-        public new string Icon => Asset?.FullPath;
+        public new string Icon => Asset.SelectedAsset?.FullPath;
 
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_symbol.Source);
-            }
-            set
-            {
-                _symbol.Source = value?.FullPath;
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("Icon");
-            }
-        }
 
     }
 }

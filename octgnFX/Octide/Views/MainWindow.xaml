@@ -40,7 +40,7 @@
             <TabItem Header="Play Table">
                 <views:PreviewTabView/>
             </TabItem>
-            <TabItem Header="Game">
+            <TabItem Header="Game" IsSelected="True">
                 <TabControl>
                     <TabItem Header="Information">
                         <views:GameInformationTabView/>
@@ -63,8 +63,11 @@
                     <TabItem Header="Markers">
                         <views:MarkerTabView/>
                     </TabItem>
-                    <TabItem Header="Symbols">
+                    <TabItem Header="Symbols" IsSelected="True">
                         <views:SymbolTabView/>
+                    </TabItem>
+                    <TabItem Header="Game Modes" >
+                        <views:GameModeTabView/>
                     </TabItem>
                 </TabControl>
             </TabItem>
@@ -74,7 +77,7 @@
             <TabItem Header="Proxies" >
                 <views:ProxyTabView/>
             </TabItem>
-            <TabItem Header="Sets" IsSelected="True" >
+            <TabItem Header="Sets" >
                 <views:SetTabView/>
             </TabItem>
             <TabItem Header="Assets">

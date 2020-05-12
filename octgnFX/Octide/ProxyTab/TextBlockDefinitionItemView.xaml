@@ -40,7 +40,7 @@
             </TextBox>
 
             <TextBlock Text="Font"/>
-            <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Font"/>
+            <local:AssetControllerView DataContext="{Binding Asset}" />
 
             <TextBlock Text="Font Size"/>
             <DockPanel>

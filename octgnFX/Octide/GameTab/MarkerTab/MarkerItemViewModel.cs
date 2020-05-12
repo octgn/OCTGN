@@ -5,6 +5,7 @@
 using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
 using System;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -12,16 +13,16 @@ namespace Octide.ItemModel
     public class MarkerItemModel : IdeBaseItem
     {
         public GameMarker _marker;
-
-        public object _parent;
-
+        public AssetController Asset { get; set; }
         public MarkerItemModel(IdeCollection<IdeBaseItem> source) : base(source)
         {
             _marker = new GameMarker
             {
                 Id = Guid.NewGuid().ToString(), //TODO: Proper ID generation, not as a GUID
-                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
             };
+            Asset = new AssetController(AssetType.Image);
+            _marker.Source = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = "New Marker";
             RaisePropertyChanged("Asset");
         }
@@ -29,16 +30,36 @@ namespace Octide.ItemModel
         public MarkerItemModel(GameMarker m, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _marker = m;
+            Asset = new AssetController(AssetType.Image, m.Source);
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public MarkerItemModel(MarkerItemModel m, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _marker = new GameMarker
             {
-                Source = m.Asset.FullPath,
                 Id = Guid.NewGuid().ToString() //TODO: Proper ID generation, not as a GUID
             };
+            Asset = new AssetController(AssetType.Image, m._marker.Source);
+            _marker.Source = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = m.Name;
+        }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _marker.Source = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
+            }
+        }
+
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
         }
 
         public override object Clone()
@@ -64,18 +85,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Name");
             }
         }
-        public new string Icon => Asset?.FullPath;
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_marker.Source);
-            }
-            set
-            {
-                _marker.Source = value?.FullPath;
-                RaisePropertyChanged("Asset");
-            }
-        }
+        public new string Icon => Asset.SelectedAsset?.FullPath;
     }
 }

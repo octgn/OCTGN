@@ -27,19 +27,34 @@ namespace Octide
     using NuGet.Versioning;
     using System.Xml.Linq;
     using System.IO.Compression;
+    using Octide.ViewModel;
+    using System.ComponentModel;
+    using Octide.SetTab.ItemModel;
+    using Octide.ItemModel;
 
     public class GameLoader : ViewModelBase
     {
         private Game game;
-        private IEnumerable<Set> sets;
-        private IEnumerable<GameScript> scripts;
         private IEnumerable<string> events;
-        private ProxyDefinition proxyDef;
-        private string gamePath;
+        private string directory;
 
         private string tempPath;
 
         private bool needsSave;
+
+        public string Directory
+        {
+            get
+            {
+                return this.directory;
+            }
+            set
+            {
+                if (value.Equals(this.directory)) return;
+                this.directory = value;
+                this.RaisePropertyChanged("Directory");
+            }
+        }
 
         public Game Game
         {
@@ -58,34 +73,8 @@ namespace Octide
             }
         }
 
-        public IEnumerable<Set> Sets
-        {
-            get
-            {
-                return this.sets;
-            }
-            set
-            {
-                if (value == this.sets) return;
-                this.sets = value;
-                this.RaisePropertyChanged("Sets");
-                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<Set>>(this, this.sets, value, "Sets")));
-            }
-        }
-        public IEnumerable<GameScript> Scripts
-        {
-            get
-            {
-                return this.scripts;
-            }
-            set
-            {
-                if (value == this.scripts) return;
-                this.scripts = value;
-                this.RaisePropertyChanged("Scripts");
-                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<GameScript>>(this, this.scripts, value, "Scripts")));
-            }
-        }
+        public AssetController Asset { get; private set; }
+
 
         public IEnumerable<string> Events
         {
@@ -103,21 +92,6 @@ namespace Octide
             }
         }
 
-        public ProxyDefinition ProxyDef
-        {
-            get
-            {
-                return this.proxyDef;
-            }
-            set
-            {
-                if (value == this.proxyDef) return;
-                this.proxyDef = value;
-                this.RaisePropertyChanged("ProxyDef");
-                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<ProxyDefinition>(this, this.proxyDef, value, "ProxyDef")));
-            }
-        }
-
         public String TempPath
         {
             get
@@ -129,19 +103,6 @@ namespace Octide
                 if (value.Equals(this.tempPath)) return;
                 this.tempPath = value;
                 this.RaisePropertyChanged("TempPath");
-            }
-        }
-        public String GamePath
-        {
-            get
-            {
-                return this.gamePath;
-            }
-            set
-            {
-                if (value.Equals(this.gamePath)) return;
-                this.gamePath = value;
-                this.RaisePropertyChanged("GamePath");
             }
         }
 
@@ -183,8 +144,8 @@ namespace Octide
             var defPath = Path.Combine(path, "definition.xml");
             var resourcePath = Path.Combine(path, "Resources");
 
-            Directory.CreateDirectory(path);
-            Directory.CreateDirectory(resourcePath);
+            System.IO.Directory.CreateDirectory(path);
+            System.IO.Directory.CreateDirectory(resourcePath);
 
             var bg = Properties.Resources.background;
             bg.Save(Path.Combine(resourcePath, "background.jpg"));
@@ -239,23 +200,19 @@ namespace Octide
             NeedsSave = false;
             DidManualSave = true;
 
-            GamePath = path.DirectoryName;
+            Directory = path.DirectoryName;
+            ViewModelLocator.AssetsTabViewModel.CollectAssets();
+
             var gameSerializer = new GameSerializer();
             Game = (Game)gameSerializer.Deserialize(path.FullName);
-
-            var setPaths = path.Directory.GetFiles("set.xml", SearchOption.AllDirectories);
-            var setSerializer = new SetSerializer() { Game = Game };
-            Sets = setPaths.Select(x => (Set)setSerializer.Deserialize(x.FullName));
-
-            var scripts = new List<GameScript>();
-            var scriptSerializer = new GameScriptSerializer(Game.Id);
-            Scripts = Game.Scripts.Select(x => (GameScript)scriptSerializer.Deserialize(Path.Combine(GamePath, x)));
-
-            var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game };
-            ProxyDef = (ProxyDefinition)proxySerializer.Deserialize(Path.Combine(GamePath, Game.ProxyGenSource));
-
+            Asset = new AssetController(AssetType.Xml, path.FullName);
+            Asset.PropertyChanged += AssetChanged;
         }
 
+        public void AssetChanged(object sender, PropertyChangedEventArgs e)
+        {
+            //TODO: Watch for changes to the game XML
+        }
 
         public void SaveGame()
         {
@@ -264,17 +221,17 @@ namespace Octide
             var gameSerializer = new Octgn.DataNew.GameSerializer();
             gameSerializer.Serialize(Game);
             var setSerializer = new Octgn.DataNew.SetSerializer() { Game = Game };
-            foreach(Set set in this.Sets)
+            foreach(SetModel set in ViewModelLocator.SetTabViewModel.Items)
             {
-                setSerializer.Serialize(set);
+                setSerializer.Serialize(set._set);
             }
             var scriptSerializer = new Octgn.DataNew.GameScriptSerializer(Game.Id) { Game = Game };
-            foreach(GameScript script in this.Scripts)
+            foreach(ScriptItemModel script in ViewModelLocator.ScriptsTabViewModel.Scripts)
             {
-                scriptSerializer.Serialize(script);
+                scriptSerializer.Serialize(script._script);
             }
             var proxySerializer = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id) { Game = Game };
-            proxySerializer.Serialize(ProxyDef);
+            proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
             NeedsSave = false;
             DidManualSave = true;
         }
@@ -297,8 +254,20 @@ namespace Octide
             var g = new GameSerializer();
             g.Serialize(Game);
 
+            var baseRefPath = "\\def";
 
-            var feedPath = Path.Combine(GamePath, Game.Name + '-' + Game.Version + ".nupkg");
+            foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets)
+            {
+                if (asset.IsLinked)
+                {
+                    var refpath = baseRefPath + "\\" + asset.RelativePath;
+                    var pf = new PhysicalPackageFile() { SourcePath = asset.FullPath, TargetPath = refpath };
+                    builder.Files.Add(pf);
+                }
+            }
+
+
+            var feedPath = Path.Combine(Directory, Game.Name + '-' + Game.Version + ".nupkg");
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
@@ -308,7 +277,7 @@ namespace Octide
 
         public void DeleteGame()
         {
-            Directory.Delete(GamePath,true);
+            System.IO.Directory.Delete(Directory, true);
         }
 
         public void GameChanged(object sender)

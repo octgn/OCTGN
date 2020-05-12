@@ -18,6 +18,7 @@ using FontFamily = System.Windows.Media.FontFamily;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.ComponentModel;
 
 namespace Octide.ItemModel
 {
@@ -25,31 +26,55 @@ namespace Octide.ItemModel
     public class OverlayBlockDefinitionItemModel : IdeBaseItem
     {
         public BlockDefinition _def;
+        public AssetController Asset { get; set; }
 
         public OverlayBlockDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new overlay
         {
             _def = new BlockDefinition
             {
-                src = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.RelativePath,
                 type = "overlay"
             };
+            Asset = new AssetController(AssetType.Image);
+            _def.src = Asset.SelectedAsset.RelativePath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = "overlay";
         }
 
         public OverlayBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // load overlay
         {
             _def = b;
+            Asset = new AssetController(AssetType.Image, Path.Combine(b.Manager.RootPath, b.src));
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public OverlayBlockDefinitionItemModel(OverlayBlockDefinitionItemModel o, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _def = new BlockDefinition
             {
-                src = o.Asset.RelativePath,
                 type = "overlay"
             };
+            Asset = new AssetController(AssetType.Image, Path.Combine(o._def.Manager.RootPath, o._def.src));
+            _def.src = Asset.SelectedAsset.RelativePath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = o.Name;
         }
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _def.src = Asset.SelectedAsset.RelativePath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Width");
+                RaisePropertyChanged("Height");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
+        }
+
+
         public override object Clone()
         {
             return new OverlayBlockDefinitionItemModel(this, Source);
@@ -68,23 +93,6 @@ namespace Octide.ItemModel
                 if (value == _def.id) return;
                 _def.id = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
-            }
-        }
-
-        public Asset Asset
-        {
-            get
-            {
-                if (_def.src == null)
-                    return new Asset();
-                return Asset.Load(Path.Combine(_def.Manager.RootPath, _def.src));
-            }
-            set
-            {
-                _def.src = value?.RelativePath;
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("Width");
-                RaisePropertyChanged("Height");
             }
         }
 
@@ -120,7 +128,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                using (var img = System.Drawing.Image.FromFile(Asset?.FullPath))
+                using (var img = System.Drawing.Image.FromFile(Asset.SelectedAsset?.FullPath))
                 {
                     return img.Width;
                 }
@@ -130,7 +138,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                using (var img = System.Drawing.Image.FromFile(Asset?.FullPath))
+                using (var img = System.Drawing.Image.FromFile(Asset.SelectedAsset?.FullPath))
                 {
                     return img.Height;
                 }
