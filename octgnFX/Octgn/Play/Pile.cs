@@ -31,8 +31,7 @@ namespace Octgn.Play
             }
         }
 
-        // Dummy property to allow animations in the player panel
-        internal bool AnimateInsertion { get; set; }
+        public double FanDensity { get; set; } = Octgn.Core.Prefs.HandDensity;
 
         public Card TopCard
         {

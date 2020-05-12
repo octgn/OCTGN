@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.DataNew.Entities;
 
@@ -36,10 +37,7 @@ namespace Octgn.Play.Gui
         private void GroupPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != "ViewState") return;
-            var cvs = (CollectionViewSource) FindResource("CollapsedGroups");
-            if (cvs.View != null) cvs.View.Refresh();
-            cvs = (CollectionViewSource) FindResource("ExpandedGroups");
-            if (cvs.View != null) cvs.View.Refresh();
+            expandedList.UpdateLayout();
 
             if (collapsedList.Items.Count == 0 && collapsedList.ActualWidth > 0)
             {
@@ -60,20 +58,6 @@ namespace Octgn.Play.Gui
                 }
             }
         }
-
-        private void IsCollapsed(object sender, FilterEventArgs e)
-        {
-            var pile = e.Item as Pile;
-            if (pile == null) e.Accepted = false;
-            else e.Accepted = pile.ViewState == GroupViewState.Collapsed;
-        }
-
-        private void IsExpanded(object sender, FilterEventArgs e)
-        {
-            var pile = e.Item as Pile;
-            if (pile == null) e.Accepted = false;
-            else e.Accepted = pile.ViewState != GroupViewState.Collapsed;
-        }
         
         private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
@@ -93,21 +77,15 @@ namespace Octgn.Play.Gui
             }
             return temp;
         }
-    }
 
-    public class PileControlSelector : DataTemplateSelector
-    {
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        private void PileControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement elemnt = container as FrameworkElement;
-            Pile pile = item as Pile;
-            if (pile.ViewState == GroupViewState.Pile)
+            if (e.NewValue is true)
             {
-                return elemnt.FindResource("PileControl") as DataTemplate;
-            }
-            else
-            {
-                return elemnt.FindResource("ExpandedControl") as DataTemplate;
+                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                { EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop };
+                (sender as PileControl)?.scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+                (sender as PileCollapsedControl)?.scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
             }
         }
     }

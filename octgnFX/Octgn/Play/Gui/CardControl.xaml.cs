@@ -757,7 +757,7 @@ namespace Octgn.Play.Gui
             double step = ActualWidth * 1.05;
             // HACK: if the selected card is in HandControl, its ContentPresenter has a RenderTransform, 
             // which we must account for
-            if (GroupControl is PileExpandedControl)
+            if (false)
             {
                 var parent = VisualTreeHelper.GetParent(this) as ContentPresenter;
                 if (parent != null)

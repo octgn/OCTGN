@@ -15,7 +15,7 @@ namespace Octgn.Play.Gui
         #region Private vars
 
         private const int SpacingWidth = 8;
-        private const double LayoutAnimationDuration = 1.0;
+        private const double LayoutAnimationDuration = .3;
         private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int, double>
                                                                                         {  
                                                                                             { 0, 0 } 
@@ -41,7 +41,7 @@ namespace Octgn.Play.Gui
 
         #endregion
 
-        public double HandDensity { get; set; } = Octgn.Core.Prefs.HandDensity / 100;
+        public double HandDensity { get; set; } = 0;
 
         #region Dependency properties
 
@@ -73,7 +73,7 @@ namespace Octgn.Play.Gui
         public int GetIndexFromPoint(Point position)
         {
             if (Children == null || Children.Count == 0) return 0;
-            int idx = cardLocations.First(x => x.Value == cardLocations.Values.OrderBy(y => Math.Abs(y - position.X)).First()).Key;
+            int idx = cardLocations.OrderBy(y => Math.Abs(y.Value - position.X)).First().Key;
             //if (idx > Children.Count) idx = Children.Count;
             return idx;
         }
@@ -110,12 +110,16 @@ namespace Octgn.Play.Gui
             CancelSpacing();
 
             // Space neighbors
-            if (idx >= Children.Count) return;
-            _spacedItem2 = Children[idx];
-            SetSpacing(_spacedItem2, -SpacingWidth);
-            if (idx <= 0) return;
-            _spacedItem1 = Children[idx - 1];
-            SetSpacing(_spacedItem1, SpacingWidth);
+            if (idx < Children.Count)
+            {
+                _spacedItem2 = Children[idx];
+                SetSpacing(_spacedItem2, -SpacingWidth);
+            }
+            if (idx > 0)
+            {
+                _spacedItem1 = Children[idx - 1];
+                SetSpacing(_spacedItem1, SpacingWidth);
+            }
         }
 
         public void HideInsertIndicator()
@@ -255,7 +259,7 @@ namespace Octgn.Play.Gui
                 var scale = (ScaleTransform) group.Children[0];
                 var translate = (TranslateTransform) group.Children[1];
 
-                if (child.IsMouseOver)
+                if (child.IsMouseOver && HandDensity > 0)
                 {
                     newMouseOverElement = child;
                     if (child != _mouseOverElement)
@@ -309,7 +313,7 @@ namespace Octgn.Play.Gui
 
                 xposition += (child.DesiredSize.Width * percentToShow);
             }
-            cardLocations.Add(0, xposition + (Children[0].DesiredSize.Width * (1-percentToShow)) );
+            cardLocations.Add(0, ActualWidth );
 
             _mouseOverElement = newMouseOverElement;
             return finalSize;

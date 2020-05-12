@@ -3,12 +3,6 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
                      xmlns:ctrl="clr-namespace:Octgn.Controls">
 
-    <gui:PileBaseControl.Resources>
-        <DataTemplate x:Key="CardTemplate">
-            <gui:CardControl />
-        </DataTemplate>
-    </gui:PileBaseControl.Resources>
-
     <gui:PileBaseControl.LayoutTransform>
         <ScaleTransform x:Name="scaleTransform" />
     </gui:PileBaseControl.LayoutTransform>
@@ -46,17 +40,25 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <gui:CardControl x:Name="cardsCtrl" DataContext="{Binding TopCard}" DataContextChanged="cardsCtrl_DataContextChanged" CardImageStretch="Uniform">
-                <gui:CardControl.Style>
-                    <Style>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
-                                <Setter Property="UIElement.Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </gui:CardControl.Style>
-            </gui:CardControl>
+            <AdornerDecorator x:Name="adornerDecorator">
+                <ItemsControl x:Name="list" ItemsSource="{Binding Cards}" Grid.Row="0" Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <gui:FanPanel Loaded="SaveFanPanel" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <gui:CardControl />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type ContentPresenter}">
+                            <Setter Property="Margin" Value="0,0,3,0" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </AdornerDecorator>
 
             <Border x:Name="bottomZone" CornerRadius="0,0,6,6" Background="Black" Opacity="0.4" Visibility="Collapsed"
               VerticalAlignment="Bottom" Height="30">
@@ -77,6 +79,9 @@
 
                 <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" 
                    Style="{x:Null}" />
+
+                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left"
+                                        LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" Thumb.DragCompleted="DensitySlider_DragCompleted" />
 
                 <Button Style="{StaticResource RightArrowButtonStyle}" Margin="5 0 0 0" HorizontalAlignment="Right"
                  x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse Pile" Focusable="False" />
