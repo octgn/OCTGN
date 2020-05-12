@@ -73,14 +73,6 @@ namespace Octide.ViewModel
             ChatInputText = null;
         }
 
-        public void UpdateFonts()
-        {
-            ViewModelLocator.GameLoader.Game.DeckEditorFont = DeckEditorFont._font;
-            ViewModelLocator.GameLoader.Game.ContextFont = ContextFont._font;
-            ViewModelLocator.GameLoader.Game.NoteFont = NotesFont._font;
-            ViewModelLocator.GameLoader.Game.ChatFont = ChatFont._font;
-        }
-        
         public List<Control> Menu { get; set; }
 
     }

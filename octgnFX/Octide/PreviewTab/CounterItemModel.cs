@@ -8,6 +8,7 @@ using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -15,6 +16,7 @@ namespace Octide.ItemModel
     public class CounterItemModel : IdeBaseItem
     {
         public Counter _counter;
+        public AssetController Asset { get; set; }
 
         public RelayCommand IncreaseCommand { get; private set; }
         public RelayCommand DecreaseCommand { get; private set; }
@@ -33,17 +35,20 @@ namespace Octide.ItemModel
         {
             IncreaseCommand = new RelayCommand(IncreaseValue);
             DecreaseCommand = new RelayCommand(DecreaseValue);
-            _counter = new Counter
-            {
-                Icon = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath
-            };
+            _counter = new Counter();
             Name = "New Counter";
+
+            Asset = new AssetController(AssetType.Image);
+            _counter.Icon = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             RaisePropertyChanged("Asset");
         }
 
         public CounterItemModel(Counter c, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _counter = c;
+            Asset = new AssetController(AssetType.Image, c.Icon);
+            Asset.PropertyChanged += AssetUpdated;
             IncreaseCommand = new RelayCommand(IncreaseValue);
             DecreaseCommand = new RelayCommand(DecreaseValue);
         }
@@ -52,14 +57,31 @@ namespace Octide.ItemModel
         {
             _counter = new Counter
             {
-                Icon = c.Asset.FullPath,
                 Reset = c.Reset,
                 Start = c.DefaultValue
             };
+            Asset = new AssetController(AssetType.Image, c._counter.Icon);
+            _counter.Icon = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = c.Name;
             IncreaseCommand = new RelayCommand(IncreaseValue);
             DecreaseCommand = new RelayCommand(DecreaseValue);
         }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _counter.Icon = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
+        }
+
 
         public override object Clone()
         {
@@ -84,19 +106,6 @@ namespace Octide.ItemModel
                 if (value == _counter.Name) return;
                 _counter.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
-            }
-        }
-
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_counter.Icon);
-            }
-            set
-            {
-                _counter.Icon = value?.FullPath;
-                RaisePropertyChanged("Asset");
             }
         }
 

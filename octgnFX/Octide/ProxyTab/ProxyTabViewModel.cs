@@ -12,19 +12,23 @@ using GalaSoft.MvvmLight.Messaging;
 
 using Octide.Messages;
 using Octgn.ProxyGenerator;
+using Octgn.DataNew;
 using System.Collections.ObjectModel;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ItemModel;
 using System.Windows.Media.Imaging;
 using Octide.ProxyTab.ItemModel;
+using System.ComponentModel;
 
 namespace Octide.ViewModel
 {
     public class ProxyTabViewModel : ViewModelBase
     {
 
-        
-        private ProxyDefinition _proxydef => ViewModelLocator.GameLoader.ProxyDef;
+
+        public ProxyDefinition _proxydef;
+
+        public AssetController Asset { get; set; }
         public IdeCollection<IdeBaseItem> Templates { get; private set; }
         public IdeCollection<IdeBaseItem> TextBlocks { get; private set; }
         public IdeCollection<IdeBaseItem> OverlayBlocks { get; private set; }
@@ -50,6 +54,16 @@ namespace Octide.ViewModel
             {
                 Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
+            var game = ViewModelLocator.GameLoader.Game;
+            var proxySerializer = new ProxyGeneratorSerializer(game.Id) { Game = game };
+            var path = new FileInfo(Path.Combine(ViewModelLocator.GameLoader.Directory, game.ProxyGenSource)).FullName;
+            _proxydef = (ProxyDefinition)proxySerializer.Deserialize(path);
+
+            var proxyDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.FullPath == path);
+            Asset = new AssetController(proxyDefAsset);
+            Asset.PropertyChanged += AssetChanged;
+
+
 
             Templates = new IdeCollection<IdeBaseItem>(this);
             foreach (TemplateDefinition templateDef in _proxydef.TemplateSelector.GetTemplates())
@@ -112,16 +126,17 @@ namespace Octide.ViewModel
                 }
             };
 
-
             AddTextBlockCommand = new RelayCommand(AddTextBlock);
             AddTemplateCommand = new RelayCommand(AddTemplate);
             AddOverlayCommand = new RelayCommand(AddOverlay);
             RaisePropertyChanged("StoredProxyProperties");
             Messenger.Default.Register<ProxyTemplateChangedMessage>(this, action => UpdateProxyTemplate(action));
-
+        }
+        public void AssetChanged(object sender, PropertyChangedEventArgs e)
+        {
 
         }
-        
+
         public void UpdateProxyTemplate(ProxyTemplateChangedMessage message)
         {
             if (SelectedTemplate == null) return;

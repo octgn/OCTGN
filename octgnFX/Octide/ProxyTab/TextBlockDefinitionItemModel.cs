@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ViewModel;
 using Octide.SetTab.ItemModel;
+using System.ComponentModel;
 
 namespace Octide.ItemModel
 {
@@ -22,12 +23,16 @@ namespace Octide.ItemModel
     {
         public BlockDefinition _def;
 
+        public AssetController Asset { get; set; }
         public TextBlockDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new text definition
         {
             _def = new BlockDefinition
             {
                 type = "text",
             };
+            Asset = new AssetController(AssetType.Font) { CanRemove = true };
+            _def.text.font = Asset.SelectedAsset.RelativePath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = "text";
         }
 
@@ -38,18 +43,33 @@ namespace Octide.ItemModel
             var font = new Font
             {
                 Size = b.text.size,
-                Src = System.IO.Path.Combine(b.Manager.RootPath, b.text.font ?? "")
             };
+            string path = null;
+            if (b.text.font != null)
+                path = Path.Combine(b.Manager.RootPath, b.text.font);
+            Asset = new AssetController(AssetType.Font, path) { CanRemove = true };
+            Asset.PropertyChanged += AssetUpdated;
         }
 
 
         public TextBlockDefinitionItemModel(TextBlockDefinitionItemModel t, IdeCollection<IdeBaseItem> source) : base(source)
         {
-            _def = new BlockDefinition
-            {
-            };
+            _def = new BlockDefinition();
+            Asset = new AssetController(AssetType.Image, t.Asset.SelectedAsset?.RelativePath) { CanRemove = true };
+            _def.text.font = Asset.SelectedAsset.RelativePath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = t.Name;
         }
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _def.text.font = Asset.SelectedAsset?.RelativePath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Font");
+            }
+        }
+
         public override object Clone()
         {
             return new TextBlockDefinitionItemModel(this, Source);
@@ -73,21 +93,6 @@ namespace Octide.ItemModel
         }
 
         #region Text
-        public Asset Asset
-        {
-            get
-            {
-                if (_def.text.font == null)
-                    return new Asset();
-                return Asset.Load(Path.Combine(_def.Manager.RootPath, _def.text.font));
-            }
-            set
-            {
-                _def.text.font = value?.RelativePath;
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("Font");
-            }
-        }
 
         public int FontSize
         {

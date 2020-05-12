@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using GongSolutions.Wpf.DragDrop;
 using System.Collections.Specialized;
 using Octide.ItemModel;
+using Octgn.DataNew;
 
 namespace Octide.ViewModel
 {
@@ -67,14 +68,22 @@ namespace Octide.ViewModel
             AddPlayerVariableCommand = new RelayCommand(AddPlayerVariable);
 
             Scripts = new IdeCollection<IdeBaseItem>();
-            foreach (var script in ViewModelLocator.GameLoader.Scripts)
+            var game = ViewModelLocator.GameLoader.Game;
+            var scriptSerializer = new GameScriptSerializer(game.Id) { Game = game };
+
+            foreach (var scriptPath in game.Scripts)
             {
-                Scripts.Add(new ScriptItemModel(script, Scripts));
+                var path = Path.Combine(ViewModelLocator.GameLoader.Directory, scriptPath);
+                var script = (GameScript)scriptSerializer.Deserialize(path);
+                var scriptModel = new ScriptItemModel(script, Scripts);
+                scriptModel.Asset = new AssetController(AssetType.PythonScript, path);
+                scriptModel.Asset.PropertyChanged += AssetChanged;
+                Scripts.Add(scriptModel);
             }
 
             Scripts.CollectionChanged += (a, b) =>
             {
-                ViewModelLocator.GameLoader.Scripts = Scripts.Select(x => ((ScriptItemModel)x)._script);
+           //     ViewModelLocator.GameLoader.Scripts = Scripts.Select(x => ((ScriptItemModel)x)._script);
             };
             AddScriptCommand = new RelayCommand(AddScript);
 
@@ -96,6 +105,11 @@ namespace Octide.ViewModel
                                                                     y => y.Select(z => ((GameEventItemModel)z)._gameEvent).ToArray());
             };
             AddEventCommand = new RelayCommand(AddGameEvent);
+
+        }
+
+        public void AssetChanged(object sender, PropertyChangedEventArgs e)
+        {
 
         }
 

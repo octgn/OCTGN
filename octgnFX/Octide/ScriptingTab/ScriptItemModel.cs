@@ -7,6 +7,7 @@ using ICSharpCode.AvalonEdit.Folding;
 using Octgn.DataNew.Entities;
 using Octide.ViewModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -14,22 +15,28 @@ namespace Octide.ItemModel
     public class ScriptItemModel : IdeBaseItem
     {
         public GameScript _script;
+        public AssetController Asset { get; set; }
 
         public ScriptItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             _script = new GameScript()
             {
                 GameId = ViewModelLocator.GameLoader.Game.Id,
-                //  Path = ViewModelLocator.GameLoader.GamePath
+                //  Path = ViewModelLocator.GameLoader.Directory
                 //  Path = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.PythonScript)?.FullPath
                 //  TODO: Create a new path for the asset
             };
+            Asset = new AssetController(AssetType.PythonScript);
+            _script.Path = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
 
         }
 
         public ScriptItemModel(GameScript gameScript, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _script = gameScript;
+            Asset = new AssetController(AssetType.PythonScript, gameScript.Path);
+            Asset.PropertyChanged += AssetUpdated;
             ScriptDocument = new TextDocument(gameScript.Script);
         }
 
@@ -41,7 +48,25 @@ namespace Octide.ItemModel
                 Path = gameScript._script.Path,
                 GameId = gameScript._script.GameId
             };
+            Asset = new AssetController(AssetType.Image, gameScript._script.Path);
+            _script.Path = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
         }
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _script.Path = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Name");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
+        }
+
         public override object Clone()
         {
             return new ScriptItemModel(this, Source);
@@ -51,24 +76,12 @@ namespace Octide.ItemModel
             return new ScriptItemModel(Source);
         }
 
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_script.Path);
-            }
-            set
-            {
-                _script.Path = value?.FullPath;
-                RaisePropertyChanged("Asset");
-            }
-        }
 
         public string Name
         {
             get
             {
-                return Asset.FullFileName;
+                return Asset.SelectedAsset?.FullFileName;
             }
             set
             {

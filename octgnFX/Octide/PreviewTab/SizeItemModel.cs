@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
 using Octide.Messages;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -13,21 +14,27 @@ namespace Octide.ItemModel
     public class SizeItemModel : IdeBaseItem
     {
         public CardSize _size;
+        public AssetController FrontAsset { get; set; }
+        public AssetController BackAsset { get; set; }
 
         public SizeItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             CanBeDefault = true;
             _size = new CardSize
             {
-                Front = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
-                Back = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
                 Width = 15,
                 Height = 15,
                 BackWidth = 15,
                 BackHeight = 15
             };
             Name = "New Size";
+            BackAsset = new AssetController(AssetType.Image);
+            _size.Back= BackAsset.FullPath;
+            BackAsset.PropertyChanged += BackAssetUpdated;
             RaisePropertyChanged("Back");
+            FrontAsset = new AssetController(AssetType.Image);
+            _size.Front = FrontAsset.FullPath;
+            FrontAsset.PropertyChanged += FrontAssetUpdated;
             RaisePropertyChanged("Front");
         }
 
@@ -35,6 +42,10 @@ namespace Octide.ItemModel
         {
             CanBeDefault = true;
             _size = s;
+            BackAsset = new AssetController(AssetType.Image, s.Back);
+            BackAsset.PropertyChanged += BackAssetUpdated;
+            FrontAsset = new AssetController(AssetType.Image, s.Front);
+            FrontAsset.PropertyChanged += FrontAssetUpdated;
         }
 
         public SizeItemModel(SizeItemModel s, IdeCollection<IdeBaseItem> source) : base(source) // copy item
@@ -42,16 +53,44 @@ namespace Octide.ItemModel
             CanBeDefault = true;
             _size = new CardSize
             {
-                Front = s.Front.FullPath,
                 Height = s.Height,
                 Width = s.Width,
                 CornerRadius = s.CornerRadius,
-                Back = s.Back.FullPath,
                 BackHeight = s.Height,
                 BackWidth = s.BackWidth,
                 BackCornerRadius = s.BackCornerRadius
             };
+            BackAsset = new AssetController(AssetType.Image, s._size.Back);
+            _size.Back = BackAsset.FullPath;
+            BackAsset.PropertyChanged += BackAssetUpdated;
+            FrontAsset = new AssetController(AssetType.Image, s._size.Front);
+            _size.Front = FrontAsset.FullPath;
+            FrontAsset.PropertyChanged += FrontAssetUpdated;
             Name = s.Name;
+        }
+        private void BackAssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _size.Back= BackAsset.FullPath;
+                Messenger.Default.Send(new CardDetailsChangedMessage());
+                RaisePropertyChanged("BackAsset");
+            }
+        }
+        private void FrontAssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _size.Front = FrontAsset.FullPath;
+                Messenger.Default.Send(new CardDetailsChangedMessage());
+                RaisePropertyChanged("FrontAsset");
+            }
+        }
+        public override void Cleanup()
+        {
+            FrontAsset.SelectedAsset = null;
+            BackAsset.SelectedAsset = null;
+            base.Cleanup();
         }
 
         public override object Clone()
@@ -79,35 +118,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Name");
                 //has to update the card data when the size name changes
                 Messenger.Default.Send(new CardSizeChangedMesssage() { Size = this, Action = PropertyChangedMessageAction.Modify });
-            }
-        }
-
-
-        public Asset Front
-        {
-            get
-            {
-                return Asset.Load(_size.Front);
-            }
-            set
-            {
-                _size.Front = value?.FullPath;
-                RaisePropertyChanged("Front");
-                Messenger.Default.Send(new CardDetailsChangedMessage());
-            }
-        }
-
-        public Asset Back
-        {
-            get
-            {
-                return Asset.Load(_size.Back);
-            }
-            set
-            {
-                _size.Back = value?.FullPath;
-                RaisePropertyChanged("Back");
-                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 

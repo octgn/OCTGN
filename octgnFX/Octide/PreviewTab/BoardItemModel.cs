@@ -7,6 +7,7 @@ using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -14,16 +15,19 @@ namespace Octide.ItemModel
     public class BoardItemModel : IdeBaseItem
     {
         public GameBoard _board;
+        public AssetController Asset { get; set; }
 
         public BoardItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
             CanBeDefault = true;
             _board = new GameBoard
             {
-                Source = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath,
                 Height = 15,
                 Width = 15
             };
+            Asset = new AssetController(AssetType.Image);
+            _board.Source = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = "New Board";
             RaisePropertyChanged("Asset");
         }
@@ -32,6 +36,8 @@ namespace Octide.ItemModel
         {
             CanBeDefault = true;
             _board = g;
+            Asset = new AssetController(AssetType.Image, g.Source);
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public BoardItemModel(BoardItemModel b, IdeCollection<IdeBaseItem> source) : base(source) // copy item
@@ -42,12 +48,27 @@ namespace Octide.ItemModel
                 Height = b.Height,
                 Width = b.Width,
                 XPos = b.XPos,
-                YPos = b.YPos,
-                Source = b.Asset.FullPath
+                YPos = b.YPos
             };
+            Asset = new AssetController(AssetType.Image, b._board.Source);
+            _board.Source = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = b.Name;
         }
 
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _board.Source = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
+        }
 
         public override object Clone()
         {
@@ -71,19 +92,6 @@ namespace Octide.ItemModel
                 if (_board.Name == value) return;
                 _board.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
-            }
-        }
-
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_board.Source);
-            }
-            set
-            {
-                _board.Source = value?.FullPath;
-                RaisePropertyChanged("Asset");
             }
         }
 

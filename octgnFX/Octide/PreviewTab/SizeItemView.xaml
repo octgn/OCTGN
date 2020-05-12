@@ -55,7 +55,7 @@
                 <Image Source="{Binding Front.FullPath, Mode=OneWay}" />
             </StackPanel>
 
-            <local:AssetControl SelectedAsset="{Binding Front, Mode=TwoWay}" TargetAssetType="Image"/>
+            <local:AssetControllerView DataContext="{Binding FrontAsset}" />
 
             <TextBlock Text="Front Card Height"/>
             <DockPanel>
@@ -104,7 +104,7 @@
                 <Image Source="{Binding Back.FullPath, Mode=OneWay}" />
             </StackPanel>
 
-            <local:AssetControl SelectedAsset="{Binding Back, Mode=TwoWay}" TargetAssetType="Image"/>
+            <local:AssetControllerView DataContext="{Binding BackAsset}" />
 
             <TextBlock Text="Back Card Height"/>
             <DockPanel>

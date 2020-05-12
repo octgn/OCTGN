@@ -21,7 +21,7 @@
                 <Image Source="{Binding Background.FullPath, Mode=OneWay}" />
             </StackPanel>
 
-            <local:AssetControl SelectedAsset="{Binding Background, Mode=TwoWay}" TargetAssetType="Image"/>
+            <local:AssetControllerView DataContext="{Binding Background}" />
 
             <TextBlock Text="Background Style"/>
 

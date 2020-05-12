@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Octgn.DataNew.Entities;
 using System.IO;
+using System.ComponentModel;
 
 namespace Octide.ViewModel
 {
@@ -17,14 +18,29 @@ namespace Octide.ViewModel
     public class GameFontItemModel : ViewModelBase
     {
         public Font _font;
-        public RelayCommand RemoveFontCommand { get; set; }
+        public AssetController Asset { get; set; }
 
         public GameFontItemModel(Font f)
         {
             _font = f;
-            RemoveFontCommand = new RelayCommand(RemoveFont);
-            RaisePropertyChanged("FontControlVisibility");
+            if (f == null)
+            {
+                _font = new Font();
+            }
+            Asset = new AssetController(AssetType.Font, f?.Src) { CanRemove = true };
+            Asset.PropertyChanged += AssetUpdated;
             RaisePropertyChanged("Asset");
+        }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _font.Src = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("FontAsset");
+                RaisePropertyChanged("Size");
+            }
         }
 
         public int Size
@@ -37,30 +53,9 @@ namespace Octide.ViewModel
             set
             {
                 if (_font.Size == value) return;
-                if (value <= 0) return;
+                if (value < 0) return;
                 _font.Size = value;
                 RaisePropertyChanged("Size");
-            }
-        }
-
-        public Asset Asset
-        {
-            get
-            {
-                if (_font == null) return null;
-
-                return Asset.Load(_font.Src);
-            }
-            set
-            {
-                if (_font == null)
-                    _font = new Font();
-                _font.Src = value?.FullPath;
-                ViewModelLocator.GameFontTabViewModel.UpdateFonts();
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("FontAsset");
-                RaisePropertyChanged("Size");
-                RaisePropertyChanged("FontControlVisibility");
             }
         }
 
@@ -68,7 +63,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                if (_font == null) return null;
+                if (Asset.SelectedAsset == null) return null;
                 using (var pf = new PrivateFontCollection())
                 {
                     pf.AddFontFile(Asset.FullPath);
@@ -82,22 +77,6 @@ namespace Octide.ViewModel
             }
         }
 
-        public void RemoveFont()
-        {
-            _font = null;
-            ViewModelLocator.GameFontTabViewModel.UpdateFonts();
-            RaisePropertyChanged("FontControlVisibility");
-            RaisePropertyChanged("Size");
-            RaisePropertyChanged("Asset");
-        }
-
-        public Visibility FontControlVisibility
-        {
-            get
-            {
-                return _font == null ? Visibility.Hidden : Visibility.Visible;
-            }
-        }
         public static void SetFont(Asset font)
         {
         }

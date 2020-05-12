@@ -22,13 +22,13 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Document Asset"/>
             </StackPanel>
-            <local:AssetControl SelectedAsset="{Binding DocumentAsset, Mode=TwoWay}" TargetAssetType="Document"/>
+            <local:AssetControllerView DataContext="{Binding DocumentAsset}" />
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Document Icon"/>
                 <Image Source="{Binding IconAsset.FullPath, Mode=OneWay}" />
             </StackPanel>
-            <local:AssetControl SelectedAsset="{Binding IconAsset, Mode=TwoWay}" TargetAssetType="Image"/>
+            <local:AssetControllerView DataContext="{Binding IconAsset}" />
         </ItemsControl>
     </ScrollViewer>
 </UserControl>

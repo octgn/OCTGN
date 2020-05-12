@@ -47,10 +47,10 @@
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Symbol Image"/>
-                <Image Source="{Binding Asset.FullPath, Mode=OneWay}" />
+                <Image Source="{Binding Icon, Mode=OneWay}" />
             </StackPanel>
 
-            <local:AssetControl SelectedAsset="{Binding Asset, Mode=TwoWay}" TargetAssetType="Image"/>
+            <local:AssetControllerView DataContext="{Binding Asset}" />
         </ItemsControl>
     </ScrollViewer>
 </UserControl>
