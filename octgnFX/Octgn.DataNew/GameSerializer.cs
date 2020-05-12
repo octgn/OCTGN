@@ -1090,43 +1090,39 @@ namespace Octgn.DataNew
             var fontList = new List<gameFont>();
             if (game.ChatFont.IsSet())
             {
-                var gameFont = new gameFont
+                var gameFont = SerializeFont(game.ChatFont, parsedRootPath, rootPath);
+                if (gameFont != null)
                 {
-                    src = (game.ChatFont.Src ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
-                    size = game.ChatFont.Size.ToString(),
-                    target = fonttarget.chat
-                };
-                fontList.Add(gameFont);
+                    gameFont.target = fonttarget.chat;
+                    fontList.Add(gameFont);
+                }
             }
             if (game.ContextFont.IsSet())
             {
-                var gameFont = new gameFont
+                var gameFont = SerializeFont(game.ContextFont, parsedRootPath, rootPath);
+                if (gameFont != null)
                 {
-                    src = (game.ContextFont.Src ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
-                    size = game.ContextFont.Size.ToString(),
-                    target = fonttarget.context
-                };
-                fontList.Add(gameFont);
+                    gameFont.target = fonttarget.context;
+                    fontList.Add(gameFont);
+                }
             }
             if (game.NoteFont.IsSet())
             {
-                var gameFont = new gameFont
+                var gameFont = SerializeFont(game.NoteFont, parsedRootPath, rootPath);
+                if (gameFont != null)
                 {
-                    src = (game.NoteFont.Src ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
-                    size = game.NoteFont.Size.ToString(),
-                    target = fonttarget.notes
-                };
-                fontList.Add(gameFont);
+                    gameFont.target = fonttarget.notes;
+                    fontList.Add(gameFont);
+                }
             }
             if (game.DeckEditorFont.IsSet())
             {
-                var gameFont = new gameFont
+                var gameFont = SerializeFont(game.DeckEditorFont, parsedRootPath, rootPath);
+                if (gameFont != null)
                 {
-                    src = (game.DeckEditorFont.Src ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
-                    size = game.DeckEditorFont.Size.ToString(),
-                    target = fonttarget.deckeditor
-                };
-                fontList.Add(gameFont);
+                    gameFont.target = fonttarget.deckeditor;
+                    fontList.Add(gameFont);
+                }
             }
             if (fontList.Count > 0) save.fonts = fontList.ToArray();
             #endregion fonts
@@ -1220,6 +1216,24 @@ namespace Octgn.DataNew
                 serializer.Serialize(fs, save);
             }
             return File.ReadAllBytes(game.Filename);
+        }
+
+        internal gameFont SerializeFont(Font font, string parsedRootPath, string rootPath)
+        {
+            var ret = new gameFont();
+            bool hasValue = false;
+            if (font.Size > 0)
+            {
+                hasValue = true;
+                ret.size = font.Size.ToString();
+            }
+            if (font.Src != null)
+            {
+                hasValue = true;
+                ret.src = font.Src.Replace(parsedRootPath, "").Replace(rootPath, "");
+            }
+            if (hasValue) return ret;
+            return null;
         }
 
         internal table SerializeTable(Group group, string rootPath)

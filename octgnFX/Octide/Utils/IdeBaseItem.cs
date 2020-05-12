@@ -29,7 +29,6 @@ namespace Octide
         public RelayCommand CopyCommand { get; set; }
         public RelayCommand InsertCommand { get; set; }
         public RelayCommand MakeDefaultCommand { get; set; }
-
         public IdeCollection<IdeBaseItem> Source { get; set; }
 
         public IdeBaseItem(IdeCollection<IdeBaseItem> src)
@@ -67,6 +66,7 @@ namespace Octide
             var index = Source.IndexOf(this);
             Source.Remove(this);
             Source.SelectedItem = (Source.Count > index) ? Source[index] : Source.Last();
+            Cleanup();
         }
 
         public void CopyItem()

@@ -9,7 +9,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             xmlns:local="clr-namespace:Octide"
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
+             xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -17,8 +19,21 @@
              >
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DockPanel >
+                <TextBlock Text="Filter by Type: " Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16"/>
+                <ComboBox VerticalAlignment="Center" Padding="5,2,2,2"  SelectedValue="{Binding FilterType}" ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:AssetType}}}" />
+            </DockPanel>
+            <CheckBox Grid.Row="1" Content="Only show unused assets" IsChecked="{Binding FilterUnused}" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16" />
+            <ListBox Grid.Row="2" ItemsSource="{Binding AssetView}" />
+        </Grid>
     </Grid>
 </UserControl>

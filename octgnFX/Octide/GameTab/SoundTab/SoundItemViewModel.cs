@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
 using Octide.ViewModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Octide.ItemModel
@@ -16,6 +17,7 @@ namespace Octide.ItemModel
         public GameSound _sound { get; private set; }
         public RelayCommand PlayCommand { get; private set; }
         public RelayCommand StopCommand { get; private set; }
+        public AssetController Asset { get; set; }
 
         public SoundItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
@@ -25,7 +27,9 @@ namespace Octide.ItemModel
             _sound = new GameSound();
             Name = "New Sound";
 
-            Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Sound);
+            Asset = new AssetController(AssetType.Sound);
+            _sound.Src = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
 
         }
 
@@ -35,6 +39,8 @@ namespace Octide.ItemModel
             StopCommand = new RelayCommand(StopSound);
 
             _sound = s;
+            Asset = new AssetController(AssetType.Sound, s.Src);
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public SoundItemModel(SoundItemModel s, IdeCollection<IdeBaseItem> source) : base(source) // copy item
@@ -45,9 +51,34 @@ namespace Octide.ItemModel
             _sound = new GameSound()
             {
                 Gameid = s._sound.Gameid,
-                Src = s.Asset.FullPath
             };
+            Asset = new AssetController(AssetType.Sound, s._sound.Src);
+            _sound.Src = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = s.Name;
+        }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _sound.Src = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
+        }
+
+        public override object Clone()
+        {
+            return new SoundItemModel(this, Source);
+        }
+        public override object Create()
+        {
+            return new SoundItemModel(Source);
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((SoundItemModel)x).Name);
@@ -66,31 +97,11 @@ namespace Octide.ItemModel
             }
         }
 
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_sound.Src);
-            }
-            set
-            {
-                _sound.Src = value?.FullPath;
-                RaisePropertyChanged("Asset");
-            }
-        }
-
-        public override object Clone()
-        {
-            return new SoundItemModel(this, Source);
-        }
-        public override object Create()
-        {
-            return new SoundItemModel(Source);
-        }
 
         public void PlaySound()
         {
-            ViewModelLocator.SoundTabViewModel.PlaySound(Asset);
+            if (Asset.SelectedAsset != null)
+               ViewModelLocator.SoundTabViewModel.PlaySound(Asset.SelectedAsset);
         }
         public void StopSound()
         {

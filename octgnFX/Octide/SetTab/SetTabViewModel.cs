@@ -2,9 +2,13 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Octgn.DataNew;
+using Octgn.DataNew.Entities;
 using Octide.SetTab.ItemModel;
 
 namespace Octide.ViewModel
@@ -20,15 +24,28 @@ namespace Octide.ViewModel
             AddSetCommand = new RelayCommand(AddSet);
 
             Items = new IdeCollection<IdeBaseItem>(this);
-            foreach (var set in ViewModelLocator.GameLoader.Sets)
+
+            var setSerializer = new SetSerializer() { Game = ViewModelLocator.GameLoader.Game };
+
+            var setAssets = ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Type == AssetType.Xml && x.FullFileName == "set.xml");
+            foreach (var asset in setAssets)
             {
-                Items.Add(new SetModel(set, Items));
+                var set = (Set)setSerializer.Deserialize(asset.FullPath);
+                var setModel = new SetModel(set, Items);
+                setModel.Asset = new AssetController(asset);
+                setModel.Asset.PropertyChanged += AssetChanged;
+                Items.Add(setModel);
             }
 
             Items.CollectionChanged += (a, b) =>
             {
-                ViewModelLocator.GameLoader.Sets = Items.Select(x => ((SetModel)x)._set);
+    //            ViewModelLocator.GameLoader.Sets = Items.Select(x => ((SetModel)x)._set);
             };
+        }
+
+        public void AssetChanged(object sender, PropertyChangedEventArgs e)
+        {
+
         }
 
         public void AddSet()

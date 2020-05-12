@@ -3,6 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -22,13 +23,27 @@ namespace Octide.ItemModel
         private Vector _offset;
         private ImageBrush _backgroundImage;
 
+        public AssetController Background { get; set; }
+
         public TableItemModel(Group group, IdeCollection<IdeBaseItem> src) : base(group, src)
         {
+            Background = new AssetController(AssetType.Image, _group.Background);
+            Background.PropertyChanged += BackgroundAssetUpdated;
             Zoom = 1;
             CenterView();
             SetBackground();
         }
-        
+
+        private void BackgroundAssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _group.Background = Asset.FullPath;
+                SetBackground();
+                RaisePropertyChanged("Background");
+            }
+        }
+
         public double Zoom
         {
             get
@@ -68,20 +83,6 @@ namespace Octide.ItemModel
             }
         }
 
-        public Asset Background
-        {
-            get
-            {
-                return Asset.Load(_group.Background);
-            }
-            set
-            {
-                _group.Background = value?.FullPath;
-                SetBackground();
-                RaisePropertyChanged("Background");
-            }
-        }
-        
         public BackgroundStyle BackgroundStyle
         {
             get

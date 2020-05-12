@@ -8,6 +8,7 @@ using Octide.ProxyTab.Handlers;
 using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -27,6 +28,8 @@ namespace Octide.ProxyTab.ItemModel
         public BlockContainer OverlayContainer { get; set; }
         public BlockContainer TextBlockContainer { get; set; }
 
+        public AssetController Asset { get; set; }
+
         public TemplateMainDropHandler OverlayDropHandler { get; set; }
         public TemplateMainDropHandler TextDropHandler { get; set; }
         public TemplateMainDragHandler DragHandler { get; set; }
@@ -40,8 +43,14 @@ namespace Octide.ProxyTab.ItemModel
                 Matches = new List<Property>(),
                 OverlayBlocks = new List<LinkDefinition.LinkWrapper>(),
                 TextBlocks = new List<LinkDefinition.LinkWrapper>(),
-                rootPath = ViewModelLocator.GameLoader.ProxyDef.RootPath
+                rootPath = ViewModelLocator.ProxyTabViewModel._proxydef.RootPath
             };
+
+            Asset = new AssetController(AssetType.Image);
+            _def.src= Asset.SelectedAsset.RelativePath;
+            Asset.PropertyChanged += AssetUpdated;
+
+
             Matches = new IdeCollection<IdeBaseItem>(this);
             Matches.CollectionChanged += (a, b) =>
             {
@@ -57,7 +66,6 @@ namespace Octide.ProxyTab.ItemModel
             {
                 _def.TextBlocks = TextBlockContainer.BuildTemplateBlockDef(b);
             };
-            Asset = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image);
             AddMatchCommand = new RelayCommand(AddMatch);
             AddOverlayConditionalCommand = new RelayCommand(AddOverlayConditional);
             AddOverlaySwitchCommand = new RelayCommand(AddOverlaySwitch);
@@ -73,6 +81,10 @@ namespace Octide.ProxyTab.ItemModel
             CanBeDefault = true;
             CanEdit = false;
             _def = t;
+
+            Asset = new AssetController(AssetType.Image, Path.Combine(t.rootPath, t.src));
+            Asset.PropertyChanged += AssetUpdated;
+
             Matches = new IdeCollection<IdeBaseItem>(this);
             foreach (var match in t.Matches)
             {
@@ -112,9 +124,12 @@ namespace Octide.ProxyTab.ItemModel
                 OverlayBlocks = p._def.OverlayBlocks,
                 TextBlocks = p._def.TextBlocks,
                 Matches = p._def.Matches,
-                rootPath = p._def.rootPath,
-                src = p.Asset.RelativePath
+                rootPath = p._def.rootPath
             };
+
+            Asset = new AssetController(AssetType.Image, Path.Combine(p._def.rootPath, p._def.src));
+            _def.src = Asset.SelectedAsset.RelativePath;
+            Asset.PropertyChanged += AssetUpdated;
 
             Matches = new IdeCollection<IdeBaseItem>(this);
             Matches.CollectionChanged += (a, b) =>
@@ -149,6 +164,22 @@ namespace Octide.ProxyTab.ItemModel
             DragHandler = new TemplateMainDragHandler();
 
         }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _def.src = Asset.SelectedAsset.RelativePath;
+                RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
+        }
+
         public override object Clone()
         {
             return new TemplateModel(this, Source);
@@ -203,20 +234,7 @@ namespace Octide.ProxyTab.ItemModel
                 RaisePropertyChanged("Name");
             }
         }
-        public new string Icon => Asset?.FullPath;
+        public new string Icon => Asset.SelectedAsset?.FullPath;
 
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(Path.Combine(_def.rootPath, _def.src));
-            }
-            set
-            {
-                _def.src = value?.RelativePath;
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("Icon");
-            }
-        }
     }
 }

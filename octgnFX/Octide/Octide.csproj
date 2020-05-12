@@ -212,6 +212,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AssetsTab\Asset.cs" />
+    <Compile Include="AssetsTab\AssetController.cs" />
     <Compile Include="AssetManager.cs" />
     <Compile Include="GameTab\DeckSectionTab\DeckSectionView.xaml.cs">
       <DependentUpon>DeckSectionView.xaml</DependentUpon>
@@ -235,6 +237,14 @@
       <DependentUpon>MarkerTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameTab\MarkerTab\MarkerTabViewModel.cs" />
+    <Compile Include="GameTab\GameModeTab\GameModeItemView.xaml.cs">
+      <DependentUpon>GameModeItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameTab\GameModeTab\GameModeItemViewModel.cs" />
+    <Compile Include="GameTab\GameModeTab\GameModeTabView.xaml.cs">
+      <DependentUpon>GameModeTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameTab\GameModeTab\GameModeTabViewModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\ActionItemModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\ActionSeparatorItemModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\ActionSubmenuItemModel.cs" />
@@ -277,7 +287,6 @@
     <Compile Include="SetTab\CardTab\Card.cs" />
     <Compile Include="PreviewTab\CounterItemModel.cs" />
     <Compile Include="PreviewTab\GroupItemModel.cs" />
-    <Compile Include="ItemModel\AssetItemModel.cs" />
     <Compile Include="SetTab\CardTab\CardItemView.xaml.cs">
       <DependentUpon>CardItemView.xaml</DependentUpon>
     </Compile>
@@ -286,6 +295,10 @@
     </Compile>
     <Compile Include="GameTab\MarkerTab\MarkerItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\DropHandlers.cs" />
+    <Compile Include="AssetsTab\AssetControllerView.xaml.cs">
+      <DependentUpon>AssetControllerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\EnumBindingSourceExtension.cs" />
     <Compile Include="Utils\ValidationRules.cs" />
     <Compile Include="Utils\IdeObservableCollection.cs" />
     <Compile Include="Views\ImportCardsWindow.xaml.cs">
@@ -322,14 +335,13 @@
     <Compile Include="GameTab\SymbolTab\SymbolItemView.xaml.cs">
       <DependentUpon>SymbolItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\AssetControl.cs" />
     <Compile Include="Utils\KeyInputTextBox.cs" />
     <Compile Include="Utils\IdeBaseItem.cs" />
     <Compile Include="Utils\ScrollViewerHelper.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="Utils\EditableTextBlock.cs" />
     <Compile Include="Utils\EditableTextBlockAdorner.cs" />
-    <Compile Include="ViewModel\AssetsTabViewModel.cs" />
+    <Compile Include="AssetsTab\AssetsTabViewModel.cs" />
     <Compile Include="PreviewTab\SampleCardItemModel.cs" />
     <Compile Include="ProxyTab\TextBlockDefinitionItemModel.cs" />
     <Compile Include="GameTab\SoundTab\SoundTabViewModel.cs" />
@@ -351,7 +363,7 @@
     <Compile Include="PreviewTab\ActionMenu\ActionSubmenuItemView.xaml.cs">
       <DependentUpon>ActionSubmenuItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AssetsTabView.xaml.cs">
+    <Compile Include="AssetsTab\AssetsTabView.xaml.cs">
       <DependentUpon>AssetsTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="PreviewTab\ActionMenu\ActionItemView.xaml.cs">
@@ -484,6 +496,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="GameTab\GameModeTab\GameModeItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GameTab\GameModeTab\GameModeTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ScriptingTab\ScriptItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -516,6 +536,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="AssetsTab\AssetControllerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ImportCardsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -544,7 +568,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\AssetsTabView.xaml">
+    <Page Include="AssetsTab\AssetsTabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -10,6 +10,7 @@ using Octide.Messages;
 using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,7 @@ namespace Octide.ItemModel
 
         public IdeCollection<IdeBaseItem> GroupActions { get; set; }
         public IdeCollection<IdeBaseItem> CardActions { get; set; }
-
+        public AssetController Asset { get; set; }
 
         public GroupItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
@@ -32,10 +33,7 @@ namespace Octide.ItemModel
             NewSeparatorCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSeparator);
             ActionsDropHandler = new ActionsDropHandler();
 
-            _group = new Group
-            {
-                Icon = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.Image)?.FullPath
-            };
+            _group = new Group();
             GroupActions = new IdeCollection<IdeBaseItem>(this);
             CardActions = new IdeCollection<IdeBaseItem>(this);
             GroupActions.CollectionChanged += (a, b) =>
@@ -46,6 +44,9 @@ namespace Octide.ItemModel
             {
                 _group.CardActions = CardActions.Select(x => ((IBaseAction)x)._action);
             };
+            Asset = new AssetController(AssetType.Image);
+            _group.Icon = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
             Name = "New Group";
             RaisePropertyChanged("Asset");
         }
@@ -76,6 +77,8 @@ namespace Octide.ItemModel
             {
                 _group.CardActions = CardActions.Select(x => ((IBaseAction)x)._action);
             };
+            Asset = new AssetController(AssetType.Image, g.Icon);
+            Asset.PropertyChanged += AssetUpdated;
         }
 
         public GroupItemModel(GroupItemModel g, IdeCollection<IdeBaseItem> source) : base(source) // copy item
@@ -87,7 +90,6 @@ namespace Octide.ItemModel
 
             _group = new Group
             {
-                Icon = g.Asset.FullPath,
                 Visibility = g.GroupVisibility,
                 Shortcut = g.Shortcut,
                 Ordered = g.Ordered,
@@ -112,6 +114,24 @@ namespace Octide.ItemModel
             };
             foreach (var item in g.CardActions)
                 CardActions.Add(IBaseAction.CopyActionItems(item, CardActions));
+            
+            Asset = new AssetController(AssetType.Image, g._group.Icon);
+            _group.Icon = Asset.FullPath;
+            Asset.PropertyChanged += AssetUpdated;
+        }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedAsset")
+            {
+                _group.Icon = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+            }
+        }
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
         }
 
         public override object Clone()
@@ -137,19 +157,6 @@ namespace Octide.ItemModel
                 _group.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
                 Messenger.Default.Send(new GroupChangedMessage() { Group = this, Action = PropertyChangedMessageAction.Modify });
-            }
-        }
-
-        public Asset Asset
-        {
-            get
-            {
-                return Asset.Load(_group.Icon);
-            }
-            set
-            {
-                _group.Icon = value?.FullPath;
-                RaisePropertyChanged("Asset");
             }
         }
 
