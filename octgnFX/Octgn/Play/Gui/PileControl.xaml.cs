@@ -26,6 +26,7 @@ namespace Octgn.Play.Gui
             InitializeComponent();
             bottomZone.AddHandler(CardControl.CardOverEvent, new CardsEventHandler(OnCardOverBottom));
             bottomZone.AddHandler(CardControl.CardDroppedEvent, new CardsEventHandler(OnCardDroppedBottom));
+            DensitySlider.ValueChanged += DensitySlider_ValueChanged;
             DataContextChanged += PileControl_DataContextChanged;
         }
 
@@ -206,9 +207,20 @@ namespace Octgn.Play.Gui
                 Collapse();
         }
 
+        private void DensitySlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            (sender as Slider).ValueChanged -= DensitySlider_ValueChanged;
+        }
         private void DensitySlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            SetDensity((sender as Slider).Value);
+            (sender as Slider).ValueChanged += DensitySlider_ValueChanged;
+            if(!e.Canceled)
+                SetDensity((sender as Slider).Value);
+        }
+
+        private void DensitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            SetDensity(e.NewValue);
         }
 
         private void SetDensity(double density)
@@ -218,6 +230,8 @@ namespace Octgn.Play.Gui
                 var pile = group as Pile;
                 pile.FanDensity = density;
                 DensitySlider.Value = density;
+                if (_fanPanel is null)
+                    return;
                 _fanPanel.HandDensity = density / 100;
                 _fanPanel.InvalidateMeasure();
                 this.InvalidateArrange();
@@ -225,6 +239,8 @@ namespace Octgn.Play.Gui
         }
         private void Collapse()
         {
+            if (_fanPanel is null)
+                return;
             _fanPanel.HandDensity = 0;
             _fanPanel.InvalidateMeasure();
             this.InvalidateArrange();
@@ -232,6 +248,8 @@ namespace Octgn.Play.Gui
         private void UpdateDensity()
         {
             DensitySlider.Value = (group as Pile).FanDensity;
+            if (_fanPanel is null)
+                return;
             _fanPanel.HandDensity = DensitySlider.Value / 100;
             _fanPanel.InvalidateMeasure();
             this.InvalidateArrange();

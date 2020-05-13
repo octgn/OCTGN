@@ -80,8 +80,9 @@
                 <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" 
                    Style="{x:Null}" />
 
-                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left"
-                                        LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" Thumb.DragCompleted="DensitySlider_DragCompleted" />
+                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left" 
+                        LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" 
+                        Thumb.DragStarted="DensitySlider_DragStarted" Thumb.DragCompleted="DensitySlider_DragCompleted" />
 
                 <Button Style="{StaticResource RightArrowButtonStyle}" Margin="5 0 0 0" HorizontalAlignment="Right"
                  x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse Pile" Focusable="False" />
