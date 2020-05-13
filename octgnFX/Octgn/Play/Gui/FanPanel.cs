@@ -309,9 +309,10 @@ namespace Octgn.Play.Gui
                 SetXPosition(child, xposition);
 
                 if (HandDensity > 0)
-                    cardLocations.Add(i+1, xposition);
-
-                xposition += (child.DesiredSize.Width * percentToShow);
+                {
+                    cardLocations.Add(i + 1, xposition);
+                    xposition += (child.DesiredSize.Width * percentToShow);
+                }
             }
             cardLocations.Add(0, ActualWidth );
 
