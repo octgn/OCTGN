@@ -247,7 +247,7 @@ namespace Octgn.DataNew
                                      IndicatorsFormat = g.player.summary
                                  };
                 var curCounter = 1;
-                var curGroup = 2;
+                var curGroup = 1;
                 if (g.player.Items != null)
                 {
                 foreach (var item in g.player.Items)
@@ -275,7 +275,8 @@ namespace Octgn.DataNew
                         }
                         else if (item is hand hand)
                         {
-                            player.Hand = this.DeserialiseGroup(hand, 1);
+                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(hand, curGroup));
+                            curGroup++;
                         }
                         else if (item is group group)
                         {
@@ -607,7 +608,6 @@ namespace Octgn.DataNew
             {
                 Id = (byte)id,
                 Name = grp.name,
-                Collapsed = bool.Parse(grp.collapsed.ToString()),
                 Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
@@ -627,6 +627,27 @@ namespace Octgn.DataNew
             {
                 ret.CardActions = DeserializeGroupActionList(grp.Items, false);
                 ret.GroupActions = DeserializeGroupActionList(grp.Items, true);
+            }
+            //LEGACY CODE for old games using the hand group tag
+            if (grp is hand) ret.ViewState = GroupViewState.Expanded;
+            else if (grp.collapsed == boolean.True) ret.ViewState = GroupViewState.Collapsed;
+            else
+            //END LEGACY CODE
+            {
+                switch (grp.viewState)
+                {
+                    case groupViewState.collapsed:
+                        ret.ViewState = GroupViewState.Collapsed;
+                        break;
+                    case groupViewState.expanded:
+                        ret.ViewState = GroupViewState.Expanded;
+                        break;
+                    case groupViewState.pile:
+                        ret.ViewState = GroupViewState.Pile;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             switch (grp.visibility)
             {
@@ -887,7 +908,6 @@ namespace Octgn.DataNew
                     };
                     ilist.Add(gamePlayerGlobalVariable);
                 }
-                ilist.Add(SerializeGroup(game.Player.Hand, parsedRootPath, new hand()));
                 foreach (var g in game.Player.Groups)
                 {
                     ilist.Add(SerializeGroup(g, parsedRootPath, new group()));
@@ -1261,16 +1281,28 @@ namespace Octgn.DataNew
             if (group == null)
                 return null;
             ret.name = group.Name;
-            ret.collapsed = group.Collapsed ? boolean.True : boolean.False;
             ret.icon = group.Icon == null ? null : (group.Icon ?? "").Replace(rootPath, "");
             ret.ordered = group.Ordered ? boolean.True : boolean.False;
             ret.shortcut = group.Shortcut;
             ret.moveto = group.MoveTo ? boolean.True : boolean.False;
+            List<baseAction> itemList = new List<baseAction>();
             if (group.CardActions != null)
-            {
-                var itemList = SerializeActions(group.CardActions, false).ToList();
-                itemList.AddRange(SerializeActions(group.GroupActions, true).ToArray());
+                itemList.AddRange(SerializeActions(group.CardActions, false));
+            if (group.GroupActions != null)
+                itemList.AddRange(SerializeActions(group.GroupActions, true));
+            if (itemList.Count > 0)
                 ret.Items = itemList.ToArray();
+            switch (group.ViewState)
+            {
+                case GroupViewState.Collapsed:
+                    ret.viewState = groupViewState.collapsed;
+                    break;
+                case GroupViewState.Pile:
+                    ret.viewState = groupViewState.pile;
+                    break;
+                case GroupViewState.Expanded:
+                    ret.viewState = groupViewState.expanded;
+                    break;
             }
             switch (group.Visibility)
             {

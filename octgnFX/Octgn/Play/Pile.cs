@@ -1,4 +1,5 @@
 using Octgn.Utils;
+using Octgn.DataNew.Entities;
 
 //using Octgn.Play.GUI;
 
@@ -11,27 +12,26 @@ namespace Octgn.Play
     {
         #region Public interface
 
-        private bool _collapsed;
+        private GroupViewState _viewState;
 
         internal Pile(Player owner, DataNew.Entities.Group def)
             : base(owner, def)
         {
-            _collapsed = def.Collapsed;
+            _viewState = def.ViewState;
         }
 
-        public bool Collapsed
+        public GroupViewState ViewState
         {
-            get { return _collapsed; }
+            get { return _viewState; }
             set
             {
-                if (value == _collapsed) return;
-                _collapsed = value;
-                OnPropertyChanged("Collapsed");
+                if (value == _viewState) return;
+                _viewState = value;
+                OnPropertyChanged("ViewState");
             }
         }
 
-        // Dummy property to allow animations in the player panel
-        internal bool AnimateInsertion { get; set; }
+        public double FanDensity { get; set; } = Octgn.Core.Prefs.HandDensity;
 
         public Card TopCard
         {

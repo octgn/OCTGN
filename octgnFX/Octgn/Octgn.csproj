@@ -305,6 +305,7 @@
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Dialogs\PreviewCardWindow.xaml.cs">
       <DependentUpon>PreviewCardWindow.xaml</DependentUpon>
     </Compile>
@@ -362,6 +363,9 @@
     <Compile Include="Launchers\GameTableLauncher.cs" />
     <Compile Include="LibraryCommunicationClientConfig.cs" />
     <Compile Include="Utils\Converters\ConnectionStatusConverter.cs" />
+    <Compile Include="Play\Gui\HandControl.xaml.cs">
+      <DependentUpon>HandControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Log4NetLogger.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Phase.cs" />
@@ -370,7 +374,6 @@
       <DependentUpon>AdhocPileControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
-    <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
@@ -531,10 +534,6 @@
     <Compile Include="Play\Gui\GroupWindow.xaml.cs">
       <DependentUpon>GroupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Play\Gui\HandControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>HandControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Play\Gui\HslColor.cs" />
     <Compile Include="Play\Gui\Adorners\InsertAdorner.cs" />
     <Compile Include="Play\Gui\MarkerControl.xaml.cs">
@@ -564,7 +563,6 @@
     <Compile Include="Controls\Tooltip.cs" />
     <Compile Include="Play\Gui\VirtualizingTilePanel.cs" />
     <Compile Include="Play\Gui\WrapPanel.cs" />
-    <Compile Include="Play\Hand.cs" />
     <Compile Include="Play\Marker.cs" />
     <Compile Include="Play\Pile.cs" />
     <Compile Include="Play\Table.cs" />
@@ -997,6 +995,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Play\Gui\HandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Play\Gui\NoteControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1009,10 +1011,6 @@
     </Page>
     <Page Include="Play\Gui\GroupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Play\Gui\HandControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

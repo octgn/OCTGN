@@ -88,11 +88,11 @@ namespace Octide.ItemModel
             _group = new Group
             {
                 Icon = g.Asset.FullPath,
-                Collapsed = g.Collapsed,
                 Visibility = g.GroupVisibility,
                 Shortcut = g.Shortcut,
                 Ordered = g.Ordered,
-                MoveTo = g.MoveTo
+                MoveTo = g.MoveTo,
+                ViewState = g.ViewState
             };
 
             Name = g.Name;
@@ -167,18 +167,17 @@ namespace Octide.ItemModel
             }
         }
 
-        public bool Collapsed
+        public GroupViewState ViewState
         {
-
             get
             {
-                return _group.Collapsed;
+                return _group.ViewState;
             }
             set
             {
-                if (value == _group.Collapsed) return;
-                _group.Collapsed = value;
-                RaisePropertyChanged("Collapsed");
+                if (_group.ViewState == value) return;
+                _group.ViewState = value;
+                RaisePropertyChanged("ViewState");
             }
         }
 

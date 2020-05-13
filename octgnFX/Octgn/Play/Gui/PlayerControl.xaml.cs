@@ -2,8 +2,11 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.Play.Gui
 {
@@ -12,10 +15,10 @@ namespace Octgn.Play.Gui
         public PlayerControl()
         {
             InitializeComponent();
-            DataContextChanged += HookUpCollapsedChangedListener;
+            DataContextChanged += HookUpViewStateChangedListener;
         }
 
-        private void HookUpCollapsedChangedListener(object sender, DependencyPropertyChangedEventArgs e)
+        private void HookUpViewStateChangedListener(object sender, DependencyPropertyChangedEventArgs e)
         {
             var player = e.OldValue as Player;
             if (player != null)
@@ -33,11 +36,7 @@ namespace Octgn.Play.Gui
 
         private void GroupPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != "Collapsed") return;
-            var cvs = (CollectionViewSource) FindResource("CollapsedGroups");
-            if (cvs.View != null) cvs.View.Refresh();
-            cvs = (CollectionViewSource) FindResource("ExpandedGroups");
-            if (cvs.View != null) cvs.View.Refresh();
+            if (e.PropertyName != "ViewState") return;
 
             if (collapsedList.Items.Count == 0 && collapsedList.ActualWidth > 0)
             {
@@ -58,23 +57,10 @@ namespace Octgn.Play.Gui
                 }
             }
         }
-
-        private void IsCollapsedPile(object sender, FilterEventArgs e)
-        {
-            var pile = e.Item as Pile;
-            e.Accepted = pile != null && pile.Collapsed;
-        }
-
-        private void IsExpandedPile(object sender, FilterEventArgs e)
-        {
-            var pile = e.Item as Pile;
-            if (pile == null) e.Accepted = false;
-            else e.Accepted = !pile.Collapsed;
-        }
-
+        
         private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            System.Windows.Controls.ScrollViewer scv = (System.Windows.Controls.ScrollViewer)sender;
+            ScrollViewer scv = (ScrollViewer)sender;
             scv.ScrollToHorizontalOffset(scv.HorizontalOffset - e.Delta/4);
             e.Handled = true;
         }
@@ -84,11 +70,22 @@ namespace Octgn.Play.Gui
             Size temp = base.MeasureOverride(constraint);
             temp.Height = gd.RowDefinitions[0].ActualHeight; //counters row
             temp.Height += 28;                               // + info-bars at base of card areas, cards themselves should be optional
-            if (cardScroller.ComputedHorizontalScrollBarVisibility == System.Windows.Visibility.Visible)
+            if (cardScroller.ComputedHorizontalScrollBarVisibility == Visibility.Visible)
             {
                 temp.Height += SystemParameters.ScrollHeight;
             }
             return temp;
+        }
+
+        private void PileControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is true)
+            {
+                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                { EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop };
+                (sender as PileControl)?.scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+                (sender as PileCollapsedControl)?.scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            }
         }
     }
 }

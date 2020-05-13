@@ -3,124 +3,92 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
                      xmlns:ctrl="clr-namespace:Octgn.Controls">
 
-  <UserControl.Resources>
-    <DataTemplate x:Key="CardTemplate">
-      <gui:CardControl />
-    </DataTemplate>
-  </UserControl.Resources>
+    <gui:PileBaseControl.LayoutTransform>
+        <ScaleTransform x:Name="scaleTransform" />
+    </gui:PileBaseControl.LayoutTransform>
 
-  <gui:GroupControl.LayoutTransform>
-    <ScaleTransform x:Name="scaleTransform" />
-  </gui:GroupControl.LayoutTransform>
-
-  <gui:GroupControl.Triggers>
-    <EventTrigger RoutedEvent="Mouse.MouseEnter">
-      <BeginStoryboard>
-        <Storyboard>
-          <DoubleAnimation To="1" Duration="00:00:00.2" Storyboard.TargetName="button"
+    <gui:PileBaseControl.Triggers>
+        <EventTrigger RoutedEvent="Mouse.MouseEnter">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation To="1" Duration="00:00:00.2" Storyboard.TargetName="expandButton"
                            Storyboard.TargetProperty="(UIElement.Opacity)" />
-        </Storyboard>
-      </BeginStoryboard>
-    </EventTrigger>
-    <EventTrigger RoutedEvent="Mouse.MouseLeave">
-      <BeginStoryboard>
-        <Storyboard>
-          <DoubleAnimation To="0" Duration="00:00:00.2" Storyboard.TargetName="button"
+                    <DoubleAnimation To="1" Duration="00:00:00.2" Storyboard.TargetName="collapseButton"
+                           Storyboard.TargetProperty="(UIElement.Opacity)" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Mouse.MouseLeave">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation To="0" Duration="00:00:00.2" Storyboard.TargetName="expandButton"
                            Storyboard.TargetProperty="(UIElement.Opacity)" FillBehavior="Stop" />
-        </Storyboard>
-      </BeginStoryboard>
-    </EventTrigger>
-  </gui:GroupControl.Triggers>
+                    <DoubleAnimation To="0" Duration="00:00:00.2" Storyboard.TargetName="collapseButton"
+                           Storyboard.TargetProperty="(UIElement.Opacity)" FillBehavior="Stop" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </gui:PileBaseControl.Triggers>
 
-  <Border Style="{StaticResource PanelControl}" Padding="2">
-    <Grid x:Name="grid">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+    <Border Style="{StaticResource PanelControl}" Padding="2">
+        <Grid x:Name="grid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-      <gui:CardControl x:Name="cardsCtrl" DataContext="{Binding TopCard}" DataContextChanged="cardsCtrl_DataContextChanged" CardImageStretch="Uniform">
-        <gui:CardControl.Style>
-          <Style>
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding}" Value="{x:Null}">
-                <Setter Property="UIElement.Visibility" Value="Collapsed" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </gui:CardControl.Style>
-      </gui:CardControl>
+            <AdornerDecorator x:Name="adornerDecorator">
+                <ItemsControl x:Name="list" ItemsSource="{Binding Cards}" Grid.Row="0" Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <gui:FanPanel Loaded="SaveFanPanel" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <gui:CardControl />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type ContentPresenter}">
+                            <Setter Property="Margin" Value="0,0,3,0" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </AdornerDecorator>
 
-      <Border x:Name="bottomZone" CornerRadius="0,0,6,6" Background="Black" Opacity="0.4" Visibility="Collapsed"
+            <Border x:Name="bottomZone" CornerRadius="0,0,6,6" Background="Black" Opacity="0.4" Visibility="Collapsed"
               VerticalAlignment="Bottom" Height="30">
-        <Path Data="M 7,0 l 10,0 0,10 4,0 q 3,0 0,3 l -9,9 -9,-9 q -3,-3 0,-3 l 4,0 Z" Fill="White"
+                <Path Data="M 7,0 l 10,0 0,10 4,0 q 3,0 0,3 l -9,9 -9,-9 q -3,-3 0,-3 l 4,0 Z" Fill="White"
               VerticalAlignment="Center" HorizontalAlignment="Center" />
-      </Border>
+            </Border>
 
-      <DockPanel Grid.Row="1" LastChildFill="True">
-        <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" />
+            <DockPanel Grid.Row="1" LastChildFill="True">
 
-        <Button DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" Height="16" Width="16" Margin="14,0,0,0"
-                Style="{x:Null}" x:Name="button" Opacity="0" Click="CollapseClicked" ToolTip="Collapse" Focusable="False">
-          <Button.Template>
-            <ControlTemplate TargetType="{x:Type Button}">
-              <Border Background="#00000000" Style="{StaticResource PanelControl}" Padding="1" BorderThickness="0"
-                      x:Name="border">
-                <Border.BorderBrush>
-                  <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#E0888888" Offset="1" />
-                    <GradientStop Color="#DAFFFFFF" Offset="0" />
-                  </LinearGradientBrush>
-                </Border.BorderBrush>
-                <Path Stretch="Uniform" Data="M0,8 l15,0 0,-8 13,13 -13,13 0,-8 -15,0 z" StrokeLineJoin="Round"
-                      SnapsToDevicePixels="True" x:Name="path">
-                  <Path.Fill>
-                    <LinearGradientBrush EndPoint="0.656,0.898" StartPoint="0.445,0.164">
-                      <GradientStop Color="#33000000" Offset="1" />
-                      <GradientStop Color="#7F000000" Offset="0" />
-                    </LinearGradientBrush>
-                  </Path.Fill>
-                  <Path.Stroke>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                      <GradientStop Color="#b0000000" Offset="1" />
-                      <GradientStop Color="#40000000" Offset="0" />
-                    </LinearGradientBrush>
-                  </Path.Stroke>
-                </Path>
-              </Border>
-              <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                  <Trigger.EnterActions>
-                    <BeginStoryboard>
-                      <Storyboard>
-                        <ColorAnimation To="#B2000000" Duration="0:0:0.2" Storyboard.TargetName="path"
-                                        Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </Trigger.EnterActions>
-                  <Trigger.ExitActions>
-                    <BeginStoryboard>
-                      <Storyboard>
-                        <ColorAnimation To="#7F000000" Duration="0:0:0.2" Storyboard.TargetName="path"
-                                        Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" FillBehavior="Stop" />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </Trigger.ExitActions>
-                  <Setter Property="BorderThickness" TargetName="border" Value="1,1,1,1" />
-                  <Setter Property="Background" TargetName="border" Value="#19000000" />
-                </Trigger>
-              </ControlTemplate.Triggers>
-            </ControlTemplate>
-          </Button.Template>
-        </Button>
+                <Button Style="{StaticResource RightArrowButtonStyle}" Margin="0 0 5 0"
+                 x:Name="expandButton" Opacity="0" Click="ExpandClicked" ToolTip="Expand Pile" Focusable="False" RenderTransformOrigin="0.5,0.5">
+                    <Button.RenderTransform>
+                        <RotateTransform Angle="180" />
+                    </Button.RenderTransform>
+                </Button>
 
-        <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" FontWeight="Bold" Margin="5 0 0 0"
+                <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" HorizontalAlignment="Right" />
+
+                <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" 
                    Style="{x:Null}" />
-      </DockPanel>
-    </Grid>
-  </Border>
+
+                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left" 
+                        LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" 
+                        Thumb.DragStarted="DensitySlider_DragStarted" Thumb.DragCompleted="DensitySlider_DragCompleted" />
+
+                <Button Style="{StaticResource RightArrowButtonStyle}" Margin="5 0 0 0" HorizontalAlignment="Right"
+                 x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse Pile" Focusable="False" />
+
+            </DockPanel>
+        </Grid>
+    </Border>
 
 </gui:PileBaseControl>

@@ -69,10 +69,11 @@
                 <TextBlock Text="{Binding MoveTo, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <TextBlock Text="Collapse Group At Start" />
+            <TextBlock Text="Starting View State" />
             <StackPanel Orientation="Horizontal">
-                <metro:ToggleSwitch IsChecked="{Binding Collapsed, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding Collapsed, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
+                <RadioButton Content="Pile" IsChecked="{Binding ViewState, Converter={StaticResource RadioConverter}, ConverterParameter=Pile}"/>
+                <RadioButton Content="Expanded" IsChecked="{Binding ViewState, Converter={StaticResource RadioConverter}, ConverterParameter=Expanded}"/>
+                <RadioButton Content="Collapsed" IsChecked="{Binding ViewState, Converter={StaticResource RadioConverter}, ConverterParameter=Collapsed}"/>
             </StackPanel>
         </ItemsControl>
     </ScrollViewer>
