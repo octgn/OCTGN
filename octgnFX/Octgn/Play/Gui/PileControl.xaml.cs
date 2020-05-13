@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.DataNew.Entities;
@@ -16,61 +19,88 @@ namespace Octgn.Play.Gui
                                                                DecelerationRatio = 0.3,
                                                                FillBehavior = FillBehavior.HoldEnd
                                                            };
+        private FanPanel _fanPanel;
 
         public PileControl()
         {
             InitializeComponent();
             bottomZone.AddHandler(CardControl.CardOverEvent, new CardsEventHandler(OnCardOverBottom));
             bottomZone.AddHandler(CardControl.CardDroppedEvent, new CardsEventHandler(OnCardDroppedBottom));
+            DataContextChanged += PileControl_DataContextChanged;
+        }
+
+        private void PileControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var pile = (e.OldValue as Pile);
+            if (!(pile is null))
+                pile.PropertyChanged -= PileControl_PropertyChanged;
+            pile = (e.NewValue as Pile);
+            if (!(pile is null))
+                pile.PropertyChanged += PileControl_PropertyChanged;
+        }
+
+        private void PileControl_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var pile = (Pile)group;
+            if (pile.ViewState == GroupViewState.Expanded)
+            {
+                expandButton.Visibility = Visibility.Hidden;
+                DensitySlider.Visibility = Visibility.Visible;
+                UpdateDensity();
+            }
+            else // if (pile.ViewState == GroupViewState.Pile)
+            {
+                DensitySlider.Visibility = Visibility.Collapsed;
+                expandButton.Visibility = Visibility.Visible;
+                Collapse();
+            }
         }
 
         protected override void GroupChanged()
         {
             base.GroupChanged();
-            if (!(double.IsNaN(cardsCtrl.Width) || double.IsNaN(cardsCtrl.Height)))
-            {
-                grid.ColumnDefinitions[0].Width = new GridLength(cardsCtrl.Width);
-            }
+
             var pile = (Pile) group;
-            if (!pile.AnimateInsertion) return;
-            pile.AnimateInsertion = false;
-            var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                                      {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
+            if (pile.ViewState == GroupViewState.Expanded)
+            {
+                expandButton.Visibility = Visibility.Hidden;
+                DensitySlider.Visibility = Visibility.Visible;
+            }
+            else // if (pile.ViewState == GroupViewState.Pile)
+            {
+                DensitySlider.Visibility = Visibility.Collapsed;
+                expandButton.Visibility = Visibility.Visible;
+            }
+            _fanPanel?.InvalidateArrange();
         }
 
         private void CollapseClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            IsHitTestVisible = false;
-
             // Fix: capture the pile, it may sometimes be null when Completed executes.
             var capturedPile = (Pile) group;
-            var doubleAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
-                                      {EasingFunction = new ExponentialEase {EasingMode = EasingMode.EaseIn}};
-            doubleAnimation.Completed += delegate
-                                             {
-                                                 capturedPile.AnimateInsertion = true;
-                                                 capturedPile.ViewState = GroupViewState.Collapsed;
-                                             };
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
+
+            if (_fanPanel.HandDensity == 0)
+            {
+                var doubleAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
+                { EasingFunction = new ExponentialEase { EasingMode = EasingMode.EaseIn } };
+                doubleAnimation.Completed += delegate
+                                                 {
+                                                     capturedPile.ViewState = GroupViewState.Collapsed;
+                                                 };
+                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
+            }
+            else // expanded
+            {
+                capturedPile.ViewState = GroupViewState.Pile;
+            }
         }
 
         private void ExpandClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            IsHitTestVisible = false;
 
-            // Fix: capture the pile, it may sometimes be null when Completed executes.
-            var capturedPile = (Pile)group;
-            var doubleAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
-            { EasingFunction = new ExponentialEase { EasingMode = EasingMode.EaseIn } };
-            doubleAnimation.Completed += delegate
-            {
-                capturedPile.AnimateInsertion = true;
-                capturedPile.ViewState = GroupViewState.Expanded;
-            };
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
+            (group as Pile).ViewState = GroupViewState.Expanded;
         }
 
         public override void ExecuteDefaultAction(Card card)
@@ -83,52 +113,59 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-			for(var i = 0;i<e.Cards.Length;i++)
+            for (var i = 0; i < e.Cards.Length; i++)
             {
-                e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, cardsCtrl.ActualHeight);
-                if (cardsCtrl.ActualWidth > cardsCtrl.ActualHeight)
+                e.CardSizes[i] = new Size(e.Cards[i].RealWidth * 100 / e.Cards[i].RealHeight, 100);
+            }
+            if (_fanPanel.HandDensity == 0)
+            {
+                if (bottomZone.Visibility != Visibility.Visible)
                 {
-                    e.CardSizes[i] = new Size(e.Cards[i].RealWidth*cardsCtrl.ActualHeight/e.Cards[i].RealHeight, cardsCtrl.ActualHeight);
+                    bottomZone.Visibility = Visibility.Visible;
+                    Anim.From = 0;
+                    Anim.To = 0.4;
+                    bottomZone.BeginAnimation(OpacityProperty, Anim);
+                    Anim.From = null;
                 }
                 else
                 {
-                    e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, e.Cards[i].RealHeight * cardsCtrl.ActualWidth / e.Cards[i].RealWidth);
+                    Anim.To = 0.4;
+                    bottomZone.BeginAnimation(OpacityProperty, Anim);
                 }
-            }
-
-            if (bottomZone.Visibility != Visibility.Visible)
-            {
-                bottomZone.Visibility = Visibility.Visible;
-                Anim.From = 0;
-                Anim.To = 0.4;
-                bottomZone.BeginAnimation(OpacityProperty, Anim);
-                Anim.From = null;
             }
             else
             {
-                Anim.To = 0.4;
-                bottomZone.BeginAnimation(OpacityProperty, Anim);
+                //e.CardSize = new Size(100 * Program.GameEngine.Definition.DefaultSize.Width / Program.GameEngine.Definition.DefaultSize.Height, 100);
+                _fanPanel.DisplayInsertIndicator(e.ClickedCard, _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel)));
             }
         }
 
         protected override void OnCardOut(object sender, CardsEventArgs e)
         {
             bottomZone.Visibility = Visibility.Collapsed;
+            _fanPanel.HideInsertIndicator();
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
-            //if (group.TryToManipulate())
-            //    foreach (Card c in e.Cards)
-            //        c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
-            if (group.TryToManipulate())
+            if (!@group.TryToManipulate()) return;
+            int idx = _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel));
+            var cards = e.Cards.ToArray();
+
+            Card.MoveCardsTo(@group, cards, (args) =>
             {
-                var cards = e.Cards.ToArray();
-                Card.MoveCardsTo(group, cards, 
-                    Enumerable.Repeat(e.FaceUp ?? false,cards.Length).ToArray()
-                    ,Enumerable.Repeat(0,cards.Length).ToArray(),false);
-            }
+                var c = args.Card;
+                args.Index = idx;
+                bool doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
+                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx, false);
+                // Fix: some cards (notably copies like token) may be deleted when they change group
+                // in those case we should increment idx, otherwise an IndexOutOfRange exception may occur
+                if (c.Group != @group)
+                    doNotIncrement = true;
+                if (!doNotIncrement) idx++;
+
+            }, false);
         }
 
         private void OnCardDroppedBottom(object sender, CardsEventArgs e)
@@ -155,17 +192,49 @@ namespace Octgn.Play.Gui
 
         #endregion
 
-        private void cardsCtrl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        internal override ItemContainerGenerator GetItemContainerGenerator()
         {
-            // Hack: animate the first card into a pile, 
-            // otherwise the CardControl sometimes has issues displaying anything.
-            // for some reason...
-            if (e.OldValue == null)
+            return list.ItemContainerGenerator;
+        }
+
+        private void SaveFanPanel(object sender, RoutedEventArgs e)
+        {
+            _fanPanel = (FanPanel)sender;
+            if ((group as Pile).ViewState == GroupViewState.Expanded)
+                UpdateDensity();
+            else
+                Collapse();
+        }
+
+        private void DensitySlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            SetDensity((sender as Slider).Value);
+        }
+
+        private void SetDensity(double density)
+        {
+            if (density > 0)
             {
-                var anim = new DoubleAnimation(1.1, 1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
-                cardsCtrl.turn.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-                cardsCtrl.turn.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+                var pile = group as Pile;
+                pile.FanDensity = density;
+                DensitySlider.Value = density;
+                _fanPanel.HandDensity = density / 100;
+                _fanPanel.InvalidateMeasure();
+                this.InvalidateArrange();
             }
+        }
+        private void Collapse()
+        {
+            _fanPanel.HandDensity = 0;
+            _fanPanel.InvalidateMeasure();
+            this.InvalidateArrange();
+        }
+        private void UpdateDensity()
+        {
+            DensitySlider.Value = (group as Pile).FanDensity;
+            _fanPanel.HandDensity = DensitySlider.Value / 100;
+            _fanPanel.InvalidateMeasure();
+            this.InvalidateArrange();
         }
     }
 }

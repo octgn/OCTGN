@@ -15,21 +15,9 @@ namespace Octgn.Play.Gui
             InitializeComponent();
         }
 
-        protected override void GroupChanged()
-        {
-            base.GroupChanged();
-            var pile = (Pile) group;
-            if (!pile.AnimateInsertion) return;
-            pile.AnimateInsertion = false;
-            var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                           {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-        }
-
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             e.Handled = true;
-            IsHitTestVisible = false;
 
             // Fix: capture the group, because it's sometimes null inside the Completed event.
             var oldPile = (Pile) group;
@@ -41,7 +29,6 @@ namespace Octgn.Play.Gui
                            {EasingFunction = new ExponentialEase {EasingMode = EasingMode.EaseIn}};
             anim.Completed += delegate
                                   {
-                                      oldPile.AnimateInsertion = true;
                                       oldPile.ViewState = DataNew.Entities.GroupViewState.Pile;
                                   };
 

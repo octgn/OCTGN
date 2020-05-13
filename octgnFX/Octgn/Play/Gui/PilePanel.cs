@@ -48,7 +48,7 @@ namespace Octgn.Play.Gui
                 if (child == null) continue;
                 Size childDesiredSize = child.DesiredSize;
 
-                if (child.Content is Pile pile && pile.ViewState == GroupViewState.Pile)
+                if (child.Content is Pile pile && pile.ViewState != GroupViewState.Expanded)
                 {
                     pileTotalWidth += childDesiredSize.Width;
                 }
@@ -73,7 +73,7 @@ namespace Octgn.Play.Gui
                     Math.Max(0.0, arrangeSize.Width - accumulatedWidth),
                     Math.Max(0.0, arrangeSize.Height)
                     );
-                if (child.Content is Pile pile && pile.ViewState == GroupViewState.Pile)
+                if (child.Content is Pile pile && pile.ViewState != GroupViewState.Expanded)
                 {
                     accumulatedWidth += childDesiredSize.Width;
                     rcChild.Width = childDesiredSize.Width;

@@ -534,10 +534,6 @@
     <Compile Include="Play\Gui\GroupWindow.xaml.cs">
       <DependentUpon>GroupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Play\Gui\PileExpandedControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>PileExpandedControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Play\Gui\HslColor.cs" />
     <Compile Include="Play\Gui\Adorners\InsertAdorner.cs" />
     <Compile Include="Play\Gui\MarkerControl.xaml.cs">
@@ -1015,10 +1011,6 @@
     </Page>
     <Page Include="Play\Gui\GroupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Play\Gui\PileExpandedControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
