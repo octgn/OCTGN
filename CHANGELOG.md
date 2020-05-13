@@ -1,3 +1,14 @@
+#3.4.243.0
++ Fixed a bug when the player summary crashed the play window if it was an empty string
++ Fixed a bug where the player summary didn't display if there wasn't any bindings in the string
++ Removed the hand group as a dedicated pile type. Any pile can now be expanded in-game.  An expanded pile behaves the same as the original hand group did.
++ Added ViewState property to group to define which type of pile it is ("Expanded", "Pile", "Collapsed").
++ Python API can get or set the ViewState.
++ Multiple piles can be expanded at once.
++ Game serializer will convert existing hand groups into the new format (for backwards compatibility)
++ Slight re-organization of the OCTGN Options window.
++ Fix a crash that occoured when the active deck section was not on the current tab in the deck editor - Ben
+
 #3.4.241.0
 
 #3.4.240.0
@@ -3785,6 +3796,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
