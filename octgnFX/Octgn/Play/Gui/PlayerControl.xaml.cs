@@ -37,7 +37,6 @@ namespace Octgn.Play.Gui
         private void GroupPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != "ViewState") return;
-            expandedList.UpdateLayout();
 
             if (collapsedList.Items.Count == 0 && collapsedList.ActualWidth > 0)
             {

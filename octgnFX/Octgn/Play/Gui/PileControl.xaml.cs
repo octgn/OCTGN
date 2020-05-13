@@ -26,6 +26,34 @@ namespace Octgn.Play.Gui
             InitializeComponent();
             bottomZone.AddHandler(CardControl.CardOverEvent, new CardsEventHandler(OnCardOverBottom));
             bottomZone.AddHandler(CardControl.CardDroppedEvent, new CardsEventHandler(OnCardDroppedBottom));
+            DataContextChanged += PileControl_DataContextChanged;
+        }
+
+        private void PileControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var pile = (e.OldValue as Pile);
+            if (!(pile is null))
+                pile.PropertyChanged -= PileControl_PropertyChanged;
+            pile = (e.NewValue as Pile);
+            if (!(pile is null))
+                pile.PropertyChanged += PileControl_PropertyChanged;
+        }
+
+        private void PileControl_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var pile = (Pile)group;
+            if (pile.ViewState == GroupViewState.Expanded)
+            {
+                expandButton.Visibility = Visibility.Hidden;
+                DensitySlider.Visibility = Visibility.Visible;
+                UpdateDensity();
+            }
+            else // if (pile.ViewState == GroupViewState.Pile)
+            {
+                DensitySlider.Visibility = Visibility.Collapsed;
+                expandButton.Visibility = Visibility.Visible;
+                Collapse();
+            }
         }
 
         protected override void GroupChanged()
@@ -43,6 +71,7 @@ namespace Octgn.Play.Gui
                 DensitySlider.Visibility = Visibility.Collapsed;
                 expandButton.Visibility = Visibility.Visible;
             }
+            _fanPanel?.InvalidateArrange();
         }
 
         private void CollapseClicked(object sender, RoutedEventArgs e)
@@ -92,6 +121,10 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
+            for (var i = 0; i < e.Cards.Length; i++)
+            {
+                e.CardSizes[i] = new Size(e.Cards[i].RealWidth * 100 / e.Cards[i].RealHeight, 100);
+            }
             if (_fanPanel.HandDensity == 0)
             {
                 if (bottomZone.Visibility != Visibility.Visible)
@@ -110,10 +143,6 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                for (var i = 0; i < e.Cards.Length; i++)
-                {
-                    e.CardSizes[i] = new Size(e.Cards[i].RealWidth * 100 / e.Cards[i].RealHeight, 100);
-                }
                 //e.CardSize = new Size(100 * Program.GameEngine.Definition.DefaultSize.Width / Program.GameEngine.Definition.DefaultSize.Height, 100);
                 _fanPanel.DisplayInsertIndicator(e.ClickedCard, _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel)));
             }
@@ -179,8 +208,10 @@ namespace Octgn.Play.Gui
         private void SaveFanPanel(object sender, RoutedEventArgs e)
         {
             _fanPanel = (FanPanel)sender;
-            if((DataContext as Pile).ViewState == GroupViewState.Expanded)
+            if ((group as Pile).ViewState == GroupViewState.Expanded)
                 UpdateDensity();
+            else
+                Collapse();
         }
 
         private void DensitySlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
@@ -192,7 +223,7 @@ namespace Octgn.Play.Gui
         {
             if (density > 0)
             {
-                var pile = DataContext as Pile;
+                var pile = group as Pile;
                 pile.FanDensity = density;
                 DensitySlider.Value = density;
                 _fanPanel.HandDensity = density / 100;
@@ -208,7 +239,7 @@ namespace Octgn.Play.Gui
         }
         private void UpdateDensity()
         {
-            DensitySlider.Value = (DataContext as Pile).FanDensity;
+            DensitySlider.Value = (group as Pile).FanDensity;
             _fanPanel.HandDensity = DensitySlider.Value / 100;
             _fanPanel.InvalidateMeasure();
             this.InvalidateArrange();
