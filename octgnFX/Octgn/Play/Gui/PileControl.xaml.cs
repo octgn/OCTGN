@@ -92,10 +92,6 @@ namespace Octgn.Play.Gui
             }
             else // expanded
             {
-                DensitySlider.Visibility = Visibility.Collapsed;
-                expandButton.Visibility = Visibility.Visible;
-                Collapse();
-
                 capturedPile.ViewState = GroupViewState.Pile;
             }
         }
@@ -103,12 +99,8 @@ namespace Octgn.Play.Gui
         private void ExpandClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            var pile = (Pile)group;
-            expandButton.Visibility = Visibility.Hidden;
-            DensitySlider.Visibility = Visibility.Visible;
-            UpdateDensity();
 
-            pile.ViewState = GroupViewState.Expanded;
+            (group as Pile).ViewState = GroupViewState.Expanded;
         }
 
         public override void ExecuteDefaultAction(Card card)
