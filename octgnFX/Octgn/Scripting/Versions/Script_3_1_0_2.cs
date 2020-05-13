@@ -143,13 +143,7 @@ namespace Octgn.Scripting.Versions
                 .Select(c => new KeyValuePair<int, string>(c.Id, c.Name))
                 .ToList();
         }
-
-        public int PlayerHandId(int id)
-        {
-            Hand hand = Player.Find((byte)id).Hand;
-            return hand != null ? hand.Id : 0;
-        }
-
+        
         public List<KeyValuePair<int, string>> PlayerPiles(int id)
         {
             return Player.Find((byte)id)
@@ -291,15 +285,61 @@ namespace Octgn.Scripting.Versions
             var g = Group.Find(id);
             if (!(g is Pile)) return false;
             Pile pile = (Pile)g;
-            return pile.Collapsed;
+            return pile.ViewState == GroupViewState.Collapsed;
         }
         public void GroupSetCollapsed(int id, bool value)
         {
             var g = Group.Find(id);
             if (!(g is Pile)) return;
             Pile pile = (Pile)g;
-            QueueAction(() => pile.Collapsed = value);
+            QueueAction(() => pile.ViewState = (value == true) ? GroupViewState.Collapsed : GroupViewState.Pile);
         }
+
+        public string PileGetViewState(int id)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return null;
+            Pile pile = (Pile)group;
+            GroupViewState state = pile.ViewState;
+            switch (state)
+            {
+                case GroupViewState.Collapsed:
+                    return "collapsed";
+                case GroupViewState.Expanded:
+                    return "expanded";
+                case GroupViewState.Pile:
+                    return "pile";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void PileSetViewState(int id, string state)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return;
+            Pile pile = (Pile)group;
+            QueueAction(
+                () =>
+                {
+                    switch (state.ToLower())
+                    {
+                        case "collapsed":
+                            pile.ViewState = GroupViewState.Collapsed;
+                            break;
+                        case "expanded":
+                            pile.ViewState = GroupViewState.Expanded;
+                            break;
+                        case "pile":
+                            pile.ViewState = GroupViewState.Pile;
+                            break;
+                        default:
+                            Program.GameMess.Warning("Invalid view state type '{0}'", state);
+                            break;
+                    }
+                });
+        }
+
         public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
@@ -657,10 +697,10 @@ namespace Octgn.Scripting.Versions
         public void CardSelect(int id, bool selected)
         {
             Card c = Card.Find(id);
-            // At the moment, only table and hand support multiple selection
+            // At the moment, only table support multiple selection
             QueueAction(() =>
             {
-                if (c.Group is Table || c.Group is Hand)
+                if (c.Group is Table)
                 {
                     if (selected)
                         Selection.Add(c);

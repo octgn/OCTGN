@@ -3,11 +3,11 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls"
                      xmlns:gui="clr-namespace:Octgn.Play.Gui" MinHeight="20" MinWidth="40">
 
-  <gui:GroupControl.LayoutTransform>
+    <gui:PileBaseControl.LayoutTransform>
     <ScaleTransform x:Name="scaleTransform" />
-  </gui:GroupControl.LayoutTransform>
+  </gui:PileBaseControl.LayoutTransform>
 
-  <gui:GroupControl.Triggers>
+    <gui:PileBaseControl.Triggers>
     <EventTrigger RoutedEvent="Mouse.MouseEnter">
       <BeginStoryboard>
         <Storyboard>
@@ -40,7 +40,7 @@
         </Storyboard>
       </BeginStoryboard>
     </EventTrigger>
-  </gui:GroupControl.Triggers>
+  </gui:PileBaseControl.Triggers>
 
   <Border Style="{StaticResource PanelControl}" Padding="2" x:Name="border">
     <DockPanel LastChildFill="True">

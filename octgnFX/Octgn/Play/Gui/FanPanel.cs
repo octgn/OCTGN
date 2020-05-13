@@ -15,9 +15,12 @@ namespace Octgn.Play.Gui
         #region Private vars
 
         private const int SpacingWidth = 8;
-        private const double LayoutAnimationDelay = 0.1;
-        private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int,double>(1);
-        private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
+        private const double LayoutAnimationDuration = .3;
+        private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int, double>
+                                                                                        {  
+                                                                                            { 0, 0 } 
+                                                                                        };
+    private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
 
         private static readonly DoubleAnimation Animation = new DoubleAnimation
                                                                 {
@@ -35,12 +38,10 @@ namespace Octgn.Play.Gui
         private InsertAdorner _insertAdorner;
         private UIElement _mouseOverElement;
         private UIElement _spacedItem1, _spacedItem2;
-        public double handDensity
-        {
-            get { return Octgn.Core.Prefs.HandDensity / 100; }
-        }
 
         #endregion
+
+        public double HandDensity { get; set; } = 0;
 
         #region Dependency properties
 
@@ -65,8 +66,6 @@ namespace Octgn.Play.Gui
             PreviewMouseMove += FanPanelMouseMove;
             MouseEnter += MouseRequiresArrange;
             MouseLeave += MouseRequiresArrange;
-
-            cardLocations.Add(0, 0);
         }
 
         #region Insertion related
@@ -74,8 +73,8 @@ namespace Octgn.Play.Gui
         public int GetIndexFromPoint(Point position)
         {
             if (Children == null || Children.Count == 0) return 0;
-            int idx = cardLocations.First(x => x.Value == cardLocations.Values.OrderBy(y => Math.Abs(y - position.X)).First()).Key;
-            if (idx > Children.Count) idx = Children.Count;
+            int idx = cardLocations.OrderBy(y => Math.Abs(y.Value - position.X)).First().Key;
+            //if (idx > Children.Count) idx = Children.Count;
             return idx;
         }
 
@@ -111,12 +110,16 @@ namespace Octgn.Play.Gui
             CancelSpacing();
 
             // Space neighbors
-            if (idx >= Children.Count) return;
-            _spacedItem2 = Children[idx];
-            SetSpacing(_spacedItem2, SpacingWidth);
-            if (idx <= 0) return;
-            _spacedItem1 = Children[idx - 1];
-            SetSpacing(_spacedItem1, -SpacingWidth);
+            if (idx < Children.Count)
+            {
+                _spacedItem2 = Children[idx];
+                SetSpacing(_spacedItem2, -SpacingWidth);
+            }
+            if (idx > 0)
+            {
+                _spacedItem1 = Children[idx - 1];
+                SetSpacing(_spacedItem1, SpacingWidth);
+            }
         }
 
         public void HideInsertIndicator()
@@ -197,22 +200,28 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var idealSize = new Size(0, 0);
-            fanWidth = 0;
+            var idealSize = new Size();
+
+            if (Children == null)
+                return idealSize;
 
             // Set Height first if constrained
             if (availableSize.Height != double.PositiveInfinity)
             {
                 idealSize.Height = availableSize.Height;
             }
-            foreach (UIElement child in Children)
+
+            fanWidth = 0;
+            for(int i = Children.Count-1; i >= 0; i--)
             {
+                var child = Children[i];
+
                 child.Measure(availableSize);
                 if (fanWidth + child.DesiredSize.Width > idealSize.Width)
                 {
                     idealSize.Width = fanWidth + child.DesiredSize.Width;
                 }
-                fanWidth += (child.DesiredSize.Width * handDensity);
+                fanWidth += (child.DesiredSize.Width * HandDensity);
             }
             return idealSize;
         }
@@ -220,44 +229,37 @@ namespace Octgn.Play.Gui
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (Children == null || Children.Count == 0)
-                return finalSize;
+                return new Size();
 
-            double totalChildWidth = 0;
-
-            foreach (UIElement child in Children)
-            {
-                child.Measure(finalSize);
-                child.Arrange(new Rect(0, 0, child.DesiredSize.Width, child.DesiredSize.Height));
-                totalChildWidth += child.DesiredSize.Width;
-            }
-
-            if (Math.Abs(Children[0].DesiredSize.Height - 0) < double.Epsilon) return finalSize; //TODO remove reliance on first card, not sure what this catches
+            cardLocations = new System.Collections.Generic.Dictionary<int, double>();
 
             // starts from min. fanning from settings, fill out extra space if available
             this.InvalidateMeasure(); // fixes issues with changing the hand density mid-game, seems to casue some odd visual effects though
-            this.Measure(finalSize); // Have to re-measure after ^
+            this.Measure(finalSize);  // Have to re-measure after ^
             double scaleHand = 1;
-            if (finalSize.Width > this.DesiredSize.Width && handDensity != 1) // don't need to do anything if no extra space or not fanning
+            if (finalSize.Width > this.DesiredSize.Width && HandDensity != 1) // don't need to do anything if no extra space or not fanning
             {
-                double handPadding = this.DesiredSize.Width - fanWidth; // the space reserved after the fanning of the cards to prevent clipping
-                double paddingCard = handPadding / (1 - handDensity); // the full width of the card that the right side is padded for
+                double handPadding = this.DesiredSize.Width - fanWidth;      // the space reserved after the fanning of the cards to prevent clipping
+                double paddingCard = handPadding / (1 - HandDensity);        // the full width of the card that the right side is padded for
                 double adjustedFan = fanWidth - (paddingCard - handPadding); // the width of the fan minus the portion aloted for above card
-                scaleHand = (finalSize.Width - paddingCard) / adjustedFan; // how much to scale the hand density to fill the space
+                scaleHand = (finalSize.Width - paddingCard) / adjustedFan;   // how much to scale the hand density to fill the space
             }
-            double percentToShow = Math.Min(scaleHand * (handDensity), 1d); // show a maximum of 100% of cards
+            double percentToShow = Math.Min(scaleHand * (HandDensity), 1d); // show a maximum of 100% of cards
 
-            cardLocations = new System.Collections.Generic.Dictionary<int, double>(); // for indexing the positions of the cards
             double xposition = 0;
             double animationDelay = 0;
             UIElement newMouseOverElement = null;
 
-            foreach (UIElement child in Children)
+            for (int i = Children.Count-1; i >= 0; i--)
             {
+                var child = Children[i];
+
+                Canvas.SetZIndex(child, -i);
                 var group = (TransformGroup) child.RenderTransform;
                 var scale = (ScaleTransform) group.Children[0];
                 var translate = (TranslateTransform) group.Children[1];
-                //scale.ScaleX = scale.ScaleY = 1;
-                if (child.IsMouseOver)
+
+                if (child.IsMouseOver && HandDensity > 0)
                 {
                     newMouseOverElement = child;
                     if (child != _mouseOverElement)
@@ -302,19 +304,18 @@ namespace Octgn.Play.Gui
                     translate2.BeginAnimation(TranslateTransform.XProperty, Animation, HandoffBehavior.Compose);
                     Animation.From = null;
                     Animation.BeginTime = TimeSpan.Zero;
-                    animationDelay += LayoutAnimationDelay;
+                    animationDelay += LayoutAnimationDuration / Children.Count;
                 }
                 SetXPosition(child, xposition);
 
-                int idx = Children.IndexOf(child);
-                cardLocations.Add(idx, xposition);
-                if (cardLocations.Count == Children.Count)
-                    cardLocations.Add(idx + 1, xposition + child.DesiredSize.Width); // add index for dragging to end of hand
-                xposition += (child.DesiredSize.Width * percentToShow); // I have no idea where the padding between cards is comming from
-                
+                if (HandDensity > 0)
+                {
+                    cardLocations.Add(i + 1, xposition);
+                    xposition += (child.DesiredSize.Width * percentToShow);
+                }
             }
-            if (cardLocations.Count == 0)
-                cardLocations.Add(0, 0); // to place adorner in empty hand
+            cardLocations.Add(0, ActualWidth );
+
             _mouseOverElement = newMouseOverElement;
             return finalSize;
         }

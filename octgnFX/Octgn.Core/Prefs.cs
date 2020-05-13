@@ -516,6 +516,11 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("EnableAdvancedOptions", false); }
             set { Config.Instance.WriteValue("EnableAdvancedOptions", value); }
         }
+        public static bool EnableLanGames
+        {
+            get { return Config.Instance.ReadValue("EnableLanGamesWhileOnline", false); }
+            set { Config.Instance.WriteValue("EnableLanGamesWhileOnline", value); }
+        }
 
         public static bool UseGameFonts
         {

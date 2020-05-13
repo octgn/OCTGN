@@ -146,11 +146,9 @@ namespace Octgn.Play
         #region Public fields and properties
 
         internal readonly ulong PublicKey; // Public cryptographic key
-        internal readonly double minHandSize;
         private readonly Counter[] _counters; // Counters this lPlayer owns
 
         private readonly Group[] _groups; // Groups this lPlayer owns
-        private readonly Hand _hand; // Hand of this lPlayer (may be null)
         private Brush _solidBrush;
         private Brush _transparentBrush;
         private bool _invertedTable;
@@ -219,22 +217,6 @@ namespace Octgn.Play
             get { return _groups.Where(g => g != null); }
         }
 
-        public IEnumerable<Group> BottomGroups
-        {
-            get
-            {
-                return Groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase) == false);
-            }
-        }
-
-        public IEnumerable<Group> TableGroups
-        {
-            get
-            {
-                return _groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase));
-            }
-        }
-
         public bool CanKick { get; private set; }
 
         public bool IsHostOrLocal
@@ -266,12 +248,7 @@ namespace Octgn.Play
         }
 
         public Dictionary<string, string> GlobalVariables { get; private set; }
-
-        public Hand Hand
-        {
-            get { return _hand; }
-        }
-
+        
         public byte Id // Identifier
         {
             get { return _id; }
@@ -501,20 +478,15 @@ namespace Octgn.Play
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varD in g.Player.GlobalVariables)
                 GlobalVariables.Add(varD.Value.Name, varD.Value.Value);
-            // Create a hand, if any
-            if (g.Player.Hand != null)
-                _hand = new Hand(this, g.Player.Hand);
             // Create groups
             _groups = new Group[0];
             if (g.Player.Groups != null)
             {
                 var tempGroups = g.Player.Groups.ToArray();
-                _groups = new Group[tempGroups.Length + 1];
-                _groups[0] = _hand;
-                for (int i = 1; i < IndexedGroups.Length; i++)
-                    _groups[i] = new Pile(this, tempGroups[i - 1]);
+                _groups = new Group[tempGroups.Length];
+                for (int i = 0; i < IndexedGroups.Length; i++)
+                    _groups[i] = new Pile(this, tempGroups[i]);
             }
-            minHandSize = 250;
             if (Spectator == false)
             {
                 // Raise the event
@@ -565,15 +537,13 @@ namespace Octgn.Play
             if (globalDef.Groups != null)
             {
                 var tempGroups = globalDef.Groups.ToArray();
-                _groups = new Group[tempGroups.Length + 1];
-                _groups[0] = _hand;
-                for (int i = 1; i < IndexedGroups.Length; i++)
-                    _groups[i] = new Pile(this, tempGroups[i - 1]);
+                _groups = new Group[tempGroups.Length];
+                for (int i = 0; i < IndexedGroups.Length; i++)
+                    _groups[i] = new Pile(this, tempGroups[i]);
             }
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
-            minHandSize = 0;
             CanKick = false;
         }
 

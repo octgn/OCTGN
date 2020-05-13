@@ -89,12 +89,12 @@ namespace Octgn.Controls
             {
                 PasswordGame.IsEnabled = true;
             }
-            StackPanelIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
+            StackPanelIsLocalGame.Visibility = Prefs.EnableLanGames ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ProgramOnOptionsChanged()
         {
-            StackPanelIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
+            StackPanelIsLocalGame.Visibility = Prefs.EnableLanGames ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)

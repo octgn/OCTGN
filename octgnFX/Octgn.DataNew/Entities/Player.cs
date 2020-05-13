@@ -13,7 +13,6 @@
         public IEnumerable<Counter> Counters { get; set; }
         public IEnumerable<Group> Groups { get; set; }
         public string IndicatorsFormat { get; set; }
-        public Group Hand { get; set; }
         public Dictionary<string, GlobalVariable> GlobalVariables { get; set; } 
     }
 

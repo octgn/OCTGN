@@ -855,11 +855,14 @@ public partial class group {
     
     private boolean collapsedField;
     
+    private groupViewState viewStateField;
+    
     public group() {
         this.visibilityField = groupVisibility.none;
         this.orderedField = boolean.True;
         this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
+        this.viewStateField = groupViewState.pile;
     }
     
     /// <remarks/>
@@ -958,6 +961,18 @@ public partial class group {
             this.collapsedField = value;
         }
     }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(groupViewState.pile)]
+    public groupViewState viewState {
+        get {
+            return this.viewStateField;
+        }
+        set {
+            this.viewStateField = value;
+        }
+    }
 }
 
 /// <remarks/>
@@ -981,6 +996,22 @@ public enum groupVisibility {
 
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum groupViewState {
+    
+    /// <remarks/>
+    collapsed,
+    
+    /// <remarks/>
+    expanded,
+    
+    /// <remarks/>
+    pile,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
