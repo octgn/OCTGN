@@ -208,7 +208,7 @@ namespace Octgn.DataNew
                                    };
 
                 var curCounter = 1;
-                var curGroup = 2;
+                var curGroup = 1;
                 if (g.shared.counter != null)
                 {
                     foreach (var i in g.shared.counter)
