@@ -1040,9 +1040,15 @@
                 throw GameValidator.GenerateEmptyAttributeException("Game", "iconurl", game.name);
             }
 
+            //TODO: Some way of automatically retrieving the most current python API version so we don't have to manually change this every time
+            var newestPythonVersion = "3.1.0.2";
             if (game.scriptVersion == "0.0.0.0")
             {
                 throw GameValidator.GenerateEmptyAttributeException("Game", "scriptVersion", game.name);
+            }
+            else if (game.scriptVersion != newestPythonVersion)
+            {
+                GenerateWarningMessage("This game is using an outdated Python Script Version ({0}).\nConsider upgrading to the newest API version {1}", game.scriptVersion, newestPythonVersion);
             }
         }
 

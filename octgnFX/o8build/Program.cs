@@ -33,6 +33,7 @@ namespace o8build
         {
             Console.OutputEncoding = Encoding.UTF8;
             Config.Instance = new Config();
+            LogManager.Flush(2000);
             Console.Clear();
             try
             {
@@ -134,7 +135,7 @@ namespace o8build
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
 
-            GameValidator.ValidateGameAttributes(game);
+        //    GameValidator.ValidateGameAttributes(game);
 
             var builder = new NuGet.PackageBuilder()
                               {
