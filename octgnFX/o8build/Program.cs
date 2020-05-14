@@ -32,6 +32,8 @@ namespace o8build
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
+            Config.Instance = new Config();
+            Console.Clear();
             try
             {
                 HandleArguments(args);
