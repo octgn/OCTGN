@@ -1,3 +1,5 @@
+#3.4.244.0
+
 #3.4.243.0
 + Fixed a bug when the player summary crashed the play window if it was an empty string
 + Fixed a bug where the player summary didn't display if there wasn't any bindings in the string
@@ -3796,6 +3798,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
