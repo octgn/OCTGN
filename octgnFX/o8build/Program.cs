@@ -17,6 +17,7 @@ namespace o8build
     using Octgn.Library.Exceptions;
 
     using log4net;
+    using System.Text;
 
     class Program
     {
@@ -30,6 +31,10 @@ namespace o8build
         static bool Converto8sFiles { get; set; }
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+            Config.Instance = new Config();
+            LogManager.Flush(2000);
+            Console.Clear();
             try
             {
                 HandleArguments(args);
@@ -130,7 +135,7 @@ namespace o8build
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
 
-            GameValidator.ValidateGameAttributes(game);
+        //    GameValidator.ValidateGameAttributes(game);
 
             var builder = new NuGet.PackageBuilder()
                               {
