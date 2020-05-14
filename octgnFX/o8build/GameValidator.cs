@@ -312,23 +312,98 @@
                 }
             }
 
-            //Test shortcuts
             if (game.table != null)
             {
+                //Test shortcuts
                 this.TestShortcut(game.table.shortcut);
                 this.TestGroupsShortcuts(game.table.Items);
             }
+
+            List<string> groups = new List<string>();    //setup for deck section target testing.
             if (game.player != null)
             {
-                foreach (var h in game.player.Items.OfType<hand>())
+                foreach (var group in game.player.Items.OfType<group>())
                 {
-                    this.TestShortcut(h.shortcut);
-                    this.TestGroupsShortcuts(h.Items);
+                    if (group is hand)
+                    {
+                        GenerateWarningMessage("The <player> element contains a <hand> child, which is no longer supported.\nExisting Hand groups should use the <pile viewState=\"expanded\"> structure instead.");
+                    }
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(group.icon))
+                    {
+                        throw GenerateEmptyAttributeException("Group", "icon", group.name);
+                    }
+
+                    path = Path.Combine(Directory.FullName, group.icon);
+
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException(path, "Group", group.name, "icon", group.icon);
+                    }
+
+                    groups.Add(group.name);
+
+                    //Test shortcuts
+                    this.TestShortcut(group.shortcut);
+                    this.TestGroupsShortcuts(group.Items);
                 }
-                foreach (var g in game.player.Items.OfType<group>())
+
+                foreach (var counter in game.player.Items.OfType<counter>())
                 {
-                    this.TestShortcut(g.shortcut);
-                    this.TestGroupsShortcuts(g.Items);
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(counter.icon))
+                    {
+                        throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
+                    }
+
+                    path = Path.Combine(Directory.FullName, counter.icon);
+
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException(path, "Counter", counter.name, "icon", counter.icon);
+                    }
+                }
+            }
+
+            List<string> sharedGroups = new List<string>();    //setup for shared deck section target testing.
+            if (game.shared != null)
+            {
+                if (game.shared.counter != null)
+                {
+                    foreach (var counter in game.shared.counter)
+                    {
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(counter.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
+                        }
+
+                        path = Path.Combine(Directory.FullName, counter.icon);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
+                        }
+                    }
+                }
+                if (game.shared.group != null)
+                {
+                    foreach (var group in game.shared.group)
+                    {
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(group.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Global Group", "icon", group.name);
+                        }
+
+                        path = Path.Combine(Directory.FullName, group.icon);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException(path, "Global Group", group.name, "icon", group.icon);
+                        }
+                        sharedGroups.Add(group.name);
+                    }
                 }
             }
 
@@ -425,45 +500,6 @@
             {
                 throw GenerateFileDoesNotExistException(path, "Table", "Default", "Background", game.table.background);
             }
-            //setup for deck section target testing.
-            List<string> groups = new List<string>();
-
-            if (game.player != null)
-            {
-                foreach (var counter in game.player.Items.OfType<counter>())
-                {
-                    // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(counter.icon))
-                    {
-                        throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
-                    }
-
-                    path = Path.Combine(Directory.FullName, counter.icon);
-
-                    if (!File.Exists(path))
-                    {
-                        throw GenerateFileDoesNotExistException(path, "Counter", counter.name, "icon", counter.icon);
-                    }
-                }
-
-                foreach (var group in game.player.Items.OfType<group>())
-                {
-                    // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(group.icon))
-                    {
-                        throw GenerateEmptyAttributeException("Group", "icon", group.name);
-                    }
-
-                    path = Path.Combine(Directory.FullName, group.icon);
-
-                    if (!File.Exists(path))
-                    {
-                        throw GenerateFileDoesNotExistException(path, "Group", group.name, "icon", group.icon);
-                    }
-
-                    groups.Add(group.name);
-                }
-            }
 
             //test deck sections for correct targets
             if (game.deck != null)
@@ -478,48 +514,19 @@
                     }
                 }
             }
-
-
-            if (game.shared != null)
+            //test shared deck sections for correct targets
+            if (game.sharedDeck != null)
             {
-                if (game.shared.counter != null)
+                foreach (var sharedDeckSection in game.sharedDeck)
                 {
-                    foreach (var counter in game.shared.counter)
+                    string groupTarget = sharedDeckSection.group;
+                    if (!sharedGroups.Contains(groupTarget))
                     {
-                        // Check for valid attributes
-                        if (String.IsNullOrWhiteSpace(counter.icon))
-                        {
-                            throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
-                        }
-
-                        path = Path.Combine(Directory.FullName, counter.icon);
-
-                        if (!File.Exists(path))
-                        {
-                            throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
-                        }
-                    }
-                }
-                if (game.shared.group != null)
-                {
-                    foreach (var group in game.shared.group)
-                    {
-                        // Check for valid attributes
-                        if (String.IsNullOrWhiteSpace(group.icon))
-                        {
-                            throw GenerateEmptyAttributeException("Global Group", "icon", group.name);
-                        }
-
-                        path = Path.Combine(Directory.FullName, group.icon);
-
-                        if (!File.Exists(path))
-                        {
-                            throw GenerateFileDoesNotExistException(path, "Global Group", group.name, "icon", group.icon);
-                        }
+                        throw new UserMessageException("Shared Deck section group is invalid for section named: {0}",
+                            sharedDeckSection.name);
                     }
                 }
             }
-
         }
         
         private void TestGroupsShortcuts(IEnumerable<baseAction> items)
@@ -761,7 +768,7 @@
 
             if (doc.GetElementsByTagName("markers").Count > 0)
             {
-                throw new UserMessageException("The set '{0}' from '{1}' contains markers, which are no longer supported. Markers must now be listed in the game definition.xml", setName, fileName);
+                GenerateWarningMessage("The set '{0}' from '{1}'\ncontains markers, which are no longer supported.\nMarkers should now be listed in the game definition.xml\nsee wiki.octgn.net for more info.", setName, fileName);
             }
             
             foreach (XmlNode cardNode in doc.GetElementsByTagName("card"))
@@ -1064,6 +1071,23 @@
             {
                 throw new UserMessageException(string.Format(message, args), e);
             }
+        }
+
+        private static void GenerateWarningMessage(string message, params object[] args)
+        {
+            var oc = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
+            Console.WriteLine("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
+            Console.WriteLine(message, args);
+            Console.WriteLine("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
+            Console.WriteLine();
+            Console.ForegroundColor = oc;
+        }
+
+
+        public static void UserWarning(string message, params object[] args)
+        {
         }
 
         /// <summary>
