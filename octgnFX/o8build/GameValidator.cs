@@ -1091,11 +1091,6 @@
             Console.ForegroundColor = oc;
         }
 
-
-        public static void UserWarning(string message, params object[] args)
-        {
-        }
-
         /// <summary>
         /// This method throws an UserMessageException with the provided information to notify the user
         /// what file/path is misconfigured.
