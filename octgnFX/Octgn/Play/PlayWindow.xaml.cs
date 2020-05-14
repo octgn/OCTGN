@@ -204,11 +204,6 @@ namespace Octgn.Play
                                                             Program.GameSettings.MuteSpectators);
                             }
                         };
-                    // Select proper player tab
-                    Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            playerTabs.SelectedIndex = 0;
-                        }));
                 }
                 else
                 {
