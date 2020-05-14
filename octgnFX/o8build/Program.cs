@@ -17,6 +17,7 @@ namespace o8build
     using Octgn.Library.Exceptions;
 
     using log4net;
+    using System.Text;
 
     class Program
     {
@@ -30,6 +31,7 @@ namespace o8build
         static bool Converto8sFiles { get; set; }
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             try
             {
                 HandleArguments(args);
