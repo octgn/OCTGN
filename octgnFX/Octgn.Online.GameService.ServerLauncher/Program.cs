@@ -174,6 +174,9 @@ namespace Octgn.Online.GameService.ServerLauncher
             var process = new Process();
             process.StartInfo.Arguments = string.Join(" ", args);
             process.StartInfo.FileName = path;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             process.Start();
 
