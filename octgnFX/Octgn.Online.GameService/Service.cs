@@ -3,7 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Reflection;
-using log4net;
 using Octgn.Utils;
 using Octgn.Communication;
 using Octgn.Site.Api;
@@ -13,7 +12,7 @@ namespace Octgn.Online.GameService
 {
     public class Service : OctgnServiceBase
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILogger Log;
 
         public static GameServiceClient Client { get; set; }
 
@@ -22,29 +21,32 @@ namespace Octgn.Online.GameService
         private static Service _service;
 
         static void Main(string[] args) {
-            try {
-                LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
-                Signal.OnException += Signal_OnException;
+            Environment.ExitCode = -69;
 
-                ApiClient.DefaultUrl = new Uri(AppConfig.Instance.ApiUrl);
+            LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
+            Log = LoggerFactory.Create(nameof(Service));
 
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-                AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
-                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            //This will catch any exceptions that happen after this line
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+            Signal.OnException += Signal_OnException;
 
-                HostedGames.Init();
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-                var handshaker = new DefaultHandshaker();
-                var connectionCreator = new TcpConnectionCreator(handshaker);
+            ApiClient.DefaultUrl = new Uri(AppConfig.Instance.ApiUrl);
 
-                Client = new GameServiceClient(connectionCreator);
+            HostedGames.Init();
 
-                using (_service = new Service()) {
-                    _service.Run(args);
-                }
-            } catch (Exception e) {
-                Log.Fatal("Fatal Main Error", e);
+            var handshaker = new DefaultHandshaker();
+            var connectionCreator = new TcpConnectionCreator(handshaker);
+
+            Client = new GameServiceClient(connectionCreator);
+            Client.ReconnectRetryCount = int.MaxValue; //retry forever basically
+
+            using (_service = new Service()) {
+                _service.Run(args);
             }
+
             ConsoleUtils.TryWaitForKey();
         }
 
@@ -89,7 +91,10 @@ namespace Octgn.Online.GameService
         }
 
         private static void Signal_OnException(object sender, ExceptionEventArgs args) {
-            Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
+            Environment.ExitCode = 20;
+
+            Log.Error($"Signal_OnException: {args.Message}", args.Exception);
+
             try {
                 _service.Stop();
             } catch (Exception ex) {
@@ -98,8 +103,11 @@ namespace Octgn.Online.GameService
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
+            Environment.ExitCode = 21;
+
             var ex = (Exception)e.ExceptionObject;
-            Log.Fatal("Unhandled Exception", ex);
+
+            Log.Error("Unhandled Exception", ex);
         }
     }
 }
