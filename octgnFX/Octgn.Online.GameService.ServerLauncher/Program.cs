@@ -20,34 +20,43 @@ namespace Octgn.Online.GameService.ServerLauncher
         private static bool _isDebug;
 
         static async Task Main(string[] args) {
+            Environment.ExitCode = -69;
+
             using (_cancellationTokenSource = new CancellationTokenSource()) {
-                try {
-                    LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
-                    Log = LoggerFactory.Create(nameof(Program));
+                LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
+                Log = LoggerFactory.Create(nameof(Program));
 
-                    AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-                    AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
-                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                    Signal.OnException += Signal_OnException;
+                //This will catch any exceptions that happen after this line
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+                Signal.OnException += Signal_OnException;
 
-                    Console.CancelKeyPress += (_, __) => {
-                        _cancellationTokenSource.Cancel();
-                    };
+                AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-                    _isDebug = OctgnProgram.IsDebug;
+                Console.CancelKeyPress += (_, __) => {
+                    _cancellationTokenSource.Cancel();
+                };
 
-                    Log.Info("Running...");
+                _isDebug = OctgnProgram.IsDebug;
 
-                    var proggy = new Program();
+                Log.Info("Running...");
 
-                    await proggy.Run(_cancellationTokenSource.Token);
-                } catch (Exception ex) {
-                    Log.Error($"FATAL ERROR: {ex}");
-                }
+                var proggy = new Program();
+
+                await proggy.Run(_cancellationTokenSource.Token);
+            }
+
+            // I use this to make sure if the app exits in any way that I don't expect, it at least returns a non 0 exit code.
+            // If we get to this point, and nothing else in the application has changed our ExitCode, then there were no errors.
+            // Set the exit code to 0 so the application exits normally.
+            if (Environment.ExitCode == -69) {
+                Environment.ExitCode = 0;
             }
         }
 
         private static void Signal_OnException(object sender, ExceptionEventArgs args) {
+            Environment.ExitCode = 20;
+
             Log.Error($"Signal_OnException: {args.Message}", args.Exception);
 
             Task.Run(() => {
@@ -56,6 +65,8 @@ namespace Octgn.Online.GameService.ServerLauncher
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
+            Environment.ExitCode = 21;
+
             var ex = (Exception)e.ExceptionObject;
 
             Log.Error("Unhandled Exception", ex);
