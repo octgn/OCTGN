@@ -1532,16 +1532,19 @@ namespace Octgn.DataNew
                 if (gameDefinedProperty.Type is PropertyType.RichText)
                 {
                     var span = new RichSpan();
-                    DeserializeRichCardProperty(span, propertyElement);
-                    var propertyDefValue = new RichTextPropertyValue
+                    if (propertyElement.IsEmpty && propertyElement.Attribute("value") != null)
                     {
-                        Value = span
-                    };
+                        propertyElement.SetValue(propertyElement.Attribute("value").Value);
+                    }
+                    DeserializeRichCardProperty(span, propertyElement);
+                    RichTextPropertyValue propertyDefValue = null;
+                    if (span.Items.Count > 0)
+                        propertyDefValue = new RichTextPropertyValue { Value = span };
                     propertySet.Properties.Add(gameDefinedProperty, propertyDefValue);
                 }
                 else
                 {
-                    propertySet.Properties.Add(gameDefinedProperty, propertyElement.Attribute("value").Value);
+                    propertySet.Properties.Add(gameDefinedProperty, propertyElement.IsEmpty ? propertyElement.Attribute("value")?.Value : propertyElement.Value);
                 }
 
             }

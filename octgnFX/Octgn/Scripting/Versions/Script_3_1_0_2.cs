@@ -525,7 +525,7 @@ namespace Octgn.Scripting.Versions
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
-            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
+            var value = c.GetProperty(property, null, StringComparison.InvariantCultureIgnoreCase, c.Alternate());
             if (value is RichTextPropertyValue richText) return richText.ToString();
             return value;
         }

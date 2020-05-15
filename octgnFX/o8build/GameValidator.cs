@@ -719,49 +719,16 @@
 
         public void CheckSetXML(string fileName)
         {
-            string definitionPath = Path.Combine(this.Directory.FullName, "definition.xml");
-            var gameProperties = new List<Tuple<string, string>>();
-            List<string> symbols = new List<string>();
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
             XmlDocument doc = new XmlDocument();
-            doc.Load(definitionPath);
-            XmlNode gameDef = doc.GetElementsByTagName("game").Item(0);
-            string gameId = gameDef.Attributes["id"].Value?.ToLower();
-            XmlNode cardDef = doc.GetElementsByTagName("card").Item(0);
-            foreach (XmlNode propNode in cardDef.ChildNodes)
-            {
-                if (propNode.Name == "property")
-                {
-                    if (propNode.Attributes["name"] != null)
-                    {
-                        gameProperties.Add(new Tuple<string, string>(propNode.Attributes["name"].Value, propNode.Attributes["type"].Value));
-                    }
-                }
-            }
-            cardDef = null;
-            XmlNode symbolDef = doc.GetElementsByTagName("symbols").Item(0);
-            if (symbolDef != null)
-            {
-                foreach (XmlNode symbolNode in symbolDef.ChildNodes)
-                {
-                    if (symbolNode.Name == "symbol")
-                    {
-                        if (symbolNode.Attributes["id"] != null)
-                        {
-                            symbols.Add(symbolNode.Attributes["id"].Value);
-                        }
-                    }
-                }
-            }
-            symbolDef = null;
-            doc.RemoveAll();
-            List<string> cardSizes = GetCardSizes(); 
-            doc = null;
-            doc = new XmlDocument();
             doc.Load(fileName);
             
             var setGameId = doc.GetElementsByTagName("set").Item(0).Attributes["gameId"].Value?.ToLower();
             var setName = doc.GetElementsByTagName("set").Item(0).Attributes["name"].Value;
-            if (!gameId.Equals(setGameId))
+            if (!game.id.Equals(setGameId))
             {
                 throw new UserMessageException("the gameId value '{0}' does not match the game's GUID in set file '{1}'", setGameId, fileName);
             }
@@ -779,7 +746,7 @@
                 if (cardNode.Attributes["size"] != null)
                 {
                     string size = cardNode.Attributes["size"].Value;
-                    if (!cardSizes.Contains(size))
+                    if (!game.card.size.Any(x => x.name == size))
                     {
                         throw new UserMessageException("Unknown size '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, size, fileName);
                     }
@@ -798,7 +765,7 @@
                         if (propNode.Attributes["size"] != null)
                         {
                             string size = propNode.Attributes["size"].Value;
-                            if (!cardSizes.Contains(size))
+                            if (!game.card.size.Any(x => x.name == size))
                             {
                                 throw new UserMessageException("Unknown size '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, size, fileName);
                             }
@@ -819,28 +786,23 @@
                             }
                             altProps.Add(altPropName);
 
-                            var gameProp = gameProperties.FirstOrDefault(x => x.Item1 == altPropName);
+                            var gameProp = game.card.property.FirstOrDefault(x => x.name == altPropName);
                             if (gameProp == null)
                             {
-                                throw new UserMessageException("Property '{2}' defined on card '{0}' alternate '{1}' is not defined in definition.xml in set file '{2}'", cardName, altName, altPropName, fileName);
+                                throw new UserMessageException("Property '{2}' defined on card '{0}' alternate '{1}' is not defined in definition.xml in set file '{3}'", cardName, altName, altPropName, fileName);
                             }
-                            if (gameProp.Item2 == "RichText")
+                            var valueString = altPropNode.Attributes["value"];
+                            var textString = altPropNode.ChildNodes;
+                            if (textString.Count > 0 && valueString != null)
                             {
-                                if (altPropNode.Attributes["value"] != null)
-                                {
-                                    throw new UserMessageException("Property '{0}' defined on card '{1}' alternate '{2}' is defined as RichText and cannot have a value attribute in set file '{3}'", altPropName, cardName, altName, fileName);
-                                }
-                                var altError = CheckPropertyChildren(altPropNode, symbols);
+                                throw new UserMessageException("Property '{0}' defined on card '{1}' alternate '{2}' cannot contain both a value attribute and inner text in set file '{3}'", altPropName, cardName, altName, fileName);
+                            }
+                            if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
+                            {
+                                var altError = CheckPropertyChildren(altPropNode, game.symbols);
                                 if (altError != null)
                                 {
-                                    throw new UserMessageException("{0} found in card '{1}' alternate `{2}' property '{3}' in set file '{4}'", altError, cardName, altName, altPropNode.Attributes["name"].Value, fileName);
-                                }
-                            }
-                            else
-                            {
-                                if (altPropNode.Attributes["value"] == null)
-                                {
-                                    throw new UserMessageException("Property '{0}' found in card '{1}' alternate '{2}' is missing the 'value' attribute in set file '{3}'", altPropName, cardName, altName, fileName);
+                                    throw new UserMessageException("{0} found in card '{1}' alternate `{2}' richText property '{3}' in set file '{4}'", altError, cardName, altName, altPropName, fileName);
                                 }
                             }
                         }
@@ -854,28 +816,23 @@
                         }
                         cardProps.Add(propName);
 
-                        var gameProp = gameProperties.FirstOrDefault(x => x.Item1 == propName);
+                        var gameProp = game.card.property.FirstOrDefault(x => x.name == propName);
                         if (gameProp == null)
                         {
                             throw new UserMessageException("Property '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, propName, fileName);
                         }
-                        if (gameProp.Item2 == "RichText")
+                        var valueString = propNode.Attributes["value"];
+                        var textString = propNode.ChildNodes;
+                        if (textString.Count > 0 && valueString != null)
                         {
-                            if (propNode.Attributes["value"] != null)
-                            {
-                                throw new UserMessageException("Property '{0}' defined on card '{1}' is defined as RichText and cannot have a value attribute in set file '{2}'", propName, cardName, fileName);
-                            }
-                            var error = CheckPropertyChildren(propNode, symbols);
+                            throw new UserMessageException("Property '{0}' defined on card '{1}' cannot contain both a value attribute and inner text in set file '{2}'", propName, cardName, fileName);
+                        }
+                        if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
+                        {
+                            var error = CheckPropertyChildren(propNode, game.symbols);
                             if (error != null)
                             {
-                                throw new UserMessageException("{0} found in card '{1}' property '{2}' in set file '{3}'", error, cardName, propNode.Attributes["name"].Value, fileName);
-                            }
-                        }
-                        else
-                        {
-                            if (propNode.Attributes["value"] == null)
-                            {
-                                throw new UserMessageException("Property '{0}' found in card '{1}' is missing the 'value' attribute in set file '{2}'", propName, cardName, fileName);
+                                throw new UserMessageException("{0} found in card '{1}' property '{2}' in set file '{3}'", error, cardName, propName, fileName);
                             }
                         }
                     }
@@ -885,7 +842,7 @@
             doc = null;
         }
 
-        public string CheckPropertyChildren(XmlNode propValueNode, List<string> symbols)
+        public string CheckPropertyChildren(XmlNode propValueNode, gameSymbol[] symbols)
         {
             if (propValueNode.HasChildNodes)
             {
@@ -894,7 +851,7 @@
                     if (childNode.NodeType == XmlNodeType.Text) continue;
                     if (childNode.Name.ToUpper() == "S" || childNode.Name.ToUpper() == "SYMBOL")
                     {
-                        if (!symbols.Contains(childNode.Attributes["value"].Value))
+                        if (!symbols.Any(x => x.id == childNode.Attributes["value"].Value))
                         {
                             return "Undefined Symbol '" + childNode.Attributes["value"].Value + "'";
                         }
@@ -917,29 +874,6 @@
                 }
             }
             return null;
-        }
-        
-        public List<string> GetCardSizes()
-        {
-            List<string> ret = new List<string>();
-
-            XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
-            var game = (game)serializer.Deserialize(fs);
-            fs.Close();
-
-            if (game.card.size != null)
-            {
-                foreach (cardsizeDef sizeDef in game.card.size)
-                {
-                    if (!ret.Contains(sizeDef.name))
-                    {
-                        ret.Add(sizeDef.name);
-                    }
-                }
-            }
-
-            return (ret);
         }
 
 
