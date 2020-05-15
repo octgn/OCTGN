@@ -525,9 +525,19 @@ namespace Octgn.Scripting.Versions
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
-            var value = c.GetProperty(property, null, StringComparison.InvariantCultureIgnoreCase, c.Alternate());
+            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
             if (value is RichTextPropertyValue richText) return richText.ToString();
             return value;
+        }
+
+        public bool CardHasProperty(int id, string property, string alt)
+        {
+            Card c = Card.Find(id);
+            if (alt == null)
+                alt = c.Alternate();
+            property = property.ToLowerInvariant();
+            var value = c.GetProperty(property, null, StringComparison.InvariantCultureIgnoreCase, alt);
+            return value != null;
         }
 
         public object CardAlternateProperty(int id, string alt, string property)

@@ -592,7 +592,7 @@ namespace Octgn.Play
 
             //check if the card has a default property value from the set data
             //if the alternate didn't have a property defined, it will use the base card's property.
-            var prop = _type.Model.GetCardProperties().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            var prop = _type.Model.GetCardProperties(alternate).FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
             if (prop.Key != null)
             {
                 return prop.Value;

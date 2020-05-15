@@ -158,12 +158,15 @@ namespace Octgn.Core.DataExtensionMethods
             var ret = card.PropertySets[""].Properties.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
             return ret;
         }
-        public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card)
+        public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card, string alt = null)
         {
+            if (alt == null || !card.PropertySets.ContainsKey(alt))
+                alt = card.Alternate;
+
             var ret = GetBaseCardProperties(card);
-            if (card.Alternate != "")
+            if (alt != "")
             {
-                foreach (var altProperty in card.PropertySets[card.Alternate].Properties)
+                foreach (var altProperty in card.PropertySets[alt].Properties)
                 {
                     if (altProperty.Value == null)
                         ret.Remove(altProperty.Key);
