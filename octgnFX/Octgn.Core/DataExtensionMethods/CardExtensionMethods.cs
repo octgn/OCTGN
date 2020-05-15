@@ -177,6 +177,14 @@ namespace Octgn.Core.DataExtensionMethods
             return ret;
         }
 
+
+        [Obsolete("The PropertySet method will soon be deprecated. Use GetFullCardProperties() instead.")]
+        public static IDictionary<PropertyDef, object> PropertySet(this ICard card) => GetFullCardProperties(card);
+
+        /// <summary>
+        /// Returns the full property dictionary for this card, respecting its current alternate state.
+        /// <para>Includes this card's name as a custom property.</para>
+        /// </summary>
         public static IDictionary<PropertyDef, object> GetFullCardProperties(this ICard card)
         {
             var ret = GetCardProperties(card);
@@ -209,6 +217,13 @@ namespace Octgn.Core.DataExtensionMethods
                 card.Size = card.PropertySets[propertyType].Size;
             }
         }
+
+        [Obsolete("The PropertyName method will soon be deprecated. Use GetName() instead.")]
+        public static string PropertyName(this ICard card) => GetName(card);
+
+        /// <summary>
+        /// Gets the name of this card, respecting its alternate state.
+        /// </summary>
         public static string GetName(this ICard card)
         {
             return card.PropertySets[card.Alternate].Name;

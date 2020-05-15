@@ -34,6 +34,14 @@
         public List<GamePhase> Phases { get; set; }
         public List<Document> Documents { get; set; }
         public List<Symbol> Symbols { get; set; }
+        [Obsolete("The CardSize property will soon be deprecated. Use game.DefaultSize() from Octgn.Core.DataExtensionMethods instead.")]
+        public CardSize CardSize
+        {
+            get
+            {
+                return CardSizes[""];
+            }
+        }
         public Dictionary<string, CardSize> CardSizes { get; set; }
         public Dictionary<string, GameBoard> GameBoards { get; set; } 
         public List<string> Scripts { get; set; } 
