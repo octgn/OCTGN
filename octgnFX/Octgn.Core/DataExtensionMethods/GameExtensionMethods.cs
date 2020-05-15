@@ -32,8 +32,8 @@ namespace Octgn.Core.DataExtensionMethods
         }
         private static IFileSystem io;
 
-        public static PropertyDef _nameProperty;
-
+        private static PropertyDef _nameProperty;
+        
         public static PropertyDef NameProperty
         {
             get
@@ -232,6 +232,9 @@ namespace Octgn.Core.DataExtensionMethods
             return retdef;
         }
 
+        /// <summary>
+        /// gets the default CardSize property defined by this game.
+        /// </summary>
         public static CardSize DefaultSize(this Game game)
         {
             return game.CardSizes[""];

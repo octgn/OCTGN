@@ -28,6 +28,9 @@ namespace Octgn.Core.DataExtensionMethods
         private static readonly ReaderWriterLockSlim GetSetLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private static readonly Dictionary<Guid, Set> CardSetIndex = new Dictionary<Guid, Set>();
 
+        /// <summary>
+        /// Returns the Octgn.DataNew.Set that this card belongs to.
+        /// </summary>
         public static Set GetSet(this ICard card)
         {
             try
@@ -48,11 +51,22 @@ namespace Octgn.Core.DataExtensionMethods
                 GetSetLock.ExitUpgradeableReadLock();
             }
         }
+
+        /// <summary>
+        /// Converts this card into a MultiCard object, which extends to support a Quantity property
+        /// </summary>
+        /// <param name="quantity">The starting quantity of this card.<para>(default is 1)</para></param>
+        /// <param name="clone">(unused, defaults to true)</param>
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1, bool clone = true)
         {
             var ret = new MultiCard(card, quantity);
             return ret;
         }
+
+        /// <summary>
+        /// Returns the image file for this card in the image database. If there is no image, generate a proxy generated image and return that file path instead.
+        /// <para>Respects this card's current alternate state.</para>
+        /// </summary>
         public static string GetPicture(this ICard card)
         {
             if (String.IsNullOrWhiteSpace(card.ImageUri) == false && card.ImageUri.StartsWith("pack://", StringComparison.InvariantCultureIgnoreCase))
@@ -88,6 +102,10 @@ namespace Octgn.Core.DataExtensionMethods
             return uri.LocalPath;
         }
 
+        /// <summary>
+        /// Returns the full file path of the proxy generated image for this card.  Will generate a new image if there isn't one cached.
+        /// <para>Respects this card's current alternate state.</para>
+        /// </summary>
         public static string GetProxyPicture(this ICard card)
         {
             var set = card.GetSet();
@@ -103,18 +121,6 @@ namespace Octgn.Core.DataExtensionMethods
             }
 
             return uri.LocalPath;
-        }
-
-        public static string GetImageUri(this ICard card)
-        {
-            var ret = card.ImageUri;
-            if (!String.IsNullOrWhiteSpace(card.Alternate)) ret = ret + "." + card.Alternate;
-            return ret;
-        }
-
-        public static bool HasProperty(this Card card, string name)
-        {
-            return card.GetCardProperties().Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static void GenerateProxyImage(this ICard card, Set set, string uri)
@@ -138,6 +144,51 @@ namespace Octgn.Core.DataExtensionMethods
             }
         }
 
+        /// <summary>
+        /// Returns the filename (no extension) for this card's image, including it's alternate state.
+        /// </summary>
+        public static string GetImageUri(this ICard card)
+        {
+            var ret = card.ImageUri;
+            if (!String.IsNullOrWhiteSpace(card.Alternate)) ret = ret + "." + card.Alternate;
+            return ret;
+        }
+
+        /// <summary>
+        /// Checks if the given property is defined in this card.
+        /// <para>Returns true if the property is defined.</para>
+        /// <para>Returns false if the property is missing or its value is null.</para>
+        /// </summary>
+        /// <param name="name">The property's name</param>
+        public static bool HasProperty(this Card card, string name)
+        {
+            return card.GetCardProperties().Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        /// <summary>
+        /// Returns the value of a specified property on this card.
+        /// <para>Respects this card's current alternate state.</para>
+        /// </summary>
+        /// <param name="name">The name of the property to check.</param>
+        public static object GetProperty(this Card card, string name)
+        {
+            return GetProperty(card, name, null);
+        }
+
+        /// <summary>
+        /// Returns the value of a given property on this card.
+        /// <para>Ignores this card's current alternate state in favor of the specified one.</para>
+        /// </summary>
+        /// <param name="name">The name of the property to check.</param>
+        /// <param name="alternate">The alternate ID to check.</param>
+        public static object GetProperty(this Card card, string name, string alternate)
+        {
+            return card.GetCardProperties(alternate).FirstOrDefault(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        /// <summary>
+        /// Creates a simplified mapping of this card's properties for use by the proxy generator.
+        /// </summary>
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
@@ -153,18 +204,33 @@ namespace Octgn.Core.DataExtensionMethods
             return (ret);
         }
 
+        /// <summary>
+        /// Returns the base properties of this card, ignoring the card's current alternate state.
+        /// </summary>
         public static IDictionary<PropertyDef, object> GetBaseCardProperties(this ICard card)
         {
-            var ret = card.PropertySets[""].Properties.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
-            return ret;
+            return GetCardProperties(card, "");
         }
-        public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card, string alt = null)
+
+        /// <summary>
+        /// Returns the properties of this card, respecting its current alternate state.
+        /// </summary>
+        public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card)
+        {
+            return GetCardProperties(card, null);
+        }
+
+        /// <summary>
+        /// Returns all defined properties for this card, from the specified alternate.
+        /// </summary>
+        /// <param name="alt">The alternate ID to use when looking for properties.</param>
+        public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card, string alt)
         {
             if (alt == null || !card.PropertySets.ContainsKey(alt))
                 alt = card.Alternate;
 
-            var ret = GetBaseCardProperties(card);
-            if (alt != "")
+            var ret = card.PropertySets[""].Properties.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
+            if (alt != "" && card.PropertySets.ContainsKey(alt))
             {
                 foreach (var altProperty in card.PropertySets[alt].Properties)
                 {
@@ -192,6 +258,13 @@ namespace Octgn.Core.DataExtensionMethods
             return ret;
         }
 
+        /// <summary>
+        /// Checks to see if a specified property value on this card is the same as the given value.
+        /// <para>Returns true if the property value is a match to the given value.</para>
+        /// <para>Returns false if the property value is different.</para>
+        /// </summary>
+        /// <param name="prop">The custom property to check.</param>
+        /// <param name="value">A value to compare with this card's property value.</param>
         public static bool MatchesPropertyValue(this ICard card, PropertyDef prop, object value)
         {
             var cardProperties = GetFullCardProperties(card);
@@ -208,13 +281,17 @@ namespace Octgn.Core.DataExtensionMethods
             }
         }
 
-        public static void SetPropertySet(this Card card, string propertyType = "")
+        /// <summary>
+        /// Sets this card's alternate state to the specified ID if it exists, then updates the card size accordingly.
+        /// </summary>
+        /// <param name="alternate">The new alternate ID to set this card to.</param>
+        public static void SetPropertySet(this Card card, string alternate = "")
         {
-            if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";
-            if (card.PropertySets.Any(x => x.Key.Equals(propertyType, StringComparison.InvariantCultureIgnoreCase)))
+            if (String.IsNullOrWhiteSpace(alternate)) alternate = "";
+            if (card.PropertySets.Any(x => x.Key.Equals(alternate, StringComparison.InvariantCultureIgnoreCase)))
             {
-                card.Alternate = propertyType;
-                card.Size = card.PropertySets[propertyType].Size;
+                card.Alternate = alternate;
+                card.Size = card.PropertySets[alternate].Size;
             }
         }
 
