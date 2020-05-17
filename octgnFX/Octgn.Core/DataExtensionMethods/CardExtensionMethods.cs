@@ -222,13 +222,15 @@ namespace Octgn.Core.DataExtensionMethods
 
         /// <summary>
         /// Returns all defined properties for this card, from the specified alternate.
+        /// <para>It will return null if the card does not have a defined property set for the specified alternate.</para>
         /// </summary>
         /// <param name="alt">The alternate ID to use when looking for properties.</param>
         public static IDictionary<PropertyDef, object> GetCardProperties(this ICard card, string alt)
         {
-            if (alt == null || !card.PropertySets.ContainsKey(alt))
+            if (alt == null)
                 alt = card.Alternate;
-
+            if (!card.PropertySets.ContainsKey(alt))
+                return null;
             var ret = card.PropertySets[""].Properties.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
             if (alt != "" && card.PropertySets.ContainsKey(alt))
             {
