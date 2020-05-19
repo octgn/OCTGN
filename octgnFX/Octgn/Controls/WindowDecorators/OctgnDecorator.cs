@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -189,6 +191,7 @@ namespace Octgn.Controls.WindowDecorators
 
             WindowMinimizeButton = new Button
             {
+                ToolTip = "Minimize",
                 Width = 40,
                 Style = buttonStyle,
                 Content = new Image
@@ -197,6 +200,7 @@ namespace Octgn.Controls.WindowDecorators
                     Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minimize.png"))
                 }
             };
+            AutomationProperties.SetName(WindowMinimizeButton, "Minimize");
             WindowChrome.SetIsHitTestVisibleInChrome(WindowMinimizeButton, true);
             WindowMinimizeButton.Click += (sender, args) =>
             {
@@ -206,6 +210,7 @@ namespace Octgn.Controls.WindowDecorators
 
             WindowResizeButton = new Button
             {
+                ToolTip = "Maximize/Restore",
                 Width = 40,
                 Style = buttonStyle,
                 Content = new Image
@@ -214,6 +219,13 @@ namespace Octgn.Controls.WindowDecorators
                     Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minmax.png"))
                 }
             };
+            var binding = new Binding("WindowState")
+            {
+                Source = Decorated,
+                Converter = new WindowStateToToolTipConverter()
+            };
+            WindowResizeButton.SetBinding(Button.ToolTipProperty, binding);
+            AutomationProperties.SetName(WindowResizeButton, "Resize");
             WindowChrome.SetIsHitTestVisibleInChrome(WindowResizeButton, true);
             WindowResizeButton.Click += (sender, args) =>
             {
@@ -223,6 +235,7 @@ namespace Octgn.Controls.WindowDecorators
 
             WindowCloseButton = new Button
             {
+                ToolTip = "Close",
                 Width = 40,
                 Style = buttonStyle,
                 Tag = "CLOSE",
@@ -232,6 +245,7 @@ namespace Octgn.Controls.WindowDecorators
                     Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/closewindow.png"))
                 }
             };
+            AutomationProperties.SetName(WindowCloseButton, "Close");
             WindowChrome.SetIsHitTestVisibleInChrome(WindowCloseButton, true);
             WindowCloseButton.Click += (sender, args) =>
             {
@@ -283,6 +297,22 @@ namespace Octgn.Controls.WindowDecorators
         public void Dispose()
         {
 
+        }
+
+        internal class WindowStateToToolTipConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if ((value is WindowState state) && state == WindowState.Maximized)
+                        return "Restore";
+                else
+                    return "Maximize";
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
