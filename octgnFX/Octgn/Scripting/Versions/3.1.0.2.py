@@ -302,6 +302,7 @@ class Card(object):
 	def setId(self): return _api.CardSetId(self._id)
 	@property
 	def properties(self): return self._props
+	def hasProperty(self, prop, alt = None): return _api.CardHasProperty(self._id, prop, alt)
 	@property
 	def owner(self): return Player(_api.CardOwner(self._id))
 	@property

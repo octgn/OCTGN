@@ -47,6 +47,10 @@
             return Name.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
         public object Clone()
         {
             var newprop = new PropertyDef()

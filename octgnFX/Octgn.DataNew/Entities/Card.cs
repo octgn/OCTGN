@@ -31,6 +31,24 @@ namespace Octgn.DataNew.Entities
 
         public CardSize Size { get; set; }
 
+        [Obsolete("The Properties property will soon be deprecated. Use PropertySets instead.")]
+        public IDictionary<string, CardPropertySet> Properties
+        {
+            get
+            {
+                var propSets = PropertySets.ToDictionary
+                    (x => x.Key,
+                    y =>
+                    {
+                        var pset = y.Value;
+                        var nameProp = new PropertyDef() { Name = "Name", Type = PropertyType.String };
+                        pset.Properties[nameProp] = pset.Name;
+                        return pset;
+                    });
+                return propSets;
+            }
+        }
+
         public IDictionary<string , CardPropertySet> PropertySets { get; set; }
 
         public Card(Guid id, Guid setId, string name, string imageuri, string alternate, CardSize size, IDictionary<string,CardPropertySet> properties )

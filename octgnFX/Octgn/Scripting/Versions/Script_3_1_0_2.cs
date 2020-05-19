@@ -530,6 +530,16 @@ namespace Octgn.Scripting.Versions
             return value;
         }
 
+        public bool CardHasProperty(int id, string property, string alt)
+        {
+            Card c = Card.Find(id);
+            if (alt == null)
+                alt = c.Alternate();
+            property = property.ToLowerInvariant();
+            var value = c.GetProperty(property, null, StringComparison.InvariantCultureIgnoreCase, alt);
+            return value != null;
+        }
+
         public object CardAlternateProperty(int id, string alt, string property)
         {
             Card c = Card.Find(id);
