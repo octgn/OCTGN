@@ -3,7 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:Octgn.Controls"
-             d:DesignHeight="294" d:DesignWidth="199" AutomationProperties.Name="{Binding Name}">
+             d:DesignHeight="294" d:DesignWidth="199" AutomationProperties.Name="{Binding Name}" AutomationProperties.HelpText="{Binding CardText}"
+             ToolTipOpening="Card_ToolTipOpening" ToolTipService.ShowDuration="32000">
+    <UserControl.ToolTip>
+        <TextBlock Text="{Binding CardText}" TextWrapping="Wrap" MaxWidth="300" />
+    </UserControl.ToolTip>
 
     <UserControl.Resources>
         <!-- FIX: This hack is meant to work around the TextBlock style 
