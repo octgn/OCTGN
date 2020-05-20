@@ -356,6 +356,7 @@ namespace Octgn.Controls
             base.OnApplyTemplate();
             var editBox = GetTemplateChild("PART_TextBox") as TextBox;
             if (editBox == null) return;
+            AutomationProperties.SetName(editBox, AutomationProperties.GetName(this));
             editBox.GotFocus += delegate(object sender, RoutedEventArgs e)
                                     {
                                         var box = (TextBox) sender;
