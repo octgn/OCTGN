@@ -326,7 +326,7 @@
                 {
                     if (group is hand)
                     {
-                        GenerateWarningMessage("The <player> element contains a <hand> child, which is no longer supported.\nExisting Hand groups should use the <pile viewState=\"expanded\"> structure instead.");
+                        GenerateWarningMessage("The <player> element contains a <hand> child, which is no longer supported.\nExisting Hand groups should use the <group viewState=\"expanded\"> structure instead.");
                     }
                     // Check for valid attributes
                     if (String.IsNullOrWhiteSpace(group.icon))
@@ -728,7 +728,7 @@
             
             var setGameId = doc.GetElementsByTagName("set").Item(0).Attributes["gameId"].Value?.ToLower();
             var setName = doc.GetElementsByTagName("set").Item(0).Attributes["name"].Value;
-            if (!game.id.Equals(setGameId))
+            if (!game.id.Equals(setGameId, StringComparison.OrdinalIgnoreCase))
             {
                 throw new UserMessageException("the gameId value '{0}' does not match the game's GUID in set file '{1}'", setGameId, fileName);
             }
