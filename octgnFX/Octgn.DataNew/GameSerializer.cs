@@ -237,6 +237,9 @@ namespace Octgn.DataNew
             }
             #endregion shared
             #region Player
+            #region LEGACY CODE FOR THE OLD HAND GROUP
+            Group legacyHandGroup = null;
+            #endregion
             if (g.player != null)
             {
                 var player = new Player
@@ -273,11 +276,14 @@ namespace Octgn.DataNew
                                                                                 Value = globalvariable.value
                                                                             });
                         }
+                        #region LEGACY CODE FOR THE OLD HAND GROUP
                         else if (item is hand hand)
                         {
                             (player.Groups as List<Group>).Add(this.DeserialiseGroup(hand, curGroup));
                             curGroup++;
+                            legacyHandGroup = player.Groups.Last();
                         }
+                        #endregion
                         else if (item is group group)
                         {
                             (player.Groups as List<Group>).Add(this.DeserialiseGroup(group, curGroup));
@@ -597,6 +603,12 @@ namespace Octgn.DataNew
             }
 
             #endregion GameModes
+            #region LEGACY CODE FOR THE OLD HAND GROUP
+            if (legacyHandGroup != null)
+            {
+                legacyHandGroup.Name = "Hand";
+            }
+            #endregion
             return ret;
         }
 
@@ -628,11 +640,11 @@ namespace Octgn.DataNew
                 ret.CardActions = DeserializeGroupActionList(grp.Items, false);
                 ret.GroupActions = DeserializeGroupActionList(grp.Items, true);
             }
-            //LEGACY CODE for old games using the hand group tag
+            #region LEGACY CODE FOR THE OLD HAND GROUP
             if (grp is hand) ret.ViewState = GroupViewState.Expanded;
             else if (grp.collapsed == boolean.True) ret.ViewState = GroupViewState.Collapsed;
             else
-            //END LEGACY CODE
+            #endregion
             {
                 switch (grp.viewState)
                 {
