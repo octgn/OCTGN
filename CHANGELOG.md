@@ -1,3 +1,6 @@
+#3.4.256.0
++ Add card text tooltip when holding ctrl - Ben
+
 #3.4.254.0
 
 #3.4.253.0
@@ -3816,6 +3819,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

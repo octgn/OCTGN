@@ -1190,6 +1190,14 @@ namespace Octgn.Play.Gui
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private void Card_ToolTipOpening(object sender, ToolTipEventArgs e)
+        {
+            if (GetDownKeys().Contains(Key.LeftCtrl) || GetDownKeys().Contains(Key.RightCtrl))
+                return; // Allow Tooltip
+            else
+                e.Handled = true; // Block Tooltip
+        }
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

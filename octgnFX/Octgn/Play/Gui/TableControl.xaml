@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
                   xmlns:octgn="clr-namespace:Octgn"
                   xmlns:play="clr-namespace:Octgn.Play"
-                  x:Name="This"
+                  x:Name="This" AutomationProperties.Name="Table"
                   FocusVisualStyle="{x:Null}" Background="Beige" TextOptions.TextFormattingMode="Ideal" ClipToBounds="True"
                   Focusable="True" LostFocus="This_LostFocus"
                    ManipulationDelta="OnManipulationDelta" IsManipulationEnabled="True" ManipulationStarting="OnManipulationStarting">
