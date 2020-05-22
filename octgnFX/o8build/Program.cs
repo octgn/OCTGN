@@ -33,8 +33,16 @@ namespace o8build
         {
             Console.OutputEncoding = Encoding.UTF8;
             Config.Instance = new Config();
-            LogManager.Flush(2000);
-            Console.Clear();
+            try
+            {
+                LogManager.Flush(2000);
+                Console.Clear();
+            }
+            catch
+            {
+                // The o8build GUI can't flush or clear the console so we have to catch it here.
+                // TODO: A proper method of ignoring the config message spam for o8build
+            }
             try
             {
                 HandleArguments(args);
