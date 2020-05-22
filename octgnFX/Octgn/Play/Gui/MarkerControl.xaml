@@ -9,7 +9,7 @@
         <Image x:Name="img1" Source="{Binding Model.Source}" HorizontalAlignment="Left" />
         <Border x:Name="textBorder" VerticalAlignment="Center" Background="#80000000" CornerRadius="3 3 3 3">
             <TextBox x:Name="text" Text="{Binding Count}" RenderOptions.ClearTypeHint="Enabled" BorderThickness="0" Background="{x:Null}"
-                 HorizontalAlignment="Center" VerticalAlignment="Center" 
+                 HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.Name="{Binding Description}"
                  Foreground="White" FontWeight="Bold" KeyUp="NumKeyUp"/>
         </Border>
     </StackPanel>

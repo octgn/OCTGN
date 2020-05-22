@@ -499,6 +499,27 @@ namespace Octgn.Play
             get { return _filter != null; }
         }
 
+        public string CardText
+        {
+            get
+            {
+                var ret = "Card";
+                if (FaceUp)
+                {
+                    ret = Name;
+                    foreach (var key in _type.Model.GetCardProperties(Alternate()).Keys)
+                    {
+                        if (!key.Hidden && !key.IgnoreText)
+                        {
+                            ret = ret + "\n" + key.Name + ": " + GetProperty(key.Name).ToString().Trim();
+                        }
+
+                    }
+                }
+                return ret;
+            }
+        }
+
         public bool IsProxy()
         {
             if (_isProxy == null)
