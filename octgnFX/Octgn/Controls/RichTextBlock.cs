@@ -41,11 +41,16 @@ namespace Octgn.Controls
             if (e.NewValue == e.OldValue)
                 return;
             RichTextBlock r = sender as RichTextBlock ?? throw new InvalidOperationException($"{nameof(sender)} of type {sender?.GetType().FullName} was not expected.");
-            List<Inline> i = e.NewValue as List<Inline> ?? throw new InvalidOperationException($"{nameof(e.NewValue)} of type {e.NewValue?.GetType().FullName} was not expected."); ;
-            r.Inlines.Clear();
-            foreach (Inline inline in i)
+            if (e.NewValue == null)
+                r.Inlines.Clear();
+            else
             {
-                r.Inlines.Add(inline);
+                List<Inline> i = e.NewValue as List<Inline> ?? throw new InvalidOperationException($"{nameof(e.NewValue)} of type {e.NewValue?.GetType().FullName} was not expected."); ;
+                r.Inlines.Clear();
+                foreach (Inline inline in i)
+                {
+                    r.Inlines.Add(inline);
+                }
             }
         }
     }

@@ -1,1 +1,1 @@
-
+Fixed a bug in the deck editor when trying to render a null RichText property.
