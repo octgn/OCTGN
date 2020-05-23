@@ -1,1 +1,2 @@
 Fanned pile drag and drop fixes - Ben
+Fixed weird behavior of drag indicator in Look At window - Ben
