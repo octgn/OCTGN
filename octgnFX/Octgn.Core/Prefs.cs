@@ -574,6 +574,11 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("HandDensity", 20d); }
             set { Config.Instance.WriteValue("HandDensity", value); }
         }
+        public static bool ExtendedTooltips
+        {
+            get { return Config.Instance.ReadValue("ExtendedTooltips", false); }
+            set { Config.Instance.WriteValue("ExtendedTooltips", value); }
+        }
         public static bool HasSeenSpectateMessage
         {
             get { return Config.Instance.ReadValue("HasSeenSpectateMessage", false); }

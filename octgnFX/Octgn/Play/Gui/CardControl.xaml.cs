@@ -1192,10 +1192,11 @@ namespace Octgn.Play.Gui
 
         private void Card_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
-            if (GetDownKeys().Contains(Key.LeftCtrl) || GetDownKeys().Contains(Key.RightCtrl))
-                return; // Allow Tooltip
+            var tooltipTextBlock = ((e.OriginalSource as Control).ToolTip as TextBlock);
+            if (Octgn.Core.Prefs.ExtendedTooltips)
+                tooltipTextBlock.Text = Card.CardText;
             else
-                e.Handled = true; // Block Tooltip
+                tooltipTextBlock.Text = Card.Name;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

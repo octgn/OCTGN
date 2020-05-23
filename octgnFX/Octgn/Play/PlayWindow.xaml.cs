@@ -127,6 +127,12 @@ namespace Octgn.Play
             }
         }
 
+        public bool ShowExtendedTooltips
+        {
+            get { return Prefs.ExtendedTooltips; }
+            set { Prefs.ExtendedTooltips = value; }
+        }
+
         public GameSettings GameSettings { get; set; }
 
         public ReplayEngine ReplayEngine { get; }

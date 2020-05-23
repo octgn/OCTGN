@@ -81,6 +81,7 @@
                 </MenuItem>
                 <MenuItem Header="Reset Screen Position" Command="gui:Commands.ResetScreen" />
                 <!--<MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>-->
+                <MenuItem Header="Extended Tooltips" IsCheckable="True" IsChecked="{Binding ShowExtendedTooltips, BindsDirectlyToSource=True, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type play:PlayWindow}}}" />
             </MenuItem>
             <MenuItem Header="Host Options" Visibility="{Binding ElementName=self,Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem Header="Kick Player" DataContext="{x:Static play:Player.AllExceptGlobal}" ItemsSource="{Binding}">
