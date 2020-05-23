@@ -183,7 +183,7 @@ namespace Octgn.Core.DataExtensionMethods
         /// <param name="alternate">The alternate ID to check.</param>
         public static object GetProperty(this Card card, string name, string alternate)
         {
-            return card.GetCardProperties(alternate).FirstOrDefault(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            return card.GetCardProperties(alternate).FirstOrDefault(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Value;
         }
 
         /// <summary>
