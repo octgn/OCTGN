@@ -1,3 +1,8 @@
+#3.4.261.0
++ Fanned pile drag and drop fixes - Ben
++ Fixed weird behavior of drag indicator in Look At window - Ben
++ Add toggleable simple/full text card tooltips - Ben
+
 #3.4.259.0
 + Fixed a bug in the deck editor when trying to render a null RichText property.
 
@@ -3824,6 +3829,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
