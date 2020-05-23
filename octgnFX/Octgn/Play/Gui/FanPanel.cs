@@ -314,7 +314,7 @@ namespace Octgn.Play.Gui
                     xposition += (child.DesiredSize.Width * percentToShow);
                 }
             }
-            cardLocations.Add(0, ActualWidth );
+            cardLocations.Add(0, xposition + Children[0].DesiredSize.Width - (Children[0].DesiredSize.Width * percentToShow));
 
             _mouseOverElement = newMouseOverElement;
             return finalSize;

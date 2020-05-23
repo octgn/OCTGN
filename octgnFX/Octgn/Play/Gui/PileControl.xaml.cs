@@ -157,6 +157,8 @@ namespace Octgn.Play.Gui
             Card.MoveCardsTo(@group, cards, (args) =>
             {
                 var c = args.Card;
+                // Fix the target index if the card is already in the group at a lower index
+                if (c.Group == @group && c.GetIndex() < idx) --idx;
                 args.Index = idx;
                 bool doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
                 c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx, false);
