@@ -363,9 +363,6 @@
     <Compile Include="Launchers\GameTableLauncher.cs" />
     <Compile Include="LibraryCommunicationClientConfig.cs" />
     <Compile Include="Utils\Converters\ConnectionStatusConverter.cs" />
-    <Compile Include="Play\Gui\HandControl.xaml.cs">
-      <DependentUpon>HandControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utils\Log4NetLogger.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Phase.cs" />
@@ -994,10 +991,6 @@
     <Page Include="Play\Dialogs\LimitedDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Play\Gui\HandControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Play\Gui\NoteControl.xaml">
       <SubType>Designer</SubType>

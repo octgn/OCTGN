@@ -107,66 +107,19 @@ namespace Octgn.Play.Gui
             }
 
             // Assuming all items are same height. Otherwise shit would be wild as FUUUUCK.
-            var curY = 0d;
-            var curX = 0d;
+            var location = new Point();
             if (this.VisualChildrenCount > 0)
             {
-                var firstElem = (FrameworkElement) this.GetVisualChild(0);
-                var defaultHeight = firstElem.ActualHeight + firstElem.Margin.Top + firstElem.Margin.Bottom;
-                for (var i = 0; i < idx; i++)
+                if (idx > VisualChildrenCount)
+                    idx = VisualChildrenCount;
+                if (idx != 0)
                 {
-                    var cur = (FrameworkElement) this.GetVisualChild(i);
-                    var addWidth = cur.ActualWidth + cur.Margin.Left + cur.Margin.Right;
-                    curX += addWidth;
-                    if (curX > this.ActualWidth && i != idx - 1)
-                    {
-                        curX = cur.ActualWidth + cur.Margin.Left + cur.Margin.Right;
-                        curY += defaultHeight;
-                    }
+                    var elem = (FrameworkElement)this.GetVisualChild(idx - 1);
+                    location = elem.TranslatePoint(new Point(elem.DesiredSize.Width - elem.RenderTransform.Value.OffsetX, 0), this);
                 }
-                //var newCardWidth = source.Size.Width + firstElem.Margin.Left + firstElem.Margin.Right;
-                //if (idx < VisualChildrenCount)
-                //{
-                //    var nextElem = (FrameworkElement) this.GetVisualChild(idx);
-                //    var nx = curX += nextElem.ActualWidth + nextElem.Margin.Left + nextElem.Margin.Right;
-                //    if (nx > this.ActualWidth)
-                //    {
-                //        curX = ;
-                //        curY = curY += defaultHeight;
-                //        //_insertAtEndOfRow = true;
-                //    }
-                //}
             }
-            _insertAdorner.MoveTo(new Point(curX, curY));
 
-            // Assuming all items have the same size, get the size of the first one
-            //double itemHeight = 0;
-            //Double itemWidth = 0;
-            //int rowSize;
-            //if (VisualChildrenCount == 0)
-            //{
-            //    itemHeight = itemWidth = 0;
-            //    rowSize = int.MaxValue;
-            //}
-            //else
-            //{
-            //    var firstChild = (FrameworkElement) GetVisualChild(0);
-            //    if (firstChild != null)
-            //    {
-            //        itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
-            //        itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
-            //    }
-            //    rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
-            //}
-
-            //// Position the adorner correctly            
-            //int hOffset, vOffset = Math.DivRem(idx, rowSize, out hOffset);
-            //if (hOffset == 0 && _insertAtEndOfRow)
-            //{
-            //    vOffset -= 1;
-            //    hOffset = rowSize;
-            //}
-            //_insertAdorner.MoveTo(new Point(hOffset*itemWidth, vOffset*itemHeight));
+            _insertAdorner.MoveTo(new Point(location.X, location.Y));
 
             CancelSpacing();
 
