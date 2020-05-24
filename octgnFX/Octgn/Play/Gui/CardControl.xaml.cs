@@ -1192,11 +1192,18 @@ namespace Octgn.Play.Gui
 
         private void Card_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
-            var tooltipTextBlock = ((e.OriginalSource as Control).ToolTip as TextBlock);
-            if (Octgn.Core.Prefs.ExtendedTooltips)
-                tooltipTextBlock.Text = Card.CardText;
-            else
-                tooltipTextBlock.Text = Card.Name;
+            if (Card is null)
+                return;
+            if (e.OriginalSource is Control source)
+            {
+                if (source.ToolTip is TextBlock tooltipTextBlock)
+                {
+                    if (Octgn.Core.Prefs.ExtendedTooltips)
+                        tooltipTextBlock.Text = Card.CardText;
+                    else
+                        tooltipTextBlock.Text = Card.Name;
+                }
+            }
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
