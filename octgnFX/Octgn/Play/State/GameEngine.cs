@@ -791,7 +791,9 @@ namespace Octgn
                     for (int i = 0; i < element.Quantity; i++)
                     {
                         //for every card in the deck, generate a unique key for it, ID for it
-                        var card = element.ToPlayCard(player);
+                        var id = element.GenerateCardId();
+                        var card = new Card(player, id, new DataNew.Entities.Card(element), true, element.Size.Name);
+                     //   var card = element.ToPlayCard(player);
                         ids[j] = card.Id;
                         keys[j] = card.Type.Model.Id;
                         //keys[j] = card.GetEncryptedKey();
