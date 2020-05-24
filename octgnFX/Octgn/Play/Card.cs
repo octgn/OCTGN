@@ -602,7 +602,6 @@ namespace Octgn.Play
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
         {
             if (_type.Model == null) return defaultReturn;
-            if (name.Equals("Name", scompare)) return _type.Model.GetName();
             if (name.Equals("Id", scompare)) return _type.Model.Id;
 
             //check if python has changed the default property value
@@ -611,15 +610,15 @@ namespace Octgn.Play
                 return PropertyOverrides[name][alternate];
             }
 
-            //check if the card has a default property value from the set data
-            //if the alternate didn't have a property defined, it will use the base card's property.
-            var prop = _type.Model.GetCardProperties(alternate).FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-            if (prop.Key != null)
+            //check if the alternate string actually exists first.
+            if (_type.Model.PropertySets.ContainsKey(alternate))
             {
-                return prop.Value;
+                if (name.Equals("Name", scompare)) return _type.Model.GetName(alternate);
+                //check the defined properties for this card with the given alternate
+                return _type.Model.GetProperty(name, alternate) ?? defaultReturn;
             }
 
-            //return the default value if the card didnt have a value for this property
+            // returns the default value if the specified alternate doesn't exist
             return defaultReturn;
         }
 
