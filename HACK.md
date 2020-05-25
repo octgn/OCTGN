@@ -10,6 +10,11 @@ Contribute!
   * Make your awesome change!
   * Request we pull it in (https://help.github.com/send-pull-requests/)
 
+Dev Environment Details
+------------------------------------------------
+* The main OCTGN repo contains a subrepo/submodule OCTGN/Octgn.Communication. Keep this in mind when cloning to your local machine
+* Install Wix toolset (https://wixtoolset.org/) to remove wix errors
+* Install Newtonsoft.json NuGet package. It is a reference for OCTGN.Core
   
 Components
 -------------------------------------------------
