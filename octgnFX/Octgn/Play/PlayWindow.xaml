@@ -102,8 +102,10 @@
 
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Card List" IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}"></MenuItem>
-            <MenuItem Header="Undock Card Preview" Click="UndockCardPreview"></MenuItem>
+            <MenuItem Header="Card List" IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}"></MenuItem>            
+            <MenuItem Header="Undock Options">
+                <MenuItem Header="Undock Card Preview" Click="UndockCardPreview"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
