@@ -1,3 +1,6 @@
+#3.4.263.0
++ Fixed a crash caused by tooltips - ben
+
 #3.4.261.0
 + Fanned pile drag and drop fixes - Ben
 + Fixed weird behavior of drag indicator in Look At window - Ben
@@ -3829,6 +3832,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
