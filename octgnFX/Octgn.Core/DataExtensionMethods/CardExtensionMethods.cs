@@ -183,7 +183,7 @@ namespace Octgn.Core.DataExtensionMethods
         /// <param name="alternate">The alternate ID to check.</param>
         public static object GetProperty(this Card card, string name, string alternate)
         {
-            return card.GetCardProperties(alternate).FirstOrDefault(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Value;
+            return card.GetCardProperties(alternate)?.FirstOrDefault(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Value;
         }
 
         /// <summary>
@@ -305,7 +305,19 @@ namespace Octgn.Core.DataExtensionMethods
         /// </summary>
         public static string GetName(this ICard card)
         {
-            return card.PropertySets[card.Alternate].Name;
+            return card.GetName(card.Alternate);
+        }
+
+        /// <summary>
+        /// Gets the name of the specified card alternate.
+        /// </summary>
+        /// <param name="alternate">the string identifier of the alternate</param>
+        public static string GetName(this ICard card, string alternate)
+        {
+            if (card.PropertySets.ContainsKey(alternate))
+                return card.PropertySets[alternate].Name;
+            else
+                return card.Name;
         }
 
         public static MultiCard Clone(this MultiCard card)
