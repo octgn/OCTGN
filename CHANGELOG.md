@@ -1,3 +1,5 @@
+#3.4.264.0
+
 #3.4.263.0
 + Fixed a crash caused by tooltips - ben
 
@@ -3832,6 +3834,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
