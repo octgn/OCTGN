@@ -98,7 +98,9 @@ namespace Octgn.Play
 
         public ObservableCollection<IGameMessage> GameMessages { get; set; }
 
-
+        private bool chatIsDocked;
+        public ChatWindow _chatWindow;
+        private const int DefaultChatWidth = 300;
 
 
         public bool IsHost { get; set; }
@@ -894,7 +896,7 @@ namespace Octgn.Play
             }
             else
             {
-                this.chatWindow.FocusInput();
+                this._chatWindow.FocusInput();
             }
             
         }
@@ -1066,8 +1068,7 @@ namespace Octgn.Play
             }
         }
 
-        private bool chatIsDocked;
-        public ChatWindow chatWindow;
+
         private void ToggleChatDockPanel(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
@@ -1078,19 +1079,19 @@ namespace Octgn.Play
                 this.ChatToggleChecked.IsChecked = true;
                 this.chatGrid.Width = 0;
                 this.Column4ChatWidth.Width = new GridLength(0);
-                if(this.chatWindow == null)
+                if(this._chatWindow == null) // create a new chat window
                 {
-                    this.chatWindow = new ChatWindow() { Owner = this };
-                    this.chatWindow.Closed += (a, b) =>
+                    this._chatWindow = new ChatWindow() { Owner = this };
+                    this._chatWindow.Closed += (a, b) =>
                     {
-                        this.chatWindow = null;
+                        this._chatWindow = null;
                         this.chatIsDocked = true;
                         this.ChatToggleChecked.IsChecked = false;
-                        this.chatGrid.Width = 300;
-                        this.Column4ChatWidth.Width = new GridLength(300);
+                        this.chatGrid.Width = DefaultChatWidth;
+                        this.Column4ChatWidth.Width = new GridLength(DefaultChatWidth);
                         Keyboard.Focus(table);
                     };
-                    this.chatWindow.Show();
+                    this._chatWindow.Show();
 
                 }
             }
@@ -1098,12 +1099,11 @@ namespace Octgn.Play
             {
                 this.chatIsDocked = true;
                 this.ChatToggleChecked.IsChecked = false;
-                this.chatGrid.Width = 300;
-                this.Column4ChatWidth.Width = new GridLength(300);
-                if(this.chatWindow != null && chatWindow.IsInitialized)
+                this.chatGrid.Width = DefaultChatWidth;
+                this.Column4ChatWidth.Width = new GridLength(DefaultChatWidth);
+                if(this._chatWindow != null && _chatWindow.IsInitialized)
                 {
-                    this.chatWindow.Close();
-                    
+                    this._chatWindow.Close();                    
                 }
             }
 
