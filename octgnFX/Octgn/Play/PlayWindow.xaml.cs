@@ -179,8 +179,8 @@ namespace Octgn.Play
             this.chat.MouseLeave += ChatOnMouseLeave;
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
-            this.chatOpen = true;
-            this.ChatToggleChecked.IsChecked = true;
+            this.chatIsDocked = true;
+            this.ChatToggleChecked.IsChecked = false;
             this.PreGameLobby.OnClose += delegate
             {
                 if (this.PreGameLobby.StartingGame)
@@ -888,13 +888,13 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (this.chatOpen)
+            if (this.chatIsDocked)
             {
-                chatWindow.FocusInput();
+                chat.FocusInput();
             }
             else
             {
-                chat.FocusInput();
+                this.chatWindow.FocusInput();
             }
             
         }
@@ -1066,38 +1066,48 @@ namespace Octgn.Play
             }
         }
 
-        private bool chatOpen;
+        private bool chatIsDocked;
         public ChatWindow chatWindow;
         private void ToggleChatDockPanel(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             // toggle visibility
-            if (this.chatOpen)
+            if (this.chatIsDocked)
             {
-                this.chatOpen = false;
+                this.chatIsDocked = false;
                 this.ChatToggleChecked.IsChecked = true;
                 this.chatGrid.Width = 0;
                 this.Column4ChatWidth.Width = new GridLength(0);
-                if(chatWindow == null)
+                if(this.chatWindow == null)
                 {
-                    chatWindow = new ChatWindow() { Owner = this };
-                    chatWindow.Closed += (a, b) => chatWindow = null;
-                    chatWindow.Show();
+                    this.chatWindow = new ChatWindow() { Owner = this };
+                    this.chatWindow.Closed += (a, b) =>
+                    {
+                        this.chatWindow = null;
+                        this.chatIsDocked = true;
+                        this.ChatToggleChecked.IsChecked = false;
+                        this.chatGrid.Width = 300;
+                        this.Column4ChatWidth.Width = new GridLength(300);
+                        Keyboard.Focus(table);
+                    };
+                    this.chatWindow.Show();
+
                 }
             }
             else
             {
-                this.chatOpen = true;
+                this.chatIsDocked = true;
                 this.ChatToggleChecked.IsChecked = false;
                 this.chatGrid.Width = 300;
                 this.Column4ChatWidth.Width = new GridLength(300);
-                if(chatWindow != null && chatWindow.isVisible)
+                if(this.chatWindow != null && chatWindow.IsInitialized)
                 {
-                    chatWindow.Close();
+                    this.chatWindow.Close();
                     
                 }
             }
 
+            Keyboard.Focus(table);
         }
 
         private void KickPlayer(object sender, RoutedEventArgs e)

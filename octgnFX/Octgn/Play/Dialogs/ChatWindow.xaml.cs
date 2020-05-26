@@ -35,15 +35,12 @@ namespace Octgn.Play.Dialogs
             Prefs.ChatWindowLocation = new Rect(Left, Top, ActualWidth, ActualHeight);
         }
 
-        private void RightButton_Click(object sender, RoutedEventArgs e)
+        public void FocusInput()
         {
-
+            this.chat.FocusInput();
         }
+    }
 
-        private void LeftButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
 
 }
