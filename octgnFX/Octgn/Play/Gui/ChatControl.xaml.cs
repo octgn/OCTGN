@@ -577,6 +577,11 @@ namespace Octgn.Play.Gui
             return ret;
         }
 
+        public bool DisplayKeyboardShortcut
+        {
+            set { if (value) watermark.Text += "  (Ctrl+T)"; }
+        }
+
         private void KeyDownHandler(object sender, KeyEventArgs e)
         {
             switch (e.Key)
