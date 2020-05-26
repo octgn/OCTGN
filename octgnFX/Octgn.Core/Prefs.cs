@@ -251,6 +251,18 @@ namespace Octgn.Core
             }
         }
 
+        public static Rect ChatWindowLocation
+        {
+            get
+            {
+                return Rect.Parse(Config.Instance.ReadValue("ChatWindowLoc", ("100, 100, 200, 300")));
+            }
+            set
+            {
+                Config.Instance.WriteValue("ChatWindowLoc", value.ToString());
+            }
+        }
+
         public static int LoginTimeout
         {
             get
