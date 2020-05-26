@@ -25,6 +25,7 @@ namespace Octgn.DeckBuilder
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
+    using Octgn.Utils.Converters;
 
     public partial class SearchControl : INotifyPropertyChanged
     {
@@ -375,7 +376,7 @@ namespace Octgn.DeckBuilder
                     {
                         Path = new PropertyPath(prop.Name),
                         Mode = BindingMode.OneTime,
-                        Converter = new RichTextBoxConverter(),
+                        Converter = new RichTextConverter(),
                         ConverterParameter = game
                     };
 
