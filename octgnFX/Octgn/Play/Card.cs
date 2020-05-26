@@ -504,14 +504,14 @@ namespace Octgn.Play
             get
             {
                 var ret = "Card";
-                if (FaceUp)
+                if (FaceUp && _type.Model != null)
                 {
                     ret = Name;
-                    foreach (var key in _type.Model.GetCardProperties(Alternate()).Keys)
+                    foreach (var key in _type.Model.GetCardProperties(Alternate())?.Keys)
                     {
                         if (!key.Hidden && !key.IgnoreText)
                         {
-                            ret = ret + "\n" + key.Name + ": " + GetProperty(key.Name).ToString().Trim();
+                            ret = ret + "\n" + key.Name + ": " + GetProperty(key.Name, defaultReturn: "").ToString().Trim();
                         }
 
                     }

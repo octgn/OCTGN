@@ -1,1 +1,1 @@
-
+Fix a crash caused by tooltips (hopefully for good this time) - Ben
