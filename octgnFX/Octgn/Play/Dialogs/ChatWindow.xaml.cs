@@ -3,19 +3,13 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using Octgn.Core;
-using Octgn.DataNew.Entities;
-using Octgn.Utils;
-using Octgn.Core.DataExtensionMethods;
 using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Linq;
-using System.Collections.Generic;
-using Octgn.Play.Gui;
+using Octgn.Controls;
 
 namespace Octgn.Play.Dialogs
 {
 
-    public partial class ChatWindow : Window
+    public partial class ChatWindow : DecorableWindow
     {
 
         public ChatWindow()

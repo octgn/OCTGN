@@ -1057,14 +1057,24 @@ namespace Octgn.Play
 
         }
 
-        private void UndockCardPreview(object sender, RoutedEventArgs e)
+        private void ToggleCardPreviewWindow(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             if (_previewCardWindow == null)
             {
                 _previewCardWindow = new PreviewCardWindow() { Owner = this };
-                _previewCardWindow.Closed += (a, b) => _previewCardWindow = null;
+                _previewCardWindow.Closed += (a, b) =>
+                {
+                    _previewCardWindow = null;
+                    CardPreviewToggleChecked.IsChecked = false;
+                };
                 _previewCardWindow.Show();
+                CardPreviewToggleChecked.IsChecked = true;
+            }
+            else if (_previewCardWindow.IsInitialized)
+            {
+                _previewCardWindow.Close();
+                CardPreviewToggleChecked.IsChecked = false;
             }
         }
 
