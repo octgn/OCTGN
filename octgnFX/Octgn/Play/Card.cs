@@ -20,6 +20,9 @@ using log4net;
 using Octgn.Site.Api;
 using Octgn.Library;
 using Octgn.Core;
+using System.Windows.Documents;
+using System.Windows;
+using Octgn.Utils.Converters;
 
 namespace Octgn.Play
 {
@@ -499,14 +502,16 @@ namespace Octgn.Play
             get { return _filter != null; }
         }
 
-        public string CardText
+        public Span CardText
         {
             get
             {
-                var ret = "Card";
+                var ret = new Span();
+                ret.Inlines.Add("Card");
                 if (FaceUp && _type.Model != null)
                 {
-                    ret = Name;
+                    ret = new Span();
+                    ret.Inlines.Add(new Run(Name) { FontWeight = FontWeights.Bold });
                     foreach (var gameProperty in Program.GameEngine.Definition.CustomProperties)
                     {
                         if (!gameProperty.Hidden && !gameProperty.IgnoreText)
@@ -514,7 +519,18 @@ namespace Octgn.Play
                             var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
                             if (cardProperty != null)
                             {
-                                ret = ret + "\n" + gameProperty.Name + ": " + cardProperty.ToString().Trim();
+                                ret.Inlines.Add(new LineBreak());
+                                ret.Inlines.Add(new Run(gameProperty.Name + ": ") { FontWeight = FontWeights.Bold });
+                                if (gameProperty.Type == PropertyType.RichText)
+                                {
+                                    var richTextSpan = RichTextConverter.ConvertToSpan(cardProperty as RichTextPropertyValue, Program.GameEngine.Definition);
+                                    ret.Inlines.Add(richTextSpan);
+                                }
+                                else
+                                {
+                                    ret.Inlines.Add(cardProperty.ToString().Trim());
+                                }
+
                             }
                         }
                     }
