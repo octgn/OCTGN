@@ -102,7 +102,7 @@
                 <MenuItem Header="Reset Screen Position" Command="gui:Commands.ResetScreen" />
                 <MenuItem Header="Extended Tooltips" IsCheckable="True" IsChecked="{Binding ShowExtendedTooltips, BindsDirectlyToSource=True, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type play:PlayWindow}}}" />
                 <MenuItem Header="Card List" IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}"></MenuItem>
-                <MenuItem Header="Undock Card Preview" Click="UndockCardPreview"></MenuItem>
+                <MenuItem x:Name="CardPreviewToggleChecked" Header="Undock Card Preview" Click="ToggleCardPreviewWindow" IsCheckable="True"></MenuItem>
                 <MenuItem x:Name="ChatToggleChecked" Header="Undock Chat" Click="ToggleChatDockPanel" IsCheckable="True"></MenuItem>
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
             </MenuItem>
