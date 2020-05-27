@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:Octgn.Controls"
-             d:DesignHeight="294" d:DesignWidth="199" AutomationProperties.Name="{Binding Name}" AutomationProperties.HelpText="{Binding CardText}"
+             d:DesignHeight="294" d:DesignWidth="199" AutomationProperties.Name="{Binding Name}" AutomationProperties.HelpText="{Binding AccessibilityCardInfo}"
              ToolTipOpening="Card_ToolTipOpening" ToolTipService.ShowDuration="32000">
     <UserControl.ToolTip>
         <TextBlock Text="Card" TextWrapping="Wrap" MaxWidth="300" />
