@@ -10,11 +10,12 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Linq;
 using System.Collections.Generic;
+using Octgn.Controls;
 
 namespace Octgn.Play.Dialogs
 {
 
-    public partial class PreviewCardWindow : Window
+    public partial class PreviewCardWindow : DecorableWindow
     {
         public DataNew.Entities.Card VisualCard;
         public List<string> alternates;

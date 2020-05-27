@@ -98,6 +98,11 @@ namespace Octgn.Play
 
         public ObservableCollection<IGameMessage> GameMessages { get; set; }
 
+        private bool chatIsDocked;
+        public ChatWindow _chatWindow;
+        private const int DefaultChatWidth = 300;
+
+
         public bool IsHost { get; set; }
 
         public bool ChatVisible
@@ -176,6 +181,8 @@ namespace Octgn.Play
             this.chat.MouseLeave += ChatOnMouseLeave;
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
+            this.chatIsDocked = true;
+            this.ChatToggleChecked.IsChecked = false;
             this.PreGameLobby.OnClose += delegate
             {
                 if (this.PreGameLobby.StartingGame)
@@ -883,7 +890,15 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            chat.FocusInput();
+            if (this.chatIsDocked)
+            {
+                chat.FocusInput();
+            }
+            else
+            {
+                this._chatWindow.FocusInput();
+            }
+            
         }
 
         private void ShowAboutWindow(object sender, RoutedEventArgs e)
@@ -1042,15 +1057,67 @@ namespace Octgn.Play
 
         }
 
-        private void UndockCardPreview(object sender, RoutedEventArgs e)
+        private void ToggleCardPreviewWindow(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             if (_previewCardWindow == null)
             {
                 _previewCardWindow = new PreviewCardWindow() { Owner = this };
-                _previewCardWindow.Closed += (a, b) => _previewCardWindow = null;
+                _previewCardWindow.Closed += (a, b) =>
+                {
+                    _previewCardWindow = null;
+                    CardPreviewToggleChecked.IsChecked = false;
+                };
                 _previewCardWindow.Show();
+                CardPreviewToggleChecked.IsChecked = true;
             }
+            else if (_previewCardWindow.IsInitialized)
+            {
+                _previewCardWindow.Close();
+                CardPreviewToggleChecked.IsChecked = false;
+            }
+        }
+
+
+        private void ToggleChatDockPanel(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            // toggle visibility
+            if (this.chatIsDocked)
+            {
+                this.chatIsDocked = false;
+                this.ChatToggleChecked.IsChecked = true;
+                this.chatGrid.Width = 0;
+                this.Column4ChatWidth.Width = new GridLength(0);
+                if(this._chatWindow == null) // create a new chat window
+                {
+                    this._chatWindow = new ChatWindow() { Owner = this };
+                    this._chatWindow.Closed += (a, b) =>
+                    {
+                        this._chatWindow = null;
+                        this.chatIsDocked = true;
+                        this.ChatToggleChecked.IsChecked = false;
+                        this.chatGrid.Width = DefaultChatWidth;
+                        this.Column4ChatWidth.Width = new GridLength(DefaultChatWidth);
+                        Keyboard.Focus(table);
+                    };
+                    this._chatWindow.Show();
+
+                }
+            }
+            else
+            {
+                this.chatIsDocked = true;
+                this.ChatToggleChecked.IsChecked = false;
+                this.chatGrid.Width = DefaultChatWidth;
+                this.Column4ChatWidth.Width = new GridLength(DefaultChatWidth);
+                if(this._chatWindow != null && _chatWindow.IsInitialized)
+                {
+                    this._chatWindow.Close();                    
+                }
+            }
+
+            Keyboard.Focus(table);
         }
 
         private void KickPlayer(object sender, RoutedEventArgs e)
