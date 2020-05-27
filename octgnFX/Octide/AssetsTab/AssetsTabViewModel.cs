@@ -22,14 +22,20 @@ namespace Octide.ViewModel
 {
     public class AssetsTabViewModel : ViewModelBase
     {
-        public FileSystemWatcher Watcher { get; private set; }
-        private ObservableCollection<Asset> _assets;
+        public ObservableCollection<Asset> Assets { get; set; }
         private bool _filterUnused;
         private AssetType _filterType;
         public AssetsTabViewModel()
         {
             if (ViewModelLocator.GameLoader.Directory != null)
             {
+                Assets = new ObservableCollection<Asset>();
+                var di = new DirectoryInfo(ViewModelLocator.GameLoader.Directory);
+                var files = di.GetFiles("*.*", SearchOption.AllDirectories);
+                Assets = new ObservableCollection<Asset>(files.Select(x => LoadAsset(x)));
+                AssetView = new ListCollectionView(Assets);
+                Assets.CollectionChanged += (a, b) => AssetView.Refresh();
+
                 Watcher = new FileSystemWatcher
                 {
                     IncludeSubdirectories = true
@@ -47,41 +53,19 @@ namespace Octide.ViewModel
             }
         }
 
-        private void FileChanged(object sender, FileSystemEventArgs args)
-        {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
-        }
-        private void FileCreated(object sender, FileSystemEventArgs args)
-        {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
-        }
-        private void FileRenamed(object sender, FileSystemEventArgs args)
-        {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
-        }
-        private void FileDeleted(object sender, FileSystemEventArgs args)
-        {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
-        }
-        public ICollectionView AssetView { get; private set; }
 
-
-        public ObservableCollection<Asset> Assets
+        public AssetType FilterType
         {
             get
             {
-                if (_assets == null)
-                {
-                    _assets = new ObservableCollection<Asset>();
-                    // AssetManager.Instance.CollectAssets();
-                }
-                return _assets;
+                return _filterType;
             }
             set
             {
-                _assets = value;
-                RaisePropertyChanged("Assets");
-                RaisePropertyChanged("AssetView");
+                if (_filterType == value) return;
+                _filterType = value;
+                UpdateFilter();
+                RaisePropertyChanged("FilterType");
             }
         }
 
@@ -99,21 +83,6 @@ namespace Octide.ViewModel
                 RaisePropertyChanged("FilterUnused");
             }
         }
-        public AssetType FilterType
-        {
-            get
-            {
-                return _filterType;
-            }
-            set
-            {
-                if (_filterType == value) return;
-                _filterType = value;
-                UpdateFilter();
-                RaisePropertyChanged("FilterType");
-            }
-        }
-
         private void UpdateFilter()
         {
             AssetView.Filter = obj =>
@@ -128,42 +97,107 @@ namespace Octide.ViewModel
             RaisePropertyChanged("AssetView");
         }
 
-        public Asset LoadAsset(AssetType validAssetType)
+        public Asset NewAsset(AssetType validAssetType, FileInfo file)
         {
-
-            var fo = new OpenFileDialog
-            {
-                Filter = Asset.GetAssetFilters(validAssetType)
-            };
-            if ((bool)fo.ShowDialog() == false)
-            {
-                return null;
-            }
-            return LoadAsset(validAssetType, new FileInfo(fo.FileName));
-        }
-
-        public Asset LoadAsset(AssetType validAssetType, FileInfo file)
-        {
-            if (Asset.GetAssetType(file) != validAssetType) return null;
+            if (GetAssetType(file) != validAssetType) return null;
             var assetPath = Path.Combine(ViewModelLocator.GameLoader.Directory, "Assets");
             if (!Directory.Exists(assetPath))
                 Directory.CreateDirectory(assetPath);
 
             var fileCopy = file.CopyTo(Utils.GetUniqueFilename(Path.Combine(assetPath, file.Name)));
-            var asset = Asset.Load(fileCopy);
-            Assets.Add(asset);
+            var asset = LoadAsset(fileCopy);
             return asset;
         }
 
-        public void CollectAssets()
+
+        public Asset LoadAsset(FileInfo file)
         {
-            var di = new DirectoryInfo(ViewModelLocator.GameLoader.Directory);
-            var files = di.GetFiles("*.*", SearchOption.AllDirectories);
-            var ret = files.Select(Asset.Load);
-            Assets = new ObservableCollection<Asset>(ret);
-            AssetView = new ListCollectionView(Assets);
-            Assets.CollectionChanged += (a, b) => AssetView.Refresh();
+            lock (Assets)
+            {
+                var asset = Assets.FirstOrDefault(x => x.FullPath == file.FullName);
+                if (asset == null)
+                {
+                    asset = new Asset(file);
+                    Assets.Add(asset);
+                }
+                return asset;
+            }
         }
+
+        public static string GetAssetFilters(AssetType assetType)
+        {
+            switch (assetType)
+            {
+                case AssetType.Image:
+                    return "Image Files (*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG";
+                case AssetType.PythonScript:
+                    return "Python files (*.PY)|*.PY";
+                case AssetType.Xml:
+                    return "Xml files (*.XML)|*.XML";
+                case AssetType.Font:
+                    return "Font files (*.TTF)|*.TTF";
+                case AssetType.Deck:
+                    return "OCTGN Deck files (*.O8D)|*.O8D";
+                case AssetType.Document:
+                    return "Document files (*.HTML;*.PDF;*.TXT)|*.HTML;*.PDF;*.TXT";
+                case AssetType.Sound:
+                    return "Sound files (*.MP3;*.WAV;*.OGG)|*.MP3;*.WAV;*.OGG";
+                default:
+                    return "Any files|*.*";
+            }
+        }
+        public static AssetType GetAssetType(FileInfo file)
+        {
+            switch (file.Extension.Substring(1).ToLower())
+            {
+                case "jpg":
+                case "jpeg":
+                case "bmp":
+                case "png":
+                case "gif":
+                case "tiff":
+                    return AssetType.Image;
+                case "py":
+                    return AssetType.PythonScript;
+                case "xml":
+                    return AssetType.Xml;
+                case "ttf":
+                    return AssetType.Font;
+                case "o8d":
+                    return AssetType.Deck;
+                case "mp3":
+                case "oog":
+                case "wav":
+                    return AssetType.Sound;
+                case "txt":
+                case "html":
+                case "pdf":
+                    return AssetType.Document;
+                default:
+                    return AssetType.Other;
+            }
+        }
+
+        #region filewatcher
+        public FileSystemWatcher Watcher { get; private set; }
+        public ICollectionView AssetView { get; private set; }
+        private void FileChanged(object sender, FileSystemEventArgs args)
+        {
+            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+        }
+        private void FileCreated(object sender, FileSystemEventArgs args)
+        {
+            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+        }
+        private void FileRenamed(object sender, FileSystemEventArgs args)
+        {
+            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+        }
+        private void FileDeleted(object sender, FileSystemEventArgs args)
+        {
+            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+        }
+        #endregion
 
     }
     public class AssetManagerUpdatedMessage

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using GongSolutions.Wpf.DragDrop;
+using Microsoft.Win32;
 
 namespace Octide
 {
@@ -28,49 +29,45 @@ namespace Octide
         public bool CanRemove { get; set; }
 
         public string FullPath => SelectedAsset?.FullPath;
-        public AssetController()  //base method
-        {
-            LoadAssetButton = new RelayCommand(LoadAsset);
-            UnlinkAssetCommand = new RelayCommand(UnlinkAsset);
-            AssetView = new ListCollectionView(ViewModelLocator.AssetsTabViewModel.Assets);
-            DropHandler = new AssetButtonDropHandler() { Parent = this };
-        }
 
-        public AssetController(AssetType type) : this()  // for loading an empty assetcontrol
+        public AssetController(AssetType type) // Creates a new assetcontroller with a default asset from the given type.
         {
-            TargetAssetType = type;
-            AssetView.Filter = obj =>
-            {
-                var asset = obj as Asset;
-                return asset.Type == TargetAssetType;
-            };
+            InitializeAssetController(type);
             SelectedAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.Type == type);
             RaisePropertyChanged("AssetView");
         }
 
-        public AssetController(AssetType type, string source) : this()  // for loading an assetcontrol with a starting value
+        public AssetController(AssetType type, string source)  // loads the assetcontroller with the pre-set asset (from initializing deserialized item models)
         {
+            InitializeAssetController(type);
+            if (source != null && source != ViewModelLocator.GameLoader.Directory)
+            {
+                var path = new FileInfo(source);
+                SelectedAsset = ViewModelLocator.AssetsTabViewModel.LoadAsset(path);
+            }
+            RaisePropertyChanged("AssetView");
+
+        }
+        public AssetController(Asset asset)  // for loading an assetcontrol with a known asset
+        {
+            InitializeAssetController(asset.Type);
+            SelectedAsset = asset;
+            RaisePropertyChanged("AssetView");
+        }
+
+        public void InitializeAssetController(AssetType type)  //base method
+        {
+            LoadAssetButton = new RelayCommand(LoadAssetDialog);
+            UnlinkAssetCommand = new RelayCommand(UnlinkAsset);
+            DropHandler = new AssetButtonDropHandler() { Parent = this };
+
             TargetAssetType = type;
+            AssetView = new ListCollectionView(ViewModelLocator.AssetsTabViewModel.Assets);
             AssetView.Filter = obj =>
             {
                 var asset = obj as Asset;
                 return asset.Type == TargetAssetType;
             };
-            if (source != null)
-                SelectedAsset = Asset.Load(source);
-            RaisePropertyChanged("AssetView");
-
-        }
-        public AssetController(Asset asset) : this()  // for loading an assetcontrol when the asset is already known
-        {
-            TargetAssetType = asset.Type;
-            AssetView.Filter = obj =>
-            {
-                var a = obj as Asset;
-                return a.Type == TargetAssetType;
-            };
-            SelectedAsset = asset;
-            RaisePropertyChanged("AssetView");
         }
 
         public void UnlinkAsset()
@@ -102,9 +99,18 @@ namespace Octide
             }
         }
 
-        public void LoadAsset()
+        public void LoadAssetDialog()
         {
-            var asset = ViewModelLocator.AssetsTabViewModel.LoadAsset(TargetAssetType);
+            var fo = new OpenFileDialog
+            {
+                Filter = AssetsTabViewModel.GetAssetFilters(TargetAssetType)
+            };
+            if ((bool)fo.ShowDialog() == false)
+            {
+                return;
+            }
+            var file = new FileInfo(fo.FileName);
+            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(TargetAssetType, file);
             if (asset == null) return;
             SelectedAsset = asset;
         }
@@ -117,39 +123,39 @@ namespace Octide
             }
         }
 
-        public class AssetButtonDropHandler : IDropTarget
+    }
+    public class AssetButtonDropHandler : IDropTarget
+    {
+        public AssetController Parent { get; set; }
+        public void DragOver(IDropInfo dropInfo)
         {
-            public AssetController Parent { get; set; }
-            public void DragOver(IDropInfo dropInfo)
-            {
-                try
-                {
-                    var data = dropInfo.Data as IDataObject;
-                    var path = (string[])data.GetData(DataFormats.FileDrop);
-                    var file = new FileInfo(path.First());
-                    if (Asset.GetAssetType(file) != Parent.TargetAssetType)
-                        dropInfo.Effects = DragDropEffects.None;
-                    else
-                    {
-                        dropInfo.Effects = DragDropEffects.Copy;
-                    }
-                }
-                catch
-                {
-                    dropInfo.Effects = DragDropEffects.None;
-                }
-            }
-
-            public void Drop(IDropInfo dropInfo)
+            try
             {
                 var data = dropInfo.Data as IDataObject;
                 var path = (string[])data.GetData(DataFormats.FileDrop);
-                var file = new FileInfo(path[0]);
-
-                var asset = ViewModelLocator.AssetsTabViewModel.LoadAsset(Parent.TargetAssetType, file);
-                if (asset == null) return;
-                Parent.SelectedAsset = asset;
+                var file = new FileInfo(path.First());
+                if (AssetsTabViewModel.GetAssetType(file) != Parent.TargetAssetType)
+                    dropInfo.Effects = DragDropEffects.None;
+                else
+                {
+                    dropInfo.Effects = DragDropEffects.Copy;
+                }
             }
+            catch
+            {
+                dropInfo.Effects = DragDropEffects.None;
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            var data = dropInfo.Data as IDataObject;
+            var path = (string[])data.GetData(DataFormats.FileDrop);
+            var file = new FileInfo(path[0]);
+
+            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(Parent.TargetAssetType, file);
+            if (asset == null) return;
+            Parent.SelectedAsset = asset;
         }
     }
 }

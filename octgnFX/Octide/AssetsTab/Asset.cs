@@ -47,39 +47,10 @@ namespace Octide
             _linkedAssets = new List<AssetController>();
         }
 
-        private static readonly Dictionary<string, Asset> AssetCache = new Dictionary<string, Asset>(StringComparer.InvariantCultureIgnoreCase);
-
-
-        public static AssetType GetAssetType(FileInfo file)
+        public Asset(FileInfo file): this()
         {
-            switch (file.Extension.Substring(1).ToLower())
-            {
-                case "jpg":
-                case "jpeg":
-                case "bmp":
-                case "png":
-                case "gif":
-                case "tiff":
-                    return AssetType.Image;
-                case "py":
-                    return AssetType.PythonScript;
-                case "xml":
-                    return AssetType.Xml;
-                case "ttf":
-                    return AssetType.Font;
-                case "o8d":
-                    return AssetType.Deck;
-                case "mp3":
-                case "oog":
-                case "wav":
-                    return AssetType.Sound;
-                case "txt":
-                case "html":
-                case "pdf":
-                    return AssetType.Document;
-                default:
-                    return AssetType.Other;
-            }
+            File = file;
+            Type = AssetsTabViewModel.GetAssetType(file);
         }
 
         public bool UnlinkAsset(AssetController control)
@@ -109,29 +80,7 @@ namespace Octide
             }
         }
 
-        public static string GetAssetFilters(AssetType assetType)
-        {
-            switch (assetType)
-            {
-                case AssetType.Image:
-                    return "Image Files (*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG";
-                case AssetType.PythonScript:
-                    return "Python files (*.PY)|*.PY";
-                case AssetType.Xml:
-                    return "Xml files (*.XML)|*.XML";
-                case AssetType.Font:
-                    return "Font files (*.TTF)|*.TTF";
-                case AssetType.Deck:
-                    return "OCTGN Deck files (*.O8D)|*.O8D";
-                case AssetType.Document:
-                    return "Document files (*.HTML;*.PDF;*.TXT)|*.HTML;*.PDF;*.TXT";
-                case AssetType.Sound:
-                    return "Sound files (*.MP3;*.WAV;*.OGG)|*.MP3;*.WAV;*.OGG";
-                default:
-                    return "Any files|*.*";
-            }
-        }
-
+        /*
         public static Asset Load(string path)
         {
             if (string.IsNullOrEmpty(path)) return null;
@@ -155,12 +104,13 @@ namespace Octide
                     File = file
                 };
 
-                a.Type = GetAssetType(file);
+                a.Type = AssetsTabViewModel.GetAssetType(file);
 
                 AssetCache.Add(file.FullName, a);
                 return a;
             }
         }
+        */
 
         public bool Equals(Asset other)
         {
