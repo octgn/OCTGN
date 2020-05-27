@@ -214,7 +214,6 @@
     </Compile>
     <Compile Include="AssetsTab\Asset.cs" />
     <Compile Include="AssetsTab\AssetController.cs" />
-    <Compile Include="AssetManager.cs" />
     <Compile Include="GameTab\DeckSectionTab\DeckSectionView.xaml.cs">
       <DependentUpon>DeckSectionView.xaml</DependentUpon>
     </Compile>

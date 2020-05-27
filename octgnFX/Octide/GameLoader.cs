@@ -201,7 +201,6 @@ namespace Octide
             DidManualSave = true;
 
             Directory = path.DirectoryName;
-            ViewModelLocator.AssetsTabViewModel.CollectAssets();
 
             var gameSerializer = new GameSerializer();
             Game = (Game)gameSerializer.Deserialize(path.FullName);

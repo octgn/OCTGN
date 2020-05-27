@@ -56,11 +56,11 @@ namespace Octide.ViewModel
             };
             var game = ViewModelLocator.GameLoader.Game;
             var proxySerializer = new ProxyGeneratorSerializer(game.Id) { Game = game };
-            var path = new FileInfo(Path.Combine(ViewModelLocator.GameLoader.Directory, game.ProxyGenSource)).FullName;
+            var path = Path.Combine(ViewModelLocator.GameLoader.Directory, game.ProxyGenSource);
             _proxydef = (ProxyDefinition)proxySerializer.Deserialize(path);
 
-            var proxyDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.FullPath == path);
-            Asset = new AssetController(proxyDefAsset);
+        //    var proxyDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.FullPath == path);
+            Asset = new AssetController(AssetType.Xml, path);
             Asset.PropertyChanged += AssetChanged;
 
 
