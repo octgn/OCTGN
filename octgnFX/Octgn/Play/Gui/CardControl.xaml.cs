@@ -21,6 +21,7 @@ using System.Reflection;
 using Octgn.Core.DataExtensionMethods;
 using log4net;
 using Octgn.Core.Play;
+using Octgn.Controls;
 
 namespace Octgn.Play.Gui
 {
@@ -1199,7 +1200,10 @@ namespace Octgn.Play.Gui
                 if (source.ToolTip is TextBlock tooltipTextBlock)
                 {
                     if (Octgn.Core.Prefs.ExtendedTooltips)
-                        tooltipTextBlock.Text = Card.CardText;
+                    {
+                        tooltipTextBlock.Inlines.Clear();
+                        tooltipTextBlock.Inlines.Add(Card.CardText);
+                    }
                     else
                         tooltipTextBlock.Text = Card.Name;
                 }

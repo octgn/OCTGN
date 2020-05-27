@@ -1,3 +1,11 @@
+#3.4.272.0
+
+#3.4.270.0
+
+#3.4.268.0
++ Fix a crash caused by tooltips (hopefully for good this time) - Ben
++ Tooltip properly shows alternate and overridden properties - brine
+
 #3.4.266.0
 
 #3.4.264.0
@@ -3836,6 +3844,9 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
 
 
 

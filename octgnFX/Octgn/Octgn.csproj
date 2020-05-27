@@ -289,6 +289,7 @@
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Utils\Converters\RichTextConverter.cs" />
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
@@ -304,6 +305,9 @@
     </Compile>
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Dialogs\PreviewCardWindow.xaml.cs">
@@ -889,6 +893,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WaitingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Dialogs\ChatWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
