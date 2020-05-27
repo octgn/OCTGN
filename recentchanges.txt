@@ -1,1 +1,2 @@
-
+Fix a crash caused by tooltips (hopefully for good this time) - Ben
+Tooltip properly shows alternate and overridden properties - brine

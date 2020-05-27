@@ -504,16 +504,19 @@ namespace Octgn.Play
             get
             {
                 var ret = "Card";
-                if (FaceUp)
+                if (FaceUp && _type.Model != null)
                 {
                     ret = Name;
-                    foreach (var key in _type.Model.GetCardProperties(Alternate()).Keys)
+                    foreach (var gameProperty in Program.GameEngine.Definition.CustomProperties)
                     {
-                        if (!key.Hidden && !key.IgnoreText)
+                        if (!gameProperty.Hidden && !gameProperty.IgnoreText)
                         {
-                            ret = ret + "\n" + key.Name + ": " + GetProperty(key.Name).ToString().Trim();
+                            var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
+                            if (cardProperty != null)
+                            {
+                                ret = ret + "\n" + gameProperty.Name + ": " + cardProperty.ToString().Trim();
+                            }
                         }
-
                     }
                 }
                 return ret;
