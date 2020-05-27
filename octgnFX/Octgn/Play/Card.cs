@@ -11,18 +11,10 @@ using Octgn.Play.Actions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 using System.Reflection;
-using Exceptionless.Json;
 using Octgn.Core.DataExtensionMethods;
-using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 
 using log4net;
-using Octgn.Site.Api;
-using Octgn.Library;
-using Octgn.Core;
-using System.Windows.Documents;
-using System.Windows;
-using Octgn.Utils.Converters;
 
 namespace Octgn.Play
 {
@@ -502,16 +494,13 @@ namespace Octgn.Play
             get { return _filter != null; }
         }
 
-        public Span CardText
+        public Dictionary<PropertyDef, object> CurrentCardProperties
         {
             get
             {
-                var ret = new Span();
-                ret.Inlines.Add("Card");
+                var ret = new Dictionary<PropertyDef, object>();
                 if (FaceUp && _type.Model != null)
                 {
-                    ret = new Span();
-                    ret.Inlines.Add(new Run(Name) { FontWeight = FontWeights.Bold });
                     foreach (var gameProperty in Program.GameEngine.Definition.CustomProperties)
                     {
                         if (!gameProperty.Hidden && !gameProperty.IgnoreText)
@@ -519,21 +508,24 @@ namespace Octgn.Play
                             var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
                             if (cardProperty != null)
                             {
-                                ret.Inlines.Add(new LineBreak());
-                                ret.Inlines.Add(new Run(gameProperty.Name + ": ") { FontWeight = FontWeights.Bold });
-                                if (gameProperty.Type == PropertyType.RichText)
-                                {
-                                    var richTextSpan = RichTextConverter.ConvertToSpan(cardProperty as RichTextPropertyValue, Program.GameEngine.Definition);
-                                    ret.Inlines.Add(richTextSpan);
-                                }
-                                else
-                                {
-                                    ret.Inlines.Add(cardProperty.ToString().Trim());
-                                }
-
+                                ret[gameProperty] = cardProperty;
                             }
                         }
                     }
+                }
+
+                return ret;
+            }
+        }
+
+        public string AccessibilityCardInfo
+        {
+            get
+            {
+                string ret = "";
+                foreach (var prop in CurrentCardProperties)
+                {
+                    ret += string.Format("\n{0}: {1}", prop.Key.Name, prop.Value.ToString());
                 }
                 return ret;
             }
