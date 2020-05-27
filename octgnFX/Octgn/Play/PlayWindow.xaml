@@ -102,8 +102,11 @@
 
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Card List" IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}"></MenuItem>
-            <MenuItem Header="Undock Card Preview" Click="UndockCardPreview"></MenuItem>
+            <MenuItem Header="Card List" IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}"></MenuItem>            
+            <MenuItem Header="Undock Options">
+                <MenuItem Header="Undock Card Preview" Click="UndockCardPreview"></MenuItem>
+                <MenuItem x:Name="ChatToggleChecked" Header="Undock Chat" Click="ToggleChatDockPanel" IsCheckable="True"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
@@ -363,7 +366,7 @@
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="1" Grid.RowSpan="4" Panel.ZIndex="53" />
         <Decorator Grid.Row="2"  x:Name="backstage" Visibility="Collapsed"/>
 
-        <Grid x:Name="chatGrid" Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+        <Grid x:Name="chatGrid"   Grid.Row="2" Grid.RowSpan="3" Width="300" ZIndex="5" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100*" x:Name="ChatGridEmptyPart"/>
                 <RowDefinition Height="5"/>
@@ -387,8 +390,8 @@
                     </ControlTemplate>
                 </GridSplitter.Template>
             </GridSplitter>
-            <Border Margin="0,0,0,2" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333" />
+            <Border Margin="0,0,0,2" Grid.Row="2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <gui:ChatControl x:Name="chat"     DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333" />
             </Border>
         </Grid>
         <GridSplitter Grid.Row="3" x:Name="playerAreaGridSplitter" VerticalAlignment="Center" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" 
@@ -409,7 +412,7 @@
         </GridSplitter>
         <Grid Grid.Row="4" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition x:Name="Column4ChatWidth" Width="300" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1"  Background="#55333333" 
