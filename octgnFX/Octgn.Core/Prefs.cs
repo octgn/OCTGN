@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using Octgn.Core.Util;
@@ -243,11 +244,18 @@ namespace Octgn.Core
         {
             get
             {
-                return Rect.Parse(Config.Instance.ReadValue("PreviewCardLoc", ("100, 100, 200, 300")));
+                try
+                {
+                    return Rect.Parse(Config.Instance.ReadValue("PreviewCardLoc", ("100, 100, 200, 300")));
+                }
+                catch
+                {
+                    return new Rect(100, 100, 200, 300);
+                }
             }
             set
             {
-                Config.Instance.WriteValue("PreviewCardLoc", value.ToString());
+                Config.Instance.WriteValue("PreviewCardLoc", value.ToString(CultureInfo.InvariantCulture));
             }
         }
 
@@ -255,11 +263,18 @@ namespace Octgn.Core
         {
             get
             {
-                return Rect.Parse(Config.Instance.ReadValue("ChatWindowLoc", ("100, 100, 200, 300")));
+                try
+                {
+                    return Rect.Parse(Config.Instance.ReadValue("ChatWindowLoc", ("100, 100, 200, 300")));
+                }
+                catch
+                {
+                    return new Rect(100, 100, 200, 300);
+                }
             }
             set
             {
-                Config.Instance.WriteValue("ChatWindowLoc", value.ToString());
+                Config.Instance.WriteValue("ChatWindowLoc", value.ToString(CultureInfo.InvariantCulture));
             }
         }
 
