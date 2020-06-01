@@ -1092,6 +1092,7 @@ namespace Octgn.Play
                 if(this._chatWindow == null) // create a new chat window
                 {
                     this._chatWindow = new ChatWindow() { Owner = this };
+                    this._chatWindow.AddHandler(CardRun.ViewCardModelEvent, new EventHandler<CardModelEventArgs>(ViewCardModel));
                     this._chatWindow.Closed += (a, b) =>
                     {
                         this._chatWindow = null;
