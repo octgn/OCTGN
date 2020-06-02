@@ -95,6 +95,12 @@ def askInteger(question, defaultAnswer):
 def askString(question, defaultAnswer):
 	return _api.AskString(question, defaultAnswer)
 
+def saveFile(title, defaultPath, fileFilter):
+    return _api.SaveFile(title, defaultPath, fileFilter)
+
+def loadFile(title, defaultPath, fileFilter):
+	return _api.LoadFile(title, defaultPath, fileFilter)
+
 def askChoice(question, choices = [], colors = [], customButtons = []):
 	choiceList = List[String](choices)
 	if len(colors) != len(choices):

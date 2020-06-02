@@ -1020,6 +1020,43 @@ namespace Octgn.Scripting.Versions
             });
         }
 
+        public string SaveFile(string title, string defaultValue, string fileFilter)
+        {
+            return QueueAction<string>(() =>
+            {
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = fileFilter;
+                    saveFileDialog.Title = title;
+                    saveFileDialog.ShowDialog();
+                    return saveFileDialog.FileName;
+                };
+            });
+        }
+
+        public string LoadFile(string title, string defaultValue, string fileFilter)
+        {
+            return QueueAction<string>(() =>
+            {
+                var filePath = string.Empty;
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.InitialDirectory = "c:\\";
+                    openFileDialog.Filter = fileFilter;
+                    openFileDialog.FilterIndex = 2;
+                    openFileDialog.Title = title;
+                    openFileDialog.RestoreDirectory = true;
+
+                    if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        //Get the path of specified file
+                        filePath = openFileDialog.FileName;
+                    }
+                    return filePath;
+                }
+            });
+        }
+
         //public Tuple<string, int> AskCard(string restriction)
         //{
         //    return QueueAction<Tuple<string, int>>(() =>
