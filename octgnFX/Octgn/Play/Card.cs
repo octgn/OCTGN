@@ -503,13 +503,10 @@ namespace Octgn.Play
                 {
                     foreach (var gameProperty in Program.GameEngine.Definition.CustomProperties)
                     {
-                        if (!gameProperty.Hidden && !gameProperty.IgnoreText)
+                        var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
+                        if (cardProperty != null)
                         {
-                            var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
-                            if (cardProperty != null)
-                            {
-                                ret[gameProperty] = cardProperty;
-                            }
+                            ret[gameProperty] = cardProperty;
                         }
                     }
                 }
@@ -518,14 +515,25 @@ namespace Octgn.Play
             }
         }
 
-        public string AccessibilityCardInfo
+        public Dictionary<PropertyDef, object> VisibleCardProperties
         {
             get
             {
-                string ret = "";
-                foreach (var prop in CurrentCardProperties)
+                return CurrentCardProperties.Where(x => x.Key.IgnoreText == false && x.Key.Hidden == false).ToDictionary(x => x.Key, y => y.Value);
+            }
+        }
+
+        /// <summary>
+        /// Lists all of the card's visible properties for cardcontrol's AutomationProperties to bind to
+        /// </summary>
+        public string AutomationHelpText
+        {
+            get
+            {
+                string ret = string.Format("Name: {0}", Name);
+                foreach (var prop in VisibleCardProperties)
                 {
-                    ret += string.Format("\n{0}: {1}", prop.Key.Name, prop.Value.ToString());
+                    ret += string.Format("\n{0}: {1}", prop.Key.Name, prop.Value.ToString().Trim());
                 }
                 return ret;
             }

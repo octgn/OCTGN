@@ -1202,9 +1202,8 @@ namespace Octgn.Play.Gui
                     tooltipTextBlock.Inlines.Add(new Run(Card.Name) { FontWeight = FontWeights.Bold });
                     if (Octgn.Core.Prefs.ExtendedTooltips)
                     {
-                        foreach (var property in Card.CurrentCardProperties)
+                        foreach (var property in Card.VisibleCardProperties)
                         {
-
                             tooltipTextBlock.Inlines.Add(new LineBreak());
                             tooltipTextBlock.Inlines.Add(new Run(property.Key.Name + ": ") { FontWeight = FontWeights.Bold });
                             if (property.Key.Type == PropertyType.RichText && property.Value is RichTextPropertyValue richText)
@@ -1215,7 +1214,6 @@ namespace Octgn.Play.Gui
                             {
                                 tooltipTextBlock.Inlines.Add(property.Value.ToString().Trim());
                             }
-
                         }
                     }
                 }
