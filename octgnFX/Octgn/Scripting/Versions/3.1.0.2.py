@@ -95,11 +95,11 @@ def askInteger(question, defaultAnswer):
 def askString(question, defaultAnswer):
 	return _api.AskString(question, defaultAnswer)
 
-def saveFile(title, defaultPath, fileFilter):
-    return _api.SaveFile(title, defaultPath, fileFilter)
+def saveFileDlg(title, defaultPath, fileFilter):
+    return _api.SaveFileDlg(title, defaultPath, fileFilter)
 
-def loadFile(title, defaultPath, fileFilter):
-	return _api.LoadFile(title, defaultPath, fileFilter)
+def openFileDlg(title, defaultPath, fileFilter):
+	return _api.OpenFileDlg(title, defaultPath, fileFilter)
 
 def askChoice(question, choices = [], colors = [], customButtons = []):
 	choiceList = List[String](choices)
