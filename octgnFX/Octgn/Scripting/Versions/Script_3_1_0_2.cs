@@ -14,6 +14,7 @@ using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 using Octgn.Extentions;
+using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
@@ -1020,41 +1021,41 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public string SaveFile(string title, string defaultValue, string fileFilter)
+        public string SaveFileDlg(string title, string defaultValue, string fileFilter)
         {
             return QueueAction<string>(() =>
             {
                 using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                 {
-                    saveFileDialog.Filter = fileFilter;
-                    saveFileDialog.Title = title;
-                    saveFileDialog.ShowDialog();
-                    return saveFileDialog.FileName;
+                    return FileDlg(title, defaultValue, fileFilter, saveFileDialog);
                 };
             });
         }
 
-        public string LoadFile(string title, string defaultValue, string fileFilter)
+        public string OpenFileDlg(string title, string defaultValue, string fileFilter)
         {
             return QueueAction<string>(() =>
             {
-                var filePath = string.Empty;
                 using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    openFileDialog.InitialDirectory = "c:\\";
-                    openFileDialog.Filter = fileFilter;
-                    openFileDialog.FilterIndex = 2;
-                    openFileDialog.Title = title;
-                    openFileDialog.RestoreDirectory = true;
-
-                    if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        //Get the path of specified file
-                        filePath = openFileDialog.FileName;
-                    }
-                    return filePath;
+                    return FileDlg(title, defaultValue, fileFilter, openFileDialog);
                 }
             });
+        }
+
+        private string FileDlg(string title, string defaultValue, string fileFilter, FileDialog fileDialog)
+        {
+            fileDialog.InitialDirectory = Config.Instance.DataDirectory;
+            fileDialog.Filter = fileFilter;
+            fileDialog.Title = title;
+            fileDialog.RestoreDirectory = true;
+
+            var filePath = string.Empty;
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = fileDialog.FileName;
+            }
+            return filePath;
         }
 
         //public Tuple<string, int> AskCard(string restriction)
