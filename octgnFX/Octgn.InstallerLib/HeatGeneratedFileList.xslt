@@ -28,7 +28,7 @@
 
   <xsl:key
         name="LogsToRemove"
-        match="wix:Directory[ @Name='Logs' ]"
+        match="wix:Component[ substring( wix:File/@Source, 20, 4 ) = 'Logs' ]"
         use="@Id"
     />
 
@@ -41,7 +41,7 @@
   <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'PdbToRemove', @Id ) ]" />
   <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'XmlToRemove', @Id ) ]" />
   <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'DataPathToRemove', @Id ) ]" />
-  <xsl:template match="*[ self::wix:Directory or self::wix:DirectoryRef ][ key( 'LogsToRemove', @Id ) ]" />
+  <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'LogsToRemove', @Id ) ]" />
 
   <xsl:template match="wix:DirectoryRef">
     <xsl:copy>
