@@ -74,15 +74,6 @@
             <Component Id="cmp2FF44427C4BE2A2545A7502159E18303" Guid="*">
                 <File Id="filC6C2E08E49C56A051CE8F19A05D29041" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.pdb" />
             </Component>
-            <Component Id="cmp74854E9D51C942C64DFE4840A5FA9B48" Guid="*">
-                <File Id="filB82AFCDD9B90C5660CBD9670E3557ED6" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.dll" />
-            </Component>
-            <Component Id="cmp41A9B9F65C5DD9588DC10E1F13924E04" Guid="*">
-                <File Id="fil341A8B260072E5BB71C4490ED368B453" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.dll.config" />
-            </Component>
-            <Component Id="cmpEE970844372C7C0C828CB6CB82AC5EA9" Guid="*">
-                <File Id="fil8BA4D4CD282C1A1FB998C5DDCB588513" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.pdb" />
-            </Component>
             <Component Id="cmpCF7DD7BD849891DCFCDA35D986864226" Guid="*">
                 <File Id="filFEFBFD68B7A8FEFFBB1475BA0D4BB6DD" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Library.dll" />
             </Component>
@@ -446,9 +437,6 @@
             <ComponentRef Id="cmp35550CF1C06E3C1827992B5B45E65C9A" />
             <ComponentRef Id="cmpBDB25F85659D6DD888698DB0DCCF30E3" />
             <ComponentRef Id="cmp2FF44427C4BE2A2545A7502159E18303" />
-            <ComponentRef Id="cmp74854E9D51C942C64DFE4840A5FA9B48" />
-            <ComponentRef Id="cmp41A9B9F65C5DD9588DC10E1F13924E04" />
-            <ComponentRef Id="cmpEE970844372C7C0C828CB6CB82AC5EA9" />
             <ComponentRef Id="cmpCF7DD7BD849891DCFCDA35D986864226" />
             <ComponentRef Id="cmpC32E430455683D2080053EAB6B4ACB9A" />
             <ComponentRef Id="cmp28319B2323E790E54EB62B255951D268" />

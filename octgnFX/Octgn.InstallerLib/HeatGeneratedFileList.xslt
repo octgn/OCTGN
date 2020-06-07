@@ -26,6 +26,12 @@
         use="@Id"
     />
 
+  <xsl:key
+        name="LogsToRemove"
+        match="wix:Directory[ @Name='Logs' ]"
+        use="@Id"
+    />
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()" />
@@ -35,6 +41,7 @@
   <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'PdbToRemove', @Id ) ]" />
   <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'XmlToRemove', @Id ) ]" />
   <xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'DataPathToRemove', @Id ) ]" />
+  <xsl:template match="*[ self::wix:Directory or self::wix:DirectoryRef ][ key( 'LogsToRemove', @Id ) ]" />
 
   <xsl:template match="wix:DirectoryRef">
     <xsl:copy>
