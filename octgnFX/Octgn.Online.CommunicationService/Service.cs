@@ -3,6 +3,7 @@ using Octgn.ChatService.Data;
 using Octgn.Communication;
 using Octgn.Communication.Modules;
 using Octgn.Communication.Serializers;
+using Octgn.Communication.Tcp;
 using Octgn.Online;
 using Octgn.Online.Hosting;
 using Octgn.WindowsDesktopUtilities;
