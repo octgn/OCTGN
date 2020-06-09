@@ -98,12 +98,44 @@
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" IsEnabled="{Binding IsDefined}" >
-                                    <TextBox.Style>
-                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
-                                    </TextBox.Style>
-                                </TextBox>
 
+                                <ContentPresenter Content="{Binding }" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsDefined}">
+                                    <ContentPresenter.Resources>
+                                        <DataTemplate x:Key="richTextProperty">
+                                            <TextBox AcceptsReturn="True" MaxHeight="100" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                                <TextBox.Style>
+                                                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
+                                                </TextBox.Style>
+                                                <TextBox.Text>
+                                                    <Binding Path="Value" >
+                                                        <Binding.ValidationRules>
+                                                            <local:RichTextValidationRule />
+                                                        </Binding.ValidationRules>
+                                                    </Binding>
+                                                </TextBox.Text>
+                                            </TextBox>
+                                        </DataTemplate>
+                                        <DataTemplate x:Key="stringProperty">
+                                            <TextBox Text="{Binding Value}">
+                                                <TextBox.Style>
+                                                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
+                                                </TextBox.Style>
+                                            </TextBox>
+                                        </DataTemplate>
+                                    </ContentPresenter.Resources>
+                                    <ContentPresenter.Style>
+                                        <Style TargetType="{x:Type ContentPresenter}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsRich}" Value="True">
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource richTextProperty}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsRich}" Value="False">
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource stringProperty}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentPresenter.Style>
+                                </ContentPresenter>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

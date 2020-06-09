@@ -68,9 +68,9 @@ namespace Octide.SetTab.ItemModel
                 Items.Add(new CardPropertyModel
                 {
                     Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemModel)._property.Equals(prop.Key)) as PropertyItemModel,
-                    _value = prop.Value,
+                    _cachedValue = prop.Value,
                     Parent = this,
-                    _isDefined = prop.Value != null
+                    _isDefined = true
                 });
             }
             Items.CollectionChanged += (a, b) =>
@@ -102,8 +102,8 @@ namespace Octide.SetTab.ItemModel
                 Items.Add(new CardPropertyModel
                 {
                     Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemModel)._property.Equals(prop.Key)) as PropertyItemModel,
-                    _value = prop.Value,
-                    _isDefined = prop.Value != null,
+                    _cachedValue = prop.Value,
+                    _isDefined = true,
                     Parent = this
                 });
             }
@@ -133,7 +133,7 @@ namespace Octide.SetTab.ItemModel
         }
         public void BuildAltDef(NotifyCollectionChangedEventArgs args)
         {
-            _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y.Value);
+            _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y._cachedValue);
         }
 
         public List<CardPropertyModel> GetProperties
@@ -421,12 +421,12 @@ namespace Octide.SetTab.ItemModel
                 );
 
             var allCardProperties = new List<CardPropertyModel>(GetProperties);
-            allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.NameProperty, _value = Name });
-            allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.SizeProperty, _value = SizeProperty.Name });
+            allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.NameProperty, _cachedValue = Name });
+            allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.SizeProperty, _cachedValue = SizeProperty.Name });
 
             foreach (var x in allCardProperties)
             {
-                var y = x.Value;
+                var y = x._cachedValue;
                 var z = x.Name;
             }
 

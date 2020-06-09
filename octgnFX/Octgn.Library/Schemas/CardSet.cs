@@ -179,6 +179,27 @@ public partial class pickProperty {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class text {
+    
+    private string valueField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlTextAttribute()]
+    public string Value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class underline {
     
     private object[] itemsField;
@@ -190,6 +211,7 @@ public partial class underline {
     [System.Xml.Serialization.XmlElementAttribute("c", typeof(color), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("i", typeof(italics), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("s", typeof(symbol), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("t", typeof(text), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
             return this.itemsField;
@@ -226,6 +248,7 @@ public partial class bold {
     [System.Xml.Serialization.XmlElementAttribute("c", typeof(color), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("i", typeof(italics), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("s", typeof(symbol), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("t", typeof(text), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("u", typeof(underline), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
@@ -266,6 +289,7 @@ public partial class color {
     [System.Xml.Serialization.XmlElementAttribute("c", typeof(color), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("i", typeof(italics), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("s", typeof(symbol), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("t", typeof(text), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("u", typeof(underline), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
@@ -314,6 +338,7 @@ public partial class italics {
     [System.Xml.Serialization.XmlElementAttribute("b", typeof(bold), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("c", typeof(color), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("s", typeof(symbol), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("t", typeof(text), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("u", typeof(underline), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
@@ -345,7 +370,7 @@ public partial class symbol {
     
     private string valueField;
     
-    private string[] textField;
+    private string valueField1;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -360,12 +385,12 @@ public partial class symbol {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlTextAttribute()]
-    public string[] Text {
+    public string Value {
         get {
-            return this.textField;
+            return this.valueField1;
         }
         set {
-            this.textField = value;
+            this.valueField1 = value;
         }
     }
 }
@@ -390,6 +415,7 @@ public partial class property {
     [System.Xml.Serialization.XmlElementAttribute("c", typeof(color), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("i", typeof(italics), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("s", typeof(symbol), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("t", typeof(text), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("u", typeof(underline), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {

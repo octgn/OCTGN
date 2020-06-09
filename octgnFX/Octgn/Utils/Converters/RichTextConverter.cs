@@ -27,7 +27,7 @@ namespace Octgn.Utils.Converters
             Game = parameter as Game;
             var propval = value as RichTextPropertyValue;
             if (propval == null) return null;
-            if (!(propval.Value is RichSpan)) throw new InvalidOperationException($"{nameof(RichTextPropertyValue)}.{nameof(value)} is the wrong type");
+            if (!(propval.Value is IRichText)) throw new InvalidOperationException($"{nameof(RichTextPropertyValue)}.{nameof(value)} is the wrong type");
 
             Span span = new Span();
             InternalProcess(span, propval.Value);
@@ -47,70 +47,59 @@ namespace Octgn.Utils.Converters
             throw new NotImplementedException();
         }
 
-        private static void InternalProcess(Span span, RichSpan node)
+        private static void InternalProcess(Span span, IRichText node)
         {
-            foreach (RichSpan child in node.Items)
+            foreach (IRichText child in node.Items)
             {
                 if (child is RichText text)
                 {
                     span.Inlines.Add(new Run(text.Text.ToString()));
                 }
-                else if (child is RichSpan element)
+                else if (child is RichBold richBold)
                 {
-                    switch (element.Type)
+                    Span boldSpan = new Span();
+                    InternalProcess(boldSpan, richBold);
+                    Bold bold = new Bold(boldSpan);
+                    span.Inlines.Add(bold);
+                }
+                else if (child is RichItalic richItalic)
+                {
+                    Span italicSpan = new Span();
+                    InternalProcess(italicSpan, richItalic);
+                    Italic italic = new Italic(italicSpan);
+                    span.Inlines.Add(italic);
+                }
+                else if (child is RichUnderline richUnderline)
+                {
+                    Span underlineSpan = new Span();
+                    InternalProcess(underlineSpan, richUnderline);
+                    Underline underline = new Underline(underlineSpan);
+                    span.Inlines.Add(underline);
+                }
+                else if (child is RichColor richColor)
+                {
+                    Span colorSpan = new Span();
+                    InternalProcess(colorSpan, richColor);
+                    colorSpan.Foreground = new BrushConverter().ConvertFromString(richColor.Attribute) as SolidColorBrush;
+                    span.Inlines.Add(colorSpan);
+                }
+                else if (child is RichSymbol richSymbol)
+                {
+                    Symbol symbol = richSymbol.Attribute;
+
+                    var image = new Image
                     {
-                        case RichSpanType.Bold:
-                            {
-                                Span boldSpan = new Span();
-                                InternalProcess(boldSpan, element);
-                                Bold bold = new Bold(boldSpan);
-                                span.Inlines.Add(bold);
-                                break;
-                            }
-                        case RichSpanType.Italic:
-                            {
-                                Span italicSpan = new Span();
-                                InternalProcess(italicSpan, element);
-                                Italic italic = new Italic(italicSpan);
-                                span.Inlines.Add(italic);
-                                break;
-                            }
-                        case RichSpanType.Underline:
-                            {
-                                Span underlineSpan = new Span();
-                                InternalProcess(underlineSpan, element);
-                                Underline underline = new Underline(underlineSpan);
-                                span.Inlines.Add(underline);
-                                break;
-                            }
-                        case RichSpanType.Color:
-                            {
-                                Span colorSpan = new Span();
-                                InternalProcess(colorSpan, element);
-                                colorSpan.Foreground = new BrushConverter().ConvertFromString((element as RichColor).Attribute) as SolidColorBrush;
-                                span.Inlines.Add(colorSpan);
-                                break;
-                            }
-                        case RichSpanType.Symbol:
-                            {
-                                Symbol symbol = (element as RichSymbol).Attribute;
+                        Margin = new Thickness(0, 0, 0, -2),
+                        Height = span.FontSize + 2,
+                        Stretch = Stretch.Uniform,
+                        Source = new BitmapImage(new Uri(symbol.Source)),
+                        ToolTip = symbol.Name
+                    };
 
-                                var image = new Image
-                                {
-                                    Margin = new Thickness(0, 0, 0, -2),
-                                    Height = span.FontSize + 2,
-                                    Stretch = Stretch.Uniform,
-                                    Source = new BitmapImage(new Uri(symbol.Source)),
-                                    ToolTip = symbol.Name
-                                };
+                    var symbolSpan = new InlineUIContainer();
+                    symbolSpan.Child = image;
 
-                                var symbolSpan = new InlineUIContainer();
-                                symbolSpan.Child = image;
-
-                                span.Inlines.Add(symbolSpan);
-                                break;
-                            }
-                    }
+                    span.Inlines.Add(symbolSpan);
                 }
             }
         }

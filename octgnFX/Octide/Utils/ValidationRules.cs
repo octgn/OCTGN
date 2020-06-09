@@ -2,6 +2,7 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using Octgn.DataNew.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Octide
 {
@@ -59,6 +62,22 @@ namespace Octide
                 return new ValidationResult(false, "Value cannot be empty.");
             if (Restriction != null && text.Equals(Restriction, StringComparison.InvariantCultureIgnoreCase))
                 return new ValidationResult(false, string.Format("Value cannot be '{0}'.", text));
+            return ValidationResult.ValidResult;
+        }
+    }
+    public class RichTextValidationRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            try
+            {
+                var xmlElement = XElement.Parse("<rich>" + value + "</rich>");
+            }
+            catch (XmlException ex)
+            {
+                return new ValidationResult(false, "Invalid XML structure.");
+
+            }
             return ValidationResult.ValidResult;
         }
     }
