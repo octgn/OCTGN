@@ -6,6 +6,12 @@ using System.Xml.Linq;
 
 namespace Octgn.DataNew.Entities
 {
+    public interface IRichText
+    {
+        List<IRichText> Items { get; set; }
+        string ToLiteralString();
+    }
+
     public class RichTextPropertyValue: ICloneable
     {
         public RichSpan Value { get; set; }
@@ -21,58 +27,137 @@ namespace Octgn.DataNew.Entities
             return Value?.ToString();
         }
         
+        public string ToLiteralString()
+        {
+            return Value?.ToLiteralString();
+        }
     }
-
-    public enum RichSpanType
+    
+    public class RichSpan : IRichText
     {
-        None,
-        Color,
-        Bold,
-        Italic,
-        Underline,
-        Symbol
-    }
-
-    public class RichSpan
-    {
-        public RichSpanType Type { get; set; }
-        public List<RichSpan> Items { get; set; }
+        public List<IRichText> Items { get; set; }
 
         public RichSpan()
         {
-            Items = new List<RichSpan>();
-            Type = RichSpanType.None;
+            Items = new List<IRichText>();
+        }
+        public override string ToString()
+        {
+            return string.Join("", Items.Select(x => x.ToString()));
+        }
+        public string ToLiteralString()
+        {
+            return string.Join("", Items.Select(x => x.ToLiteralString()));
+        }
+    }
+
+    public class RichBold : IRichText
+    {
+        public List<IRichText> Items { get; set; }
+
+        public RichBold()
+        {
+            Items = new List<IRichText>();
         }
 
         public override string ToString()
         {
             return string.Join("", Items.Select(x => x.ToString()));
         }
+        public string ToLiteralString()
+        {
+            return "<b>" + string.Join("", Items.Select(x => x.ToLiteralString())) + "</b>";
+        }
+    }
+    public class RichItalic : IRichText
+    {
+        public List<IRichText> Items { get; set; }
+
+        public RichItalic()
+        {
+            Items = new List<IRichText>();
+        }
+
+        public override string ToString()
+        {
+            return string.Join("", Items.Select(x => x.ToString()));
+        }
+        public string ToLiteralString()
+        {
+            return "<i>" + string.Join("", Items.Select(x => x.ToLiteralString())) + "</i>";
+        }
+    }
+    public class RichUnderline : IRichText
+    {
+        public List<IRichText> Items { get; set; }
+
+        public RichUnderline()
+        {
+            Items = new List<IRichText>();
+        }
+
+        public override string ToString()
+        {
+            return string.Join("", Items.Select(x => x.ToString()));
+        }
+        public string ToLiteralString()
+        {
+            return "<u>" + string.Join("", Items.Select(x => x.ToLiteralString())) + "</u>";
+        }
     }
     
-    public class RichSymbol : RichSpan
+    public class RichSymbol : IRichText
     {
+        public List<IRichText> Items { get; set; }
         public Symbol Attribute { get; set; }
         public string Text { get; set; }
+
+        public RichSymbol()
+        {
+            Items = new List<IRichText>();
+        }
 
         public override string ToString()
         {
             return Text;
         }
+        public string ToLiteralString()
+        {
+            return "<s value=\"" + Attribute.Id + "\">" + Text + "</s>";
+        }
     }
 
-    public class RichColor : RichSpan
+    public class RichColor : IRichText
     {
+        public List<IRichText> Items { get; set; }
         public string Attribute { get; set; }
+        public RichColor()
+        {
+            Items = new List<IRichText>();
+        }
+        public string ToLiteralString()
+        {
+            return "<c value=\"" + Attribute + "\">" + string.Join("", Items.Select(x => x.ToLiteralString())) + "</c>";
+        }
     }
 
 
-    public class RichText : RichSpan
+    public class RichText : IRichText
     {
-        public object Text { get; set; }
+        public List<IRichText> Items { get; set; }
+        public string Text { get; set; }
+        public RichText()
+        {
+            Items = new List<IRichText>();
+        }
         public override string ToString()
         {
-            return Text.ToString();
+            return Text;
+        }
+
+        public string ToLiteralString()
+        {
+            return Text;
         }
     }
 }

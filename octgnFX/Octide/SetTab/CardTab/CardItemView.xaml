@@ -34,7 +34,7 @@
                                 <DataTrigger Binding="{Binding IsDefault}" Value="True">
                                     <Setter Property="FontWeight" Value="Bold" />
                                     <Setter Property="BorderThickness" Value="3,3,3,0" />
-                                    <Setter Property="BorderBrush" Value="DarkRed" />
+                                    <Setter Property="BorderBrush" Value="{x:Static metro:AccentBrushes.Blue}" />
                                 </DataTrigger>
                                 <Trigger Property="IsMouseOver" Value="true">
                                     <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
@@ -56,8 +56,18 @@
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="10,10,0,0" Padding="15,1,15,1" Margin="5,0,0,0" >
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding Type}" FontWeight="Bold"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" >
+                                                <TextBlock Text="{Binding Type}" FontWeight="Bold" >
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="{x:Type TextBlock}" >
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsDefault}" Value="True" >
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                                 <TextBlock Text="{Binding Name}"  />
                                             </StackPanel>
                                         </Border>

@@ -1581,7 +1581,7 @@ namespace Octgn.DataNew
             }*/
         }
 
-        private void DeserializeRichCardProperty(RichSpan span, XElement xmlNode, Game game)
+        public static void DeserializeRichCardProperty(IRichText span, XElement xmlNode, Game game)
         {
             foreach (XNode child in xmlNode.Nodes())
             {
@@ -1593,39 +1593,41 @@ namespace Octgn.DataNew
                 {
                     switch (element.Name.ToString().ToUpper())
                     {
+                        case "T":
+                        case "TEXT":
+                            {
+                                span.Items.Add(new RichText() { Text = element.Value });
+                                break;
+                            }
                         case "B":
                         case "BOLD":
                             {
-                                RichSpan boldSpan = new RichSpan();
+                                var boldSpan = new RichBold();
                                 DeserializeRichCardProperty(boldSpan, element, game);
-                                boldSpan.Type = RichSpanType.Bold;
                                 span.Items.Add(boldSpan);
                                 break;
                             }
                         case "I":
                         case "ITALIC":
                             {
-                                RichSpan italicSpan = new RichSpan();
+                                var italicSpan = new RichItalic();
                                 DeserializeRichCardProperty(italicSpan, element, game);
-                                italicSpan.Type = RichSpanType.Italic;
                                 span.Items.Add(italicSpan);
                                 break;
                             }
                         case "U":
                         case "UNDERLINE":
                             {
-                                RichSpan underlineSpan = new RichSpan();
+                                var underlineSpan = new RichUnderline();
                                 DeserializeRichCardProperty(underlineSpan, element, game);
-                                underlineSpan.Type = RichSpanType.Underline;
                                 span.Items.Add(underlineSpan);
                                 break;
                             }
                         case "C":
                         case "COLOR":
                             {
-                                RichColor colorSpan = new RichColor();
+                                var colorSpan = new RichColor();
                                 DeserializeRichCardProperty(colorSpan, element, game);
-                                colorSpan.Type = RichSpanType.Color;
                                 var regexColorCode = new Regex.Regex("^#[a-fA-F0-9]{6}$");
                                 var color = element.Attribute("value").Value;
                                 if (!regexColorCode.IsMatch(color))
@@ -1639,9 +1641,8 @@ namespace Octgn.DataNew
                             {
                                 var symbolId = element.Attribute("value").Value;
                                 Symbol symbol = game.Symbols.FirstOrDefault(x => x.Id == symbolId) ?? throw new InvalidOperationException($"Could not find symbol {symbolId}");
-                                RichSymbol symbolSpan = new RichSymbol
+                                var symbolSpan = new RichSymbol
                                 {
-                                    Type = RichSpanType.Symbol,
                                     Attribute = symbol,
                                     Text = element.FirstNode.ToString()
                                 };
@@ -1793,8 +1794,15 @@ namespace Octgn.DataNew
                             var prop = new property
                             {
                                 name = p.Key.Name,
-                                value = p.Value.ToString()
                             };
+                            if (p.Value is RichTextPropertyValue richText)
+                            {
+                                prop.Items = SerializeRichText(richText.Value).ToArray();
+                            }
+                            else
+                            {
+                                prop.value = p.Value.ToString();
+                            }
                             props.Add(prop);
                         }
                         card.name = propset.Value.Name;
@@ -1822,9 +1830,16 @@ namespace Octgn.DataNew
                             if (p.Value == null) continue;
                             var prop = new property
                             {
-                                name = p.Key.Name,
-                                value = p.Value.ToString()
+                                name = p.Key.Name
                             };
+                            if (p.Value is RichTextPropertyValue richText)
+                            {
+                                prop.Items = SerializeRichText(richText.Value).ToArray();
+                            }
+                            else
+                            {
+                                prop.value = p.Value.ToString();
+                            }
                             altprops.Add(prop);
                         }
                         alt.property = altprops.ToArray();
@@ -1844,6 +1859,51 @@ namespace Octgn.DataNew
                 serializer.Serialize(fs, save);
             }
             return File.ReadAllBytes(set.Filename);
+        }
+
+        public IEnumerable<object> SerializeRichText(IRichText richText)
+        {
+            foreach (var item in richText.Items)
+            {
+                if (item is RichBold bold)
+                {
+                    var ret = new bold();
+                    ret.Items = SerializeRichText(bold).ToArray();
+                    yield return ret;
+                }
+                else if (item is RichItalic italic)
+                {
+                    var ret = new italics();
+                    ret.Items = SerializeRichText(italic).ToArray();
+                    yield return ret;
+                }
+                else if (item is RichUnderline underline)
+                {
+                    var ret = new underline();
+                    ret.Items = SerializeRichText(underline).ToArray();
+                    yield return ret;
+                }
+                else if (item is RichSymbol symbol)
+                {
+                    var ret = new symbol();
+                    ret.value = symbol.Attribute.Id;
+                    ret.Value = symbol.Text;
+                    yield return ret;
+                }
+                else if (item is RichColor color)
+                {
+                    var ret = new color();
+                    ret.value = color.Attribute;
+                    ret.Items = SerializeRichText(color).ToArray();
+                    yield return ret;
+                }
+                else if (item is RichText text)
+                {
+                    var ret = new text();
+                    ret.Value = text.Text;
+                    yield return ret;
+                }
+            }
         }
 
         public IEnumerable<object> SerializePack(List<object> packitems)
