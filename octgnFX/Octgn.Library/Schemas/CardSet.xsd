@@ -142,6 +142,7 @@
         <xs:element name="b" type="bold" />
         <xs:element name="i" type="italics" />
         <xs:element name="u" type="underline" />
+        <xs:element name="t" type="text" />
       </xs:choice>
       <xs:attribute name="name" type="xs:string" use="required">
         <xs:annotation>
@@ -171,6 +172,7 @@
           <xs:element name="u" type="underline" />
           <xs:element name="c" type="color" />
           <xs:element name="s" type="symbol" />
+        <xs:element name="t" type="text" />
       </xs:choice>
     </xs:complexType>
   
@@ -185,6 +187,7 @@
           <xs:element name="i" type="italics" />
           <xs:element name="c" type="color" />
           <xs:element name="s" type="symbol" />
+        <xs:element name="t" type="text" />
       </xs:choice>
     </xs:complexType>
   
@@ -199,6 +202,7 @@
           <xs:element name="u" type="underline" />
           <xs:element name="c" type="color" />
           <xs:element name="s" type="symbol" />
+        <xs:element name="t" type="text" />
       </xs:choice>
     </xs:complexType>
 
@@ -214,11 +218,12 @@
           <xs:element name="u" type="underline" />
           <xs:element name="c" type="color" />
           <xs:element name="s" type="symbol" />
+          <xs:element name="t" type="text" />
       </xs:choice>
     <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
   
-  <xs:complexType mixed="true" name="symbol" >
+  <xs:complexType name="symbol" >
     <xs:annotation>
       <xs:documentation>
         symbol type contents
@@ -228,6 +233,17 @@
         <xs:extension base="xs:string">
           <xs:attribute name="value" type="xs:string" use="required"/>
         </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  
+  <xs:complexType name="text" >
+    <xs:annotation>
+      <xs:documentation>
+        text type contents
+      </xs:documentation>
+    </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string" />
       </xs:simpleContent>
     </xs:complexType>
         
