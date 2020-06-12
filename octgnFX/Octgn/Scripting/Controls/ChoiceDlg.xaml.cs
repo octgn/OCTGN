@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Octgn.Extentions;
 
 namespace Octgn.Scripting.Controls
 {
@@ -15,6 +16,15 @@ namespace Octgn.Scripting.Controls
         public ChoiceDlg(string title, string prompt, List<string> choices, List<string> colors, List<string> customButtons)
         {
             InitializeComponent();
+
+            // Apply game defined fonts
+            if (Core.Prefs.UseGameFonts && Program.GameEngine.Definition.ContextFont != null)
+            {
+                this.FontFamily = Program.GameEngine.Definition.ContextFont.GetFontFamily(this.FontFamily);
+                if (Program.GameEngine.Definition.ContextFont?.Size > 0)
+                    this.FontSize = Program.GameEngine.Definition.ContextFont.Size;
+            }
+
             //fix MAINWINDOW bug
             Owner = WindowManager.PlayWindow;
             Title = title;
