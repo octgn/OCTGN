@@ -697,12 +697,20 @@ namespace Octgn.Server
 				}
 				case 103:
 				{
-					string arg0 = reader.ReadString();
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
 					Log.Debug($"SERVER IN:  SetBoard");
-					_socket.Handler.SetBoard(arg0);
+					_socket.Handler.SetBoard(arg0, arg1);
 					break;
 				}
 				case 104:
+				{
+					byte arg0 = reader.ReadByte();
+					Log.Debug($"SERVER IN:  RemoveBoard");
+					_socket.Handler.RemoveBoard(arg0);
+					break;
+				}
+				case 105:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();

@@ -77,7 +77,8 @@ namespace Octgn.Networking
 		void SetCardProperty(Card id, Player player, string name, string val, string valtype);
 		void ResetCardProperties(Card id, Player player);
 		void Filter(Card card, Color? color);
-		void SetBoard(string name);
+		void SetBoard(Player player, string name);
+		void RemoveBoard(Player player);
 		void SetPlayerColor(Player player, string color);
 	}
 }

@@ -523,7 +523,11 @@
     <param name="color" type="Color?" />
   </msg>
   <msg name="SetBoard" client="true" server="true">
+    <param name="player" type="Player" />
     <param name="name" type="string" />
+  </msg>
+  <msg name="RemoveBoard" client="true" server="true">
+    <param name="player" type="Player" />
   </msg>
 	<msg name="SetPlayerColor" client="true" server="true">
 		<param name="player" type="Player"/>

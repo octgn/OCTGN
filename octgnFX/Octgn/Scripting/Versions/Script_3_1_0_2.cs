@@ -1407,15 +1407,24 @@ namespace Octgn.Scripting.Versions
 
         public void SetBoard(string name)
         {
-            if (String.IsNullOrWhiteSpace(name)) return;
-            if (!GetBoardList().Contains(name)) return;
-            QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
-            Program.Client.Rpc.SetBoard(name);
-
+            if (name == null)
+            {
+              //  QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
+                Program.Client.Rpc.RemoveBoard(Player.LocalPlayer);
+            }
+            else if (GetBoardList().Contains(name))
+            {
+            //    QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
+                Program.Client.Rpc.SetBoard(Player.LocalPlayer, name);
+            }
+            else
+            {
+                Program.GameMess.Warning("Cannot find game board with name `{0}`.", name);
+            }
         }
         public string GetBoard()
         {
-            return Program.GameEngine.GameBoard.Name;
+            return Program.GameEngine.GameBoard?.Name;
         }
         public string[] GetBoardList()
         {
