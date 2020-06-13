@@ -631,11 +631,20 @@ namespace Octgn.Server
 		}
 	}
 
-	public void SetBoard(string name)
+	public void SetBoard(byte player, string name)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
-				ply.Rpc.SetBoard(name);
+				ply.Rpc.SetBoard(player, name);
+			}
+		}
+	}
+
+	public void RemoveBoard(byte player)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.RemoveBoard(player);
 			}
 		}
 	}

@@ -1196,7 +1196,7 @@ namespace Octgn.Scripting.Versions
             if (String.IsNullOrWhiteSpace(name)) return;
             if (!GetBoardList().Contains(name)) return;
             QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
-            Program.Client.Rpc.SetBoard(name);
+            Program.Client.Rpc.SetBoard(Player.LocalPlayer, name);
 
         }
         public string GetBoard()

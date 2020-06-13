@@ -162,7 +162,8 @@ namespace Octgn
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
-            GameBoard = Definition.GameBoards[""];
+            if (Definition.GameBoards.ContainsKey(""))
+                GameBoard = Definition.GameBoards[""];
             ActivePlayer = null;
 
             foreach (var size in Definition.CardSizes) {
@@ -252,7 +253,8 @@ namespace Octgn
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
-            GameBoard = Definition.GameBoards[""];
+            if (Definition.GameBoards.ContainsKey(""))
+                GameBoard = Definition.GameBoards[""];
             ActivePlayer = null;
 
             foreach (var size in Definition.CardSizes)
@@ -386,10 +388,17 @@ namespace Octgn
 
         public void ChangeGameBoard(string name)
         {
-            if (name == null) return;
-            if (!Definition.GameBoards.ContainsKey(name)) return;
-            GameBoard = Definition.GameBoards[name];
-            BoardImage = GameBoard.Source;
+            if (name == null)
+            {
+                GameBoard = null;
+                BoardImage = null;
+            }
+            else
+            {
+                if (!Definition.GameBoards.ContainsKey(name)) return;
+                GameBoard = Definition.GameBoards[name];
+                BoardImage = GameBoard.Source;
+            }
             this.OnPropertyChanged("GameBoard");
             this.OnPropertyChanged("BoardMargin");
         }
@@ -404,7 +413,7 @@ namespace Octgn
             {
                 if (value == boardImage) return;
                 var nw = value;
-                if (!File.Exists(nw))
+                if (nw != null && !File.Exists(nw))
                 {
                     var workingDirectory = Path.Combine(Config.Instance.Paths.DatabasePath, Definition.Id.ToString());
                     if (File.Exists(Path.Combine(workingDirectory, nw)))
@@ -422,14 +431,19 @@ namespace Octgn
             }
         }
 
-        private Thickness? boardMargin;
         public Thickness BoardMargin
         {
             get
             {
-                var pos = new Rect(GameBoard.XPos, GameBoard.YPos, GameBoard.Width, GameBoard.Height);
-                boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
-                return boardMargin.Value;
+                if (GameBoard == null)
+                {
+                    return new Thickness();
+                }
+                else
+                {
+                    var pos = new Rect(GameBoard.XPos, GameBoard.YPos, GameBoard.Width, GameBoard.Height);
+                    return new Thickness(pos.Left, pos.Top, 0, 0);
+                }
             }
         }
 

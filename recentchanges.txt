@@ -1,1 +1,4 @@
-
+python can now revert the game board back to its default value ""
+python can remove the board (set the board to None)
+Added chat notifications for changing or removing game board
+Fixed a crash if a game didn't set a default game board

@@ -49,7 +49,7 @@ namespace Octgn.Play.State
             //this.TurnPlayer = engine.TurnPlayer.Id;
             if (engine.ActivePlayer != null) this.ActivePlayer = engine.ActivePlayer.Id;
             this.TurnNumber = engine.TurnNumber;
-            this.GameBoard = engine.GameBoard.Name;
+            this.GameBoard = engine.GameBoard?.Name;
             if (Play.Player.LocalPlayer == fromPlayer)
             {
                 CurrentUniqueId = engine.CurrentUniqueId;

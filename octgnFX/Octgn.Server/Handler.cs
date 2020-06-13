@@ -590,8 +590,11 @@ namespace Octgn.Server
             _context.Broadcaster.ResetCardProperties(card, player);
         }
 
-        public void SetBoard(string name) {
-            _context.Broadcaster.SetBoard(name);
+        public void SetBoard(byte player, string name) {
+            _context.Broadcaster.SetBoard(player, name);
+        }
+        public void RemoveBoard(byte player) {
+            _context.Broadcaster.RemoveBoard(player);
         }
 
         public void SetPlayerColor(byte player, string colorHex) {
