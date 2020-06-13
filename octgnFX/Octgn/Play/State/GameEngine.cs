@@ -692,6 +692,17 @@ namespace Octgn
             CardIdentity.Reset();
             Selection.Clear();
 
+            if (Definition.GameBoards.ContainsKey(""))
+            {
+                GameBoard = Definition.GameBoards[""];
+                BoardImage = GameBoard.Source;
+            }
+            else
+            {
+                GameBoard = null;
+                BoardImage = null;
+            }
+
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Key] = g.Value.Value;
 
