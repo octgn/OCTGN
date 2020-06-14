@@ -302,6 +302,7 @@ namespace Octgn.Play
                 }
                 // Set the value
                 _type = value;
+                OnPropertyChanged("AutomationHelpText");
                 OnPropertyChanged("Picture");
             }
         }
@@ -362,6 +363,7 @@ namespace Octgn.Play
             OnPropertyChanged("RealWidth");
             OnPropertyChanged("RealHeight");
             OnPropertyChanged("RealCornerRadius");
+            OnPropertyChanged("AutomationHelpText");
             if (lFaceUp)
             {
                 PeekingPlayers.Clear();
@@ -616,6 +618,7 @@ namespace Octgn.Play
             OnPropertyChanged("RealWidth");
             OnPropertyChanged("RealHeight");
             OnPropertyChanged("RealCornerRadius");
+            OnPropertyChanged("AutomationHelpText");
         }
 
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
@@ -650,6 +653,7 @@ namespace Octgn.Play
             {
                 Program.Client.Rpc.SetCardProperty(this,Player.LocalPlayer,name, val, val.GetType().FullName);
             }
+            OnPropertyChanged("AutomationHelpText");
         }
 
         public void ResetProperties(bool notifyServer = true)
@@ -659,6 +663,7 @@ namespace Octgn.Play
             {
                 Program.Client.Rpc.ResetCardProperties(this, Player.LocalPlayer);
             }
+            OnPropertyChanged("AutomationHelpText");
         }
 
         public void MoveTo(Group to, bool lFaceUp, bool isScriptMove)
