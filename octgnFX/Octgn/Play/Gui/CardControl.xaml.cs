@@ -377,6 +377,9 @@ namespace Octgn.Play.Gui
                 case "Anchored":
                     this.IsAnchored = Card.Anchored;
                     break;
+                case "AutomationHelpText":
+                    _regenerateToolTip = true;
+                    break;
             }
         }
 
@@ -1188,15 +1191,15 @@ namespace Octgn.Play.Gui
 
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private bool _regenerateToolTip = true;
 
         private void Card_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
             if (Card is null)
                 return;
-            if (e.OriginalSource is Control source)
+            if (e.OriginalSource is CardControl source && source.ToolTip is TextBlock tooltipTextBlock)
             {
-                if (source.ToolTip is TextBlock tooltipTextBlock)
+                if (_regenerateToolTip)
                 {
                     tooltipTextBlock.Inlines.Clear();
                     tooltipTextBlock.Inlines.Add(new Run(Card.Name) { FontWeight = FontWeights.Bold });
@@ -1216,10 +1219,12 @@ namespace Octgn.Play.Gui
                             }
                         }
                     }
+                    _regenerateToolTip = false;
                 }
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
