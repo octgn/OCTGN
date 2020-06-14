@@ -14,6 +14,7 @@ using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 using Octgn.Extentions;
+using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
@@ -1018,6 +1019,43 @@ namespace Octgn.Scripting.Versions
                 var result = dlg.GetString();
                 return dlg.DialogResult.GetValueOrDefault() ? result : null;
             });
+        }
+
+        public string SaveFileDlg(string title, string defaultValue, string fileFilter)
+        {
+            return QueueAction<string>(() =>
+            {
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    return FileDlg(title, defaultValue, fileFilter, saveFileDialog);
+                };
+            });
+        }
+
+        public string OpenFileDlg(string title, string defaultValue, string fileFilter)
+        {
+            return QueueAction<string>(() =>
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    return FileDlg(title, defaultValue, fileFilter, openFileDialog);
+                }
+            });
+        }
+
+        private string FileDlg(string title, string defaultValue, string fileFilter, FileDialog fileDialog)
+        {
+            fileDialog.InitialDirectory = Config.Instance.DataDirectory;
+            fileDialog.Filter = fileFilter;
+            fileDialog.Title = title;
+            fileDialog.RestoreDirectory = true;
+
+            var filePath = string.Empty;
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = fileDialog.FileName;
+            }
+            return filePath;
         }
 
         //public Tuple<string, int> AskCard(string restriction)

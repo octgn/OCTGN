@@ -57,10 +57,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication.WindowsDesktop\Octgn.Communication.WindowsDesktop.csproj">
-      <Project>{9BE61987-6599-4D33-96D3-4B22F30A07F6}</Project>
-      <Name>Octgn.Communication.WindowsDesktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj">
       <Project>{F145C512-7B6E-4DE3-9D7C-CD64151A829D}</Project>
       <Name>Octgn.Communication</Name>

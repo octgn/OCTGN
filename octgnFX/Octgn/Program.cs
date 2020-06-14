@@ -29,10 +29,9 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
-using Octgn.Library.Communication;
 using Octgn.Online.Hosting;
-using Octgn.Communication;
 using Octgn.Online;
+using Octgn.Communication.Tcp;
 
 namespace Octgn
 {

@@ -1299,10 +1299,6 @@
       <Project>{f31191fb-dd9e-4c6c-a37b-796d653dd864}</Project>
       <Name>o8build</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication.WindowsDesktop\Octgn.Communication.WindowsDesktop.csproj">
-      <Project>{9be61987-6599-4d33-96d3-4b22f30a07f6}</Project>
-      <Name>Octgn.Communication.WindowsDesktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj">
       <Project>{f145c512-7b6e-4de3-9d7c-cd64151a829d}</Project>
       <Name>Octgn.Communication</Name>
