@@ -210,22 +210,25 @@
             if (game.gameboards != null)
             {
                 // Check for valid attributes
-                if (String.IsNullOrWhiteSpace(game.gameboards.src))
+                if (!string.IsNullOrWhiteSpace(game.gameboards.src))
                 {
-                    throw GenerateEmptyAttributeException("GameBoard", "src");
+                    path = Path.Combine(Directory.FullName, game.gameboards.src);
+
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException(path, "Default Board", game.gameboards.name, "src", game.gameboards.src);
+                    }
                 }
 
-                path = Path.Combine(Directory.FullName, game.gameboards.src);
-
-                if (!File.Exists(path))
-                {
-                    throw GenerateFileDoesNotExistException(path, "Default Board", game.gameboards.name, "src", game.gameboards.src);
-                }
                 if (game.gameboards.gameboard != null)
                 {
                     foreach (var board in game.gameboards.gameboard)
                     {
                         // Check for valid attributes
+                        if (board.name == "")
+                        {
+                            throw GenerateReservedAttributeValueException("GameBoard", "name", "");
+                        }
                         if (String.IsNullOrWhiteSpace(board.src))
                         {
                             throw GenerateEmptyAttributeException("GameBoard", "src");
@@ -480,8 +483,10 @@
             }
 
             // Check for valid attributes
-            if (String.IsNullOrWhiteSpace(game.table.board) == false)
+            if (!string.IsNullOrWhiteSpace(game.table.board))
             {
+                GenerateWarningMessage("Defining a game board from the `<table>` element has been depreciated.\nPlease use the `<gameboards>` element to define game boards instead.\nsee wiki.octgn.net for more info.");
+
                 path = Path.Combine(Directory.FullName, game.table.board);
 
                 if (!File.Exists(path))
