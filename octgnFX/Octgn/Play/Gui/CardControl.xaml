@@ -96,7 +96,7 @@
 
                 <!--<Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
              Source="{Binding ElementName=me, Path=DisplayedPicture}" IsHitTestVisible="False"/>-->
-                <controls:OpaqueClickableImage x:Name="img" Image.MouseLeftButtonDown="LeftButtonDownOverImage" Source="{Binding ElementName=me, Path=DisplayedPicture}" AutomationProperties.ItemStatus="" />
+                <controls:OpaqueClickableImage x:Name="img" Image.MouseLeftButtonDown="LeftButtonDownOverImage" Source="{Binding ElementName=me, Path=DisplayedPicture}" />
 
                 <Rectangle MouseLeftButtonDown="LeftButtonDownOverImage"
                  Visibility="{Binding IsFiltered, Converter={StaticResource BooleanToVisibilityConverter}}">

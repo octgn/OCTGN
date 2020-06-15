@@ -377,9 +377,6 @@ namespace Octgn.Play.Gui
                 case "Anchored":
                     this.IsAnchored = Card.Anchored;
                     break;
-                case "AutomationHelpText":
-                    _regenerateToolTip = true;
-                    break;
             }
         }
 
@@ -1191,7 +1188,6 @@ namespace Octgn.Play.Gui
 
         #endregion
 
-        private bool _regenerateToolTip = true;
 
         private void Card_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
@@ -1199,27 +1195,23 @@ namespace Octgn.Play.Gui
                 return;
             if (e.OriginalSource is CardControl source && source.ToolTip is TextBlock tooltipTextBlock)
             {
-                if (_regenerateToolTip)
+                tooltipTextBlock.Inlines.Clear();
+                tooltipTextBlock.Inlines.Add(new Run(Card.Name) { FontWeight = FontWeights.Bold });
+                if (Octgn.Core.Prefs.ExtendedTooltips)
                 {
-                    tooltipTextBlock.Inlines.Clear();
-                    tooltipTextBlock.Inlines.Add(new Run(Card.Name) { FontWeight = FontWeights.Bold });
-                    if (Octgn.Core.Prefs.ExtendedTooltips)
+                    foreach (var property in Card.VisibleCardProperties)
                     {
-                        foreach (var property in Card.VisibleCardProperties)
+                        tooltipTextBlock.Inlines.Add(new LineBreak());
+                        tooltipTextBlock.Inlines.Add(new Run(property.Key.Name + ": ") { FontWeight = FontWeights.Bold });
+                        if (property.Key.Type == PropertyType.RichText && property.Value is RichTextPropertyValue richText)
                         {
-                            tooltipTextBlock.Inlines.Add(new LineBreak());
-                            tooltipTextBlock.Inlines.Add(new Run(property.Key.Name + ": ") { FontWeight = FontWeights.Bold });
-                            if (property.Key.Type == PropertyType.RichText && property.Value is RichTextPropertyValue richText)
-                            {
-                                tooltipTextBlock.Inlines.Add(RichTextConverter.ConvertToSpan(richText, Program.GameEngine.Definition));
-                            }
-                            else
-                            {
-                                tooltipTextBlock.Inlines.Add(property.Value.ToString().Trim());
-                            }
+                            tooltipTextBlock.Inlines.Add(RichTextConverter.ConvertToSpan(richText, Program.GameEngine.Definition));
+                        }
+                        else
+                        {
+                            tooltipTextBlock.Inlines.Add(property.Value.ToString().Trim());
                         }
                     }
-                    _regenerateToolTip = false;
                 }
             }
         }
