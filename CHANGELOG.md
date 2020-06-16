@@ -1,3 +1,11 @@
+#3.4.281.0
++ python can now revert the game board back to its default value ""
++ python can remove the board (set the board to None)
++ Added chat notifications for changing or removing game board
++ Fixed a crash if a game didn't set a default game board
++ Resetting the game reverts back to the default game board state
++ Added some additional o8build warning messages for game boards
+
 #3.4.279.0
 
 #3.4.276.0
@@ -3852,6 +3860,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
