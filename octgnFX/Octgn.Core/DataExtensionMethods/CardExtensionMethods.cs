@@ -282,6 +282,27 @@ namespace Octgn.Core.DataExtensionMethods
                 return string.IsNullOrWhiteSpace(value.ToString());
             }
         }
+        /// <summary>
+        /// Checks to see if a specified property exists on this card, and that its value matches the given value.
+        /// <para>Returns true if the property value is a match to the given value.</para>
+        /// <para>Returns false if the property value is different.</para>
+        /// </summary>
+        /// <param name="prop">The name of the custom property to check.</param>
+        /// <param name="value">A value to compare with this card's property value.</param>
+        public static bool MatchesPropertyValue(this ICard card, string prop, object value)
+        {
+            var cardProperties = GetFullCardProperties(card);
+            var matchedProperty = cardProperties.Keys.FirstOrDefault(x => x.Name.Equals(prop, StringComparison.InvariantCultureIgnoreCase));
+            if (matchedProperty == null)
+            {
+                // if the property is missing then its treated as null for match requests
+                return string.IsNullOrWhiteSpace(value.ToString());
+            }
+
+            if (string.IsNullOrWhiteSpace(cardProperties[matchedProperty]?.ToString()) && string.IsNullOrWhiteSpace(value?.ToString()))
+                return true;
+            return cardProperties[matchedProperty].ToString().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
+        }
 
         /// <summary>
         /// Sets this card's alternate state to the specified ID if it exists, then updates the card size accordingly.

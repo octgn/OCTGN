@@ -26,6 +26,7 @@
         {
             var packContents = new PackContent();
             var cardSelectionPool = pack.Set.Cards.ToList();
+            var game = pack.Set.GetGame();
 
             // add the include cards to the set for this booster
             var includeCards =
@@ -41,7 +42,13 @@
             .Select(picked =>
             {
                 var card = new Card(picked.Card);
-                picked.Include.Properties.Select(include => card.PropertySets[""].Properties[include.Property] = include.Value);
+
+                foreach (var include in picked.Include.Properties)
+                { 
+                    var property = game.CustomProperties.FirstOrDefault(x => x.Name.Equals(include.Property.Name, StringComparison.InvariantCultureIgnoreCase));
+                    if (property != null)
+                        card.PropertySets[""].Properties[property] = include.Value;
+                };
                 return card;
             });
 
@@ -66,7 +73,7 @@
                         var list = (
                             from card in filteredPool
                             where
-                                card.MatchesPropertyValue(Prop, Value)
+                                card.MatchesPropertyValue(Prop.Name, Value)
                             select card).ToList();
                         filteredPool = list;
                     }

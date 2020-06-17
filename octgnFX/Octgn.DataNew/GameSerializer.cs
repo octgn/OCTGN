@@ -1665,6 +1665,25 @@ namespace Octgn.DataNew
             return ret;
         }
 
+        private static PropertyDef _nameProperty;
+        private static PropertyDef NameProperty
+        {
+            get
+            {
+                if (_nameProperty == null)
+                {
+                    _nameProperty = new PropertyDef
+                    {
+                        Name = "Name",
+                        Type = PropertyType.String,
+                        Hidden = true,
+                        IgnoreText = true
+                    };
+                }
+                return _nameProperty;
+            }
+        }
+
         internal List<object> DeserializePack(IEnumerable<XElement> element)
         {
             var ret = new List<object>();
@@ -1682,7 +1701,9 @@ namespace Octgn.DataNew
                         var propertyList = new List<PickProperty>();
                         var baseProp = new PickProperty
                         {
-                            Property = Game.CustomProperties.FirstOrDefault(x => x.Name == e.Attribute("key").Value),
+                            Property = e.Attribute("key").Value.Equals("Name", StringComparison.InvariantCultureIgnoreCase)
+                                ? NameProperty
+                                : Game.CustomProperties.FirstOrDefault(x => x.Name.Equals(e.Attribute("key").Value, StringComparison.InvariantCultureIgnoreCase)),
                             Value = e.Attribute("value").Value
                         };
                         propertyList.Add(baseProp);
@@ -1690,7 +1711,9 @@ namespace Octgn.DataNew
                         {
                             var prop = new PickProperty
                             {
-                                Property = Game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("key").Value),
+                                Property = p.Attribute("key").Value.Equals("Name", StringComparison.InvariantCultureIgnoreCase)
+                                    ? NameProperty
+                                    : Game.CustomProperties.FirstOrDefault(x => x.Name.Equals(p.Attribute("key").Value, StringComparison.InvariantCultureIgnoreCase)),
                                 Value = p.Attribute("value").Value
                             };
                             propertyList.Add(prop);
