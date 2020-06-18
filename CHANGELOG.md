@@ -1,3 +1,5 @@
+#3.4.282.0
+
 #3.4.281.0
 + python can now revert the game board back to its default value ""
 + python can remove the board (set the board to None)
@@ -3860,6 +3862,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
