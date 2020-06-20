@@ -1,0 +1,65 @@
+﻿<Page x:Class="Octgn.Desktop.Easy.EasyMainMenu"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Octgn.Desktop.Easy"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="EasyMainMenu">
+    <Page.Resources>
+        <Style x:Key="OptionsList" TargetType="{x:Type ListView}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Height" Value="60"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <ContentPresenter
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            HorizontalAlignment="Stretch"
+                                            Margin="5"
+                                            />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <ListView Style="{StaticResource OptionsList}"
+                  Margin="50 50">
+            <Button Content="Sign In"
+                    Click="SignIn_Click"
+                    HorizontalAlignment="Stretch"
+                    />
+            <Button Content="Single Player"
+                    HorizontalAlignment="Stretch"
+                    />
+            <Button Content="Multiplayer"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="False"
+                    />
+            <Button Content="Games"
+                    HorizontalAlignment="Stretch"
+                    />
+            <Button Content="Options"
+                    HorizontalAlignment="Stretch"
+                    />
+            <Rectangle Stroke="{DynamicResource AccentColor1}"
+                       Height="1"/>
+            <Button Content="Quit"
+                    HorizontalAlignment="Stretch"
+                    />
+        </ListView>
+    </Grid>
+</Page>

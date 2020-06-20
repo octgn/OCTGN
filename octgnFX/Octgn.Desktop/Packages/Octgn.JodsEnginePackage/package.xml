@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Package Id="Octgn.JodsEnginePackage"
+         Name="Jods Game Engine"
+         Description="Octgn Game Engine"
+         Website="http://www.octgn.net"
+         IconPath="images/icon.png"
+         Version="3.4.0.0"
+         OctgnVersion="3.4.0.0">
+  <Plugins>
+    <Plugin Id="Octgn.JodsEnginePlugin"
+            Name="Jods Game Engine"
+            Description="Game engine for most games in Octgn"
+            Path="engine/Octgn.exe"
+            Icon="images/icon.png"
+         />
+  </Plugins>
+</Package>

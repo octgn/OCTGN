@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Octgn.Desktop.Resources.Themes">
+    <SolidColorBrush x:Key="AccentColor1" Color="#FF569DE5"/>
+    <SolidColorBrush x:Key="AccentColor1Disabled" Color="#aaaaaa"/>
+    <SolidColorBrush x:Key="HighlightColorFocused" Color="#FF569DE5"/>
+    <SolidColorBrush x:Key="HighlightColorUnfocused" Color="#FF356495"/>
+    <SolidColorBrush x:Key="HighlightColorDisabled" Color="#FF356495"/>
+    <SolidColorBrush x:Key="BackgroundColor" Color="#333333"/>
+    <SolidColorBrush x:Key="BackgroundFurtherColor" Color="#666688"/>
+    <SolidColorBrush x:Key="BackgroundCloserColor" Color="#FFCDDDEE"/>
+    <SolidColorBrush x:Key="BackgroundCloserColorDisabled" Color="#FFCFD4DA"/>
+</ResourceDictionary>

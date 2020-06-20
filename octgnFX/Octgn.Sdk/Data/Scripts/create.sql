@@ -1,0 +1,24 @@
+﻿CREATE TABLE octgn_packages (
+	id text NOT NULL,
+	version text NOT NULL,
+	name text NOT NULL,
+	description text NOT NULL,
+	website text NOT NULL,
+	icon text NOT NULL,
+	octgnVersion text NOT NULL,
+	combinedDepenedencies text NULL,
+	PRIMARY KEY (id, version)
+);
+
+CREATE TABLE octgn_plugins (
+	id text NOT NULL,
+	packageId text NOT NULL,
+	packageVersion text NOT NULL,
+	name text NOT NULL,
+	description text NOT NULL,
+	icon text NOT NULL,
+	path text NOT NULL,
+	PRIMARY KEY (id, packageId, packageVersion)
+);
+
+PRAGMA user_version = 1;

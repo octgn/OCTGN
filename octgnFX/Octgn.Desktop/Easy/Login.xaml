@@ -1,0 +1,46 @@
+﻿<Page x:Class="Octgn.Desktop.Easy.Login"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Octgn.Desktop.Easy"
+      mc:Ignorable="d"
+      d:DesignWidth="300"
+      Title="Login" Background="{DynamicResource BackgroundColor}">
+    <Page.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Nirmala UI"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentColor1}"/>
+        </Style>
+    </Page.Resources>
+
+    <StackPanel Margin="50 0">
+        <TextBlock Text="Login"
+                       Foreground="{DynamicResource AccentColor1}"
+                       HorizontalAlignment="Left"
+                       Margin="0 0 0 20"
+                       FontWeight="Bold"
+                       FontSize="44"/>
+        <TextBox TabIndex="0"
+                     Margin="0 0 0 10"
+                     Text="Username@Email.com">
+        </TextBox>
+        <PasswordBox Password=""
+                         Margin="0 0 0 20">
+        </PasswordBox>
+
+        <CheckBox VerticalContentAlignment="Center">
+            <TextBlock Text="Remember Username" FontSize="16"/>
+        </CheckBox>
+        <CheckBox Margin="0 5 0 0" VerticalContentAlignment="Center">
+            <TextBlock Text="Remember Password" FontSize="16"/>
+        </CheckBox>
+        <CheckBox Margin="0 5 0 0" VerticalContentAlignment="Center">
+            <TextBlock Text="Automatically Sign In" FontSize="16"/>
+        </CheckBox>
+
+        <Button Content="Login"
+                    HorizontalAlignment="Right"
+                    Margin="0 20 0 10"/>
+    </StackPanel>
+</Page>

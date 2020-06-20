@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Package Id="Octgn.ChessPackage"
+         Name="Chess Game"
+         Description="Chess for Octgn"
+         Website="http://www.octgn.net"
+         IconPath="images/icon.jpg"
+         Version="3.4.0.0"
+         OctgnVersion="3.4.0.0">
+  <Dependencies>
+    <Dependency Id="Octgn.JodsEnginePackage"
+                Name="Jods Game Engine"
+                Version="3.4.0.0" />
+  </Dependencies>
+  <Games>
+    <Game Id="Octgn.Game.Chess"
+          Name="Chess Game"
+          Description="Chess for Octgn"
+          Path="game/definition.xml"
+          Icon="images/icon.jpg"
+          Engine="Octgn.JodsEngine"/>
+  </Games>
+</Package>

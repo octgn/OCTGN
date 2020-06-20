@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<set name="Chess Set" id="64a18595-85f8-44a6-9678-69c7a06fa4c6" gameId="2f3dbb9b-67c4-41c9-b648-047a2fa4fc56" gameVersion="1.1.0" version="1.1">
+ <cards>
+  <card id="0df50d0f-0400-4a11-ab7f-1b3afbed5daf" name="Black King"><property name="Color" value="Black" /></card>
+  <card id="75cd0ccd-9d7a-4578-8646-c17196d6b54b" name="Black Knight"><property name="Color" value="Black" /></card>
+  <card id="b9d0646c-5a0d-4066-9bc1-77efb891a618" name="Black Pawn"><property name="Color" value="Black" /></card>
+  <card id="f4ef6fea-046f-42bf-921d-92ed72ac5b5f" name="Black Queen"><property name="Color" value="Black" /></card>
+  <card id="ba598f95-f373-48ec-be3c-62035f845f39" name="Black Rook"><property name="Color" value="Black" /></card>
+  <card id="e73920a6-151d-4a1f-9087-99346e189781" name="Black Bishop"><property name="Color" value="Black" /></card>
+  <card id="71357430-5d2b-44a4-83a4-50d6eb15be91" name="White Bishop"><property name="Color" value="White" /></card>
+  <card id="ecabdb34-22fc-462c-ada5-0d6b47b3ca0b" name="White King"><property name="Color" value="White" /></card>
+  <card id="41391a2b-5aba-4f77-91f3-c7708b37f977" name="White Knight"><property name="Color" value="White" /></card>
+  <card id="95d43b3d-7269-4aba-9f29-a01a9733b5d1" name="White Pawn"><property name="Color" value="White" /></card>
+  <card id="c2c49386-8f57-4237-9f23-1478c2d5abbe" name="White Queen"><property name="Color" value="White" /></card>
+  <card id="d1b7956d-d7fa-4a72-9b6c-201072c0954f" name="White Rook"><property name="Color" value="White" /></card>
+ </cards>
+</set>
