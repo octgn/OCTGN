@@ -17,6 +17,6 @@
           Description="Chess for Octgn"
           Path="game/definition.xml"
           Icon="images/icon.jpg"
-          Engine="Octgn.JodsEngine"/>
+          Type="Game;JodsEngine"/>
   </Games>
 </Package>

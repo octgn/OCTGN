@@ -12,6 +12,7 @@
             Description="Game engine for most games in Octgn"
             Path="engine/Octgn.exe"
             Icon="images/icon.png"
+            Type="dotnet"
          />
   </Plugins>
 </Package>
