@@ -6,7 +6,7 @@
 	website text NOT NULL,
 	icon text NOT NULL,
 	octgnVersion text NOT NULL,
-	combinedDepenedencies text NULL,
+	combinedDependencies text NULL,
 	PRIMARY KEY (id, version)
 );
 

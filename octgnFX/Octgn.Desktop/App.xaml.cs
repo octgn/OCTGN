@@ -10,6 +10,16 @@ namespace Octgn.Desktop
         protected override void OnStartup(StartupEventArgs e) {
             using (var context = new DataContext()) {
                 context.Upgrade(null, default);
+            }
+
+#if(DEBUG)
+            //TempDev();
+#endif
+        }
+
+        private void TempDev() {
+            using (var context = new DataContext()) {
+                context.Upgrade(null, default);
 
                 var testPackage = new PackageRecord() {
                     Id = "Octgn.Test",
