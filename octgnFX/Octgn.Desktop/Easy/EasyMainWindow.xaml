@@ -5,11 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Octgn.Desktop.Easy"
         mc:Ignorable="d"
-        Title="EasyMainWindow" Height="429" Width="433"
-        SizeToContent="Height"
+        Title="EasyMainWindow" Height="600" Width="433"
         WindowStartupLocation="CenterScreen">
     <Border Background="{DynamicResource BackgroundColor}">
-        <Grid Margin="10">
+        <Grid>
             <Frame Source="EasyMainMenu.xaml" NavigationUIVisibility="Visible">
 
             </Frame>

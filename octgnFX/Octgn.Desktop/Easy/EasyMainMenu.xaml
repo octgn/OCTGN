@@ -36,30 +36,53 @@
     </Page.Resources>
 
     <Grid>
-        <ListView Style="{StaticResource OptionsList}"
-                  Margin="50 50">
-            <Button Content="Sign In"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Margin="40 40"
+                Padding="10"
+                CornerRadius="2"
+                Background="{DynamicResource BackgroundFurtherColor}"
+                VerticalAlignment="Top">
+            <ListView Style="{StaticResource OptionsList}"
+                      VerticalAlignment="Top">
+                <Button Content="Single Player"
+                    HorizontalAlignment="Stretch"
+                    />
+                <Button Content="Multi Player"
+                    HorizontalAlignment="Stretch"
+                    />
+                <Button Content="Deck Editor"
+                    HorizontalAlignment="Stretch"
+                    />
+                <Button Content="Rules"
+                    HorizontalAlignment="Stretch"
+                    />
+                <!--<Rectangle Stroke="{DynamicResource AccentColor1}"
+                       Height="1"/>-->
+            </ListView>
+        </Border>
+        <Border Grid.Row="1"
+                Padding="10"
+                BorderThickness="0 1 0 0"
+                BorderBrush="{DynamicResource AccentColor1}"
+                Background="{DynamicResource BackgroundFurtherColor}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Content="⚙"
+                    Padding="10 10"
+                    Grid.Column="0"/>
+                <Button Content="👤 Sign In"
+                    Padding="10 10"
                     Click="SignIn_Click"
-                    HorizontalAlignment="Stretch"
-                    />
-            <Button Content="Single Player"
-                    HorizontalAlignment="Stretch"
-                    />
-            <Button Content="Multiplayer"
-                    HorizontalAlignment="Stretch"
-                    IsEnabled="False"
-                    />
-            <Button Content="Games"
-                    HorizontalAlignment="Stretch"
-                    />
-            <Button Content="Options"
-                    HorizontalAlignment="Stretch"
-                    />
-            <Rectangle Stroke="{DynamicResource AccentColor1}"
-                       Height="1"/>
-            <Button Content="Quit"
-                    HorizontalAlignment="Stretch"
-                    />
-        </ListView>
+                    Grid.Column="2">
+                </Button>
+            </Grid>
+        </Border>
     </Grid>
 </Page>
