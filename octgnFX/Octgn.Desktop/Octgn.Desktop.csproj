@@ -35,4 +35,8 @@
     <ProjectReference Include="..\Octgn.Sdk\Octgn.Sdk.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
+
 </Project>

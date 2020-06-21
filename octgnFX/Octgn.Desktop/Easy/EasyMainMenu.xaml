@@ -74,9 +74,18 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Content="⚙"
-                    Padding="10 10"
-                    Grid.Column="0"/>
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal">
+                    <Button Content="⚙"
+                            ToolTip="Settings"
+                            Padding="10 10"
+                            Grid.Column="0"/>
+                    <Rectangle Width="10"/>
+                    <Button Content="🧩"
+                            ToolTip="Plugins"
+                            Padding="10 10"
+                            Grid.Column="1"/>
+                </StackPanel>
                 <Button Content="👤 Sign In"
                     Padding="10 10"
                     Click="SignIn_Click"
