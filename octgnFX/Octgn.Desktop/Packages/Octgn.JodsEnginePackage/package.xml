@@ -6,7 +6,7 @@
          IconPath="images/icon.png"
          Version="3.4.0.0"
          OctgnVersion="3.4.0.0">
-  <Plugins>
+  <Register>
     <Plugin Id="Octgn.JodsEnginePlugin"
             Name="Jods Game Engine"
             Description="Game engine for most games in Octgn"
@@ -14,5 +14,18 @@
             Icon="images/icon.png"
             Type="dotnet"
          />
-  </Plugins>
+    <Menu Id="Octgn.JodsEngineMenu">
+      <MenuItem Id="Octgn.JodsEngineMenu.SinglePlayer"
+                Text="Single Player"
+                Click="Navigate: Octgn.Easy.SinglePlayerPage"/>
+      <MenuItem Id="Octgn.JodsEngineMenu.MultiPlayer"
+                Text="MultiPlayer"
+                Click="Navigate: Octgn.Easy.MultiPlayerPage"/>
+      <!--TODO: Inside of the plugin code, it
+        should register the following command -->
+      <MenuItem Id="Octgn.JodsEngineMenu.DeckEditor"
+                Text="Deck Editor"
+                Click="Command: Octgn.JodsEngine.LaunchDeckEditor"/>
+    </Menu>
+  </Register>
 </Package>

@@ -11,12 +11,17 @@
                 Name="Jods Game Engine"
                 Version="3.4.0.0" />
   </Dependencies>
-  <Games>
+  <Register>
     <Game Id="Octgn.Game.Chess"
           Name="Chess Game"
           Description="Chess for Octgn"
           Path="game/definition.xml"
           Icon="images/icon.jpg"
           Type="Game;JodsEngine"/>
-  </Games>
+  </Register>
+  <OctgnApp Menu="Octgn.JodsEngineMenu">
+    <Theme>
+
+    </Theme>
+  </OctgnApp>
 </Package>
