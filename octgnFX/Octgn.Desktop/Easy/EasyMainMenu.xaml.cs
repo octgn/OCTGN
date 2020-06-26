@@ -32,19 +32,21 @@ namespace Octgn.Desktop.Easy
 
                 App.Current.MainWindow.Title = game.Name;
 
-                var package = context.Packages.Find(
+                var gamePackageRecord = context.Packages.Find(
                     game.PackageId,
                     game.PackageVersion
                 );
 
-                var menuPluginRecord = context.GameMenuPlugins(package).First();
+                var menuPluginRecord = context.GameMenuPlugins(gamePackageRecord).First();
 
-                var plugin = _pluginIntegration.Load<IMainMenuPlugin>(menuPluginRecord);
+                var menuPluginPackage = context.Packages.Find(menuPluginRecord.PackageId, menuPluginRecord.PackageVersion);
+
+                var plugin = _pluginIntegration.Load<MenuPlugin>(menuPluginPackage, menuPluginRecord);
 
                 var converter = new BrushConverter();
-                var brush = (Brush)converter.ConvertFromString(plugin.Theme.Background);
+                //var brush = (Brush)converter.ConvertFromString(plugin.Theme.Background);
 
-                this.Background = brush;
+                //this.Background = brush;
             }
         }
 
