@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Packages\Octgn.JodsEnginePackage\gamemenu.xml" />
-    <None Remove="Packages\Octgn.JodsEnginePackage\package.yaml" />
-    <None Remove="Packages\Octgn.JodsEnginePackage\themes\dark\darktheme.css" />
-    <None Remove="Packages\Octgn.JodsEnginePackage\themes\light\darktheme.css" />
+    <None Remove="Packages\octgn.packages.jodsengine\gamemenu.xml" />
+    <None Remove="Packages\octgn.packages.jodsengine\jodsengine.package.yaml" />
+    <None Remove="Packages\octgn.packages.jodsengine\themes\dark\darktheme.css" />
+    <None Remove="Packages\octgn.packages.jodsengine\themes\light\darktheme.css" />
   </ItemGroup>
 
   <ItemGroup>

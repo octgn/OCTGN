@@ -18,7 +18,7 @@ CREATE TABLE octgn_plugins (
 	name text NOT NULL,
 	description text NOT NULL,
 	type text NOT NULL,
-	icon text NOT NULL,
+	icon text NULL,
 	path text NOT NULL,
 	PRIMARY KEY (id, packageId, packageVersion)
 );

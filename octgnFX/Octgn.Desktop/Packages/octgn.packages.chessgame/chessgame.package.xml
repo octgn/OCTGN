@@ -3,7 +3,7 @@
          Name="Chess Game"
          Description="Chess for Octgn"
          Website="http://www.octgn.net"
-         IconPath="images/icon.jpg"
+         Icon="images/icon.jpg"
          Version="3.4.0.0"
          OctgnVersion="3.4.0.0">
   <Dependencies>
