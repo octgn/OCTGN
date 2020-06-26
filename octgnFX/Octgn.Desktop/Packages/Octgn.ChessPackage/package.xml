@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Package Id="Octgn.ChessPackage"
+<Package Id="octgn.packages.chessgame"
          Name="Chess Game"
          Description="Chess for Octgn"
          Website="http://www.octgn.net"
@@ -7,21 +7,16 @@
          Version="3.4.0.0"
          OctgnVersion="3.4.0.0">
   <Dependencies>
-    <Dependency Id="Octgn.JodsEnginePackage"
+    <Dependency Id="octgn.jodsengine"
                 Name="Jods Game Engine"
                 Version="3.4.0.0" />
   </Dependencies>
-  <Register>
-    <Game Id="Octgn.Game.Chess"
-          Name="Chess Game"
-          Description="Chess for Octgn"
-          Path="game/definition.xml"
-          Icon="images/icon.jpg"
-          Type="Game;JodsEngine"/>
-  </Register>
-  <OctgnApp Menu="Octgn.JodsEngineMenu">
-    <Theme>
-
-    </Theme>
-  </OctgnApp>
+  <Plugins>
+    <Plugin Id="octgn.plugins.game.chess"
+            Name="Chess Game"
+            Description="Chess for Octgn"
+            Path="game/definition.xml"
+            Icon="images/icon.jpg"
+            Type="octgn.plugins.game"/>
+  </Plugins>
 </Package>
