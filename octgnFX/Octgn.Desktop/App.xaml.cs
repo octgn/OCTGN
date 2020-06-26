@@ -36,6 +36,8 @@ namespace Octgn.Desktop
 #endif
         }
 
+        internal static void UnhandledException(Exception ex) => throw new NotImplementedException();
+
         private void UpgradeDatabase() {
             using (var context = new DataContext()) {
                 context.Upgrade(null, default);

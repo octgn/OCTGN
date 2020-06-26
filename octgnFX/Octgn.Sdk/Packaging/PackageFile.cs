@@ -33,5 +33,9 @@ namespace Octgn.Sdk.Packaging
         [XmlArray("Plugins")]
         [XmlArrayItem("Plugin")]
         public List<PluginFile> Plugins { get; set; }
+
+        [XmlArray("Dependencies")]
+        [XmlArrayItem("Dependency")]
+        public List<DependencyFile> Dependencies { get; set; }
     }
 }

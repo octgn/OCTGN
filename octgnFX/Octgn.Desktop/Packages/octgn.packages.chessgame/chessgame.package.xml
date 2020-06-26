@@ -7,8 +7,7 @@
          Version="3.4.0.0"
          OctgnVersion="3.4.0.0">
   <Dependencies>
-    <Dependency Id="octgn.jodsengine"
-                Name="Jods Game Engine"
+    <Dependency Id="octgn.jodsengine.package"
                 Version="3.4.0.0" />
   </Dependencies>
   <Plugins>

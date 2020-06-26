@@ -7,7 +7,7 @@ namespace Octgn.Sdk
     public class DataMapper
     {
         public T Map<T>(PackageFile package) where T : PackageRecord {
-            return (T)new PackageRecord {
+            var record = new PackageRecord {
                 Id = package.Id,
                 Name = package.Name,
                 Icon = package.Icon,
@@ -17,6 +17,12 @@ namespace Octgn.Sdk
                 OctgnVersion = package.OctgnVersion,
                 Path = package.Path
             };
+
+            if (package.Dependencies != null && package.Dependencies.Count > 0) {
+                record.SetDependencies(package.Dependencies);
+            }
+
+            return (T)record;
         }
 
         public T Map<T>(PluginFile plugin, string packageId, string packageVersion) where T : PluginRecord {

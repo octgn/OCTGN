@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Octgn.Sdk.Packaging;
+using System;
 
 namespace Octgn.Sdk.Data
 {
-    public class DependencyRecord
+    public class DependencyRecord : IDependency
     {
         public string Id { get; set; }
 

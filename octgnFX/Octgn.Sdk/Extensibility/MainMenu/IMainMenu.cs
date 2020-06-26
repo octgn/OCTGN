@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Octgn.Sdk.Packaging;
+using System;
 using System.Threading.Tasks;
 
 namespace Octgn.Sdk.Extensibility.MainMenu
@@ -6,6 +7,17 @@ namespace Octgn.Sdk.Extensibility.MainMenu
     public interface IMainMenuPlugin : IPlugin
     {
         MainMenuPluginTheme Theme { get; }
+    }
+
+    public class MainMenuPlugin : IMainMenuPlugin
+    {
+        public MainMenuPluginTheme Theme { get; set; }
+
+        public IPackage Package { get; set; }
+
+        public Task OnStart() {
+            return Task.CompletedTask;
+        }
     }
 
     public class MainMenuPluginTheme

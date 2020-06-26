@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Octgn.Sdk.Packaging;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Octgn.Sdk.Data
 {
@@ -23,7 +25,7 @@ namespace Octgn.Sdk.Data
 
         public string CombinedDependencies { get; set; }
 
-        public IEnumerable<DependencyRecord> Dependencies() {
+        public IEnumerable<IDependency> Dependencies() {
             if (string.IsNullOrWhiteSpace(CombinedDependencies))
                 yield break;
 
@@ -43,8 +45,9 @@ namespace Octgn.Sdk.Data
             }
         }
 
-        public void SetDependencies(IEnumerable<DependencyRecord> dependencies) {
-            CombinedDependencies = string.Join(";", dependencies);
+        public void SetDependencies(IEnumerable<IDependency> dependencies) {
+            var dstrings = dependencies.Select(d => $"{d.Id}@{d.Version}");
+            CombinedDependencies = string.Join(";", dstrings);
         }
     }
 }

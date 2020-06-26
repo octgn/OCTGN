@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Octgn.Sdk.Extensibility;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Octgn.Desktop.Easy
 {
@@ -16,6 +8,13 @@ namespace Octgn.Desktop.Easy
     {
         public EasyMainWindow() {
             InitializeComponent();
+
+            this.Loaded += EasyMainWindow_Loaded;
+        }
+
+        private void EasyMainWindow_Loaded(object sender, RoutedEventArgs e) {
+            //TODO: Default display should be some kind of 'Loading' screen
+            this.Content = new EasyMainMenu(new PluginIntegration());
         }
     }
 }

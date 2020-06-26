@@ -4,10 +4,8 @@ namespace Octgn.Sdk.Packaging
 {
     public interface IDependency
     {
-        string Dependency { get; }
+        string Id { get; }
 
-        string Name { get; }
-
-        Version Version { get; }
+        string Version { get; }
     }
 }

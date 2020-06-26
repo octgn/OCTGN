@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace Octgn.Sdk.Data
@@ -28,6 +29,49 @@ namespace Octgn.Sdk.Data
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
 
             Path = new Uri(path);
+        }
+
+        public IEnumerable<PluginRecord> Games() {
+            var packageGroups = Packages
+                .ToArray()
+                .GroupBy(x => x.Id)
+                .ToArray()
+            ;
+
+            foreach (var packageGroup in packageGroups) {
+                var package = packageGroup.OrderByDescending(x => x.Version).First();
+
+                foreach (var game in GamePlugins(package)) {
+                    yield return game;
+                }
+            }
+        }
+
+        public IEnumerable<PluginRecord> GamePlugins(PackageRecord package) {
+            var query = PackagePlugins(package)
+                .Where(plugin =>
+                    plugin.Type == "octgn.plugins.game"
+                );
+            ;
+
+            foreach (var plugin in query) {
+                yield return plugin;
+            }
+        }
+
+        public IEnumerable<PluginRecord> PackagePlugins(PackageRecord package) {
+            if (package == null) throw new ArgumentNullException(nameof(package));
+
+            var query = Plugins
+                .Where(plugin =>
+                    plugin.PackageId == package.Id
+                    && plugin.PackageVersion == package.Version
+                );
+            ;
+
+            foreach (var plugin in query) {
+                yield return plugin;
+            }
         }
 
         #region Upgrading
