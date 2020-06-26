@@ -1,0 +1,32 @@
+﻿id: octgn.jodsengine.package
+name: Jods Game Engine
+description: Octgn Game Engine
+website: http://www.octgn.net
+icon: images/icon.png
+version: 3.4.0.0
+octgnversion: 3.4.0.0
+plugins:
+- id: octgn.jodsengine
+  name: Jods Game Engine
+  description: Game engine for most games in Octgn
+  path: engine/Octgn.exe
+  icon: images/icon.png
+  type: octgn.plugins.dotnet
+
+- id: octgn.jodsengine.gamemenu
+  name: Jods Game Engine Menu
+  description: Default game menu for games using Jods Engine
+  path: gamemenu.xml
+  type: octgn.plugins.gamemenu
+
+- id: octgn.jodsengine.darktheme
+  name: Default Dark Theme
+  description: Default Dark Theme for games using Jods engine
+  path: themes/dark/darktheme.css
+  type: octgn.plugins.theme.dark
+
+- id: octgn.jodsengine.darktheme
+  name: Default Dark Theme
+  description: Default Dark Theme for games using Jods engine
+  path: themes/dark/darktheme.css
+  type: octgn.plugins.theme.light

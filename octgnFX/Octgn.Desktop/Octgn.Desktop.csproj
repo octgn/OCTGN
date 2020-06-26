@@ -13,6 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Packages\Octgn.JodsEnginePackage\gamemenu.xml" />
+    <None Remove="Packages\Octgn.JodsEnginePackage\package.yaml" />
+    <None Remove="Packages\Octgn.JodsEnginePackage\themes\dark\darktheme.css" />
+    <None Remove="Packages\Octgn.JodsEnginePackage\themes\light\darktheme.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

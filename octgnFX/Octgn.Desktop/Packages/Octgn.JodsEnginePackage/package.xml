@@ -6,7 +6,7 @@
          IconPath="images/icon.png"
          Version="3.4.0.0"
          OctgnVersion="3.4.0.0">
-  <Register>
+  <Plugins>
     <Plugin Id="Octgn.JodsEnginePlugin"
             Name="Jods Game Engine"
             Description="Game engine for most games in Octgn"
@@ -14,18 +14,16 @@
             Icon="images/icon.png"
             Type="dotnet"
          />
-    <Menu Id="Octgn.JodsEngineMenu">
-      <MenuItem Id="Octgn.JodsEngineMenu.SinglePlayer"
-                Text="Single Player"
-                Click="Navigate: Octgn.Easy.SinglePlayerPage"/>
-      <MenuItem Id="Octgn.JodsEngineMenu.MultiPlayer"
-                Text="MultiPlayer"
-                Click="Navigate: Octgn.Easy.MultiPlayerPage"/>
-      <!--TODO: Inside of the plugin code, it
-        should register the following command -->
-      <MenuItem Id="Octgn.JodsEngineMenu.DeckEditor"
-                Text="Deck Editor"
-                Click="Command: Octgn.JodsEngine.LaunchDeckEditor"/>
-    </Menu>
-  </Register>
+    <Menu Path="gamemenu.xml"/>
+    <Theme Id="Octgn.JodsEngine.DarkTheme"
+           Name="Default Dark Theme"
+           Path="themes/dark/darktheme.css"
+           Mode="dark"
+    />
+    <Theme Id="Octgn.JodsEngine.LightTheme"
+           Name="Default Light Theme"
+           Path="themes/light/lighttheme.css"
+           Mode="light"
+    />
+  </Plugins>
 </Package>
