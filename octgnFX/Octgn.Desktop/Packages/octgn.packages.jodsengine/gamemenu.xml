@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Menu Id="Octgn.JodsEngine.GameMenu"
-      Type="GameMenu">
-  <MenuItem Id="Octgn.JodsEngine.GameMenu.SinglePlayer"
+<Menu>
+  <MenuItem Id="octgn.jodsengine.gamemenu.singleplayer"
             Text="Single Player"
             Click="Navigate: Octgn.Easy.SinglePlayerPage"/>
-  <MenuItem Id="Octgn.JodsEngine.GameMenu.MultiPlayer"
+  <MenuItem Id="octgn.jodsengine.gamemenu.multiplayer"
             Text="MultiPlayer"
             Click="Navigate: Octgn.Easy.MultiPlayerPage"/>
   <!--TODO: Inside of the plugin code, it
         should register the following command -->
-  <MenuItem Id="Octgn.JodsEngine.GameMenu.DeckEditor"
+  <MenuItem Id="octgn.jodsengine.gamemenu.deckeditor"
             Text="Deck Editor"
             Click="Command: Octgn.JodsEngine.LaunchDeckEditor"/>
 </Menu>
