@@ -6,6 +6,7 @@ CREATE TABLE octgn_packages (
 	description text NOT NULL,
 	website text NOT NULL,
 	icon text NOT NULL,
+	path text NOT NULL,
 	octgnVersion text NOT NULL,
 	combinedDependencies text NULL,
 	PRIMARY KEY (id, version)

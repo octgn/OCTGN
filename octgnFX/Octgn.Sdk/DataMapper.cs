@@ -14,7 +14,8 @@ namespace Octgn.Sdk
                 Website = package.Website,
                 Version = package.Version,
                 Description = package.Description,
-                OctgnVersion = package.OctgnVersion
+                OctgnVersion = package.OctgnVersion,
+                Path = package.Path
             };
         }
 

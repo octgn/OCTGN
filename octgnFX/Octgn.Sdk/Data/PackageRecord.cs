@@ -13,6 +13,8 @@ namespace Octgn.Sdk.Data
 
         public string Description { get; set; }
 
+        public string Path { get; set; }
+
         public string Website { get; set; }
 
         public string Icon { get; set; }
