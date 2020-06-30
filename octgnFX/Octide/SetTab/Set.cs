@@ -18,8 +18,6 @@ namespace Octide.SetTab.ItemModel
     {
         public Set _set;
 
-        public AssetController Asset { get; set; }
-
         public RelayCommand AddCardCommand { get; private set; }
         public RelayCommand AddPackageCommand { get; private set; }
         public RelayCommand ImportCSVCommand { get; private set; }
@@ -38,7 +36,7 @@ namespace Octide.SetTab.ItemModel
                 Packs = new List<Pack>()
             };
             Name = "New Set";
-            string installPath = Path.Combine(ViewModelLocator.GameLoader.Directory, "Sets", _set.Id.ToString());
+            string installPath = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, "Sets", _set.Id.ToString());
             _set.InstallPath = installPath;
             _set.Filename = Path.Combine(installPath, "set.xml");
             _set.PackUri = Path.Combine(installPath, "Cards");
@@ -104,7 +102,7 @@ namespace Octide.SetTab.ItemModel
         public SetModel(SetModel s, IdeCollection<IdeBaseItem> src) : base(src) //for copying the item
         {
             var id = Guid.NewGuid();
-            string installPath = Path.Combine(ViewModelLocator.GameLoader.Directory, "Sets", id.ToString());
+            string installPath = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, "Sets", id.ToString());
             _set = new Set()
             {
                 Name = s._set.Name,

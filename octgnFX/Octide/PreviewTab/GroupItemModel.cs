@@ -126,6 +126,7 @@ namespace Octide.ItemModel
             {
                 _group.Icon = Asset.FullPath;
                 RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
             }
         }
         public override void Cleanup()
@@ -144,6 +145,7 @@ namespace Octide.ItemModel
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((GroupItemModel)x).Name);
+        public new string Icon => Asset.FullPath;
 
         public string Name
         {

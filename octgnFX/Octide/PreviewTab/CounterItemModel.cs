@@ -74,6 +74,7 @@ namespace Octide.ItemModel
             {
                 _counter.Icon = Asset.FullPath;
                 RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
             }
         }
         public override void Cleanup()
@@ -94,6 +95,7 @@ namespace Octide.ItemModel
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((CounterItemModel)x).Name);
+        public new string Icon => Asset.FullPath;
 
         public string Name
         {

@@ -33,7 +33,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <Image Source="{Binding Asset.FullPath}" Height="16" HorizontalAlignment="Left" />
+                        <Image Source="{Binding Icon}" Height="16" HorizontalAlignment="Left" />
                         <local:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" MinWidth="25" VerticalAlignment="Center" ClipToBounds="False" />
                     </StackPanel>
 
@@ -44,14 +44,14 @@
         <DataTemplate x:Key="CollapsedGroupPanel" >
             <Border Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonUp="CreateActionsMenu">
                 <Grid >
-                    <Image Source="{Binding Asset.FullPath}" Height="16" ToolTip="{Binding Name}"/>
+                    <Image Source="{Binding Icon}" Height="16" ToolTip="{Binding Name}"/>
                 </Grid>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="CounterPanel">
             <StackPanel Orientation="Horizontal">
-                <Image Source="{Binding Asset.FullPath}" Height="20" />
+                <Image Source="{Binding Icon}" Height="20" />
                 <local:EditableTextBlock VerticalAlignment="Center" Text="{Binding Name}" Foreground="White" FontSize="12" MinWidth="20" Width="Auto" />
                 <Border BorderThickness="1" CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}" VerticalAlignment="Center">
                     <Grid Height="20" Width="60">
@@ -101,7 +101,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <local:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" Padding="3" Background="#444444" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" ClipToBounds="False" />
                                     <Border BorderThickness="3" BorderBrush="Gray">
-                                        <Image Source="{Binding Asset.FullPath}" StretchDirection="DownOnly" MaxHeight="50" />
+                                        <Image Source="{Binding Icon}" StretchDirection="DownOnly" MaxHeight="50" />
                                     </Border>
                                 </StackPanel>
                             </DataTemplate>
@@ -139,7 +139,7 @@
                                         </TextBlock>
                                     </Border>
                                 </Border>
-                                <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}"/>
+                                <Image Source="{Binding Icon}" Width="{Binding Width}" Height="{Binding Height}"/>
                             </Canvas>
                         </Canvas>
                         <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove" MouseLeave="ResetCursor" 
@@ -278,7 +278,7 @@
                             <DataTemplate DataType="{x:Type ListBoxItem}">
                                 <DockPanel >
                                     <local:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" Grid.Row="1" Foreground="White" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
-                                    <Image Source="{Binding Back.FullPath}" Stretch="Uniform" Margin="0 0 0 4"/>
+                                    <Image Source="{Binding Icon}" Stretch="Uniform" Margin="0 0 0 4"/>
                                 </DockPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -297,7 +297,7 @@
                             <DataTemplate DataType="{x:Type ListBoxItem}">
                                 <DockPanel>
                                     <local:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" Grid.Row="1" Foreground="White" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
-                                    <Image Source="{Binding Asset.FullPath}" Stretch="Uniform" Margin="0 0 0 4" />
+                                    <Image Source="{Binding Icon}" Stretch="Uniform" Margin="0 0 0 4" />
                                 </DockPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

@@ -128,7 +128,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                using (var img = System.Drawing.Image.FromFile(Asset.SelectedAsset?.FullPath))
+                using (var img = System.Drawing.Image.FromFile(Asset.FullPath))
                 {
                     return img.Width;
                 }
@@ -138,7 +138,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                using (var img = System.Drawing.Image.FromFile(Asset.SelectedAsset?.FullPath))
+                using (var img = System.Drawing.Image.FromFile(Asset.FullPath))
                 {
                     return img.Height;
                 }

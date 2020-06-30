@@ -26,7 +26,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Document Icon"/>
-                <Image Source="{Binding IconAsset.FullPath, Mode=OneWay}" />
+                <Image Source="{Binding Icon, Mode=OneWay}" />
             </StackPanel>
             <local:AssetControllerView DataContext="{Binding IconAsset}" />
         </ItemsControl>
