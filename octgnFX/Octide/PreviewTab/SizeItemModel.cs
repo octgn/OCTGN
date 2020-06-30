@@ -75,6 +75,7 @@ namespace Octide.ItemModel
                 _size.Back= BackAsset.FullPath;
                 Messenger.Default.Send(new CardDetailsChangedMessage());
                 RaisePropertyChanged("BackAsset");
+                RaisePropertyChanged("Icon");
             }
         }
         private void FrontAssetUpdated(object sender, PropertyChangedEventArgs e)
@@ -104,6 +105,7 @@ namespace Octide.ItemModel
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((SizeItemModel)x).Name);
+        public new string Icon => BackAsset.FullPath;
 
         public string Name
         {

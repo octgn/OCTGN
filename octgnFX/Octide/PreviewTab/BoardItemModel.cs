@@ -62,6 +62,7 @@ namespace Octide.ItemModel
             {
                 _board.Source = Asset.FullPath;
                 RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
             }
         }
         public override void Cleanup()
@@ -80,6 +81,8 @@ namespace Octide.ItemModel
             return new BoardItemModel(this, Source);
         }
         public IEnumerable<string> UniqueNames => Source.Select(x => ((BoardItemModel)x).Name);
+
+        public new string Icon => Asset.FullPath;
 
         public string Name
         {

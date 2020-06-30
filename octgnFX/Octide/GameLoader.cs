@@ -31,6 +31,7 @@ namespace Octide
     using System.ComponentModel;
     using Octide.SetTab.ItemModel;
     using Octide.ItemModel;
+    using Microsoft.Win32;
 
     public class GameLoader : ViewModelBase
     {
@@ -42,7 +43,9 @@ namespace Octide
 
         private bool needsSave;
 
-        public string Directory
+        private bool livesInTempDirectory;
+
+        public string WorkingDirectory
         {
             get
             {
@@ -73,9 +76,6 @@ namespace Octide
             }
         }
 
-        public AssetController Asset { get; private set; }
-
-
         public IEnumerable<string> Events
         {
             get
@@ -92,7 +92,7 @@ namespace Octide
             }
         }
 
-        public String TempPath
+        public String TempDirectory
         {
             get
             {
@@ -130,11 +130,14 @@ namespace Octide
             }
         }
 
-        public bool DidManualSave { get; set; }
-
 		public GameLoader()
         {
-            TempPath = Path.Combine(Config.Instance.Paths.GraveyardPath, "IDE-" + Guid.NewGuid());
+            TempDirectory = Config.Instance.Paths.GraveyardPath;
+            if (!Directory.Exists(TempDirectory))
+            {
+                Directory.CreateDirectory(TempDirectory);
+                //todo: dispose of this temp folder when the window closes
+            }
         }
 
         public void CreateGame(DirectoryInfo directory)
@@ -174,10 +177,10 @@ namespace Octide
                 .Replace("{GUID}", id.ToString())
                 .Replace("{OCTVER}", typeof(Config).Assembly.GetName().Version.ToString()));
             definition.Save(defPath);
-            
 
             definition.LoadXml(Properties.Resources.proxydef);
             definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
+
             LoadGame(new FileInfo(defPath));
         }
 
@@ -185,9 +188,10 @@ namespace Octide
 		public void ImportGame(FileInfo package)
 		{
             //TODO: Extracts into a temp folder, but then it needs to save to a proper location via prompt as well
-            ZipFile.ExtractToDirectory(package.FullName, TempPath);
-            TempPath = Path.Combine(TempPath, "def");
-            var definition = Path.Combine(TempPath, "definition.xml");
+            livesInTempDirectory = true;
+            var ExtractLocation = Config.Instance.Paths.GraveyardPath;
+            ZipFile.ExtractToDirectory(package.FullName, ExtractLocation);
+            var definition = Path.Combine(ExtractLocation, "definition.xml");
             if (File.Exists(definition))
             {
                 LoadGame(new FileInfo(definition));
@@ -198,23 +202,44 @@ namespace Octide
         public void LoadGame(FileInfo path)
         {
             NeedsSave = false;
-            DidManualSave = true;
 
-            Directory = path.DirectoryName;
+            WorkingDirectory = path.DirectoryName;
 
             var gameSerializer = new GameSerializer();
             Game = (Game)gameSerializer.Deserialize(path.FullName);
-            Asset = new AssetController(AssetType.Xml, path.FullName);
-            Asset.PropertyChanged += AssetChanged;
-        }
-
-        public void AssetChanged(object sender, PropertyChangedEventArgs e)
-        {
-            //TODO: Watch for changes to the game XML
+            var gameDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.File.FullName == path.FullName);
+            gameDefAsset.IsReserved = true;
         }
 
         public void SaveGame()
         {
+            if (livesInTempDirectory)
+            {
+                var gameLocationDlg = new SaveFileDialog
+                {
+                    FileName = Game.Name,
+                    Title = "Choose a location to save the game files.",
+                    Filter = "Folder|*.",
+                    AddExtension = false
+                };
+                if (gameLocationDlg.ShowDialog() == true)
+                {
+                    if (File.Exists(gameLocationDlg.FileName))
+                    {
+                        var dlg = System.Windows.Forms.MessageBox.Show("Warning: Files in this location may be overwritten.  Continue?", "Overwrite Existing Location?");
+                        if (dlg == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            WorkingDirectory = gameLocationDlg.FileName;
+                            livesInTempDirectory = false;
+                        }
+                    }
+                    else
+                    {
+                        WorkingDirectory = gameLocationDlg.FileName;
+                        livesInTempDirectory = false;
+                    }
+                }
+            }
          //   if (!NeedsSave)
          //       return;
             var gameSerializer = new Octgn.DataNew.GameSerializer();
@@ -231,8 +256,14 @@ namespace Octide
             }
             var proxySerializer = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id) { Game = Game };
             proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
+            foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets)
+            {
+                if (asset.IsLinked && !asset.IsReserved)
+                {
+                    asset.File.CopyTo(asset.File.FullName, true);
+                }
+            }
             NeedsSave = false;
-            DidManualSave = true;
         }
 
         public void ExportGame()
@@ -250,33 +281,41 @@ namespace Octide
             foreach (var a in Game.Authors) builder.Authors.Add(a);
             foreach (var t in Game.Tags) builder.Authors.Add(t);
 
-            var g = new GameSerializer();
-            g.Serialize(Game);
+            var gameSerializer = new GameSerializer();
+            gameSerializer.Serialize(Game);
+
+            var setSerializer = new Octgn.DataNew.SetSerializer() { Game = Game };
+            foreach (SetModel set in ViewModelLocator.SetTabViewModel.Items)
+            {
+                setSerializer.Serialize(set._set);
+            }
+            var scriptSerializer = new Octgn.DataNew.GameScriptSerializer(Game.Id) { Game = Game };
+            foreach (ScriptItemModel script in ViewModelLocator.ScriptsTabViewModel.Scripts)
+            {
+                scriptSerializer.Serialize(script._script);
+            }
+            var proxySerializer = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id) { Game = Game };
+            proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
 
             var baseRefPath = "\\def";
 
             foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets)
             {
-                if (asset.IsLinked)
+                if (asset.IsLinked && !asset.IsReserved)
                 {
                     var refpath = baseRefPath + "\\" + asset.RelativePath;
-                    var pf = new PhysicalPackageFile() { SourcePath = asset.FullPath, TargetPath = refpath };
+                    var pf = new PhysicalPackageFile() { SourcePath = asset.SafeFilePath, TargetPath = refpath };
                     builder.Files.Add(pf);
                 }
             }
 
 
-            var feedPath = Path.Combine(Directory, Game.Name + '-' + Game.Version + ".nupkg");
+            var feedPath = Path.Combine(WorkingDirectory, Game.Name + '-' + Game.Version + ".nupkg");
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
             filestream.Close();
 
-        }
-
-        public void DeleteGame()
-        {
-            System.IO.Directory.Delete(Directory, true);
         }
 
         public void GameChanged(object sender)

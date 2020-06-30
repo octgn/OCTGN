@@ -47,7 +47,7 @@ namespace Octide.ViewModel
         
         public void PlaySound(Asset sound)
         {
-            _mediaPlayer.Open(new Uri(sound.FullPath));
+            _mediaPlayer.Open(new Uri(sound.SafeFilePath));
 
             _mediaPlayer.Play();
         }

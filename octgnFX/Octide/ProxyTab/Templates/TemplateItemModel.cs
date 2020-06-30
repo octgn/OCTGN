@@ -234,7 +234,7 @@ namespace Octide.ProxyTab.ItemModel
                 RaisePropertyChanged("Name");
             }
         }
-        public new string Icon => Asset.SelectedAsset?.FullPath;
+        public new string Icon => Asset.FullPath;
 
     }
 }

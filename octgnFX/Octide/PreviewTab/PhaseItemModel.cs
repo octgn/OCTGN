@@ -51,6 +51,7 @@ namespace Octide.ItemModel
             {
                 _phase.Icon = Asset.FullPath;
                 RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
             }
         }
         public override void Cleanup()
@@ -69,6 +70,7 @@ namespace Octide.ItemModel
             return new PhaseItemModel(Source);
         }
 
+        public new string Icon => Asset.FullPath;
 
         public string Name
         {

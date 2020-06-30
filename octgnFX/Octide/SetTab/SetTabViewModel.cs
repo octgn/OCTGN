@@ -27,13 +27,12 @@ namespace Octide.ViewModel
 
             var setSerializer = new SetSerializer() { Game = ViewModelLocator.GameLoader.Game };
 
-            var setAssets = ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Type == AssetType.Xml && x.FullFileName == "set.xml");
+            var setAssets = ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Type == AssetType.Xml && x.FileName == "set.xml");
             foreach (var asset in setAssets)
             {
-                var set = (Set)setSerializer.Deserialize(asset.FullPath);
+                asset.IsReserved = true;
+                var set = (Set)setSerializer.Deserialize(asset.SafeFilePath);
                 var setModel = new SetModel(set, Items);
-                setModel.Asset = new AssetController(asset);
-                setModel.Asset.PropertyChanged += AssetChanged;
                 Items.Add(setModel);
             }
 
@@ -43,10 +42,6 @@ namespace Octide.ViewModel
             };
         }
 
-        public void AssetChanged(object sender, PropertyChangedEventArgs e)
-        {
-
-        }
 
         public void AddSet()
         {

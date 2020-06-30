@@ -65,7 +65,7 @@ namespace Octide.ViewModel
         public bool AskToSave()
         {
             bool ret = true;
-            if (ViewModelLocator.GameLoader.NeedsSave && ViewModelLocator.GameLoader.DidManualSave)
+            if (ViewModelLocator.GameLoader.NeedsSave)
             {
                 switch (MessageBox.Show("You have unsaved changes. Would you like to save first?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
@@ -83,13 +83,9 @@ namespace Octide.ViewModel
         }
 		public bool CleanupCurrentGame()
 		{
-            if (!AskToSave())
-            {
-                return false;
-            }
-			if (ViewModelLocator.GameLoader.DidManualSave == false)
+			if (!AskToSave())
 			{
-				ViewModelLocator.GameLoader.DeleteGame();
+				return false;
 			}
 			return true;
 		}
