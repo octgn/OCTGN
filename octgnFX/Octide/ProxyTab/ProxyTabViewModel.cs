@@ -27,8 +27,6 @@ namespace Octide.ViewModel
 
 
         public ProxyDefinition _proxydef;
-
-        public AssetController Asset { get; set; }
         public IdeCollection<IdeBaseItem> Templates { get; private set; }
         public IdeCollection<IdeBaseItem> TextBlocks { get; private set; }
         public IdeCollection<IdeBaseItem> OverlayBlocks { get; private set; }
@@ -56,13 +54,14 @@ namespace Octide.ViewModel
             };
             var game = ViewModelLocator.GameLoader.Game;
             var proxySerializer = new ProxyGeneratorSerializer(game.Id) { Game = game };
-            var path = Path.Combine(ViewModelLocator.GameLoader.Directory, game.ProxyGenSource);
+            var path = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, game.ProxyGenSource);
             _proxydef = (ProxyDefinition)proxySerializer.Deserialize(path);
 
-        //    var proxyDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.FullPath == path);
-            Asset = new AssetController(AssetType.Xml, path);
-            Asset.PropertyChanged += AssetChanged;
-
+            var proxyDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.RelativePath == new FileInfo(path).FullName); ;
+            if (proxyDefAsset != null)
+            {
+                proxyDefAsset.IsReserved = true;
+            }
 
 
             Templates = new IdeCollection<IdeBaseItem>(this);

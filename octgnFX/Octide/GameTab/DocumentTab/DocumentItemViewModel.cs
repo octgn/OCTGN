@@ -86,7 +86,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public new string Icon => IconAsset.SelectedAsset?.FullPath;
+        public new string Icon => IconAsset.FullPath;
 
         public override object Clone()
         {

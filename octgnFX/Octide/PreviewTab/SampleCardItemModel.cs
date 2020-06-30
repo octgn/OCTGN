@@ -106,7 +106,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                return IsBack ? Size.BackAsset.SelectedAsset?.FullPath : Size.FrontAsset.SelectedAsset?.FullPath;
+                return IsBack ? Size.BackAsset.FullPath : Size.FrontAsset.FullPath;
             }
         }
 

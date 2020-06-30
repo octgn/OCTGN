@@ -30,26 +30,30 @@ namespace Octide
 
     public class Asset : IAsset, IEqualityComparer<Asset>, IEquatable<Asset>
     {
-        public FileInfo File { get; private set; }
         public AssetType Type { get; private set; }
-
         internal List<AssetController> _linkedAssets;
 
-        public string FullPath => File?.FullName;
-        public string Folder => File?.Directory.FullName;
-        public string FileName => File?.Name.Substring(0, File.Name.Length - File.Extension.Length);
-        public string FullFileName => File?.Name;
+        public FileInfo File { get; private set; }
+        public string FileName { get; set; }
+        public string RelativePath => Utils.MakeRelativePath(ViewModelLocator.GameLoader.WorkingDirectory, File.FullName);
+        public string FullPath => File.FullName;
         public string Extension => File?.Extension.Substring(1);
-        public string RelativePath => File == null ? null : Utils.MakeRelativePath(ViewModelLocator.GameLoader.Directory, File.FullName);
+
+        // targets the full path of the temporary file for rendering images and asset data
+        public string SafeFilePath => File.FullName;
+
+        public bool IsReserved { get; set; }
 
         public Asset()
         {
             _linkedAssets = new List<AssetController>();
         }
 
+        //loads the asset from an existing location
         public Asset(FileInfo file): this()
         {
             File = file;
+            FileName = file.Name;
             Type = AssetsTabViewModel.GetAssetType(file);
         }
 
@@ -80,42 +84,10 @@ namespace Octide
             }
         }
 
-        /*
-        public static Asset Load(string path)
-        {
-            if (string.IsNullOrEmpty(path)) return null;
-            var file = new FileInfo(Path.GetFullPath(path));
-            if (file == null || path == ViewModelLocator.GameLoader.Directory)
-                return null;
-            return Load(file);
-        }
-
-        public static Asset Load(FileInfo file)
-        {
-            lock (AssetCache)
-            {
-                if (AssetCache.ContainsKey(file.FullName))
-                {
-                    return AssetCache[file.FullName];
-                }
-
-                var a = new Asset
-                {
-                    File = file
-                };
-
-                a.Type = AssetsTabViewModel.GetAssetType(file);
-
-                AssetCache.Add(file.FullName, a);
-                return a;
-            }
-        }
-        */
-
         public bool Equals(Asset other)
         {
             if (other == null) return false;
-            var ret = FullPath.Equals(other.FullPath, StringComparison.InvariantCultureIgnoreCase);
+            var ret = RelativePath.Equals(other.RelativePath, StringComparison.InvariantCultureIgnoreCase);
             return ret;
         }
 
@@ -128,13 +100,13 @@ namespace Octide
         {
             if (x == null && y != null) return false;
             if (x != null && y == null) return false;
-            return String.Equals(x.FullPath, y.FullPath, StringComparison.InvariantCultureIgnoreCase);
+            return String.Equals(x.RelativePath, y.RelativePath, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public int GetHashCode(Asset obj)
         {
             if (obj == null) return 0;
-            return obj.FullPath.GetHashCode();
+            return obj.RelativePath.GetHashCode();
         }
     }
 }

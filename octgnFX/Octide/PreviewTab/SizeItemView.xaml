@@ -52,7 +52,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Front Card Image"/>
-                <Image Source="{Binding Front.FullPath, Mode=OneWay}" />
+                <Image Source="{Binding FrontAsset.FullPath, Mode=OneWay}" />
             </StackPanel>
 
             <local:AssetControllerView DataContext="{Binding FrontAsset}" />
@@ -101,7 +101,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Back Card Image"/>
-                <Image Source="{Binding Back.FullPath, Mode=OneWay}" />
+                <Image Source="{Binding Icon, Mode=OneWay}" />
             </StackPanel>
 
             <local:AssetControllerView DataContext="{Binding BackAsset}" />

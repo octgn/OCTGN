@@ -21,10 +21,7 @@ namespace Octide.ItemModel
         {
             _script = new GameScript()
             {
-                GameId = ViewModelLocator.GameLoader.Game.Id,
-                //  Path = ViewModelLocator.GameLoader.Directory
-                //  Path = AssetManager.Instance.Assets.FirstOrDefault(x => x.Type == AssetType.PythonScript)?.FullPath
-                //  TODO: Create a new path for the asset
+                GameId = ViewModelLocator.GameLoader.Game.Id
             };
             Asset = new AssetController(AssetType.PythonScript);
             _script.Path = Asset.FullPath;
@@ -45,7 +42,6 @@ namespace Octide.ItemModel
             _script = new GameScript()
             {
                 Script = gameScript._script.Script,
-                Path = gameScript._script.Path,
                 GameId = gameScript._script.GameId
             };
             Asset = new AssetController(AssetType.Image, gameScript._script.Path);
@@ -81,7 +77,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                return Asset.SelectedAsset?.FullFileName;
+                return Asset.SelectedAsset?.FileName;
             }
             set
             {

@@ -25,27 +25,31 @@ namespace Octide.ViewModel
         public ObservableCollection<Asset> Assets { get; set; }
         private bool _filterUnused;
         private AssetType _filterType;
+
         public AssetsTabViewModel()
         {
-            if (ViewModelLocator.GameLoader.Directory != null)
+            Assets = new ObservableCollection<Asset>();
+            if (ViewModelLocator.GameLoader.WorkingDirectory != null)
             {
-                Assets = new ObservableCollection<Asset>();
-                var di = new DirectoryInfo(ViewModelLocator.GameLoader.Directory);
-                var files = di.GetFiles("*.*", SearchOption.AllDirectories);
-                Assets = new ObservableCollection<Asset>(files.Select(x => LoadAsset(x)));
-                AssetView = new ListCollectionView(Assets);
-                Assets.CollectionChanged += (a, b) => AssetView.Refresh();
-
-                Watcher = new FileSystemWatcher
+                lock (Assets)
                 {
-                    IncludeSubdirectories = true
-                };
-                Watcher.Path = ViewModelLocator.GameLoader.Directory;
-                Watcher.EnableRaisingEvents = true;
-                Watcher.Changed += FileChanged;
-                Watcher.Created += FileCreated;
-                Watcher.Renamed += FileRenamed;
-                Watcher.Deleted += FileDeleted;
+                    var di = new DirectoryInfo(ViewModelLocator.GameLoader.WorkingDirectory);
+                    var files = di.GetFiles("*.*", SearchOption.AllDirectories);
+                    Assets = new ObservableCollection<Asset>(files.Select(x => LoadAsset(x)));
+                    AssetView = new ListCollectionView(Assets);
+                    Assets.CollectionChanged += (a, b) => AssetView.Refresh();
+
+                    Watcher = new FileSystemWatcher
+                    {
+                        IncludeSubdirectories = true
+                    };
+                    Watcher.Path = ViewModelLocator.GameLoader.WorkingDirectory;
+                    Watcher.EnableRaisingEvents = true;
+                    Watcher.Changed += FileChanged;
+                    Watcher.Created += FileCreated;
+                    Watcher.Renamed += FileRenamed;
+                    Watcher.Deleted += FileDeleted;
+                }
             }
             else
             {
@@ -53,6 +57,16 @@ namespace Octide.ViewModel
             }
         }
 
+        public Asset LoadAsset(FileInfo file)
+        {
+            var tempPath = Path.Combine(ViewModelLocator.GameLoader.TempDirectory, Guid.NewGuid().ToString() + file.Extension);
+            var tempFile = file.CopyTo(tempPath);
+            var asset = new Asset(file)
+            {
+            };
+            Assets.Add(asset);
+            return asset;
+        }
 
         public AssetType FilterType
         {
@@ -97,32 +111,28 @@ namespace Octide.ViewModel
             RaisePropertyChanged("AssetView");
         }
 
-        public Asset NewAsset(AssetType validAssetType, FileInfo file)
+        public Asset NewAsset(FileInfo file)
         {
-            if (GetAssetType(file) != validAssetType) return null;
-            var assetPath = Path.Combine(ViewModelLocator.GameLoader.Directory, "Assets");
-            if (!Directory.Exists(assetPath))
-                Directory.CreateDirectory(assetPath);
+            var tempPath = Path.Combine(ViewModelLocator.GameLoader.TempDirectory, Guid.NewGuid().ToString() + file.Extension);
+            var fileCopy = file.CopyTo(tempPath);
 
-            var fileCopy = file.CopyTo(Utils.GetUniqueFilename(Path.Combine(assetPath, file.Name)));
-            var asset = LoadAsset(fileCopy);
+            string assetPath;
+            if (file.FullName.StartsWith(ViewModelLocator.GameLoader.WorkingDirectory))
+            {
+                //if the asset is being copied from within the working directory, then use its existing path
+                assetPath = Utils.MakeRelativePath(ViewModelLocator.GameLoader.WorkingDirectory, file.FullName);
+            }
+            else
+            {
+                assetPath = Utils.GetUniqueFilename(Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, "Assets", file.Name));
+            }
+            var asset = new Asset(fileCopy)
+            {
+            };
+            Assets.Add(asset);
             return asset;
         }
 
-
-        public Asset LoadAsset(FileInfo file)
-        {
-            lock (Assets)
-            {
-                var asset = Assets.FirstOrDefault(x => x.FullPath == file.FullName);
-                if (asset == null)
-                {
-                    asset = new Asset(file);
-                    Assets.Add(asset);
-                }
-                return asset;
-            }
-        }
 
         public static string GetAssetFilters(AssetType assetType)
         {

@@ -90,7 +90,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public new string Icon => Asset.SelectedAsset?.FullPath;
+        public new string Icon => Asset.FullPath;
 
 
         public int PlayerCount

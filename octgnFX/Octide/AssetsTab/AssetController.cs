@@ -28,7 +28,7 @@ namespace Octide
 
         public bool CanRemove { get; set; }
 
-        public string FullPath => SelectedAsset?.FullPath;
+        public string FullPath => SelectedAsset?.File.FullName;
 
         public AssetController(AssetType type) // Creates a new assetcontroller with a default asset from the given type.
         {
@@ -40,17 +40,17 @@ namespace Octide
         public AssetController(AssetType type, string source)  // loads the assetcontroller with the pre-set asset (from initializing deserialized item models)
         {
             InitializeAssetController(type);
-            if (source != null && source != ViewModelLocator.GameLoader.Directory)
+            if (source != null && source != ViewModelLocator.GameLoader.WorkingDirectory)
             {
                 var path = new FileInfo(source);
-                SelectedAsset = ViewModelLocator.AssetsTabViewModel.LoadAsset(path);
+                SelectedAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.File.FullName == path.FullName);
             }
             RaisePropertyChanged("AssetView");
 
         }
-        public AssetController(Asset asset)  // for loading an assetcontrol with a known asset
+        public AssetController(AssetType type, Asset asset)  // for loading an assetcontrol with a known asset
         {
-            InitializeAssetController(asset.Type);
+            InitializeAssetController(type);
             SelectedAsset = asset;
             RaisePropertyChanged("AssetView");
         }
@@ -110,7 +110,7 @@ namespace Octide
                 return;
             }
             var file = new FileInfo(fo.FileName);
-            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(TargetAssetType, file);
+            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(file);
             if (asset == null) return;
             SelectedAsset = asset;
         }
@@ -153,7 +153,7 @@ namespace Octide
             var path = (string[])data.GetData(DataFormats.FileDrop);
             var file = new FileInfo(path[0]);
 
-            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(Parent.TargetAssetType, file);
+            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(file);
             if (asset == null) return;
             Parent.SelectedAsset = asset;
         }
