@@ -109,7 +109,8 @@ namespace Octgn.Core
 
                     try
                     {
-                        X.Instance.Retry(() => packages = repo.GetPackages()
+                        X.Instance.Retry(() => packages = repo.FindPackages(games.Keys)
+                                                              .Where(p => p.IsAbsoluteLatestVersion)
                                                               .ToList());
                     }
                     catch (WebException e)
@@ -120,9 +121,6 @@ namespace Octgn.Core
 
                     foreach (var package in packages)
                     {
-                        if (!package.IsAbsoluteLatestVersion)
-                            continue;
-
                         if (!games.ContainsKey(package.Id))
                             continue;
 
@@ -179,22 +177,23 @@ namespace Octgn.Core
                 cancellationSource.Dispose();
             }
 
-            try
+            foreach (var update in updates.Values)
             {
-                foreach (var update in updates.Values)
-                {
-                    var game = games[update.Id];
+                var game = games[update.Id];
 
+                try
+                {
                     FireOnUpdateMessage(L.D.UpdateMessage__UpdatingGame_Format, game.Name, game.Version, update.Version.Version);
                     Log.DebugFormat("Update found for {2} {3}. Updating from {0} to {1}", game.Version, update.Version.Version, game.Id, game.Name);
 
                     DataManagers.GameManager.Get().InstallGame(update, onProgressUpdate);
                     Log.DebugFormat("Update completed for {0} {1}", game.Id, game.Name);
                 }
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Error installing updates", e);
+                catch (Exception e)
+                {
+                    Log.WarnFormat("Error installing update for {0} {1}", game.Id, game.Name);
+                    Log.Warn("", e);
+                }
             }
 
             Log.Info("Check for updates finished");
