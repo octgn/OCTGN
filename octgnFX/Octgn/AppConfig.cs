@@ -16,6 +16,7 @@ namespace Octgn
         public static readonly string GameServerPath;
         public static readonly string UpdateInfoPath;
         public static readonly string GameFeed;
+        public static readonly int GameFeedTimeoutSeconds;
         public static readonly bool UseGamePackageManagement;
         public static readonly string StaticWebsitePath;
         public static readonly string NewsFeedPath;
@@ -36,6 +37,12 @@ namespace Octgn
             ChatServerHost = ConfigurationManager.AppSettings["ChatServerHost"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
             GameFeed = ConfigurationManager.AppSettings["GameFeed"];
+            GameFeedTimeoutSeconds = 60;
+            if (int.TryParse(ConfigurationManager.AppSettings["GameFeedTimeoutSeconds"], out var parsedSeconds))
+            {
+                GameFeedTimeoutSeconds = parsedSeconds;
+            }
+
             UseGamePackageManagement = bool.Parse(ConfigurationManager.AppSettings["UseGamePackageManagement"]);
             if (Program.IsReleaseTest)
                 UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
