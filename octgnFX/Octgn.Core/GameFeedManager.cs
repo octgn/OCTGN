@@ -174,6 +174,10 @@ namespace Octgn.Core
             {
                 Log.Warn("Error fetching updates from feed", e);
             }
+            finally
+            {
+                cancellationSource.Dispose();
+            }
 
             try
             {
