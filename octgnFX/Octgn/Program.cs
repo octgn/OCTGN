@@ -99,6 +99,10 @@ namespace Octgn
 
             Log.Info("Setting api path");
             Octgn.Site.Api.ApiClient.DefaultUrl = new Uri(AppConfig.WebsitePath);
+
+            Log.Info("Configuring game feeds");
+            ConfigureGameFeedTimeout();
+
             try
             {
                 Log.Debug("Setting rendering mode.");
@@ -527,6 +531,12 @@ namespace Octgn
                 Log.Error(e);
             }
             return defaultBrowserPath;
+        }
+
+        public static void ConfigureGameFeedTimeout()
+        {
+            var manager = GameFeedManager.Get();
+            manager.FeedUpdateTimeout = TimeSpan.FromSeconds(AppConfig.GameFeedTimeoutSeconds);
         }
 
         public static void DoCrazyException(Exception e, string action)

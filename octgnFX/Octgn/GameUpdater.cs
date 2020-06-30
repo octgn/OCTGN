@@ -119,7 +119,7 @@
                     return;
                 }
                 Log.Info("Checking for updates");
-                GameFeedManager.Get().CheckForUpdates(true);
+                GameFeedManager.Get().CheckInstallUpdates(true);
                 Log.InfoFormat("Update check complete");
             }
             Log.Info("Exited timer lock");

@@ -18,6 +18,9 @@ using Octgn.Library.Networking;
 
 using log4net;
 using Octgn.Library.Localization;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Octgn.Core
 {
@@ -25,7 +28,7 @@ namespace Octgn.Core
     public interface IGameFeedManager : IDisposable
     {
         event Action<String> OnUpdateMessage;
-        void CheckForUpdates( bool localOnly = false, Action<int, int> onProgressUpdate = null );
+        void CheckInstallUpdates( bool localOnly = false, Action<int, int> onProgressUpdate = null );
         IEnumerable<NamedUrl> GetFeeds( bool localOnly = false );
         void AddFeed( string name, string feed, string username, string password );
         void RemoveFeed( string name );
@@ -34,6 +37,7 @@ namespace Octgn.Core
         void ExtractPackage( string directory, IPackage package, Action<int, int> onProgressUpdate = null );
         void AddToLocalFeed( string file );
         event EventHandler OnUpdateFeedList;
+        TimeSpan FeedUpdateTimeout { get; set; }
     }
 
     public class GameFeedManager : IGameFeedManager
@@ -66,62 +70,130 @@ namespace Octgn.Core
 
         public event Action<string> OnUpdateMessage;
 
+        public TimeSpan FeedUpdateTimeout { get; set; }
+
         protected virtual void FireOnUpdateMessage( string obj, params object[] args ) {
             this.OnUpdateMessage?.Invoke( string.Format( obj, args ) );
         }
 
-        public void CheckForUpdates( bool localOnly = false, Action<int, int> onProgressUpdate = null ) {
+        public void CheckInstallUpdates( bool localOnly = false, Action<int, int> onProgressUpdate = null ) {
             if( onProgressUpdate == null ) onProgressUpdate = ( i, i1 ) => { };
             Log.Info( "Checking for updates" );
-            try {
-                foreach( var g in DataManagers.GameManager.Get().Games ) {
-                    FireOnUpdateMessage( L.D.UpdateMessage__CheckingGame_Format, g.Name );
-                    Log.DebugFormat( "Checking for updates for game {0} {1}", g.Id, g.Name );
-                    foreach( var f in this.GetFeeds( localOnly ) ) {
-                        Log.DebugFormat( "Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
-                        if( string.IsNullOrWhiteSpace( f.Url ) ) continue;
-                        var repo = PackageRepositoryFactory.Default.CreateRepository( f.Url );
-                        Log.DebugFormat( "Repo Created {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
-                        IPackage newestPackage = default( IPackage );
-                        try {
-                            X.Instance.Retry(
-                                () => {
-                                    newestPackage =
-                                        repo.GetPackages()
-                                            .Where( x => x.Id.ToLower() == g.Id.ToString().ToLower() )
-                                            .ToList()
-                                            .OrderByDescending( x => x.Version.Version )
-                                            .FirstOrDefault( x => x.IsAbsoluteLatestVersion );
-                                } );
-                        } catch( WebException e ) {
-                            Log.WarnFormat( "Could not get feed {0} {1}", f.Name, f.Url );
-                            Log.Warn( "", e );
+
+            var concurrencyLevel = 5;
+            var idComparer = StringComparer.InvariantCultureIgnoreCase;
+            var cancellationSource = new CancellationTokenSource(FeedUpdateTimeout);
+            var options = new ParallelOptions()
+            {
+                MaxDegreeOfParallelism = concurrencyLevel,
+                CancellationToken = cancellationSource.Token
+            };
+
+            var feeds = GetFeeds(localOnly);
+            var games = DataManagers.GameManager.Get().Games
+                                                      .ToDictionary(x => x.Id.ToString(), idComparer);
+            
+            var updates = new ConcurrentDictionary<string, IPackage>(concurrencyLevel, games.Count);
+
+            try
+            {
+                Parallel.ForEach(feeds, options, (feed) =>
+                {
+                    Log.DebugFormat("Getting feed {0} {1}", feed.Name, feed.Url);
+
+                    if (string.IsNullOrEmpty(feed.Url))
+                        return;
+
+                    var repo = PackageRepositoryFactory.Default.CreateRepository(feed.Url);
+                    var packages = Enumerable.Empty<IPackage>();
+
+                    try
+                    {
+                        X.Instance.Retry(() => packages = repo.GetPackages()
+                                                              .ToList());
+                    }
+                    catch (WebException e)
+                    {
+                        Log.WarnFormat("Could not get feed {0} {1}", feed.Name, feed.Url);
+                        Log.Warn("", e);
+                    }
+
+                    foreach (var package in packages)
+                    {
+                        if (!package.IsAbsoluteLatestVersion)
                             continue;
-                        }
-                        Log.DebugFormat( "Grabbed newest package for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
-                        if( newestPackage == null ) {
-                            Log.DebugFormat( "No package found for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
+
+                        if (!games.ContainsKey(package.Id))
                             continue;
+
+                        var game = games[package.Id];
+                        var gameVersion = new SemanticVersion(game.Version);
+
+                        if (package.Version.CompareTo(gameVersion) < 1)
+                            continue;
+
+                        if (updates.ContainsKey(package.Id))
+                        {
+                            var fetched = updates.TryGetValue(package.Id, out var existingUpdate);
+                            if (fetched)
+                            {
+                                if (package.Version.CompareTo(existingUpdate.Version) < 1)
+                                    continue;
+
+                                var updated = updates.TryUpdate(package.Id, package, existingUpdate);
+                                if (updated)
+                                {
+                                    Log.DebugFormat("Replacing update for {0} from {1} {2}, version {3} -> {4}", package.Id, feed.Name, feed.Url, existingUpdate.Version, package.Version);
+                                }
+                                else 
+                                {
+                                    Log.DebugFormat("Could not overwrite update for {0} from {1} {2}, version {3} -> {4}", package.Id, feed.Name, feed.Url, existingUpdate.Version, package.Version);
+                                }
+                            }
+                            else
+                            {
+                                Log.DebugFormat("Could not fetch update for {0} from existing data", package.Id);
+                            }
                         }
-                        Log.DebugFormat( "Got feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
-                        Log.DebugFormat( "Installed Version: {0} Feed Version: {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url );
-                        var gameVersion = new SemanticVersion( g.Version );
-                        if( newestPackage.Version.Version.CompareTo( gameVersion.Version ) > 0 ) {
-                            FireOnUpdateMessage( L.D.UpdateMessage__UpdatingGame_Format, g.Name, g.Version, newestPackage.Version.Version );
-                            Log.DebugFormat(
-                                "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url );
-                            DataManagers.GameManager.Get().InstallGame( newestPackage, onProgressUpdate );
-                            Log.DebugFormat( "Updated game finished for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
-                            break;
+                        else
+                        {
+                            var added = updates.TryAdd(package.Id, package);
+                            if (added)
+                            {
+                                Log.DebugFormat("Queueing update for {0} from {1} {2}", package.Id, feed.Name, feed.Url);
+                            }
+                            else
+                            {
+                                Log.DebugFormat("Could not add update for {0} from {1} {2}", package.Id, feed.Name, feed.Url);
+                            }                                
                         }
                     }
-                }
-
-            } catch( Exception e ) {
-                Log.Warn( "Error checking for updates", e );
-            } finally {
-                Log.Info( "Check for updates finished" );
+                });
             }
+            catch (Exception e)
+            {
+                Log.Warn("Error fetching updates from feed", e);
+            }
+
+            try
+            {
+                foreach (var update in updates.Values)
+                {
+                    var game = games[update.Id];
+
+                    FireOnUpdateMessage(L.D.UpdateMessage__UpdatingGame_Format, game.Name, game.Version, update.Version.Version);
+                    Log.DebugFormat("Update found for {2} {3}. Updating from {0} to {1}", game.Version, update.Version.Version, game.Id, game.Name);
+
+                    DataManagers.GameManager.Get().InstallGame(update, onProgressUpdate);
+                    Log.DebugFormat("Update completed for {0} {1}", game.Id, game.Name);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Error installing updates", e);
+            }
+
+            Log.Info("Check for updates finished");
         }
 
         /// <summary>

@@ -286,7 +286,7 @@ namespace Octgn.Windows
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
             Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false; }));
-            GameFeedManager.Get().CheckForUpdates(localOnly,
+            GameFeedManager.Get().CheckInstallUpdates(localOnly,
                 (cur, max) => this.Dispatcher.Invoke(
                     new Action(
                         () => {
