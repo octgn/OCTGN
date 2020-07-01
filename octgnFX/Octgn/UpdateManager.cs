@@ -204,7 +204,7 @@ namespace Octgn
 
                 if (Version.Minor != thisVersion.Minor) return true;
 
-                return Version.Equals(thisVersion);
+                return Version.CompareTo(thisVersion) < 1;
             }
         }
 
