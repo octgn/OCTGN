@@ -779,7 +779,11 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-
+        public List<int> CardPeekers(int id)
+        {
+            Card c = Card.Find(id);
+            return c.PeekingPlayers.Select(x => (int)x.Id).ToList();
+        }
 
         public void CardTargetArrow(int id, int targetId, bool active)
         {
