@@ -1,1 +1,1 @@
-new python API card property: card.peekers - returns a list of players peeking at the card.
+
