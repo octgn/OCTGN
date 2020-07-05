@@ -1,3 +1,5 @@
+#3.4.285.0
+
 #3.4.284.0
 + new python API card property: card.peekers - returns a list of players peeking at the card.
 
@@ -3867,6 +3869,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
