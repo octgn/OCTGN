@@ -755,7 +755,10 @@ namespace Octgn.Scripting.Versions
                 return;
             }
 
-            card.SetProperty(name, val);
+            QueueAction(() =>
+            {
+                card.SetProperty(name, val);
+            });
         }
 
         public void CardResetProperties(int cardId)
@@ -767,7 +770,10 @@ namespace Octgn.Scripting.Versions
                 return;
             }
 
-            card.ResetProperties();
+            QueueAction(() =>
+            {
+                card.ResetProperties();
+            });
         }
 
         #endregion Cards API
