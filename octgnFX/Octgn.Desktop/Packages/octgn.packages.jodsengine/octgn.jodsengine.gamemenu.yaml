@@ -1,0 +1,9 @@
+﻿menuitems:
+- id: octgn.jodsengine.gamemenu.singleplayer
+  text: Single Player
+
+- id: octgn.jodsengine.gamemenu.multiplayer
+  text: Multi Player
+
+- id: octgn.jodsengine.gamemenu.deckeditor
+  text: Deck Editor

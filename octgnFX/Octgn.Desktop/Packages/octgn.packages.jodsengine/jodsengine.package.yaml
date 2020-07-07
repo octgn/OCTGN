@@ -6,27 +6,31 @@ icon: images/icon.png
 version: 3.4.0.0
 octgnversion: 3.4.0.0
 plugins:
-- id: octgn.jodsengine
-  name: Jods Game Engine
-  description: Game engine for most games in Octgn
-  path: engine/Octgn.exe
-  icon: images/icon.png
-  type: octgn.plugins.dotnet
+
+# - id: octgn.jodsengine.gameformat
+#  name: Jods Engine Game Definition File format
+#  description: Used to load Jods Engine Game Definition format files.
+#  path: engine/Octgn.exe
+#  format: octgn.plugin.format.dotnet
+#  type: octgn.plugin.format
 
 - id: octgn.jodsengine.gamemenu
   name: Jods Game Engine Menu
   description: Default game menu for games using Jods Engine
-  path: gamemenu.xml
-  type: octgn.plugins.gamemenu
+  path: octgn.jodsengine.gamemenu.yaml
+  format: octgn.plugin.format.yaml
+  type: octgn.plugin.menu
 
-- id: octgn.jodsengine.darktheme
-  name: Default Dark Theme
-  description: Default Dark Theme for games using Jods engine
-  path: themes/dark/darktheme.css
-  type: octgn.plugins.theme.dark
+#- id: octgn.jodsengine.darktheme
+#  name: Default Dark Theme
+#  description: Default Dark Theme for games using Jods engine
+#  path: themes/dark/darktheme.css
+#  format: css
+#  type: octgn.plugin.theme.dark
 
-- id: octgn.jodsengine.lighttheme
-  name: Default Light Theme
-  description: Default Light Theme for games using Jods engine
-  path: themes/light/lighttheme.css
-  type: octgn.plugins.theme.light
+#- id: octgn.jodsengine.lighttheme
+#  name: Default Light Theme
+#  description: Default Light Theme for games using Jods engine
+#  path: themes/light/lighttheme.css
+#  format: css
+#  type: octgn.plugin.theme.light

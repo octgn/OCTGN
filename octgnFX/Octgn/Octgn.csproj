@@ -14,7 +14,7 @@
     <StartupObject>
     </StartupObject>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -289,6 +289,14 @@
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="DesktopIntegration\JodsGameFormat.cs" />
+    <Compile Include="DesktopIntegration\JodsGameMenu.cs" />
+    <Compile Include="DesktopIntegration\JodsGamePlugin.cs" />
+    <Compile Include="DoVersionStuff.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DoVersionStuff.tt</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Converters\RichTextConverter.cs" />
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
@@ -722,7 +730,7 @@
     <None Include="app.manifest" />
     <None Include="DoVersionStuff.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
+      <LastGenOutput>DoVersionStuff.cs</LastGenOutput>
     </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Resource Include="Resources\Fonts\Entypo.otf" />
@@ -749,11 +757,6 @@
     <Resource Include="Resources\background.png" />
     <Resource Include="Resources\Icons\diag.ico" />
     <Resource Include="Scripting\ApiVersions.xml" />
-    <Resource Include="DoVersionStuff.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DoVersionStuff.tt</DependentUpon>
-    </Resource>
     <Resource Include="Resources\people.png" />
     <Resource Include="Resources\gamemode.png" />
     <Resource Include="Resources\circle-back-button.png" />
@@ -1331,6 +1334,10 @@
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.Sdk\Octgn.Sdk.csproj">
+      <Project>{a7cbab10-bd60-4a9b-a7e3-7b7a0d73073b}</Project>
+      <Name>Octgn.Sdk</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
       <Name>Octgn.Server</Name>
@@ -1466,7 +1473,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>rd /s /q "de", "es", "fr", "hu", "it", "pt-BR", "ro", "ru", "sv", "zh-Hans"</PostBuildEvent>
+    <PostBuildEvent>rd /s /q "de", "es", "fr", "hu", "it", "pt-BR", "ro", "ru", "sv", "zh-Hans"
+xcopy /Y "$(TargetDir)*.*" "$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

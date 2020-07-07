@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Octgn.Sdk.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Octgn.Sdk.Data
+namespace Octgn.Sdk.Extensibility.Desktop
 {
     public static class ExtensionMethods
     {
         public static IEnumerable<PluginRecord> GameMenuPlugins(this DataContext context, PackageRecord package) {
             var query = context.PackagePlugins(package)
                 .Where(plugin =>
-                    plugin.Type == "octgn.plugins.gamemenu"
+                    plugin.Type == "octgn.plugin.gamemenu"
                 );
             ;
 

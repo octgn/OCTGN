@@ -1,38 +1,16 @@
-﻿using Octgn.Sdk.Packaging;
-using System;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Octgn.Sdk.Extensibility
 {
-    public interface IPlugin
+    public interface IPlugin : IDisposable
     {
-        IPackage Package { get; }
+        IPluginDetails Details { get; set; }
 
-        Task OnStart();
-    }
+        Package Package { get; }
 
-    public class Plugin : IPlugin
-    {
-        public IPackage Package { get; }
+        void Initialize(Package package);
 
-        public Plugin(IPackage package) {
-            Package = package ?? throw new ArgumentNullException(nameof(package));
-        }
-
-        public virtual Task OnStart() {
-            return Task.CompletedTask;
-        }
-    }
-
-    public interface IPackageExtension
-    {
-        void Config(PackageConfig config);
-    }
-
-    public class PackageExtension : IPackageExtension
-    {
-        public virtual void Config(PackageConfig config) {
-
-        }
+        void Start();
     }
 }

@@ -1,10 +1,14 @@
 ﻿using System;
 
-namespace Octgn.Sdk.Packaging
+namespace Octgn.Sdk
 {
-    public interface IPlugin
+    public interface IPluginDetails
     {
         string Id { get; }
+
+        string Type { get; }
+
+        string Format { get; }
 
         string Name { get; }
 

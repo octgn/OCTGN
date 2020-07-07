@@ -11,11 +11,13 @@
                 Version="3.4.0.0" />
   </Dependencies>
   <Plugins>
-    <Plugin Id="octgn.plugins.game.chess"
+    <Plugin Id="octgn.plugin.game.chess"
             Name="Chess Game"
             Description="Chess for Octgn"
             Path="game/definition.xml"
+            Format="octgn.jodsengine.gameformat"
             Icon="images/icon.jpg"
-            Type="octgn.plugins.game"/>
+            Type="octgn.plugin.game">
+    </Plugin>
   </Plugins>
 </Package>

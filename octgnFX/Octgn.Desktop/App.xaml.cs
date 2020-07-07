@@ -1,42 +1,88 @@
-﻿using Octgn.Sdk;
+﻿using Microsoft.EntityFrameworkCore.Internal;
+using Octgn.Desktop.Interfaces.Easy;
+using Octgn.Sdk;
 using Octgn.Sdk.Data;
+using Octgn.Sdk.Extensibility;
+using Octgn.Sdk.Extensibility.Desktop;
 using Octgn.Sdk.Packaging;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Octgn.Desktop
 {
     public partial class App : Application
     {
-        private readonly DataMapper _dataMapper;
-        private readonly PackageFileReader _packageFileReader;
-
-        public App() {
-            _dataMapper = new DataMapper();
-            _packageFileReader = new PackageFileReader();
+        public new MainWindow MainWindow {
+            get => (MainWindow)base.MainWindow;
+            set => base.MainWindow = value;
         }
 
-        protected override void OnStartup(StartupEventArgs e) {
+        private DataMapper _dataMapper;
+        private PluginIntegration _pluginIntegration;
+        private Settings _settings;
+        private NavigationService _navigationService;
+
+        //TODO: Reduce this to 150ms total until something is visible. Will probably have to use win32 window for loading screen or something idk.
+        public App() {
+            DebugTimed(TimeSpan.FromMilliseconds(20), "Took too long to Init App. There is no UI visible, so this needs to be fast.", () => {
+                _dataMapper = new DataMapper();
+                _pluginIntegration = new PluginIntegration();
+                _settings = new Settings();
+                _navigationService = new NavigationService();
+            });
+
+            DebugTimed(TimeSpan.FromMilliseconds(1000), "Took too long to create Main Window. There is no UI visible, so this needs to be fast.", () => {
+                MainWindow = new MainWindow(_navigationService);
+            });
+        }
+
+        [ThreadStatic]
+        private static readonly Stopwatch _sw = new Stopwatch();
+
+        [DebuggerStepThrough]
+        private static void DebugTimed(TimeSpan maxTime, string errorMessage, Action action) {
+            _sw.Restart();
+
+            action();
+
+            _sw.Stop();
+
+            Debug.Assert(_sw.Elapsed <= maxTime, _sw.ElapsedMilliseconds.ToString() + "ms:" + errorMessage);
+        }
+
+        internal static void UnhandledException(Exception ex) => throw new NotImplementedException();
+
+        protected override async void OnStartup(StartupEventArgs e) {
+            try {
+                MainWindow.Show();
+
+                await Task.Run(Load).ConfigureAwait(false);
+            } catch (Exception ex) {
+                App.UnhandledException(ex);
+            }
+        }
+
+        private void Load() {
+            File.Delete("temp.db");
+
             UpgradeDatabase();
 
             InstallBuiltInPackages();
 
             UpdateBuiltInPackages();
 
-            using(var context = new DataContext()) {
-                foreach(var package in context.Packages) {
-                    Console.WriteLine(package.Id);
-                }
-            }
+            LoadPlugins();
 
-#if(DEBUG)
-            //TempDev();
-#endif
+            var defaultGameRecord = ChooseDefaultGame();
+
+            var startScreen = ChooseStartScreen(defaultGameRecord);
+
+            _navigationService.NavigateTo(startScreen);
         }
-
-        internal static void UnhandledException(Exception ex) => throw new NotImplementedException();
 
         private void UpgradeDatabase() {
             using (var context = new DataContext()) {
@@ -93,6 +139,11 @@ namespace Octgn.Desktop
             }
         }
 
+        private void LoadPlugins() {
+            //_pluginIntegration.Loader.RegisterStandard(MenuPlugin.PluginTypeName);
+            _pluginIntegration.Initialize();
+        }
+
         private PackageFile LoadPackageFile(string path) {
             path = Path.Combine(Environment.CurrentDirectory, "Packages", path);
 
@@ -101,44 +152,55 @@ namespace Octgn.Desktop
             if (!pathInfo.Exists)
                 throw new FileNotFoundException($"Package '{path}' doesn't exist.");
 
-            return _packageFileReader.ReadFile(path);
+            var packageFileReader = new PackageFileReader();
+
+            return packageFileReader.ReadFile(path);
         }
 
-        private void TempDev() {
+        private PluginRecord ChooseDefaultGame() {
+            var defaultGameId = _settings.DefaultGame;
+
             using (var context = new DataContext()) {
-                context.Upgrade(null, default);
+                var allGames = context.Games().ToArray();
 
-                var testPackage = new PackageRecord() {
-                    Id = "Octgn.Test",
-                    Name = "Test",
-                    Icon = "icon.ico",
-                    Description = "Just a test",
-                    OctgnVersion = "1.2.3.4",
-                    Website = "http://www.octgn.net",
-                    Version = "1.0.0.0"
-                };
+                var plugin = allGames
+                    .Where(x => x.Id == defaultGameId)
+                    .OrderByDescending(x => x.PackageVersion)
+                    .FirstOrDefault();
 
-                var testPlugin = new PluginRecord() {
-                    Id = "Octgn.Test.Plugin1",
-                    Name = "Plugin1",
-                    Icon = "icon2.ico",
-                    Description = "Just a test plugin 1",
-                    Path = "plugin1.dll",
-                    PackageId = "Octgn.Test",
-                    PackageVersion = "1.0.0.0"
-                };
+                if (plugin == null) {
+                    plugin = allGames.First();
+                }
 
-                context.Packages.Add(testPackage);
-
-                context.Plugins.Add(testPlugin);
-
-                context.SaveChanges();
-
-                var packages = context.Packages.ToArray();
-                var plugins = context.Plugins.ToArray();
-
-                System.Diagnostics.Debugger.Break();
+                return plugin;
             }
+        }
+
+        private Screen ChooseStartScreen(PluginRecord gamePluginRecord) {
+            using var context = new DataContext();
+
+            var gamePackage = _pluginIntegration
+                .Packages
+                .Where(x => x.Plugins.Any(x => x.Details.Id == gamePluginRecord.Id))
+                .First();
+
+            var menuPlugin = gamePackage
+                .FindByType(MenuPlugin.PluginTypeName, true)
+                .SingleOrDefault();
+
+            if (menuPlugin == null) {
+                throw new NotImplementedException();
+            }
+
+            var mp = (MenuPlugin)menuPlugin;
+
+            Screen screen = null;
+            Dispatcher.Invoke(() => {
+                screen = new MenuScreen(mp);
+            });
+
+            return screen
+                ?? throw new InvalidOperationException($"page null");
         }
     }
 }

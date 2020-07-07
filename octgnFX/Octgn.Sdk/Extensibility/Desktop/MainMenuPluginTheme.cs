@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Octgn.Sdk.Extensibility.MainMenu
+namespace Octgn.Sdk.Extensibility.Desktop
 {
     public class MainMenuPluginTheme
     {

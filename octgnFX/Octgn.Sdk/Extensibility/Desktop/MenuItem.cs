@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Octgn.Sdk.Extensibility.MainMenu
+namespace Octgn.Sdk.Extensibility.Desktop
 {
     [XmlRoot("MenuItem")]
     public class MenuItem

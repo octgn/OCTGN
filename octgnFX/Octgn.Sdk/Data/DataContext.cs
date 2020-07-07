@@ -50,7 +50,7 @@ namespace Octgn.Sdk.Data
         public IEnumerable<PluginRecord> GamePlugins(PackageRecord package) {
             var query = PackagePlugins(package)
                 .Where(plugin =>
-                    plugin.Type == "octgn.plugins.game"
+                    plugin.Type == "octgn.plugin.game"
                 );
             ;
 

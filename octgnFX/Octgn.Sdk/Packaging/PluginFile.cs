@@ -3,7 +3,7 @@
 namespace Octgn.Sdk.Packaging
 {
     [XmlRoot("Plugin")]
-    public class PluginFile
+    public class PluginFile : IPluginDetails
     {
         [XmlAttribute("Id")]
         public string Id { get; set; }
@@ -22,5 +22,8 @@ namespace Octgn.Sdk.Packaging
 
         [XmlAttribute("Type")]
         public string Type { get; set; }
+
+        [XmlAttribute("Format")]
+        public string Format { get; set; }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Octgn.Sdk.Packaging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Octgn.Sdk.Data
 {
+    [DebuggerDisplay("PackageRecord({Id}@{Version})")]
     public class PackageRecord
     {
         public string Id { get; set; }

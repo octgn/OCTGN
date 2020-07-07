@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Octgn.Sdk.Data
 {
-    public class PluginRecord
+    [DebuggerDisplay("PluginRecord({PackageId}.{Id}@{PackageVersion}")]
+    public class PluginRecord : IPluginDetails
     {
         public string Id { get; set; }
 
@@ -11,6 +13,8 @@ namespace Octgn.Sdk.Data
         public string PackageVersion { get; set; }
 
         public string Type { get; set; }
+
+        public string Format { get; set; }
 
         public string Name { get; set; }
 

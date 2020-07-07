@@ -1,35 +1,48 @@
 ﻿using Octgn.Sdk.Data;
-using Octgn.Sdk.Extensibility.MainMenu;
+using Octgn.Sdk.Extensibility.PluginLoading;
 using System;
-using System.IO;
-using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace Octgn.Sdk.Extensibility
 {
     public class PluginIntegration
     {
-        private readonly XmlSerializer _serializer;
+        public PluginLoader Loader { get; }
+
+        public IEnumerable<Package> Packages => _packages.Values;
+
+        private readonly Dictionary<string, Package> _packages;
 
         public PluginIntegration() {
-            _serializer = new XmlSerializer(typeof(MenuPlugin));
+            Loader = new PluginLoader();
+
+            _packages = new Dictionary<string, Package>();
         }
 
-        public T Load<T>(PackageRecord packageRecord, PluginRecord pluginRecord) where T : IPlugin {
-            var rootPath = Path.GetDirectoryName(packageRecord.Path);
+        public void Initialize() {
+            Loader.Initialize(this);
 
-            var path = Path.Combine(rootPath, pluginRecord.Path);
+            Loader.RegisterPluginFormat(new IntegratedPluginFormat());
 
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"File {path} not found");
+            using (var context = new DataContext()) {
+                foreach (var packageRecord in context.Packages) {
+                    var package = LoadPackage(context, packageRecord);
 
-            IPlugin menuPlugin;
-            using (var stream = File.OpenRead(path)) {
-                menuPlugin = (MenuPlugin)_serializer.Deserialize(stream);
+                    if (_packages.ContainsKey(packageRecord.Id))
+                        throw new InvalidOperationException($"Package {packageRecord.Id} was already loaded.");
+
+                    _packages.Add(packageRecord.Id, package);
+                }
             }
+        }
 
-            var t = (T)menuPlugin;
+        private Package LoadPackage(DataContext data, PackageRecord packageRecord) {
+            var package = new Package(packageRecord);
 
-            return t;
+            package.Load(data, Loader);
+
+            return package;
+
         }
     }
 }

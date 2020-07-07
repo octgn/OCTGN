@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Octgn.Sdk.Packaging
 {
     /// <summary>
-    /// Package containing <see cref="IPlugin"/>'s for Octgn.
+    /// Package containing <see cref="IPluginDetails"/>'s for Octgn.
     /// </summary>
     public interface IPackage
     {
@@ -24,6 +24,6 @@ namespace Octgn.Sdk.Packaging
 
         IList<IDependency> Dependencies { get; }
 
-        IList<IPlugin> Plugins { get; }
+        IList<IPluginDetails> Plugins { get; }
     }
 }

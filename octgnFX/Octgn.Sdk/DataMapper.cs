@@ -34,6 +34,7 @@ namespace Octgn.Sdk
                 Path = plugin.Path,
                 PackageId = packageId,
                 Type = plugin.Type,
+                Format = plugin.Format,
                 PackageVersion = packageVersion
             };
         }

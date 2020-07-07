@@ -1,18 +1,18 @@
-﻿<Page x:Class="Octgn.Desktop.Easy.Login"
+﻿<local:Screen x:Class="Octgn.Desktop.Interfaces.Easy.LoginScreen"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:Octgn.Desktop.Easy"
+      xmlns:local="clr-namespace:Octgn.Desktop.Interfaces.Easy"
       mc:Ignorable="d"
       d:DesignWidth="300"
-      Title="Login" Background="{DynamicResource BackgroundColor}">
-    <Page.Resources>
+      Background="{DynamicResource BackgroundColor}">
+    <local:Screen.Resources>
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="FontFamily" Value="Nirmala UI"/>
             <Setter Property="Foreground" Value="{DynamicResource AccentColor1}"/>
         </Style>
-    </Page.Resources>
+    </local:Screen.Resources>
 
     <StackPanel Margin="50 0">
         <TextBlock Text="Login"
@@ -39,8 +39,25 @@
             <TextBlock Text="Automatically Sign In" FontSize="16"/>
         </CheckBox>
 
-        <Button Content="Login"
+        <Grid Margin="0 20 0 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".5*"/>
+                <ColumnDefinition Width=".5*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Cancel"
+                    DockPanel.Dock="Left"
+                    Width="150"
+                    HorizontalAlignment="Left"
+                    Grid.Column="0"
+                    Click="Cancel_Click"
+                    />
+            <Button Content="Login"
+                    DockPanel.Dock="Right"
+                    Width="150"
                     HorizontalAlignment="Right"
-                    Margin="0 20 0 10"/>
+                    Grid.Column="1"
+                    Click="Login_Click"
+                    />
+        </Grid>
     </StackPanel>
-</Page>
+</local:Screen>
