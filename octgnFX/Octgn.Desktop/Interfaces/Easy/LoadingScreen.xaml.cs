@@ -6,6 +6,8 @@ namespace Octgn.Desktop.Interfaces.Easy
     {
         [Obsolete("For designer only")]
         public LoadingScreen() {
+            Title = "Loading...";
+
             InitializeComponent();
         }
     }

@@ -179,10 +179,13 @@ namespace Octgn.Desktop
         private Screen ChooseStartScreen(PluginRecord gamePluginRecord) {
             using var context = new DataContext();
 
-            var gamePackage = _pluginIntegration
+            var gamePlugin = _pluginIntegration
                 .Packages
-                .Where(x => x.Plugins.Any(x => x.Details.Id == gamePluginRecord.Id))
+                .SelectMany(package => package.Plugins)
+                .Where(plugin => plugin.Details.Id == gamePluginRecord.Id)
                 .First();
+
+            var gamePackage = gamePlugin.Package;
 
             var menuPlugin = gamePackage
                 .FindByType(MenuPlugin.PluginTypeName, true)
@@ -196,7 +199,7 @@ namespace Octgn.Desktop
 
             Screen screen = null;
             Dispatcher.Invoke(() => {
-                screen = new MenuScreen(mp);
+                screen = new MenuScreen(gamePlugin.Details, mp);
             });
 
             return screen

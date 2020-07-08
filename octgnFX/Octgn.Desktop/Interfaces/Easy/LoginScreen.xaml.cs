@@ -8,6 +8,8 @@ namespace Octgn.Desktop.Interfaces.Easy
 
         [Obsolete("For designer only")]
         public LoginScreen() {
+            Title = "Login";
+
             InitializeComponent();
         }
 

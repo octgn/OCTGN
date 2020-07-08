@@ -1,4 +1,5 @@
-﻿using Octgn.Sdk.Extensibility.Desktop;
+﻿using Octgn.Sdk;
+using Octgn.Sdk.Extensibility.Desktop;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,8 +15,10 @@ namespace Octgn.Desktop.Interfaces.Easy
             InitializeComponent();
         }
 
-        public MenuScreen(MenuPlugin menuPlugin) {
+        public MenuScreen(IPluginDetails gamePluginDetails, MenuPlugin menuPlugin) {
             _menuPlugin = menuPlugin ?? throw new ArgumentNullException(nameof(menuPlugin));
+
+            Title = gamePluginDetails.Name;
 
             InitializeComponent();
 
@@ -27,7 +30,6 @@ namespace Octgn.Desktop.Interfaces.Easy
 
                 ButtonList.Items.Add(button);
             }
-            //TODO: Create buttons from menuPlugin
 
             //var converter = new BrushConverter();
             //var brush = (Brush)converter.ConvertFromString(plugin.Theme.Background);

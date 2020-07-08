@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Octgn.Desktop.Interfaces.Easy"
         mc:Ignorable="d"
-        Title="Octgn - Loading..." Height="600" Width="433"
+        Title="Loading..." Height="600" Width="433"
         WindowStartupLocation="CenterScreen">
     <Border Background="{DynamicResource BackgroundColor}"
             x:Name="WindowBorder">

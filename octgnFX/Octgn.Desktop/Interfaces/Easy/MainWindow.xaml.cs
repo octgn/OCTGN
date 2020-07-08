@@ -22,6 +22,8 @@ namespace Octgn.Desktop.Interfaces.Easy
 
         private void NavigationService_Navigate(object sender, NavigateEventArgs e) {
             Dispatcher.InvokeAsync(() => {
+                this.Title = e.Destination.Title;
+
                 this.WindowBorder.Child = e.Destination;
             });
 
