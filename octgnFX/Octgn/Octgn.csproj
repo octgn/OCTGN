@@ -289,14 +289,6 @@
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
-    <Compile Include="DesktopIntegration\JodsGameFormat.cs" />
-    <Compile Include="DesktopIntegration\JodsGameMenu.cs" />
-    <Compile Include="DesktopIntegration\JodsGamePlugin.cs" />
-    <Compile Include="DoVersionStuff.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DoVersionStuff.tt</DependentUpon>
-    </Compile>
     <Compile Include="Utils\Converters\RichTextConverter.cs" />
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
@@ -674,6 +666,11 @@
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
     <Resource Include="Resources\noimage.png" />
+    <Resource Include="DoVersionStuff.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DoVersionStuff.tt</DependentUpon>
+    </Resource>
     <Content Include="Sleeves\Air-Travel.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -730,7 +727,7 @@
     <None Include="app.manifest" />
     <None Include="DoVersionStuff.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DoVersionStuff.cs</LastGenOutput>
+      <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
     </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Resource Include="Resources\Fonts\Entypo.otf" />
@@ -1333,10 +1330,6 @@
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Octgn.Sdk\Octgn.Sdk.csproj">
-      <Project>{a7cbab10-bd60-4a9b-a7e3-7b7a0d73073b}</Project>
-      <Name>Octgn.Sdk</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
