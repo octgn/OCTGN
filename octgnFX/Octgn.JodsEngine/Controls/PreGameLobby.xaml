@@ -1,0 +1,228 @@
+﻿<UserControl x:Class="Octgn.Controls.PreGameLobby"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:gui="clr-namespace:Octgn.Play.Gui"
+             xmlns:o="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play"
+             xmlns:toggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="500"
+             MinHeight="500" x:Name="me">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="{x:Type toggleSwitch:HorizontalToggleSwitch}" TargetType="{x:Type toggleSwitch:HorizontalToggleSwitch}">
+            <Setter Property="Background" Value="#FF1F1F1F"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="UncheckedBackground" Value="#FF333430"/>
+            <Setter Property="UncheckedForeground" Value="#FF999999"/>
+            <Setter Property="ThumbSize" Value="38"/>
+            <Setter Property="Margin" Value="5 0 0 0"/>
+            <Setter Property="CheckedBackground">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF3EB3EC"/>
+                        <GradientStop Color="#FF349BE6" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ThumbBrush">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF4D4E48"/>
+                        <GradientStop Color="#FF333430" Offset="1"/>
+                        <GradientStop Color="#FF333330" Offset="0.021"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate DataType="{x:Type play:Player}" x:Key="PlayerItemDataTemplate">
+            <DataTemplate.Resources>
+                <gui:LuminanceConverter x:Key="Luminance" />
+            </DataTemplate.Resources>
+            <Grid x:Name="root" Margin="4,4,4,0">
+                <Grid.LayoutTransform>
+                    <ScaleTransform />
+                </Grid.LayoutTransform>
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Border.Loaded">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation From="0" To="1" Duration="00:00:00.4" Storyboard.TargetProperty="LayoutTransform.(ScaleTransform.ScaleY)" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Grid.Triggers>
+
+                <Rectangle RadiusX="2" RadiusY="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" Opacity="0.8">
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.3}" Offset="0.8" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="1" />
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                    <Rectangle.Stroke>
+                        <LinearGradientBrush EndPoint="0,0" StartPoint="0,1" Opacity="0.8">
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.3}" Offset="0.8" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="1" />
+                        </LinearGradientBrush>
+                    </Rectangle.Stroke>
+                </Rectangle>
+
+                <Rectangle RadiusX="2" RadiusY="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush EndPoint="0.50,0" StartPoint="0.5,1">
+                            <GradientStop Color="#00FFFFFF" Offset="0.644" />
+                            <GradientStop Color="#73FFFFFF" Offset="1" />
+                            <GradientStop Color="#4BFFFFFF" Offset="0.668" />
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <Grid HorizontalAlignment="Stretch" Margin="5 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="100*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{Binding UserIcon}" Stretch="Uniform" Height="16" HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="9">
+                        <TextBlock Grid.Column="1" FontWeight="Bold" FontSize="12" Foreground="#eee">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <Binding Path="Name" />
+                                    <!--<Binding Path="DisconnectPercent" />-->
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <!--<TextBlock Grid.Column="1" FontSize="12" Margin="0" Text="Profile Page" Foreground="WhiteSmoke" 
+                               TextDecorations="Underline" Cursor="Hand" MouseUp="ProfileMouseUp"/>-->
+                    </StackPanel>
+                </Grid>
+
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <CheckBox VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding Spectator}" IsEnabled="{Binding CanChangePlayerSettings}"
+                                            Visibility="{Binding AllowSpectators,Source={x:Static o:Program.GameSettings},Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <CheckBox.Template>
+                            <ControlTemplate TargetType="CheckBox">
+                                <Border Padding="2" SnapsToDevicePixels="True" BorderBrush="#eee" BorderThickness="1" Background="Transparent">
+                                    <TextBlock x:Name="spectateLabel" Text="Play" TextAlignment="Center" Foreground="#eee" FontWeight="Bold" Width="54" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Trigger.Setters>
+                                            <Setter Property="Text" TargetName="spectateLabel" Value="Spectate" />
+                                        </Trigger.Setters>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </CheckBox.Template>
+                    </CheckBox>
+
+                    <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="{Binding InvertedTable}" IsEnabled="{Binding CanChangePlayerSettings}"
+                                            Visibility="{Binding UseTwoSidedTable,Source={x:Static o:Program.GameSettings},Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <CheckBox.Template>
+                            <ControlTemplate TargetType="CheckBox">
+                                <Border Padding="2" SnapsToDevicePixels="True" BorderBrush="#eee" BorderThickness="1" Background="Transparent">
+                                    <TextBlock x:Name="sideLabel" Text="A" TextAlignment="Center" Foreground="#eee" FontWeight="Bold" Width="14" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Trigger.Setters>
+                                            <Setter Property="Text" TargetName="sideLabel" Value="B" />
+                                        </Trigger.Setters>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </CheckBox.Template>
+                    </CheckBox>
+                    <Button Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="KickPlayer" Click="KickPlayer_OnClick" Margin="-4,0,5,0" 
+                                                    Width="22" Height="22" Visibility="{Binding Path=CanKick,Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                                    FontFamily="{StaticResource Entypo}" FontSize="20" Padding="0 -8 0 0">&#10060;</Button>
+                </StackPanel>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Id}" Value="0">
+                    <Setter TargetName="root" Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border Background="#FF333333" CornerRadius="0,0,5,5 " Margin="0,0,0,-5" Padding="10,3,10,10">
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100*" />
+                <RowDefinition Height="50px" />
+            </Grid.RowDefinitions>
+
+            <Border Name="border1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Margin="0,8,0,8" Grid.ColumnSpan="2" Style="{StaticResource DarkPanel}" Padding="5,10,5,10">
+                        <StackPanel>
+                            <TextBlock x:Name="descriptionLabel"  />
+                            <Grid Height="6"/>
+                            <TextBlock FontSize="12" FontStyle="Italic">*DC is the percent of games the user disconnects from. 100% means the user disconnects from all the games they play, 0% means they disconnect from none.</TextBlock>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource ButtonBarPanel}" Grid.Row="1" Grid.ColumnSpan="2">
+                        <StackPanel Orientation="Horizontal">
+                            <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" Visibility="{Binding ChangeTwoSidedTable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
+                                <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                                    <TextBlock Text="Two Sided Table" TextWrapping="Wrap"></TextBlock>
+                                </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                                <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                                    <TextBlock Text="One Sided Table" TextWrapping="Wrap"></TextBlock>
+                                </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                            </toggleSwitch:HorizontalToggleSwitch>
+                            <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowSpectators, Mode=TwoWay}" Margin="10,0,0,0"
+                                IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
+                                <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                                    <TextBlock Text="Allow Spectators" TextWrapping="Wrap"></TextBlock>
+                                </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                                <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                                    <TextBlock Text="No Spectators" TextWrapping="Wrap"></TextBlock>
+                                </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                            </toggleSwitch:HorizontalToggleSwitch>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Row="2" Margin="0,8,8,8" Style="{StaticResource PanelControl}" >
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <ItemsControl x:Name="playersList" ItemsSource="{x:Static play:Player.All}" ItemTemplate="{StaticResource PlayerItemDataTemplate}">
+                                </ItemsControl>
+                                <ItemsControl x:Name="spectatorList" ItemsSource="{x:Static play:Player.Spectators}" ItemTemplate="{StaticResource PlayerItemDataTemplate}">
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <gui:ChatControl x:Name="chatControl" Grid.Row="2" Grid.Column="1" Margin="8,8,0,8" />
+                </Grid>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right" Grid.Row="1">
+                <Button Content="Skip" Margin="0,0,16,0" MinWidth="128" x:Name="skipBtn" Click="SkipClicked"
+                    Style="{StaticResource FlatDarkOrangeButtonStyle}"/>
+                <Button Content="Start" Margin="0,0,16,0" MinWidth="128" x:Name="startBtn" Click="StartClicked"
+                    Style="{StaticResource FlatDarkGreenButtonStyle}"/>
+                <Button Content="Cancel" MinWidth="128" Click="CancelClicked" Style="{StaticResource FlatDarkButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

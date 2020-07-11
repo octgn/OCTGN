@@ -1,0 +1,29 @@
+﻿<Window x:Class="Octgn.Windows.PickCardFromList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:windows="clr-namespace:Octgn.Windows"
+        Title="Pick A Card" MinHeight="420" MinWidth="680" 
+        Height="420" Width="680"
+        x:Name="Me" DataContext="{Binding ElementName=Me}">
+    <Window.Resources>
+        <windows:ICardToImageConverter x:Key="ICardToImageConverter" />
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="5"></Setter>
+        </Style>
+    </Window.Resources>
+    <ListBox ItemsSource="{Binding Path=CardList}" SelectedItem="{Binding Path=SelectedCard,Mode=TwoWay}" Style="{x:Null}" ItemContainerStyle="{x:Null}">
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}" ItemWidth="{Binding (ListBox.ItemsPanel).ItemWidth, RelativeSource={RelativeSource AncestorType=ListBox}}" MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}" ItemHeight="{Binding (ListBox.ItemsPanel).ItemHeight, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Image Source="{Binding Converter={StaticResource ICardToImageConverter}}" Width="200" MouseLeftButtonUp="OnPickCard"/>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding}"></DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
+</Window>

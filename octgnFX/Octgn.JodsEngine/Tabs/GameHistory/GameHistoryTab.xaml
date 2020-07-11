@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="Octgn.Tabs.GameHistory.GameHistoryTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Octgn.Controls"
+             xmlns:utils="clr-namespace:Octgn.Utils"
+             xmlns:local="clr-namespace:Octgn.Tabs.GameHistory"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="870"
+             x:Name="Me">
+    <UserControl.Resources>
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}"
+               BasedOn="{StaticResource {x:Type ListViewItem}}">
+            <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="497*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
+        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
+            <DockPanel>
+                <Button Click="ButtonNextClick" Width="35" Height="30" Margin="0,0,0,0" FontSize="35" Padding="0 -16 0 0"
+                        Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonNext"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding NextPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Delete">&#59230;</Button>
+                <Button Click="ButtonPrevClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
+                        Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonPrev"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding PrevPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Delete">&#59229;</Button>
+                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,10,0">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="Page: {0:N0} of {1:N0}">
+                            <Binding ElementName="Me" Path="Page" />
+                            <Binding ElementName="Me" Path="PageCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -18 0 0"
+                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                        DockPanel.Dock="Left"
+                        HorizontalAlignment="Left"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh">&#10227;</Button>
+                <Button Click="ButtonDeleteClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
+                        Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonDelete"
+                        DockPanel.Dock="Left"
+                        HorizontalAlignment="Left"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Delete"
+                        IsEnabled="{Binding IsHistorySelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">&#59177;</Button>
+            </DockPanel>
+        </Border>
+        <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0" Foreground="CornflowerBlue">
+            <ProgressBar.Style>
+                <Style TargetType="{x:Type ProgressBar}">
+                    <Style.Resources>
+                        <Storyboard x:Key="InitialRefreshDelayAnimation">
+                            <DoubleAnimation From="200" To="0" Storyboard.TargetProperty="Value" Duration="{x:Static local:GameHistoryTab.InitialRefreshDelay}" />
+                        </Storyboard>
+                        <Storyboard x:Key="NormalRefreshDelayAnimation">
+                            <DoubleAnimation From="200" To="0" Storyboard.TargetProperty="Value" Duration="{x:Static local:GameHistoryTab.NormalRefreshDelay}" />
+                        </Storyboard>
+                    </Style.Resources>
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding ElementName=Me, Path=IsRefreshingHistoryList}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=Me, Path=IsInitialRefresh}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard Name="InitialRefreshDelayBeginStoryboard" Storyboard="{StaticResource InitialRefreshDelayAnimation}"/>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="InitialRefreshDelayBeginStoryboard"/>
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding ElementName=Me, Path=IsRefreshingHistoryList}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=Me, Path=IsInitialRefresh}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard Name="NormalRefreshDelayBeginStoryboard" Storyboard="{StaticResource NormalRefreshDelayAnimation}"/>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="NormalRefreshDelayBeginStoryboard"/>
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=Me, Path=IsRefreshingHistoryList}" Value="False">
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ProgressBar.Style>
+        </ProgressBar>
+        <ListView x:Name="ListViewHistoryList" Grid.Row="2"
+                  SelectionChanged="ListViewHistoryList_SelectionChanged"
+                  ItemsSource="{Binding GameHistories, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
+                  ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                  utils:GridViewSort.AutoSort="True"
+                  Grid.RowSpan="3"
+                  SelectionMode="Extended" HorizontalContentAlignment="Left"
+                  AlternationCount="1">
+            <ListView.View>
+                <GridView>
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
+                    <GridViewColumn Header="Name"
+                                    DisplayMemberBinding="{Binding Path=Name}" Width="200"></GridViewColumn>
+                    <GridViewColumn Header="Game"
+                                    DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
+                    <GridViewColumn Header="Start Time"
+                                    DisplayMemberBinding="{Binding Path=StartTime, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
+                    <GridViewColumn Header="Run Time"
+                                    DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

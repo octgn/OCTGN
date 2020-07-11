@@ -1,0 +1,18 @@
+﻿<Window x:Class="Octgn.Windows.GameLog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
+        Title="Full Game Log" Height="409" Width="643" Icon="pack://application:,,,/OCTGN;component/Resources/log2.ico"
+        Background="#333333" Visibility="Hidden">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <gui:ChatControl x:Name="ChatControl" IgnoreMute="True" ShowInput="False"/>
+        <Border  Grid.Row="1" Padding="10">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Save Log" Padding="10,0,10,0" Click="Button_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

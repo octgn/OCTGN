@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Octgn.Controls.UpdateBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Height="30" d:DesignWidth="600"
+             x:Name="self" DataContext="{Binding ElementName=self}">
+    <Border Background="Khaki" BorderBrush="Olive" BorderThickness="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="../Resources/Icons/Reset.png"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                <TextBlock VerticalAlignment="Center" Text="{Binding Message}"/>
+                <TextBlock VerticalAlignment="Center" Text=" Click"/>
+                <TextBlock VerticalAlignment="Center" Text=" Restart " Foreground="SteelBlue" Cursor="Hand" MouseLeftButtonUp="RestartClick"/>
+                <TextBlock VerticalAlignment="Center" Text=" to install it, or the update will install automatically the next time you start up OCTGN."/>
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</UserControl>
