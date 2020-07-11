@@ -1,18 +1,19 @@
 ﻿using Newtonsoft.Json;
+using Octgn.Core.Play.Save;
 using Octgn.Play.State;
 using System;
 using System.Text;
 
 namespace Octgn.Play.Save
 {
-    public class History
+    public class History : IHistory
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
 
         public Guid GameId { get; set; }
 
-        public GameSaveState State { get; set; }
+        public IGameSaveState State { get; set; }
 
         public DateTimeOffset DateSaved { get; set; }
 
@@ -34,7 +35,9 @@ namespace Octgn.Play.Save
         }
 
         public byte[] GetSnapshot(GameEngine engine, Player localPlayer) {
-            State.Create(engine, localPlayer, true);
+            var state = (GameSaveState)State;
+
+            state.Create(engine, localPlayer, true);
             DateSaved = DateTimeOffset.Now;
 
             var serialized = Serialize(this);

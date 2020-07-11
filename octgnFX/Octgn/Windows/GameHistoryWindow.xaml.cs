@@ -1,14 +1,9 @@
-using Octgn.Core;
 using Octgn.DataNew;
-using Octgn.Library;
-using Octgn.Play;
-using Octgn.Play.Save;
 using Octgn.Tabs.GameHistory;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Documents;
-using System.Windows.Threading;
 
 namespace Octgn.Windows
 {
@@ -87,11 +82,6 @@ namespace Octgn.Windows
 
                 return;
             }
-            if(WindowManager.PlayWindow != null) {
-                MessageBox.Show("Unable to watch replay, you're currently in a game.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return;
-            }
 
             var game = DbContext.Get().GameById(History.GameId);
 
@@ -101,43 +91,32 @@ namespace Octgn.Windows
                 return;
             }
 
-            var replayClient = new ReplayClient();
-            Program.Client = replayClient;
+            Program.JodsEngine.LaunchReplay(History);
 
-            // TODO: Should set username to the user that created the replay
+            //var replayClient = new ReplayClient();
+            //Program.Client = replayClient;
 
-            Program.IsHost = true;
-            Program.CurrentOnlineGameName = History.GameName;
+            //// TODO: Should set username to the user that created the replay
 
-            ReplayReader reader = null;
-            ReplayEngine engine = null;
-            try {
-                reader = ReplayReader.FromStream(File.OpenRead(History.ReplayFile));
-                engine = new ReplayEngine(reader, replayClient);
+            //Program.IsHost = true;
+            //Program.CurrentOnlineGameName = History.GameName;
 
-                Program.GameEngine = new GameEngine(engine, game, reader.Replay.User);
-            } catch {
-                reader?.Dispose();
-                engine?.Dispose();
+            //ReplayReader reader = null;
+            //ReplayEngine engine = null;
+            //try {
+            //    reader = ReplayReader.FromStream(File.OpenRead(History.ReplayFile));
+            //    engine = new ReplayEngine(reader, replayClient);
 
-                throw;
-            }
+            //    Program.GameEngine = new GameEngine(engine, game, reader.Replay.User);
+            //} catch {
+            //    reader?.Dispose();
+            //    engine?.Dispose();
 
-            Program.IsHost = true;
-            LaunchPlayWindow();
-        }
+            //    throw;
+            //}
 
-        private void LaunchPlayWindow() {
-            Dispatcher.VerifyAccess();
-
-            if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
-
-            Dispatcher.InvokeAsync(async () => {
-                await Dispatcher.Yield(DispatcherPriority.Background);
-                WindowManager.PlayWindow = new PlayWindow();
-                WindowManager.PlayWindow.Show();
-                WindowManager.PlayWindow.Activate();
-            });
+            //Program.IsHost = true;
+            //LaunchPlayWindow();
         }
     }
 }

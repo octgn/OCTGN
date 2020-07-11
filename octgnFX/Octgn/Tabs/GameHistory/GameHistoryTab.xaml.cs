@@ -11,8 +11,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using System.IO;
 using Octgn.Library;
-using Octgn.Play.Save;
 using Octgn.Windows;
+using Octgn.Core.Play.Save;
 
 namespace Octgn.Tabs.GameHistory
 {
@@ -59,8 +59,6 @@ namespace Octgn.Tabs.GameHistory
 
             if (history != null) {
                 Dispatcher.VerifyAccess();
-
-                if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
 
                 Dispatcher.InvokeAsync(async () => {
                     await Dispatcher.Yield(DispatcherPriority.Background);
@@ -239,7 +237,10 @@ namespace Octgn.Tabs.GameHistory
 
                 var historyFileContents = File.ReadAllBytes(historyFile.FullName);
 
-                var history = History.Deserialize(historyFileContents);
+                return pageContent;
+                //throw new NotImplementedException();
+                var history = (IHistory)null;
+                //var history = History.Deserialize(historyFileContents);
 
                 if (history == null) continue;
 

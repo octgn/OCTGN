@@ -11,6 +11,7 @@ namespace Octgn.Play.State
     using System.Windows.Media;
 
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Play.Save;
     using Octgn.DataNew.Entities;
 
     public abstract class SaveState<T, T1>
@@ -18,9 +19,9 @@ namespace Octgn.Play.State
         public abstract T1 Create(T tp, Play.Player fromPlayer);
     }
 
-    public class GameSaveState : SaveState<GameEngine, GameSaveState>
+    public class GameSaveState : SaveState<GameEngine, GameSaveState>, IGameSaveState
     {
-        public PlayerSaveState[] Players { get; set; }
+        public IPlayerSaveState[] Players { get; set; }
 
         public Dictionary<string, string> GlobalVariables { get; set; }
         public int TurnNumber { get; set; }
@@ -78,27 +79,27 @@ namespace Octgn.Play.State
             Program.GameEngine.TurnNumber = state.TurnNumber;
             Program.GameEngine.ActivePlayer = Play.Player.Find(state.ActivePlayer);
 
-            foreach (var p in state.Players)
+            foreach (var player in state.Players)
             {
-                var player = Play.Player.Find(p.Id);
-                player.Color = p.Color;
-                player.ActualColor = p.Color;
-                player.Brush = new SolidColorBrush(player.Color);
-                player.TransparentBrush = new SolidColorBrush(player.Color) { Opacity = 0.4};
-                foreach (var gv in p.GlobalVariables)
-                {
-                    player.GlobalVariables[gv.Key] = gv.Value;
-                }
+                var playPlayer = Play.Player.Find(player.Id);
+                playPlayer.Color = player.Color;
+                playPlayer.ActualColor = player.Color;
+                playPlayer.Brush = new SolidColorBrush(playPlayer.Color);
+                playPlayer.TransparentBrush = new SolidColorBrush(playPlayer.Color) { Opacity = 0.4};
 
-                foreach (var counter in p.Counters)
-                {
-                    var cnt = Play.Counter.Find(counter.Id);
-                    cnt.SetValue(counter.Value, player, false, false);
-                }
+                if (player is PlayerSaveState playerSaveState) {
+                    foreach (var gv in playerSaveState.GlobalVariables) {
+                        playPlayer.GlobalVariables[gv.Key] = gv.Value;
+                    }
 
-                foreach (var g in p.Groups)
-                {
-                    LoadGroup(g, fromPlayer);
+                    foreach (var counter in playerSaveState.Counters) {
+                        var cnt = Play.Counter.Find(counter.Id);
+                        cnt.SetValue(counter.Value, playPlayer, false, false);
+                    }
+
+                    foreach (var g in playerSaveState.Groups) {
+                        LoadGroup(g, fromPlayer);
+                    }
                 }
             }
 
@@ -269,7 +270,7 @@ namespace Octgn.Play.State
         }
     }
 
-    public class PlayerSaveState : SaveState<Play.Player, PlayerSaveState>
+    public class PlayerSaveState : SaveState<Play.Player, PlayerSaveState>, IPlayerSaveState
     {
         public byte Id { get; set; }
         public string Nickname { get; set; }

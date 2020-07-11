@@ -333,22 +333,6 @@ namespace Octgn.Tabs.GameManagement
 			if(installuninstallprocessing) return;
 			installuninstallprocessing = true;
 			try {
-				if(WindowManager.PlayWindow != null) {
-					TopMostMessageBox.Show(
-						"You can not install/uninstall games while you are in a game.",
-						"Error",
-						MessageBoxButton.OK,
-						MessageBoxImage.Error );
-					return;
-				}
-				if(WindowManager.DeckEditor != null) {
-					TopMostMessageBox.Show(
-						"You can not install/uninstall games while you are in the deck editor.",
-						"Error",
-						MessageBoxButton.OK,
-						MessageBoxImage.Error );
-					return;
-				}
 				var button = e.Source as Button;
 				if(button == null || button.DataContext == null) return;
 				var model = button.DataContext as FeedGameViewModel;

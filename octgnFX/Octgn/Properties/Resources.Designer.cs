@@ -61,35 +61,6 @@ namespace Octgn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to import collections
-        ///
-        ///class idict(collections.Mapping):
-        ///
-        ///    def __init__(self, pairs): 
-        ///        &quot;&quot;&quot;Constructor: takes an iterable of tuples&quot;&quot;&quot; 
-        ///        self._dict = {} 
-        ///        for key, value in pairs: 
-        ///            k = key.lower() 
-        ///            self._dict[k] = (key, value) 
-        ///
-        ///    def __getitem__(self, key):
-        ///        k = key.lower()
-        ///        pair = self._dict[k]
-        ///        return pair[1]
-        ///
-        ///    def __len__(self):
-        ///        return len(self._dict)
-        ///
-        ///    def __iter__(self):
-        ///        return (key for key, v [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string CaseInsensitiveDict {
-            get {
-                return ResourceManager.GetString("CaseInsensitiveDict", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap closewindow {

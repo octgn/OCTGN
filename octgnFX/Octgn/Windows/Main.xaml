@@ -4,7 +4,6 @@
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
-    xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
     xmlns:login="clr-namespace:Octgn.Tabs.Login"
     xmlns:playtab="clr-namespace:Octgn.Tabs.Play"
