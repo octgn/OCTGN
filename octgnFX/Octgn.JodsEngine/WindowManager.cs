@@ -1,13 +1,10 @@
 ﻿using System.Reflection;
-using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 using log4net;
 
 namespace Octgn
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
 
@@ -23,12 +20,9 @@ namespace Octgn
         public static Main Main { get; set; }
         public static DeckBuilderWindow DeckEditor { get; set; }
         public static PlayWindow PlayWindow { get; set; }
-        //public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
-        public static GrowlNotifications GrowlWindow { get; set; }
 
         static WindowManager()
         {
-            GrowlWindow = new GrowlNotifications();
         }
 
         public static bool ApplicationIsActivated()

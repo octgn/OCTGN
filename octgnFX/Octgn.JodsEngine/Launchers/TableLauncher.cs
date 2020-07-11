@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Octgn.Launchers
 {
-    public class TableLauncher : UpdatingLauncher
+    public class TableLauncher : LauncherBase
     {
         private readonly int? hostPort;
         private readonly Guid? gameId;
@@ -20,11 +20,11 @@ namespace Octgn.Launchers
             }
         }
 
-        public override Task BeforeUpdate() {
+        protected override Task Load() {
             return Task.CompletedTask;
         }
 
-        public override async Task AfterUpdate() {
+        protected override async Task Loaded() {
             try {
                 await new GameTableLauncher().Launch(this.hostPort, this.gameId);
             } catch (Exception e) {

@@ -2,14 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
 using System.Windows;
-using log4net.Repository.Hierarchy;
 using Octgn.Library;
 using System.Windows.Markup;
 using System.Windows.Threading;
@@ -18,15 +15,10 @@ using Octgn.Core.Util;
 using Octgn.Library.Exceptions;
 
 using log4net;
-using Octgn.Controls;
-using Octgn.Core.Plugin;
-using Octgn.Play;
 using Octgn.Utils;
-using Octgn.Windows;
 using Octgn.Communication;
 using System.Net;
 using System.Threading;
-using Octgn.Library.Plugin;
 
 namespace Octgn
 {
@@ -77,13 +69,6 @@ namespace Octgn
 
             Environment.SetEnvironmentVariable("OCTGN_DATA", Config.Instance.DataDirectoryFull, EnvironmentVariableTarget.Process);
 
-            if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {
-                Log.Info($"Creating Updates directory");
-                Directory.CreateDirectory(Config.Instance.Paths.UpdatesPath);
-            }
-
-            // TODO: Show an error if Octgn 3.3 or earlier is installed
-
             // Check for test mode
             var isTestRelease = false;
             try
@@ -95,160 +80,11 @@ namespace Octgn
                 Log.Warn("Error checking for test mode", ex);
             }
 
-            //ExceptionlessClient.Default.Register(false);
-            //ExceptionlessClient.Default.Configuration.IncludePrivateInformation = true;
-            //ExceptionlessClient.Default.SubmittingEvent += (sender, args) =>
-            //{
-            //    if (X.Instance.Debug)
-            //    {
-            //        args.Cancel = true;
-            //        return;
-            //    }
-            //    if (args.IsUnhandledError)
-            //    {
-            //        var exception = args.PluginContextData.GetException();
-            //        if (exception is InvalidOperationException)
-            //        {
-            //            bool gotit = exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)
-            //                || exception.Message.StartsWith("El objeto Application se va a cerrar.", StringComparison.CurrentCultureIgnoreCase);
-            //            gotit = gotit ||
-            //                    (exception.Message.ToLower().Contains("system.windows.controls.grid") &&
-            //                     exception.Message.ToLower().Contains("row"));
-            //            args.Cancel = gotit;
-            //            return;
-            //        }
-            //        if (exception is BadImageFormatException)
-            //        {
-            //            if (exception.Message.Contains("Could not load file or assembly") && exception.Message.Contains("Microsoft.Dynamic"))
-            //            {
-            //                args.Cancel = true;
-            //                TopMostMessageBox.Show("OCTGN is installed improperly and must close. Please try reinstalling OCTGN. If that doesn't work, you can find help at OCTGN.net", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //                return;
-            //            }
-            //        }
-            //        var src = exception.Source;
-            //        try
-            //        {
-            //            foreach (var plug in PluginManager.GetPlugins<IDeckBuilderPlugin>())
-            //            {
-            //                var pt = plug.GetType();
-            //                var pn = pt.Assembly.GetName();
-            //                if (src == pn.Name)
-            //                {
-            //                    args.Cancel = true;
-            //                    return;
-            //                }
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            Log.Error("Check against plugins error", ex);
-            //        }
-            //    }
-            //    X.Instance.Try(() =>
-            //    {
-            //        args.Event.SetUserIdentity(Prefs.Username);
-            //    });
-            //    args.Event.AddObject(Config.Instance.Paths, "Registered Paths");
-            //    using (var cf = new ConfigFile(Config.Instance.Paths.ConfigDirectory))
-            //    {
-            //        args.Event.AddObject(cf.ConfigData, "Config File");
-            //    }
-            //    args.Event.AddObject(e.Args, "Startup Arguments");
-
-            //    X.Instance.Try(() =>
-            //    {
-            //        var ge = Program.GameEngine;
-            //        //var gameString = "";
-            //        if (ge != null && ge.Definition != null)
-            //        {
-            //            var gameObject = new
-            //            {
-            //                Game = new
-            //                {
-            //                    Name = ge.Definition.Name,
-            //                    Version = ge.Definition.Version,
-            //                    ID = ge.Definition.Id,
-            //                    Variables = ge.Variables,
-            //                    GlobalVariables = ge.GlobalVariables
-            //                },
-            //                IsConnected = ge.IsConnected,
-            //                IsLocal = ge.IsLocal,
-            //                SessionId = ge.SessionId,
-            //                WaitingForState = ge.WaitForGameState,
-            //                Players = Player.All.Select(player => new
-            //                {
-            //                    GlobalVariables = player.GlobalVariables,
-            //                    Id = player.Id,
-            //                    InvertedTable = player.InvertedTable,
-            //                    IsGlobalPlayer = player.IsGlobalPlayer,
-            //                    Name = player.Name,
-            //                    Ready = player.Ready,
-            //                    State = player.State,
-            //                    WaitingOnPlayers = player.WaitingOnPlayers,
-            //                })
-            //            };
-            //            args.Event.AddObject(gameObject, "Game State");
-            //        }
-
-
-            //    });
-
-            //    X.Instance.Try(() =>
-            //    {
-            //        var hierarchy = LogManager.GetRepository() as Hierarchy;
-            //        if (hierarchy != null)
-            //        {
-            //            var mappender = hierarchy.Root.GetAppender("LimitedMemoryAppender") as LimitedMemoryAppender;
-            //            if (mappender != null)
-            //            {
-            //                var items = new List<string>();
-
-            //                foreach (var ev in mappender.GetEvents())
-            //                {
-            //                    using (var writer = new StringWriter())
-            //                    {
-            //                        mappender.Layout.Format(writer, ev);
-            //                        items.Add(writer.ToString());
-
-            //                    }
-            //                }
-
-            //                args.Event.AddObject(items, "Recent Log Entries");
-            //            }
-
-            //        }
-            //    });
-
-            //    if (Program.LobbyClient != null)
-            //    {
-            //        var lc = Program.LobbyClient;
-            //        var lobbyObject = new
-            //        {
-            //            Connected = lc.IsConnected,
-            //            Me = lc.User
-            //        };
-            //    }
-            //};
-
             Signal.OnException += Signal_OnException;
-            if (X.Instance.Debug)
-            {
-                AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
-                //ExceptionlessClient.Default.Configuration.DefaultTags.Add("DEBUG");
-            }
-            else
+            if (!X.Instance.Debug)
             {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                 Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
-                if (isTestRelease)
-                {
-                    //ExceptionlessClient.Default.Configuration.DefaultTags.Add("TEST");
-                }
-                else
-                {
-                    //ExceptionlessClient.Default.Configuration.DefaultTags.Add("LIVE");
-                }
             }
 
 
@@ -264,22 +100,30 @@ namespace Octgn
 
         }
 
-        private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
-        {
-            //if (X.Instance.Debug)
-            //{
-            //    if (Program.GameMess != null && Program.GameEngine != null) Program.GameMess.Warning(e.Exception.Message + "\n" + e.Exception.StackTrace);
-            //}
+        private static void ShowUserMessageException(UserMessageException userMessageException) {
+            switch (userMessageException.Mode) {
+                case UserMessageExceptionMode.Blocking:
+                    ShowErrorMessageBox("Error", userMessageException.Message);
+
+                    break;
+                case UserMessageExceptionMode.Background:
+                    //TODO: Show windows/growl notification
+                    Log.Error($"Can not show background error to user.");
+                    Debug.Fail($"Can not show background error to user");
+
+                    break;
+                default:
+                    Log.Error($"{nameof(UserMessageExceptionMode)}.{userMessageException.Mode} not implemented.");
+
+                    break;
+            }
         }
 
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            if (e.Exception is UserMessageException)
-            {
-                if((e.Exception as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
-                    ShowErrorMessageBox("Error",e.Exception.Message);
-                else
-                    WindowManager.GrowlWindow.AddNotification(new ErrorNotification(e.Exception.Message));
+            if (e.Exception is UserMessageException userMessageException) {
+                ShowUserMessageException(userMessageException);
+
                 e.Handled = true;
             }
             if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase))
@@ -296,13 +140,12 @@ namespace Octgn
             var gameString = "";
             if (ge?.Definition != null)
                 gameString = "[Game " + ge.Definition.Name + " " + ge.Definition.Version + " " + ge.Definition.Id + "] [Username " + Prefs.Username + "] ";
-            if (ex is UserMessageException)
-            {
-                if ((ex as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
-                    ShowErrorMessageBox("Error", ex.Message);
-                else
-                    WindowManager.GrowlWindow.AddNotification(new ErrorNotification(ex.Message));
-                Log.Warn("Unhandled Exception " + gameString, ex);
+
+            if (ex is UserMessageException userMessageException) {
+                Log.Warn("Unhandled UserMessageException " + gameString, ex);
+
+                ShowUserMessageException(userMessageException);
+
                 handled = true;
             }
             else if (ex is XamlParseException)

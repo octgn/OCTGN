@@ -16,8 +16,6 @@ using Octgn.Core;
 using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
-using Octgn.Windows;
-using Octgn.Communication;
 
 namespace Octgn.Controls
 {
@@ -28,14 +26,7 @@ namespace Octgn.Controls
         public event Action<object> OnClose;
         public bool CanChangeSettings { get; }
 
-        protected virtual void FireOnClose(object obj)
-        {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(obj);
-            }
-        }
+        protected virtual void FireOnClose(object obj) => this.OnClose?.Invoke(obj);
 
         public bool StartingGame { get; private set; }
         public bool IsOnline { get; private set; }
@@ -303,7 +294,7 @@ namespace Octgn.Controls
             var fe = sender as FrameworkElement;
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
-			await UserProfileWindow.Show(new User(play.UserId));
+            throw new NotImplementedException();
         }
 
         private void SkipClicked(object sender, RoutedEventArgs e) {

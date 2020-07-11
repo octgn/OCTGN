@@ -49,7 +49,7 @@ namespace Octgn
             try
             {
                 if (args != null) Log.Debug(string.Join(Environment.NewLine, args));
-                if (args.Length < 2) return new MainLauncher();
+                if (args.Length < 2) return null;
                 Log.Info("Has arguments");
                 if (args[1].StartsWith("octgn://", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -104,7 +104,7 @@ namespace Octgn
                 Log.Error("Error handling arguments", e);
                 if (args != null) Log.Error(string.Join(Environment.NewLine, args));
             }
-			return new MainLauncher();
+            return null;
         }
 
         internal ILauncher HandleProtocol(Uri url)
@@ -120,7 +120,7 @@ namespace Octgn
                     //   the current running octgn.
                     break;
             }
-            return new MainLauncher();
+            throw new NotImplementedException();
         }
     }
 }

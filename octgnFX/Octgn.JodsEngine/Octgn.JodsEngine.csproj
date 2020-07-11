@@ -381,9 +381,6 @@
     <Compile Update="Controls\SubscribeMessageLargeMessage.xaml.cs">
       <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Controls\UpdateBar.xaml.cs">
-      <DependentUpon>UpdateBar.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
@@ -545,9 +542,6 @@
     <Compile Update="Tabs\Play\PlayTab.xaml.cs">
       <DependentUpon>PlayTab.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Tabs\Profile\UserProfilePage.xaml.cs">
-      <DependentUpon>UserProfilePage.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Tabs\Watch\WatchList.xaml.cs">
       <DependentUpon>WatchList.xaml</DependentUpon>
     </Compile>
@@ -556,9 +550,6 @@
     </Compile>
     <Compile Update="Windows\BrowserWindow.xaml.cs">
       <DependentUpon>BrowserWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Windows\Diagnostics.xaml.cs">
-      <DependentUpon>Diagnostics.xaml</DependentUpon>
     </Compile>
     <Compile Update="Windows\DWindow.xaml.cs">
       <DependentUpon>DWindow.xaml</DependentUpon>
@@ -572,9 +563,6 @@
     <Compile Update="Windows\GameLog.xaml.cs">
       <DependentUpon>GameLog.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Windows\GrowlNotifications.xaml.cs">
-      <DependentUpon>GrowlNotifications.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Windows\ImportImages.xaml.cs">
       <DependentUpon>ImportImages.xaml</DependentUpon>
     </Compile>
@@ -587,17 +575,8 @@
     <Compile Update="Windows\PickCardFromList.xaml.cs">
       <DependentUpon>PickCardFromList.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Windows\ShareDeck.xaml.cs">
-      <DependentUpon>ShareDeck.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Windows\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Windows\UpgradeMessage.xaml.cs">
-      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Windows\UserProfileWindow.xaml.cs">
-      <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -667,9 +646,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\SubscribeMessageLargeMessage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Controls\UpdateBar.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\WaitingDialog.xaml">
@@ -873,9 +849,6 @@
     <Page Update="Windows\BrowserWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Windows\Diagnostics.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Windows\DWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -886,9 +859,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Windows\GameLog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Windows\GrowlNotifications.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Windows\ImportImages.xaml">
@@ -903,13 +873,7 @@
     <Page Update="Windows\PickCardFromList.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Windows\ShareDeck.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Windows\UpdateChecker.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Windows\UpgradeMessage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

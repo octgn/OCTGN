@@ -86,7 +86,6 @@
                 <MenuItem Header="Save" Command="gui:Commands.SaveDeck" />
                 <MenuItem Header="Save as..." Command="gui:Commands.SaveDeckAs" />
                 <MenuItem Header="Export as..." Command="gui:Commands.ExportDeckAs" />
-                <MenuItem Header="Share Deck..." Click="ShareDeckClicked"/>
                 <MenuItem Header="Import Images..." Click="ImportImagesClicked"/>
                 <Separator />
                 <MenuItem Header="Close" Click="CloseClicked" />
@@ -114,7 +113,7 @@
             <TabControl x:Name="DeckTabs" DragLeave="TabControl_DragLeave" IsEnabled="{Binding IsGameLoaded, ElementName=self}">
                 <TabItem x:Name="PlayerTab">
                     <TabItem.Header>
-                        <TextBlock Text="{Binding Path=DeckSectionsTotalCards, ElementName=self, StringFormat='Player({0})', FallbackValue=Player, TargetNullValue=Player}" 
+                        <TextBlock Text="{Binding Path=DeckSectionsTotalCards, ElementName=self, StringFormat='Player({0})', FallbackValue=Player, TargetNullValue=Player}"
                                    Style="{Binding Parent.Header.Style, RelativeSource={RelativeSource Self}}" />
                     </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
@@ -126,7 +125,7 @@
                 </TabItem>
                 <TabItem x:Name="GlobalTab">
                     <TabItem.Header>
-                        <TextBlock Text="{Binding Path=DeckSharedSectionsTotalCards, ElementName=self, StringFormat='Global({0})', FallbackValue=Global, TargetNullValue=Global}" 
+                        <TextBlock Text="{Binding Path=DeckSharedSectionsTotalCards, ElementName=self, StringFormat='Global({0})', FallbackValue=Global, TargetNullValue=Global}"
                                    Style="{Binding Parent.Header.Style, RelativeSource={RelativeSource Self}}" />
                     </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">

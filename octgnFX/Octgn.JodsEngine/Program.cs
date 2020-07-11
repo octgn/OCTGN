@@ -279,6 +279,15 @@ namespace Octgn
             //return;
             Log.Info("Getting Launcher");
             Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            if (launcher == null) {
+                Log.Warn($"no launcher from command line args");
+
+                if (Application.Current.MainWindow != null)
+                    Application.Current.MainWindow.Close();
+
+                return;
+            }
+
             DeveloperMode = CommandLineHandler.Instance.DevMode;
 
             Versioned.Setup(Program.DeveloperMode);
@@ -341,7 +350,6 @@ namespace Octgn
             {
                 Log.Error( "Exit() Player leave exception", e );
             }
-            UpdateManager.Instance.Stop();
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {

@@ -5,26 +5,21 @@
 using System.Windows.Controls;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Win32;
 using Octgn.Annotations;
 using Octgn.Core;
 using Octgn.Core.DataManagers;
-using Octgn.Core.Util;
 using Octgn.DeckBuilder;
 using Octgn.Extentions;
 using Octgn.Controls;
 using Octgn.Library;
-using Octgn.Library.Exceptions;
 using log4net;
 using Octgn.Communication;
 using Octgn.Communication.Modules;
-using System.Linq;
 
 namespace Octgn.Windows
 {
@@ -34,9 +29,6 @@ namespace Octgn.Windows
 
         public ConnectionStatus ConnectionStatus => Program.LobbyClient.Status;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Main"/> class.
-        /// </summary>
         public Main()
         {
             this.InitializeComponent();
@@ -58,43 +50,18 @@ namespace Octgn.Windows
             OnPropertyChanged(nameof(ConnectionStatus));
         }
 
-        private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
+        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
-            try {
-                OnPropertyChanged(nameof(ConnectionStatus));
-
-                await Dispatcher.InvokeAsync(async ()=> {
-                    ProfileTab.IsEnabled = true;
-                    await ProfileTabContent.Load(Program.LobbyClient.User);
-                });
-            } catch (Exception ex) {
-                Log.Error($"{nameof(LobbyClient_Connected)}", ex);
-            }
+            OnPropertyChanged(nameof(ConnectionStatus));
         }
 
-        private async void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
+        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
         {
-            try {
-                OnPropertyChanged(nameof(ConnectionStatus));
-
-                await Dispatcher.InvokeAsync(() => {
-                    ProfileTab.IsEnabled = false;
-                });
-            } catch (Exception ex) {
-                Log.Error($"{nameof(LobbyClient_Connected)}", ex);
-            }
+            OnPropertyChanged(nameof(ConnectionStatus));
         }
 
-        private async void LobbyClient_Connecting(object sender, ConnectingEventArgs e) {
-            try {
-                OnPropertyChanged(nameof(ConnectionStatus));
-
-                await Dispatcher.InvokeAsync(() => {
-                    ProfileTab.IsEnabled = false;
-                });
-            } catch (Exception ex) {
-                Log.Error($"{nameof(LobbyClient_Connecting)}", ex);
-            }
+        private void LobbyClient_Connecting(object sender, ConnectingEventArgs e) {
+            OnPropertyChanged(nameof(ConnectionStatus));
         }
 
         private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
@@ -111,8 +78,6 @@ namespace Octgn.Windows
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= OnLoaded;
-            //SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
-            UpdateManager.Instance.Start();
 
             var uri = new System.Uri("/Resources/CustomDataAgreement.txt", UriKind.Relative);
             var info = Application.GetResourceStream(uri);
@@ -146,9 +111,6 @@ namespace Octgn.Windows
 
         void Main_IsSubbedChanged(bool obj)
         {
-            //Dispatcher.Invoke(
-            //    new Action(() =>
-            //              { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
         }
 
         /// <summary>
@@ -181,7 +143,6 @@ namespace Octgn.Windows
             Program.LobbyClient.Connecting -= LobbyClient_Connecting;
             Program.LobbyClient.Stats().StatsModuleUpdate -= LobbyClient_StatsModuleUpdate;
             Program.LobbyClient.Stop();
-            GameUpdater.Get().Dispose();
             Task.Factory.StartNew(Program.Exit);
         }
 
@@ -201,12 +162,6 @@ namespace Octgn.Windows
                     if (X.Instance.Debug || Program.IsReleaseTest)
                         Program.LobbyClient.Stop();
                     break;
-                case Key.F8: {
-                        if (X.Instance.Debug) {
-                            //WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User("jim") }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
-                        }
-                        break;
-                    }
             }
         }
 
@@ -286,11 +241,6 @@ namespace Octgn.Windows
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void MenuDiagClick(object sender, RoutedEventArgs e)
-        {
-            Octgn.Windows.Diagnostics.Instance.Show();
         }
 
 

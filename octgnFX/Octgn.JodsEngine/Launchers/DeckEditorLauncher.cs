@@ -1,40 +1,31 @@
 ﻿using System.Windows;
-using log4net;
-using Octgn.Controls;
 using Octgn.DataNew.Entities;
 using Octgn.DeckBuilder;
-using Octgn.Library.Exceptions;
 using System.Threading.Tasks;
-using System.Reflection;
 
 namespace Octgn.Launchers
 {
-
-    public class DeckEditorLauncher : ILauncher
+    public class DeckEditorLauncher : LauncherBase
     {
-        internal string DeckPath;
-        internal IDeck Deck;
+        public string DeckPath { get; }
+        public IDeck Deck { get; private set; }
 
         public DeckEditorLauncher(string deckPath = null) {
             // This way Deck == null instead of an empty string
-            Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-            this.DeckPath = string.IsNullOrWhiteSpace(deckPath) ? null : deckPath;
+            DeckPath = string.IsNullOrWhiteSpace(deckPath) ? null : deckPath;
         }
 
-        public ILog Log { get; private set; }
-        public bool Shutdown { get; private set; }
+        protected override Task Load() {
+            Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
 
-        public Task Launch() {
-            try {
-                Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
-                var win = new DeckBuilderWindow(Deck, true);
-                Application.Current.MainWindow = win;
-                win.Show();
-            } catch (UserMessageException e) {
-                TopMostMessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                this.Shutdown = true;
-            }
+            return Task.CompletedTask;
+        }
+
+        protected override Task Loaded() {
+            var win = new DeckBuilderWindow(Deck, true);
+            Application.Current.MainWindow = win;
+            win.Show();
+
             return Task.CompletedTask;
         }
     }

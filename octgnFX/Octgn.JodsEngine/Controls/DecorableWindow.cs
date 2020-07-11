@@ -333,10 +333,6 @@ namespace Octgn.Controls
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs args)
         {
-            if (args.Key == Key.F12 && (Keyboard.IsKeyDown(Key.LeftCtrl & Key.RightCtrl)))
-            {
-                Diagnostics.Instance.Show();
-            }
             if (args.Key == Key.F5 && (Keyboard.IsKeyDown(Key.LeftCtrl & Key.RightCtrl)))
             {
                 if (Undecorate())

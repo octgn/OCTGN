@@ -408,7 +408,7 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            
+
             Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
@@ -665,14 +665,14 @@ namespace Octgn.DeckBuilder
             var grid = (DataGrid)sender;
             var element = (ICard)grid.SelectedItem;
 
-            // Don't hide the picture if the selected element was removed 
+            // Don't hide the picture if the selected element was removed
             // with a keyboard shortcut from the results grid
             // if (element == null && !grid.IsFocused) return;
             if (element == null)
                 return;
             var nc = element.ToMultiCard();
             var sc = new Card(nc);
-                         
+
             cardImageControl.Card.SetCard(sc);
             selection = element.ImageUri;
             set_id = element.GetSet().Id;
@@ -700,8 +700,8 @@ namespace Octgn.DeckBuilder
             DeckFocus(ActiveSection, element.Id);
         }
 
-        public void DeckFocus(ObservableSection section, Guid? cardId) 
-        { 
+        public void DeckFocus(ObservableSection section, Guid? cardId)
+        {
             // Change tab if needed
             var targetTab = section.Shared ? GlobalTab : PlayerTab;
             if (DeckTabs.SelectedItem != targetTab)
@@ -1117,7 +1117,7 @@ namespace Octgn.DeckBuilder
                 }
                 RemoveAdorner();
                 InvokeDeckChangedEvent();
-            }  
+            }
         }
         private static T FindAncestor<T>(DependencyObject Current)
             where T : DependencyObject
@@ -1309,14 +1309,6 @@ namespace Octgn.DeckBuilder
             Deck.Notes = (sender as TextBox).Text;
         }
 
-        private void ShareDeckClicked(object sender, RoutedEventArgs e)
-        {
-            if (Deck == null) return;
-            if (Deck.CardCount() == 0) return;
-            var dlg = new ShareDeck(Deck);
-            dlg.ShowDialog();
-        }
-
         private void ImportImagesClicked(object sender, RoutedEventArgs e)
         {
             if (Game == null) return;
@@ -1355,7 +1347,7 @@ namespace Octgn.DeckBuilder
                 return;
             if (Deck == null)
                 return;
-            
+
             Deck.Sleeve = obj;
 
             SleeveImage = Deck.Sleeve.GetImage();
@@ -1381,7 +1373,7 @@ namespace Octgn.DeckBuilder
                 sortGrid.CanUserSortColumns = false;
                 sortGrid.HeadersVisibility = DataGridHeadersVisibility.None;
                 SortDataGrid(sortGrid, -1);
-            } 
+            }
         }
         private static void SortDataGrid(DataGrid dataGrid, int columnIndex = 0, ListSortDirection sortDirection = ListSortDirection.Ascending)
         {
@@ -1411,14 +1403,14 @@ namespace Octgn.DeckBuilder
 
             if (parentRows.Count == 4) // only valid if layout hasn't changed
             {
-                // calculate height available for search grid 
-                Double maxH = e.NewSize.Height 
-                            - parentRows[3].MinHeight 
-                            - parentRows[2].ActualHeight 
+                // calculate height available for search grid
+                Double maxH = e.NewSize.Height
+                            - parentRows[3].MinHeight
+                            - parentRows[2].ActualHeight
                             - parentRows[0].ActualHeight;
                 parentRows[1].MaxHeight = maxH - 1; // -1 required to force updating when resizing window (no idea why)
                 // speeds up grid resizing to fit minSizes when shrinking window
-                if (e.NewSize.Height < e.PreviousSize.Height 
+                if (e.NewSize.Height < e.PreviousSize.Height
                     && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
                 {
                     parentRows[1].Height = new GridLength(self.ActualHeight);
@@ -1427,12 +1419,12 @@ namespace Octgn.DeckBuilder
             if (parentCols.Count == 3) // only valid if layout hasn't changed
             {
                 // calculate width available for search grid
-                double maxW = e.NewSize.Width 
-                            - parentCols[2].MinWidth 
+                double maxW = e.NewSize.Width
+                            - parentCols[2].MinWidth
                             - parentCols[1].ActualWidth;
                 parentCols[0].MaxWidth = maxW - 1; // -1 required to force updating when resizing window
                 // speeds up grid resizing to fit minSizes when shrinking window
-                if (e.NewSize.Width < e.PreviousSize.Width 
+                if (e.NewSize.Width < e.PreviousSize.Width
                     && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
                 {
                     parentCols[0].Width = new GridLength(self.ActualWidth);
@@ -1502,7 +1494,7 @@ namespace Octgn.DeckBuilder
                 drawingContext.DrawLine(renderPen, adornedElementRect.BottomLeft, adornedElementRect.BottomRight); // Bottom
                 drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.BottomLeft); // Left
                 drawingContext.DrawLine(renderPen, adornedElementRect.TopRight, adornedElementRect.BottomRight); // Right
-            }               
+            }
         }
     }
 

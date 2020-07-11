@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Controls="clr-namespace:Octgn.Controls"
-    xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
     xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
@@ -39,7 +38,6 @@
             <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" MinWidth="137" Click="MenuHelpClick"/>
-                <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" MinWidth="137" Click="MenuDiagClick"/>
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" MinWidth="137" Click="MenuAboutClick"/>
             </MenuItem>
             <MenuItem Header="Open _Source">
@@ -56,9 +54,6 @@
         </Menu>
         <Border Grid.Column="2">
         </Border>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
-			<Controls:UpdateBar/>
-		</StackPanel>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <TabControl x:Name="TabControlMain" Grid.Row="2" Style="{StaticResource MainTab}">
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent" Style="{StaticResource MainTabItem}">
@@ -75,9 +70,6 @@
             </TabItem>
             <TabItem Header="Challenge Board" x:Name="ChallengeBoardTab" Style="{StaticResource MainTabItem}">
                 <challengeBoards:ChallengeBoards/>
-            </TabItem>
-            <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab" Style="{StaticResource MainTabItem}">
-                <profile:UserProfilePage x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
         </TabControl>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" Background="Transparent" HorizontalAlignment="Right">
