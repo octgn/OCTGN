@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Login
 {
-    public class LoginTabViewModel : ViewModelBase
+    public class LoginTabViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
