@@ -302,13 +302,28 @@ namespace Octgn
 			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
-            launcher.Launch().Wait();
+            var shutdown = false;
+            try {
+                launcher.Launch().Wait();
 
-            if (launcher.Shutdown)
+                shutdown = launcher.Shutdown;
+            } catch (Exception ex) {
+                shutdown = true;
+
+                var message = $"There was an error launching Octgn. Please try again. If this continues to happen, let us know.";
+                if (X.Instance.Debug) {
+                    message = message + Environment.NewLine + ex.ToString();
+                }
+
+                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Environment.ExitCode = 70;
+            }
+
+            if (shutdown)
             {
                 if (Application.Current.MainWindow != null)
                     Application.Current.MainWindow.Close();
-                return;
             }
         }
 

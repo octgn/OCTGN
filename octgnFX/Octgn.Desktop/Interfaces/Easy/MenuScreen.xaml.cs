@@ -1,6 +1,7 @@
 ﻿using Octgn.Sdk;
 using Octgn.Sdk.Extensibility.Desktop;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,6 +27,19 @@ namespace Octgn.Desktop.Interfaces.Easy
                 var button = new Button {
                     Content = item.Text,
                     HorizontalAlignment = HorizontalAlignment.Stretch
+                };
+
+                button.Click += async (sender, args) => {
+                    this.IsEnabled = false;
+                    try {
+                        await Task.Delay(200);
+
+                        await item.OnClick();
+                    } catch (Exception ex) {
+                        //TODO: Shutodwn error
+                    } finally {
+                        this.IsEnabled = true;
+                    }
                 };
 
                 ButtonList.Items.Add(button);

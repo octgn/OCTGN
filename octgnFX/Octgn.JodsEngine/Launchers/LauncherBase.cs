@@ -16,9 +16,10 @@ namespace Octgn.Launchers
 
         public async Task Launch() {
             if (Shutdown == false) {
-                ShowLoaderWindow();
+                if (ShowLoaderWindow()) {
+                    await Loaded();
+                }
 
-                await Loaded();
             }
         }
 
@@ -26,7 +27,7 @@ namespace Octgn.Launchers
 
         protected abstract Task Loaded();
 
-        private void ShowLoaderWindow() {
+        private bool ShowLoaderWindow() {
             var uc = new UpdateChecker();
 
             uc.AddLoader(() => {
@@ -34,6 +35,10 @@ namespace Octgn.Launchers
             });
 
             uc.ShowDialog();
+
+            Shutdown = uc.Shutdown;
+
+            return uc.Shutdown == false;
         }
     }
 }

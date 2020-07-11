@@ -27,6 +27,8 @@ namespace Octgn.Windows
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public bool Shutdown { get; private set; }
+
         private bool _realCloseWindow = false;
 
         private bool _hasWindowLoaded = false;
@@ -83,16 +85,26 @@ namespace Octgn.Windows
             } catch (Exception ex) {
                 Log.Error($"Error loading: {ex.Message}", ex);
 
-                MessageBox.Show($"There was an error loading Octgn. Please try again. If this continues to happen, let us know.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var message = $"There was an error loading Octgn. Please try again. If this continues to happen, let us know.";
+                if (X.Instance.Debug) {
+                    message = message + Environment.NewLine + ex.ToString();
+                }
+
+                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 _realCloseWindow = true;
 
-                ((OctgnApp)(OctgnApp.Current)).Shutdown(69);
-
-                Program.Exit();
-
-                Close();
+                Environment.ExitCode = 69;
+                Shutdown = true;
             }
+
+            Log.Info("Load complete");
+
+            _realCloseWindow = true;
+
+            // Expected: Managed Debugging Assistant NotMarshalable
+            // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
+            Close();
         }
 
         public void AddLoader(Action load) {
@@ -133,15 +145,6 @@ namespace Octgn.Windows
             foreach (var loader in _loaders) {
                 loader();
             }
-
-            Log.Info("Load complete");
-
-            _realCloseWindow = true;
-
-            // Expected: Managed Debugging Assistant NotMarshalable
-            // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
-            Close();
-
         }
 
         private void RandomMessage() {

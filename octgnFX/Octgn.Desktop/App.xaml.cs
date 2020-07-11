@@ -55,7 +55,7 @@ namespace Octgn.Desktop
 
             _sw.Stop();
 
-            Debug.Assert(_sw.Elapsed <= maxTime, _sw.ElapsedMilliseconds.ToString() + "ms:" + errorMessage);
+            //Debug.Assert(_sw.Elapsed <= maxTime, _sw.ElapsedMilliseconds.ToString() + "ms:" + errorMessage);
         }
 
         internal static void UnhandledException(Exception ex) => throw new NotImplementedException();
