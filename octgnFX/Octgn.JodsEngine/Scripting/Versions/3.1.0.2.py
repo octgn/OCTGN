@@ -363,6 +363,8 @@ class Card(object):
 		_api.CardSetIndex(self._id,index, True)
 	def select(self, selection = True): _api.CardSelect(self._id, selection)
 	def peek(self): _api.CardPeek(self._id)
+	@property
+	def peekers(self): return [Player(id) for id in _api.CardPeekers(self._id)]
 	def target(self, active = True): _api.CardTarget(self._id, active)
 	def arrow(self, targetCard, active = True): _api.CardTargetArrow(self._id, targetCard._id, active)
 	@property
@@ -452,7 +454,7 @@ class Table(Group):
 	@property
 	def board(self): return _api.GetBoard()
 	@board.setter
-	def board(self, alt = "Default"): _api.SetBoard(alt)
+	def board(self, key): _api.SetBoard(key)
 	@property
 	def boards(self): return _api.GetBoardList()
 	_twoSided = None

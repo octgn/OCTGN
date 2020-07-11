@@ -779,7 +779,10 @@ namespace Octgn.Scripting.Versions
                 return;
             }
 
-            card.SetProperty(name, val);
+            QueueAction(() =>
+            {
+                card.SetProperty(name, val);
+            });
         }
 
         public void CardResetProperties(int cardId)
@@ -791,7 +794,10 @@ namespace Octgn.Scripting.Versions
                 return;
             }
 
-            card.ResetProperties();
+            QueueAction(() =>
+            {
+                card.ResetProperties();
+            });
         }
 
         #endregion Cards API
@@ -1196,7 +1202,7 @@ namespace Octgn.Scripting.Versions
             if (String.IsNullOrWhiteSpace(name)) return;
             if (!GetBoardList().Contains(name)) return;
             QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
-            Program.Client.Rpc.SetBoard(name);
+            Program.Client.Rpc.SetBoard(Player.LocalPlayer, name);
 
         }
         public string GetBoard()

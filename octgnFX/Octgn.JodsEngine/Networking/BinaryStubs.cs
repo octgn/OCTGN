@@ -1324,7 +1324,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void SetBoard(string name)
+		public void SetBoard(Player player, string name)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(SetBoard)}");
 		    if(Program.Client == null)return;
@@ -1334,7 +1334,25 @@ namespace Octgn.Networking
 
 			writer.Write(Program.Client.Muted);
 			writer.Write((byte)103);
+			writer.Write(player.Id);
 			writer.Write(name);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void RemoveBoard(Player player)
+		{
+			Log.Debug($"OCTGN OUT: {nameof(RemoveBoard)}");
+		    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+			writer.Write(Program.Client.Muted);
+			writer.Write((byte)104);
+			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -1350,7 +1368,7 @@ namespace Octgn.Networking
 			BinaryWriter writer = new BinaryWriter(stream);
 
 			writer.Write(Program.Client.Muted);
-			writer.Write((byte)104);
+			writer.Write((byte)105);
 			writer.Write(player.Id);
 			writer.Write(color);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
