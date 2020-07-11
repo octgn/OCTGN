@@ -110,14 +110,6 @@
             lock (timerLock)
             {
                 Log.Info("Entered timer lock");
-                if (WindowManager.PlayWindow != null || WindowManager.DeckEditor != null)
-                {
-                    Log.InfoFormat(
-                        "Can't update PlayWindow={0} DeckEditor={1}",
-                        WindowManager.PlayWindow != null,
-                        WindowManager.DeckEditor != null);
-                    return;
-                }
                 Log.Info("Checking for updates");
                 GameFeedManager.Get().CheckInstallUpdates(true);
                 Log.InfoFormat("Update check complete");

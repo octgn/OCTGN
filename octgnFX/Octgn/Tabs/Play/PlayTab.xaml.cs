@@ -17,16 +17,12 @@ using Microsoft.Scripting.Utils;
 using Octgn.Core;
 using Octgn.Core.DataManagers;
 using Octgn.Library.Exceptions;
-using Octgn.Networking;
-using Octgn.Play;
-using Octgn.Scripting.Controls;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Octgn.Extentions;
 using Octgn.Communication;
 using Octgn.Online.Hosting;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
-using Octgn.Controls;
 
 namespace Octgn.Tabs.Play
 {
@@ -188,37 +184,9 @@ namespace Octgn.Tabs.Play
 
         private void ButtonHostClick(object sender, RoutedEventArgs e) {
             try {
-                if (WindowManager.PlayWindow != null) {
-                    throw new UserMessageException("You are currently in a game or game lobby. Please leave before you host a game.");
-                }
-
-                HostGameSettings dialog = null;
-                try {
-                    dialog = new HostGameSettings();
-                    dialog.Show(DialogPlaceHolder);
-                    dialog.OnClose += HostGameSettingsDialogOnClose;
-                    BorderButtons.IsEnabled = false;
-                } catch {
-                    dialog.OnClose -= HostGameSettingsDialogOnClose;
-                    dialog.Dispose();
-                    BorderButtons.IsEnabled = true;
-                    throw;
-                }
+                Program.JodsEngine.HostGame();
             } catch (Exception ex) {
                 HandleException(ex);
-            }
-        }
-
-        private void HostGameSettingsDialogOnClose(object sender, DialogResult dialogResult) {
-            BorderButtons.IsEnabled = true;
-            using (var dialog = sender as HostGameSettings) {
-                dialog.OnClose -= ConnectOfflineGameDialogOnClose;
-
-                if (dialogResult == DialogResult.OK) {
-                    if (dialog.SuccessfulHost) {
-                        LaunchPlayWindow();
-                    }
-                }
             }
         }
 
@@ -258,28 +226,7 @@ namespace Octgn.Tabs.Play
 
                 var hostedGame = await VerifyCanJoinGame();
 
-                var spectate = hostedGame.Status == HostedGameStatus.GameInProgress && hostedGame.Spectator;
-                Program.IsHost = false;
-                var password = "";
-                if (hostedGame.HasPassword) {
-                    var dlg = new InputDlg("Password", "Please enter this games password", "");
-                    password = dlg.GetString();
-                }
-                var username = (Program.LobbyClient.IsConnected == false
-                    || Program.LobbyClient.User == null
-                    || Program.LobbyClient.User.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.User.DisplayName;
-
-                var game = GameManager.Get().GetById(hostedGame.GameId);
-
-                Program.GameEngine = new GameEngine(game, username, spectate, password);
-                Program.CurrentOnlineGameName = hostedGame.Name;
-
-                Log.InfoFormat("Creating client for {0}:{1}", hostedGame.IPAddress, hostedGame.Port);
-                Program.Client = new ClientSocket(hostedGame.IPAddress, hostedGame.Port);
-                await Program.Client.Connect();
-
-                Log.Info($"{nameof(JoinGame)}: Launching {nameof(PlayWindow)}");
-                LaunchPlayWindow();
+                Program.JodsEngine.JoinGame(hostedGame);
             } catch (Exception ex) {
                 HandleException(ex);
             } finally {
@@ -288,10 +235,6 @@ namespace Octgn.Tabs.Play
         }
 
         private async Task<HostedGameViewModel> VerifyCanJoinGame() {
-            if (WindowManager.PlayWindow != null) {
-                throw new UserMessageException("You are currently in a game or game lobby. Please leave before you join game.");
-            }
-
             var hostedGame = ListViewGameList.SelectedItem as HostedGameViewModel;
 
             if (hostedGame.Status == HostedGameStatus.GameInProgress && hostedGame.Spectator == false) {
@@ -328,57 +271,13 @@ namespace Octgn.Tabs.Play
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e) {
             try {
-                if (WindowManager.PlayWindow != null) {
-                    throw new UserMessageException("You are currently in a game or game lobby. Please leave before you join game.");
-                }
-
-                ConnectOfflineGame dialog = null;
-                try {
-                    dialog = new ConnectOfflineGame();
-                    dialog.Show(DialogPlaceHolder);
-                    dialog.OnClose += ConnectOfflineGameDialogOnClose;
-                    BorderButtons.IsEnabled = false;
-                } catch {
-                    dialog.OnClose -= ConnectOfflineGameDialogOnClose;
-                    dialog.Dispose();
-                    BorderButtons.IsEnabled = true;
-                    throw;
-                }
+                Program.JodsEngine.JoinOfflineGame();
             } catch (Exception ex) {
                 HandleException(ex);
             }
         }
 
-        private void ConnectOfflineGameDialogOnClose(object sender, DialogResult dialogResult) {
-            BorderButtons.IsEnabled = true;
-            using (var dialog = sender as ConnectOfflineGame) {
-                dialog.OnClose -= ConnectOfflineGameDialogOnClose;
-
-                if (dialogResult == DialogResult.OK) {
-                    if (dialog.Successful) {
-                        LaunchPlayWindow();
-                        return;
-                    }
-                }
-
-                Program.GameEngine?.End();
-            }
-        }
-
         #endregion Join Offline Game
-
-        private void LaunchPlayWindow() {
-            Dispatcher.VerifyAccess();
-
-            if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
-
-            Dispatcher.InvokeAsync(async () => {
-                await Dispatcher.Yield(DispatcherPriority.Background);
-                WindowManager.PlayWindow = new PlayWindow();
-                WindowManager.PlayWindow.Show();
-                WindowManager.PlayWindow.Activate();
-            });
-        }
 
         private void ButtonKillGame(object sender, RoutedEventArgs e) {
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;

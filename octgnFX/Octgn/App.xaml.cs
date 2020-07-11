@@ -22,7 +22,6 @@ using log4net;
 using Octgn.Controls;
 using Octgn.Core.Plugin;
 using Octgn.Library.Plugin;
-using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
 using Octgn.Communication;
@@ -160,44 +159,6 @@ namespace Octgn
 
                 X.Instance.Try(() =>
                 {
-                    var ge = Program.GameEngine;
-                    //var gameString = "";
-                    if (ge != null && ge.Definition != null)
-                    {
-                        var gameObject = new
-                        {
-                            Game = new
-                            {
-                                Name = ge.Definition.Name,
-                                Version = ge.Definition.Version,
-                                ID = ge.Definition.Id,
-                                Variables = ge.Variables,
-                                GlobalVariables = ge.GlobalVariables
-                            },
-                            IsConnected = ge.IsConnected,
-                            IsLocal = ge.IsLocal,
-                            SessionId = ge.SessionId,
-                            WaitingForState = ge.WaitForGameState,
-                            Players = Player.All.Select(player => new
-                            {
-                                GlobalVariables = player.GlobalVariables,
-                                Id = player.Id,
-                                InvertedTable = player.InvertedTable,
-                                IsGlobalPlayer = player.IsGlobalPlayer,
-                                Name = player.Name,
-                                Ready = player.Ready,
-                                State = player.State,
-                                WaitingOnPlayers = player.WaitingOnPlayers,
-                            })
-                        };
-                        args.Event.AddObject(gameObject, "Game State");
-                    }
-
-
-                });
-
-                X.Instance.Try(() =>
-                {
                     var hierarchy = LogManager.GetRepository() as Hierarchy;
                     if (hierarchy != null)
                     {
@@ -299,23 +260,19 @@ namespace Octgn
         {
             var ex = (Exception)e.ExceptionObject;
             var handled = false;
-            var ge = Program.GameEngine;
-            var gameString = "";
-            if (ge?.Definition != null)
-                gameString = "[Game " + ge.Definition.Name + " " + ge.Definition.Version + " " + ge.Definition.Id + "] [Username " + Prefs.Username + "] ";
             if (ex is UserMessageException)
             {
                 if ((ex as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
                     ShowErrorMessageBox("Error", ex.Message);
                 else
                     WindowManager.GrowlWindow.AddNotification(new ErrorNotification(ex.Message));
-                Log.Warn("Unhandled Exception " + gameString, ex);
+                Log.Warn("Unhandled Exception", ex);
                 handled = true;
             }
             else if (ex is XamlParseException)
             {
                 var er = ex as XamlParseException;
-                Log.Warn("unhandled exception " + gameString, ex);
+                Log.Warn("unhandled exception", ex);
                 handled = true;
                 ShowErrorMessageBox("Error", "There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
             }
@@ -327,9 +284,9 @@ namespace Octgn
             if (!handled)
             {
                 if (e.IsTerminating)
-                    Log.Fatal("UNHANDLED EXCEPTION " + gameString, ex);
+                    Log.Fatal("UNHANDLED EXCEPTION", ex);
                 else
-                    Log.Error("UNHANDLED EXCEPTION " + gameString, ex);
+                    Log.Error("UNHANDLED EXCEPTION", ex);
             }
             if (e.IsTerminating)
             {
@@ -361,7 +318,6 @@ namespace Octgn
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)
-            X.Instance.Try(Program.StopGame);
             Sounds.Close();
             base.OnExit(e);
         }

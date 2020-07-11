@@ -1,15 +1,10 @@
-﻿using System.Windows;
-using log4net;
-using Octgn.Controls;
+﻿using log4net;
 using Octgn.DataNew.Entities;
-using Octgn.DeckBuilder;
-using Octgn.Library.Exceptions;
 using System.Threading.Tasks;
 using System.Reflection;
 
 namespace Octgn.Launchers
 {
-
     public class DeckEditorLauncher : ILauncher
     {
         internal string DeckPath;
@@ -26,15 +21,8 @@ namespace Octgn.Launchers
         public bool Shutdown { get; private set; }
 
         public Task Launch() {
-            try {
-                Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
-                var win = new DeckBuilderWindow(Deck, true);
-                Application.Current.MainWindow = win;
-                win.Show();
-            } catch (UserMessageException e) {
-                TopMostMessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                this.Shutdown = true;
-            }
+            Program.JodsEngine.LaunchDeckEditor(DeckPath);
+
             return Task.CompletedTask;
         }
     }
