@@ -1,0 +1,82 @@
+﻿<!-- 
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+-->
+    <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controlTemplates="clr-namespace:Octgn.Controls.ControlTemplates"
+                    xmlns:controls="clr-namespace:Octgn.Controls">
+    <Style TargetType="{x:Type controlTemplates:UserListItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="MouseOverAnimation" Storyboard.TargetProperty="Color">
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop1" To="#895E0101" Duration="0:0:0.2" />
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop2" To="#895E0101" Duration="0:0:0.2" />
+                        </Storyboard>
+                        <Storyboard x:Key="MouseOutAnimation" Storyboard.TargetProperty="Color"
+                                FillBehavior="Stop">
+                            <!-- <=================== -->
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop1" To="Transparent" Duration="0:0:0.2" />
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop2" To="Transparent" Duration="0:0:0.2" />
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource MouseOverAnimation}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource MouseOutAnimation}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                    <Border Height="25">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientBrush.GradientStops>
+                                    <GradientStop x:Name="ButtonBorderGradientStop1" Color="Transparent" Offset="0.0" />
+                                    <GradientStop x:Name="ButtonBorderGradientStop2" Color="Transparent" Offset="1.0" />
+                                </GradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid VerticalAlignment="Center" Margin="5,0,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="100*"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter Content="{Binding PreSubIcon}"/>
+                            <Image 
+                                x:Name="ImageSub" 
+                                Source="{Binding Path=ImageSubSource,Mode=OneWay}" 
+                                Width="16" 
+                                Height="16" 
+                                VerticalAlignment="Center" 
+                                Grid.Column="1"
+                                Visibility="{Binding IsSub,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Image.CacheMode>
+                                    <BitmapCache/>
+                                </Image.CacheMode>
+                            </Image>
+                            <ContentPresenter Grid.Column="2">
+                            </ContentPresenter>
+                            <Border Width="5" Grid.Column="3"></Border>
+                            <TextBlock 
+                                x:Name="UserNameTextBox" 
+                                Grid.Column="4" 
+                                Foreground="White"
+                                DataContext="{Binding Path=User}" 
+                                Text="{Binding Path=UserName}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

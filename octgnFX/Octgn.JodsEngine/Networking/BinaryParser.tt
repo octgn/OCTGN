@@ -1,0 +1,179 @@
+﻿<#@ template language="C#" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text" #>
+<#
+  XDocument doc = XDocument.Load(Host.ResolvePath(@"..\..\Octgn.Server\Protocol.xml"));
+#>
+/*
+ * This file was automatically generated!
+ * Do not modify, changes will get lost when the file is regenerated!
+ */
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Media;
+using Octgn.Play;
+using log4net;
+
+namespace Octgn.Networking
+{
+	sealed class BinaryParser
+	{
+		private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+		Handler handler;
+
+		public BinaryParser(Handler handler)
+		{ this.handler = handler; }
+
+		public void Parse(byte[] data)
+		{
+			var stream = new MemoryStream(data);
+			var reader = new BinaryReader(stream);
+			short length;
+			Program.Client.Muted = reader.ReadInt32();
+			var method = reader.ReadByte();
+			switch (method)
+			{
+<#
+  var msgId = -1;
+  PushIndent("\t\t\t\t");
+  foreach (var msg in doc.Root.Elements("msg"))
+  {
+    ++msgId;
+    if ((bool?)msg.Attribute("client") != true) continue;
+    WriteLine("case {0}:", msgId);
+    WriteLine("{");
+    PushIndent("\t");
+    var msgName = msg.Attribute("name").Value;
+    var paramId = 0;
+    foreach (var param in msg.Elements("param"))
+    {
+      var code = paramTypes[param.Attribute("type").Value];
+      WriteLine(code, paramId++, msgName);
+    }
+	if(msgName != "Ping")
+		WriteLine($"Log.Debug($\"OCTGN IN: {msgName}\");");
+    WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
+    WriteLine("break;");
+    PopIndent();
+    WriteLine("}");
+  }
+  PopIndent();
+#>
+		  default:
+			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
+				break;
+			}
+			reader.Close();
+		}
+	}
+}
+<#+
+  private string BuildParameters(int paramCount)
+  {
+    var sb = new StringBuilder();
+    for (var i = 0; i < paramCount; ++i)
+    {
+      sb.Append("arg").Append(i).Append(", ");
+    }
+    if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
+    return sb.ToString();
+  }
+
+  private Dictionary<string, string> paramTypes = new Dictionary<string, string>()
+  {
+    { "byte", "var arg{0} = reader.ReadByte();" },
+    { "ushort", "var arg{0} = reader.ReadUInt16();" },
+    { "short", "var arg{0} = reader.ReadInt16();" },
+
+    { "short[]", @"length = reader.ReadInt16();
+var arg{0} = new short[length];
+for (var i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadInt16();" },
+
+    { "int", "var arg{0} = reader.ReadInt32();" },
+
+    { "int[]", @"length = reader.ReadInt16();
+var arg{0} = new int[length];
+for (var i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadInt32();" },
+
+    { "ulong", "var arg{0} = reader.ReadUInt64();" },
+
+    { "ulong[]", @"length = reader.ReadInt16();
+var arg{0} = new ulong[length];
+for (var i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadUInt64();" },
+
+    { "float", "var arg{0} = reader.ReadSingle();" },
+    { "bool", "var arg{0} = reader.ReadBoolean();" },
+    { "bool[]", @"length = reader.ReadInt16();
+var arg{0} = new bool[length];
+for (var i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadBoolean();" },
+    { "string", "var arg{0} = reader.ReadString();" },
+    { "string[]", @"length = reader.ReadInt16();
+var arg{0} = new string[length];
+for (var i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadString();" },
+    { "Version", "var arg{0} = new Version(reader.ReadString());" },
+    { "Guid", "var arg{0} = new Guid(reader.ReadBytes(16));" },
+
+    { "Guid[]", @"length = reader.ReadInt16();
+var arg{0} = new Guid[length];
+for (var i = 0; i < length; ++i)
+	arg{0}[i] = new Guid(reader.ReadBytes(16));" },
+
+    { "Player", @"var arg{0} = Player.Find(reader.ReadByte());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
+
+			    { "PlayerOrSpectator", @"var arg{0} = Player.FindIncludingSpectators(reader.ReadByte());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
+
+    { "Player[]", @"length = reader.ReadInt16();
+var arg{0} = new Player[length];
+for (var i = 0; i < length; ++i)
+{{
+  arg{0}[i] = Player.Find(reader.ReadByte());
+  if (arg{0}[i] == null)
+    Debug.WriteLine(""[{1}] Player not found."");
+}}" },
+
+    { "ControllableObject", @"var arg{0} = ControllableObject.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] ControllableObject not found.""); return; }}" },
+
+    { "Group", @"var arg{0} = Group.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Group not found.""); return; }}" },
+
+    { "Group[]", @"length = reader.ReadInt16();
+var arg{0} = new Group[length];
+for (var i = 0; i < length; ++i)
+{{
+  arg{0}[i] = Group.Find(reader.ReadInt32());
+  if (arg{0}[i] == null)
+    Debug.WriteLine(""[{1}] Group not found."");
+}}" },
+
+    { "Card", @"var arg{0} = Card.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Card not found.""); return; }}" },
+
+    { "Counter", @"var arg{0} = Counter.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Counter not found.""); return; }}" },
+
+    { "CardOrientation", "var arg{0} = (CardOrientation)reader.ReadByte();" },
+
+    { "Color?", @"var temp{0} = reader.ReadString();
+var arg{0} = temp{0} == """" ? (Color?)null : (Color?)ColorConverter.ConvertFromString(temp{0});" }
+  };
+#>

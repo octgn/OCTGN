@@ -1,0 +1,889 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Octgn</RootNamespace>
+    <AssemblyName>Octgn</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CurrentReleaseVersion.txt" />
+    <None Remove="CurrentTestVersion.txt" />
+    <None Remove="CurrentVersion.txt" />
+    <None Remove="Resources\admin.png" />
+    <None Remove="Resources\Anchor.png" />
+    <None Remove="Resources\Avatar9_80.jpg" />
+    <None Remove="Resources\back-button.png" />
+    <None Remove="Resources\Back.jpg" />
+    <None Remove="Resources\background.png" />
+    <None Remove="Resources\chat.ico" />
+    <None Remove="Resources\chaticon.png" />
+    <None Remove="Resources\circle-back-button.png" />
+    <None Remove="Resources\close.png" />
+    <None Remove="Resources\closewindow.png" />
+    <None Remove="Resources\cross.png" />
+    <None Remove="Resources\custom-games-icon.png" />
+    <None Remove="Resources\CustomDataAgreement.txt" />
+    <None Remove="Resources\d0c.jpeg" />
+    <None Remove="Resources\eye.png" />
+    <None Remove="Resources\FileIcons\Deck.ico" />
+    <None Remove="Resources\FileIcons\Game.ico" />
+    <None Remove="Resources\FileIcons\Patch.ico" />
+    <None Remove="Resources\FileIcons\Set.ico" />
+    <None Remove="Resources\Folder.png" />
+    <None Remove="Resources\Fonts\Entypo.otf" />
+    <None Remove="Resources\Front.jpg" />
+    <None Remove="Resources\gamemode.png" />
+    <None Remove="Resources\github.png" />
+    <None Remove="Resources\GravecorpAvatar.jpg" />
+    <None Remove="Resources\greenbullet.png" />
+    <None Remove="Resources\greybullet.png" />
+    <None Remove="Resources\Icon.ico" />
+    <None Remove="Resources\Icons\About.png" />
+    <None Remove="Resources\Icons\cards.png" />
+    <None Remove="Resources\Icons\console.png" />
+    <None Remove="Resources\Icons\diag.ico" />
+    <None Remove="Resources\Icons\LoadDeck.png" />
+    <None Remove="Resources\Icons\LoadLimited.png" />
+    <None Remove="Resources\Icons\Ok.png" />
+    <None Remove="Resources\Icons\Quit.png" />
+    <None Remove="Resources\Icons\Reset.png" />
+    <None Remove="Resources\Icons\Save.png" />
+    <None Remove="Resources\Icons\setting_tools.png" />
+    <None Remove="Resources\knockknock.wav" />
+    <None Remove="Resources\loading.gif" />
+    <None Remove="Resources\LoadingWindowAds\0.jpg" />
+    <None Remove="Resources\lock.png" />
+    <None Remove="Resources\log.ico" />
+    <None Remove="Resources\log2.ico" />
+    <None Remove="Resources\logo (1).png" />
+    <None Remove="Resources\logoback.png" />
+    <None Remove="Resources\logolarge.png" />
+    <None Remove="Resources\logowords.png" />
+    <None Remove="Resources\Markers\black.png" />
+    <None Remove="Resources\Markers\blue.png" />
+    <None Remove="Resources\Markers\brown.png" />
+    <None Remove="Resources\Markers\green.png" />
+    <None Remove="Resources\Markers\orange.png" />
+    <None Remove="Resources\Markers\purple.png" />
+    <None Remove="Resources\Markers\red.png" />
+    <None Remove="Resources\Markers\white.png" />
+    <None Remove="Resources\Markers\yellow.png" />
+    <None Remove="Resources\matchmaking-icon.png" />
+    <None Remove="Resources\messagenotify.wav" />
+    <None Remove="Resources\minimize.png" />
+    <None Remove="Resources\minmax.png" />
+    <None Remove="Resources\moderator.png" />
+    <None Remove="Resources\noimage.png" />
+    <None Remove="Resources\none.jpg" />
+    <None Remove="Resources\orangebullet.png" />
+    <None Remove="Resources\owner.png" />
+    <None Remove="Resources\Patch.png" />
+    <None Remove="Resources\people.png" />
+    <None Remove="Resources\pregamelobbyicon.png" />
+    <None Remove="Resources\ralig.png" />
+    <None Remove="Resources\randomname.png" />
+    <None Remove="Resources\search.png" />
+    <None Remove="Resources\smallsub.png" />
+    <None Remove="Resources\smith_user.png" />
+    <None Remove="Resources\soul1355.png" />
+    <None Remove="Resources\special.png" />
+    <None Remove="Resources\spectator-icon.png" />
+    <None Remove="Resources\StartupMessages.txt" />
+    <None Remove="Resources\statusAway.png" />
+    <None Remove="Resources\statusDND.png" />
+    <None Remove="Resources\statusOffline.png" />
+    <None Remove="Resources\statusOnline.png" />
+    <None Remove="Resources\sub.png" />
+    <None Remove="Resources\subscriberbenefits.txt" />
+    <None Remove="Resources\usernoimage.png" />
+    <None Remove="Resources\viewers.png" />
+    <None Remove="Scripting\ApiVersions.xml" />
+    <None Remove="Scripting\CaseInsensitiveDict.py" />
+    <None Remove="Scripting\Lib\abc.py" />
+    <None Remove="Scripting\Lib\bisect.py" />
+    <None Remove="Scripting\Lib\collections.py" />
+    <None Remove="Scripting\Lib\heapq.py" />
+    <None Remove="Scripting\Lib\keyword.py" />
+    <None Remove="Scripting\Lib\_abcoll.py" />
+    <None Remove="Scripting\PythonAPI.py" />
+    <None Remove="Scripting\Versions\3.1.0.0.py" />
+    <None Remove="Scripting\Versions\3.1.0.1.py" />
+    <None Remove="Scripting\Versions\3.1.0.2.py" />
+    <None Remove="Sleeves\Air-Travel.jpg" />
+    <None Remove="Sleeves\Canival.jpg" />
+    <None Remove="Sleeves\cb1.png" />
+    <None Remove="Sleeves\cb2.png" />
+    <None Remove="Sleeves\Dragon-Strategy.jpg" />
+    <None Remove="Sleeves\Face-In-The-Crowd.jpg" />
+    <None Remove="Sleeves\GGG.jpg" />
+    <None Remove="Sleeves\Homewrecker.jpg" />
+    <None Remove="Sleeves\Invent.jpg" />
+    <None Remove="Sleeves\Master-Ritualist.jpg" />
+    <None Remove="Sleeves\Monstrous-Lassitude.jpg" />
+    <None Remove="Sleeves\P-Warrior.jpg" />
+    <None Remove="Sleeves\Rudo-Shade.jpg" />
+    <None Remove="Sleeves\Straw-Man.jpg" />
+    <None Remove="Sleeves\Thabbashite-Assailant.jpg" />
+    <None Remove="Sleeves\The-Spoils.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="App.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\FileIcons\Deck.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FileIcons\Game.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FileIcons\Patch.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FileIcons\Set.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\knockknock.wav" />
+    <Content Include="Scripting\Lib\abc.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\bisect.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\collections.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\heapq.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\keyword.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\_abcoll.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Air-Travel.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Canival.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Dragon-Strategy.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Face-In-The-Crowd.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\GGG.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Homewrecker.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Invent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Master-Ritualist.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Monstrous-Lassitude.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\P-Warrior.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Rudo-Shade.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Straw-Man.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Thabbashite-Assailant.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\The-Spoils.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="CurrentVersion.txt" />
+    <EmbeddedResource Include="Resources\StartupMessages.txt" />
+    <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
+    <EmbeddedResource Include="Scripting\PythonAPI.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.0.1" />
+    <PackageReference Include="IronPython" Version="2.7.10" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <PackageReference Include="NAudio" Version="1.10.0" />
+    <PackageReference Include="RIPEMD160" Version="1.0.1" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="4.7.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageReference Include="ToggleSwitch" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj" />
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj" />
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj" />
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj" />
+    <ProjectReference Include="..\Octgn.Sdk\Octgn.Sdk.csproj" />
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj" />
+    <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="CurrentReleaseVersion.txt" />
+    <Resource Include="CurrentTestVersion.txt" />
+    <Resource Include="Resources\admin.png" />
+    <Resource Include="Resources\Anchor.png" />
+    <Resource Include="Resources\Avatar9_80.jpg" />
+    <Resource Include="Resources\back-button.png" />
+    <Resource Include="Resources\Back.jpg" />
+    <Resource Include="Resources\background.png" />
+    <Resource Include="Resources\chat.ico" />
+    <Resource Include="Resources\chaticon.png" />
+    <Resource Include="Resources\circle-back-button.png" />
+    <Resource Include="Resources\close.png" />
+    <Resource Include="Resources\closewindow.png" />
+    <Resource Include="Resources\cross.png" />
+    <Resource Include="Resources\custom-games-icon.png" />
+    <Resource Include="Resources\CustomDataAgreement.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\d0c.jpeg" />
+    <Resource Include="Resources\eye.png" />
+    <Resource Include="Resources\Folder.png" />
+    <Resource Include="Resources\Fonts\Entypo.otf" />
+    <Resource Include="Resources\Front.jpg" />
+    <Resource Include="Resources\gamemode.png" />
+    <Resource Include="Resources\github.png" />
+    <Resource Include="Resources\GravecorpAvatar.jpg" />
+    <Resource Include="Resources\greenbullet.png" />
+    <Resource Include="Resources\greybullet.png" />
+    <Resource Include="Resources\Icons\About.png" />
+    <Resource Include="Resources\Icons\cards.png" />
+    <Resource Include="Resources\Icons\console.png" />
+    <Resource Include="Resources\Icons\diag.ico" />
+    <Resource Include="Resources\Icons\LoadDeck.png" />
+    <Resource Include="Resources\Icons\LoadLimited.png" />
+    <Resource Include="Resources\Icons\Ok.png" />
+    <Resource Include="Resources\Icons\Quit.png" />
+    <Resource Include="Resources\Icons\Reset.png" />
+    <Resource Include="Resources\Icons\Save.png" />
+    <Resource Include="Resources\Icons\setting_tools.png" />
+    <Resource Include="Resources\loading.gif" />
+    <Resource Include="Resources\LoadingWindowAds\0.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\lock.png" />
+    <Resource Include="Resources\log.ico" />
+    <Resource Include="Resources\log2.ico" />
+    <Resource Include="Resources\logo (1).png" />
+    <Resource Include="Resources\logoback.png" />
+    <Resource Include="Resources\logolarge.png" />
+    <Resource Include="Resources\logowords.png" />
+    <Resource Include="Resources\Markers\black.png" />
+    <Resource Include="Resources\Markers\blue.png" />
+    <Resource Include="Resources\Markers\brown.png" />
+    <Resource Include="Resources\Markers\green.png" />
+    <Resource Include="Resources\Markers\orange.png" />
+    <Resource Include="Resources\Markers\purple.png" />
+    <Resource Include="Resources\Markers\red.png" />
+    <Resource Include="Resources\Markers\white.png" />
+    <Resource Include="Resources\Markers\yellow.png" />
+    <Resource Include="Resources\matchmaking-icon.png" />
+    <Resource Include="Resources\messagenotify.wav" />
+    <Resource Include="Resources\minimize.png" />
+    <Resource Include="Resources\minmax.png" />
+    <Resource Include="Resources\moderator.png" />
+    <Resource Include="Resources\noimage.png" />
+    <Resource Include="Resources\none.jpg" />
+    <Resource Include="Resources\orangebullet.png" />
+    <Resource Include="Resources\owner.png" />
+    <Resource Include="Resources\Patch.png" />
+    <Resource Include="Resources\people.png" />
+    <Resource Include="Resources\pregamelobbyicon.png" />
+    <Resource Include="Resources\ralig.png" />
+    <Resource Include="Resources\randomname.png" />
+    <Resource Include="Resources\search.png" />
+    <Resource Include="Resources\smallsub.png" />
+    <Resource Include="Resources\smith_user.png" />
+    <Resource Include="Resources\soul1355.png" />
+    <Resource Include="Resources\special.png" />
+    <Resource Include="Resources\spectator-icon.png" />
+    <Resource Include="Resources\statusAway.png" />
+    <Resource Include="Resources\statusDND.png" />
+    <Resource Include="Resources\statusOffline.png" />
+    <Resource Include="Resources\statusOnline.png" />
+    <Resource Include="Resources\sub.png" />
+    <Resource Include="Resources\subscriberbenefits.txt" />
+    <Resource Include="Resources\usernoimage.png" />
+    <Resource Include="Resources\viewers.png" />
+    <Resource Include="Scripting\ApiVersions.xml" />
+    <Resource Include="Scripting\Versions\3.1.0.0.py" />
+    <Resource Include="Scripting\Versions\3.1.0.1.py" />
+    <Resource Include="Scripting\Versions\3.1.0.2.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\ConnectOfflineGame.xaml.cs">
+      <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\HostGameSettings.xaml.cs">
+      <DependentUpon>HostGameSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\MissedMessagesBreak.xaml.cs">
+      <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\PopupWindowMessage.xaml.cs">
+      <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\PreGameLobby.xaml.cs">
+      <DependentUpon>PreGameLobby.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\SubscribeMessageLargeMessage.xaml.cs">
+      <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\WaitingDialog.xaml.cs">
+      <DependentUpon>WaitingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\DeckBuilderWindow.xaml.cs">
+      <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\DeckCardsViewer.xaml.cs">
+      <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
+      <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\DeckManager.xaml.cs">
+      <DependentUpon>DeckManager.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\FilterControl.xaml.cs">
+      <DependentUpon>FilterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="DeckBuilder\SleeveManagerView.xaml.cs">
+      <DependentUpon>SleeveManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Networking\BinaryParser.cs">
+      <DependentUpon>BinaryParser.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Networking\BinaryStubs.cs">
+      <DependentUpon>BinaryStubs.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Networking\IServerCalls.cs">
+      <DependentUpon>IServerCalls.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Play\DeveloperConsole\InteractiveConsole.xaml.cs">
+      <DependentUpon>InteractiveConsole.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\DeveloperWindow.xaml.cs">
+      <DependentUpon>DeveloperWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Dialogs\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Dialogs\LimitedDialog.xaml.cs">
+      <DependentUpon>LimitedDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Dialogs\PickCardsDialog.xaml.cs">
+      <DependentUpon>PickCardsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Dialogs\PreviewCardWindow.xaml.cs">
+      <DependentUpon>PreviewCardWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Dialogs\RulesWindow.xaml.cs">
+      <DependentUpon>RulesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\AdhocPileControl.xaml.cs">
+      <DependentUpon>AdhocPileControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\CardControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>CardControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\CardListControl.xaml.cs">
+      <DependentUpon>CardListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\ChatControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ChatControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\DeckStats.xaml.cs">
+      <DependentUpon>DeckStats.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\GroupWindow.xaml.cs">
+      <DependentUpon>GroupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\MarkerControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MarkerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\NoteControl.xaml.cs">
+      <DependentUpon>NoteControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\PileCollapsedControl.xaml.cs">
+      <DependentUpon>PileCollapsedControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\PileControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>PileControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\PilePanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Play\Gui\PlayerControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>PlayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\Gui\TableControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TableControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Play\PlayWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>PlayWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Scripting\Controls\CardDlg.xaml.cs">
+      <DependentUpon>CardDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\Controls\ChoiceDlg.xaml.cs">
+      <DependentUpon>ChoiceDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\Controls\InputDlg.xaml.cs">
+      <DependentUpon>InputDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\Controls\MarkerDlg.xaml.cs">
+      <DependentUpon>MarkerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\Controls\PackDlg.xaml.cs">
+      <DependentUpon>PackDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\Controls\SelectCardsDlg.xaml.cs">
+      <DependentUpon>SelectCardsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\Controls\SelectMultiCardsDlg.xaml.cs">
+      <DependentUpon>SelectMultiCardsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Scripting\GameEvents.cs">
+      <DependentUpon>GameEvents.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Scripting\OPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Scripting\ScriptApiOld.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Scripting\Versions\Script_3_1_0_1.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Tabs\ChallengeBoards\ChallengeBoards.xaml.cs">
+      <DependentUpon>ChallengeBoards.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Tabs\GameHistory\GameHistoryTab.xaml.cs">
+      <DependentUpon>GameHistoryTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Tabs\Login\LoginTab.xaml.cs">
+      <DependentUpon>LoginTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Tabs\Play\PlayTab.xaml.cs">
+      <DependentUpon>PlayTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Tabs\Watch\WatchList.xaml.cs">
+      <DependentUpon>WatchList.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\BrowserWindow.xaml.cs">
+      <DependentUpon>BrowserWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\DWindow.xaml.cs">
+      <DependentUpon>DWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\GameHistoryWindow.xaml.cs">
+      <DependentUpon>GameHistoryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\GameLog.xaml.cs">
+      <DependentUpon>GameLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\ImportImages.xaml.cs">
+      <DependentUpon>ImportImages.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\Options.xaml.cs">
+      <DependentUpon>Options.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\PickCardFromList.xaml.cs">
+      <DependentUpon>PickCardFromList.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\UpdateChecker.xaml.cs">
+      <DependentUpon>UpdateChecker.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="app.Debug x86.config">
+      <DependentUpon>app.config</DependentUpon>
+    </None>
+    <None Update="app.Debug.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>app.config</DependentUpon>
+    </None>
+    <None Update="DoVersionStuff.tt">
+      <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="DoVersionStuff.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DoVersionStuff.tt</DependentUpon>
+    </None>
+    <None Update="Networking\BinaryParser.tt">
+      <LastGenOutput>BinaryParser.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Networking\BinaryStubs.tt">
+      <LastGenOutput>BinaryStubs.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Networking\IServerCalls.tt">
+      <LastGenOutput>IServerCalls.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Scripting\GameEvents.tt">
+      <LastGenOutput>GameEvents.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Controls\ConnectOfflineGame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\HostGameSettings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\MissedMessagesBreak.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\PopupWindowMessage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\PreGameLobby.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\SubscribeMessageLargeMessage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\WaitingDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\WindowDecorators\OctgnDecoratorResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\DeckBuilderWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\DeckCardsViewer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\DeckEditorPreviewControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\DeckManager.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\FilterControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\SearchControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DeckBuilder\SleeveManagerView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\DeveloperConsole\InteractiveConsole.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\DeveloperWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Dialogs\ChatWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Dialogs\LimitedDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Dialogs\PickCardsDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Dialogs\PreviewCardWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Dialogs\RulesWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\AdhocPileControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\CardControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\CardListControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\ChatControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\DeckStats.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\GroupWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\MarkerControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\NoteControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\PileCollapsedControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\PileControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\PlayerControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\Gui\TableControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Play\PlayWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\PlayResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\Button.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\CardRun.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\ChildWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\CommonControls.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\Menu.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\NumericUpDown.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\Panel.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\ProgressBar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\ScrollBar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\Tabs.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\BlueGlass\Window.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\ChildWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\BureauBlack.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\BureauBlue.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\ExpressionDark.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\ExpressionLight.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\ShinyBlue.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\ShinyRed.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Full\WhistlerBlue.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Global.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Notifications.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\NumericUpDown.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Themes\Target.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\CardDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\ChoiceDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\InputDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\MarkerDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\PackDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\SelectCardsDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Scripting\Controls\SelectMultiCardsDlg.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Tabs\ChallengeBoards\ChallengeBoards.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Tabs\GameHistory\GameHistoryTab.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Tabs\Login\LoginTab.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Tabs\Play\PlayTab.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Tabs\Watch\WatchList.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\BrowserWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\DWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\ErrorWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\GameHistoryWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\GameLog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\ImportImages.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\Main.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\Options.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\PickCardFromList.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\UpdateChecker.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(TargetDir)*&quot; &quot;$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine&quot; /ys" />
+  </Target>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿<Window x:Class="Octgn.Desktop.Interfaces.Easy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Octgn.Desktop.Interfaces.Easy"
+        mc:Ignorable="d"
+        Title="Loading..." Height="600" Width="433"
+        WindowStartupLocation="CenterScreen">
+    <Border Background="{DynamicResource BackgroundColor}"
+            x:Name="WindowBorder">
+        <local:LoadingScreen />
+    </Border>
+</Window>

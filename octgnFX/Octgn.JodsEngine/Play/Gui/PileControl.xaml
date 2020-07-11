@@ -1,0 +1,94 @@
+<gui:PileBaseControl x:Class="Octgn.Play.Gui.PileControl"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
+                     xmlns:ctrl="clr-namespace:Octgn.Controls">
+
+    <gui:PileBaseControl.LayoutTransform>
+        <ScaleTransform x:Name="scaleTransform" />
+    </gui:PileBaseControl.LayoutTransform>
+
+    <gui:PileBaseControl.Triggers>
+        <EventTrigger RoutedEvent="Mouse.MouseEnter">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation To="1" Duration="00:00:00.2" Storyboard.TargetName="expandButton"
+                           Storyboard.TargetProperty="(UIElement.Opacity)" />
+                    <DoubleAnimation To="1" Duration="00:00:00.2" Storyboard.TargetName="collapseButton"
+                           Storyboard.TargetProperty="(UIElement.Opacity)" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Mouse.MouseLeave">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation To="0" Duration="00:00:00.2" Storyboard.TargetName="expandButton"
+                           Storyboard.TargetProperty="(UIElement.Opacity)" FillBehavior="Stop" />
+                    <DoubleAnimation To="0" Duration="00:00:00.2" Storyboard.TargetName="collapseButton"
+                           Storyboard.TargetProperty="(UIElement.Opacity)" FillBehavior="Stop" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </gui:PileBaseControl.Triggers>
+
+    <Border Style="{StaticResource PanelControl}" Padding="2">
+        <Grid x:Name="grid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <AdornerDecorator x:Name="adornerDecorator">
+                <ItemsControl x:Name="list" ItemsSource="{Binding Cards}" Grid.Row="0" Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <gui:FanPanel Loaded="SaveFanPanel" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <gui:CardControl />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type ContentPresenter}">
+                            <Setter Property="Margin" Value="0,0,3,0" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </AdornerDecorator>
+
+            <Border x:Name="bottomZone" CornerRadius="0,0,6,6" Background="Black" Opacity="0.4" Visibility="Collapsed"
+              VerticalAlignment="Bottom" Height="30">
+                <Path Data="M 7,0 l 10,0 0,10 4,0 q 3,0 0,3 l -9,9 -9,-9 q -3,-3 0,-3 l 4,0 Z" Fill="White"
+              VerticalAlignment="Center" HorizontalAlignment="Center" />
+            </Border>
+
+            <DockPanel Grid.Row="1" LastChildFill="True">
+
+                <Button Style="{StaticResource RightArrowButtonStyle}" Margin="0 0 5 0"
+                 x:Name="expandButton" Opacity="0" Click="ExpandClicked" ToolTip="Expand Pile" Focusable="False" RenderTransformOrigin="0.5,0.5">
+                    <Button.RenderTransform>
+                        <RotateTransform Angle="180" />
+                    </Button.RenderTransform>
+                </Button>
+
+                <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" HorizontalAlignment="Right" />
+
+                <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" 
+                   Style="{x:Null}" />
+
+                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left" 
+                        LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" 
+                        Thumb.DragStarted="DensitySlider_DragStarted" Thumb.DragCompleted="DensitySlider_DragCompleted" />
+
+                <Button Style="{StaticResource RightArrowButtonStyle}" Margin="5 0 0 0" HorizontalAlignment="Right"
+                 x:Name="collapseButton" Opacity="0" Click="CollapseClicked" ToolTip="Collapse Pile" Focusable="False" />
+
+            </DockPanel>
+        </Grid>
+    </Border>
+
+</gui:PileBaseControl>
