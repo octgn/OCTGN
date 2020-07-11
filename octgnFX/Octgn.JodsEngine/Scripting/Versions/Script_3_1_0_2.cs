@@ -144,7 +144,7 @@ namespace Octgn.Scripting.Versions
                 .Select(c => new KeyValuePair<int, string>(c.Id, c.Name))
                 .ToList();
         }
-
+        
         public List<KeyValuePair<int, string>> PlayerPiles(int id)
         {
             return Player.Find((byte)id)
@@ -718,7 +718,7 @@ namespace Octgn.Scripting.Versions
                     else
                         Selection.Remove(c);
                 }
-
+                    
             });
         }
 
@@ -779,7 +779,11 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-
+        public List<int> CardPeekers(int id)
+        {
+            Card c = Card.Find(id);
+            return c.PeekingPlayers.Select(x => (int)x.Id).ToList();
+        }
 
         public void CardTargetArrow(int id, int targetId, bool active)
         {
@@ -921,8 +925,10 @@ namespace Octgn.Scripting.Versions
                 Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
                 return;
             }
-
-            card.SetProperty(name, val);
+            QueueAction(() =>
+            {
+                card.SetProperty(name, val);
+            });
         }
 
         public void CardResetProperties(int cardId)
@@ -934,7 +940,10 @@ namespace Octgn.Scripting.Versions
                 return;
             }
 
-            card.ResetProperties();
+            QueueAction(() =>
+            {
+                card.ResetProperties();
+            });
         }
 
         #endregion Cards API
@@ -1407,15 +1416,24 @@ namespace Octgn.Scripting.Versions
 
         public void SetBoard(string name)
         {
-            if (String.IsNullOrWhiteSpace(name)) return;
-            if (!GetBoardList().Contains(name)) return;
-            QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
-            Program.Client.Rpc.SetBoard(name);
-
+            if (name == null)
+            {
+              //  QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
+                Program.Client.Rpc.RemoveBoard(Player.LocalPlayer);
+            }
+            else if (GetBoardList().Contains(name))
+            {
+            //    QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
+                Program.Client.Rpc.SetBoard(Player.LocalPlayer, name);
+            }
+            else
+            {
+                Program.GameMess.Warning("Cannot find game board with name `{0}`.", name);
+            }
         }
         public string GetBoard()
         {
-            return Program.GameEngine.GameBoard.Name;
+            return Program.GameEngine.GameBoard?.Name;
         }
         public string[] GetBoardList()
         {

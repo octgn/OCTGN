@@ -233,10 +233,17 @@ namespace Octgn.Networking
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber, false);
         }
 
-        public void SetBoard(string name)
+        public void SetBoard(Player player, string name)
+        {
+            WriteReplayAction(); 
+            Program.GameMess.PlayerEvent(player, "changes the game board to `{0}`", name == "" ? "default" : name);
+            Program.GameEngine.ChangeGameBoard(name);
+        }
+        public void RemoveBoard(Player player)
         {
             WriteReplayAction();
-            Program.GameEngine.ChangeGameBoard(name);
+            Program.GameMess.PlayerEvent(player, "removes the game board");
+            Program.GameEngine.ChangeGameBoard(null);
         }
 
         public void Chat(Player player, string text)

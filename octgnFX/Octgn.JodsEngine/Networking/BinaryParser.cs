@@ -892,12 +892,24 @@ namespace Octgn.Networking
 				}
 				case 103:
 				{
-					var arg0 = reader.ReadString();
+					var arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[SetBoard] Player not found."); return; }
+					var arg1 = reader.ReadString();
 					Log.Debug($"OCTGN IN: SetBoard");
-					handler.SetBoard(arg0);
+					handler.SetBoard(arg0, arg1);
 					break;
 				}
 				case 104:
+				{
+					var arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[RemoveBoard] Player not found."); return; }
+					Log.Debug($"OCTGN IN: RemoveBoard");
+					handler.RemoveBoard(arg0);
+					break;
+				}
+				case 105:
 				{
 					var arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)

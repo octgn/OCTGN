@@ -1,4 +1,4 @@
-﻿/* 
+﻿/*
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -9,7 +9,7 @@ using Octgn.Play;
 namespace Octgn.Networking
 {
 	public interface IServerCalls
-	{ 
+	{
 		void Error(string msg);
 		void Boot(Player player, string reason);
 		void Hello(string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
@@ -77,7 +77,8 @@ namespace Octgn.Networking
 		void SetCardProperty(Card id, Player player, string name, string val, string valtype);
 		void ResetCardProperties(Card id, Player player);
 		void Filter(Card card, Color? color);
-		void SetBoard(string name);
+		void SetBoard(Player player, string name);
+		void RemoveBoard(Player player);
 		void SetPlayerColor(Player player, string color);
 	}
 }
