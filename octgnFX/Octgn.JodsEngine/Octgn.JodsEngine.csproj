@@ -8,6 +8,10 @@
     <AssemblyName>Octgn</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="CurrentReleaseVersion.txt" />
     <None Remove="CurrentTestVersion.txt" />
@@ -913,5 +917,9 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /Y &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine&quot;" />
+  </Target>
 
 </Project>

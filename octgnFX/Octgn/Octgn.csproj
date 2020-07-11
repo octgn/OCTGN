@@ -1466,8 +1466,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>rd /s /q "de", "es", "fr", "hu", "it", "pt-BR", "ro", "ru", "sv", "zh-Hans"
-xcopy /Y "$(TargetDir)*.*" "$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine"</PostBuildEvent>
+    <PostBuildEvent>rd /s /q "de", "es", "fr", "hu", "it", "pt-BR", "ro", "ru", "sv", "zh-Hans"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
