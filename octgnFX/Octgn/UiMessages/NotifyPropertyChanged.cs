@@ -1,6 +1,4 @@
-﻿using Octgn.Play;
-
-namespace Octgn.UiMessages
+﻿namespace Octgn.UiMessages
 {
     public abstract class NotifyPropertyChanged
     {
@@ -15,20 +13,5 @@ namespace Octgn.UiMessages
     public class GroupNotifyPropertyChanged
     {
 
-    }
-
-    public class PlayerGlobalVariableChanged
-    {
-        public Player Player{get;set;}
-
-        public PlayerGlobalVariableChanged(Player p)
-        {
-            Player = p;
-        }
-    }
-
-    public class RefreshSharedDecksMessage
-    {
-        
     }
 }

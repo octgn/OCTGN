@@ -79,9 +79,13 @@
     <Compile Include="EmptyPackage.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="Messenger.cs" />
     <Compile Include="Play\GameMessageDispatcher.cs" />
     <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\PlayerState.cs" />
+    <Compile Include="Play\Save\IGameSaveState.cs" />
+    <Compile Include="Play\Save\IHistory.cs" />
+    <Compile Include="Play\Save\IPlayerSaveState.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
     <Compile Include="Plugin\IEventBindingDeckBuilderPlugin.cs" />
@@ -93,12 +97,15 @@
     <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StreamExtensionMethods.cs" />
     <Compile Include="Tabletop\GameEngine.cs" />
     <Compile Include="Tabletop\GameState.cs" />
+    <Compile Include="TaskContinuationHelpers.cs" />
     <Compile Include="Util\BigInteger.cs" />
     <Compile Include="Util\Crypto.cs" />
     <Compile Include="Util\FileDownloader.cs" />
     <Compile Include="Util\TextUploader.cs" />
+    <Compile Include="ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">

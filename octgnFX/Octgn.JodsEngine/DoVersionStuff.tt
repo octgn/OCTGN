@@ -1,0 +1,52 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".txt" #>
+<#
+    var programPath = Host.ResolvePath("Program.cs");
+    var programString = File.ReadAllText(programPath);
+
+    XDocument doc = XDocument.Load(Host.ResolvePath(@"Scripting\ApiVersions.xml"));
+
+    const string RegisterTemplate = "			Versioned.RegisterVersion(Version.Parse(\"{0}\"),DateTime.Parse(\"{1}\"),ReleaseMode.{2} );";
+    const string RegisterPythonApiTemplate = "			Versioned.RegisterFile(\"PythonApi\", \"pack://application:,,,/Scripting/Versions/{0}.py\", Version.Parse(\"{0}\"));";
+
+	var sbRegister = new StringBuilder();
+	var sbRegisterPythonApi = new StringBuilder();
+
+    foreach(var v in doc.Root.Descendants("version"))
+    {
+		// TODO Could probably not include ones that are expired.
+		var version = v.Attribute("version").Value;
+		var releaseDate = v.Attribute("releaseDate").Value;
+		var mode = v.Attribute("releaseMode").Value;
+
+		sbRegister.AppendLine(String.Format(RegisterTemplate,version,releaseDate,mode));
+		sbRegisterPythonApi.AppendLine(String.Format(RegisterPythonApiTemplate,version));
+    }
+
+    string newString = "";
+	int startSpot = programString.IndexOf("//START_REPLACE_API_VERSION");
+	int endSpot = programString.IndexOf("//END_REPLACE_API_VERSION");
+    string startString = programString.Substring(0,startSpot + 27) + Environment.NewLine;
+	string endString = "			" + programString.Substring(endSpot, programString.Length - endSpot);
+
+    string finalString= startString + sbRegister.ToString() + sbRegisterPythonApi.ToString() + endString;
+
+    WriteLine("Outputting Program.cs info");
+    Write(sbRegister.ToString());
+    Write(sbRegisterPythonApi.ToString());
+
+    File.WriteAllText(programPath,finalString);
+
+    WriteLine("");
+    WriteLine("Generating any files that need to exist.");
+	// TODO Could generate the .py file and possibly modify the GameEvents.xml to include a new section for the new version.
+#>

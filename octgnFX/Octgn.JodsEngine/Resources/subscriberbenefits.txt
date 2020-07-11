@@ -1,0 +1,9 @@
+﻿In Game Sounds
+Chat Notification Sounds
+OCTGN Window Skins
+Custom Game Backgrounds
+Chat Images
+Custom Icon Next To Your Name
+Password Protected Games
+Save/Load Filters In The Deck Editor
+Replace Card Image In The Deck Editor

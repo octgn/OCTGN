@@ -24,14 +24,16 @@ namespace Octgn.Launchers
             return Task.CompletedTask;
         }
 
-        public override async Task AfterUpdate() {
+        public override Task AfterUpdate() {
             try {
-                await new GameTableLauncher().Launch(this.hostPort, this.gameId);
+                Program.JodsEngine.HostGame(hostPort, gameId);
             } catch (Exception e) {
                 this.Log.Warn("Couldn't host/join table mode", e);
                 this.Shutdown = true;
                 Program.Exit();
             }
+
+            return Task.CompletedTask;
         }
     }
 }

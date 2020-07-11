@@ -80,3 +80,4 @@ _TeamCity.OCTGN
 /installer/*.exe
 /.HistoryData
 /packages
+/octgnFX/Octgn.Desktop/Packages/octgn.packages.jodsengine/engine

@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-
 using Octgn.Core;
 using Octgn.Core.DataManagers;
 using Octgn.Library.Exceptions;
-using Octgn.Networking;
 using Octgn.ViewModels;
-
 using log4net;
-
 using UserControl = System.Windows.Controls.UserControl;
 using Octgn.Communication;
-using Octgn.Library.Utils;
 using Octgn.Extentions;
 using Octgn.Library;
 using Octgn.Online.Hosting;
@@ -28,7 +20,6 @@ using Octgn.Online;
 
 namespace Octgn.Controls
 {
-
     public partial class HostGameSettings : UserControl,IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -209,19 +200,16 @@ namespace Octgn.Controls
 
         async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
-            var hostport = new Random().Next(5000,6000);
-            while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
-
             var octgnVersion = typeof(Server.Server).Assembly.GetName().Version;
 
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUser = Program.LobbyClient?.User ?? new User(hostport.ToString(), Username),
+                HostUser = Program.LobbyClient?.User ?? new User(Guid.NewGuid().ToString(), Username),
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
-                HostAddress = $"0.0.0.0:{hostport}",
+                HostAddress = $"0.0.0.0:{Prefs.LastLocalHostedGamePort}",
                 Password = password,
                 OctgnVersion = octgnVersion.ToString(),
                 GameIconUrl = game.IconUrl,
@@ -231,34 +219,7 @@ namespace Octgn.Controls
                 hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
-            // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
-            var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
-            hs.Start();
-
-            Prefs.Nickname = hg.HostUser.DisplayName;
-            Program.CurrentOnlineGameName = name;
-            Program.GameEngine = new GameEngine(game, Username, false, password, true);
-            Program.IsHost = true;
-
-            var ip = IPAddress.Parse("127.0.0.1");
-
-            for (var i = 0; i < 5; i++)
-            {
-                try
-                {
-                    Program.Client = new ClientSocket(ip, hostport);
-                    await Program.Client.Connect();
-                    SuccessfulHost = true;
-                    return;
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Start local game error",e);
-                    if (i == 4) throw;
-                }
-                Thread.Sleep(2000);
-            }
-
+            Program.JodsEngine.HostGame(hg);
         }
 
         async Task StartOnlineGame(DataNew.Entities.Game game, string name, string password)
@@ -294,26 +255,7 @@ namespace Octgn.Controls
                 throw new UserMessageException("The Game Service is currently offline. Please try again.");
             }
 
-            Program.CurrentHostedGame = result ?? throw new InvalidOperationException("HostGame returned a null");
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.User.DisplayName, false, this.Password);
-            Program.IsHost = true;
-
-            foreach(var address in Dns.GetHostAddresses(AppConfig.GameServerPath)) {
-                try {
-                    if (address == IPAddress.IPv6Loopback) continue;
-
-                    // Should use gameData.IpAddress sometime.
-                    Log.Info($"{nameof(StartOnlineGame)}: Trying to connect to {address}:{result.Port}");
-
-                    Program.Client = new ClientSocket(address, result.Port);
-                    await Program.Client.Connect();
-                    SuccessfulHost = true;
-                    return;
-                } catch (Exception ex) {
-                    Log.Error($"{nameof(StartOnlineGame)}: Couldn't connect to address {address}:{result.Port}", ex);
-                }
-            }
-            throw new InvalidOperationException($"Unable to connect to {AppConfig.GameServerPath}.{result.Port}");
+            Program.JodsEngine.JoinGame(game, result, Password);
         }
 
         #endregion

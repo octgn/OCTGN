@@ -248,7 +248,8 @@ namespace Octgn.Tabs.Profile
                 {
                     throw new UserMessageException(result.Message);
                 }
-                Messenger.Default.Send(new RefreshSharedDecksMessage());
+                //TODO: Shared decks
+                //GalaSoft.MvvmLight.Messaging.Messenger.Default.Send(new RefreshSharedDecksMessage());
             }
             catch (UserMessageException)
             {
@@ -504,8 +505,9 @@ namespace Octgn.Tabs.Profile
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
                 IsMe = Program.LobbyClient.User.Id.Equals(user.Id.ToString(), StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
-            Messenger.Default.Register<RefreshSharedDecksMessage>(this,
-                x => Task.Factory.StartNew(this.RefreshSharedDecks));
+            //TODO: shared decks
+            //GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<RefreshSharedDecksMessage>(this,
+            //    x => Task.Factory.StartNew(this.RefreshSharedDecks));
             Task.Factory.StartNew(RefreshSharedDecks);
         }
 
@@ -696,7 +698,7 @@ namespace Octgn.Tabs.Profile
         }
     }
 
-    public class UserExperienceViewModel : ViewModelBase
+    public class UserExperienceViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
         private string _image;
 

@@ -19,7 +19,7 @@ namespace Octgn.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,35 +57,6 @@ namespace Octgn.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to import collections
-        ///
-        ///class idict(collections.Mapping):
-        ///
-        ///    def __init__(self, pairs): 
-        ///        &quot;&quot;&quot;Constructor: takes an iterable of tuples&quot;&quot;&quot; 
-        ///        self._dict = {} 
-        ///        for key, value in pairs: 
-        ///            k = key.lower() 
-        ///            self._dict[k] = (key, value) 
-        ///
-        ///    def __getitem__(self, key):
-        ///        k = key.lower()
-        ///        pair = self._dict[k]
-        ///        return pair[1]
-        ///
-        ///    def __len__(self):
-        ///        return len(self._dict)
-        ///
-        ///    def __iter__(self):
-        ///        return (key for key, v [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string CaseInsensitiveDict {
-            get {
-                return ResourceManager.GetString("CaseInsensitiveDict", resourceCulture);
             }
         }
         

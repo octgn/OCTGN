@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+	<blocks>
+		<block type="text" id="title">
+			<location x="31" y="32" />
+			<text color="#000000" size="30" />
+			<border color="#FFFFFF" size="2" />
+			<wordwrap height="80" width="318" />
+		</block>
+	</blocks>
+	<template src="Proxy/card.png" default="True" >
+		<matches>
+		  <match name="Color" value="Black" />
+		</matches>
+		<textblocks>
+			<link block="title">
+				<property name="Name" />
+			</link>      
+		</textblocks> 
+	</template>
+</templates>
