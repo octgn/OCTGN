@@ -883,7 +883,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine&quot;" />
+    <Exec Command="xcopy &quot;$(TargetDir)*&quot; &quot;$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine&quot; /ys" />
   </Target>
 
 </Project>
