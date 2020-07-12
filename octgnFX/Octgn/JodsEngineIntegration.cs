@@ -4,10 +4,13 @@
 
 using Octgn.Core;
 using Octgn.Core.DataManagers;
+using Octgn.Library;
 using Octgn.Online.Hosting;
 using Octgn.Tabs.GameHistory;
 using Octgn.Tabs.Play;
 using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace Octgn
 {
@@ -22,7 +25,11 @@ namespace Octgn
         }
 
         public void LaunchDeckEditor(string deckPath = null) {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(deckPath)) {
+                LaunchJodsEngine("-e");
+            } else {
+                LaunchJodsEngine($"-e -d \"{deckPath}\"");
+            }
         }
 
         public void JoinGame(DataNew.Entities.Game game, HostedGame hostedGame, string password) {
@@ -72,5 +79,22 @@ namespace Octgn
         internal void LaunchReplay(GameHistoryViewModel history) => throw new NotImplementedException();
         internal void JoinOfflineGame() => throw new NotImplementedException();
         internal void HostGame() => throw new NotImplementedException();
+
+        private void LaunchJodsEngine(string args) {
+            var engineDirectory = "jodsengine";
+            if (X.Instance.Debug) {
+                engineDirectory = "..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1";
+            }
+
+            engineDirectory = Path.GetFullPath(engineDirectory);
+
+            var enginePath = Path.Combine(engineDirectory, "octgn.exe");
+
+            var psi = new ProcessStartInfo(enginePath, args);
+            psi.UseShellExecute = true;
+            psi.WorkingDirectory = engineDirectory;
+
+            Process.Start(psi);
+        }
     }
 }

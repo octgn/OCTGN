@@ -229,6 +229,8 @@ namespace Octgn.Windows
                     MessageBoxImage.Error);
                 return;
             }
+
+            Program.JodsEngine.LaunchDeckEditor();
         }
 
         private void MenuOptionsClick(object sender, RoutedEventArgs e)
