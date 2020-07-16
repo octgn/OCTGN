@@ -23,6 +23,7 @@ using Octgn.Communication;
 using Octgn.Online.Hosting;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
+using Octgn.Controls;
 
 namespace Octgn.Tabs.Play
 {
@@ -184,11 +185,30 @@ namespace Octgn.Tabs.Play
 
         private void ButtonHostClick(object sender, RoutedEventArgs e) {
             try {
-                Program.JodsEngine.HostGame();
+                HostGameSettings dialog = null;
+                try {
+                    dialog = new HostGameSettings();
+                    dialog.Show(DialogPlaceHolder);
+                    dialog.OnClose += HostGameSettingsDialogOnClose;
+                    BorderButtons.IsEnabled = false;
+                } catch {
+                    dialog.OnClose -= HostGameSettingsDialogOnClose;
+                    dialog.Dispose();
+                    BorderButtons.IsEnabled = true;
+                    throw;
+                }
             } catch (Exception ex) {
                 HandleException(ex);
             }
         }
+
+        private void HostGameSettingsDialogOnClose(object sender, DialogResult dialogResult) {
+            BorderButtons.IsEnabled = true;
+            using (var dialog = sender as HostGameSettings) {
+                dialog.OnClose -= HostGameSettingsDialogOnClose;
+            }
+        }
+
 
         #endregion Host Game
 
@@ -271,9 +291,27 @@ namespace Octgn.Tabs.Play
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e) {
             try {
-                Program.JodsEngine.JoinOfflineGame();
+                ConnectOfflineGame dialog = null;
+                try {
+                    dialog = new ConnectOfflineGame();
+                    dialog.Show(DialogPlaceHolder);
+                    dialog.OnClose += ConnectOfflineGameDialogOnClose;
+                    BorderButtons.IsEnabled = false;
+                } catch {
+                    dialog.OnClose -= ConnectOfflineGameDialogOnClose;
+                    dialog.Dispose();
+                    BorderButtons.IsEnabled = true;
+                    throw;
+                }
             } catch (Exception ex) {
                 HandleException(ex);
+            }
+        }
+
+        private void ConnectOfflineGameDialogOnClose(object sender, DialogResult dialogResult) {
+            BorderButtons.IsEnabled = true;
+            using (var dialog = sender as ConnectOfflineGame) {
+                dialog.OnClose -= ConnectOfflineGameDialogOnClose;
             }
         }
 

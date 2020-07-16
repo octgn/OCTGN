@@ -9,6 +9,7 @@ namespace Octgn
     using log4net;
 
     using Octgn.Launchers;
+    using Octgn.Online.Hosting;
 
     public class CommandLineHandler
     {
@@ -59,16 +60,24 @@ namespace Octgn
                 }
                 var tableOnly = false;
                 var editorOnly = false;
+                var joinGame = false;
+                var hostGame = false;
                 int? hostport = null;
                 Guid? gameid = null;
                 string deckPath = null;
+                string username = null;
+                string hostedGameString = null;
                 var os = new Mono.Options.OptionSet()
                 {
                     {"t|table", x => tableOnly = true},
                     {"g|game=", x => gameid = Guid.Parse(x)},
                     {"d|deck=", x => deckPath = x},
                     {"x|devmode", x => DevMode = true},
-                    {"e|editor", x => editorOnly = true}
+                    {"e|editor", x => editorOnly = true},
+                    {"j|join", x => joinGame = true },
+                    {"u|username=", x => username = x },
+                    {"s|hostedgame=", x => hostedGameString = x },
+                    {"h|host", x => hostGame = true }
                 };
                 try
                 {
@@ -78,9 +87,19 @@ namespace Octgn
                 {
                     Log.Warn("Parse args exception: " + String.Join(",", Environment.GetCommandLineArgs()), e);
                 }
-                if (tableOnly)
-                {
+                if (tableOnly) {
                     return new TableLauncher(hostport, gameid);
+                } else if (joinGame) {
+                    var hostedGame = (HostedGame)DeserializeHostedgameString(hostedGameString);
+
+                    return new JoinGameLauncher(username, hostedGame);
+                } else if (hostGame) {
+                    var hostedGame = (HostedGame)DeserializeHostedgameString(hostedGameString);
+
+                    return new HostGameLauncher(username, hostedGame);
+                } else if(tableOnly && joinGame) {
+                    //TODO: Show error
+                    return null;
                 }
 
                 if (File.Exists(args[1]))
