@@ -15,6 +15,7 @@ using Octgn.Library;
 using Octgn.Online;
 using Octgn.Online.Hosting;
 using System.Threading.Tasks;
+using Octgn.Communication;
 
 namespace Octgn.Launchers
 {
@@ -77,11 +78,12 @@ namespace Octgn.Launchers
 
         async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
+            var user = new User(Guid.NewGuid().ToString(), Prefs.Username);
 
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUser = Program.LobbyClient?.User,
+                HostUser = user,
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
@@ -91,9 +93,6 @@ namespace Octgn.Launchers
                 Spectators = true,
             };
 
-            if (Program.LobbyClient?.User != null) {
-                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User).IconUrl;
-            }
             // We don't use a userid here becuase we're doing a local game.
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
             hs.Start();

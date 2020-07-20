@@ -12,9 +12,7 @@ using Octgn.Core;
 using Octgn.Extentions;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-
 using log4net;
-using Octgn.Communication;
 
 namespace Octgn
 {
@@ -50,7 +48,6 @@ namespace Octgn
             Task.Factory.StartNew(() => CheckTimerOnElapsed(null, null)).ContinueWith(
                 x =>
                 { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
-            Program.LobbyClient.Connected += LobbyClient_Connected;
             var sti = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/subscriberbenefits.txt"));
             var benifits = new List<string>();
             using (var sr = new StreamReader(sti.Stream))
@@ -92,50 +89,23 @@ namespace Octgn
             bool? ret = null;
             try
             {
-                if (Program.LobbyClient.IsConnected)
+                if (string.IsNullOrWhiteSpace(Prefs.Password.Decrypt())) ret = false;
+                else
                 {
                     var client = new ApiClient();
-                    var res = IsSubbedResult.UnknownError;
-
-                    if (!String.IsNullOrWhiteSpace(Prefs.Password.Decrypt()))
-                    {
-                        res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
-                    }
-                    else
-                        res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
+                    var res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
                     switch (res)
                     {
                         case IsSubbedResult.Ok:
                             ret = true;
                             break;
-						case IsSubbedResult.AuthenticationError:
-						case IsSubbedResult.NoSubscription:
-						case IsSubbedResult.SubscriptionExpired:
-                            ret = false;
-                            break;
+                    case IsSubbedResult.AuthenticationError:
+                    case IsSubbedResult.NoSubscription:
+                    case IsSubbedResult.SubscriptionExpired:
+                        ret = false;
+                        break;
                     }
                 }
-                else
-                {
-                    if (string.IsNullOrWhiteSpace(Prefs.Password.Decrypt())) ret = false;
-                    else
-                    {
-                        var client = new ApiClient();
-                        var res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
-                        switch (res)
-                        {
-                            case IsSubbedResult.Ok:
-                                ret = true;
-                                break;
-						case IsSubbedResult.AuthenticationError:
-						case IsSubbedResult.NoSubscription:
-						case IsSubbedResult.SubscriptionExpired:
-                            ret = false;
-                            break;
-                        }
-                    }
-                }
-
             }
             catch (Exception e)
             {
@@ -180,11 +150,6 @@ namespace Octgn
             //Log.Info("Broadcasting Sub");
             //if(PrevSubValue != null && PrevSubValue != false)
             //    Program.LobbyClient.SetSub((bool)PrevSubValue);
-        }
-
-        private void LobbyClient_Connected(object sender, ConnectedEventArgs results)
-        {
-            this.UpdateIsSubbed();
         }
 
     }
