@@ -185,43 +185,47 @@ namespace Octgn.Play
             this.ChatToggleChecked.IsChecked = false;
             this.PreGameLobby.OnClose += delegate
             {
-                if (this.PreGameLobby.StartingGame)
-                {
-                    PreGameLobby.Visibility = Visibility.Collapsed;
-                    if (Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
-                        Program.GameEngine.ScriptEngine.SetupEngine(false);
+                try {
+                    if (this.PreGameLobby.StartingGame) {
+                        PreGameLobby.Visibility = Visibility.Collapsed;
+                        if (Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
+                            Program.GameEngine.ScriptEngine.SetupEngine(false);
 
 
-                    table = new TableControl { DataContext = Program.GameEngine.Table, IsTabStop = true };
-                    KeyboardNavigation.SetIsTabStop(table, true);
-                    TableHolder.Child = table;
+                        table = new TableControl { DataContext = Program.GameEngine.Table, IsTabStop = true };
+                        KeyboardNavigation.SetIsTabStop(table, true);
+                        TableHolder.Child = table;
 
-                    table.UpdateSided();
-                    Keyboard.Focus(table);
+                        table.UpdateSided();
+                        Keyboard.Focus(table);
 
-					Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
+                        Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
 
-                    //Program.GameEngine.Ready();
-                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false)
-                    {
-                        MenuConsole.Visibility = Visibility.Visible;
-                        var wnd = new DeveloperWindow() { Owner = this };
-                        wnd.Show();
-                    }
-                    Program.GameSettings.PropertyChanged += (sender, args) =>
-                        {
-                            if (Program.IsHost)
-                            {
+                        //Program.GameEngine.Ready();
+                        if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false && Program.GameEngine.IsReplay == false) {
+                            MenuConsole.Visibility = Visibility.Visible;
+                            var wnd = new DeveloperWindow() { Owner = this };
+                            wnd.Show();
+                        }
+                        Program.GameSettings.PropertyChanged += (sender, args) => {
+                            if (Program.IsHost) {
                                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable,
                                                             Program.GameSettings.AllowSpectators,
                                                             Program.GameSettings.MuteSpectators);
                             }
                         };
-                }
-                else
-                {
+                    } else {
+                        IsRealClosing = true;
+                        this.TryClose();
+                    }
+                } catch (Exception ex) {
+                    Log.Fatal($"PreGameLobby On Close Error: {ex.Message}", ex);
+
+                    MessageBox.Show("Octgn encountered an error and needs to close.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                     IsRealClosing = true;
-                    this.TryClose();
+
+                    TryClose();
                 }
             };
 
@@ -898,7 +902,7 @@ namespace Octgn.Play
             {
                 this._chatWindow.FocusInput();
             }
-            
+
         }
 
         private void ShowAboutWindow(object sender, RoutedEventArgs e)
@@ -1114,7 +1118,7 @@ namespace Octgn.Play
                 this.Column4ChatWidth.Width = new GridLength(DefaultChatWidth);
                 if(this._chatWindow != null && _chatWindow.IsInitialized)
                 {
-                    this._chatWindow.Close();                    
+                    this._chatWindow.Close();
                 }
             }
 

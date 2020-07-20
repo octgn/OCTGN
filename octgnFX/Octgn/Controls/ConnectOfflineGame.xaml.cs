@@ -4,14 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 
 using Octgn.Core;
 using Octgn.Core.DataManagers;
-using Octgn.Networking;
 using Octgn.ViewModels;
 
 using UserControl = System.Windows.Controls.UserControl;
@@ -101,20 +99,6 @@ namespace Octgn.Controls
                 Games.Add(l);
         }
 
-        async Task Connect(string username, DataGameViewModel game, string userhost, string userport, string password)
-        {
-            Successful = false;
-            var port = -1;
-            this.ValidateFields(username, game, userhost, userport, password, out var host, out port);
-
-            Program.IsHost = false;
-            Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
-
-            Program.Client = new ClientSocket(host, port);
-            await Program.Client.Connect();
-            Successful = true;
-        }
-
         void ValidateFields(string username, DataGameViewModel game, string host, string port, string password, out IPAddress ip, out int conPort)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -196,11 +180,12 @@ namespace Octgn.Controls
                 var username = TextBoxUserName.Text;
                 var password = TextBoxPassword.Password ?? "";
 
-                this.IsEnabled = false;
-                ProgressBar.Visibility = Visibility.Visible;
-                ProgressBar.IsIndeterminate = true;
+                ValidateFields(username, game, strHost, strPort, password, out var host, out var port);
 
-                await this.Connect(username, game, strHost, strPort, password);
+                Program.IsHost = false;
+                Program.JodsEngine.JoinGame(game, host, port, username, password);
+
+                Successful = true;
 
                 this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
                 this.Password = TextBoxPassword.Password ?? "";

@@ -4,11 +4,7 @@
                  xmlns:Controls="clr-namespace:Octgn.Controls"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
-    xmlns:login="clr-namespace:Octgn.Tabs.Login"
-    xmlns:playtab="clr-namespace:Octgn.Tabs.Play"
     xmlns:historytab="clr-namespace:Octgn.Tabs.GameHistory"
-    xmlns:converters="clr-namespace:Octgn.Utils.Converters"
-    xmlns:windows="clr-namespace:Octgn.Windows"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
     x:Name="me"
@@ -55,12 +51,6 @@
         </Border>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <TabControl x:Name="TabControlMain" Grid.Row="2" Style="{StaticResource MainTab}">
-            <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent" Style="{StaticResource MainTabItem}">
-                <login:LoginTab></login:LoginTab>
-            </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Play or Spectate" Style="{StaticResource MainTabItem}">
-                <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
-            </TabItem>
             <TabItem x:Name="TabItemHistory" Header="Game History" Style="{StaticResource MainTabItem}">
                 <historytab:GameHistoryTab x:Name="TabHistory"/>
             </TabItem>
@@ -71,13 +61,5 @@
                 <challengeBoards:ChallengeBoards/>
             </TabItem>
         </TabControl>
-        <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" Background="Transparent" HorizontalAlignment="Right">
-            <Border Padding="5,0,5,0" CornerRadius="5" Background="#dd333333" Visibility="Visible">
-                <Border.Resources>
-                    <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter"/>
-                </Border.Resources>
-                <Label VerticalAlignment="Center" Margin="5" Content="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}" Foreground="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}"/>
-            </Border>
-        </StackPanel>
     </Grid>
 </Controls:DecorableWindow>

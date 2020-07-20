@@ -2,42 +2,56 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using log4net;
 using Octgn.Core;
 using Octgn.Core.DataManagers;
 using Octgn.Library;
 using Octgn.Online.Hosting;
 using Octgn.Tabs.GameHistory;
 using Octgn.Tabs.Play;
+using Octgn.ViewModels;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Octgn
 {
     public class JodsEngineIntegration
     {
-        public void HostGame(HostedGame hostedGame) {
-            var args = "";
+        private readonly static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public Task<bool> HostGame(HostedGame hostedGame, string username) {
+            new HostedGameProcess(
+                hostedGame,
+                X.Instance.Debug,
+                true
+            ).Start();
 
+            var args = "-h ";
+            args += $"-u \"{username}\" ";
+            args += "-k \"" + HostedGame.Serialize(hostedGame) + "\"";
 
-            LaunchJodsEngine(args);
-            throw new NotImplementedException();
+            return LaunchJodsEngine(args);
         }
 
         public void HostGame(int? hostPort, Guid? gameId) {
             throw new NotImplementedException();
         }
 
-        public void LaunchDeckEditor(string deckPath = null) {
+        public Task<bool> LaunchDeckEditor(string deckPath = null) {
             if (string.IsNullOrWhiteSpace(deckPath)) {
-                LaunchJodsEngine("-e");
+                return LaunchJodsEngine("-e");
             } else {
-                LaunchJodsEngine($"-e -d \"{deckPath}\"");
+                return LaunchJodsEngine($"-e -d \"{deckPath}\"");
             }
         }
 
-        public void JoinGame(DataNew.Entities.Game game, HostedGame hostedGame, string password) {
+        public Task<bool> JoinGame(DataNew.Entities.Game game, HostedGame hostedGame, string password) {
             var username = Program.LobbyClient.User.DisplayName;
 
             var host = hostedGame.HostAddress;
@@ -85,7 +99,7 @@ namespace Octgn
         internal void JoinOfflineGame() => throw new NotImplementedException();
         internal void HostGame() => throw new NotImplementedException();
 
-        private void LaunchJodsEngine(string args) {
+        private async Task<bool> LaunchJodsEngine(string args) {
             var engineDirectory = "jodsengine";
             if (X.Instance.Debug) {
                 engineDirectory = "..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1";
@@ -99,7 +113,42 @@ namespace Octgn
             psi.UseShellExecute = true;
             psi.WorkingDirectory = engineDirectory;
 
-            Process.Start(psi);
+            var proc = Process.Start(psi);
+
+            try {
+                using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
+                    await Task.Run(async () => {
+                        while (proc.MainWindowHandle == IntPtr.Zero) {
+                            await Task.Delay(2000, cts.Token);
+                            if (proc.HasExited) {
+                                break;
+                            }
+                        }
+                    }, cts.Token);
+                }
+            } catch (OperationCanceledException) {
+                Log.Warn("Engine did not show UI withing alloted time.");
+
+                MessageBox.Show("Engine appears to be frozen, please try again. If this continues to happen, let us know.", "Frozen Engine", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                try {
+                    proc.Kill();
+                } catch (Exception ex) {
+                    Log.Warn($"Error killing proc: {ex.Message}", ex);
+                }
+
+                return false;
+            }
+
+            if (proc.HasExited) {
+                MessageBox.Show("Engine prematurely shutdown, please try again. If this continues to happen, let us know.", "Engine Shutdown", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return false;
+            }
+
+            return true;
         }
+
+        internal void JoinGame(DataGameViewModel game, IPAddress host, int port, string username, string password) => throw new NotImplementedException();
     }
 }

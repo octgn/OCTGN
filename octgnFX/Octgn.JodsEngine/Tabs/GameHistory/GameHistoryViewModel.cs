@@ -1,4 +1,5 @@
-﻿using Octgn.Play.Save;
+﻿using Octgn.Core.Play.Save;
+using Octgn.Play.Save;
 using Octgn.Play.State;
 using System;
 using System.Collections.ObjectModel;
@@ -93,7 +94,7 @@ namespace Octgn.Tabs.GameHistory
         }
         private string _replayFile;
 
-        public bool HasReplay => 
+        public bool HasReplay =>
             !string.IsNullOrWhiteSpace(ReplayFile)
             && File.Exists(ReplayFile);
 
@@ -208,7 +209,7 @@ namespace Octgn.Tabs.GameHistory
 
         public GameHistoryPlayerViewModel() { }
 
-        public GameHistoryPlayerViewModel(PlayerSaveState player) {
+        public GameHistoryPlayerViewModel(IPlayerSaveState player) {
             Name = player.Nickname;
             Color = new SolidColorBrush(player.Color);
         }

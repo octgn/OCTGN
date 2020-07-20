@@ -198,14 +198,19 @@ namespace Octgn.Controls
             ProgressBar.IsIndeterminate = false;
         }
 
-        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        Task<bool> StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var octgnVersion = typeof(Server.Server).Assembly.GetName().Version;
+
+            var user = Program.LobbyClient?.User
+                ?? new User(Guid.NewGuid().ToString(), Username);
+
+            var username = user.DisplayName;
 
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUser = Program.LobbyClient?.User ?? new User(Guid.NewGuid().ToString(), Username),
+                HostUser = user,
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
@@ -219,10 +224,10 @@ namespace Octgn.Controls
                 hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
-            Program.JodsEngine.HostGame(hg);
+            return Program.JodsEngine.HostGame(hg, username);
         }
 
-        async Task StartOnlineGame(DataNew.Entities.Game game, string name, string password)
+        async Task<bool> StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
             var client = new Octgn.Site.Api.ApiClient();
             if (!await client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
@@ -255,7 +260,9 @@ namespace Octgn.Controls
                 throw new UserMessageException("The Game Service is currently offline. Please try again.");
             }
 
-            Program.JodsEngine.JoinGame(game, result, Password);
+            var joinResult = await Program.JodsEngine.JoinGame(game, result, Password);
+
+            return joinResult;
         }
 
         #endregion
@@ -283,15 +290,24 @@ namespace Octgn.Controls
 
                 //var startTime = DateTime.Now;
 
+                bool result;
                 if (isLocalGame) {
-                    await StartLocalGame(Game, Gamename, Password);
+                    result = await Task.Run(() => StartLocalGame(Game, Gamename, Password));
                 } else {
-                    await StartOnlineGame(Game, Gamename, Password);
+                    result = await Task.Run(() => StartOnlineGame(Game, Gamename, Password));
                 }
 
-                Prefs.LastRoomName = this.Gamename;
-                Prefs.LastHostedGameType = this.Game.Id;
+                if (!result) {
+                    Log.Warn("Failed to start engine");
 
+                    error = "Engine could not be started, please try again. If this continues to happen, please let us know.";
+
+                    SuccessfulHost = false;
+                } else {
+                    Prefs.LastRoomName = this.Gamename;
+                    Prefs.LastHostedGameType = this.Game.Id;
+                    SuccessfulHost = true;
+                }
             } catch (Exception ex) {
                 if (ex is UserMessageException) {
                     error = ex.Message;

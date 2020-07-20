@@ -16,6 +16,7 @@
     <None Remove="CurrentReleaseVersion.txt" />
     <None Remove="CurrentTestVersion.txt" />
     <None Remove="CurrentVersion.txt" />
+    <None Remove="logging.config" />
     <None Remove="Resources\admin.png" />
     <None Remove="Resources\Anchor.png" />
     <None Remove="Resources\Avatar9_80.jpg" />
@@ -141,6 +142,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="logging.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\FileIcons\Deck.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -363,12 +367,6 @@
     <Compile Update="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Controls\ConnectOfflineGame.xaml.cs">
-      <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Controls\HostGameSettings.xaml.cs">
-      <DependentUpon>HostGameSettings.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
@@ -536,12 +534,6 @@
     <Compile Update="Tabs\GameHistory\GameHistoryTab.xaml.cs">
       <DependentUpon>GameHistoryTab.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Tabs\Login\LoginTab.xaml.cs">
-      <DependentUpon>LoginTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Tabs\Play\PlayTab.xaml.cs">
-      <DependentUpon>PlayTab.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Tabs\Watch\WatchList.xaml.cs">
       <DependentUpon>WatchList.xaml</DependentUpon>
     </Compile>
@@ -630,12 +622,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Controls\ConnectOfflineGame.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Controls\HostGameSettings.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Controls\MissedMessagesBreak.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -832,12 +818,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Tabs\GameHistory\GameHistoryTab.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Tabs\Login\LoginTab.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Tabs\Play\PlayTab.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Tabs\Watch\WatchList.xaml">

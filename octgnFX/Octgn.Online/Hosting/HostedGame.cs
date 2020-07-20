@@ -1,8 +1,11 @@
-﻿using Octgn.Communication;
+﻿using Newtonsoft.Json;
+using Octgn.Communication;
 using Octgn.Communication.Packets;
+using Octgn.Communication.Serializers;
 using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Octgn.Online.Hosting
 {
@@ -71,6 +74,9 @@ namespace Octgn.Online.Hosting
             }
         }
 
+        /// <summary>
+        /// The Hostname portion of <see cref="HostAddress"/>.
+        /// </summary>
         public string Host{
             get {
                 var errorString = $"{nameof(HostAddress)} is not in the correct format 'host:port'. Can not determin the port from '{HostAddress}'";
@@ -87,6 +93,10 @@ namespace Octgn.Online.Hosting
             }
         }
 
+        /// <summary>
+        /// Address of the server hosting this game.
+        /// The format is 'host:port'
+        /// </summary>
         [DataMember]
         public string HostAddress { get; set; }
 
@@ -183,6 +193,26 @@ namespace Octgn.Online.Hosting
 
         public static void AddIdToPacket(DictionaryPacket packet, string id) {
             packet["hostedgameid"] = id;
+        }
+
+        public static string Serialize(HostedGame hostedGame) {
+            if (hostedGame == null) throw new ArgumentNullException(nameof(hostedGame));
+
+            var hostedGameJson = JsonConvert.SerializeObject(hostedGame);
+
+            var hostedGameBytes = Encoding.UTF8.GetBytes(hostedGameJson);
+
+            return Convert.ToBase64String(hostedGameBytes);
+        }
+
+        public static HostedGame Deserialize(string serializedGame) {
+            if (string.IsNullOrWhiteSpace(serializedGame)) throw new ArgumentNullException(nameof(serializedGame));
+
+            var hostedGameBytes = Convert.FromBase64String(serializedGame);
+
+            var hostedGameJson = Encoding.UTF8.GetString(hostedGameBytes);
+
+            return JsonConvert.DeserializeObject<HostedGame>(hostedGameJson);
         }
     }
 }

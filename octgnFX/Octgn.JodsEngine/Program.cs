@@ -41,7 +41,6 @@ namespace Octgn
         public static GameEngine GameEngine;
 
         public static string CurrentOnlineGameName = "";
-        public static Library.Communication.Client LobbyClient;
 
         public static GameSettings GameSettings { get; set; }
         internal static IClient Client;
@@ -131,9 +130,6 @@ namespace Octgn
             Log.Info("Creating Lobby Client");
             var handshaker = new DefaultHandshaker();
             var connectionCreator = new TcpConnectionCreator(handshaker);
-            var lobbyClientConfig = new LibraryCommunicationClientConfig(connectionCreator);
-
-            LobbyClient = new Octgn.Library.Communication.Client(lobbyClientConfig, typeof(Program).Assembly.GetName().Version);
 
             //Log.Info("Adding trace listeners");
             //Debug.Listeners.Add(DebugListener);
@@ -368,8 +364,6 @@ namespace Octgn
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                if (LobbyClient != null)
-                    LobbyClient.Stop();
                 WindowManager.Shutdown();
 
                 //Apparently this can be null sometimes?
