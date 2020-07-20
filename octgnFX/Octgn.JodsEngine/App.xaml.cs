@@ -22,7 +22,6 @@ using System.Threading;
 
 namespace Octgn
 {
-
     public partial class OctgnApp
     {
         // Need this to load Octgn.Core for the logger
@@ -31,12 +30,24 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Console.WriteLine("Hi");
+
+
             Thread.CurrentThread.Name = "MAIN";
 
             // Need this to load Octgn.Core for the logger
             Debug.WriteLine(bi);
-            GlobalContext.Properties["version"] = Const.OctgnVersion;
-            GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
+
+            { // Configure logging
+                GlobalContext.Properties["version"] = Const.OctgnVersion;
+                GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
+
+                var repository = LogManager.GetRepository(Assembly.GetCallingAssembly());
+
+                var fileInfo = new FileInfo("logging.config");
+
+                log4net.Config.XmlConfigurator.Configure(repository, fileInfo);
+            }
 
             int i = 0;
             foreach (var a in e.Args)

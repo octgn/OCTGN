@@ -16,18 +16,13 @@ using Octgn.Core.DataManagers;
 using Octgn.DeckBuilder;
 using Octgn.Extentions;
 using Octgn.Controls;
-using Octgn.Library;
 using log4net;
-using Octgn.Communication;
-using Octgn.Communication.Modules;
 
 namespace Octgn.Windows
 {
     public partial class Main : INotifyPropertyChanged
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        public ConnectionStatus ConnectionStatus => Program.LobbyClient.Status;
 
         public Main()
         {
@@ -36,37 +31,14 @@ namespace Octgn.Windows
             if (Program.IsReleaseTest) {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
-            Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
-            Program.LobbyClient.Connected += LobbyClient_Connected;
-            Program.LobbyClient.Connecting += LobbyClient_Connecting;
-            Program.LobbyClient.Stats().StatsModuleUpdate += LobbyClient_StatsModuleUpdate;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             this.Loaded += OnLoaded;
             this.Activated += OnActivated;
         }
 
-        private void LobbyClient_StatsModuleUpdate(object sender, StatsModuleUpdateEventArgs e) {
-            OnPropertyChanged(nameof(ConnectionStatus));
-        }
-
-        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
-        {
-            OnPropertyChanged(nameof(ConnectionStatus));
-        }
-
-        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
-        {
-            OnPropertyChanged(nameof(ConnectionStatus));
-        }
-
-        private void LobbyClient_Connecting(object sender, ConnectingEventArgs e) {
-            OnPropertyChanged(nameof(ConnectionStatus));
-        }
-
         private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
-            TabCustomGamesList.VisibleChanged(TabCustomGames.IsSelected);
             TabHistory.VisibleChanged(TabItemHistory.IsSelected);
         }
 
@@ -138,11 +110,6 @@ namespace Octgn.Windows
                     return;
                 }
             }
-            Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
-            Program.LobbyClient.Connected -= LobbyClient_Connected;
-            Program.LobbyClient.Connecting -= LobbyClient_Connecting;
-            Program.LobbyClient.Stats().StatsModuleUpdate -= LobbyClient_StatsModuleUpdate;
-            Program.LobbyClient.Stop();
             Task.Factory.StartNew(Program.Exit);
         }
 
@@ -159,8 +126,6 @@ namespace Octgn.Windows
         {
             switch (keyEventArgs.Key) {
                 case Key.F7:
-                    if (X.Instance.Debug || Program.IsReleaseTest)
-                        Program.LobbyClient.Stop();
                     break;
             }
         }

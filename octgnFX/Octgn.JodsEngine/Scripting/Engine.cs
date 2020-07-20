@@ -586,6 +586,8 @@ namespace Octgn.Scripting
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
             _engine.Execute(Properties.Resources.CaseInsensitiveDict, scope);
 
+            _engine.Runtime.LoadAssembly(typeof(Directory).Assembly);
+
             var file = Versioned.GetFile("PythonApi", Program.GameEngine.Definition.ScriptVersion);
             using (var str = Application.GetResourceStream(new Uri(file.Path)).Stream)
             using (var sr = new StreamReader(str))

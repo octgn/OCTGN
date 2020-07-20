@@ -1,6 +1,4 @@
-﻿using Octgn.Library.Exceptions;
-
-namespace Octgn
+﻿namespace Octgn
 {
     using System;
     using System.IO;
@@ -62,6 +60,7 @@ namespace Octgn
                 var editorOnly = false;
                 var joinGame = false;
                 var hostGame = false;
+                var spectate = false;
                 int? hostport = null;
                 Guid? gameid = null;
                 string deckPath = null;
@@ -75,9 +74,10 @@ namespace Octgn
                     {"x|devmode", x => DevMode = true},
                     {"e|editor", x => editorOnly = true},
                     {"j|join", x => joinGame = true },
+                    {"h|joinashost", x => hostGame = true },
                     {"u|username=", x => username = x },
-                    {"s|hostedgame=", x => hostedGameString = x },
-                    {"h|host", x => hostGame = true }
+                    {"k|hostedgame=", x => hostedGameString = x },
+                    {"s|spectate", x => spectate = true }
                 };
                 try
                 {
@@ -90,13 +90,23 @@ namespace Octgn
                 if (tableOnly) {
                     return new TableLauncher(hostport, gameid);
                 } else if (joinGame) {
-                    var hostedGame = (HostedGame)DeserializeHostedgameString(hostedGameString);
+                    var hostedGame = HostedGame.Deserialize(hostedGameString);
 
-                    return new JoinGameLauncher(username, hostedGame);
+                    return new JoinGameLauncher(
+                        hostedGame,
+                        username,
+                        false,
+                        spectate
+                    );
                 } else if (hostGame) {
-                    var hostedGame = (HostedGame)DeserializeHostedgameString(hostedGameString);
+                    var hostedGame = HostedGame.Deserialize(hostedGameString);
 
-                    return new HostGameLauncher(username, hostedGame);
+                    return new JoinGameLauncher(
+                        hostedGame,
+                        username,
+                        true,
+                        spectate
+                    );
                 } else if(tableOnly && joinGame) {
                     //TODO: Show error
                     return null;

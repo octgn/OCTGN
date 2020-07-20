@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using log4net;
 using Octgn.Library.ExtensionMethods;
 using System.Threading.Tasks;
+using System.Net;
+using System.Runtime.InteropServices;
 
 namespace Octgn.Library.Networking
 {
@@ -15,7 +16,7 @@ namespace Octgn.Library.Networking
         public SocketStatus Status { get; internal set; }
         public IPEndPoint EndPoint { get; internal set; }
         public ISocketMessageProcessor MessageProcessor { get; internal set; }
-        public TcpClient Client { get; internal set; }
+        public TcpClient Client { get; private set; }
 
         internal bool FirstConnection = true;
 
@@ -37,7 +38,7 @@ namespace Octgn.Library.Networking
                     try { this.Client.Close(); }
                     catch { }
                 }
-                this.Client = new TcpClient();
+                Client = new MyBBTcpClientOhMi();
                 this.MessageProcessor = processor;
             }
         }
@@ -52,7 +53,7 @@ namespace Octgn.Library.Networking
 				Log.DebugFormat("Setup {0}",client.Client.RemoteEndPoint);
                 this.EndPoint = client.Client.RemoteEndPoint as IPEndPoint;
                 this.MessageProcessor = processor;
-                this.Client = client;
+                Client = client;
                 this.Status = SocketStatus.Connected;
             }
             this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
@@ -71,16 +72,19 @@ namespace Octgn.Library.Networking
         {
             if (this.EndPoint == null) throw new InvalidOperationException("EndPoint must be set.");
             if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't connect if the socket isn't disconnected");
-            Log.Debug("Connect");
-            if (this.Client.IsDisposed())
-            {
-                this.Client = new TcpClient();
+            Log.Debug($"Connect to {EndPoint.Address}:{EndPoint.Port}");
+            if(Client is MyBBTcpClientOhMi bb && bb.IsDisposed) {
+                Client = new MyBBTcpClientOhMi();
             }
             await this.Client.ConnectAsync(this.EndPoint.Address, this.EndPoint.Port);
+            Log.Debug("Connected");
+
             this.Status = SocketStatus.Connected;
 
             this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
             this.FirstConnection = false;
+
+            Log.Debug("Receiving");
             var bundle = new SocketReceiveBundle(this.Client);
             this.Client.Client.BeginReceive(
                 bundle.Buffer,
@@ -206,8 +210,24 @@ namespace Octgn.Library.Networking
             {
 
             }
-            this.Client = null;
+            Client = null;
             this.EndPoint = null;
+        }
+
+        private class MyBBTcpClientOhMi : TcpClient
+        {
+            public bool IsDisposed { get; private set; }
+
+            public MyBBTcpClientOhMi() { }
+
+            public MyBBTcpClientOhMi(TcpClient other) {
+            }
+
+            protected override void Dispose(bool disposing) {
+                IsDisposed = true;
+
+                base.Dispose(disposing);
+            }
         }
     }
 
