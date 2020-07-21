@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Octgn.Windows;
 using System.IO;
 using System;
+using Octgn.Library.Exceptions;
 
 namespace Octgn.Launchers
 {
@@ -33,7 +34,6 @@ namespace Octgn.Launchers
 
                 return win;
             } catch (Exception e) {
-
                 string msg;
                 if (string.IsNullOrWhiteSpace(DeckPath)) {
                     msg = $"Deck editor failed to launch: {e.Message}";
@@ -43,17 +43,12 @@ namespace Octgn.Launchers
 
                 Log.Warn(msg, e);
 
-                MessageBox.Show(
+                throw new UserMessageException(
+                    UserMessageExceptionMode.Blocking,
                     msg,
-                    "Deck Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
+                    e
                 );
-
-                this.Shutdown = true;
             }
-
-            return null;
         }
     }
 }

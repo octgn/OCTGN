@@ -1,4 +1,4 @@
-<Window x:Class="Octgn.Windows.UpdateChecker"
+<Window x:Class="Octgn.Windows.LoadingWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Loading Octgn..."

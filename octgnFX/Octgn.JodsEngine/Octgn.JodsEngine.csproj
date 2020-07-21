@@ -562,8 +562,8 @@
     <Compile Update="Windows\PickCardFromList.xaml.cs">
       <DependentUpon>PickCardFromList.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Windows\UpdateChecker.xaml.cs">
-      <DependentUpon>UpdateChecker.xaml</DependentUpon>
+    <Compile Update="Windows\LoadingWindow.xaml.cs">
+      <DependentUpon>LoadingWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -848,7 +848,7 @@
     <Page Update="Windows\PickCardFromList.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Windows\UpdateChecker.xaml">
+    <Page Update="Windows\LoadingWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

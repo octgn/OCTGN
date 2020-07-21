@@ -11,32 +11,21 @@ using Octgn.Library;
 using System.Windows.Markup;
 using System.Windows.Threading;
 using Octgn.Core;
-using Octgn.Core.Util;
 using Octgn.Library.Exceptions;
 
 using log4net;
 using Octgn.Utils;
 using Octgn.Communication;
-using System.Net;
 using System.Threading;
 
 namespace Octgn
 {
     public partial class OctgnApp
     {
-        // Need this to load Octgn.Core for the logger
-        internal static BigInteger bi = new BigInteger(12);
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            Console.WriteLine("Hi");
-
-
+        protected override void OnStartup(StartupEventArgs e) {
             Thread.CurrentThread.Name = "MAIN";
-
-            // Need this to load Octgn.Core for the logger
-            Debug.WriteLine(bi);
 
             { // Configure logging
                 GlobalContext.Properties["version"] = Const.OctgnVersion;
@@ -47,68 +36,24 @@ namespace Octgn
                 var fileInfo = new FileInfo("logging.config");
 
                 log4net.Config.XmlConfigurator.Configure(repository, fileInfo);
+
+                LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
             }
 
-            int i = 0;
-            foreach (var a in e.Args)
-            {
-                Log.InfoFormat("Arg[{0}]: {1}", i, a);
+            var i = 0;
+            foreach (var arg in e.Args) {
+                Log.InfoFormat("Arg[{0}]: {1}", i, arg);
+
                 i++;
             }
 
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
-
-            Log.Info("Creating Config class");
-            try
-            {
-                Config.Instance = new Config();
-            }
-            catch (Exception ex)
-            {
-                //TODO: Find a better user experience for dealing with this error. Like a wizard to fix the problem or something.
-                Log.Fatal("Error loading config", ex);
-
-                MessageBox.Show($"Error loading Config:{Environment.NewLine}{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                Shutdown(1);
-
-                return;
-            }
-
-            Environment.SetEnvironmentVariable("OCTGN_DATA", Config.Instance.DataDirectoryFull, EnvironmentVariableTarget.Process);
-
-            // Check for test mode
-            var isTestRelease = false;
-            try
-            {
-                isTestRelease = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
-            }
-            catch(Exception ex)
-            {
-                Log.Warn("Error checking for test mode", ex);
-            }
-
             Signal.OnException += Signal_OnException;
-            if (!X.Instance.Debug)
-            {
+            if (!X.Instance.Debug) {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-                Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
+                Dispatcher.UnhandledException += CurrentOnDispatcherUnhandledException;
             }
 
-
-            if (e.Args.Any())
-            {
-                Properties["ArbitraryArgName"] = e.Args[0];
-            }
-
-            Log.Debug("Calling Base");
             base.OnStartup(e);
-            Log.Debug("Base called.");
-            Program.Start(e.Args, isTestRelease);
-
         }
 
         private static void ShowUserMessageException(UserMessageException userMessageException) {
@@ -130,21 +75,18 @@ namespace Octgn
             }
         }
 
-        private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
+        private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
             if (e.Exception is UserMessageException userMessageException) {
                 ShowUserMessageException(userMessageException);
 
                 e.Handled = true;
             }
-            if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase))
-            {
+            if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)) {
                 e.Handled = true;
             }
         }
 
-        private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
+        private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
             var ex = (Exception)e.ExceptionObject;
             var handled = false;
             var ge = Program.GameEngine;
@@ -158,28 +100,22 @@ namespace Octgn
                 ShowUserMessageException(userMessageException);
 
                 handled = true;
-            }
-            else if (ex is XamlParseException)
-            {
+            } else if (ex is XamlParseException) {
                 var er = ex as XamlParseException;
                 Log.Warn("unhandled exception " + gameString, ex);
                 handled = true;
                 ShowErrorMessageBox("Error", "There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
-            }
-            else if (ex is IOException && (ex as IOException).Message.Contains("not enough space"))
-            {
+            } else if (ex is IOException && (ex as IOException).Message.Contains("not enough space")) {
                 handled = true;
                 ShowErrorMessageBox("Error", "Your computer has run out of hard drive space and OCTGN will have to shut down. Please resolve this before opening OCTGN back up again.");
             }
-            if (!handled)
-            {
+            if (!handled) {
                 if (e.IsTerminating)
                     Log.Fatal("UNHANDLED EXCEPTION " + gameString, ex);
                 else
                     Log.Error("UNHANDLED EXCEPTION " + gameString, ex);
             }
-            if (e.IsTerminating)
-            {
+            if (e.IsTerminating) {
                 if (handled)
                     ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!");
                 else
@@ -196,13 +132,11 @@ namespace Octgn
             });
         }
 
-        private static void ShowErrorMessageBox(string title, string message)
-        {
+        private static void ShowErrorMessageBox(string title, string message) {
             Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Exclamation)));
         }
 
-        protected override void OnExit(ExitEventArgs e)
-        {
+        protected override void OnExit(ExitEventArgs e) {
             //X.Instance.Try(PlayDispatcher.Instance.Dispose);
             //ExceptionlessClient.Default.Shutdown();
             // Fix: this can happen when the user uses the system close button.

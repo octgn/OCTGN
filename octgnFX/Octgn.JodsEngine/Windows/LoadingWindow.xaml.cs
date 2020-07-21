@@ -2,28 +2,27 @@ using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Octgn.Annotations;
 using Octgn.Library;
 
 using log4net;
+using Octgn.Loaders;
+using Octgn.Launchers;
+using Octgn.Library.Exceptions;
+using System.Threading.Tasks;
 
 namespace Octgn.Windows
 {
-    public partial class UpdateChecker : INotifyPropertyChanged, ILoadingView
+    public partial class LoadingWindow : INotifyPropertyChanged, ILoadingView
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        public bool Shutdown { get; private set; }
+        private readonly static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private bool _realCloseWindow = false;
 
-        private readonly List<Func<ILoadingView, Task>> _loaders = new List<Func<ILoadingView, Task>>();
-
-        public UpdateChecker() {
+        public LoadingWindow() {
             Loaded += OnWindowLoaded;
+
             InitializeComponent();
         }
 
@@ -32,15 +31,49 @@ namespace Octgn.Windows
 
             Log.Debug(nameof(OnWindowLoaded));
 
+            var shutdown = false;
             try {
                 UpdateStatus("Loading...");
                 Log.Info("Loading...");
 
-                await Task.Delay(60000);
+                await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
 
-                foreach (var loader in _loaders) {
-                    await loader(this);
+                var loader = new Loader();
+
+                loader.Loaders.Add(new ConfigLoader());
+                loader.Loaders.Add(new NetworkLoader());
+                loader.Loaders.Add(new GraphicsLoader());
+                loader.Loaders.Add(new GameMessageLoader());
+                loader.Loaders.Add(new EnvironmentLoader());
+                loader.Loaders.Add(new VersionedLoader());
+
+                await loader.Load(this);
+
+                UpdateStatus("Launching...");
+
+                await Task.Delay(100);
+
+                if (Program.Launcher == null) {
+                    Log.Warn($"No launcher specified, using Deck Editor");
+                    Program.Launcher = new DeckEditorLauncher();
                 }
+
+                if (!await Program.Launcher.Launch(this)) {
+                    shutdown = true;
+                }
+            } catch (UserMessageException ex) {
+                Log.Error($"Error loading: {ex.Message}", ex);
+
+                var message = ex.Message;
+                if (X.Instance.Debug) {
+                    message = message + Environment.NewLine + ex.ToString();
+                }
+
+                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Environment.ExitCode = 70;
+
+                shutdown = true;
             } catch (Exception ex) {
                 Log.Error($"Error loading: {ex.Message}", ex);
 
@@ -51,23 +84,24 @@ namespace Octgn.Windows
 
                 MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                _realCloseWindow = true;
-
                 Environment.ExitCode = 69;
-                Shutdown = true;
+
+                shutdown = true;
             }
 
-            Log.Info("Load complete");
-
             _realCloseWindow = true;
+
+            if (shutdown) {
+                Log.Warn("Shutting down");
+
+                Program.Exit();
+            } else {
+                Log.Info("Load complete");
+            }
 
             // Expected: Managed Debugging Assistant NotMarshalable
             // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
             Close();
-        }
-
-        public void AddLoader(Func<ILoadingView, Task> load) {
-            _loaders.Add(load);
         }
 
         public void UpdateStatus(string stat) {
@@ -87,7 +121,7 @@ namespace Octgn.Windows
                 Log.Info("Real close");
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName) {
@@ -97,7 +131,6 @@ namespace Octgn.Windows
 
     public interface ILoadingView
     {
-        void AddLoader(Func<ILoadingView, Task> loader);
         void UpdateStatus(string status);
     }
 }

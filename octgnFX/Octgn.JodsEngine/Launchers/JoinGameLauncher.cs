@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using MessageBox = System.Windows.MessageBox;
 using System;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
@@ -10,6 +9,7 @@ using Octgn.Play;
 using System.Net;
 using System.Collections.Generic;
 using Octgn.Windows;
+using Octgn.Library.Exceptions;
 
 namespace Octgn.Launchers
 {
@@ -72,16 +72,9 @@ namespace Octgn.Launchers
                 Program.Client = await Connect(hostedGame.Host, hostedGame.Port);
 
                 if (Program.Client == null) {
-                    MessageBox.Show(
-                        $"Unable to connect to {hostedGame.Name} at {hostedGame.HostAddress}",
-                        "Unable to Join Game",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    var msg = $"Unable to connect to {hostedGame.Name} at {hostedGame.HostAddress}";
 
-                    this.Shutdown = true;
-
-                    Program.Exit();
+                    throw new UserMessageException(UserMessageExceptionMode.Blocking, msg);
                 }
 
                 Log.Info($"{nameof(Load)}: Launching {nameof(PlayWindow)}");
@@ -92,19 +85,12 @@ namespace Octgn.Launchers
 
                 return window;
             } catch (Exception e) {
-                this.Log.Warn($"Couldn't join game: {e.Message}", e);
+                var msg = $"Error joining game {hostedGame.Name}: {e.Message}";
 
-                MessageBox.Show(
-                    $"Error joining game {hostedGame.Name}: {e.Message}",
-                    "Error Joining Game",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                Log.Warn(msg, e);
 
-                this.Shutdown = true;
+                throw new UserMessageException(UserMessageExceptionMode.Blocking, msg, e);
             }
-
-            return null;
         }
 
         private async Task<IClient> Connect(string host, int port) {

@@ -4,47 +4,39 @@ using Octgn.Windows;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using System;
 
 namespace Octgn.Launchers
 {
     public abstract class LauncherBase : ILauncher
     {
-        public ILog Log { get; private set; }
-        public bool Shutdown { get; protected set; }
+        protected ILog Log { get; }
+
+        protected abstract Task<Window> Load(ILoadingView loadingView);
 
         protected LauncherBase() {
             Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         }
 
-        public void Launch() {
+        public async Task<bool> Launch(ILoadingView view) {
             Dispatcher.CurrentDispatcher.VerifyAccess();
 
-            if (Shutdown) return;
+            var window = await Load(view);
 
-            var uc = new UpdateChecker();
+            if (window == null) {
+                Log.Warn("No window created");
 
-            uc.AddLoader(async (view) => {
-                var window = await Load(view);
+                return false;
+            }
 
-                if (window == null) {
-                    Shutdown = true;
+            // do async so can run in backround
+            await Dispatcher.Yield(DispatcherPriority.Background);
 
-                    return;
-                }
+            Application.Current.MainWindow = window;
 
-                // do async so can run in backround
-                await Dispatcher.Yield(DispatcherPriority.Background);
+            await Task.Delay(300);
 
-                Application.Current.MainWindow = window;
-
-                await Task.Delay(1000);
-            });
-
-            uc.ShowDialog();
-
-            Shutdown = uc.Shutdown;
+            return true;
         }
-
-        protected abstract Task<Window> Load(ILoadingView loadingView);
     }
 }

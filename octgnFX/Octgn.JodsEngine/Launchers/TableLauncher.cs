@@ -1,8 +1,8 @@
 ﻿using System.Windows;
-using MessageBox = System.Windows.MessageBox;
 using System;
 using System.Threading.Tasks;
 using Octgn.Windows;
+using Octgn.Library.Exceptions;
 
 namespace Octgn.Launchers
 {
@@ -12,13 +12,8 @@ namespace Octgn.Launchers
         private readonly Guid? gameId;
 
         public TableLauncher(int? hostport, Guid? gameid) {
-            this.hostPort = hostport;
-            this.gameId = gameid;
-            if (this.gameId == null) {
-                MessageBox.Show("You must supply a GameId with -g=GUID on the command line.", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                this.Shutdown = true;
-            }
+            hostPort = hostport;
+            gameId = gameid;
         }
 
         protected override async Task<Window> Load(ILoadingView loadingView) {
@@ -27,14 +22,12 @@ namespace Octgn.Launchers
 
                 return WindowManager.PlayWindow;
             } catch (Exception e) {
-                this.Log.Warn("Couldn't host/join table mode", e);
+                var msg = "Couldn't host local game";
 
-                this.Shutdown = true;
+                Log.Warn(msg, e);
 
-                Program.Exit();
+                throw new UserMessageException(UserMessageExceptionMode.Blocking, msg, e);
             }
-
-            return null;
         }
     }
 }
