@@ -119,7 +119,7 @@ namespace Octgn
                 using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
                     await Task.Run(async () => {
                         while (proc.MainWindowHandle == IntPtr.Zero) {
-                            await Task.Delay(2000, cts.Token);
+                            await Task.Delay(1000, cts.Token);
                             if (proc.HasExited) {
                                 break;
                             }

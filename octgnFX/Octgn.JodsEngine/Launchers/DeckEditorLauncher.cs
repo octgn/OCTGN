@@ -6,6 +6,7 @@ using Octgn.Windows;
 using System.IO;
 using System;
 using Octgn.Library.Exceptions;
+using System.Windows.Threading;
 
 namespace Octgn.Launchers
 {
@@ -28,9 +29,14 @@ namespace Octgn.Launchers
                     Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
                 });
 
-                var win = new DeckBuilderWindow(Deck, true);
+                Window win = null;
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => {
+                    win = new DeckBuilderWindow(Deck, true);
 
-                win.Show();
+                    win.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                    win.Show();
+                }, DispatcherPriority.Background);
 
                 return win;
             } catch (Exception e) {

@@ -10,6 +10,7 @@ using System.Net;
 using System.Collections.Generic;
 using Octgn.Windows;
 using Octgn.Library.Exceptions;
+using System.Windows.Threading;
 
 namespace Octgn.Launchers
 {
@@ -69,6 +70,7 @@ namespace Octgn.Launchers
                 Program.GameEngine = new GameEngine(game, _username, _spectate, password);
 
                 loadingView.UpdateStatus($"Connecting to {hostedGame.HostAddress}");
+                await Task.Delay(100);
                 Program.Client = await Connect(hostedGame.Host, hostedGame.Port);
 
                 if (Program.Client == null) {
@@ -77,11 +79,15 @@ namespace Octgn.Launchers
                     throw new UserMessageException(UserMessageExceptionMode.Blocking, msg);
                 }
 
-                Log.Info($"{nameof(Load)}: Launching {nameof(PlayWindow)}");
-                var window = WindowManager.PlayWindow = new PlayWindow();
-                window.Closed += PlayWindow_Closed;
 
-                window.Show();
+                Window window = null;
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => {
+                    window = WindowManager.PlayWindow = new PlayWindow();
+
+                    window.Closed += PlayWindow_Closed;
+
+                    window.Show();
+                }, DispatcherPriority.Background);
 
                 return window;
             } catch (Exception e) {
@@ -101,7 +107,7 @@ namespace Octgn.Launchers
 
                     var client = new ClientSocket(address, port);
 
-                    await client.Connect();
+                    await Task.Run(client.Connect);
 
                     return client;
                 } catch (Exception ex) {

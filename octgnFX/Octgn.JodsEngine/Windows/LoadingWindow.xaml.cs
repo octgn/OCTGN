@@ -49,10 +49,6 @@ namespace Octgn.Windows
 
                 await loader.Load(this);
 
-                UpdateStatus("Launching...");
-
-                await Task.Delay(100);
-
                 if (Program.Launcher == null) {
                     Log.Warn($"No launcher specified, using Deck Editor");
                     Program.Launcher = new DeckEditorLauncher();
