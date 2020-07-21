@@ -19,7 +19,7 @@ namespace Octgn.Library {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -64,8 +64,6 @@ namespace Octgn.Library {
         ///   Looks up a localized string similar to AFAIK
         ///AFAIKs
         ///AI
-        ///AIDS
-        ///AIDSes
         ///AIs
         ///ANSI
         ///ANSIs
@@ -136,7 +134,10 @@ namespace Octgn.Library {
         ///Marses
         ///Microsoft
         ///Multics
-        ///Multicses [rest of string was truncated]&quot;;.
+        ///Multicses
+        ///N
+        ///NeWS
+        ///NeW [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string jargonlist {
             get {

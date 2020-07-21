@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using MessageBox = System.Windows.MessageBox;
 using System;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
@@ -7,9 +6,11 @@ using Octgn.Scripting.Controls;
 using Octgn.Core.DataManagers;
 using Octgn.Networking;
 using Octgn.Play;
-using System.Windows.Threading;
 using System.Net;
 using System.Collections.Generic;
+using Octgn.Windows;
+using Octgn.Library.Exceptions;
+using System.Windows.Threading;
 
 namespace Octgn.Launchers
 {
@@ -42,7 +43,7 @@ namespace Octgn.Launchers
             //}
         }
 
-        protected override async Task Load() {
+        protected override async Task<Window> Load(ILoadingView loadingView) {
             var hostedGame = _game;
 
             try {
@@ -62,48 +63,40 @@ namespace Octgn.Launchers
                     Program.CurrentOnlineGameName = hostedGame.Name;
                 }
 
+                loadingView.UpdateStatus("Loading game");
                 var game = GameManager.Get().GetById(hostedGame.GameId);
 
+                loadingView.UpdateStatus("Building engine");
                 Program.GameEngine = new GameEngine(game, _username, _spectate, password);
 
-                var hostUrl = hostedGame.Host;
-
-                Program.Client = await Connect(hostUrl, hostedGame.Port);
+                loadingView.UpdateStatus($"Connecting to {hostedGame.HostAddress}");
+                await Task.Delay(100);
+                Program.Client = await Connect(hostedGame.Host, hostedGame.Port);
 
                 if (Program.Client == null) {
-                    MessageBox.Show(
-                        $"Unable to connect to {hostedGame.Name} at {hostedGame.HostAddress}",
-                        "Unable to Join Game",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    var msg = $"Unable to connect to {hostedGame.Name} at {hostedGame.HostAddress}";
 
-                    this.Shutdown = true;
-
-                    Program.Exit();
+                    throw new UserMessageException(UserMessageExceptionMode.Blocking, msg);
                 }
 
-                Log.Info($"{nameof(Loaded)}: Launching {nameof(PlayWindow)}");
+
+                Window window = null;
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => {
+                    window = WindowManager.PlayWindow = new PlayWindow();
+
+                    window.Closed += PlayWindow_Closed;
+
+                    window.Show();
+                }, DispatcherPriority.Background);
+
+                return window;
             } catch (Exception e) {
-                this.Log.Warn($"Couldn't join game: {e.Message}", e);
+                var msg = $"Error joining game {hostedGame.Name}: {e.Message}";
 
-                MessageBox.Show(
-                    $"Error joining game {hostedGame.Name}: {e.Message}",
-                    "Error Joining Game",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                Log.Warn(msg, e);
 
-                this.Shutdown = true;
-
-                Program.Exit();
+                throw new UserMessageException(UserMessageExceptionMode.Blocking, msg, e);
             }
-        }
-
-        protected override Task Loaded() {
-            LaunchPlayWindow();
-
-            return Task.CompletedTask;
         }
 
         private async Task<IClient> Connect(string host, int port) {
@@ -114,7 +107,7 @@ namespace Octgn.Launchers
 
                     var client = new ClientSocket(address, port);
 
-                    await client.Connect();
+                    await Task.Run(client.Connect);
 
                     return client;
                 } catch (Exception ex) {
@@ -137,26 +130,6 @@ namespace Octgn.Launchers
 
                 yield return address;
             }
-        }
-
-        private void LaunchPlayWindow() {
-            System.Windows.Application.Current.Dispatcher.VerifyAccess();
-
-            if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
-
-            System.Windows.Application.Current.Dispatcher
-                .InvokeAsync(async () => {
-                    await Dispatcher.Yield(DispatcherPriority.Background);
-
-                    Application.Current.MainWindow
-                        = WindowManager.PlayWindow
-                        = new PlayWindow();
-
-                    WindowManager.PlayWindow.Closed += PlayWindow_Closed;
-
-                    WindowManager.PlayWindow.Show();
-                    WindowManager.PlayWindow.Activate();
-                });
         }
 
         private void PlayWindow_Closed(object sender, EventArgs e) {

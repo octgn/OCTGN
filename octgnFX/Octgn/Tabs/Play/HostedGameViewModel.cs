@@ -311,9 +311,12 @@ namespace Octgn.Tabs.Play
 
         //public IHostedGameData Data { get; set; }
 
+        public HostedGame HostedGame { get; }
+
         public HostedGameViewModel(HostedGame game)
         {
-            //Data = data;
+            HostedGame = game;
+
             var gameManagerGame = GameManager.Get().GetById(game.GameId);
 
             this.Id = game.Id;

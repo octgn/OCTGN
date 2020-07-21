@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Octgn")]
 [assembly: AssemblyProduct("Octgn.Data")]
-[assembly: AssemblyCopyright("Copyright © Skylabs 2005-2012")]
+[assembly: AssemblyCopyright("Copyright © Octgn 2005-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

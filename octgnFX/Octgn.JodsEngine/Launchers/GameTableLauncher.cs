@@ -12,7 +12,6 @@ using Octgn.Library.Exceptions;
 using Octgn.Play;
 using Octgn.Library.Utils;
 using Octgn.Library;
-using Octgn.Online;
 using Octgn.Online.Hosting;
 using System.Threading.Tasks;
 using Octgn.Communication;
@@ -66,7 +65,6 @@ namespace Octgn.Launchers
             Play.Player.OnLocalPlayerWelcomed -= this.PlayerOnOnLocalPlayerWelcomed;
             WindowManager.PlayWindow = new PlayWindow();
             Application.Current.MainWindow = WindowManager.PlayWindow;
-			//WindowManager.PlayWindow.PreGameLobby.Start(false);
 			WindowManager.PlayWindow.Show();
             WindowManager.PlayWindow.Closed += PlayWindowOnClosed;
         }
@@ -76,7 +74,7 @@ namespace Octgn.Launchers
             Program.Exit();
         }
 
-        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        async Task StartLocalGame(Game game, string name, string password)
         {
             var user = new User(Guid.NewGuid().ToString(), Prefs.Username);
 
