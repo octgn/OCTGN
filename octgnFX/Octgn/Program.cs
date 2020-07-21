@@ -120,7 +120,10 @@ namespace Octgn
             var connectionCreator = new TcpConnectionCreator(handshaker);
             var lobbyClientConfig = new LibraryCommunicationClientConfig(connectionCreator);
 
-            LobbyClient = new Octgn.Library.Communication.Client(lobbyClientConfig, typeof(Program).Assembly.GetName().Version);
+            LobbyClient = new Octgn.Library.Communication.Client(
+                lobbyClientConfig,
+                typeof(Program).Assembly.GetName().Version
+            );
 
             //Log.Info("Adding trace listeners");
             //Debug.Listeners.Add(DebugListener);

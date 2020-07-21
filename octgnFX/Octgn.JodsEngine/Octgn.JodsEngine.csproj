@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>Octgn</RootNamespace>
     <AssemblyName>Octgn</AssemblyName>
+    <AssemblyVersion>3.4.286.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
