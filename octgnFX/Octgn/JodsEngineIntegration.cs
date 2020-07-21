@@ -79,10 +79,6 @@ namespace Octgn
             return LaunchJodsEngine(args);
         }
 
-        internal void LaunchReplay(GameHistoryViewModel history) => throw new NotImplementedException();
-        internal void JoinOfflineGame() => throw new NotImplementedException();
-        internal void HostGame() => throw new NotImplementedException();
-
         private async Task<bool> LaunchJodsEngine(string args) {
             var engineDirectory = "jodsengine";
             if (X.Instance.Debug) {
@@ -134,5 +130,7 @@ namespace Octgn
         }
 
         internal void JoinGame(DataGameViewModel game, IPAddress host, int port, string username, string password) => throw new NotImplementedException();
+
+        internal void LaunchReplay(GameHistoryViewModel history) => throw new NotImplementedException();
     }
 }
