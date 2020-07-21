@@ -59,7 +59,6 @@
     <None Remove="Resources\Icons\setting_tools.png" />
     <None Remove="Resources\knockknock.wav" />
     <None Remove="Resources\loading.gif" />
-    <None Remove="Resources\LoadingWindowAds\0.jpg" />
     <None Remove="Resources\lock.png" />
     <None Remove="Resources\log.ico" />
     <None Remove="Resources\log2.ico" />
@@ -96,7 +95,6 @@
     <None Remove="Resources\soul1355.png" />
     <None Remove="Resources\special.png" />
     <None Remove="Resources\spectator-icon.png" />
-    <None Remove="Resources\StartupMessages.txt" />
     <None Remove="Resources\statusAway.png" />
     <None Remove="Resources\statusDND.png" />
     <None Remove="Resources\statusOffline.png" />
@@ -231,7 +229,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="CurrentVersion.txt" />
-    <EmbeddedResource Include="Resources\StartupMessages.txt" />
     <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
     <EmbeddedResource Include="Scripting\PythonAPI.py" />
   </ItemGroup>
@@ -311,9 +308,6 @@
     <Resource Include="Resources\Icons\Save.png" />
     <Resource Include="Resources\Icons\setting_tools.png" />
     <Resource Include="Resources\loading.gif" />
-    <Content Include="Resources\LoadingWindowAds\0.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\log.ico" />
     <Resource Include="Resources\log2.ico" />

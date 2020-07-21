@@ -107,26 +107,6 @@ namespace Octgn
                 // if the system gets mad, best to leave it alone.
             }
 
-            Log.Info("Setting temp main window");
-            Application.Current.MainWindow = new Window();
-            try
-            {
-                Log.Info("Checking if admin");
-                var isAdmin = UacHelper.IsProcessElevated && UacHelper.IsUacEnabled;
-                if (isAdmin)
-                {
-                    MessageBox.Show(
-                        "You are currently running OCTGN as Administrator. It is recommended that you run as a standard user, or you will most likely run into problems. Please exit OCTGN and run as a standard user.",
-                        "WARNING",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Couldn't check if admin", e);
-            }
-
             Log.Info("Creating Lobby Client");
             var handshaker = new DefaultHandshaker();
             var connectionCreator = new TcpConnectionCreator(handshaker);
@@ -187,94 +167,8 @@ namespace Octgn
                 return;
             }
 
-            Log.Info("Decide to ask about wine");
-            if (Prefs.AskedIfUsingWine == false)
-            {
-                Log.Info("Asking about wine");
-                var res = MessageBox.Show("Are you running OCTGN on Linux or a Mac using Wine?", "Using Wine",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes)
-                {
-                    Prefs.AskedIfUsingWine = true;
-                    Prefs.UsingWine = true;
-                    Prefs.UseHardwareRendering = false;
-                    Prefs.UseGameFonts = false;
-                    Prefs.UseWindowTransparency = false;
-                }
-                else if (res == MessageBoxResult.No)
-                {
-                    Prefs.AskedIfUsingWine = true;
-                    Prefs.UsingWine = false;
-                    Prefs.UseHardwareRendering = true;
-                    Prefs.UseGameFonts = true;
-                    Prefs.UseWindowTransparency = true;
-                }
-            }
-            // Check for desktop experience
-            //if (Prefs.UsingWine == false)
-            //{
-            //    try
-            //    {
-            //        Log.Debug("Checking for Desktop Experience");
-            //        var objMC = new ManagementClass("Win32_ServerFeature");
-            //        // Expected Exception: System.Management.ManagementException
-            //        // Additional information: Not found
-            //        var objMOC = objMC.GetInstances();
-            //        bool gotIt = false;
-            //        foreach (var objMO in objMOC)
-            //        {
-            //            if ((UInt32)objMO["ID"] == 35)
-            //            {
-            //                Log.Debug("Found Desktop Experience");
-            //                gotIt = true;
-            //                break;
-            //            }
-            //        }
-            //        if (!gotIt)
-            //        {
-            //            var res =
-            //                MessageBox.Show(
-            //                    "You are running OCTGN without the windows Desktop Experience installed. This WILL cause visual, gameplay, and sound issues. Though it isn't required, it is HIGHLY recommended. \n\nWould you like to be shown a site to tell you how to turn it on?",
-            //                    "Windows Desktop Experience Missing", MessageBoxButton.YesNo,
-            //                    MessageBoxImage.Exclamation);
-            //            if (res == MessageBoxResult.Yes)
-            //            {
-            //                LaunchUrl(
-            //                    "http://blogs.msdn.com/b/findnavish/archive/2012/06/01/enabling-win-7-desktop-experience-on-windows-server-2008.aspx");
-            //            }
-            //            else
-            //            {
-            //                MessageBox.Show("Ok, but you've been warned...", "Warning", MessageBoxButton.OK,
-            //                    MessageBoxImage.Warning);
-            //            }
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Log.Warn(
-            //            "Check desktop experience error. An error like 'Not Found' is normal and shouldn't be worried about",
-            //            e);
-            //    }
-            //}
-            // Send off user/computer stats
-            try
-            {
-                var osver = System.Environment.OSVersion.VersionString;
-                var osBit = Win32.Is64BitOperatingSystem;
-                var procBit = Win32.Is64BitProcess;
-                var issubbed = SubscriptionModule.Get().IsSubscribed;
-                var iswine = Prefs.UsingWine;
-                // Use the API to submit info
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Sending stats error", e);
-            }
-            //var win = new ShareDeck();
-            //win.ShowDialog();
-            //return;
             Log.Info("Getting Launcher");
-            Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             if (launcher == null) {
                 Log.Warn($"no launcher from command line args");
 
@@ -300,7 +194,7 @@ namespace Octgn
 
             var shutdown = false;
             try {
-                launcher.Launch().Wait();
+                launcher.Launch();
 
                 shutdown = launcher.Shutdown;
             } catch (Exception ex) {

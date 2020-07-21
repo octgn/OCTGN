@@ -2,6 +2,8 @@
 using log4net;
 using Octgn.Windows;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Octgn.Launchers
 {
@@ -14,31 +16,35 @@ namespace Octgn.Launchers
             Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         }
 
-        public async Task Launch() {
-            if (Shutdown == false) {
-                if (ShowLoaderWindow()) {
-                    await Loaded();
-                }
+        public void Launch() {
+            Dispatcher.CurrentDispatcher.VerifyAccess();
 
-            }
-        }
+            if (Shutdown) return;
 
-        protected abstract Task Load();
-
-        protected abstract Task Loaded();
-
-        private bool ShowLoaderWindow() {
             var uc = new UpdateChecker();
 
-            uc.AddLoader(() => {
-                Load().GetAwaiter().GetResult();
+            uc.AddLoader(async (view) => {
+                var window = await Load(view);
+
+                if (window == null) {
+                    Shutdown = true;
+
+                    return;
+                }
+
+                // do async so can run in backround
+                await Dispatcher.Yield(DispatcherPriority.Background);
+
+                Application.Current.MainWindow = window;
+
+                await Task.Delay(1000);
             });
 
             uc.ShowDialog();
 
             Shutdown = uc.Shutdown;
-
-            return uc.Shutdown == false;
         }
+
+        protected abstract Task<Window> Load(ILoadingView loadingView);
     }
 }

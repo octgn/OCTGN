@@ -2,6 +2,7 @@
 using MessageBox = System.Windows.MessageBox;
 using System;
 using System.Threading.Tasks;
+using Octgn.Windows;
 
 namespace Octgn.Launchers
 {
@@ -20,18 +21,20 @@ namespace Octgn.Launchers
             }
         }
 
-        protected override Task Load() {
-            return Task.CompletedTask;
-        }
-
-        protected override async Task Loaded() {
+        protected override async Task<Window> Load(ILoadingView loadingView) {
             try {
                 await new GameTableLauncher().Launch(this.hostPort, this.gameId);
+
+                return WindowManager.PlayWindow;
             } catch (Exception e) {
                 this.Log.Warn("Couldn't host/join table mode", e);
+
                 this.Shutdown = true;
+
                 Program.Exit();
             }
+
+            return null;
         }
     }
 }

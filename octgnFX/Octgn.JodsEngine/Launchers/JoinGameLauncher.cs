@@ -7,9 +7,9 @@ using Octgn.Scripting.Controls;
 using Octgn.Core.DataManagers;
 using Octgn.Networking;
 using Octgn.Play;
-using System.Windows.Threading;
 using System.Net;
 using System.Collections.Generic;
+using Octgn.Windows;
 
 namespace Octgn.Launchers
 {
@@ -42,7 +42,7 @@ namespace Octgn.Launchers
             //}
         }
 
-        protected override async Task Load() {
+        protected override async Task<Window> Load(ILoadingView loadingView) {
             var hostedGame = _game;
 
             try {
@@ -62,13 +62,14 @@ namespace Octgn.Launchers
                     Program.CurrentOnlineGameName = hostedGame.Name;
                 }
 
+                loadingView.UpdateStatus("Loading game");
                 var game = GameManager.Get().GetById(hostedGame.GameId);
 
+                loadingView.UpdateStatus("Building engine");
                 Program.GameEngine = new GameEngine(game, _username, _spectate, password);
 
-                var hostUrl = hostedGame.Host;
-
-                Program.Client = await Connect(hostUrl, hostedGame.Port);
+                loadingView.UpdateStatus($"Connecting to {hostedGame.HostAddress}");
+                Program.Client = await Connect(hostedGame.Host, hostedGame.Port);
 
                 if (Program.Client == null) {
                     MessageBox.Show(
@@ -83,7 +84,13 @@ namespace Octgn.Launchers
                     Program.Exit();
                 }
 
-                Log.Info($"{nameof(Loaded)}: Launching {nameof(PlayWindow)}");
+                Log.Info($"{nameof(Load)}: Launching {nameof(PlayWindow)}");
+                var window = WindowManager.PlayWindow = new PlayWindow();
+                window.Closed += PlayWindow_Closed;
+
+                window.Show();
+
+                return window;
             } catch (Exception e) {
                 this.Log.Warn($"Couldn't join game: {e.Message}", e);
 
@@ -95,15 +102,9 @@ namespace Octgn.Launchers
                 );
 
                 this.Shutdown = true;
-
-                Program.Exit();
             }
-        }
 
-        protected override Task Loaded() {
-            LaunchPlayWindow();
-
-            return Task.CompletedTask;
+            return null;
         }
 
         private async Task<IClient> Connect(string host, int port) {
@@ -137,26 +138,6 @@ namespace Octgn.Launchers
 
                 yield return address;
             }
-        }
-
-        private void LaunchPlayWindow() {
-            System.Windows.Application.Current.Dispatcher.VerifyAccess();
-
-            if (WindowManager.PlayWindow != null) throw new InvalidOperationException($"Can't run more than one game at a time.");
-
-            System.Windows.Application.Current.Dispatcher
-                .InvokeAsync(async () => {
-                    await Dispatcher.Yield(DispatcherPriority.Background);
-
-                    Application.Current.MainWindow
-                        = WindowManager.PlayWindow
-                        = new PlayWindow();
-
-                    WindowManager.PlayWindow.Closed += PlayWindow_Closed;
-
-                    WindowManager.PlayWindow.Show();
-                    WindowManager.PlayWindow.Activate();
-                });
         }
 
         private void PlayWindow_Closed(object sender, EventArgs e) {
