@@ -137,9 +137,9 @@
       <DependentUpon>Game.xsd</DependentUpon>
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
-    <None Include="Schemas\CardSet.xsd">
+    <EmbeddedResource Include="Schemas\CardSet.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </EmbeddedResource>
     <None Include="Schemas\CardGenerator.xsd">
       <LastGenOutput>CardGenerator.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>

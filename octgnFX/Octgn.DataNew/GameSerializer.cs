@@ -1378,10 +1378,11 @@ namespace Octgn.DataNew
             get
             {
                 if (setSchema != null) return setSchema;
+
                 var libAss = Assembly.GetAssembly(typeof(Paths));
-                var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardSet.xsd"));
-                setSchema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => Console.WriteLine(args.Exception));
-                return setSchema;
+                var schemaStream = libAss.GetManifestResourceStream("Octgn.Library.Schemas.CardSet.xsd");
+                var schema = XmlSchema.Read(schemaStream, (sender, args) => Console.WriteLine(args.Exception));
+                return schema;
             }
         }
 
@@ -2072,7 +2073,7 @@ namespace Octgn.DataNew
                     block.text = text;
                 }
                 blocks.Add(block);
-            }           
+            }
             save.blocks = blocks.ToArray();
             #endregion
 
@@ -2116,7 +2117,7 @@ namespace Octgn.DataNew
                 template.textblocks = textblocks.ToArray();
                 templates.Add(template);
             }
-            
+
 
             save.template = templates.ToArray();
             #endregion
