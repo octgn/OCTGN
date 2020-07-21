@@ -108,11 +108,10 @@ namespace Octgn.Windows
             //SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
             UpdateManager.Instance.Start();
 
-            var uri = new System.Uri("/Resources/CustomDataAgreement.txt", UriKind.Relative);
-            var info = Application.GetResourceStream(uri);
-            var resource = "";
-            using (var s = new StreamReader(info.Stream)) {
-                resource = s.ReadToEnd();
+            var sti = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/CustomDataAgreement.txt"));
+            var resource = string.Empty;
+            using (var sr = new StreamReader(sti.Stream)) {
+                resource = sr.ReadToEnd();
             }
 
             var hash = resource.Sha1().ToLowerInvariant();

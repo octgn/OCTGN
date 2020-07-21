@@ -98,6 +98,10 @@ namespace Octgn.Sdk.Extensibility
 
             var path = Path.Combine(rootPath, pluginRecord.Path);
 
+            if (path.Contains("..")) {
+                path = Path.GetFullPath(path);
+            }
+
             if (!File.Exists(path) && path != "integrated")
                 throw new FileNotFoundException($"File {path} not found");
 

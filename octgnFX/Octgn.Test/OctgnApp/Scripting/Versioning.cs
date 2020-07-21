@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using FakeItEasy;
 using NUnit.Framework;
 using Octgn.Library;
@@ -92,7 +91,7 @@ namespace Octgn.Test.OctgnApp.Scripting
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var g = Versioned.Get<TestTypeBase>(new Version(3, 1, 0, 0));
-            });		    
+            });
 		}
 
 		[Test]
@@ -106,7 +105,7 @@ namespace Octgn.Test.OctgnApp.Scripting
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var g = Versioned.Get<TestTypeBase>(new Version(3, 1, 0, 2));
-            });	
+            });
 		}
 
 		[Test]
@@ -125,7 +124,7 @@ namespace Octgn.Test.OctgnApp.Scripting
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var g = Versioned.Get<TestTypeBase>(new Version(3, 1, 0, 1));
-            });	
+            });
 
 		    X.SingletonContext = curx;
 		}
@@ -192,12 +191,12 @@ namespace Octgn.Test.OctgnApp.Scripting
 
 	internal class TestTypeBase
 	{
-	    
+
 	}
 	[Versioned("3.1.0.0")]
 	internal class TestType_3_1_0_0 : TestTypeBase
 	{
-	    
+
 	}
     [Versioned("3.1.0.1")]
     internal class TestType_3_1_0_1 : TestTypeBase

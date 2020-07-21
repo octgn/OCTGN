@@ -111,6 +111,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.GameService.ServerLauncher", "octgnFx\Octgn.Online.GameService.ServerLauncher\Octgn.Online.GameService.ServerLauncher.csproj", "{C465DC76-AC29-446F-BB85-7E4287FD29CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Octgn.Desktop", "octgnFX\Octgn.Desktop\Octgn.Desktop.csproj", "{C6D28BCA-C368-461D-BE34-BE6CD45586E2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AB4D9DEB-790D-4173-A5DC-D0460A5CEB0A} = {AB4D9DEB-790D-4173-A5DC-D0460A5CEB0A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Octgn.Sdk", "octgnFX\Octgn.Sdk\Octgn.Sdk.csproj", "{5C50B9DF-B3A0-4746-A110-26B8E5B059C4}"
 EndProject

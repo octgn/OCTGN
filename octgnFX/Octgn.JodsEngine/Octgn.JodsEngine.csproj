@@ -258,6 +258,7 @@
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj" />
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj" />
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj" />
+    <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj" />
     <ProjectReference Include="..\Octgn.Sdk\Octgn.Sdk.csproj" />
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj" />
     <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj" />
@@ -286,7 +287,7 @@
     <Resource Include="Resources\cross.png" />
     <Resource Include="Resources\custom-games-icon.png" />
     <Resource Include="Resources\CustomDataAgreement.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\d0c.jpeg" />
     <Resource Include="Resources\eye.png" />
@@ -310,9 +311,9 @@
     <Resource Include="Resources\Icons\Save.png" />
     <Resource Include="Resources\Icons\setting_tools.png" />
     <Resource Include="Resources\loading.gif" />
-    <Resource Include="Resources\LoadingWindowAds\0.jpg">
+    <Content Include="Resources\LoadingWindowAds\0.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </Content>
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\log.ico" />
     <Resource Include="Resources\log2.ico" />
@@ -861,9 +862,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mkdir &quot;$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine&quot;&#xD;&#xA;xcopy &quot;$(TargetDir)*&quot; &quot;$(ProjectDir)..\Octgn.Desktop\Packages\octgn.packages.jodsengine\engine&quot; /ys" />
-  </Target>
 
 </Project>
