@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="16.0">
   <UsingTask TaskName="ShaderBuildTask.PixelShaderCompile" AssemblyName="ShaderBuildTask, Version=1.0.3072.18169, Culture=neutral, PublicKeyToken=44e467d1687af125" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -466,9 +466,7 @@
     <Resource Include="Resources\chat.ico" />
     <Resource Include="Resources\viewers.png" />
     <Resource Include="Resources\special.png" />
-    <Resource Include="Resources\CustomDataAgreement.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\CustomDataAgreement.txt" />
     <Resource Include="Resources\background.png" />
     <Resource Include="Resources\Icons\diag.ico" />
     <Resource Include="Resources\people.png" />
@@ -483,9 +481,9 @@
     <None Include="Resources\userjoinsroom.wav" />
     <None Include="Resources\gamemessage.wav" />
     <Resource Include="Resources\Icons\setting_tools.png" />
-    <Resource Include="Resources\LoadingWindowAds\0.jpg">
+    <Content Include="Resources\LoadingWindowAds\0.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </Content>
     <Content Include="Resources\knockknock.wav" />
     <Resource Include="Resources\minimize.png" />
     <Resource Include="Resources\minmax.png" />

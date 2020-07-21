@@ -1,12 +1,10 @@
-﻿namespace Octgn.Launchers
-{
-    using log4net;
-    using System.Threading.Tasks;
+﻿using Octgn.Windows;
+using System.Threading.Tasks;
 
+namespace Octgn.Launchers
+{
     public interface ILauncher
     {
-		ILog Log { get; }
-		bool Shutdown { get; }
-        Task Launch();
+        Task<bool> Launch(ILoadingView view);
     }
 }

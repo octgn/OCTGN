@@ -224,7 +224,7 @@ namespace Octgn.Controls
                 hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
-            return Program.JodsEngine.HostGame(hg, username);
+            return Program.JodsEngine.HostGame(hg, username, password);
         }
 
         async Task<bool> StartOnlineGame(DataNew.Entities.Game game, string name, string password)
@@ -252,17 +252,23 @@ namespace Octgn.Controls
                 Spectators = Specators
             };
 
+            var lobbyClient = Program.LobbyClient ?? throw new InvalidOperationException("lobby client null");
+
             HostedGame result = null;
             try {
-                result = await Program.LobbyClient.HostGame(req);
+                result = await lobbyClient.HostGame(req);
             } catch (ErrorResponseException ex) {
                 if (ex.Code != ErrorResponseCodes.UserOffline) throw;
                 throw new UserMessageException("The Game Service is currently offline. Please try again.");
             }
 
-            var joinResult = await Program.JodsEngine.JoinGame(game, result, Password);
+            var launchedEngine = await Program.JodsEngine.HostGame(
+                result,
+                lobbyClient.User.DisplayName,
+                Password
+            );
 
-            return joinResult;
+            return launchedEngine;
         }
 
         #endregion

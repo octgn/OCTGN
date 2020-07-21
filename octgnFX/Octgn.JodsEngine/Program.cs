@@ -14,23 +14,17 @@ using Octgn.DataNew.Entities;
 using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
-using Octgn.Scripting;
 using Octgn.Utils;
-using Card = Octgn.Play.Card;
 using Player = Octgn.Play.Player;
 using System.Reflection;
-using System.Windows.Interop;
 using System.Windows.Media;
 using Microsoft.Win32;
-using Octgn.Core;
 using Octgn.Core.Play;
-using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
 using Octgn.Online.Hosting;
-using Octgn.Online;
-using Octgn.Communication.Tcp;
+using Octgn.Launchers;
 
 namespace Octgn
 {
@@ -42,7 +36,7 @@ namespace Octgn
 
         public static string CurrentOnlineGameName = "";
 
-        public static GameSettings GameSettings { get; set; }
+        public static GameSettings GameSettings { get; } = new GameSettings();
         internal static IClient Client;
         public static event Action OnOptionsChanged;
 
@@ -60,267 +54,25 @@ namespace Octgn
 
         internal static Dispatcher Dispatcher;
 
-        private static SSLValidationHelper SSLHelper;
-
         public static GameMessageDispatcher GameMess { get; internal set; }
 
-        public static bool DeveloperMode { get; private set; }
+        public static ILauncher Launcher { get; internal set; }
+
+        public static bool DeveloperMode { get; internal set; }
 
         /// <summary>
         /// Is properly set at Program.Start()
         /// </summary>
-        public static bool IsReleaseTest { get; set; }
+        public static bool IsReleaseTest { get; internal set; }
 
         public static string SessionKey { get; set; }
         public static string UserId { get; set; }
         public static HostedGame CurrentHostedGame { get; internal set; }
-
-        private static bool shutDown = false;
+        public static SSLValidationHelper SSLHelper { get; internal set; }
 
         static Program()
         {
             //Do not put anything here, it'll just lead to pain and confusion
-        }
-
-        internal static void Start(string[] args, bool isTestRelease)
-        {
-            Log.Info("Start");
-            IsReleaseTest = isTestRelease;
-            GameMessage.MuteChecker = () =>
-            {
-                if (Program.Client == null) return false;
-                return Program.Client.Muted != 0;
-            };
-
-            Log.Info("Setting SSL Validation Helper");
-            SSLHelper = new SSLValidationHelper();
-
-            Log.Info("Setting api path");
-            Octgn.Site.Api.ApiClient.DefaultUrl = new Uri(AppConfig.WebsitePath);
-            try
-            {
-                Log.Debug("Setting rendering mode.");
-                RenderOptions.ProcessRenderMode = Prefs.UseHardwareRendering ? RenderMode.Default : RenderMode.SoftwareOnly;
-            }
-            catch (Exception)
-            {
-                // if the system gets mad, best to leave it alone.
-            }
-
-            Log.Info("Setting temp main window");
-            Application.Current.MainWindow = new Window();
-            try
-            {
-                Log.Info("Checking if admin");
-                var isAdmin = UacHelper.IsProcessElevated && UacHelper.IsUacEnabled;
-                if (isAdmin)
-                {
-                    MessageBox.Show(
-                        "You are currently running OCTGN as Administrator. It is recommended that you run as a standard user, or you will most likely run into problems. Please exit OCTGN and run as a standard user.",
-                        "WARNING",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Couldn't check if admin", e);
-            }
-
-            Log.Info("Creating Lobby Client");
-            var handshaker = new DefaultHandshaker();
-            var connectionCreator = new TcpConnectionCreator(handshaker);
-
-            //Log.Info("Adding trace listeners");
-            //Debug.Listeners.Add(DebugListener);
-            //DebugTrace.Listeners.Add(DebugListener);
-            //Trace.Listeners.Add(DebugListener);
-            //ChatLog = new CacheTraceListener();
-            //Trace.Listeners.Add(ChatLog);
-            Log.Info("Creating Game Message Dispatcher");
-            GameMess = new GameMessageDispatcher();
-            GameMess.ProcessMessage(
-                x =>
-                {
-                    for (var i = 0; i < x.Arguments.Length; i++)
-                    {
-                        var arg = x.Arguments[i];
-                        var cardModel = arg as DataNew.Entities.Card;
-                        var cardId = arg as CardIdentity;
-                        var card = arg as Card;
-                        if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
-                            cardId = card.Type;
-
-                        if (cardId != null || cardModel != null)
-                        {
-                            ChatCard chatCard = null;
-                            if (cardId != null)
-                            {
-                                chatCard = new ChatCard(cardId);
-                            }
-                            else
-                            {
-                                chatCard = new ChatCard(cardModel);
-                            }
-                            if (card != null)
-                                chatCard.SetGameCard(card);
-                            x.Arguments[i] = chatCard;
-                        }
-                        else
-                        {
-                            x.Arguments[i] = arg == null ? "[?]" : arg.ToString();
-                        }
-                    }
-                    return x;
-                });
-
-            Log.Info("Registering versioned stuff");
-
-            //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
-            Log.Info("Setting Games Path");
-            GameSettings = new GameSettings();
-            if (shutDown)
-            {
-                Log.Info("Shutdown Time");
-                if (Application.Current.MainWindow != null)
-                    Application.Current.MainWindow.Close();
-                return;
-            }
-
-            Log.Info("Decide to ask about wine");
-            if (Prefs.AskedIfUsingWine == false)
-            {
-                Log.Info("Asking about wine");
-                var res = MessageBox.Show("Are you running OCTGN on Linux or a Mac using Wine?", "Using Wine",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes)
-                {
-                    Prefs.AskedIfUsingWine = true;
-                    Prefs.UsingWine = true;
-                    Prefs.UseHardwareRendering = false;
-                    Prefs.UseGameFonts = false;
-                    Prefs.UseWindowTransparency = false;
-                }
-                else if (res == MessageBoxResult.No)
-                {
-                    Prefs.AskedIfUsingWine = true;
-                    Prefs.UsingWine = false;
-                    Prefs.UseHardwareRendering = true;
-                    Prefs.UseGameFonts = true;
-                    Prefs.UseWindowTransparency = true;
-                }
-            }
-            // Check for desktop experience
-            //if (Prefs.UsingWine == false)
-            //{
-            //    try
-            //    {
-            //        Log.Debug("Checking for Desktop Experience");
-            //        var objMC = new ManagementClass("Win32_ServerFeature");
-            //        // Expected Exception: System.Management.ManagementException
-            //        // Additional information: Not found
-            //        var objMOC = objMC.GetInstances();
-            //        bool gotIt = false;
-            //        foreach (var objMO in objMOC)
-            //        {
-            //            if ((UInt32)objMO["ID"] == 35)
-            //            {
-            //                Log.Debug("Found Desktop Experience");
-            //                gotIt = true;
-            //                break;
-            //            }
-            //        }
-            //        if (!gotIt)
-            //        {
-            //            var res =
-            //                MessageBox.Show(
-            //                    "You are running OCTGN without the windows Desktop Experience installed. This WILL cause visual, gameplay, and sound issues. Though it isn't required, it is HIGHLY recommended. \n\nWould you like to be shown a site to tell you how to turn it on?",
-            //                    "Windows Desktop Experience Missing", MessageBoxButton.YesNo,
-            //                    MessageBoxImage.Exclamation);
-            //            if (res == MessageBoxResult.Yes)
-            //            {
-            //                LaunchUrl(
-            //                    "http://blogs.msdn.com/b/findnavish/archive/2012/06/01/enabling-win-7-desktop-experience-on-windows-server-2008.aspx");
-            //            }
-            //            else
-            //            {
-            //                MessageBox.Show("Ok, but you've been warned...", "Warning", MessageBoxButton.OK,
-            //                    MessageBoxImage.Warning);
-            //            }
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Log.Warn(
-            //            "Check desktop experience error. An error like 'Not Found' is normal and shouldn't be worried about",
-            //            e);
-            //    }
-            //}
-            // Send off user/computer stats
-            try
-            {
-                var osver = System.Environment.OSVersion.VersionString;
-                var osBit = Win32.Is64BitOperatingSystem;
-                var procBit = Win32.Is64BitProcess;
-                var issubbed = SubscriptionModule.Get().IsSubscribed;
-                var iswine = Prefs.UsingWine;
-                // Use the API to submit info
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Sending stats error", e);
-            }
-            //var win = new ShareDeck();
-            //win.ShowDialog();
-            //return;
-            Log.Info("Getting Launcher");
-            Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
-            if (launcher == null) {
-                Log.Warn($"no launcher from command line args");
-
-                if (Application.Current.MainWindow != null)
-                    Application.Current.MainWindow.Close();
-
-                return;
-            }
-
-            DeveloperMode = CommandLineHandler.Instance.DevMode;
-
-            Versioned.Setup(Program.DeveloperMode);
-            /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
-            //START_REPLACE_API_VERSION
-			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
-			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Live );
-			Versioned.RegisterVersion(Version.Parse("3.1.0.2"),DateTime.Parse("2015-8-26"),ReleaseMode.Live );
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.2.py", Version.Parse("3.1.0.2"));
-			//END_REPLACE_API_VERSION
-            Versioned.Register<ScriptApi>();
-
-            var shutdown = false;
-            try {
-                launcher.Launch().Wait();
-
-                shutdown = launcher.Shutdown;
-            } catch (Exception ex) {
-                shutdown = true;
-
-                var message = $"There was an error launching Octgn. Please try again. If this continues to happen, let us know.";
-                if (X.Instance.Debug) {
-                    message = message + Environment.NewLine + ex.ToString();
-                }
-
-                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                Environment.ExitCode = 70;
-            }
-
-            if (shutdown)
-            {
-                if (Application.Current.MainWindow != null)
-                    Application.Current.MainWindow.Close();
-            }
         }
 
         internal static void FireOptionsChanged()
@@ -348,7 +100,7 @@ namespace Octgn
 
         public static void Exit()
         {
-            try { SSLHelper.Dispose(); }
+            try { SSLHelper?.Dispose(); }
             catch (Exception e) {
                 Log.Error( "SSLHelper Dispose Exception", e );
             };
@@ -450,27 +202,6 @@ namespace Octgn
             return new Tuple<string, object[]>(finalText, args.ToArray());
         }
 
-        //internal static void TracePlayerEvent(Player player, string message, params object[] args)
-        //{
-        //    var args1 = new List<object>(args) {player};
-        //    Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
-        //                     args1.ToArray());
-        //}
-
-        //internal static void TraceWarning(string message)
-        //{
-        //    if (message == null) message = "";
-        //    if (Trace == null) return;
-        //    Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
-        //}
-
-        //internal static void TraceWarning(string message, params object[] args)
-        //{
-        //    if (message == null) message = "";
-        //    if (Trace == null) return;
-        //    Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
-        //}
-
         public static void LaunchUrl(string url)
         {
             if (url == null) return;
@@ -549,28 +280,6 @@ namespace Octgn
         {
             var res = TopMostMessageBox.Show(action + Environment.NewLine + Environment.NewLine + "Are you going to be ok?", "Oh No!",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
-//            dieinfireplz
-//            if (res == MessageBoxResult.No)
-//            {
-//                res = TopMostMessageBox.Show(
-//                    "There there...It'll all be alright..." + Environment.NewLine + Environment.NewLine +
-//                    "Do you feel that we properly comforted you in this time of great sorrow?", "Comfort Dialog",
-//                    MessageBoxButton.YesNo, MessageBoxImage.Question);
-//                if (res == MessageBoxResult.Yes)
-//                {
-//                    TopMostMessageBox.Show(
-//                        "Great! Maybe you could swing by my server room later and we can hug it out.",
-//                        "Inappropriate Gesture Dialog", MessageBoxButton.OK, MessageBoxImage.Question);
-//                    TopMostMessageBox.Show("I'll be waiting...", "Creepy Dialog Box", MessageBoxButton.OK,
-//                        MessageBoxImage.Information);
-//                }
-//                else if (res == MessageBoxResult.No)
-//                {
-//                    TopMostMessageBox.Show(
-//                        "Ok. We will sack the person responsible for that not so comforting message. Have a nice day!",
-//                        "Repercussion Dialog", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-//                }
-//            }
         }
     }
 }

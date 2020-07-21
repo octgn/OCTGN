@@ -9,6 +9,7 @@
         RenderOptions.BitmapScalingMode="Fant" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:core="clr-namespace:Octgn.Core;assembly=Octgn.Core"
                   mc:Ignorable="d"
+                  WindowStartupLocation="CenterScreen"
         >
 
     <ctrl:DecorableWindow.Resources>

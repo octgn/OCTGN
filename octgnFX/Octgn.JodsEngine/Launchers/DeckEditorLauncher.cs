@@ -2,6 +2,11 @@
 using Octgn.DataNew.Entities;
 using Octgn.DeckBuilder;
 using System.Threading.Tasks;
+using Octgn.Windows;
+using System.IO;
+using System;
+using Octgn.Library.Exceptions;
+using System.Windows.Threading;
 
 namespace Octgn.Launchers
 {
@@ -15,18 +20,41 @@ namespace Octgn.Launchers
             DeckPath = string.IsNullOrWhiteSpace(deckPath) ? null : deckPath;
         }
 
-        protected override Task Load() {
-            Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
+        protected override async Task<Window> Load(ILoadingView loadingView) {
+            try {
+                var fn = Path.GetFileName(DeckPath);
+                loadingView.UpdateStatus($"Loading Deck '{fn}'...");
 
-            return Task.CompletedTask;
-        }
+                await Task.Run(() => {
+                    Deck = (DeckPath == null) ? null : new MetaDeck(DeckPath);
+                });
 
-        protected override Task Loaded() {
-            var win = new DeckBuilderWindow(Deck, true);
-            Application.Current.MainWindow = win;
-            win.Show();
+                Window win = null;
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => {
+                    win = new DeckBuilderWindow(Deck, true);
 
-            return Task.CompletedTask;
+                    win.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                    win.Show();
+                }, DispatcherPriority.Background);
+
+                return win;
+            } catch (Exception e) {
+                string msg;
+                if (string.IsNullOrWhiteSpace(DeckPath)) {
+                    msg = $"Deck editor failed to launch: {e.Message}";
+                } else {
+                    msg = $"Deck editor failed to launch '{DeckPath}': {e.Message}";
+                }
+
+                Log.Warn(msg, e);
+
+                throw new UserMessageException(
+                    UserMessageExceptionMode.Blocking,
+                    msg,
+                    e
+                );
+            }
         }
     }
 }

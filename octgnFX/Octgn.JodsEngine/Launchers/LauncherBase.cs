@@ -2,43 +2,41 @@
 using log4net;
 using Octgn.Windows;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+using System;
 
 namespace Octgn.Launchers
 {
     public abstract class LauncherBase : ILauncher
     {
-        public ILog Log { get; private set; }
-        public bool Shutdown { get; protected set; }
+        protected ILog Log { get; }
+
+        protected abstract Task<Window> Load(ILoadingView loadingView);
 
         protected LauncherBase() {
             Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         }
 
-        public async Task Launch() {
-            if (Shutdown == false) {
-                if (ShowLoaderWindow()) {
-                    await Loaded();
-                }
+        public async Task<bool> Launch(ILoadingView view) {
+            Dispatcher.CurrentDispatcher.VerifyAccess();
 
+            var window = await Load(view);
+
+            if (window == null) {
+                Log.Warn("No window created");
+
+                return false;
             }
-        }
 
-        protected abstract Task Load();
+            // do async so can run in backround
+            await Dispatcher.Yield(DispatcherPriority.Background);
 
-        protected abstract Task Loaded();
+            Application.Current.MainWindow = window;
 
-        private bool ShowLoaderWindow() {
-            var uc = new UpdateChecker();
+            await Task.Delay(300);
 
-            uc.AddLoader(() => {
-                Load().GetAwaiter().GetResult();
-            });
-
-            uc.ShowDialog();
-
-            Shutdown = uc.Shutdown;
-
-            return uc.Shutdown == false;
+            return true;
         }
     }
 }

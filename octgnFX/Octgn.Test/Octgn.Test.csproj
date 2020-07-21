@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -124,7 +124,6 @@
     <Compile Include="Library\Networking\GameBroadcastingTests.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
-    <Compile Include="OctgnApp\Scripting\Script_3_1_0_0Tests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />
     <Compile Include="PlayGround.cs" />
     <Compile Include="Utils\HttpEcho.cs" />
@@ -155,10 +154,6 @@
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Octgn\Octgn.csproj">
-      <Project>{c6ade75c-5bc2-47db-9240-b99c66431ef3}</Project>
-      <Name>Octgn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

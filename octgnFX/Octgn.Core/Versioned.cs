@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Octgn.Library;
 using log4net;
 using Octgn.Library.ExtensionMethods;
@@ -13,8 +12,8 @@ namespace Octgn.Scripting
 	    private static bool isDeveloperMode;
         internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 	    private static readonly object Locker = new object();
-		private static Dictionary<Version,VersionMetaData> _versionData = new Dictionary<Version, VersionMetaData>(); 
-	    private static readonly Dictionary<Type, Dictionary<VersionedAttribute, Type>> Versions = new Dictionary<Type, Dictionary<VersionedAttribute, Type>>(); 
+		private static Dictionary<Version,VersionMetaData> _versionData = new Dictionary<Version, VersionMetaData>();
+	    private static readonly Dictionary<Type, Dictionary<VersionedAttribute, Type>> Versions = new Dictionary<Type, Dictionary<VersionedAttribute, Type>>();
 		private static readonly Dictionary<string,Dictionary<Version,VersionedFileMetaData>> FileVersions = new Dictionary<string, Dictionary<Version, VersionedFileMetaData>>(StringComparer.InvariantCultureIgnoreCase);
 
 		public static void Setup(bool developerMode)
@@ -173,7 +172,7 @@ namespace Octgn.Scripting
             {
                 throw new InvalidOperationException("Can't get versioned file for " + name + " v" + version + " because the version number " + version + " is incorrect or wasn't registered.");
             }
-            if (X.Instance.Debug || Program.DeveloperMode)
+            if (X.Instance.Debug || isDeveloperMode)
             {
                 return FileVersions[name][version];
             }

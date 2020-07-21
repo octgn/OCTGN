@@ -24,6 +24,7 @@ using Octgn.Online.Hosting;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using Octgn.Controls;
+using Octgn.Library;
 
 namespace Octgn.Tabs.Play
 {
@@ -246,7 +247,18 @@ namespace Octgn.Tabs.Play
 
                 var hostedGame = await VerifyCanJoinGame();
 
-                Program.JodsEngine.JoinGame(hostedGame);
+                string username;
+                if (hostedGame.GameSource == "Online") {
+                    username = Program.LobbyClient.User.DisplayName;
+                } else {
+                    username = Program.LobbyClient.User?.DisplayName ?? Prefs.Username ?? Randomness.RandomRoomName();
+                }
+
+                var spectate
+                    = hostedGame.Status == HostedGameStatus.GameInProgress
+                    && hostedGame.Spectator;
+
+                await Program.JodsEngine.JoinGame(hostedGame, username, spectate);
             } catch (Exception ex) {
                 HandleException(ex);
             } finally {
@@ -275,11 +287,6 @@ namespace Octgn.Tabs.Play
             var game = GameManager.Get().GetById(hostedGame.GameId);
             if (game == null) {
                 throw new UserMessageException("You don't have the required game installed.");
-            }
-
-            var hostAddress = hostedGame.IPAddress;
-            if (hostAddress == null) {
-                throw new UserMessageException("There was a problem with your DNS. Please try again.");
             }
 
             return hostedGame;

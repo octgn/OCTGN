@@ -10,7 +10,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".txt" #>
 <#
-    var programPath = Host.ResolvePath("Program.cs");
+    var programPath = Host.ResolvePath(@"Loaders\VersionedLoader.cs");
     var programString = File.ReadAllText(programPath);
 
     XDocument doc = XDocument.Load(Host.ResolvePath(@"Scripting\ApiVersions.xml"));
