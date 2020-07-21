@@ -9,7 +9,7 @@ namespace Octgn.Play.State
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Media;
-
+    using Newtonsoft.Json;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.Play.Save;
     using Octgn.DataNew.Entities;
@@ -21,7 +21,10 @@ namespace Octgn.Play.State
 
     public class GameSaveState : SaveState<GameEngine, GameSaveState>, IGameSaveState
     {
-        public IPlayerSaveState[] Players { get; set; }
+        [JsonIgnore]
+        IPlayerSaveState[] IGameSaveState.Players => Players;
+
+        public PlayerSaveState[] Players { get; set; }
 
         public Dictionary<string, string> GlobalVariables { get; set; }
         public int TurnNumber { get; set; }
