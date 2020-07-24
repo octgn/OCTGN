@@ -386,29 +386,6 @@
             <Component Id="cmp8B958C539340A3249641B5DE0F84F5D6" Guid="*">
                 <File Id="fil423C980DE52A8501A274756049B7F7FB" KeyPath="yes" Source="$(var.HarvestPath)\System.Xml.XPath.XDocument.dll" />
             </Component>
-            <Directory Id="dir772CD746B96CC182838BEDFDC724FCF6" Name="Schemas">
-                <Component Id="cmp933E93C00D66D28AB9F977FDA948E154" Guid="*">
-                    <File Id="fil1CBA3DC385DFD3E5146ECCF4586D7399" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\CardGenerator.cs" />
-                </Component>
-                <Component Id="cmp527CB8B6A0812162F5F6694F98E02781" Guid="*">
-                    <File Id="filD68B3F72063409B9FC2CD63EC20A5F8E" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\CardGenerator.xsd" />
-                </Component>
-                <Component Id="cmp4E1348F8B0325B454118831A1A6F152A" Guid="*">
-                    <File Id="filD37567DED1C53BB4C5FCC641B543C77F" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\CardSet.cs" />
-                </Component>
-                <Component Id="cmp72B76DE37ED8A652A666B9AC7AB63538" Guid="*">
-                    <File Id="fil3BF47177D07F1CAEF939A15D32744955" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\CardSet.xsd" />
-                </Component>
-                <Component Id="cmp525370DC49A1DFC5E4FF42DA20D104AB" Guid="*">
-                    <File Id="filC076325E09A1935527D164AB184D62CB" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\CardSet.xsx" />
-                </Component>
-                <Component Id="cmp2C61E685F03D6B125FBC0DFEF8C563CD" Guid="*">
-                    <File Id="fil39A15D25456792E49DB2C0CAEE930AE2" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\Game.cs" />
-                </Component>
-                <Component Id="cmpF009CAE4A22883572E14EF019724F65E" Guid="*">
-                    <File Id="fil46B75FEA831E55CB6CABB88BF3C863A2" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\Game.xsd" />
-                </Component>
-            </Directory>
         </DirectoryRef>
     </Fragment>
     <Fragment>
@@ -541,13 +518,6 @@
             <ComponentRef Id="cmpB7810F3D9754EEF1BB54E469994259BD" />
             <ComponentRef Id="cmp47F0870C91C9B4504162A9AAE96A9D9E" />
             <ComponentRef Id="cmp8B958C539340A3249641B5DE0F84F5D6" />
-            <ComponentRef Id="cmp933E93C00D66D28AB9F977FDA948E154" />
-            <ComponentRef Id="cmp527CB8B6A0812162F5F6694F98E02781" />
-            <ComponentRef Id="cmp4E1348F8B0325B454118831A1A6F152A" />
-            <ComponentRef Id="cmp72B76DE37ED8A652A666B9AC7AB63538" />
-            <ComponentRef Id="cmp525370DC49A1DFC5E4FF42DA20D104AB" />
-            <ComponentRef Id="cmp2C61E685F03D6B125FBC0DFEF8C563CD" />
-            <ComponentRef Id="cmpF009CAE4A22883572E14EF019724F65E" />
         </ComponentGroup>
     </Fragment>
 </Wix>

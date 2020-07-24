@@ -153,7 +153,7 @@
       PostBuildMacros;
     </PostBuildEventDependsOn>
     <PostBuildEvent>echo ASSEMBLY VERSION IS: @(VersionNumber)</PostBuildEvent>
-    <PostBuildEvent>xcopy /Y "$(TargetDir)*.*" "$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\"
+    <PostBuildEvent>xcopy /Y /s "$(TargetDir)*.*" "$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\"
 xcopy /Y "$(TargetDir)*.*" "C:\Server\sas\@(VersionNumber)_Override\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

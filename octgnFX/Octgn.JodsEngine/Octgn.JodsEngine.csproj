@@ -858,4 +858,8 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /Y /i /s &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\JodsEngine&quot;" />
+  </Target>
+
 </Project>
