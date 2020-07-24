@@ -137,7 +137,7 @@ namespace Octgn.Tabs.GameHistory
         public GameHistoryViewModel() {
         }
 
-        public GameHistoryViewModel(History history, string gameName, string path) {
+        public GameHistoryViewModel(IHistory history, string gameName, string path) {
             Id = history.Id;
             GameId = history.GameId;
             Name = history.Name;

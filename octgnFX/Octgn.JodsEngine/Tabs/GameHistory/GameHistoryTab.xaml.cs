@@ -239,7 +239,7 @@ namespace Octgn.Tabs.GameHistory
 
                 var historyFileContents = File.ReadAllBytes(historyFile.FullName);
 
-                var history = History.Deserialize(historyFileContents);
+                var history = JodsEngineHistory.Deserialize(historyFileContents);
 
                 if (history == null) continue;
 

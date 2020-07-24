@@ -83,9 +83,12 @@
     <Compile Include="Play\GameMessageDispatcher.cs" />
     <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\PlayerState.cs" />
+    <Compile Include="Play\Save\GameSaveState.cs" />
+    <Compile Include="Play\Save\History.cs" />
     <Compile Include="Play\Save\IGameSaveState.cs" />
     <Compile Include="Play\Save\IHistory.cs" />
     <Compile Include="Play\Save\IPlayerSaveState.cs" />
+    <Compile Include="Play\Save\PlayerSaveState.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
     <Compile Include="Plugin\IEventBindingDeckBuilderPlugin.cs" />
