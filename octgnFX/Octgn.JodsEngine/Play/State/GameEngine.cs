@@ -99,7 +99,7 @@ namespace Octgn
             }
         }
 
-        public History History { get; }
+        public JodsEngineHistory History { get; }
 
         public bool IsReplay { get; }
 
@@ -187,7 +187,7 @@ namespace Octgn
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
-            History = new History(def.Id);
+            History = new JodsEngineHistory(def.Id);
             if (Program.IsHost) {
                 History.Name = Program.CurrentOnlineGameName;
             }
@@ -484,7 +484,7 @@ namespace Octgn
                 return;
             }
 
-            Program.GameEngine.History.Name = DateTime.Now.Ticks.ToString();
+            Program.GameEngine.History.Name = _gameName;
 
             if (_historyPath == null) {
                 var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);
@@ -540,7 +540,7 @@ namespace Octgn
 
             string blockString = null;
 
-            Program.Dispatcher.InvokeAsync(() => { 
+            Program.Dispatcher.InvokeAsync(() => {
                 var block = ChatControl.GameMessageToBlock(obj);
 
                 blockString = BlockToString(block);
@@ -920,7 +920,7 @@ namespace Octgn
             {
                 // Use a default marker model
                 Program.GameMess.GameDebug("Marker model '{0}' not found, using default marker instead", id);
-                
+
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers.FirstOrDefault(x => x.Id == id) ?? Marker.DefaultMarkers[Crypto.Random(7)];
                 model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;

@@ -1078,7 +1078,7 @@ namespace Octgn.Networking
         {
             WriteReplayAction(fromPlayer.Id);
             Log.DebugFormat("GameState From {0}", fromPlayer);
-            var state = JsonConvert.DeserializeObject<GameSaveState>(strstate);
+            var state = JsonConvert.DeserializeObject<JodsEngineGameSaveState>(strstate);
 
             state.Load(Program.GameEngine, fromPlayer);
 
@@ -1091,7 +1091,7 @@ namespace Octgn.Networking
             Log.DebugFormat("GameStateReq From {0}", fromPlayer);
             try
             {
-                var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
+                var ps = new JodsEngineGameSaveState().Create(Program.GameEngine, fromPlayer);
 
                 var str = JsonConvert.SerializeObject(ps, Formatting.None);
 

@@ -172,8 +172,7 @@ namespace Octgn.Controls
         {
             try {
                 Error = "";
-                var game = ComboBoxGame.SelectedItem as DataGameViewModel;
-                if (game == null) return;
+                if (!(ComboBoxGame.SelectedItem is DataGameViewModel game)) return;
 
                 var strHost = TextBoxHostName.Text;
                 var strPort = TextBoxPort.Text;
@@ -183,14 +182,15 @@ namespace Octgn.Controls
                 ValidateFields(username, game, strHost, strPort, password, out var host, out var port);
 
                 Program.IsHost = false;
-                Program.JodsEngine.JoinGame(game, host, port, username, password);
+                if(await Program.JodsEngine.JoinGame(game, host, port, username, password, Spectator)) {
+                    Successful = true;
 
-                Successful = true;
-
-                this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
-                this.Password = TextBoxPassword.Password ?? "";
-                this.Close(DialogResult.OK);
-
+                    Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
+                    Password = TextBoxPassword.Password ?? "";
+                    Close(DialogResult.OK);
+                } else {
+                    throw new UserMessageException($"Game engine didn't start");
+                }
             } catch (UserMessageException ex) {
                 Log.Error(nameof(ButtonConnectClick), ex);
                 Error = $"Could not connect: {ex.Message}";

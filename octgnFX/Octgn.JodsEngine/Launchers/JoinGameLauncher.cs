@@ -79,7 +79,6 @@ namespace Octgn.Launchers
                     throw new UserMessageException(UserMessageExceptionMode.Blocking, msg);
                 }
 
-
                 Window window = null;
                 await Dispatcher.CurrentDispatcher.InvokeAsync(() => {
                     window = WindowManager.PlayWindow = new PlayWindow();

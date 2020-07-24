@@ -122,7 +122,7 @@
                     <GridViewColumn Header="Game"
                                     DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
                     <GridViewColumn Header="Start Time"
-                                    DisplayMemberBinding="{Binding Path=StartTime, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=DateStarted, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
                     <GridViewColumn Header="Run Time"
                                     DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
                 </GridView>

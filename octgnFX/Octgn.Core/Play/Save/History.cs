@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Octgn.Core.Play.Save;
-using Octgn.Play.State;
 using System;
 using System.Text;
 
-namespace Octgn.Play.Save
+namespace Octgn.Core.Play.Save
 {
     public class History : IHistory
     {
@@ -13,36 +11,16 @@ namespace Octgn.Play.Save
 
         public Guid GameId { get; set; }
 
-        public IGameSaveState State { get; set; }
+        [JsonIgnore]
+        IGameSaveState IHistory.State => State;
+
+        public GameSaveState State { get; set; }
 
         public DateTimeOffset DateSaved { get; set; }
 
         public DateTimeOffset DateStarted { get; set; }
 
         public History() {
-            State = new GameSaveState();
-            Id = Guid.NewGuid();
-        }
-
-        public History(Guid gameId) {
-            Id = Guid.NewGuid();
-
-            GameId = gameId;
-
-            State = new GameSaveState();
-
-            DateStarted = DateTimeOffset.Now;
-        }
-
-        public byte[] GetSnapshot(GameEngine engine, Player localPlayer) {
-            var state = (GameSaveState)State;
-
-            state.Create(engine, localPlayer, true);
-            DateSaved = DateTimeOffset.Now;
-
-            var serialized = Serialize(this);
-
-            return serialized;
         }
 
         public static byte[] Serialize(History history) {
