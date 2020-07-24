@@ -79,6 +79,33 @@ namespace Octgn
             return LaunchJodsEngine(args);
         }
 
+        public Task<bool> JoinGame(DataGameViewModel game, IPAddress host, int port, string username, string password, bool spectate) {
+            var user = new User(Guid.NewGuid().ToString(), username);
+
+            var hostedGame = new HostedGame() {
+                Id = Guid.NewGuid(),
+                GameId = game.Id,
+                GameName = game.Name,
+                OctgnVersion = Const.OctgnVersion.ToString(),
+                GameVersion = game.Version.ToString(),
+                HostAddress = $"{host}:{port}",
+                Password = password
+            };
+
+            var args = "-j ";
+
+            args += $"-u \"{username}\" ";
+            if (spectate) {
+                args += "-s ";
+            }
+
+            args += "-k \"" + HostedGame.Serialize(hostedGame) + "\"";
+
+            return LaunchJodsEngine(args);
+        }
+
+        internal void LaunchReplay(GameHistoryViewModel history) => throw new NotImplementedException();
+
         private async Task<bool> LaunchJodsEngine(string args) {
             var engineDirectory = "jodsengine";
             if (X.Instance.Debug) {
@@ -128,9 +155,5 @@ namespace Octgn
 
             return true;
         }
-
-        internal void JoinGame(DataGameViewModel game, IPAddress host, int port, string username, string password) => throw new NotImplementedException();
-
-        internal void LaunchReplay(GameHistoryViewModel history) => throw new NotImplementedException();
     }
 }
