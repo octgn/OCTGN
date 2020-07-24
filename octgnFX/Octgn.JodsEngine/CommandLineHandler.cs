@@ -66,6 +66,7 @@
                 string deckPath = null;
                 string username = null;
                 string hostedGameString = null;
+                string historyPath = null;
                 var os = new Mono.Options.OptionSet()
                 {
                     {"t|table", x => tableOnly = true},
@@ -77,7 +78,8 @@
                     {"h|joinashost", x => hostGame = true },
                     {"u|username=", x => username = x },
                     {"k|hostedgame=", x => hostedGameString = x },
-                    {"s|spectate", x => spectate = true }
+                    {"s|spectate", x => spectate = true },
+                    {"r|replay=", x => historyPath = x }
                 };
                 try
                 {
@@ -110,6 +112,8 @@
                 } else if(tableOnly && joinGame) {
                     //TODO: Show error
                     return null;
+                }else if (!string.IsNullOrWhiteSpace(historyPath)) {
+                    return new ReplayLauncher(historyPath);
                 }
 
                 if (File.Exists(args[1]))

@@ -104,7 +104,13 @@ namespace Octgn
             return LaunchJodsEngine(args);
         }
 
-        internal void LaunchReplay(GameHistoryViewModel history) => throw new NotImplementedException();
+        public Task<bool> LaunchReplay(string replayFile) {
+            if (string.IsNullOrWhiteSpace(replayFile)) throw new ArgumentNullException(nameof(replayFile));
+
+            var args = $"-r=\"{replayFile}\"";
+
+            return LaunchJodsEngine(args);
+        }
 
         private async Task<bool> LaunchJodsEngine(string args) {
             var engineDirectory = "jodsengine";

@@ -237,10 +237,7 @@ namespace Octgn.Tabs.GameHistory
 
                 var historyFileContents = File.ReadAllBytes(historyFile.FullName);
 
-                return pageContent;
-                //throw new NotImplementedException();
-                var history = (IHistory)null;
-                //var history = History.Deserialize(historyFileContents);
+                var history = History.Deserialize(historyFileContents);
 
                 if (history == null) continue;
 

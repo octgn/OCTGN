@@ -1,13 +1,15 @@
-﻿using Octgn.Core.Play.Save;
+﻿using Newtonsoft.Json;
+using Octgn.Core.Play.Save;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Text;
 using System.Windows.Media;
 
 namespace Octgn.Tabs.GameHistory
 {
-    public class GameHistoryViewModel : INotifyPropertyChanged
+    public class GameHistoryViewModel : INotifyPropertyChanged, IHistory
     {
         private static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -55,17 +57,29 @@ namespace Octgn.Tabs.GameHistory
         }
         private string _name;
 
-        public DateTime StartTime {
-            get => _startTime;
+        public DateTimeOffset DateStarted {
+            get => _dateStarted;
             private set {
-                if (value.Equals(_startTime)) {
+                if (value.Equals(_dateStarted)) {
                     return;
                 }
-                _startTime = value;
-                OnPropertyChanged(nameof(StartTime));
+                _dateStarted = value;
+                OnPropertyChanged(nameof(DateStarted));
             }
         }
-        private DateTime _startTime;
+        private DateTimeOffset _dateStarted;
+
+        public DateTimeOffset DateSaved {
+            get => _dateSaved;
+            private set {
+                if (value.Equals(_dateSaved)) {
+                    return;
+                }
+                _dateSaved = value;
+                OnPropertyChanged(nameof(DateSaved));
+            }
+        }
+        private DateTimeOffset _dateSaved;
 
         public string RunTime {
             get => _runTime;
@@ -120,6 +134,18 @@ namespace Octgn.Tabs.GameHistory
         }
         private string _path;
 
+        public IGameSaveState State  {
+            get => _state;
+            set {
+                if (value.Equals(_state)) {
+                    return;
+                }
+                _state = value;
+                OnPropertyChanged(nameof(State));
+            }
+        }
+        private IGameSaveState _state;
+
         public ObservableCollection<GameHistoryPlayerViewModel> Players {
             get => _players;
             set {
@@ -139,7 +165,7 @@ namespace Octgn.Tabs.GameHistory
             Id = history.Id;
             GameId = history.GameId;
             Name = history.Name;
-            StartTime = history.DateStarted.LocalDateTime;
+            DateStarted = history.DateStarted.LocalDateTime;
             var runTime = (history.DateSaved.LocalDateTime - history.DateStarted.LocalDateTime);
             RunTime = string.Format("{0}h {1}m", Math.Floor(runTime.TotalHours), runTime.Minutes);
             GameName = gameName;
@@ -157,7 +183,7 @@ namespace Octgn.Tabs.GameHistory
             Id = history.Id;
             GameId = history.GameId;
             Name = history.Name;
-            StartTime = history.StartTime;
+            DateStarted = history.DateStarted;
             RunTime = history.RunTime;
             GameName = history.GameName;
             _players = new ObservableCollection<GameHistoryPlayerViewModel>(history.Players);
@@ -167,7 +193,7 @@ namespace Octgn.Tabs.GameHistory
             Id = history.Id;
             GameId = history.GameId;
             Name = history.Name;
-            StartTime = history.StartTime;
+            DateStarted = history.DateStarted;
             RunTime = history.RunTime;
             GameName = history.GameName;
             _players = new ObservableCollection<GameHistoryPlayerViewModel>(history.Players);
@@ -216,6 +242,22 @@ namespace Octgn.Tabs.GameHistory
 
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public static byte[] Serialize(GameHistoryPlayerViewModel history) {
+            var str = JsonConvert.SerializeObject(history, Formatting.Indented);
+
+            var bytes = Encoding.UTF8.GetBytes(str);
+
+            return bytes;
+        }
+
+        public static GameHistoryPlayerViewModel Deserialize(byte[] data) {
+            var str = Encoding.UTF8.GetString(data);
+
+            var history = JsonConvert.DeserializeObject<GameHistoryPlayerViewModel>(str);
+
+            return history;
         }
     }
 }
