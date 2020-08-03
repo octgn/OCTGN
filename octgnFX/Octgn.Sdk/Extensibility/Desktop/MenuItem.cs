@@ -47,6 +47,8 @@ namespace Octgn.Sdk.Extensibility.Desktop
 
             (var path, var args) = ParseLaunchString(launchString);
 
+            path = Environment.ExpandEnvironmentVariables(path);
+
             if (!System.IO.Path.IsPathRooted(path)) {
                 var root = Path.GetDirectoryName(Menu.Package.Record.Path);
 
