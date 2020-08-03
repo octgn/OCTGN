@@ -7,4 +7,4 @@
 
 - id: octgn.jodsengine.gamemenu.deckeditor
   text: Deck Editor
-  click: launch "engine\octgn.exe" -e
+  click: launch "%JODSENGINE_DEBUGPATH%" -e
