@@ -73,6 +73,8 @@ namespace Octgn.Desktop
         private void Load() {
             File.Delete("temp.db");
 
+            ConfigureDebugSettings();
+
             UpgradeDatabase();
 
             InstallBuiltInPackages();
@@ -86,6 +88,14 @@ namespace Octgn.Desktop
             var startScreen = ChooseStartScreen(defaultGameRecord);
 
             _navigationService.NavigateTo(startScreen);
+        }
+
+        private void ConfigureDebugSettings() {
+#if (!DEBUG)
+            return;
+#endif
+
+            Environment.SetEnvironmentVariable("JODSENGINE_DEBUGPATH", "..\\..\\..\\..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1\\octgn.exe");
         }
 
         private void UpgradeDatabase() {
