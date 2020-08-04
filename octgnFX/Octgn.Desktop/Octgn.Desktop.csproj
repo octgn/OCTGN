@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <None Remove="Packages\octgn.packages.jodsengine\jodsengine.package.yaml" />
-    <None Remove="Packages\octgn.packages.jodsengine\octgn.jodsengine.gamemenu.yaml" />
     <None Remove="Packages\octgn.packages.jodsengine\themes\dark\darktheme.css" />
     <None Remove="Packages\octgn.packages.jodsengine\themes\light\darktheme.css" />
   </ItemGroup>

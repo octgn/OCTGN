@@ -7,7 +7,6 @@ using Octgn.Communication;
 using Octgn.Core;
 using Octgn.Library;
 using Octgn.Online.Hosting;
-using Octgn.Tabs.GameHistory;
 using Octgn.Tabs.Play;
 using Octgn.ViewModels;
 using System;

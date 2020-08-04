@@ -17,6 +17,8 @@ namespace Octgn.Library
     {
         public static Config Instance { get; set; }
 
+        public static readonly object Sync = new object();
+
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public IPaths Paths { get; }
