@@ -1,5 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,13 +7,11 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Octgn</RootNamespace>
     <AssemblyName>Octgn</AssemblyName>
-    <AssemblyVersion>3.4.286.0</AssemblyVersion>
+    <AssemblyVersion>3.4.294.0</AssemblyVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="CurrentReleaseVersion.txt" />
     <None Remove="CurrentTestVersion.txt" />
@@ -134,13 +132,11 @@
     <None Remove="Sleeves\Thabbashite-Assailant.jpg" />
     <None Remove="Sleeves\The-Spoils.jpg" />
   </ItemGroup>
-
   <ItemGroup>
     <Page Include="App.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="logging.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -183,13 +179,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="CurrentVersion.txt" />
     <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
     <EmbeddedResource Include="Scripting\PythonAPI.py" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.0.1" />
     <PackageReference Include="IronPython" Version="2.7.10" />
@@ -205,7 +199,6 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="ToggleSwitch" Version="1.1.2" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj" />
@@ -217,13 +210,11 @@
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj" />
     <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Windows.Forms">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.Windows.Forms.dll</HintPath>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
     <Resource Include="CurrentReleaseVersion.txt" />
     <Resource Include="CurrentTestVersion.txt" />
@@ -314,7 +305,6 @@
     <Resource Include="Scripting\Versions\3.1.0.1.py" />
     <Resource Include="Scripting\Versions\3.1.0.2.py" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -523,7 +513,6 @@
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -531,7 +520,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="app.config">
       <SubType>Designer</SubType>
@@ -572,7 +560,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <Page Update="Controls\MissedMessagesBreak.xaml">
       <SubType>Designer</SubType>
@@ -809,13 +796,10 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy &quot;$(TargetDir)octgn.exe&quot; &quot;$(TargetDir)Octgn.JodsEngine.exe&quot;&#xD;&#xA;xcopy /sY &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\&quot;" />
   </Target>
-
 </Project>
