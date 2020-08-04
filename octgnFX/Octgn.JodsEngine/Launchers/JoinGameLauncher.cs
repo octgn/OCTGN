@@ -64,7 +64,14 @@ namespace Octgn.Launchers
                 }
 
                 loadingView.UpdateStatus("Loading game");
+                var gm = GameManager.Get();
+
                 var game = GameManager.Get().GetById(hostedGame.GameId);
+
+                if (game == null) {
+                    var msg = $"Game {hostedGame.GameName}({hostedGame.Id}) could not be found.";
+                    throw new UserMessageException(UserMessageExceptionMode.Blocking, msg);
+                }
 
                 loadingView.UpdateStatus("Building engine");
                 Program.GameEngine = new GameEngine(game, _username, _spectate, password);

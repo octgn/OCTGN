@@ -477,7 +477,9 @@ namespace Octgn.Core.DataManagers
                 {
                     try
                     {
-                        DbContext.Get().Invalidate(game);
+                        if (DbContext.Get() is IDbContextCaching dbWithCaching)
+                            dbWithCaching.Invalidate(game);
+
                         gamePathDi.ClearReadonlyFlag();
                         gamePathDi.MoveTo(Config.Instance.Paths.GraveyardPath);
                         break;

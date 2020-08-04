@@ -1,7 +1,5 @@
 ﻿using Csv;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -25,11 +23,11 @@ namespace Octgn.Sdk.Extensibility.Desktop
         [XmlIgnore]
         public MenuPlugin Menu { get; set; }
 
-        public virtual Task OnClick() {
-            return Task.Run(OnClickSync);
+        public virtual Task OnClick(ClickContext context) {
+            return Task.Run(() => OnClickSync(context));
         }
 
-        private void OnClickSync() {
+        private void OnClickSync(ClickContext context) {
             if (string.IsNullOrWhiteSpace(Click))
                 return;
 

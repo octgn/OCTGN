@@ -5,7 +5,7 @@
     using System.Reflection;
 
     using log4net;
-
+    using Octgn.DataNew;
     using Octgn.Launchers;
     using Octgn.Online.Hosting;
 
@@ -61,6 +61,7 @@
                 var joinGame = false;
                 var hostGame = false;
                 var spectate = false;
+                var desktopContext = false;
                 int? hostport = null;
                 Guid? gameid = null;
                 string deckPath = null;
@@ -79,7 +80,8 @@
                     {"u|username=", x => username = x },
                     {"k|hostedgame=", x => hostedGameString = x },
                     {"s|spectate", x => spectate = true },
-                    {"r|replay=", x => historyPath = x }
+                    {"r|replay=", x => historyPath = x },
+                    {"p|desktopcontext", x => desktopContext = true }
                 };
                 try
                 {
@@ -89,6 +91,11 @@
                 {
                     Log.Warn("Parse args exception: " + String.Join(",", Environment.GetCommandLineArgs()), e);
                 }
+
+                if (desktopContext) {
+                    DbContext.SetContext(new DesktopIntegration.DesktopDbContext());
+                }
+
                 if (tableOnly) {
                     return new TableLauncher(hostport, gameid);
                 } else if (joinGame) {

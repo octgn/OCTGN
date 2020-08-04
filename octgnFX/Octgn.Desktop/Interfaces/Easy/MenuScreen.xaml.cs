@@ -1,4 +1,4 @@
-﻿using Octgn.Sdk;
+﻿using Octgn.Sdk.Extensibility;
 using Octgn.Sdk.Extensibility.Desktop;
 using System;
 using System.Threading.Tasks;
@@ -16,10 +16,10 @@ namespace Octgn.Desktop.Interfaces.Easy
             InitializeComponent();
         }
 
-        public MenuScreen(IPluginDetails gamePluginDetails, MenuPlugin menuPlugin) {
+        public MenuScreen(GamePlugin gamePlugin, MenuPlugin menuPlugin) {
             _menuPlugin = menuPlugin ?? throw new ArgumentNullException(nameof(menuPlugin));
 
-            Title = gamePluginDetails.Name;
+            Title = gamePlugin.Details.Name;
 
             InitializeComponent();
 
@@ -34,7 +34,9 @@ namespace Octgn.Desktop.Interfaces.Easy
                     try {
                         await Task.Delay(200);
 
-                        await item.OnClick();
+                        var context = new ClickContext(gamePlugin);
+
+                        await item.OnClick(context);
                     } catch (Exception ex) {
                         //TODO: Shutodwn error
                     } finally {
