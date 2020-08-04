@@ -1358,7 +1358,7 @@ namespace Octgn.Play
             //        new Image()
             //        {
             //            Source =
-            //                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
+            //                new BitmapImage(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/statusOffline.png")),
             //            Stretch = Stretch.Uniform,
             //            Width = 12,
             //            Height=8,
@@ -1385,7 +1385,7 @@ namespace Octgn.Play
             //        new Image()
             //        {
             //            Source =
-            //                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/orangebullet.png")),
+            //                new BitmapImage(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/orangebullet.png")),
             //            Stretch = Stretch.Uniform,
             //            Width = 8,
             //            VerticalAlignment = VerticalAlignment.Center,

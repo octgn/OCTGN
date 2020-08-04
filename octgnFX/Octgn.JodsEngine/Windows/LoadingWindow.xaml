@@ -5,7 +5,7 @@
         Height="150"
         Width="300"
         WindowStartupLocation="CenterScreen"
-        Icon="/OCTGN;component/Resources/Icons/Reset.png"
+        Icon="/Octgn.JodsEngine;component/Resources/Icons/Reset.png"
         ResizeMode="NoResize"
         ShowInTaskbar="True"
         Topmost="False"

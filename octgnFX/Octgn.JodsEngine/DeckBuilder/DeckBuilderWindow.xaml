@@ -2,7 +2,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls"
                   xmlns:gui="clr-namespace:Octgn.Play.Gui" xmlns:deck="clr-namespace:Octgn.DeckBuilder" xmlns:octgn="clr-namespace:Octgn"
                   x:Name="self" Title="Octgn Deck Builder" Height="650" Width="800" MinHeight="600" MinWidth="800"
-                  Style="{StaticResource Window}" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico">
+                  Style="{StaticResource Window}" WindowIcon="pack://application:,,,/Octgn.JodsEngine;component/Resources/Icon.ico">
 
     <Window.CommandBindings>
         <CommandBinding Command="gui:Commands.LoadDeck" Executed="LoadDeckCommand" />
