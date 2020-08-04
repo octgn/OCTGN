@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Octgn</RootNamespace>
     <AssemblyName>Octgn</AssemblyName>
-    <AssemblyVersion>3.4.296.0</AssemblyVersion>
+    <AssemblyVersion>3.4.297.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
