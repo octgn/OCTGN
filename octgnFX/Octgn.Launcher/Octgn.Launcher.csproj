@@ -86,7 +86,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy /sY "$(TargetDir)*.*" "$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
