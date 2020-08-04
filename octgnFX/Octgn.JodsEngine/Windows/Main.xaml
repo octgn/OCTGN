@@ -9,7 +9,7 @@
         Title="OCTGN"
     x:Name="me"
         Height="600" Width="1024"
-        MinHeight="600" MinWidth="800" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        MinHeight="600" MinWidth="800" WindowIcon="pack://application:,,,/Octgn.JodsEngine;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>

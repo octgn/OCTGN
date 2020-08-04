@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:Octgn.Controls" 
                           xmlns:me="clr-namespace:Octgn.Windows"
         CanResize="False" MinMaxButtonVisibility="Collapsed" 
-        MinimizeButtonVisibility="Collapsed" WindowIcon="pack://application:,,,/OCTGN;component/Resources/FileIcons/Deck.ico"
+        MinimizeButtonVisibility="Collapsed" WindowIcon="pack://application:,,,/Octgn.JodsEngine;component/Resources/FileIcons/Deck.ico"
         SizeToContent="Height"
         Title="Import Card Images" Height="600" MaxHeight="600" Width="700" MaxWidth="700"
         x:Name="me" >

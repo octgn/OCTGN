@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:octgn="clr-namespace:Octgn"
         Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden" MinimizeButtonVisibility="Hidden"
-        WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight"
+        WindowIcon="pack://application:,,,/Octgn.JodsEngine;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight"
         Width="596" Height="325">
     <Grid Width="596" Height="325" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
@@ -40,22 +40,22 @@
                 <RowDefinition Height="21*"/>
             </Grid.RowDefinitions>
             <Image Height="80" HorizontalAlignment="Left" Margin="6,6,0,0" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" 
-                   Name="imgDrilus" Opacity="0.25" Source="/OCTGN;component/Resources/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
+                   Name="imgDrilus" Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
             <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Image Height="80" HorizontalAlignment="Left" Margin="6,151,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
-                   Opacity="0.25" Source="/OCTGN;component/Resources/ralig.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+                   Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/ralig.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="7,231,0,0" Name="lblRalig98" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80" 
-                   Opacity="0.25" Source="/OCTGN;component/Resources/GravecorpAvatar.jpg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+                   Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/GravecorpAvatar.jpg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
-                   Opacity="0.25" Source="/OCTGN;component/Resources/d0c.jpeg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+                   Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/d0c.jpeg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,85,0,0" Name="lblGraveCorp" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="177,0,0,54" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Resources/smith_user.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+            <Image Height="80" HorizontalAlignment="Left" Margin="177,0,0,54" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/smith_user.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,231,0,0" Name="lblOthers" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
             <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textAbout" 
@@ -110,7 +110,7 @@
                     </TextBlock>
                 </Grid>
             </Border>
-            <Image Height="80" HorizontalAlignment="Left" Margin="91,0,0,54" x:Name="imgSoul1355" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Resources/soul1355.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+            <Image Height="80" HorizontalAlignment="Left" Margin="91,0,0,54" x:Name="imgSoul1355" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/soul1355.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="Soul1355" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" x:Name="lblSoul1355" 
             	VerticalAlignment="Top" Width="79" Foreground="Black" Margin="91,231,0,0" />
             <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textSoul1355" 

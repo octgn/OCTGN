@@ -184,7 +184,7 @@ namespace Octgn.Controls.WindowDecorators
 
             var styles = new ResourceDictionary
             {
-                Source = new Uri("pack://application:,,,/OCTGN;component/Controls/WindowDecorators/OctgnDecoratorResources.xaml", UriKind.RelativeOrAbsolute)
+                Source = new Uri("pack://application:,,,/Octgn.JodsEngine;component/Controls/WindowDecorators/OctgnDecoratorResources.xaml", UriKind.RelativeOrAbsolute)
             };
             var buttonStyle = (Style)styles["TitleBarButtonStyle"];
             buttonStyle.Setters.Add(new Setter(Control.TemplateProperty, styles["TitleBarButtonTemplate"]));
@@ -197,7 +197,7 @@ namespace Octgn.Controls.WindowDecorators
                 Content = new Image
                 {
                     Stretch = Stretch.None,
-                    Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minimize.png"))
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/minimize.png"))
                 }
             };
             AutomationProperties.SetName(WindowMinimizeButton, "Minimize");
@@ -216,7 +216,7 @@ namespace Octgn.Controls.WindowDecorators
                 Content = new Image
                 {
                     Stretch = Stretch.None,
-                    Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minmax.png"))
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/minmax.png"))
                 }
             };
             var binding = new Binding("WindowState")
@@ -242,7 +242,7 @@ namespace Octgn.Controls.WindowDecorators
                 Content = new Image
                 {
                     Stretch = Stretch.None,
-                    Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/closewindow.png"))
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/closewindow.png"))
                 }
             };
             AutomationProperties.SetName(WindowCloseButton, "Close");
