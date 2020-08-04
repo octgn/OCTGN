@@ -127,6 +127,8 @@ namespace Octgn
                 enginePath = Path.Combine(engineDirectory, exeName);
             }
 
+            Log.Info($"Launching engine {enginePath} - {args}");
+
             var psi = new ProcessStartInfo(enginePath, args);
             psi.UseShellExecute = true;
             psi.WorkingDirectory = engineDirectory;
