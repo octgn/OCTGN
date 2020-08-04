@@ -118,35 +118,43 @@
     </Compile>
     <Compile Include="Schemas\CardGenerator.cs">
       <DependentUpon>CardGenerator.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Schemas\CardSet.cs">
       <DependentUpon>CardSet.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Schemas\Game.cs">
       <DependentUpon>Game.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\NetworkHelper.cs" />
     <Compile Include="X.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Schemas\Game.xsd">
+    <EmbeddedResource Include="Schemas\Game.xsd">
       <SubType>Designer</SubType>
-    </None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <CodeAnalysisDictionary Include="Schemas\Game.xsx">
       <DependentUpon>Game.xsd</DependentUpon>
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </CodeAnalysisDictionary>
     <EmbeddedResource Include="Schemas\CardSet.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Schemas\CardGenerator.xsd">
+    <EmbeddedResource Include="Schemas\CardGenerator.xsd">
       <LastGenOutput>CardGenerator.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Schemas\CardSet.xsx">
       <DependentUpon>CardSet.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Schemas\GameEvents.xsd">
       <SubType>Designer</SubType>
