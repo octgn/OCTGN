@@ -486,23 +486,24 @@ namespace Octgn.DataNew
                 foreach (var s in g.scripts)
                 {
                     ret.Scripts.Add(s.src);
-                    var coll = (Def.Config.IsExternalDb)
-                        ?
-                            Def.Config.DefineCollection<GameScript>("Scripts")
-                            .OverrideRoot(x => x.Directory(""))
-                            .SetPart(x => x.Directory(ret.Id.ToString()))
-                        :
-                            Def.Config.DefineCollection<GameScript>("Scripts")
-                            .OverrideRoot(x => x.Directory("GameDatabase"))
-                            .SetPart(x => x.Directory(ret.Id.ToString()));
-                    var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    for (var index = 0; index < pathParts.Length; index++)
-                    {
-                        var i = index;
-                        if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
-                        else coll.SetPart(x => x.Directory(pathParts[i]));
+                    if (Def != null) {
+                        var coll = (Def.Config.IsExternalDb)
+                            ?
+                                Def.Config.DefineCollection<GameScript>("Scripts")
+                                .OverrideRoot(x => x.Directory(""))
+                                .SetPart(x => x.Directory(ret.Id.ToString()))
+                            :
+                                Def.Config.DefineCollection<GameScript>("Scripts")
+                                .OverrideRoot(x => x.Directory("GameDatabase"))
+                                .SetPart(x => x.Directory(ret.Id.ToString()));
+                        var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        for (var index = 0; index < pathParts.Length; index++) {
+                            var i = index;
+                            if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
+                            else coll.SetPart(x => x.Directory(pathParts[i]));
+                        }
+                        coll.SetSerializer(new GameScriptSerializer(ret.Id));
                     }
-                    coll.SetSerializer(new GameScriptSerializer(ret.Id));
                 }
             }
             #endregion scripts
@@ -537,24 +538,25 @@ namespace Octgn.DataNew
             if (g.proxygen != null && g.proxygen.definitionsrc != null)
             {
                 ret.ProxyGenSource = g.proxygen.definitionsrc;
-                var coll = (Def.Config.IsExternalDb)
-                    ?
-                        Def.Config.DefineCollection<ProxyDefinition>("Proxies")
-                        .OverrideRoot(x => x.Directory(""))
-                        .SetPart(x => x.Directory(ret.Id.ToString()))
-                    :
-                       Def.Config.DefineCollection<ProxyDefinition>("Proxies")
-                       .OverrideRoot(x => x.Directory("GameDatabase"))
-                       .SetPart(x => x.Directory(ret.Id.ToString()));
-                //.SetPart(x => x.Property(y => y.Key));
-                var pathParts = g.proxygen.definitionsrc.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                for (var index = 0; index < pathParts.Length; index++)
-                {
-                    var i = index;
-                    if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
-                    else coll.SetPart(x => x.Directory(pathParts[i]));
+                if (Def != null) {
+                    var coll = (Def.Config.IsExternalDb)
+                        ?
+                            Def.Config.DefineCollection<ProxyDefinition>("Proxies")
+                            .OverrideRoot(x => x.Directory(""))
+                            .SetPart(x => x.Directory(ret.Id.ToString()))
+                        :
+                           Def.Config.DefineCollection<ProxyDefinition>("Proxies")
+                           .OverrideRoot(x => x.Directory("GameDatabase"))
+                           .SetPart(x => x.Directory(ret.Id.ToString()));
+                    //.SetPart(x => x.Property(y => y.Key));
+                    var pathParts = g.proxygen.definitionsrc.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    for (var index = 0; index < pathParts.Length; index++) {
+                        var i = index;
+                        if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
+                        else coll.SetPart(x => x.Directory(pathParts[i]));
+                    }
+                    coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id));
                 }
-                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id));
             }
             #endregion proxygen
             #region globalvariables

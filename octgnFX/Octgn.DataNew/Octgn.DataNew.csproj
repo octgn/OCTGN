@@ -118,6 +118,8 @@
     <Compile Include="FileDB\Part.cs" />
     <Compile Include="FileDB\PartType.cs" />
     <Compile Include="GameSerializer.cs" />
+    <Compile Include="IDbContext.cs" />
+    <Compile Include="IDbContextCaching.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\RichTextPropertyValue.cs" />
   </ItemGroup>

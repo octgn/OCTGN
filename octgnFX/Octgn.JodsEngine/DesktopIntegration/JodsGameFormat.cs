@@ -19,6 +19,8 @@ namespace Octgn.DesktopIntegration
             if (pluginType != typeof(JodsGamePlugin) && pluginType != typeof(Plugin))
                 throw new UnsupportedPluginTypeException($"{nameof(JodsGameFormat)} does not support plugin type {pluginType.Name}");
 
+            //TODO: This needs to create a JodsGamePlugin from a definition.xml
+
             return new JodsGamePlugin();
         }
     }

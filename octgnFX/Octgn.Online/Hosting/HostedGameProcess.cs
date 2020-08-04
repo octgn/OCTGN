@@ -55,7 +55,11 @@ namespace Octgn.Library
             var path = "";
             // Get file path
             if (isDebug) {
-                path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
+                if (System.Reflection.Assembly.GetEntryAssembly().GetName().Name == "Octgn.Desktop") {
+                    path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
+                } else {
+                    path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
+                }
                 path = Path.GetFullPath(path);
             } else if (isLocal) {
                 path = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";

@@ -17,7 +17,13 @@ namespace Octgn.Loaders
         }
 
         protected void LoadConfig() {
-            Config.Instance = new Config();
+            lock (Config.Sync) {
+                if (Config.Instance != null) {
+                    return; // already configured
+                }
+
+                Config.Instance = new Config();
+            }
 
             Environment.SetEnvironmentVariable(
                 "OCTGN_DATA",

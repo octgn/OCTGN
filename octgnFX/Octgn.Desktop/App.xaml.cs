@@ -197,6 +197,7 @@ namespace Octgn.Desktop
                 .Packages
                 .SelectMany(package => package.Plugins)
                 .Where(plugin => plugin.Details.Id == gamePluginRecord.Id)
+                .OfType<GamePlugin>()
                 .First();
 
             var gamePackage = gamePlugin.Package;
@@ -213,7 +214,7 @@ namespace Octgn.Desktop
 
             Screen screen = null;
             Dispatcher.Invoke(() => {
-                screen = new MenuScreen(gamePlugin.Details, mp);
+                screen = new MenuScreen(gamePlugin, mp);
             });
 
             return screen
