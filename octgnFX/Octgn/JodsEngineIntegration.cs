@@ -112,14 +112,20 @@ namespace Octgn
         }
 
         private async Task<bool> LaunchJodsEngine(string args) {
-            var engineDirectory = "jodsengine";
-            if (X.Instance.Debug) {
-                engineDirectory = "..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1";
+            string enginePath;
+            string engineDirectory;
+            {
+                var exeName = "octgn.jodsengine.exe";
+                engineDirectory = ".\\";
+                if (X.Instance.Debug) {
+                    engineDirectory = "..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1";
+                    exeName = "octgn.exe";
+                }
+
+                engineDirectory = Path.GetFullPath(engineDirectory);
+
+                enginePath = Path.Combine(engineDirectory, exeName);
             }
-
-            engineDirectory = Path.GetFullPath(engineDirectory);
-
-            var enginePath = Path.Combine(engineDirectory, "octgn.exe");
 
             var psi = new ProcessStartInfo(enginePath, args);
             psi.UseShellExecute = true;
