@@ -10,7 +10,7 @@
             <ColumnDefinition Width="299*"/>
             <ColumnDefinition Width="297*"/>
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="Silver" BorderThickness="1" Height="276" HorizontalAlignment="Left" Name="border1" VerticalAlignment="Top" 
+        <Border BorderBrush="Silver" BorderThickness="1" Height="276" HorizontalAlignment="Left" Name="border1" VerticalAlignment="Top"
                 Width="275" Margin="10,10,0,0" CornerRadius="10">
             <Border.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
@@ -20,7 +20,7 @@
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
-        <Border BorderBrush="Silver" BorderThickness="1" Height="276" HorizontalAlignment="Left" Margin="5,10,0,0" Name="border2" VerticalAlignment="Top" 
+        <Border BorderBrush="Silver" BorderThickness="1" Height="276" HorizontalAlignment="Left" Margin="5,10,0,0" Name="border2" VerticalAlignment="Top"
                 Width="280" CornerRadius="10" Grid.Column="1">
             <Border.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
@@ -39,26 +39,26 @@
                 <RowDefinition Height="257*"/>
                 <RowDefinition Height="21*"/>
             </Grid.RowDefinitions>
-            <Image Height="80" HorizontalAlignment="Left" Margin="6,6,0,0" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="6,6,0,0" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave"
                    Name="imgDrilus" Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
-            <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus" 
+            <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus"
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="6,151,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="6,151,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80"
                    Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/ralig.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="7,231,0,0" Name="lblRalig98" 
+            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="7,231,0,0" Name="lblRalig98"
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80"
                    Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/GravecorpAvatar.jpg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80"
                    Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/d0c.jpeg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Label Content="gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,85,0,0" Name="lblGraveCorp" 
+            <Label Content="gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,85,0,0" Name="lblGraveCorp"
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c" 
+            <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c"
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Image Height="80" HorizontalAlignment="Left" Margin="177,0,0,54" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/smith_user.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,231,0,0" Name="lblOthers" 
+            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,231,0,0" Name="lblOthers"
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textAbout" 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textAbout"
                    VerticalAlignment="Top" Width="240" Opacity="1" TextWrapping="Wrap" Padding="5" FontSize="12" Grid.Column="1" >
                 OCTGN &quot;Online Card and Tabletop Gaming Network&quot; was originally developed by jods &quot;Joel Dumas&quot;. <LineBreak/><LineBreak/>
                 This program allows anyone to create a game file for use in OCTGN. A game file is typically a TCG (Trading Card Game).<LineBreak/><LineBreak/>
@@ -71,19 +71,19 @@
                     Source(GitHub)
                 </Hyperlink>
             </TextBlock>
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textDrilus" 
-                   Text="Kent Jones is a part time programmer experienced in Delphi and C#.&#13;&#13;His first card game was Star Trek and he's been a TCG enthusiast ever since.&#13;&#13;^.^" 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textDrilus"
+                   Text="Kent Jones is a part time programmer experienced in Delphi and C#.&#13;&#13;His first card game was Star Trek and he's been a TCG enthusiast ever since.&#13;&#13;^.^"
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textRalig98" 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textRalig98"
                    Text="Chris Martin. Not much is known about him.&#13;&#13;He likes to spout random movie quotes that make no sense in context. For example, &quot;One morning I shot an elephant in my pajamas. How he got in my pajamas, I don't know.&quot;"
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textGravecorp" 
-                   Text="Gravecorp (Uri)&#13;&#13;Can program in almost any programming language by abusing his code monkey army!&#13;&#13;KkNvdmVycyB1cCogU3RvcCBkZWNyeXB0aW5nIG1lIHdpdGggeW91ciBleWVzISEh" 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textGravecorp"
+                   Text="Gravecorp (Uri)&#13;&#13;Can program in almost any programming language by abusing his code monkey army!&#13;&#13;KkNvdmVycyB1cCogU3RvcCBkZWNyeXB0aW5nIG1lIHdpdGggeW91ciBleWVzISEh"
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" Name="textOther" 
-                   Text="brine: Thanks for all the python help!&#13;&#13;MagnusVortex:Thanks for some cool ideas. =]&#13;&#13;Robertmeta (Robert Melton):Wow. Thanks for the amazing amount of code and time you contributed. Check out his fork @ https://github.com/robertmeta/open-octgn ." 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" Name="textOther"
+                   Text="brine: Thanks for all the python help!&#13;&#13;MagnusVortex:Thanks for some cool ideas. =]&#13;&#13;Robertmeta (Robert Melton):Wow. Thanks for the amazing amount of code and time you contributed. Check out his fork @ https://github.com/robertmeta/open-octgn ."
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" Name="textD0c" 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" Name="textD0c"
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1">
                 Kelly Elton<LineBreak/><LineBreak/>
                 Team lead and software contractor. <LineBreak/>
@@ -100,7 +100,7 @@
                         <ColumnDefinition Width="25*"/>
                         <ColumnDefinition Width="50*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding Source={x:Static octgn:Const.OctgnVersion}}" 
+                    <TextBlock Grid.Column="0" Text="{Binding Source={x:Static octgn:Const.OctgnVersion}}"
                                HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="MintCream" FontWeight="Bold"></TextBlock>
                     <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
                         <Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">Octgn.Net</Hyperlink>
@@ -111,9 +111,9 @@
                 </Grid>
             </Border>
             <Image Height="80" HorizontalAlignment="Left" Margin="91,0,0,54" x:Name="imgSoul1355" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/Octgn.JodsEngine;component/Resources/soul1355.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Label Content="Soul1355" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" x:Name="lblSoul1355" 
+            <Label Content="Soul1355" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" x:Name="lblSoul1355"
             	VerticalAlignment="Top" Width="79" Foreground="Black" Margin="91,231,0,0" />
-            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textSoul1355" 
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textSoul1355"
             	VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1">
                 <Run Text="Soul1355"/><LineBreak/><LineBreak/>
                 <Run Text="Software Developer and Student"/><LineBreak/><LineBreak/>
