@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Octgn</RootNamespace>
-    <AssemblyName>Octgn</AssemblyName>
+    <AssemblyName>Octgn.JodsEngine</AssemblyName>
     <AssemblyVersion>3.4.298.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -198,6 +198,9 @@
     <PackageReference Include="System.ServiceModel.Syndication" Version="4.7.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="ToggleSwitch" Version="1.1.2" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
@@ -800,6 +803,6 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="move &quot;$(TargetDir)octgn.exe&quot; &quot;$(TargetDir)Octgn.JodsEngine.exe&quot;&#xD;&#xA;xcopy /sY &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\&quot;&#xD;&#xA;move  &quot;$(TargetDir)Octgn.JodsEngine.exe&quot; &quot;$(TargetDir)octgn.exe&quot;" />
+    <Exec Command="xcopy /sY &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\&quot;" />
   </Target>
 </Project>

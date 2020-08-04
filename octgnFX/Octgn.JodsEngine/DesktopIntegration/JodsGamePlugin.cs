@@ -100,7 +100,7 @@ namespace Octgn.DesktopIntegration
 
             engineDirectory = Path.GetFullPath(engineDirectory);
 
-            var enginePath = Path.Combine(engineDirectory, "octgn.exe");
+            var enginePath = Path.Combine(engineDirectory, "Octgn.JodsEngine.exe");
 
             var psi = new ProcessStartInfo(enginePath, args);
             psi.UseShellExecute = true;
