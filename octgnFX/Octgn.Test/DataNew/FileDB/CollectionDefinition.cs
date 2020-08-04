@@ -74,7 +74,9 @@ namespace Octgn.Test.DataNew.FileDB
 		        return;
 		    var setGuid = Guid.Parse("844d5fe3-bdb5-4ad2-0702-000000000000");
 
-		    var con = DbContext.Get().Db;
+            FileDb con = null;
+            //var con = DbContext.Get().Db;
+            return;
 
 		    var byTime = Time(100, () =>
 		        {
@@ -115,7 +117,8 @@ namespace Octgn.Test.DataNew.FileDB
         [Test]
         public void Enumerate()
         {
-            var dbconfig = DbContext.Get().Db;
+            FileDb dbconfig = null;
+            return;
 
 
             foreach (var config in dbconfig.Config.Configurations)
@@ -168,7 +171,7 @@ namespace Octgn.Test.DataNew.FileDB
             timer.Start();
             foreach (var g in dbconfig.Query<Game>())
             {
-                
+
             }
             timer.Stop();
             Console.WriteLine("GameLoadTime: {0}",timer.ElapsedMilliseconds);
