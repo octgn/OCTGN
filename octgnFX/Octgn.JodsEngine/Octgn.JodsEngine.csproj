@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Octgn</RootNamespace>
     <AssemblyName>Octgn.JodsEngine</AssemblyName>
-    <AssemblyVersion>3.4.298.0</AssemblyVersion>
+    <AssemblyVersion>3.4.300.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
