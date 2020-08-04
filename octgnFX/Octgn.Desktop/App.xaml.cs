@@ -95,7 +95,7 @@ namespace Octgn.Desktop
             return;
 #endif
 
-            Environment.SetEnvironmentVariable("JODSENGINE_DEBUGPATH", "..\\..\\..\\..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1\\octgn.exe");
+            Environment.SetEnvironmentVariable("JODSENGINE_DEBUGPATH", "..\\..\\..\\..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1\\Octgn.JodsEngine.exe");
         }
 
         private void UpgradeDatabase() {
