@@ -20,7 +20,7 @@ namespace Octgn.DataNew
 
         public static IDbContext Get() {
             lock (Sync) {
-                return Context ?? new DbContext();
+                return Context ?? (Context = new DbContext());
             }
         }
 
