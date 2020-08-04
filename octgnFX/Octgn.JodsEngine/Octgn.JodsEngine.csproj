@@ -800,6 +800,6 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetDir)octgn.exe&quot; &quot;$(TargetDir)Octgn.JodsEngine.exe&quot;&#xD;&#xA;xcopy /sY &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\&quot;" />
+    <Exec Command="move &quot;$(TargetDir)octgn.exe&quot; &quot;$(TargetDir)Octgn.JodsEngine.exe&quot;&#xD;&#xA;xcopy /sY &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\&quot;&#xD;&#xA;move  &quot;$(TargetDir)Octgn.JodsEngine.exe&quot; &quot;$(TargetDir)octgn.exe&quot;" />
   </Target>
 </Project>
