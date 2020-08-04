@@ -50,7 +50,7 @@ namespace Octgn.Utils
             {
                 try
                 {
-                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/messagenotify.wav"));
+                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/messagenotify.wav"));
                     PlaySound(si.Stream, false);
                 }
                 catch (Exception e)
@@ -66,7 +66,7 @@ namespace Octgn.Utils
             {
                 try
                 {
-                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/gamemessage.wav"));
+                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/Octgn.JodsEngine;component/Resources/gamemessage.wav"));
                     PlaySound(si.Stream, false);
                 }
                 catch (Exception e)

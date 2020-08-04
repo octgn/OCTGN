@@ -6,7 +6,7 @@
         Title="Developer Window" Height="420" Width="431"
         TextOptions.TextFormattingMode="Display" ShowInTaskbar="False"
         FontFamily="Lucida Console" 
-        Icon="/OCTGN;component/Resources/Icons/console.png">
+        Icon="/Octgn.JodsEngine;component/Resources/Icons/console.png">
     <Border>
         <Grid>
             <Grid.RowDefinitions>
