@@ -70,9 +70,9 @@ namespace Octide.ItemModel
         }
         private void BackAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
-                _size.Back= BackAsset.FullPath;
+                _size.Back = BackAsset.FullPath;
                 Messenger.Default.Send(new CardDetailsChangedMessage());
                 RaisePropertyChanged("BackAsset");
                 RaisePropertyChanged("Icon");
@@ -80,7 +80,7 @@ namespace Octide.ItemModel
         }
         private void FrontAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _size.Front = FrontAsset.FullPath;
                 Messenger.Default.Send(new CardDetailsChangedMessage());
@@ -105,7 +105,7 @@ namespace Octide.ItemModel
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((SizeItemModel)x).Name);
-        public new string Icon => BackAsset.FullPath;
+        public new string Icon => BackAsset.SafePath;
 
         public string Name
         {

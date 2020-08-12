@@ -9,13 +9,13 @@ namespace Octgn.ProxyGenerator
 {
     public class BlockManager
     {
-        public string RootPath = string.Empty;
 
         private List<BlockDefinition> blocks = new List<BlockDefinition>();
 
-        public BlockManager(string rootPath)
+
+        public BlockManager()
         {
-            RootPath = rootPath;
+
         }
 
         public List<BlockDefinition> GetBlocks()

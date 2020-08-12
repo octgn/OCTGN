@@ -18,6 +18,21 @@ namespace Octide.ItemModel
         private SizeItemModel _size;
         private bool _isBack = true;
 
+        public SampleCardItemModel()
+        {
+            Messenger.Default.Register<CardDetailsChangedMessage>(this, x => this.RefreshValues());
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
+        }
+        public void RefreshValues()
+        {
+            RaisePropertyChanged("");
+            RaisePropertyChanged("Size");
+            RaisePropertyChanged("CardWidth");
+            RaisePropertyChanged("CardHeight");
+            RaisePropertyChanged("CardImage");
+            RaisePropertyChanged("CardCornerRadius");
+        }
+
         public bool IsBack
         {
             get { return _isBack; }
@@ -106,24 +121,9 @@ namespace Octide.ItemModel
         {
             get
             {
-                return IsBack ? Size.BackAsset.FullPath : Size.FrontAsset.FullPath;
+                return IsBack ? Size.BackAsset.SafePath : Size.FrontAsset.SafePath;
             }
         }
 
-        public SampleCardItemModel()
-        {
-            Messenger.Default.Register<CardDetailsChangedMessage>(this, x => this.RefreshValues());
-            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
-        }
-
-        public void RefreshValues()
-        {
-            RaisePropertyChanged("");
-            RaisePropertyChanged("Size");
-            RaisePropertyChanged("CardWidth");
-            RaisePropertyChanged("CardHeight");
-            RaisePropertyChanged("CardImage");
-            RaisePropertyChanged("CardCornerRadius");
-        }
     }
 }

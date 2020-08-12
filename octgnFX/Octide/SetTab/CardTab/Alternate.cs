@@ -409,7 +409,7 @@ namespace Octide.SetTab.ItemModel
                     break;
                 }
             }
-            BaseImage = Path.Combine(activeTemplate._def.rootPath, activeTemplate._def.src);
+            BaseImage = activeTemplate._def.src;
             BitmapImage image = new BitmapImage(new Uri(BaseImage));
             BaseWidth = image.PixelWidth;
             BaseHeight = image.PixelHeight;

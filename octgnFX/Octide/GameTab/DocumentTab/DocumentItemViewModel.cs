@@ -50,7 +50,7 @@ namespace Octide.ItemModel
 
         private void DocumentAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _document.Source = DocumentAsset.FullPath;
                 RaisePropertyChanged("DocumentAsset");
@@ -58,7 +58,7 @@ namespace Octide.ItemModel
         }
         private void IconAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _document.Icon = IconAsset.FullPath;
                 RaisePropertyChanged("IconAsset");
@@ -86,7 +86,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public new string Icon => IconAsset.FullPath;
+        public new string Icon => IconAsset.SafePath;
 
         public override object Clone()
         {

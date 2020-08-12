@@ -122,7 +122,7 @@ namespace Octide.ItemModel
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _group.Icon = Asset.FullPath;
                 RaisePropertyChanged("Asset");
@@ -145,7 +145,7 @@ namespace Octide.ItemModel
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((GroupItemModel)x).Name);
-        public new string Icon => Asset.FullPath;
+        public new string Icon => Asset.SafePath;
 
         public string Name
         {

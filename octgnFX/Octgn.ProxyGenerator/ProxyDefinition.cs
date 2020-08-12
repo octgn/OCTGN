@@ -15,20 +15,23 @@
         public BlockManager BlockManager { get; internal set; }
         internal XmlDocument Document;
 
-        public string RootPath { get; internal set; }
+        public ProxyDefinition()
+        {
+            TemplateSelector = new TemplateManager();
+            BlockManager = new BlockManager();
+        }
 
         public ProxyDefinition(object key, string path, string rootPath)
         {
-            RootPath = rootPath;
             Key = key;
             TemplateSelector = new TemplateManager();
-            Load(path);
+            Load(rootPath, path);
         }
 
         public Image GenerateProxyImage(Dictionary<string, string> values)
         {
             TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(BlockManager, RootPath, cardDef, values, null);
+            Image ret = ProxyGenerator.GenerateProxy(BlockManager, cardDef, values, null);
             return (ret);
         }
 
@@ -42,7 +45,7 @@
         public Image GenerateProxyImage(Dictionary<string, string> values, string specialPath)
         {
             TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(BlockManager, RootPath, cardDef, values, specialPath);
+            Image ret = ProxyGenerator.GenerateProxy(BlockManager, cardDef, values, specialPath);
             return (ret);
         }
 
@@ -59,7 +62,7 @@
             proxy.Dispose();
         }
 
-        internal void Load(string path)
+        internal void Load(string rootPath, string path)
         {
             if (Document != null)
             {
@@ -71,14 +74,14 @@
             Document.Load(path);
 
             XmlNodeList blockList = Document.GetElementsByTagName("blocks");
-            BlockManager = new BlockManager(RootPath);
+            BlockManager = new BlockManager();
             foreach (XmlNode block in blockList[0])
             {
                 if (block.Name != "block")
                 {
                     continue;
                 }
-                BlockDefinition blockDef = ProxyDeserializer.DeserializeBlock(BlockManager, block);
+                BlockDefinition blockDef = ProxyDeserializer.DeserializeBlock(rootPath, block);
                 BlockManager.AddBlock(blockDef);
             }
 
@@ -89,8 +92,7 @@
                 {
                     continue;
                 }
-                TemplateDefinition templateDef = ProxyDeserializer.DeserializeTemplate(template);
-                templateDef.rootPath = RootPath;
+                TemplateDefinition templateDef = ProxyDeserializer.DeserializeTemplate(rootPath, template);
                 TemplateSelector.AddTemplate(templateDef);
             }
         }

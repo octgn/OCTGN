@@ -50,7 +50,7 @@ namespace Octide.ItemModel
         }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _script.Path = Asset.FullPath;
                 RaisePropertyChanged("Asset");
@@ -77,7 +77,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                return Asset.SelectedAsset?.FileName;
+                return Asset.SelectedAsset?.Name;
             }
             set
             {

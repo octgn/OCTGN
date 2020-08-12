@@ -60,7 +60,7 @@ namespace Octide.ItemModel
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _sound.Src = Asset.FullPath;
                 RaisePropertyChanged("Asset");

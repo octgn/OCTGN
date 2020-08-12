@@ -23,12 +23,11 @@ namespace Octgn.ProxyGenerator
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string, string> values, string specialPath)
+        public static Image GenerateProxy(BlockManager manager, TemplateDefinition template, Dictionary<string, string> values, string specialPath)
         {
-            if (rootPath == null || template == null || template.src == null)
+            if (template == null || template.src == null)
                 throw new UserMessageException(L.D.Exception__InvalidProxyDefinition);
-            var path = Path.Combine(rootPath, template.src);
-            Bitmap temp = GraphicUtils.LoadImage(path, PixelFormat.Format32bppArgb);
+            Bitmap temp = GraphicUtils.LoadImage(template.src, PixelFormat.Format32bppArgb);
 
             using (Graphics graphics = Graphics.FromImage(temp))
             {
@@ -52,7 +51,6 @@ namespace Octgn.ProxyGenerator
                         {
                             continue;
                         }
-                        block.src = Path.Combine(rootPath, block.src);
                         GraphicUtils.MergeOverlay(graphics, block);
                     }
                 }

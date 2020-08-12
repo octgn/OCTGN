@@ -10,7 +10,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Octide"
-             xmlns:viewModel="clr-namespace:Octide.ViewModel"
+             xmlns:views="clr-namespace:Octide.Views"
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
@@ -22,18 +22,24 @@
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <DockPanel >
-                <TextBlock Text="Filter by Type: " Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16"/>
-                <ComboBox VerticalAlignment="Center" Padding="5,2,2,2"  SelectedValue="{Binding FilterType}" ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:AssetType}}}" />
-            </DockPanel>
-            <CheckBox Grid.Row="1" Content="Only show unused assets" IsChecked="{Binding FilterUnused}" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16" />
-            <ListBox Grid.Row="2" ItemsSource="{Binding AssetView}" />
-        </Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel >
+            <TextBlock Text="Filter by Type: " Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16"/>
+            <ComboBox VerticalAlignment="Center" Padding="5,2,2,2"  SelectedValue="{Binding FilterType}" ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:AssetType}}}" />
+        </DockPanel>
+        <CheckBox Grid.Row="1" Content="Only show unlinked assets" IsChecked="{Binding FilterLinked}" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16" />
+        <ListBox Grid.Row="2" ItemsSource="{Binding AssetList}" SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="FileName" />
+
+        <ContentControl Grid.Column="1" Grid.RowSpan="3" Content="{Binding SelectedAsset}">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type local:Asset}" >
+                    <views:AssetItemView />
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
     </Grid>
 </UserControl>

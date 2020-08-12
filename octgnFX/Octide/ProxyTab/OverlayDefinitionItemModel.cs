@@ -35,7 +35,7 @@ namespace Octide.ItemModel
                 type = "overlay"
             };
             Asset = new AssetController(AssetType.Image);
-            _def.src = Asset.SelectedAsset.RelativePath;
+            _def.src = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = "overlay";
         }
@@ -43,26 +43,26 @@ namespace Octide.ItemModel
         public OverlayBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // load overlay
         {
             _def = b;
-            Asset = new AssetController(AssetType.Image, Path.Combine(b.Manager.RootPath, b.src));
+            Asset = new AssetController(AssetType.Image, b.src);
             Asset.PropertyChanged += AssetUpdated;
         }
 
-        public OverlayBlockDefinitionItemModel(OverlayBlockDefinitionItemModel o, IdeCollection<IdeBaseItem> source) : base(source)
+        public OverlayBlockDefinitionItemModel(OverlayBlockDefinitionItemModel o, IdeCollection<IdeBaseItem> source) : base(source) //copy 
         {
             _def = new BlockDefinition
             {
                 type = "overlay"
             };
-            Asset = new AssetController(AssetType.Image, Path.Combine(o._def.Manager.RootPath, o._def.src));
-            _def.src = Asset.SelectedAsset.RelativePath;
+            Asset = new AssetController(AssetType.Image, o._def.src);
+            _def.src = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = o.Name;
         }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
-                _def.src = Asset.SelectedAsset.RelativePath;
+                _def.src = Asset.SelectedAsset?.FullPath;
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("Width");
                 RaisePropertyChanged("Height");
@@ -128,7 +128,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                using (var img = System.Drawing.Image.FromFile(Asset.FullPath))
+                using (var img = System.Drawing.Image.FromFile(Asset.SafePath))
                 {
                     return img.Width;
                 }
@@ -138,7 +138,7 @@ namespace Octide.ItemModel
         {
             get
             {
-                using (var img = System.Drawing.Image.FromFile(Asset.FullPath))
+                using (var img = System.Drawing.Image.FromFile(Asset.SafePath))
                 {
                     return img.Height;
                 }

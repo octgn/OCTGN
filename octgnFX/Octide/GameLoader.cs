@@ -9,55 +9,34 @@ namespace Octide
 {
     using System;
     using System.Collections.Generic;
-    using System.Xml;
-    using System.Linq;
 
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Messaging;
 
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
-    using Octgn.Core.DataExtensionMethods;
     using Octgn.Library;
-    using Octgn.ProxyGenerator;
-    using System.Windows;
-    using System.Collections.ObjectModel;
     using NuGet.Packaging;
     using NuGet.Versioning;
-    using System.Xml.Linq;
     using System.IO.Compression;
     using Octide.ViewModel;
-    using System.ComponentModel;
     using Octide.SetTab.ItemModel;
     using Octide.ItemModel;
     using Microsoft.Win32;
+    using System.Linq;
+    using System.Windows;
+    using System.Diagnostics;
 
     public class GameLoader : ViewModelBase
     {
         private Game game;
         private IEnumerable<string> events;
-        private string directory;
-
-        private string tempPath;
 
         private bool needsSave;
 
         private bool livesInTempDirectory;
 
-        public string WorkingDirectory
-        {
-            get
-            {
-                return this.directory;
-            }
-            set
-            {
-                if (value.Equals(this.directory)) return;
-                this.directory = value;
-                this.RaisePropertyChanged("Directory");
-            }
-        }
+        public AssetController Asset { get; set; }
 
         public Game Game
         {
@@ -76,6 +55,25 @@ namespace Octide
             }
         }
 
+        private DirectoryInfo _workingDirectory;
+
+        public DirectoryInfo WorkingDirectory
+        {
+            get
+            {
+                return _workingDirectory;
+            }
+            set
+            {
+                if (_workingDirectory != null && _workingDirectory.FullName.Equals(value.FullName)) return;
+                _workingDirectory = value;
+                game.InstallPath = value.FullName;
+                game.Filename = Asset.FullPath;
+                ViewModelLocator.AssetsTabViewModel.UpdateWorkingDirectory(value);
+            }
+        }
+
+
         public IEnumerable<string> Events
         {
             get
@@ -92,19 +90,6 @@ namespace Octide
             }
         }
 
-        public String TempDirectory
-        {
-            get
-            {
-                return this.tempPath;
-            }
-            set
-            {
-                if (value.Equals(this.tempPath)) return;
-                this.tempPath = value;
-                this.RaisePropertyChanged("TempPath");
-            }
-        }
 
         public bool ValidGame
         {
@@ -132,56 +117,68 @@ namespace Octide
 
 		public GameLoader()
         {
-            TempDirectory = Config.Instance.Paths.GraveyardPath;
-            if (!Directory.Exists(TempDirectory))
-            {
-                Directory.CreateDirectory(TempDirectory);
-                //todo: dispose of this temp folder when the window closes
-            }
         }
-
-        public void CreateGame(DirectoryInfo directory)
+         
+        public void CreateGame()
         {
-            var id = Guid.NewGuid();
-            var path = directory.FullName;
-            var defPath = Path.Combine(path, "definition.xml");
-            var resourcePath = Path.Combine(path, "Resources");
+            _workingDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "Game"));
 
-            System.IO.Directory.CreateDirectory(path);
-            System.IO.Directory.CreateDirectory(resourcePath);
+            var resourcePath = Path.Combine(_workingDirectory.FullName, "Assets");
 
-            var bg = Properties.Resources.background;
-            bg.Save(Path.Combine(resourcePath, "background.jpg"));
-            bg.Dispose();
-            var cback = Properties.Resources.back;
-            cback.Save(Path.Combine(resourcePath, "back.png"));
-            cback.Dispose();
-            var cfront = Properties.Resources.front;
-            cfront.Save(Path.Combine(resourcePath, "front.png"));
-            cfront.Dispose();
-            var pblank = Properties.Resources.blank;
-            pblank.Save(Path.Combine(resourcePath, "blank.png"));
-            pblank.Dispose();
-            var hand = Properties.Resources.hand;
-            hand.Save(Path.Combine(resourcePath, "hand.png"));
-            hand.Dispose();
-            var deck = Properties.Resources.deck;
-            deck.Save(Path.Combine(resourcePath, "deck.png"));
-            deck.Dispose();
-            var score = Properties.Resources.score;
-            score.Save(Path.Combine(resourcePath, "score.png"));
-            score.Dispose();
+            Directory.CreateDirectory(resourcePath);
 
-            XmlDocument definition = new XmlDocument();
-            definition.LoadXml(Properties.Resources.definition
-                .Replace("{GUID}", id.ToString())
-                .Replace("{OCTVER}", typeof(Config).Assembly.GetName().Version.ToString()));
-            definition.Save(defPath);
+            //load in some sample assets
 
-            definition.LoadXml(Properties.Resources.proxydef);
-            definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
+            var back = Path.Combine(resourcePath, "back.png");
+            Properties.Resources.back.Save(back);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(back));
 
-            LoadGame(new FileInfo(defPath));
+            var front = Path.Combine(resourcePath, "front.png");
+            Properties.Resources.front.Save(front);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(front));
+
+            var hand = Path.Combine(resourcePath, "hand.png");
+            Properties.Resources.hand.Save(hand);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(hand));
+
+            var deck = Path.Combine(resourcePath, "deck.png");
+            Properties.Resources.deck.Save(deck);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(deck));
+
+            var score = Path.Combine(resourcePath, "score.png");
+            Properties.Resources.score.Save(score);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(score));
+
+            var background = Path.Combine(resourcePath, "background.jpg");
+            Properties.Resources.background.Save(background);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(background));
+            
+            Game = new Game()
+            {
+                Id = Guid.NewGuid(),
+                Name = "My Game",
+                Version = new Version(1, 0, 0, 0),
+                ScriptVersion = new Version(3, 1, 0, 2),
+                OctgnVersion = typeof(Config).Assembly.GetName().Version,
+                NoteBackgroundColor = "#FFEBE8C5",
+                NoteForegroundColor = "#FF000000",
+                Filename = Path.Combine(WorkingDirectory.FullName, "definition.xml"),
+                InstallPath = WorkingDirectory.FullName
+            };
+            Game.CardSizes.Add("", new CardSize
+            {
+                Name = "Default",
+                Height = 88,
+                Width = 63,
+                Back = back,
+                Front = front
+            });
+
+            var gameAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { }, "definition", ".xml");
+            gameAsset.IsReserved = true;
+            Asset = new AssetController(gameAsset);
+
+            livesInTempDirectory = true;
         }
 
 
@@ -192,6 +189,8 @@ namespace Octide
             var ExtractLocation = Config.Instance.Paths.GraveyardPath;
             ZipFile.ExtractToDirectory(package.FullName, ExtractLocation);
             var definition = Path.Combine(ExtractLocation, "definition.xml");
+            Asset = new AssetController(AssetType.Xml, definition);
+
             if (File.Exists(definition))
             {
                 LoadGame(new FileInfo(definition));
@@ -203,71 +202,156 @@ namespace Octide
         {
             NeedsSave = false;
 
-            WorkingDirectory = path.DirectoryName;
+            _workingDirectory = path.Directory;
 
-            var gameSerializer = new GameSerializer();
-            Game = (Game)gameSerializer.Deserialize(path.FullName);
-            var gameDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.File.FullName == path.FullName);
-            gameDefAsset.IsReserved = true;
+            var files = WorkingDirectory.GetFiles("*.*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                var asset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
+                if (file.FullName == path.FullName)
+                {
+                    // registers the game definition asset
+
+                    var gameSerializer = new GameSerializer();
+                    Game = (Game)gameSerializer.Deserialize(path.FullName);
+                    Asset = new AssetController(asset);
+                    asset.LockName = true;
+                    asset.IsReserved = true;
+                }
+            }
         }
+
+        public bool ChooseSaveLocation()
+        {
+            // this dialog creates a new folder for the game at the specified directory
+            var gameLocationDlg = new SaveFileDialog
+            {
+                FileName = Game.Name,
+                Title = "Choose a location to save the game files.",
+                Filter = "Folder|*.",
+                AddExtension = false
+            };
+            if (gameLocationDlg.ShowDialog() == false)
+            {
+                return false;
+            }
+            if (File.Exists(gameLocationDlg.FileName))
+            {
+                if (System.Windows.Forms.MessageBox.Show("Warning: Files in this location may be overwritten.  Continue?", "Overwrite Existing Location?")
+                     != System.Windows.Forms.DialogResult.Yes)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                System.IO.Directory.CreateDirectory(gameLocationDlg.FileName);
+            }
+            WorkingDirectory = new DirectoryInfo(gameLocationDlg.FileName);
+            livesInTempDirectory = false;
+            return true;
+        }
+
 
         public void SaveGame()
         {
             if (livesInTempDirectory)
             {
-                var gameLocationDlg = new SaveFileDialog
+                if (ChooseSaveLocation() == false)
+                    return;
+            }
+            //   if (!NeedsSave)
+            //       return;
+
+            bool saveAllAssets = true;
+
+            if (ViewModelLocator.AssetsTabViewModel.Assets.Any(x => x.IsLinked == false))
+            {
+                var result = MessageBox.Show("Unlinked assets detected! Click Yes to save all assets, No to save linked assets only, or Cancel to cancel saving.", "Asset Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (result)
                 {
-                    FileName = Game.Name,
-                    Title = "Choose a location to save the game files.",
-                    Filter = "Folder|*.",
-                    AddExtension = false
-                };
-                if (gameLocationDlg.ShowDialog() == true)
-                {
-                    if (File.Exists(gameLocationDlg.FileName))
-                    {
-                        var dlg = System.Windows.Forms.MessageBox.Show("Warning: Files in this location may be overwritten.  Continue?", "Overwrite Existing Location?");
-                        if (dlg == System.Windows.Forms.DialogResult.Yes)
-                        {
-                            WorkingDirectory = gameLocationDlg.FileName;
-                            livesInTempDirectory = false;
-                        }
-                    }
-                    else
-                    {
-                        WorkingDirectory = gameLocationDlg.FileName;
-                        livesInTempDirectory = false;
-                    }
+                    case MessageBoxResult.No:
+                        saveAllAssets = false;
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
                 }
             }
-         //   if (!NeedsSave)
-         //       return;
-            var gameSerializer = new Octgn.DataNew.GameSerializer();
-            gameSerializer.Serialize(Game);
-            var setSerializer = new Octgn.DataNew.SetSerializer() { Game = Game };
-            foreach(SetModel set in ViewModelLocator.SetTabViewModel.Items)
+
+            if (!SerializeXmlAssets())
             {
-                setSerializer.Serialize(set._set);
+                return;
             }
-            var scriptSerializer = new Octgn.DataNew.GameScriptSerializer(Game.Id) { Game = Game };
-            foreach(ScriptItemModel script in ViewModelLocator.ScriptsTabViewModel.Scripts)
+
+            ViewModelLocator.AssetsTabViewModel.Watcher.EnableRaisingEvents = false;
+
+            foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets.Where(x => saveAllAssets || x.IsLinked))
             {
-                scriptSerializer.Serialize(script._script);
-            }
-            var proxySerializer = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id) { Game = Game };
-            proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
-            foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets)
-            {
-                if (asset.IsLinked && !asset.IsReserved)
+                if (asset.TargetFile != null && asset.TargetFile.FullName != asset.FullPath)
                 {
-                    asset.File.CopyTo(asset.File.FullName, true);
+                    asset.TargetFile.Refresh();
+                    if (asset.TargetFile.Exists)
+                    {
+                        asset.TargetFile.Delete();
+                    }
                 }
+                Directory.CreateDirectory(Path.GetDirectoryName(asset.FullPath));
+                asset.TargetFile = asset.SafeFile.CopyTo(asset.FullPath, true);
             }
+
+
             NeedsSave = false;
+            ViewModelLocator.AssetsTabViewModel.Watcher.EnableRaisingEvents = true;
+        }
+
+        public bool SerializeXmlAssets()
+        {
+            try
+            {
+                var gameTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
+
+                var gameSerializer = new GameSerializer();
+                gameSerializer.OutputPath = gameTempPath;
+                gameSerializer.Serialize(Game);
+                Asset.SelectedAsset.SafeFile = new FileInfo(gameTempPath);
+
+                var setSerializer = new SetSerializer() { Game = Game };
+                foreach (SetModel set in ViewModelLocator.SetTabViewModel.Items)
+                {
+                    var setTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
+                    setSerializer.OutputPath = setTempPath;
+                    setSerializer.Serialize(set._set);
+                    set.Asset.SelectedAsset.SafeFile = new FileInfo(setTempPath);
+                }
+                var scriptSerializer = new GameScriptSerializer(Game.Id) { Game = Game };
+                foreach (ScriptItemModel script in ViewModelLocator.ScriptsTabViewModel.Scripts)
+                {
+                    scriptSerializer.OutputPath = script.Asset.SafePath;
+                    scriptSerializer.Serialize(script._script);
+                }
+
+                var proxyTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
+
+                var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game};
+                proxySerializer.OutputPath = proxyTempPath;
+                proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
+                ViewModelLocator.ProxyTabViewModel.Asset.SelectedAsset.SafeFile = new FileInfo(proxyTempPath);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void ExportGame()
         {
+
+            if (!SerializeXmlAssets())
+            {
+                return;
+            }
+
             var builder = new PackageBuilder()
             {
                 Id = Game.Id.ToString(),
@@ -281,40 +365,22 @@ namespace Octide
             foreach (var a in Game.Authors) builder.Authors.Add(a);
             foreach (var t in Game.Tags) builder.Authors.Add(t);
 
-            var gameSerializer = new GameSerializer();
-            gameSerializer.Serialize(Game);
-
-            var setSerializer = new Octgn.DataNew.SetSerializer() { Game = Game };
-            foreach (SetModel set in ViewModelLocator.SetTabViewModel.Items)
-            {
-                setSerializer.Serialize(set._set);
-            }
-            var scriptSerializer = new Octgn.DataNew.GameScriptSerializer(Game.Id) { Game = Game };
-            foreach (ScriptItemModel script in ViewModelLocator.ScriptsTabViewModel.Scripts)
-            {
-                scriptSerializer.Serialize(script._script);
-            }
-            var proxySerializer = new Octgn.DataNew.ProxyGeneratorSerializer(Game.Id) { Game = Game };
-            proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
-
             var baseRefPath = "\\def";
 
-            foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets)
+
+            foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.IsLinked))
             {
-                if (asset.IsLinked && !asset.IsReserved)
-                {
                     var refpath = baseRefPath + "\\" + asset.RelativePath;
                     var pf = new PhysicalPackageFile() { SourcePath = asset.SafeFilePath, TargetPath = refpath };
                     builder.Files.Add(pf);
-                }
             }
 
-
-            var feedPath = Path.Combine(WorkingDirectory, Game.Name + '-' + Game.Version + ".nupkg");
+            var feedPath = Path.Combine(WorkingDirectory.FullName, Game.Name + '-' + Game.Version + ".nupkg");
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
             filestream.Close();
+            Process.Start(WorkingDirectory.FullName);
 
         }
 
