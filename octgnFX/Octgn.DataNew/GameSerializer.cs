@@ -25,6 +25,8 @@ namespace Octgn.DataNew
         public ICollectionDefinition Def { get; set; }
 
         private string directory;
+
+        public string OutputPath { get; set; }
         public object Deserialize(string fileName)
         {
             //var serializer = new XmlSerializer(typeof(game));
@@ -52,13 +54,7 @@ namespace Octgn.DataNew
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
-                              CardSizes = new Dictionary<string, CardSize>(),
-                              GameBoards = new Dictionary<string, GameBoard>(),
                               Version = Version.Parse(g.version),
-                              CustomProperties = new List<PropertyDef>(),
-                              DeckSections = new Dictionary<string, DeckSection>(),
-                              SharedDeckSections = new Dictionary<string, DeckSection>(),
-                              GlobalVariables = new Dictionary<string, GlobalVariable>(),
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
                               Filename = fileName,
@@ -68,22 +64,13 @@ namespace Octgn.DataNew
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               MarkerSize = int.Parse(g.markersize),
-                              Markers = new Dictionary<string, GameMarker>(),
-                              Phases = new List<GamePhase>(),
-                              Documents = new List<Document>(),
-                              Symbols = new List<Symbol>(),
-                              Sounds = new Dictionary<string, GameSound>(),
                               FileHash = fileHash,
-                              Events = new Dictionary<string, GameEvent[]>(),
                               InstallPath = directory,
                               UseTwoSidedTable = g.usetwosidedtable == boolean.True ? true : false,
                               ChangeTwoSidedTable = g.changetwosidedtable == boolean.True ? true : false,
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
-                              Scripts = new List<string>(),
-                              Modes = new List<GameMode>(),
-
                           };
             var defSize = new CardSize
             {
@@ -199,8 +186,6 @@ namespace Octgn.DataNew
             {
                 var player = new GlobalPlayer
                                    {
-                                     Counters = new List<Counter>(),
-                                     Groups = new List<Group>(),
                                      IndicatorsFormat = g.shared.summary
                                    };
 
@@ -241,9 +226,6 @@ namespace Octgn.DataNew
             {
                 var player = new Player
                                  {
-                                     Groups = new List<Group>(),
-                                     GlobalVariables = new Dictionary<string, GlobalVariable>(),
-                                     Counters = new List<Counter>(),
                                      IndicatorsFormat = g.player.summary
                                  };
                 var curCounter = 1;
@@ -528,7 +510,7 @@ namespace Octgn.DataNew
             #region proxygen
             if (g.proxygen != null && g.proxygen.definitionsrc != null)
             {
-                ret.ProxyGenSource = g.proxygen.definitionsrc;
+                ret.ProxyGenSource = Path.Combine(directory, g.proxygen.definitionsrc);
                 if (Def != null && !Def.Config.IsExternalDb) {
                     var coll = Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                             .OverrideRoot(x => x.Directory("GameDatabase"))
@@ -610,9 +592,7 @@ namespace Octgn.DataNew
                 Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
-                MoveTo = bool.Parse(grp.moveto.ToString()),
-                CardActions = new List<IGroupAction>(),
-                GroupActions = new List<IGroupAction>()
+                MoveTo = bool.Parse(grp.moveto.ToString())
             };
             if (ret.Width == 0)
             {
@@ -697,7 +677,6 @@ namespace Octgn.DataNew
                         continue;
                     var addgroup = new GroupActionSubmenu
                     {
-                        Children = new List<IGroupAction>(),
                         Name = submenu.menu,
                         IsGroup = isGroup,
                         ShowExecute = submenu.showIf,
@@ -746,7 +725,6 @@ namespace Octgn.DataNew
                     var i = item as actionSubmenu;
                     var addgroup = new GroupActionSubmenu
                     {
-                        Children = new List<IGroupAction>(),
                         Name = i.menu,
                         IsGroup = isGroup,
                         ShowExecute = i.showIf,
@@ -1165,7 +1143,7 @@ namespace Octgn.DataNew
 
             save.proxygen = new gameProxygen
             {
-                definitionsrc = game.ProxyGenSource
+                definitionsrc = game.ProxyGenSource.Replace(parsedRootPath, "").Replace(rootPath, "")
             };
             #endregion proxygen
             #region globalvariables
@@ -1210,12 +1188,14 @@ namespace Octgn.DataNew
             #endregion GameModes
 
             var serializer = new XmlSerializer(typeof(game));
-            directory = new FileInfo(game.InstallPath).Directory.FullName;
-            using (var fs = File.Open(game.Filename, FileMode.Create, FileAccess.Write, FileShare.None))
+
+            var outputPath = OutputPath ?? game.Filename;
+            Directory.CreateDirectory(new FileInfo(outputPath).Directory.FullName);
+            using (var fs = File.Open(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 serializer.Serialize(fs, save);
             }
-            return File.ReadAllBytes(game.Filename);
+            return File.ReadAllBytes(outputPath);
         }
 
         internal gameFont SerializeFont(Font font, string parsedRootPath, string rootPath)
@@ -1395,6 +1375,8 @@ namespace Octgn.DataNew
         /// this <see cref="Octgn.DataNew.Entities.Game"/>, reguardless of what the data says.
         /// </summary>
         public Game Game { get; set; }
+
+        public string OutputPath { get; set; }
 
         public object Deserialize(string fileName)
         {
@@ -1735,8 +1717,6 @@ namespace Octgn.DataNew
                 throw new InvalidOperationException("obj must be typeof Set");
             var set = obj as Set;
             var game = Game ?? DbContext.Get().Games.First(x => x.Id == set.GameId);
-            var rootPath = new DirectoryInfo(set.InstallPath).FullName;
-            var parsedRootPath = string.Join("", rootPath, "\\");
 
             var save = new set
             {
@@ -1852,13 +1832,14 @@ namespace Octgn.DataNew
             save.cards = cards.ToArray();
 
             var serializer = new XmlSerializer(typeof(set));
-            Directory.CreateDirectory(new FileInfo(set.Filename).Directory.FullName);
+            var outputPath = OutputPath ?? set.Filename;
+            Directory.CreateDirectory(new FileInfo(outputPath).Directory.FullName);
 
-            using (var fs = File.Open(set.Filename, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var fs = File.Open(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 serializer.Serialize(fs, save);
             }
-            return File.ReadAllBytes(set.Filename);
+            return File.ReadAllBytes(outputPath);
         }
 
         public IEnumerable<object> SerializeRichText(IRichText richText)
@@ -1965,6 +1946,7 @@ namespace Octgn.DataNew
 
         internal Guid GameId { get; set; }
         public Game Game { get; set; }
+        public string OutputPath { get; set; }
 
         public GameScriptSerializer(Guid gameId)
         {
@@ -2012,6 +1994,7 @@ namespace Octgn.DataNew
         /// this <see cref="Octgn.DataNew.Entities.Game"/>, reguardless of what the data says.
         /// </summary>
         public Game Game { get; set; }
+        public string OutputPath { get; set; }
         public ProxyGeneratorSerializer(Guid gameId)
         {
             GameId = gameId;
@@ -2030,9 +2013,8 @@ namespace Octgn.DataNew
                 throw new InvalidOperationException("obj must be typeof ProxyDefinition");
             var proxyDef = obj as ProxyDefinition;
             var game = Game ?? DbContext.Get().Games.First(x => x.Id == (Guid)proxyDef.Key);
-            var rootPath = new DirectoryInfo(proxyDef.RootPath).FullName;
+            var rootPath = new DirectoryInfo(game.InstallPath).FullName;
             var parsedRootPath = string.Join("", rootPath, "\\");
-            var fullPath = Path.Combine(game.InstallPath, game.ProxyGenSource);
 
             var save = new templates
             {
@@ -2048,7 +2030,7 @@ namespace Octgn.DataNew
                 else if (blockdef.type == "text")
                     block.type = blocktype.text;
                 block.id = blockdef.id;
-                block.src = blockdef.src;
+                block.src = blockdef.src?.Replace(parsedRootPath, "").Replace(rootPath, "");
 
                 var location = new templatesBlockLocation
                 {
@@ -2125,7 +2107,7 @@ namespace Octgn.DataNew
                     };
                     if (blockdef.text.font != null)
                     {
-                        text.font = blockdef.text.font;
+                        text.font = blockdef.text.font.Replace(parsedRootPath, "").Replace(rootPath, "");
                     }
                     if (blockdef.text.size != 0)
                     {
@@ -2147,7 +2129,7 @@ namespace Octgn.DataNew
                 {
                     template.@default = proxyBoolean.True;
                 }
-                template.src = templatedef.src;
+                template.src = templatedef.src.Replace(parsedRootPath, "").Replace(rootPath, "");
 
                 var matches = new List<templatesTemplateMatch>();
                 foreach (Property matchdef in templatedef.Matches)
@@ -2187,13 +2169,14 @@ namespace Octgn.DataNew
             ///
 
             var serializer = new XmlSerializer(typeof(templates));
-            Directory.CreateDirectory(new FileInfo(fullPath).Directory.FullName);
+            var outputPath = OutputPath ?? game.ProxyGenSource;
+            Directory.CreateDirectory(new FileInfo(outputPath).Directory.FullName);
 
-            using (var fs = File.Open(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var fs = File.Open(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 serializer.Serialize(fs, save);
             }
-            return File.ReadAllBytes(fullPath);
+            return File.ReadAllBytes(outputPath);
         }
 
         public object SerializeLinkWrapper(LinkDefinition.LinkWrapper wrapper)

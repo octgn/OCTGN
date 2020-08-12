@@ -48,7 +48,7 @@ namespace Octide.ItemModel
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _marker.Source = Asset.FullPath;
                 RaisePropertyChanged("Asset");
@@ -85,6 +85,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Name");
             }
         }
-        public new string Icon => Asset.FullPath;
+        public new string Icon => Asset.SafePath;
     }
 }

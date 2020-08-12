@@ -82,15 +82,18 @@ namespace Octide.ViewModel
             }
         }
 
+        public Game _game => ViewModelLocator.GameLoader.Game;
+
         public PreviewTabViewModel()
         {
-            var _game = ViewModelLocator.GameLoader.Game;
-            if (_game.GlobalPlayer == null)
+            #region table
+            if (_game.Table == null)
             {
-                _game.GlobalPlayer = new GlobalPlayer()
+                _game.Table = new Group()
                 {
-                    Counters = new List<Counter>(),
-                    Groups = new List<Group>()
+                    Name = "Table",
+                    Width = 640,
+                    Height = 480
                 };
             }
             Table = new TableItemModel(_game.Table, new IdeCollection<IdeBaseItem>(this))
@@ -99,7 +102,12 @@ namespace Octide.ViewModel
                 CanCopy = false,
                 CanInsert = false
             };
-
+            #endregion
+            #region piles
+            if (_game.Player == null)
+            {
+                _game.Player = new Player();
+            }
             Piles = new IdeCollection<IdeBaseItem>(this);
             foreach (var pile in _game.Player.Groups)
             {
@@ -113,7 +121,8 @@ namespace Octide.ViewModel
                 Messenger.Default.Send(new GroupChangedMessage(args));
             };
             AddPileCommand = new RelayCommand(AddPile);
-
+            #endregion
+            #region counters
             Counters = new IdeCollection<IdeBaseItem>(this);
             foreach (var counter in _game.Player.Counters)
             {
@@ -124,7 +133,12 @@ namespace Octide.ViewModel
                 _game.Player.Counters = Counters.Select(x => ((CounterItemModel)x)._counter);
             };
             AddCounterCommand = new RelayCommand(AddCounter);
-
+            #endregion
+            #region globalpiles
+            if (_game.GlobalPlayer == null)
+            {
+                _game.GlobalPlayer = new GlobalPlayer();
+            }
             GlobalPiles = new IdeCollection<IdeBaseItem>(this);
             foreach (var pile in _game.GlobalPlayer.Groups)
             {
@@ -138,7 +152,8 @@ namespace Octide.ViewModel
                 Messenger.Default.Send(new GroupChangedMessage(args));
             };
             AddGlobalPileCommand = new RelayCommand(AddGlobalPile);
-
+            #endregion
+            #region globalcounters
             GlobalCounters = new IdeCollection<IdeBaseItem>(this);
             foreach (var counter in _game.GlobalPlayer.Counters)
             {
@@ -149,7 +164,8 @@ namespace Octide.ViewModel
                 _game.GlobalPlayer.Counters = GlobalCounters.Select(x => ((CounterItemModel)x)._counter);
             };
             AddGlobalCounterCommand = new RelayCommand(AddGlobalCounter);
-
+            #endregion
+            #region sizes
             CardSizes = new IdeCollection<IdeBaseItem>(this);
             foreach (var sizeDef in _game.CardSizes)
             {
@@ -170,7 +186,8 @@ namespace Octide.ViewModel
                 UpdateCardSizesDef();
             };
             AddSizeCommand = new RelayCommand(AddSize);
-
+            #endregion
+            #region phases
             Phases = new IdeCollection<IdeBaseItem>(this);
             foreach (var phase in _game.Phases)
             {
@@ -181,7 +198,8 @@ namespace Octide.ViewModel
                 _game.Phases = Phases.Select(x => ((PhaseItemModel)x)._phase).ToList();
             };
             AddPhaseCommand = new RelayCommand(AddPhase);
-
+            #endregion
+            #region boards
             Boards = new IdeCollection<IdeBaseItem>(this);
             foreach (var boardDef in _game.GameBoards)
             {
@@ -192,7 +210,6 @@ namespace Octide.ViewModel
                     Boards.DefaultItem = board;
                 }
             }
-            ActiveBoard = (BoardItemModel)Boards.DefaultItem;
             Boards.CollectionChanged += (sender, args) =>
             {
                 UpdateBoardsDef();
@@ -202,15 +219,24 @@ namespace Octide.ViewModel
                 UpdateBoardsDef();
             };
             AddBoardCommand = new RelayCommand(AddBoard);
-
+            #endregion
+            #region samplecards
             Cards = new ObservableCollection<SampleCardItemModel>();
-            var card = new SampleCardItemModel
+            if (CardSizes.DefaultItem != null)
             {
-                Size = (SizeItemModel)CardSizes.DefaultItem
-            };
-            Cards.Add(card);
-
-            RaisePropertyChanged("Cards");
+                var card = new SampleCardItemModel
+                {
+                    Size = (SizeItemModel)CardSizes.DefaultItem
+                };
+                Cards.Add(card);
+            }
+            #endregion
+            #region activeboard
+            if (Boards.DefaultItem != null)
+            {
+                ActiveBoard = (BoardItemModel)Boards.DefaultItem;
+            }
+            #endregion
         }
 
         public void UpdateCardSizesDef()

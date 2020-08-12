@@ -13,13 +13,14 @@ using System.Windows;
 using System.Windows.Data;
 using GongSolutions.Wpf.DragDrop;
 using Microsoft.Win32;
+using Octgn.Library;
 
 namespace Octide
 {
     public class AssetController : ViewModelBase
     {
         public RelayCommand LoadAssetButton { get; private set; }
-        public RelayCommand UnlinkAssetCommand { get; private set; }
+        public RelayCommand ClearAssetCommand { get; private set; }
 
         public AssetButtonDropHandler DropHandler { get; set; }
         public AssetType TargetAssetType { get; set; }
@@ -28,7 +29,15 @@ namespace Octide
 
         public bool CanRemove { get; set; }
 
-        public string FullPath => SelectedAsset?.File.FullName;
+        public string SafePath => SelectedAsset?.SafeFile.FullName;
+
+        public string FullPath
+        {
+            get
+            {
+                return SelectedAsset?.FullPath;
+            }
+        }
 
         public AssetController(AssetType type) // Creates a new assetcontroller with a default asset from the given type.
         {
@@ -37,20 +46,27 @@ namespace Octide
             RaisePropertyChanged("AssetView");
         }
 
-        public AssetController(AssetType type, string source)  // loads the assetcontroller with the pre-set asset (from initializing deserialized item models)
+        public AssetController(AssetType type, string path)  // loads the assetcontroller with the pre-set asset (from initializing deserialized item models)
         {
             InitializeAssetController(type);
-            if (source != null && source != ViewModelLocator.GameLoader.WorkingDirectory)
+            if (path != null)
             {
-                var path = new FileInfo(source);
-                SelectedAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.File.FullName == path.FullName);
+                var file = new FileInfo(path);
+                if (file.Exists)
+                {
+                    SelectedAsset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
+                }
+                else
+                {
+                    // TODO: Error message because it can't find the target asset
+                }
             }
             RaisePropertyChanged("AssetView");
 
         }
-        public AssetController(AssetType type, Asset asset)  // for loading an assetcontrol with a known asset
+        public AssetController(Asset asset)  // for loading an assetcontrol with a known asset
         {
-            InitializeAssetController(type);
+            InitializeAssetController(asset.Type);
             SelectedAsset = asset;
             RaisePropertyChanged("AssetView");
         }
@@ -58,8 +74,8 @@ namespace Octide
         public void InitializeAssetController(AssetType type)  //base method
         {
             LoadAssetButton = new RelayCommand(LoadAssetDialog);
-            UnlinkAssetCommand = new RelayCommand(UnlinkAsset);
-            DropHandler = new AssetButtonDropHandler() { Parent = this };
+            ClearAssetCommand = new RelayCommand(ClearAsset);
+            DropHandler = new AssetButtonDropHandler() { Controller = this };
 
             TargetAssetType = type;
             AssetView = new ListCollectionView(ViewModelLocator.AssetsTabViewModel.Assets);
@@ -70,7 +86,7 @@ namespace Octide
             };
         }
 
-        public void UnlinkAsset()
+        public void ClearAsset()
         {
             if (SelectedAsset != null)
                 SelectedAsset = null;
@@ -95,6 +111,7 @@ namespace Octide
                 }
                 _asset = value;
                 RaisePropertyChanged("SelectedAsset");
+                RaisePropertyChanged("Path");
                 RaisePropertyChanged("RemoveButtonVisibility");
             }
         }
@@ -103,14 +120,14 @@ namespace Octide
         {
             var fo = new OpenFileDialog
             {
-                Filter = AssetsTabViewModel.GetAssetFilters(TargetAssetType)
+                Filter = Asset.GetAssetFilters(TargetAssetType)
             };
             if ((bool)fo.ShowDialog() == false)
             {
                 return;
             }
             var file = new FileInfo(fo.FileName);
-            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(file);
+            var asset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
             if (asset == null) return;
             SelectedAsset = asset;
         }
@@ -126,7 +143,7 @@ namespace Octide
     }
     public class AssetButtonDropHandler : IDropTarget
     {
-        public AssetController Parent { get; set; }
+        public AssetController Controller { get; set; }
         public void DragOver(IDropInfo dropInfo)
         {
             try
@@ -134,7 +151,7 @@ namespace Octide
                 var data = dropInfo.Data as IDataObject;
                 var path = (string[])data.GetData(DataFormats.FileDrop);
                 var file = new FileInfo(path.First());
-                if (AssetsTabViewModel.GetAssetType(file) != Parent.TargetAssetType)
+                if (Asset.GetAssetType(file.Extension) != Controller.TargetAssetType)
                     dropInfo.Effects = DragDropEffects.None;
                 else
                 {
@@ -153,9 +170,9 @@ namespace Octide
             var path = (string[])data.GetData(DataFormats.FileDrop);
             var file = new FileInfo(path[0]);
 
-            var asset = ViewModelLocator.AssetsTabViewModel.NewAsset(file);
+            var asset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
             if (asset == null) return;
-            Parent.SelectedAsset = asset;
+            Controller.SelectedAsset = asset;
         }
     }
 }

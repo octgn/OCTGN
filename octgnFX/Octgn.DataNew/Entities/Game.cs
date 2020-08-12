@@ -54,7 +54,27 @@
         public string NoteBackgroundColor { get; set; }
         public string NoteForegroundColor { get; set; }
         public Version ScriptVersion { get; set; }
-        public List<GameMode> Modes { get; set; } 
+        public List<GameMode> Modes { get; set; }
+
+        public Game()
+        {
+            CardSizes = new Dictionary<string, CardSize>();
+            GameBoards = new Dictionary<string, GameBoard>();
+            CustomProperties = new List<PropertyDef>();
+            DeckSections = new Dictionary<string, DeckSection>();
+            SharedDeckSections = new Dictionary<string, DeckSection>();
+            GlobalVariables = new Dictionary<string, GlobalVariable>();
+            Markers = new Dictionary<string, GameMarker>();
+            Phases = new List<GamePhase>();
+            Documents = new List<Document>();
+            Symbols = new List<Symbol>();
+            Sounds = new Dictionary<string, GameSound>();
+            Events = new Dictionary<string, GameEvent[]>();
+            Scripts = new List<string>();
+            Modes = new List<GameMode>();
+            Authors = new List<string>();
+            Tags = new List<string>();
+        }
 
         public bool Equals(Game x, Game y)
         {

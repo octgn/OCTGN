@@ -3,69 +3,130 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
-using Microsoft.Win32;
-using Octgn.DataNew.Entities;
-using Octide.ItemModel;
+using log4net.Repository.Hierarchy;
+using Newtonsoft.Json.Linq;
+using Octgn.Library;
+using Octide.Messages;
 
 namespace Octide.ViewModel
 {
     public class AssetsTabViewModel : ViewModelBase
     {
-        public ObservableCollection<Asset> Assets { get; set; }
-        private bool _filterUnused;
+        public AsyncObservableCollection<Asset> Assets { get; set; }
+        private bool _filterLinked;
         private AssetType _filterType;
 
+
+        private DirectoryInfo _assetTempDirectory;
+        public DirectoryInfo AssetTempDirectory
+        {
+            get
+            {
+                if (_assetTempDirectory == null)
+                {
+                    _assetTempDirectory = Directory.CreateDirectory(Config.Instance.Paths.GraveyardPath);
+                }
+                return _assetTempDirectory;
+            }
+        }
         public AssetsTabViewModel()
         {
-            Assets = new ObservableCollection<Asset>();
+            Assets = new AsyncObservableCollection<Asset>();
+            AssetList = new List<Asset>();
+            Assets.CollectionChanged += (a, b) =>
+            {
+                RefreshAssetsList();
+            };
+
+            Watcher = new FileSystemWatcher();
+            Watcher.IncludeSubdirectories = true;
+      //      Watcher.Changed += FileChanged;
+      //      Watcher.Created += FileCreated;
+      //      Watcher.Renamed += FileRenamed;
+      //      Watcher.Deleted += FileDeleted;
             if (ViewModelLocator.GameLoader.WorkingDirectory != null)
             {
-                lock (Assets)
-                {
-                    var di = new DirectoryInfo(ViewModelLocator.GameLoader.WorkingDirectory);
-                    var files = di.GetFiles("*.*", SearchOption.AllDirectories);
-                    Assets = new ObservableCollection<Asset>(files.Select(x => LoadAsset(x)));
-                    AssetView = new ListCollectionView(Assets);
-                    Assets.CollectionChanged += (a, b) => AssetView.Refresh();
-
-                    Watcher = new FileSystemWatcher
-                    {
-                        IncludeSubdirectories = true
-                    };
-                    Watcher.Path = ViewModelLocator.GameLoader.WorkingDirectory;
-                    Watcher.EnableRaisingEvents = true;
-                    Watcher.Changed += FileChanged;
-                    Watcher.Created += FileCreated;
-                    Watcher.Renamed += FileRenamed;
-                    Watcher.Deleted += FileDeleted;
-                }
-            }
-            else
-            {
-                Watcher.EnableRaisingEvents = false;
+                Watcher.Path = ViewModelLocator.GameLoader.WorkingDirectory.FullName;
+                Watcher.EnableRaisingEvents = true;
             }
         }
 
+        private string WorkingDirectory => ViewModelLocator.GameLoader.WorkingDirectory?.FullName;
+
+
         public Asset LoadAsset(FileInfo file)
         {
-            var tempPath = Path.Combine(ViewModelLocator.GameLoader.TempDirectory, Guid.NewGuid().ToString() + file.Extension);
-            var tempFile = file.CopyTo(tempPath);
-            var asset = new Asset(file)
+            if (WorkingDirectory != null && file.FullName.StartsWith(WorkingDirectory))
             {
+                // loads a file from within the working directory
+                var asset = Assets.FirstOrDefault(x => x.FullPath == file.FullName);
+                if (asset == null)
+                {
+                    asset = new Asset(file);
+                    asset.TargetFile = file;
+
+                    var hierarchyList = new List<string>();
+                    var directory = file.Directory;
+
+                    while (directory != null && directory.FullName != WorkingDirectory)
+                    {
+                        if (directory == null) break;
+                        hierarchyList.Insert(0, directory.Name);
+                        directory = directory.Parent;
+                    }
+                    asset.Hierarchy = hierarchyList.ToArray();
+                    asset.Name = Path.GetFileNameWithoutExtension(file.FullName);
+
+                    Assets.Add(asset);
+                }
+                return asset;
+            }
+            else
+            {
+                // loads a file from outside the working directory
+                var asset = new Asset(file);
+                asset.Hierarchy = new string[] { "Asset" };
+
+                asset.Name = GetUniqueFileName(asset.Hierarchy, Path.GetFileNameWithoutExtension(file.FullName), file.Extension);
+                Assets.Add(asset);
+                return asset;
+            }
+        }
+
+        public Asset NewAsset(string[] hierarchy, string name, string extension)
+        {
+            var asset = new Asset()
+            {
+                Hierarchy = hierarchy,
+                Name = GetUniqueFileName(hierarchy, name, extension),
+                Extension = extension
             };
+
             Assets.Add(asset);
             return asset;
+        }
+
+        public string GetUniqueFileName(string[] hierarchy, string filename, string extension)
+        {
+            int n = 1;
+            string ret = filename;
+            while (Assets.Any(x =>
+                x.Hierarchy.SequenceEqual(hierarchy)
+                && x.Name == ret
+                && x.Extension == extension))
+            {
+                ret = string.Format("{0} ({1})", filename, n++);
+            }
+            return ret;
         }
 
         public AssetType FilterType
@@ -78,130 +139,55 @@ namespace Octide.ViewModel
             {
                 if (_filterType == value) return;
                 _filterType = value;
-                UpdateFilter();
                 RaisePropertyChanged("FilterType");
+                RefreshAssetsList();
             }
         }
 
-        public bool FilterUnused
+        public bool FilterLinked
         {
             get
             {
-                return _filterUnused;
+                return _filterLinked;
             }
             set
             {
-                if (_filterUnused == value) return;
-                _filterUnused = value;
-                UpdateFilter();
-                RaisePropertyChanged("FilterUnused");
+                if (_filterLinked == value) return;
+                _filterLinked = value;
+                RaisePropertyChanged("FilterLinked");
+                RefreshAssetsList();
             }
-        }
-        private void UpdateFilter()
-        {
-            AssetView.Filter = obj =>
-            {
-                var asset = obj as Asset;
-                if (FilterType != AssetType.All && asset.Type != FilterType)
-                    return false;
-                if (FilterUnused && asset.IsLinked)
-                    return false;
-                return true;
-            };
-            RaisePropertyChanged("AssetView");
         }
 
-        public Asset NewAsset(FileInfo file)
-        {
-            var tempPath = Path.Combine(ViewModelLocator.GameLoader.TempDirectory, Guid.NewGuid().ToString() + file.Extension);
-            var fileCopy = file.CopyTo(tempPath);
-
-            string assetPath;
-            if (file.FullName.StartsWith(ViewModelLocator.GameLoader.WorkingDirectory))
-            {
-                //if the asset is being copied from within the working directory, then use its existing path
-                assetPath = Utils.MakeRelativePath(ViewModelLocator.GameLoader.WorkingDirectory, file.FullName);
-            }
-            else
-            {
-                assetPath = Utils.GetUniqueFilename(Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, "Assets", file.Name));
-            }
-            var asset = new Asset(fileCopy)
-            {
-            };
-            Assets.Add(asset);
-            return asset;
-        }
-
-
-        public static string GetAssetFilters(AssetType assetType)
-        {
-            switch (assetType)
-            {
-                case AssetType.Image:
-                    return "Image Files (*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG";
-                case AssetType.PythonScript:
-                    return "Python files (*.PY)|*.PY";
-                case AssetType.Xml:
-                    return "Xml files (*.XML)|*.XML";
-                case AssetType.Font:
-                    return "Font files (*.TTF)|*.TTF";
-                case AssetType.Deck:
-                    return "OCTGN Deck files (*.O8D)|*.O8D";
-                case AssetType.Document:
-                    return "Document files (*.HTML;*.PDF;*.TXT)|*.HTML;*.PDF;*.TXT";
-                case AssetType.Sound:
-                    return "Sound files (*.MP3;*.WAV;*.OGG)|*.MP3;*.WAV;*.OGG";
-                default:
-                    return "Any files|*.*";
-            }
-        }
-        public static AssetType GetAssetType(FileInfo file)
-        {
-            switch (file.Extension.Substring(1).ToLower())
-            {
-                case "jpg":
-                case "jpeg":
-                case "bmp":
-                case "png":
-                case "gif":
-                case "tiff":
-                    return AssetType.Image;
-                case "py":
-                    return AssetType.PythonScript;
-                case "xml":
-                    return AssetType.Xml;
-                case "ttf":
-                    return AssetType.Font;
-                case "o8d":
-                    return AssetType.Deck;
-                case "mp3":
-                case "oog":
-                case "wav":
-                    return AssetType.Sound;
-                case "txt":
-                case "html":
-                case "pdf":
-                    return AssetType.Document;
-                default:
-                    return AssetType.Other;
-            }
-        }
 
         #region filewatcher
         public FileSystemWatcher Watcher { get; private set; }
-        public ICollectionView AssetView { get; private set; }
+        public void UpdateWorkingDirectory(DirectoryInfo newPath)
+        {
+            Watcher.Path = newPath.FullName;
+            foreach (var asset in Assets)
+            {
+                asset.UpdateLinkedAssetPaths();
+            }
+        }
         private void FileChanged(object sender, FileSystemEventArgs args)
         {
             Messenger.Default.Send(new AssetManagerUpdatedMessage());
         }
         private void FileCreated(object sender, FileSystemEventArgs args)
         {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+
+            var file = new FileInfo(args.FullPath);
+            ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
         }
-        private void FileRenamed(object sender, FileSystemEventArgs args)
+        private void FileRenamed(object sender, RenamedEventArgs args)
         {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+            var asset = Assets.FirstOrDefault(x => x.TargetFilePath == args.OldFullPath);
+            if (asset != null)
+            {
+                asset.TargetFile = new FileInfo(args.FullPath);
+                asset.UpdateLinkedAssetPaths();
+            }
         }
         private void FileDeleted(object sender, FileSystemEventArgs args)
         {
@@ -209,8 +195,34 @@ namespace Octide.ViewModel
         }
         #endregion
 
+        public void RefreshAssetsList()
+        {
+            AssetList = new List<Asset>(Assets.Where(x => FilterType == AssetType.All || x.Type == FilterType).Where(x => FilterLinked == false || x.IsLinked == false));
+            RaisePropertyChanged("AssetList");
+        }
+
+        public List<Asset> AssetList { get; set; }
+
+        public Asset _selectedAsset;
+        public Asset SelectedAsset
+        {
+            get
+            {
+                return _selectedAsset;
+            }
+            set
+            {
+                if (_selectedAsset == value) return;
+                _selectedAsset = value;
+                RaisePropertyChanged("SelectedAsset");
+            }
+        }
+
     }
     public class AssetManagerUpdatedMessage
+    {
+    }
+    public class WorkingDirectoryChangedMessage
     {
     }
 }

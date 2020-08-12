@@ -15,24 +15,26 @@
              d:DesignHeight="900" d:DesignWidth="600"
              params:Design.Theme="Dark"
              >
-    <ItemsControl Style="{StaticResource OctideInputPanel}" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <ItemsControl Style="{StaticResource OctideInputPanel}" ScrollViewer.VerticalScrollBarVisibility="Auto" >
 
-        <TextBlock Text="Marker Name"/>
-        <TextBox>
-            <TextBox.Text>
-                <Binding Path="Name" >
-                    <Binding.ValidationRules>
-                        <local:StringRestrictionValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+            <TextBlock Text="Marker Name"/>
+            <TextBox>
+                <TextBox.Text>
+                    <Binding Path="Name" >
+                        <Binding.ValidationRules>
+                            <local:StringRestrictionValidationRule />
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Icon"/>
-            <Image Source="{Binding Icon, Mode=OneWay}" />
-        </StackPanel>
-        <local:AssetControllerView DataContext="{Binding Asset}" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Icon"/>
+                <Image Source="{Binding Icon, Mode=OneWay}" />
+            </StackPanel>
+            <local:AssetControllerView DataContext="{Binding Asset}" />
 
-    </ItemsControl>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>

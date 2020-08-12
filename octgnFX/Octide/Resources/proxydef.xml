@@ -10,7 +10,7 @@
       <text color="#000000" size="20"/>
     </block>
   </blocks>
-  <template src="Resources/blank.png" default="True">
+  <template src="Assets/blank.png" default="True">
     <matches>
       <match name="property" value="name" />
     </matches>
