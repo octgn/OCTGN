@@ -18,7 +18,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Style="{StaticResource XButton}" ToolTip="Unlink Asset" Margin="5" Visibility="{Binding RemoveButtonVisibility}" Command="{Binding UnlinkAssetCommand}" />
+        <Button Style="{StaticResource XButton}" ToolTip="Unlink Asset" Margin="5" Visibility="{Binding RemoveButtonVisibility}" Command="{Binding ClearAssetCommand}" />
         <Button Grid.Column="1" Content="Load/Drop Asset" AllowDrop="True" Command="{Binding LoadAssetButton}" 
                           gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding DropHandler}" />
         <ComboBox Grid.Column="2" ItemsSource="{Binding AssetView}" SelectedValue="{Binding SelectedAsset}" >
@@ -31,7 +31,7 @@
                                     <Setter Property="Source" Value="{x:Null}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="{x:Static local:AssetType.Image}">
-                                            <Setter Property="Source" Value="{Binding FullPath, TargetNullValue={x:Null}}" />
+                                            <Setter Property="Source" Value="{Binding SafeFilePath, TargetNullValue={x:Null}}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

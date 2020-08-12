@@ -33,24 +33,21 @@ namespace Octide.ViewModel
 			NewGameCommand = new RelayCommand(NewGame);
 			ImportGameCommand = new RelayCommand(ImportGame);
 			LoadGameCommand = new RelayCommand(LoadGame);
+			var garbageFolder = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
+			foreach (var dir in garbageFolder.GetDirectories())
+			{
+				try
+				{
+					dir.Delete(true);
+				}
+				catch
+				{
+				}
+			}
 		}
 		public void NewGame()
 		{
-			// this dialog creates a new folder for the game at the specified directory
-			var gameLocationDlg = new SaveFileDialog
-			{
-				FileName = "My OCTGN Game",
-				Title = "Choose a location for your new game.",
-				Filter = "Folder|*.",
-				AddExtension = false
-			};
-			if ((bool)gameLocationDlg.ShowDialog() == false) return;
-			if (File.Exists(gameLocationDlg.FileName))
-			{
-				var dlg = System.Windows.Forms.MessageBox.Show("Cannot create game: folder name is already in use", "Error creating game directory");
-				return;
-			}
-			ViewModelLocator.GameLoader.CreateGame(new DirectoryInfo(gameLocationDlg.FileName));
+			ViewModelLocator.GameLoader.CreateGame();
 			Task.Factory.StartNew(LoadMainWindow);
 
 		}

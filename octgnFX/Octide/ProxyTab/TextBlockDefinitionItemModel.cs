@@ -31,12 +31,12 @@ namespace Octide.ItemModel
                 type = "text",
             };
             Asset = new AssetController(AssetType.Font) { CanRemove = true };
-            _def.text.font = Asset.SelectedAsset.RelativePath;
+            _def.text.font = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = "text";
         }
 
-        public TextBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // copy from 
+        public TextBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // load 
         {
             _def = b;
 
@@ -44,27 +44,25 @@ namespace Octide.ItemModel
             {
                 Size = b.text.size,
             };
-            string path = null;
-            if (b.text.font != null)
-                path = Path.Combine(b.Manager.RootPath, b.text.font);
+            string path = b.text.font ?? null;
             Asset = new AssetController(AssetType.Font, path) { CanRemove = true };
             Asset.PropertyChanged += AssetUpdated;
         }
 
 
-        public TextBlockDefinitionItemModel(TextBlockDefinitionItemModel t, IdeCollection<IdeBaseItem> source) : base(source)
+        public TextBlockDefinitionItemModel(TextBlockDefinitionItemModel t, IdeCollection<IdeBaseItem> source) : base(source) // copy
         {
             _def = new BlockDefinition();
-            Asset = new AssetController(AssetType.Image, t.Asset.SelectedAsset?.RelativePath) { CanRemove = true };
-            _def.text.font = Asset.SelectedAsset.RelativePath;
+            Asset = new AssetController(AssetType.Image, t._def.src) { CanRemove = true };
+            _def.text.font = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = t.Name;
         }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
-                _def.text.font = Asset.SelectedAsset?.RelativePath;
+                _def.text.font = Asset.SelectedAsset?.FullPath;
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("Font");
             }
@@ -374,11 +372,11 @@ namespace Octide.ItemModel
         {
             get
             {
-                if (Asset == null)
+                if (Asset?.SafePath == null)
                 {
                     return new FontFamily("Arial");
                 }
-                return new FontFamily(Asset.FullPath);
+                return new FontFamily(Asset.SafePath);
             }
         }
 

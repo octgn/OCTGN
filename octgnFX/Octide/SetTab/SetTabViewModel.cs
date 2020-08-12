@@ -27,11 +27,12 @@ namespace Octide.ViewModel
 
             var setSerializer = new SetSerializer() { Game = ViewModelLocator.GameLoader.Game };
 
-            var setAssets = ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Type == AssetType.Xml && x.FileName == "set.xml");
+            var setAssets = ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Type == AssetType.Xml && x.Name == "set");
             foreach (var asset in setAssets)
             {
                 asset.IsReserved = true;
-                var set = (Set)setSerializer.Deserialize(asset.SafeFilePath);
+                asset.LockName = true;
+                var set = (Set)setSerializer.Deserialize(asset.TargetFilePath);
                 var setModel = new SetModel(set, Items);
                 Items.Add(setModel);
             }

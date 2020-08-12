@@ -13,7 +13,6 @@ namespace Octgn.ProxyGenerator.Definitions
         public List<Property> Matches = new List<Property>();
 
         public string src;
-        public string rootPath;
         public bool defaultTemplate = false;
         
         public List<LinkDefinition> GetOverLayBlocks(Dictionary<string, string> values)

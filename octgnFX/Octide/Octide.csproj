@@ -215,6 +215,9 @@
     </Compile>
     <Compile Include="AssetsTab\Asset.cs" />
     <Compile Include="AssetsTab\AssetController.cs" />
+    <Compile Include="AssetsTab\AssetItemView.xaml.cs">
+      <DependentUpon>AssetItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GameTab\DeckSectionTab\DeckSectionView.xaml.cs">
       <DependentUpon>DeckSectionView.xaml</DependentUpon>
     </Compile>
@@ -299,6 +302,7 @@
       <DependentUpon>AssetControllerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\EnumBindingSourceExtension.cs" />
+    <Compile Include="Utils\AsyncObservableCollection.cs" />
     <Compile Include="Utils\ValidationRules.cs" />
     <Compile Include="Utils\IdeObservableCollection.cs" />
     <Compile Include="Views\ImportCardsWindow.xaml.cs">
@@ -476,6 +480,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="AssetsTab\AssetItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="GameTab\DeckSectionTab\DeckSectionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

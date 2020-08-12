@@ -8,7 +8,6 @@ namespace Octgn.ProxyGenerator.Definitions
 {
     public class BlockDefinition
     {
-        public BlockManager Manager { get; set; }
         public SectionStructs.Location location = new SectionStructs.Location { x = 0, y = 0 };
         public SectionStructs.WordWrap wordwrap = new SectionStructs.WordWrap { height = 0, width = 0 };
         public SectionStructs.Text text = new SectionStructs.Text { color = Color.White, size = 0 };

@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -13,6 +14,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
 
 using Octgn.DataNew.Entities;
+using Octgn.Library;
 using Octide.ViewModel;
 
 namespace Octide.ItemModel
@@ -36,7 +38,7 @@ namespace Octide.ItemModel
 
         private void BackgroundAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
                 _group.Background = Asset.FullPath;
                 SetBackground();
@@ -132,16 +134,15 @@ namespace Octide.ItemModel
         
         internal void SetBackground()
         {
-            if (!DispatcherHelper.UIDispatcher.CheckAccess())
+            if (Background.SafePath == null)
             {
-                DispatcherHelper.UIDispatcher.Invoke(new Action(SetBackground));
+                BackgroundImage = null;
                 return;
             }
-            if (ViewModelLocator.GameLoader.Game == null || ViewModelLocator.GameLoader.Game.Table == null) return;
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = new Uri(_group.Background);
+            bim.UriSource = new Uri(Background.SafePath);
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);

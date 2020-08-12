@@ -11,12 +11,16 @@ using System.IO;
 using System.Linq;
 using System.Collections.Specialized;
 using Octide.Views;
+using System.ComponentModel;
+using Octgn.Library;
 
 namespace Octide.SetTab.ItemModel
 {
     public class SetModel : IdeBaseItem
     {
         public Set _set;
+
+        public AssetController Asset { get; set; }
 
         public RelayCommand AddCardCommand { get; private set; }
         public RelayCommand AddPackageCommand { get; private set; }
@@ -36,10 +40,15 @@ namespace Octide.SetTab.ItemModel
                 Packs = new List<Pack>()
             };
             Name = "New Set";
-            string installPath = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, "Sets", _set.Id.ToString());
-            _set.InstallPath = installPath;
-            _set.Filename = Path.Combine(installPath, "set.xml");
-            _set.PackUri = Path.Combine(installPath, "Cards");
+
+            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString()}, "set", ".xml");
+            setAsset.IsReserved = true;
+            setAsset.LockName = true;
+            Asset = new AssetController(setAsset);
+            Asset.PropertyChanged += AssetUpdated;
+
+            _set.Filename = setAsset.FullPath;
+            _set.ImagePackUri = Path.Combine(Config.Instance.ImageDirectoryFull, _set.GameId.ToString(), "Sets", _set.Id.ToString());
 
             CardItems = new IdeCollection<IdeBaseItem>(this);
             CardItems.CollectionChanged += (a, b) =>
@@ -68,6 +77,14 @@ namespace Octide.SetTab.ItemModel
         public SetModel(Set s, IdeCollection<IdeBaseItem> src) : base(src) // For loading existing set data
         {
             _set = s;
+
+            Asset = new AssetController(AssetType.Xml, s.Filename);
+            Asset.PropertyChanged += AssetUpdated;
+            if (Asset.SelectedAsset != null)
+            {
+                Asset.SelectedAsset.IsReserved = true;
+            };
+
             CardItems = new IdeCollection<IdeBaseItem>(this);
             foreach (var card in _set.Cards)
             {
@@ -101,21 +118,27 @@ namespace Octide.SetTab.ItemModel
 
         public SetModel(SetModel s, IdeCollection<IdeBaseItem> src) : base(src) //for copying the item
         {
-            var id = Guid.NewGuid();
-            string installPath = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, "Sets", id.ToString());
             _set = new Set()
             {
                 Name = s._set.Name,
-                Id = id,
+                Id = Guid.NewGuid(),
                 GameId = s._set.GameId,
                 Hidden = s._set.Hidden,
                 ShortName = s._set.ShortName,
                 Description = s._set.Description,
-                ReleaseDate = s._set.ReleaseDate,
-                InstallPath = installPath,
-                Filename = Path.Combine(installPath, "set.xml"),
-                PackUri = Path.Combine(installPath, "Cards")
+                ReleaseDate = s._set.ReleaseDate
             };
+
+            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString()}, "set", ".xml");
+
+            _set.Filename = setAsset.FullPath;
+            _set.ImagePackUri = Path.Combine(Config.Instance.ImageDirectoryFull, _set.GameId.ToString(), "Sets", _set.Id.ToString());
+
+            setAsset.IsReserved = true;
+            setAsset.LockName = true;
+            Asset = new AssetController(setAsset);
+            Asset.PropertyChanged += AssetUpdated;
+
             CardItems = new IdeCollection<IdeBaseItem>(this);
             CardItems.CollectionChanged += (a, b) =>
             {
@@ -147,6 +170,13 @@ namespace Octide.SetTab.ItemModel
             CanDragDrop = false;
         }
 
+        public void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Path")
+            {
+                _set.Filename = Asset.FullPath;
+            }
+        }
         public void AddPackage()
         {
             var ret = new PackageModel(PackageItems);

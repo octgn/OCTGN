@@ -178,13 +178,13 @@ namespace Octide.Properties {
         ///      &lt;text color=&quot;#000000&quot; size=&quot;20&quot;/&gt;
         ///    &lt;/block&gt;
         ///  &lt;/blocks&gt;
-        ///  &lt;template src=&quot;Resources/blank.png&quot; default=&quot;True&quot;&gt;
+        ///  &lt;template src=&quot;Assets/blank.png&quot; default=&quot;True&quot;&gt;
         ///    &lt;matches&gt;
         ///      &lt;match name=&quot;property&quot; value=&quot;name&quot; /&gt;
         ///    &lt;/matches&gt;
         ///    &lt;textblocks&gt;
         ///      &lt;link block=&quot;name&quot;&gt;
-        ///        &lt; [rest of string was truncated]&quot;;.
+        ///        &lt;pro [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string proxydef {
             get {

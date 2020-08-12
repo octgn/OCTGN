@@ -65,7 +65,8 @@ namespace Octide
             if (Source == null) return;
             var index = Source.IndexOf(this);
             Source.Remove(this);
-            Source.SelectedItem = (Source.Count > index) ? Source[index] : Source.Last();
+            if (Source.Count > 0)
+                Source.SelectedItem = (Source.Count > index) ? Source[index] : Source.Last();
             Cleanup();
         }
 

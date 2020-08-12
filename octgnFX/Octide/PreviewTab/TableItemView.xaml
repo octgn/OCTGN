@@ -12,7 +12,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" >
 
-    <ScrollViewer  VerticalScrollBarVisibility="Auto" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
         <ItemsControl Style="{StaticResource OctideInputPanel}" >
             <TextBlock Text="Table Editor" />
 

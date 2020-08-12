@@ -16,16 +16,16 @@ namespace Octgn.ProxyGenerator
 {
     class ProxyDeserializer
     {
-        public static BlockDefinition DeserializeBlock(BlockManager manager, XmlNode node)
+        public static BlockDefinition DeserializeBlock(string rootPath, XmlNode node)
         {
             BlockDefinition ret = new BlockDefinition();
-            ret.Manager = manager;
 
             ret.id = node.Attributes["id"].Value;
             ret.type = node.Attributes["type"].Value;
             if (node.Attributes["src"] != null)
             {
-                ret.src = node.Attributes["src"].Value;
+                //todo: make sure the src exists and figure out what to do if it doesn't
+                ret.src = Path.Combine(rootPath, node.Attributes["src"].Value);
             }
             foreach (XmlNode prop in node.ChildNodes)
             {
@@ -56,12 +56,10 @@ namespace Octgn.ProxyGenerator
                     ret.text.size = int.Parse(prop.Attributes["size"].Value);
                     if (prop.Attributes["font"] != null)
                     {
-                        string relativePath = prop.Attributes["font"].Value;
-                        string rootPath = manager.RootPath;
-                        string combined = Path.Combine(rootPath, relativePath);
+                        string combined = Path.Combine(rootPath, prop.Attributes["font"].Value);
                         if (File.Exists(combined))
                         {
-                            ret.text.font = relativePath;
+                            ret.text.font = combined;
                         }
                     }
                 }
@@ -116,10 +114,11 @@ namespace Octgn.ProxyGenerator
             return (ret);
         }
 
-        public static TemplateDefinition DeserializeTemplate(XmlNode node)
+        public static TemplateDefinition DeserializeTemplate(string rootPath, XmlNode node)
         {
             TemplateDefinition ret = new TemplateDefinition();
-            ret.src = node.Attributes["src"].Value;
+            //todo: make sure the src exists and figure out what to do if it doesn't
+            ret.src = Path.Combine(rootPath, node.Attributes["src"].Value);
             if (node.Attributes["default"] != null)
             {
                 ret.defaultTemplate = bool.Parse(node.Attributes["default"].Value);

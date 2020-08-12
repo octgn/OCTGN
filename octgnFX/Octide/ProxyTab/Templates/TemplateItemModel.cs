@@ -43,11 +43,10 @@ namespace Octide.ProxyTab.ItemModel
                 Matches = new List<Property>(),
                 OverlayBlocks = new List<LinkDefinition.LinkWrapper>(),
                 TextBlocks = new List<LinkDefinition.LinkWrapper>(),
-                rootPath = ViewModelLocator.ProxyTabViewModel._proxydef.RootPath
             };
 
             Asset = new AssetController(AssetType.Image);
-            _def.src= Asset.SelectedAsset.RelativePath;
+            _def.src= Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
 
 
@@ -82,7 +81,7 @@ namespace Octide.ProxyTab.ItemModel
             CanEdit = false;
             _def = t;
 
-            Asset = new AssetController(AssetType.Image, Path.Combine(t.rootPath, t.src));
+            Asset = new AssetController(AssetType.Image, t.src);
             Asset.PropertyChanged += AssetUpdated;
 
             Matches = new IdeCollection<IdeBaseItem>(this);
@@ -124,11 +123,10 @@ namespace Octide.ProxyTab.ItemModel
                 OverlayBlocks = p._def.OverlayBlocks,
                 TextBlocks = p._def.TextBlocks,
                 Matches = p._def.Matches,
-                rootPath = p._def.rootPath
             };
 
-            Asset = new AssetController(AssetType.Image, Path.Combine(p._def.rootPath, p._def.src));
-            _def.src = Asset.SelectedAsset.RelativePath;
+            Asset = new AssetController(AssetType.Image, p._def.src);
+            _def.src = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
 
             Matches = new IdeCollection<IdeBaseItem>(this);
@@ -167,11 +165,12 @@ namespace Octide.ProxyTab.ItemModel
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedAsset")
+            if (e.PropertyName == "Path")
             {
-                _def.src = Asset.SelectedAsset.RelativePath;
+                _def.src = Asset.SelectedAsset?.FullPath;
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("Icon");
+                RaisePropertyChanged("Name");
             }
         }
         public override void Cleanup()
@@ -225,16 +224,14 @@ namespace Octide.ProxyTab.ItemModel
         {
             get
             {
-                return _def.src;
+                return Asset?.SelectedAsset?.RelativePath;
             }
             set
             {
-                if (_def.src == value) return;
-                _def.src = value;
-                RaisePropertyChanged("Name");
+                return;
             }
         }
-        public new string Icon => Asset.FullPath;
+        public new string Icon => Asset.SafePath;
 
     }
 }

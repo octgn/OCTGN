@@ -19,14 +19,19 @@ using Octide.ItemModel;
 using System.Windows.Media.Imaging;
 using Octide.ProxyTab.ItemModel;
 using System.ComponentModel;
+using System.Xml;
+using Octgn.Library;
+using System.Windows.Forms;
 
 namespace Octide.ViewModel
 {
     public class ProxyTabViewModel : ViewModelBase
     {
-
+        //TODO: Add a toggle to ignore the proxygen, blanking the src link and disabling the tab contents
 
         public ProxyDefinition _proxydef;
+
+        public AssetController Asset { get; set; }
         public IdeCollection<IdeBaseItem> Templates { get; private set; }
         public IdeCollection<IdeBaseItem> TextBlocks { get; private set; }
         public IdeCollection<IdeBaseItem> OverlayBlocks { get; private set; }
@@ -39,30 +44,35 @@ namespace Octide.ViewModel
 
         public ProxyTabViewModel()
         {
-            StoredProxyProperties = new ObservableCollection<ProxyInputPropertyItemModel>
-            {
-                new ProxyInputPropertyItemModel("Name", "Card"),
-                new ProxyInputPropertyItemModel("CardSizeName", "Size"),
-                new ProxyInputPropertyItemModel("Type", "Creature"),
-                new ProxyInputPropertyItemModel("Color", "Red"),
-                new ProxyInputPropertyItemModel("Rules", "LOL FREE CARD")
-            };
-            
+            StoredProxyProperties = new ObservableCollection<ProxyInputPropertyItemModel>();
+
             StoredProxyProperties.CollectionChanged += (a, b) =>
             {
                 Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
             var game = ViewModelLocator.GameLoader.Game;
+
             var proxySerializer = new ProxyGeneratorSerializer(game.Id) { Game = game };
-            var path = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory, game.ProxyGenSource);
-            _proxydef = (ProxyDefinition)proxySerializer.Deserialize(path);
 
-            var proxyDefAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.RelativePath == new FileInfo(path).FullName); ;
-            if (proxyDefAsset != null)
+            if (game.ProxyGenSource == null)
             {
-                proxyDefAsset.IsReserved = true;
+                _proxydef = new ProxyDefinition();
+                var proxyAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Proxy" }, "proxydef", ".xml");
+                proxyAsset.IsReserved = true;
+                Asset = new AssetController(proxyAsset);
             }
-
+            else
+            {
+                var path = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory.FullName, game.ProxyGenSource);
+                //TODO: Catch if the target xml is not a valid proxy definition
+                _proxydef = (ProxyDefinition)proxySerializer.Deserialize(path);
+                Asset = new AssetController(AssetType.Xml, path);
+            }
+            Asset.PropertyChanged += AssetUpdated;
+            if (Asset.SelectedAsset != null)
+            {
+                Asset.SelectedAsset.IsReserved = true;
+            }
 
             Templates = new IdeCollection<IdeBaseItem>(this);
             foreach (TemplateDefinition templateDef in _proxydef.TemplateSelector.GetTemplates())
@@ -131,9 +141,13 @@ namespace Octide.ViewModel
             RaisePropertyChanged("StoredProxyProperties");
             Messenger.Default.Register<ProxyTemplateChangedMessage>(this, action => UpdateProxyTemplate(action));
         }
-        public void AssetChanged(object sender, PropertyChangedEventArgs e)
+        
+        public void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
-
+            if (e.PropertyName == "Path")
+            {
+                ViewModelLocator.GameLoader.Game.ProxyGenSource = Asset.FullPath;
+            }
         }
 
         public void UpdateProxyTemplate(ProxyTemplateChangedMessage message)
@@ -143,7 +157,7 @@ namespace Octide.ViewModel
             var properties = StoredProxyProperties.Where(x => x.Name != null).ToDictionary(x => x.Name, x => x.Value);
 
             //this stuff generates the real proxy image, maybe we'll need to keep it in for more accurate image
-            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, _proxydef.RootPath, SelectedTemplate._def, properties, null);
+            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, SelectedTemplate._def, properties, null);
             using (var ms = new MemoryStream())
             {
                 proxy.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -157,7 +171,7 @@ namespace Octide.ViewModel
             }
             proxy.Dispose();
 
-            BaseImage = new BitmapImage(new Uri(Path.Combine(SelectedTemplate._def.rootPath, SelectedTemplate._def.src)));
+            BaseImage = new BitmapImage(new Uri(SelectedTemplate._def.src));
             ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
                 SelectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
                     x => (OverlayBlockDefinitionItemModel)OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block)));

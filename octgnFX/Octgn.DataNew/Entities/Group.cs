@@ -18,6 +18,12 @@
         public bool Ordered { get; set; }
         public IEnumerable<IGroupAction> CardActions { get; set; }
         public IEnumerable<IGroupAction> GroupActions { get; set; } 
+
+        public Group()
+        {
+            CardActions = new List<IGroupAction>();
+            GroupActions = new List<IGroupAction>();
+        }
     }
     public interface IGroupAction
     {
@@ -33,6 +39,11 @@
         public string ShowExecute { get; set; }
         public string HeaderExecute { get; set; }
         public IEnumerable<IGroupAction> Children { get; set; } 
+
+        public GroupActionSubmenu()
+        {
+            Children = new List<IGroupAction>();
+        }
     }
     public class GroupAction : IGroupAction
     {
