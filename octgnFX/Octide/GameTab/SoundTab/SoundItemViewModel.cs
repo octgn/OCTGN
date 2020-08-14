@@ -39,7 +39,8 @@ namespace Octide.ItemModel
             StopCommand = new RelayCommand(StopSound);
 
             _sound = s;
-            Asset = new AssetController(AssetType.Sound, s.Src);
+            Asset = new AssetController(AssetType.Sound);
+            Asset.Register(s.Src);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -52,7 +53,8 @@ namespace Octide.ItemModel
             {
                 Gameid = s._sound.Gameid,
             };
-            Asset = new AssetController(AssetType.Sound, s._sound.Src);
+            Asset = new AssetController(AssetType.Sound);
+            Asset.Register(s._sound.Src);
             _sound.Src = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = s.Name;

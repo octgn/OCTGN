@@ -32,7 +32,8 @@ namespace Octide.ItemModel
         public ScriptItemModel(GameScript gameScript, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _script = gameScript;
-            Asset = new AssetController(AssetType.PythonScript, gameScript.Path);
+            Asset = new AssetController(AssetType.PythonScript);
+            Asset.Register(gameScript.Path);
             Asset.PropertyChanged += AssetUpdated;
             ScriptDocument = new TextDocument(gameScript.Script);
         }
@@ -44,7 +45,8 @@ namespace Octide.ItemModel
                 Script = gameScript._script.Script,
                 GameId = gameScript._script.GameId
             };
-            Asset = new AssetController(AssetType.Image, gameScript._script.Path);
+            Asset = new AssetController(AssetType.PythonScript);
+            Asset.Register(gameScript._script.Path);
             _script.Path = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
         }

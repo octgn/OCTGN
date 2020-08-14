@@ -59,14 +59,16 @@ namespace Octide.ViewModel
                 _proxydef = new ProxyDefinition();
                 var proxyAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Proxy" }, "proxydef", ".xml");
                 proxyAsset.IsReserved = true;
-                Asset = new AssetController(proxyAsset);
+                Asset = new AssetController(AssetType.Xml);
+                Asset.SelectedAsset = proxyAsset;
             }
             else
             {
                 var path = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory.FullName, game.ProxyGenSource);
                 //TODO: Catch if the target xml is not a valid proxy definition
                 _proxydef = (ProxyDefinition)proxySerializer.Deserialize(path);
-                Asset = new AssetController(AssetType.Xml, path);
+                Asset = new AssetController(AssetType.Xml);
+                Asset.Register(path);
             }
             Asset.PropertyChanged += AssetUpdated;
             if (Asset.SelectedAsset != null)

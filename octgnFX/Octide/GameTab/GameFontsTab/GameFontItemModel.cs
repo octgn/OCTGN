@@ -23,11 +23,16 @@ namespace Octide.ViewModel
         public GameFontItemModel(Font f)
         {
             _font = f;
+            Asset = new AssetController(AssetType.Font);
+            Asset.CanRemove = true;
             if (f == null)
             {
                 _font = new Font();
             }
-            Asset = new AssetController(AssetType.Font, f?.Src) { CanRemove = true };
+            else
+            {
+                Asset.Register(f.Src);
+            }
             Asset.PropertyChanged += AssetUpdated;
             RaisePropertyChanged("Asset");
         }

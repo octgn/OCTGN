@@ -72,8 +72,10 @@ namespace Octide.ViewModel
                 if (asset == null)
                 {
                     asset = new Asset(file);
-                    asset.TargetFile = file;
-
+                    if (file.Exists)
+                    {
+                        asset.TargetFile = file;
+                    }
                     var hierarchyList = new List<string>();
                     var directory = file.Directory;
 

@@ -44,7 +44,8 @@ namespace Octide.SetTab.ItemModel
             var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString()}, "set", ".xml");
             setAsset.IsReserved = true;
             setAsset.LockName = true;
-            Asset = new AssetController(setAsset);
+            Asset = new AssetController(AssetType.Xml);
+            Asset.SelectedAsset = setAsset;
             Asset.PropertyChanged += AssetUpdated;
 
             _set.Filename = setAsset.FullPath;
@@ -78,7 +79,8 @@ namespace Octide.SetTab.ItemModel
         {
             _set = s;
 
-            Asset = new AssetController(AssetType.Xml, s.Filename);
+            Asset = new AssetController(AssetType.Xml);
+            Asset.Register(s.Filename);
             Asset.PropertyChanged += AssetUpdated;
             if (Asset.SelectedAsset != null)
             {
@@ -136,7 +138,8 @@ namespace Octide.SetTab.ItemModel
 
             setAsset.IsReserved = true;
             setAsset.LockName = true;
-            Asset = new AssetController(setAsset);
+            Asset = new AssetController(AssetType.Xml);
+            Asset.SelectedAsset = setAsset;
             Asset.PropertyChanged += AssetUpdated;
 
             CardItems = new IdeCollection<IdeBaseItem>(this);

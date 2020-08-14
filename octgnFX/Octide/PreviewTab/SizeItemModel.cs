@@ -42,9 +42,11 @@ namespace Octide.ItemModel
         {
             CanBeDefault = true;
             _size = s;
-            BackAsset = new AssetController(AssetType.Image, s.Back);
+            BackAsset = new AssetController(AssetType.Image);
+            BackAsset.Register(s.Back);
             BackAsset.PropertyChanged += BackAssetUpdated;
-            FrontAsset = new AssetController(AssetType.Image, s.Front);
+            FrontAsset = new AssetController(AssetType.Image);
+            FrontAsset.Register(s.Front);
             FrontAsset.PropertyChanged += FrontAssetUpdated;
         }
 
@@ -60,10 +62,12 @@ namespace Octide.ItemModel
                 BackWidth = s.BackWidth,
                 BackCornerRadius = s.BackCornerRadius
             };
-            BackAsset = new AssetController(AssetType.Image, s._size.Back);
+            BackAsset = new AssetController(AssetType.Image);
+            BackAsset.Register(s._size.Back);
             _size.Back = BackAsset.FullPath;
             BackAsset.PropertyChanged += BackAssetUpdated;
-            FrontAsset = new AssetController(AssetType.Image, s._size.Front);
+            FrontAsset = new AssetController(AssetType.Image);
+            FrontAsset.Register(s._size.Front);
             _size.Front = FrontAsset.FullPath;
             FrontAsset.PropertyChanged += FrontAssetUpdated;
             Name = s.Name;
