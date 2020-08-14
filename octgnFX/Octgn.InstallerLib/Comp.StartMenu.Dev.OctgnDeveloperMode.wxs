@@ -6,7 +6,7 @@
         <Shortcut Id="Comp.StartMenu.Dev.OctgnDeveloperMode.Shortcut"
                   Name="OCTGN (Developer Mode)"
                   Description="Run OCTGN in Developer Mode (-x)"
-                  Target="[#fil59E2C7E4B79381DF45FA80A2BB35088F]"
+                  Target="[#filDD92BED66D8CCAE233C37576A2AB17A7]"
                   Arguments="-x"
                   WorkingDirectory="INSTALLDIR"/>
         <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />

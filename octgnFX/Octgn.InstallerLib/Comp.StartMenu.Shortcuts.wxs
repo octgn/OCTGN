@@ -6,7 +6,7 @@
         <Shortcut Id="ApplicationStartMenuShortcut"
                   Name="OCTGN"
                   Description="OCTGN Application"
-                  Target="[#fil59E2C7E4B79381DF45FA80A2BB35088F]"
+                  Target="[#filDD92BED66D8CCAE233C37576A2AB17A7]"
                   WorkingDirectory="INSTALLDIR"/>
         <Shortcut Id="LogExporterStartMenuShortcut"
                   Name="Log Exporter"
