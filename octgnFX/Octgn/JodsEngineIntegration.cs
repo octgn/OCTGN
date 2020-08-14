@@ -118,7 +118,7 @@ namespace Octgn
                 var exeName = "Octgn.JodsEngine.exe";
                 engineDirectory = ".\\";
                 if (X.Instance.Debug) {
-                    engineDirectory = "..\\..\\..\\Octgn.JodsEngine\\bin\\Debug\\netcoreapp3.1";
+                    engineDirectory = "..\\..\\..\\Octgn.JodsEngine\\bin\\Debug";
                     exeName = "Octgn.JodsEngine.exe";
                 }
 
