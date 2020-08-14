@@ -47,7 +47,8 @@ namespace Octide.ItemModel
         public CounterItemModel(Counter c, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _counter = c;
-            Asset = new AssetController(AssetType.Image, c.Icon);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(c.Icon);
             Asset.PropertyChanged += AssetUpdated;
             IncreaseCommand = new RelayCommand(IncreaseValue);
             DecreaseCommand = new RelayCommand(DecreaseValue);
@@ -60,7 +61,8 @@ namespace Octide.ItemModel
                 Reset = c.Reset,
                 Start = c.DefaultValue
             };
-            Asset = new AssetController(AssetType.Image, c._counter.Icon);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(c._counter.Icon);
             _counter.Icon = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = c.Name;

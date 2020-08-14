@@ -26,6 +26,7 @@ namespace Octide
     using System.Linq;
     using System.Windows;
     using System.Diagnostics;
+    using System.ComponentModel;
 
     public class GameLoader : ViewModelBase
     {
@@ -175,8 +176,11 @@ namespace Octide
             });
 
             var gameAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { }, "definition", ".xml");
+            gameAsset.LockName = true;
             gameAsset.IsReserved = true;
-            Asset = new AssetController(gameAsset);
+            Asset = new AssetController(AssetType.Xml);
+            Asset.SelectedAsset = gameAsset;
+            Asset.PropertyChanged += AssetUpdated;
 
             livesInTempDirectory = true;
         }
@@ -187,13 +191,17 @@ namespace Octide
             //TODO: Extracts into a temp folder, but then it needs to save to a proper location via prompt as well
             livesInTempDirectory = true;
             var ExtractLocation = Config.Instance.Paths.GraveyardPath;
+
             ZipFile.ExtractToDirectory(package.FullName, ExtractLocation);
-            var definition = Path.Combine(ExtractLocation, "definition.xml");
-            Asset = new AssetController(AssetType.Xml, definition);
+            var definition = Path.Combine(ExtractLocation, "def", "definition.xml");
 
             if (File.Exists(definition))
             {
                 LoadGame(new FileInfo(definition));
+            }
+            else
+            {
+                // throw an invalid game exception if it can't find the game xml
             }
 		}
 
@@ -214,13 +222,16 @@ namespace Octide
 
                     var gameSerializer = new GameSerializer();
                     Game = (Game)gameSerializer.Deserialize(path.FullName);
-                    Asset = new AssetController(asset);
+                    Asset = new AssetController(AssetType.Xml);
                     asset.LockName = true;
                     asset.IsReserved = true;
+                    Asset.SelectedAsset = asset;
+                    Asset.PropertyChanged += AssetUpdated;
+                    {
+                    };
                 }
             }
         }
-
         public bool ChooseSaveLocation()
         {
             // this dialog creates a new folder for the game at the specified directory
@@ -382,6 +393,15 @@ namespace Octide
             filestream.Close();
             Process.Start(WorkingDirectory.FullName);
 
+        }
+
+        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Path")
+            {
+                Game.Filename = Asset.FullPath;
+                RaisePropertyChanged("Asset");
+            }
         }
 
         public void GameChanged(object sender)

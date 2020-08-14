@@ -29,7 +29,8 @@ namespace Octide.ItemModel
 
         public TableItemModel(Group group, IdeCollection<IdeBaseItem> src) : base(group, src)
         {
-            Background = new AssetController(AssetType.Image, _group.Background);
+            Background = new AssetController(AssetType.Image);
+            Background.Register(_group.Background);
             Background.PropertyChanged += BackgroundAssetUpdated;
             Zoom = 1;
             CenterView();

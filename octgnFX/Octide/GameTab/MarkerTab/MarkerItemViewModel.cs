@@ -30,7 +30,8 @@ namespace Octide.ItemModel
         public MarkerItemModel(GameMarker m, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _marker = m;
-            Asset = new AssetController(AssetType.Image, m.Source);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(m.Source);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -40,7 +41,8 @@ namespace Octide.ItemModel
             {
                 Id = Guid.NewGuid().ToString() //TODO: Proper ID generation, not as a GUID
             };
-            Asset = new AssetController(AssetType.Image, m._marker.Source);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(m._marker.Source);
             _marker.Source = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = m.Name;

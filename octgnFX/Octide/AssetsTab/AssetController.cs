@@ -39,51 +39,34 @@ namespace Octide
             }
         }
 
-        public AssetController(AssetType type) // Creates a new assetcontroller with a default asset from the given type.
-        {
-            InitializeAssetController(type);
-            SelectedAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.Type == type);
-            RaisePropertyChanged("AssetView");
-        }
-
-        public AssetController(AssetType type, string path)  // loads the assetcontroller with the pre-set asset (from initializing deserialized item models)
-        {
-            InitializeAssetController(type);
-            if (path != null)
-            {
-                var file = new FileInfo(path);
-                if (file.Exists)
-                {
-                    SelectedAsset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
-                }
-                else
-                {
-                    // TODO: Error message because it can't find the target asset
-                }
-            }
-            RaisePropertyChanged("AssetView");
-
-        }
-        public AssetController(Asset asset)  // for loading an assetcontrol with a known asset
-        {
-            InitializeAssetController(asset.Type);
-            SelectedAsset = asset;
-            RaisePropertyChanged("AssetView");
-        }
-
-        public void InitializeAssetController(AssetType type)  //base method
+        public AssetController(AssetType type)
         {
             LoadAssetButton = new RelayCommand(LoadAssetDialog);
             ClearAssetCommand = new RelayCommand(ClearAsset);
             DropHandler = new AssetButtonDropHandler() { Controller = this };
 
             TargetAssetType = type;
+
             AssetView = new ListCollectionView(ViewModelLocator.AssetsTabViewModel.Assets);
             AssetView.Filter = obj =>
             {
                 var asset = obj as Asset;
                 return asset.Type == TargetAssetType;
             };
+            RaisePropertyChanged("AssetView");
+
+            SelectedAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.Type == type);
+            RaisePropertyChanged("AssetView");
+        }
+
+        public void Register(string path)
+        {
+            if (path != null)
+            {
+                var file = new FileInfo(path);
+                SelectedAsset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
+            }
+            RaisePropertyChanged("AssetView");
         }
 
         public void ClearAsset()
@@ -113,6 +96,7 @@ namespace Octide
                 RaisePropertyChanged("SelectedAsset");
                 RaisePropertyChanged("Path");
                 RaisePropertyChanged("RemoveButtonVisibility");
+                RaisePropertyChanged("AssetView");
             }
         }
 

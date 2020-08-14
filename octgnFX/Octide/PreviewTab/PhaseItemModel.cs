@@ -30,7 +30,8 @@ namespace Octide.ItemModel
         public PhaseItemModel(GamePhase p, IdeCollection<IdeBaseItem> source) : base(source)
         {
             _phase = p;
-            Asset = new AssetController(AssetType.Image, p.Icon);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(p.Icon);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -39,7 +40,8 @@ namespace Octide.ItemModel
             _phase = new GamePhase
             {
             };
-            Asset = new AssetController(AssetType.Image, p._phase.Icon);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(p._phase.Icon);
             _phase.Icon = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = p.Name;

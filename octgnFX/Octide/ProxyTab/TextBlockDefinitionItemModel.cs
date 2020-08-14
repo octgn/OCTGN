@@ -30,7 +30,8 @@ namespace Octide.ItemModel
             {
                 type = "text",
             };
-            Asset = new AssetController(AssetType.Font) { CanRemove = true };
+            Asset = new AssetController(AssetType.Font);
+            Asset.CanRemove = true;
             _def.text.font = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = "text";
@@ -45,7 +46,9 @@ namespace Octide.ItemModel
                 Size = b.text.size,
             };
             string path = b.text.font ?? null;
-            Asset = new AssetController(AssetType.Font, path) { CanRemove = true };
+            Asset = new AssetController(AssetType.Font);
+            Asset.CanRemove = true;
+            Asset.Register(path);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -53,9 +56,11 @@ namespace Octide.ItemModel
         public TextBlockDefinitionItemModel(TextBlockDefinitionItemModel t, IdeCollection<IdeBaseItem> source) : base(source) // copy
         {
             _def = new BlockDefinition();
-            Asset = new AssetController(AssetType.Image, t._def.src) { CanRemove = true };
-            _def.text.font = Asset.SelectedAsset.FullPath;
+            Asset = new AssetController(AssetType.Font);
+            Asset.CanRemove = true;
+            Asset.Register(t._def.src);
             Asset.PropertyChanged += AssetUpdated;
+            _def.text.font = Asset.SelectedAsset.FullPath;
             Name = t.Name;
         }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)

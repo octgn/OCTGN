@@ -81,7 +81,8 @@ namespace Octide.ProxyTab.ItemModel
             CanEdit = false;
             _def = t;
 
-            Asset = new AssetController(AssetType.Image, t.src);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(t.src);
             Asset.PropertyChanged += AssetUpdated;
 
             Matches = new IdeCollection<IdeBaseItem>(this);
@@ -125,7 +126,8 @@ namespace Octide.ProxyTab.ItemModel
                 Matches = p._def.Matches,
             };
 
-            Asset = new AssetController(AssetType.Image, p._def.src);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(p._def.src);
             _def.src = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
 
