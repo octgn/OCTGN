@@ -108,20 +108,20 @@ namespace Octgn.Sdk.Extensibility.Desktop
             return pathBuilder.ToString();
         }
 
-        private string TrimQuotes(string str) {
-            if (string.IsNullOrWhiteSpace(str) || str.Length == 1) return str;
+        //private string TrimQuotes(string str) {
+        //    if (string.IsNullOrWhiteSpace(str) || str.Length == 1) return str;
 
-            var firstChar = str[0];
-            var lastChar = str[^1];
+        //    var firstChar = str[0];
+        //    var lastChar = str[^1];
 
-            if (firstChar == '\'' || firstChar == '"') {
-                if (firstChar == lastChar) {
-                    return str[1..^1];
-                }
-            }
+        //    if (firstChar == '\'' || firstChar == '"') {
+        //        if (firstChar == lastChar) {
+        //            return str[1..^1];
+        //        }
+        //    }
 
-            return str;
-        }
+        //    return str;
+        //}
 
         private void RunProcess(string path, string args) {
             //TODO: Log this path and args

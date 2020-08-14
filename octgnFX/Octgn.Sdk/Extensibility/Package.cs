@@ -64,7 +64,7 @@ namespace Octgn.Sdk.Extensibility
             //TODO: null checks
             //TODO: make single load
             //TODO: Unload context on dispose
-            _pluginAssemblyContext = new AssemblyLoadContext(FullName);
+            //_pluginAssemblyContext = assemblyContext ?? throw new ArgumentNullException(nameof(assemblyContext)();
             //TODO: Clean this up
             _pluginAssemblyContext.Resolving += _pluginAssemblyContext_Resolving;
 
