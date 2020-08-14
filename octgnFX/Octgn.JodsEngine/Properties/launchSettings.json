@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Octgn.JodsEngine": {
-      "commandName": "Project",
-      "commandLineArgs": "-e"
-    }
-  }
-}
