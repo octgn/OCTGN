@@ -30,19 +30,23 @@ namespace Octide.ItemModel
         public DocumentItemModel(Document d, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _document = d;
-            DocumentAsset = new AssetController(AssetType.Document, d.Source);
+            DocumentAsset = new AssetController(AssetType.Document);
+            DocumentAsset.Register(d.Source);
             DocumentAsset.PropertyChanged += DocumentAssetUpdated;
-            IconAsset = new AssetController(AssetType.Image, d.Icon);
+            IconAsset = new AssetController(AssetType.Image);
+            IconAsset.Register(d.Icon);
             IconAsset.PropertyChanged += IconAssetUpdated;
         }
 
         public DocumentItemModel(DocumentItemModel d, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _document = new Document();
-            DocumentAsset = new AssetController(AssetType.Document, d._document.Source);
+            DocumentAsset = new AssetController(AssetType.Document);
+            DocumentAsset.Register(d._document.Source);
             _document.Source = DocumentAsset.FullPath;
             DocumentAsset.PropertyChanged += DocumentAssetUpdated;
-            IconAsset = new AssetController(AssetType.Image, d._document.Icon);
+            IconAsset = new AssetController(AssetType.Image);
+            IconAsset.Register(d._document.Icon);
             _document.Icon = IconAsset.FullPath;
             IconAsset.PropertyChanged += IconAssetUpdated;
             Name = d.Name;

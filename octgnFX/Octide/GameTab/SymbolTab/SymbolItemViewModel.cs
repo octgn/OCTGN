@@ -37,14 +37,16 @@ namespace Octide.ItemModel
         public SymbolItemModel(Symbol s, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _symbol = s;
-            Asset = new AssetController(AssetType.Image, s.Source);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(s.Source);
             Asset.PropertyChanged += AssetUpdated;
         }
 
         public SymbolItemModel(SymbolItemModel s, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _symbol = new Symbol();
-            Asset = new AssetController(AssetType.Image, s._symbol.Source);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(s._symbol.Source);
             _symbol.Source = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = s.Name;

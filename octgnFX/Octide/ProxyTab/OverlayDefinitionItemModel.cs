@@ -43,7 +43,8 @@ namespace Octide.ItemModel
         public OverlayBlockDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(source) // load overlay
         {
             _def = b;
-            Asset = new AssetController(AssetType.Image, b.src);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(b.src);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -53,9 +54,10 @@ namespace Octide.ItemModel
             {
                 type = "overlay"
             };
-            Asset = new AssetController(AssetType.Image, o._def.src);
-            _def.src = Asset.SelectedAsset.FullPath;
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(o._def.src);
             Asset.PropertyChanged += AssetUpdated;
+            _def.src = Asset.SelectedAsset.FullPath;
             Name = o.Name;
         }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)

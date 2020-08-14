@@ -77,7 +77,8 @@ namespace Octide.ItemModel
             {
                 _group.CardActions = CardActions.Select(x => ((IBaseAction)x)._action);
             };
-            Asset = new AssetController(AssetType.Image, g.Icon);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(g.Icon);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -115,7 +116,8 @@ namespace Octide.ItemModel
             foreach (var item in g.CardActions)
                 CardActions.Add(IBaseAction.CopyActionItems(item, CardActions));
             
-            Asset = new AssetController(AssetType.Image, g._group.Icon);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(g._group.Icon);
             _group.Icon = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
         }

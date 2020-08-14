@@ -36,7 +36,8 @@ namespace Octide.ItemModel
         {
             CanBeDefault = true;
             _board = g;
-            Asset = new AssetController(AssetType.Image, g.Source);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(g.Source);
             Asset.PropertyChanged += AssetUpdated;
         }
 
@@ -50,7 +51,8 @@ namespace Octide.ItemModel
                 XPos = b.XPos,
                 YPos = b.YPos
             };
-            Asset = new AssetController(AssetType.Image, b._board.Source);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(b._board.Source);
             _board.Source = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = b.Name;

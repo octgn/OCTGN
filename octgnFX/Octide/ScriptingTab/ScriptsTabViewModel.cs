@@ -76,8 +76,6 @@ namespace Octide.ViewModel
                 var path = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory.FullName, scriptPath);
                 var script = (GameScript)scriptSerializer.Deserialize(path);
                 var scriptModel = new ScriptItemModel(script, Scripts);
-                scriptModel.Asset = new AssetController(AssetType.PythonScript, path);
-                scriptModel.Asset.PropertyChanged += AssetChanged;
                 Scripts.Add(scriptModel);
             }
 
@@ -105,11 +103,6 @@ namespace Octide.ViewModel
                                                                     y => y.Select(z => ((GameEventItemModel)z)._gameEvent).ToArray());
             };
             AddEventCommand = new RelayCommand(AddGameEvent);
-
-        }
-
-        public void AssetChanged(object sender, PropertyChangedEventArgs e)
-        {
 
         }
 

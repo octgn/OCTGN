@@ -29,23 +29,25 @@ namespace Octide.ItemModel
             _gameMode = new GameMode();
             Name = "New Game Mode";
             Asset = new AssetController(AssetType.Image);
-            _gameMode.Image = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
+            _gameMode.Image = Asset.FullPath;
         }
 
         public GameModeItemModel(GameMode g, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _gameMode = g;
-            Asset = new AssetController(AssetType.Image, g.Image);
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(g.Image);
             Asset.PropertyChanged += AssetUpdated;
         }
 
         public GameModeItemModel(GameModeItemModel g, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _gameMode = new GameMode();
-            Asset = new AssetController(AssetType.Image, g._gameMode.Image);
-            _gameMode.Image = Asset.FullPath;
+            Asset = new AssetController(AssetType.Image);
+            Asset.Register(g._gameMode.Image);
             Asset.PropertyChanged += AssetUpdated;
+            _gameMode.Image = Asset.FullPath;
             Name = g.Name;
             UseTwoSidedTable = g.UseTwoSidedTable;
             ShortDescription = g.ShortDescription;
