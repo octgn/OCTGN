@@ -1012,22 +1012,54 @@
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
     <Resource Include="Scripting\Versions\3.1.0.1.py" />
     <Resource Include="Scripting\Versions\3.1.0.2.py" />
-    <Resource Include="Sleeves\Air-Travel.jpg" />
-    <Resource Include="Sleeves\Canival.jpg" />
-    <Resource Include="Sleeves\cb1.png" />
-    <Resource Include="Sleeves\cb2.png" />
-    <Resource Include="Sleeves\Dragon-Strategy.jpg" />
-    <Resource Include="Sleeves\Face-In-The-Crowd.jpg" />
-    <Resource Include="Sleeves\GGG.jpg" />
-    <Resource Include="Sleeves\Homewrecker.jpg" />
-    <Resource Include="Sleeves\Invent.jpg" />
-    <Resource Include="Sleeves\Master-Ritualist.jpg" />
-    <Resource Include="Sleeves\Monstrous-Lassitude.jpg" />
-    <Resource Include="Sleeves\P-Warrior.jpg" />
-    <Resource Include="Sleeves\Rudo-Shade.jpg" />
-    <Resource Include="Sleeves\Straw-Man.jpg" />
-    <Resource Include="Sleeves\Thabbashite-Assailant.jpg" />
-    <Resource Include="Sleeves\The-Spoils.jpg" />
+    <Content Include="Sleeves\Air-Travel.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Canival.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Dragon-Strategy.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Face-In-The-Crowd.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\GGG.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Homewrecker.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Invent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Master-Ritualist.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Monstrous-Lassitude.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\P-Warrior.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Rudo-Shade.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Straw-Man.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Thabbashite-Assailant.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\The-Spoils.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -1078,4 +1110,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /SDY "$(TargetDir)*.*" "$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
