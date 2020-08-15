@@ -170,9 +170,6 @@
     <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.bundle">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.dll.lib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
