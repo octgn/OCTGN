@@ -76,6 +76,14 @@
     <Compile Include="DataManagers\GameManager.cs" />
     <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
+    <Compile Include="DiscordIntegration\DiscordWrapper.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\ActivityManager.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\Constants.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\Core.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\ImageManager.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\LobbyManager.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\StorageManager.cs" />
+    <Compile Include="DiscordIntegration\DiscordGameSdk\StoreManager.cs" />
     <Compile Include="EmptyPackage.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
@@ -159,9 +167,26 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Deploy.ps1" />
+    <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.bundle">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.dll.lib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="DiscordIntegration\DiscordGameSdk\discord_game_sdk.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

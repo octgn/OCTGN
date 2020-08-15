@@ -480,6 +480,8 @@ namespace Octgn
         }
 
         public void OnStart() {
+            Program.Discord.UpdateStatusInGame(this.Definition.Name, StartTime.Value, Program.IsHost, IsReplay, Spectator, false, Player.AllExceptGlobal.Count());
+
             if (IsReplay) {
                 return;
             }
@@ -627,10 +629,14 @@ namespace Octgn
             }
         }
 
+        public DateTimeOffset? StartTime;
+
         public void Begin()
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
+            StartTime = DateTimeOffset.Now;
+
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.UserId, Player.LocalPlayer.PublicKey,
@@ -642,6 +648,8 @@ namespace Octgn
             if (IsReplay) {
                 ReplayEngine.Start();
             }
+
+            Program.Discord.UpdateStatusInGame(this.Definition.Name, StartTime.Value, Program.IsHost, IsReplay, Spectator, true, Player.AllExceptGlobal.Count());
         }
 
         public void Resume()
