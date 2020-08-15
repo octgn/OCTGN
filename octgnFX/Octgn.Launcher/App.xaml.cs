@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Windows;
 
@@ -83,9 +82,9 @@ namespace Octgn.Launcher
                 }
 
                 if (!IsDotNet47OrLaterInstalled()) {
-                    Log.Warn(".net 4.7 is not installed.");
+                    Log.Warn(".net 4.8 is not installed.");
 
-                    var result = MessageBox.Show($"OCTGN requires .net 4.7 to be installed.{Environment.NewLine}{Environment.NewLine}Press 'Yes' to download .net", ".Net Missing", MessageBoxButton.YesNo, MessageBoxImage.Stop);
+                    var result = MessageBox.Show($"OCTGN requires .net 4.8 to be installed.{Environment.NewLine}{Environment.NewLine}Press 'Yes' to download .net", ".Net Missing", MessageBoxButton.YesNo, MessageBoxImage.Stop);
 
                     if (result == MessageBoxResult.Yes) {
                         if (DownloadDotNetFramework48(out var downloadPath)) {
@@ -181,7 +180,7 @@ namespace Octgn.Launcher
 
                     Log.Info(".Net Release: " + releaseKey);
 
-                    if (releaseKey >= 460798) {
+                    if (releaseKey >= 528040) {
                         return true;
                     }
 
