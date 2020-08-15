@@ -7,6 +7,7 @@
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Media;
+    using System.Linq;
 
     using Microsoft.Win32;
 
@@ -48,13 +49,14 @@
             return ss;
         }
 
-        public static SearchSave Load()
+        public static IEnumerable<SearchSave> LoadSearchSaves()
         {
             var sf = new OpenFileDialog();
             sf.Filter = "OCTGN Search Save (*.o8ds)|*.o8ds";
+            sf.Multiselect = true;
             if ((bool)sf.ShowDialog())
             {
-                return Load(sf.FileName);
+                return sf.FileNames.Select(x => Load(x));
             }
             return null;
         }
