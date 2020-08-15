@@ -16,6 +16,8 @@ namespace Octgn.Launchers
 {
     public class JoinGameLauncher : LauncherBase
     {
+        public override string Name => "Game Table";
+
         private readonly string _username;
         private readonly HostedGame _game;
         private readonly bool _spectate;

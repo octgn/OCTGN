@@ -8,6 +8,8 @@ namespace Octgn.Launchers
 {
     public class TableLauncher : LauncherBase
     {
+        public override string Name => "Game Table";
+
         private readonly int? hostPort;
         private readonly Guid? gameId;
 
