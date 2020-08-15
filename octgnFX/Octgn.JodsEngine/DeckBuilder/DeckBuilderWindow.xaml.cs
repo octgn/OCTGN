@@ -1277,29 +1277,33 @@ namespace Octgn.DeckBuilder
                 return;
             }
             if (!IsGameLoaded) return;
-            var save = SearchSave.Load();
-            if (save == null) return;
+            var searches = SearchSave.LoadSearchSaves();
+            if (searches == null) return;
 
-            var game = GameManager.Get().GetById(save.GameId);
-            if (game == null)
+            foreach (var search in searches)
             {
-                TopMostMessageBox.Show("You don't have the game for this search installed", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                var game = GameManager.Get().GetById(search.GameId);
+                if (game == null)
+                {
+                    TopMostMessageBox.Show(string.Format("Error loading saved search file '{0}':\n\nThis search is for the game '{1}', which is not installed.", search.Name, search.GameId), "Unknown Game Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
+                }
+                else if (Game.Id != search.GameId)
+                {
+                    TopMostMessageBox.Show(string.Format(
+                        "Error loading saved search file '{0}':\n\nThis search is for the game '{1}'. You currently have the game '{2}' loaded.", search.Name, game.Name, Game.Name), "Wrong Game Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
+                }
+                else
+                {
+                    var ctrl = new SearchControl(Game, search) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
+                    ctrl.CardAdded += AddResultCard;
+                    ctrl.CardRemoved += RemoveResultCard;
+                    ctrl.CardSelected += CardSelected;
+                    LoadFonts(ctrl.resultsGrid);
+                    Searches.Add(ctrl);
+                }
             }
-            else if (Game.Id != save.GameId)
-            {
-                TopMostMessageBox.Show(
-                    "This search is for the game " + game.Name + ". You currently have the game " + Game.Name
-                    + " loaded so you can not load this search.", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var ctrl = new SearchControl(Game, save) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
-            ctrl.CardAdded += AddResultCard;
-            ctrl.CardRemoved += RemoveResultCard;
-            ctrl.CardSelected += CardSelected;
-            LoadFonts(ctrl.resultsGrid);
-            Searches.Add(ctrl);
             searchTabs.SelectedIndex = Searches.Count - 1;
         }
 

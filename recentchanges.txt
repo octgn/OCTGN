@@ -1,1 +1,1 @@
-
+You can load multiple search saves at once in the deck editor.
