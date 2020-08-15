@@ -13,6 +13,8 @@ namespace Octgn.Launchers
 {
     public class ReplayLauncher : LauncherBase
     {
+        public override string Name => "Replay";
+
         private readonly string _replayPath;
 
         public ReplayLauncher(string replayPath) {

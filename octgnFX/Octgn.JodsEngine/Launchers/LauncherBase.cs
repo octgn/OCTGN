@@ -12,6 +12,8 @@ namespace Octgn.Launchers
     {
         protected ILog Log { get; }
 
+        public abstract string Name { get; }
+
         protected abstract Task<Window> Load(ILoadingView loadingView);
 
         protected LauncherBase() {
@@ -20,6 +22,8 @@ namespace Octgn.Launchers
 
         public async Task<bool> Launch(ILoadingView view) {
             Dispatcher.CurrentDispatcher.VerifyAccess();
+
+            view.UpdateStatus($"Launching {Name}...");
 
             var window = await Load(view);
 

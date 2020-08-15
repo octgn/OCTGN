@@ -12,6 +12,8 @@ namespace Octgn.Launchers
 {
     public class DeckEditorLauncher : LauncherBase
     {
+        public override string Name => "Deck Editor";
+
         public string DeckPath { get; }
         public IDeck Deck { get; private set; }
 
