@@ -241,9 +241,6 @@ namespace Octgn
                     Application.Current.MainWindow.Close();
                 return;
             }
-
-            //Discord = new DiscordWrapper();
-            //Discord.Error += Discord_Error;
         }
 
         private static void Discord_Error(object sender, Exception ex)
