@@ -1,3 +1,5 @@
+#3.4.313.0
+
 #3.4.311.0
 + You can load multiple search saves at once in the deck editor.
 
@@ -3895,6 +3897,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
