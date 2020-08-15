@@ -25,6 +25,7 @@ using log4net;
 using Octgn.Controls;
 using Octgn.Online.Hosting;
 using Octgn.Launchers;
+using Octgn.Core.DiscordIntegration;
 
 namespace Octgn
 {
@@ -59,6 +60,8 @@ namespace Octgn
         public static ILauncher Launcher { get; internal set; }
 
         public static bool DeveloperMode { get; internal set; }
+
+        public static DiscordWrapper Discord { get; internal set; }
 
         /// <summary>
         /// Is properly set at Program.Start()

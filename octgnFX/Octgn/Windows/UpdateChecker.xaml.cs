@@ -146,6 +146,11 @@ namespace Octgn.Windows
 
         private void RandomMessage()
         {
+            this.UpdateStatus(GetRandomMessage());
+        }
+
+        public static string GetRandomMessage()
+        {
             var assembly = Assembly.GetExecutingAssembly();
             var objStream = assembly.GetManifestResourceStream("Octgn.Resources.StartupMessages.txt");
             var objReader = new StreamReader(objStream);
@@ -153,9 +158,9 @@ namespace Octgn.Windows
             while (!objReader.EndOfStream) {
                 lines.Add(objReader.ReadLine());
             }
-            var rand = new Random();
-            var linenum = rand.Next(0, lines.Count - 1);
-            this.UpdateStatus(lines[linenum]);
+            var linenum = Randomness.Rand.Next(0, lines.Count - 1);
+
+            return lines[linenum];
         }
 
         private void LoadDatabase()
