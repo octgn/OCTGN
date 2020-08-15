@@ -46,6 +46,7 @@ namespace Octgn.Windows
                 loader.Loaders.Add(new GameMessageLoader());
                 loader.Loaders.Add(new EnvironmentLoader());
                 loader.Loaders.Add(new VersionedLoader());
+                loader.Loaders.Add(new DiscordLoader());
 
                 await loader.Load(this);
 

@@ -23,6 +23,7 @@ using Octgn.Controls;
 using Octgn.Online.Hosting;
 using Octgn.Online;
 using Octgn.Communication.Tcp;
+using Octgn.Core.DiscordIntegration;
 
 namespace Octgn
 {
@@ -61,6 +62,8 @@ namespace Octgn
         public static string SessionKey { get; set; }
         public static string UserId { get; set; }
         public static HostedGame CurrentHostedGame { get; internal set; }
+
+        public static DiscordWrapper Discord { get; private set; }
 
         private static bool shutDown = false;
 
@@ -238,6 +241,14 @@ namespace Octgn
                     Application.Current.MainWindow.Close();
                 return;
             }
+
+            //Discord = new DiscordWrapper();
+            //Discord.Error += Discord_Error;
+        }
+
+        private static void Discord_Error(object sender, Exception ex)
+        {
+            Log.Warn($"Discord Error: {ex.Message}", ex);
         }
 
         internal static void FireOptionsChanged()

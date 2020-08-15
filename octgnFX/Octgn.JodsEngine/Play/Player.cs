@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -138,6 +139,8 @@ namespace Octgn.Play
                     p.OnPropertyChanged("Ready");
                 }
 
+                if(Program.GameEngine != null)
+                    Program.Discord.UpdateStatusInGame(Program.GameEngine.Definition.Name, Program.GameEngine.StartTime.Value, Program.IsHost, Program.GameEngine.IsReplay, Program.GameEngine.Spectator, Program.InPreGame, Player.AllExceptGlobal.Count());
             };
         }
 
@@ -248,7 +251,7 @@ namespace Octgn.Play
         }
 
         public Dictionary<string, string> GlobalVariables { get; private set; }
-        
+
         public byte Id // Identifier
         {
             get { return _id; }

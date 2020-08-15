@@ -12,7 +12,7 @@ namespace Octgn.DeckBuilderPluginExample
     using Octgn.DataNew.Entities;
     using Octgn.Library.Plugin;
 
-    public class DeckBuilderPluginExample : IDeckBuilderPlugin 
+    public class DeckBuilderPluginExample : IDeckBuilderPlugin
     {
         public IEnumerable<IPluginMenuItem> MenuItems
         {
