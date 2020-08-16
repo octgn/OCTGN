@@ -20,8 +20,7 @@ using Octgn.Utils;
 using System.Reflection;
 using Octgn.Core.DataExtensionMethods;
 using log4net;
-using Octgn.Core.Play;
-using Octgn.Controls;
+using Octgn.Utils.Converters;
 
 namespace Octgn.Play.Gui
 {
@@ -1189,27 +1188,35 @@ namespace Octgn.Play.Gui
 
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private void Card_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
             if (Card is null)
                 return;
-            if (e.OriginalSource is Control source)
+            if (e.OriginalSource is CardControl source && source.ToolTip is TextBlock tooltipTextBlock)
             {
-                if (source.ToolTip is TextBlock tooltipTextBlock)
+                tooltipTextBlock.Inlines.Clear();
+                tooltipTextBlock.Inlines.Add(new Run(Card.Name) { FontWeight = FontWeights.Bold });
+                if (Octgn.Core.Prefs.ExtendedTooltips)
                 {
-                    if (Octgn.Core.Prefs.ExtendedTooltips)
+                    foreach (var property in Card.VisibleCardProperties)
                     {
-                        tooltipTextBlock.Inlines.Clear();
-                        tooltipTextBlock.Inlines.Add(Card.CardText);
+                        tooltipTextBlock.Inlines.Add(new LineBreak());
+                        tooltipTextBlock.Inlines.Add(new Run(property.Key.Name + ": ") { FontWeight = FontWeights.Bold });
+                        if (property.Key.Type == PropertyType.RichText && property.Value is RichTextPropertyValue richText)
+                        {
+                            tooltipTextBlock.Inlines.Add(RichTextConverter.ConvertToSpan(richText, Program.GameEngine.Definition));
+                        }
+                        else
+                        {
+                            tooltipTextBlock.Inlines.Add(property.Value.ToString().Trim());
+                        }
                     }
-                    else
-                        tooltipTextBlock.Text = Card.Name;
                 }
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
