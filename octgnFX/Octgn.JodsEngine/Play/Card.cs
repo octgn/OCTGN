@@ -12,16 +12,9 @@ using Octgn.Play.Gui;
 using Octgn.Utils;
 using System.Reflection;
 using Octgn.Core.DataExtensionMethods;
-using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 
 using log4net;
-using Octgn.Site.Api;
-using Octgn.Library;
-using Octgn.Core;
-using System.Windows.Documents;
-using System.Windows;
-using Octgn.Utils.Converters;
 
 namespace Octgn.Play
 {
@@ -309,6 +302,7 @@ namespace Octgn.Play
                 }
                 // Set the value
                 _type = value;
+                OnPropertyChanged("AutomationHelpText");
                 OnPropertyChanged("Picture");
             }
         }
@@ -369,6 +363,7 @@ namespace Octgn.Play
             OnPropertyChanged("RealWidth");
             OnPropertyChanged("RealHeight");
             OnPropertyChanged("RealCornerRadius");
+            OnPropertyChanged("AutomationHelpText");
             if (lFaceUp)
             {
                 PeekingPlayers.Clear();
@@ -501,38 +496,46 @@ namespace Octgn.Play
             get { return _filter != null; }
         }
 
-        public Span CardText
+        public Dictionary<PropertyDef, object> CurrentCardProperties
         {
             get
             {
-                var ret = new Span();
-                ret.Inlines.Add("Card");
+                var ret = new Dictionary<PropertyDef, object>();
                 if (FaceUp && _type.Model != null)
                 {
-                    ret = new Span();
-                    ret.Inlines.Add(new Run(Name) { FontWeight = FontWeights.Bold });
                     foreach (var gameProperty in Program.GameEngine.Definition.CustomProperties)
                     {
-                        if (!gameProperty.Hidden && !gameProperty.IgnoreText)
+                        var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
+                        if (cardProperty != null)
                         {
-                            var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
-                            if (cardProperty != null)
-                            {
-                                ret.Inlines.Add(new LineBreak());
-                                ret.Inlines.Add(new Run(gameProperty.Name + ": ") { FontWeight = FontWeights.Bold });
-                                if (gameProperty.Type == PropertyType.RichText)
-                                {
-                                    var richTextSpan = RichTextConverter.ConvertToSpan(cardProperty as RichTextPropertyValue, Program.GameEngine.Definition);
-                                    ret.Inlines.Add(richTextSpan);
-                                }
-                                else
-                                {
-                                    ret.Inlines.Add(cardProperty.ToString().Trim());
-                                }
-
-                            }
+                            ret[gameProperty] = cardProperty;
                         }
                     }
+                }
+
+                return ret;
+            }
+        }
+
+        public Dictionary<PropertyDef, object> VisibleCardProperties
+        {
+            get
+            {
+                return CurrentCardProperties.Where(x => x.Key.IgnoreText == false && x.Key.Hidden == false).ToDictionary(x => x.Key, y => y.Value);
+            }
+        }
+
+        /// <summary>
+        /// Lists all of the card's visible properties for cardcontrol's AutomationProperties to bind to
+        /// </summary>
+        public string AutomationHelpText
+        {
+            get
+            {
+                string ret = string.Format("Name: {0}", Name);
+                foreach (var prop in VisibleCardProperties)
+                {
+                    ret += string.Format("\n{0}: {1}", prop.Key.Name, prop.Value.ToString().Trim());
                 }
                 return ret;
             }
@@ -615,6 +618,7 @@ namespace Octgn.Play
             OnPropertyChanged("RealWidth");
             OnPropertyChanged("RealHeight");
             OnPropertyChanged("RealCornerRadius");
+            OnPropertyChanged("AutomationHelpText");
         }
 
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
@@ -649,6 +653,7 @@ namespace Octgn.Play
             {
                 Program.Client.Rpc.SetCardProperty(this,Player.LocalPlayer,name, val, val.GetType().FullName);
             }
+            OnPropertyChanged("AutomationHelpText");
         }
 
         public void ResetProperties(bool notifyServer = true)
@@ -658,6 +663,7 @@ namespace Octgn.Play
             {
                 Program.Client.Rpc.ResetCardProperties(this, Player.LocalPlayer);
             }
+            OnPropertyChanged("AutomationHelpText");
         }
 
         public void MoveTo(Group to, bool lFaceUp, bool isScriptMove)
