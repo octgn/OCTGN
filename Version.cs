@@ -4,6 +4,6 @@
 
 using System.Reflection;
 
-[assembly: AssemblyVersion("3.4.314.0")]
-[assembly: AssemblyFileVersion("3.4.314.0")]
-[assembly: AssemblyInformationalVersion("3.4.314.0")]
+[assembly: AssemblyVersion("3.4.316.0")]
+[assembly: AssemblyFileVersion("3.4.316.0")]
+[assembly: AssemblyInformationalVersion("3.4.316.0")]
