@@ -16,6 +16,9 @@ namespace Octgn.Core.DiscordIntegration
 
         public event EventHandler<Exception> Error;
 
+        public event EventHandler<HostedGame> JoinGame;
+        public event EventHandler<HostedGame> SpectateGame;
+
         private DateTime _lastActivityUpdate = DateTime.MinValue;
         private bool disposedValue;
 
@@ -31,12 +34,28 @@ namespace Octgn.Core.DiscordIntegration
         public DiscordWrapper() {
             _discord = new Discord.Discord(_clientId, (UInt64)Discord.CreateFlags.Default);
             _discord.ActivityManagerInstance.OnActivityJoin += ActivityManagerInstance_OnActivityJoin;
+            _discord.ActivityManagerInstance.OnActivitySpectate += ActivityManagerInstance_OnActivitySpectate;
             _updateTimer = new Timer(UpdateDiscord, this, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
         }
 
-        private void ActivityManagerInstance_OnActivityJoin(string secret) {
+        private void ActivityManagerInstance_OnActivitySpectate(string secret) {
+            try {
+                var hostedGame = HostedGame.Deserialize(secret);
 
-            throw new NotImplementedException();
+                SpectateGame?.Invoke(this, hostedGame);
+            } catch (Exception ex) {
+                Error?.Invoke(this, ex);
+            }
+        }
+
+        private void ActivityManagerInstance_OnActivityJoin(string secret) {
+            try {
+                var hostedGame = HostedGame.Deserialize(secret);
+
+                JoinGame?.Invoke(this, hostedGame);
+            } catch (Exception ex) {
+                Error?.Invoke(this, ex);
+            }
         }
 
         public void UpdateStatusNothing() {
@@ -54,10 +73,10 @@ namespace Octgn.Core.DiscordIntegration
             _activity = activity;
         }
 
-        public void UpdateStatusInGame(string gameName, DateTimeOffset gameStartTime, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount) {
+        public void UpdateStatusInGame(HostedGame game, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount) {
             var activity = new Activity();
             activity.Type = ActivityType.Playing;
-            activity.Details = gameName;
+            activity.Details = game.GameName;
             activity.Assets.LargeImage = "bruco";
 
             String state;
@@ -72,6 +91,10 @@ namespace Octgn.Core.DiscordIntegration
                 } else {
                     state = "In Lobby";
                 }
+
+                activity.Secrets.Join = HostedGame.Serialize(game);
+
+                activity.Timestamps.Start = (long)(game.DateCreated.UtcDateTime - _epoch).TotalSeconds;
             } else {
                 activity.Party.Size.CurrentSize = playerCount;
                 activity.Party.Size.MaxSize = 8;
@@ -83,10 +106,13 @@ namespace Octgn.Core.DiscordIntegration
                 } else {
                     state = "In Game";
                 }
+
+                activity.Secrets.Spectate = HostedGame.Serialize(game);
+
+                activity.Timestamps.Start = (long)(game.DateStarted.Value.UtcDateTime - _epoch).TotalSeconds;
             }
             activity.State = state;
 
-            activity.Timestamps.Start = (long)(gameStartTime.UtcDateTime - _epoch).TotalSeconds;
 
             _activity = activity;
         }
@@ -128,6 +154,7 @@ namespace Octgn.Core.DiscordIntegration
             if (!disposedValue) {
                 if (disposing) {
                     _discord.ActivityManagerInstance.OnActivityJoin -= ActivityManagerInstance_OnActivityJoin;
+                    _discord.ActivityManagerInstance.OnActivitySpectate -= ActivityManagerInstance_OnActivitySpectate;
                 }
 
                 _discord.Dispose();

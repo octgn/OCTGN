@@ -6,15 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using log4net;
-using Octgn.Core;
 using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Play;
 using Octgn.DataNew.Entities;
@@ -140,7 +137,7 @@ namespace Octgn.Play
                 }
 
                 if(Program.GameEngine != null)
-                    Program.Discord.UpdateStatusInGame(Program.GameEngine.Definition.Name, Program.GameEngine.StartTime.Value, Program.IsHost, Program.GameEngine.IsReplay, Program.GameEngine.Spectator, Program.InPreGame, Player.AllExceptGlobal.Count());
+                    Program.Discord.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, Program.GameEngine.IsReplay, Program.GameEngine.Spectator, Program.InPreGame, Player.AllExceptGlobal.Count());
             };
         }
 
