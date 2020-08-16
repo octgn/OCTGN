@@ -17,6 +17,8 @@ using Octgn.Extentions;
 using Octgn.Library;
 using Octgn.Online.Hosting;
 using Octgn.Online;
+using System.ComponentModel;
+using System.Windows.Media.Animation;
 
 namespace Octgn.Controls
 {
@@ -32,7 +34,15 @@ namespace Octgn.Controls
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(
             "Error", typeof(String), typeof(HostGameSettings));
 
-        public bool HasErrors { get; private set; }
+        public bool HasError {
+            get { return (bool)GetValue(HasErrorProperty); }
+            set { SetValue(HasErrorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for HasError.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HasErrorProperty =
+            DependencyProperty.Register("HasError", typeof(bool), typeof(HostGameSettings), new PropertyMetadata(false));
+
         public string Error
         {
             get { return this.GetValue(ErrorProperty) as String; }
@@ -55,6 +65,13 @@ namespace Octgn.Controls
         public HostGameSettings()
         {
             InitializeComponent();
+
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+
+            this.Opacity = 0;
+            ErrorMessageBorder.Child.Opacity = 0;
+            this.Margin = new Thickness(0, -60, 0, 0);
+
             Specators = true;
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
@@ -81,6 +98,24 @@ namespace Octgn.Controls
                 PasswordGame.IsEnabled = true;
             }
             StackPanelIsLocalGame.Visibility = Prefs.EnableLanGames ? Visibility.Visible : Visibility.Collapsed;
+
+            SetError();
+
+            this.Loaded += HostGameSettings_Loaded;
+        }
+
+        private void HostGameSettings_Loaded(object sender, RoutedEventArgs e) {
+            this.Loaded -= HostGameSettings_Loaded;
+
+            var animation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(200)));
+            animation.FillBehavior = FillBehavior.HoldEnd;
+
+            BeginAnimation(OpacityProperty, animation);
+
+            var animation2 = new ThicknessAnimation(new Thickness(0, -60, 0, 0), new Thickness(0), new Duration(TimeSpan.FromMilliseconds(500)));
+            animation2.FillBehavior = FillBehavior.HoldEnd;
+
+            BeginAnimation(MarginProperty, animation2);
         }
 
         private void ProgramOnOptionsChanged()
@@ -143,9 +178,9 @@ namespace Octgn.Controls
 
         void SetError(string error = "")
         {
-            this.HasErrors = !string.IsNullOrWhiteSpace(error);
             Error = error;
-            ErrorMessageBorder.Visibility = HasErrors ? Visibility.Visible : Visibility.Collapsed;
+            this.HasError = !string.IsNullOrWhiteSpace(Error);
+            ErrorText.Text = Error;
         }
 
         #region Dialog
@@ -180,8 +215,23 @@ namespace Octgn.Controls
             Password = PasswordGame.Password;
             if (ComboBoxGame.SelectedIndex != -1)
                 Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
-            Placeholder.Child = null;
-            this.FireOnClose(this, result);
+
+            var animation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(200)));
+            animation.FillBehavior = FillBehavior.HoldEnd;
+
+            BeginAnimation(OpacityProperty, animation);
+
+            var animation2 = new ThicknessAnimation(new Thickness(0), new Thickness(0, -60, 0, 0), new Duration(TimeSpan.FromMilliseconds(500)));
+            animation2.FillBehavior = FillBehavior.HoldEnd;
+
+            BeginAnimation(MarginProperty, animation2);
+
+            Dispatcher.InvokeAsync(async () => {
+                await Task.Delay(1000);
+
+                Placeholder.Child = null;
+                this.FireOnClose(this, result);
+            });
         }
 
         void StartWait()
@@ -276,19 +326,22 @@ namespace Octgn.Controls
         #region UI Events
         private void ButtonCancelClick(object sender, RoutedEventArgs e)
         {
+            this.Game = GameSelector.Game;
+
             this.Close(DialogResult.Cancel);
         }
 
         private async void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
         {
             this.ValidateFields();
-            if (this.HasErrors) return;
+            if (this.HasError) return;
 
             var error = "";
             try {
                 Program.Dispatcher = this.Dispatcher;
                 this.StartWait();
                 this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
+                this.Game = GameSelector.Game;
                 this.Gamename = TextBoxGameName.Text;
                 this.Password = PasswordGame.Password;
                 this.Username = TextBoxUserName.Text;

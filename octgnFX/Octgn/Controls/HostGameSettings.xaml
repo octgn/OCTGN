@@ -3,92 +3,190 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
-             mc:Ignorable="d" d:DesignWidth="300"
-             Panel.ZIndex="5" Height="Auto">
-    <Border x:Name="BorderHostGame" Width="300" MinHeight="200" Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource Panel}">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
-                <LinearGradientBrush.Transform>
-                    <RotateTransform Angle="-22" CenterY="0.5" CenterX="0.5"/>
-                </LinearGradientBrush.Transform>
-                <GradientStop Color="#FF333333" Offset="0.558"/>
-                <GradientStop Color="#FF555555" Offset="1"/>
-                <GradientStop Color="#FF777777" Offset="0"/>
-                <GradientStop Color="#FF555555" Offset="0.154"/>
-                <GradientStop Color="#FF333333" Offset="0.351"/>
-            </LinearGradientBrush>
-        </Border.Background>
-        <Grid>
-            <Grid.RowDefinitions >
+             mc:Ignorable="d" d:DesignWidth="650"
+             Panel.ZIndex="5" Height="410">
+    <Border x:Name="BorderHostGame" Width="650" MinHeight="200" Visibility="Visible" Padding="0"
+            Style="{StaticResource Panel}" CornerRadius="5"
+            BorderThickness="2" BorderBrush="#AA2B6DFF"
+            Background="#FF2B6DFF">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="1" Color="#2B6DFF"/>
+        </Border.Effect>
+        <Grid Margin="0">
+            <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="100*"/>
-                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="85"></ColumnDefinition>
-                <ColumnDefinition Width="100*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Start A Game</Label>
-            <Border Margin="0,10,0,10" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Crimson" BorderThickness="1" x:Name="ErrorMessageBorder" Visibility="Collapsed">
-                <TextBlock Foreground="White" Padding="5 2"
-                       TextWrapping="Wrap" Background="OrangeRed"
-                       Text="{Binding Error, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"/>
+            <Border Grid.Row="0" Background="#2B6DFF" CornerRadius="5 5 0 0"
+                    Padding="5 5" BorderThickness="0">
+                <Grid>
+                    <Image Source="pack://application:,,,/Octgn;component/Resources/icon.ico"
+                           Width="24"
+                           HorizontalAlignment="Left"
+                           Margin="0">
+                        <Image.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="0" Color="Black"/>
+                        </Image.Effect>
+                    </Image>
+                    <Label FontSize="16" Content="Start a Game"
+                           HorizontalAlignment="Center"
+                           >
+                        <Label.Effect>
+                            <DropShadowEffect BlurRadius="2" ShadowDepth="2"/>
+                        </Label.Effect>
+                    </Label>
+                </Grid>
             </Border>
-            <StackPanel x:Name="StackPanelIsLocalGame" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed">
-                <Label x:Name="LabelIsLocalGame" Content="Host Game on LAN" />
-                <CheckBox x:Name="CheckBoxIsLocalGame" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked" Visibility="Visible"/>
-            </StackPanel>
-            <Label Grid.Row="4" Grid.Column="0">Username</Label>
-            <Grid Grid.Row="4" Grid.Column="1">
+            <Border VerticalAlignment="Top"
+                    Name="ErrorMessageBorder"
+                    Grid.Row="1"
+                    Margin="10"
+                    Panel.ZIndex="10"
+                    HorizontalAlignment="Stretch"
+                    Opacity="1"
+                    ClipToBounds="True"
+                    Grid.ColumnSpan="2">
+                <Border BorderBrush="#AADC143C"
+                        Height="40"
+                        BorderThickness="1"
+                        CornerRadius="3">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="5" Color="#AADC143C" ShadowDepth="0"/>
+                    </Border.Effect>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasError, RelativeSource={RelativeSource AncestorType=controls:HostGameSettings}}"
+                                             Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="0:0:0.3"
+                                                                 From="0" To="1"
+                                                                 Storyboard.TargetProperty="Opacity"/>
+                                                <ThicknessAnimation Duration="0:0:0.5"
+                                                                    From="0 -60 0 0"
+                                                                    To="0 0 0 0"
+                                                                    Storyboard.TargetProperty="Margin">
+                                                    <ThicknessAnimation.EasingFunction>
+                                                        <BackEase EasingMode="EaseOut"  Amplitude="0.5"/>
+                                                    </ThicknessAnimation.EasingFunction>
+                                                </ThicknessAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="0:0:0.2"
+                                                                 To="0" From="1"
+                                                                 Storyboard.TargetProperty="Opacity"/>
+                                                <ThicknessAnimation Duration="0:0:0.5"
+                                                                    To="0 -60 0 0"
+                                                                    From="0"
+                                                                    Storyboard.TargetProperty="Margin">
+                                                    <ThicknessAnimation.EasingFunction>
+                                                        <BackEase EasingMode="EaseOut"  Amplitude="0.5"/>
+                                                    </ThicknessAnimation.EasingFunction>
+                                                </ThicknessAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="{StaticResource Entypo}"
+                                   Text="⚠"
+                                   FontSize="32"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Grid.Column="0"
+                                   Margin="0 -16 0 0"/>
+                        <Border Background="#AAFF0048" Grid.Column="1">
+                            <TextBlock Foreground="White" Padding="10 5 80 5"
+                                       FontSize="12"
+                                       Grid.Column="1"
+                                       TextWrapping="Wrap"
+                                       x:Name="ErrorText"
+                                       Text="lorem ipsem in the dalawe flwelkfj alwekj falwkejflakwjefliawje lawiemf ;alwiem aowimef oawimefoaiwme foaiwem "/>
+                        </Border>
+                    </Grid>
+                            <!--<Border Margin="0,10,0,10" BorderBrush="Crimson" BorderThickness="1" x:Name="ErrorMessageBorder" Visibility="Collapsed">
+                                <TextBlock Foreground="White" Padding="5 2"
+                                       TextWrapping="Wrap" Background="#FF0048"
+                                       Text="{Binding Error, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"/>
+                            </Border>-->
+                </Border>
+            </Border>
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48*"/>
-                    <ColumnDefinition Width="125*"/>
-                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="TextBoxUserName" Grid.ColumnSpan="3"/>
-                <Button x:Name="ButtonRandomizeUserName" Grid.Column="2" Click="ButtonRandomizeUserNameClick">
-                    <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
-                </Button>
+                <Border Grid.Row="1" Style="{StaticResource Panel}"
+                        Padding="10 60 10 10"
+                        Background="#02020F" BorderThickness="0"
+                        CornerRadius="0">
+                    <StackPanel>
+                        <StackPanel x:Name="StackPanelIsLocalGame" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed">
+                            <Label x:Name="LabelIsLocalGame" Content="Host Game on LAN" />
+                            <CheckBox x:Name="CheckBoxIsLocalGame" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked" Visibility="Visible"/>
+                        </StackPanel>
+                        <Label Margin="5 0 0 5">Username</Label>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="48*"/>
+                                <ColumnDefinition Width="125*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="TextBoxUserName" Grid.ColumnSpan="3"/>
+                            <Button x:Name="ButtonRandomizeUserName" Grid.Column="2" Click="ButtonRandomizeUserNameClick">
+                                <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
+                            </Button>
+                        </Grid>
+                        <Label Margin="5 5 0 5">Game Name</Label>
+                        <Grid Grid.Row="6" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="TextBoxGameName" Grid.ColumnSpan="2"/>
+                            <Button x:Name="ButtonRandomizeGameName" Grid.Column="1" Click="ButtonRandomizeGameNameClick">
+                                <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
+                            </Button>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <Image Source="../Resources/sub.png" Height="12" Stretch="UniformToFill"></Image>
+                            <Border Width="3"></Border>
+                            <Label VerticalAlignment="Center">Password</Label>
+                        </StackPanel>
+                        <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False"></PasswordBox>
+                        <Label Margin="5 5 0 5">Game</Label>
+                        <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>
+                        <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,30" IsIndeterminate="false"></ProgressBar>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Background="#111111">
+                    <controls:GameSelector Margin="5 60 5 5" x:Name="GameSelector" VerticalAlignment="Bottom">
+                    </controls:GameSelector>
+                </Border>
             </Grid>
-            <Label Grid.Row="6" Grid.Column="0">Game Name</Label>
-            <Grid Grid.Row="6" Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100*"/>
-                    <ColumnDefinition Width="20"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="TextBoxGameName" Grid.ColumnSpan="2"/>
-                <Button x:Name="ButtonRandomizeGameName" Grid.Column="1" Click="ButtonRandomizeGameNameClick">
-                    <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
-                </Button>
-            </Grid>
-            <StackPanel Orientation="Horizontal" Grid.Row="8" Grid.Column="0">
-                <Image Source="../Resources/sub.png" Height="12" Stretch="UniformToFill"></Image>
-                <Border Width="3"></Border>
-                <Label VerticalAlignment="Center">Password</Label>
-            </StackPanel>
-            <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False"></PasswordBox>
-            <Label Grid.Row="10" Grid.Column="0">Game</Label>
-            <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>
-            <!--<StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2">
-                <Label Content="Allow Specators" />
-                <CheckBox x:Name="CheckBoxSpectators" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxSpectators_OnChecked" Unchecked="CheckBoxSpectators_OnUnchecked" Visibility="Visible"/>
-            </StackPanel>-->
-            <Button Grid.Row="15" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-            <Button Grid.Row="15" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonHostGameStartClick" Content="Start" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}" Background="Green"></Button>
-            <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
+            <Border Grid.Row="2" Style="{StaticResource Panel}"
+                    CornerRadius="0 0 5 5"
+                    Margin="0 0 0 -0.5"
+                    Padding="5">
+                <Grid>
+                    <Button Width="101" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                    <Button Width="101" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start" Style="{StaticResource FlatDarkButtonStyle}" Background="Green"></Button>
+                </Grid>
+            </Border>
         </Grid>
     </Border>
 </UserControl>
