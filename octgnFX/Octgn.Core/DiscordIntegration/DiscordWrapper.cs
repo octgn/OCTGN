@@ -7,8 +7,7 @@ namespace Octgn.Core.DiscordIntegration
 {
     public class DiscordWrapper : ViewModelBase, IDisposable
     {
-        public bool IsRunning
-        {
+        public bool IsRunning {
             get => _isRunning;
             set => SetAndNotify(ref _isRunning, value);
         }
@@ -29,22 +28,25 @@ namespace Octgn.Core.DiscordIntegration
 
         private static readonly DateTime _epoch = new DateTime(1970, 1, 1);
 
-        public DiscordWrapper()
-        {
+        public DiscordWrapper() {
             _discord = new Discord.Discord(_clientId, (UInt64)Discord.CreateFlags.Default);
+            _discord.ActivityManagerInstance.OnActivityJoin += ActivityManagerInstance_OnActivityJoin;
             _updateTimer = new Timer(UpdateDiscord, this, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
         }
 
-        public void UpdateStatusNothing()
-        {
+        private void ActivityManagerInstance_OnActivityJoin(string secret) {
+
+            throw new NotImplementedException();
+        }
+
+        public void UpdateStatusNothing() {
             var activity = new Activity();
             activity.Type = ActivityType.Playing;
 
             _activity = activity;
         }
 
-        public void UpdateStatusInDeckEditor()
-        {
+        public void UpdateStatusInDeckEditor() {
             var activity = new Activity();
             activity.Type = ActivityType.Playing;
             activity.Details = "Building a Deck";
@@ -52,43 +54,33 @@ namespace Octgn.Core.DiscordIntegration
             _activity = activity;
         }
 
-        public void UpdateStatusInGame(string gameName, DateTimeOffset gameStartTime, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount)
-        {
+        public void UpdateStatusInGame(string gameName, DateTimeOffset gameStartTime, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount) {
             var activity = new Activity();
             activity.Type = ActivityType.Playing;
             activity.Details = gameName;
             activity.Assets.LargeImage = "bruco";
 
             String state;
-            if (isReplay)
-            {
+            if (isReplay) {
                 state = "Replaying";
                 activity.Type = ActivityType.Watching;
-            } else if (isPreGame)
-            {
+            } else if (isPreGame) {
                 activity.Party.Size.CurrentSize = playerCount;
                 activity.Party.Size.MaxSize = 8;
-                if (isHost)
-                {
+                if (isHost) {
                     state = "In Lobby(Host)";
-                } else
-                {
+                } else {
                     state = "In Lobby";
                 }
-            } else
-            {
+            } else {
                 activity.Party.Size.CurrentSize = playerCount;
                 activity.Party.Size.MaxSize = 8;
-                if (isHost)
-                {
+                if (isHost) {
                     state = "In Game(Host)";
-                } else if(isSpectator)
-                {
+                } else if (isSpectator) {
                     state = "Spectating";
                     activity.Type = ActivityType.Watching;
-                }
-                else
-                {
+                } else {
                     state = "In Game";
                 }
             }
@@ -99,31 +91,22 @@ namespace Octgn.Core.DiscordIntegration
             _activity = activity;
         }
 
-        private void UpdateDiscord(object state)
-        {
-            try
-            {
+        private void UpdateDiscord(object state) {
+            try {
                 _discord.RunCallbacks();
                 IsRunning = true;
                 UpdateActivity();
-            }
-            catch (ResultException ex) when (ex.Result == Result.NotRunning)
-            {
+            } catch (ResultException ex) when (ex.Result == Result.NotRunning) {
                 // Discord not running
                 IsRunning = false;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Error?.Invoke(this, ex);
-            }
-            finally
-            {
+            } finally {
                 _updateTimer.Change(TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
             }
         }
 
-        private void UpdateActivity()
-        {
+        private void UpdateActivity() {
             var activity = _activity;
 
             if (activity == null) return;
@@ -134,21 +117,17 @@ namespace Octgn.Core.DiscordIntegration
 
             _lastActivityUpdate = DateTime.Now;
 
-            _discord.GetActivityManager().UpdateActivity(activity.Value, result =>
-            {
-                if (result != Result.Ok)
-                {
+            _discord.GetActivityManager().UpdateActivity(activity.Value, result => {
+                if (result != Result.Ok) {
                     Error?.Invoke(this, new ResultException(result));
                 }
             });
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    _discord.ActivityManagerInstance.OnActivityJoin -= ActivityManagerInstance_OnActivityJoin;
                 }
 
                 _discord.Dispose();
@@ -157,14 +136,12 @@ namespace Octgn.Core.DiscordIntegration
             }
         }
 
-        ~DiscordWrapper()
-        {
+        ~DiscordWrapper() {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
