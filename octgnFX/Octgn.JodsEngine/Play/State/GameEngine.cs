@@ -30,7 +30,6 @@ using Player = Octgn.Play.Player;
 using System.Collections.ObjectModel;
 using Octgn.DataNew;
 using Octgn.Play.Save;
-using Octgn.Play.State;
 using Octgn.Core.Play;
 
 namespace Octgn
@@ -494,7 +493,7 @@ namespace Octgn
         }
 
         public void OnStart() {
-            Program.Discord.UpdateStatusInGame(this.Definition.Name, StartTime.Value, Program.IsHost, IsReplay, Spectator, false, Player.AllExceptGlobal.Count());
+            Program.Discord.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, IsReplay, Spectator, false, Player.AllExceptGlobal.Count());
 
             if (IsReplay) {
                 return;
@@ -663,7 +662,7 @@ namespace Octgn
                 ReplayEngine.Start();
             }
 
-            Program.Discord.UpdateStatusInGame(this.Definition.Name, StartTime.Value, Program.IsHost, IsReplay, Spectator, true, Player.AllExceptGlobal.Count());
+            Program.Discord.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, IsReplay, Spectator, true, Player.AllExceptGlobal.Count());
         }
 
         public void Resume()

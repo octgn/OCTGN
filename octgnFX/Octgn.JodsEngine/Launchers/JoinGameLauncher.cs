@@ -49,10 +49,10 @@ namespace Octgn.Launchers
             var hostedGame = _game;
 
             try {
+                Program.CurrentHostedGame = hostedGame;
                 var password = string.Empty;
                 if (Program.IsHost = _isHost) {
                     password = hostedGame.Password;
-                    Program.CurrentHostedGame = hostedGame;
                 } else {
                     if (hostedGame.HasPassword) {
                         var dlg = new InputDlg("Password", "Please enter this games password", "");
