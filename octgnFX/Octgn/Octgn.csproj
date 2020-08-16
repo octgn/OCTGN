@@ -321,6 +321,9 @@
     <Compile Include="Controls\ConnectOfflineGame.xaml.cs">
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GameSelector.xaml.cs">
+      <DependentUpon>GameSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RichTextBlock.cs" />
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
     <Compile Include="JodsEngineIntegration.cs" />
@@ -596,6 +599,10 @@
     </Page>
     <Page Include="Controls\ControlTemplates\UserListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GameSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MissedMessagesBreak.xaml">
       <SubType>Designer</SubType>
