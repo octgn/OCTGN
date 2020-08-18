@@ -133,12 +133,19 @@ namespace Octgn.Play.Gui
 
         protected virtual void OnKeyShortcut(object sender, TableKeyEventArgs e)
         {
-            ActionShortcut[] shortcuts = group.GroupShortcuts;
-            ActionShortcut match = shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e.KeyEventArgs));
-            if (match == null || !@group.TryToManipulate()) return;
-            if (match.ActionDef.AsAction().Execute != null)
-                ScriptEngine.ExecuteOnGroup(match.ActionDef.AsAction().Execute, @group);
-            e.Handled = e.KeyEventArgs.Handled = true;
+            if (!@group.TryToManipulate()) return;
+            ActionShortcut match = group.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e.KeyEventArgs));
+            if (match != null)
+            {
+                if (match.ActionDef.AsAction().Execute != null)
+                    ScriptEngine.ExecuteOnGroup(match.ActionDef.AsAction().Execute, @group);
+                e.Handled = e.KeyEventArgs.Handled = true;
+            }
+            else if (group is Pile pile && pile.ShuffleShortcut != null && pile.ShuffleShortcut.Matches(this, e.KeyEventArgs))
+            {
+                pile.Shuffle();
+                e.Handled = e.KeyEventArgs.Handled = true;
+            }
         }
 
         protected virtual void GroupChanged()
@@ -285,10 +292,17 @@ namespace Octgn.Play.Gui
             {
                 var actions = def.GroupActions;
                 var nGroupActions = actions.ToArray().Length;
-                
+
                 if (nGroupActions > 0)
                     items.AddRange(actions.Select(action => CreateActionMenuItem(action, GroupActionClicked, null)).Where(x => x.Visibility == Visibility.Visible));
-                    items.Add(new Separator());
+                items.Add(new Separator());
+
+                if (group.ShuffleShortcut != null && group is Pile pile)
+                {
+                    var shuffleItem = new MenuItem { Header = "Shuffle " + pile.Name , InputGestureText = def.ShuffleShortcut};
+                    shuffleItem.Click += delegate { pile.Shuffle(); };
+                    items.Add(shuffleItem);
+                }
 
                 if (group.Controller != null)
                     items.Add(CreateGroupPassToItem());

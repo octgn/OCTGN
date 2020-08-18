@@ -8,6 +8,7 @@
         public string Name { get; set; }
         public string Icon { get; set; }
         public string Shortcut { get; set; }
+        public string ShuffleShortcut { get; set; }
         public bool MoveTo { get; set; }
         public string Background { get; set; }
         public BackgroundStyle BackgroundStyle { get; set; }

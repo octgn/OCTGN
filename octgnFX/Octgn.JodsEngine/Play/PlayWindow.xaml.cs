@@ -671,11 +671,19 @@ namespace Octgn.Play
             foreach (Group g in Player.LocalPlayer.Groups.Where(g => g.CanManipulate()))
             {
                 ActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
-                if (a == null) continue;
-                if (a.ActionDef.AsAction().Execute != null)
-                    ScriptEngine.ExecuteOnGroup(a.ActionDef.AsAction().Execute, g);
-                e.Handled = true;
-                return;
+                if (a != null)
+                {
+                    if (a.ActionDef.AsAction().Execute != null)
+                        ScriptEngine.ExecuteOnGroup(a.ActionDef.AsAction().Execute, g);
+                    e.Handled = true;
+                    return;
+                }
+                else if (g is Pile pile && pile.ShuffleShortcut != null && pile.ShuffleShortcut.Matches(this, e))
+                {
+                    pile.Shuffle();
+                    e.Handled = true;
+                    return;
+                }
             }
         }
 

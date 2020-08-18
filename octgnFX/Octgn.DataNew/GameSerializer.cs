@@ -602,6 +602,10 @@ namespace Octgn.DataNew
             {
                 ret.Height = 1;
             }
+            if (!string.IsNullOrWhiteSpace(grp.shuffle))
+            {
+                ret.ShuffleShortcut = grp.shuffle;
+            }
             if (grp.Items != null)
             {
                 ret.CardActions = DeserializeGroupActionList(grp.Items, false);
@@ -1277,6 +1281,7 @@ namespace Octgn.DataNew
             ret.icon = group.Icon == null ? null : (group.Icon ?? "").Replace(rootPath, "");
             ret.ordered = group.Ordered ? boolean.True : boolean.False;
             ret.shortcut = group.Shortcut;
+            ret.shuffle = group.ShuffleShortcut;
             ret.moveto = group.MoveTo ? boolean.True : boolean.False;
             List<baseAction> itemList = new List<baseAction>();
             if (group.CardActions != null)
