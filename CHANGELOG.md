@@ -1,3 +1,5 @@
+#3.4.320.0
+
 #3.4.319.0
 + 'shuffle' attribute added to group element in game definitions.  It expects a hotkey string.
 + If 'shuffle' is defined on a group, it will activate a shuffle action in the group's context menu with the given hotkey.
@@ -3910,6 +3912,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
