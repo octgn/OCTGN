@@ -318,37 +318,37 @@
             if (game.table != null)
             {
                 //Test shortcuts
-                this.TestShortcut(game.table.shortcut);
                 this.TestGroupsShortcuts(game.table.Items);
             }
 
             List<string> groups = new List<string>();    //setup for deck section target testing.
             if (game.player != null)
             {
-                foreach (var group in game.player.Items.OfType<group>())
+                foreach (var pile in game.player.Items.OfType<pile>())
                 {
-                    if (group is hand)
+                    if (pile is hand)
                     {
                         GenerateWarningMessage("The <player> element contains a <hand> child, which is no longer supported.\nExisting Hand groups should use the <group viewState=\"expanded\"> structure instead.");
                     }
                     // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(group.icon))
+                    if (String.IsNullOrWhiteSpace(pile.icon))
                     {
-                        throw GenerateEmptyAttributeException("Group", "icon", group.name);
+                        throw GenerateEmptyAttributeException("Group", "icon", pile.name);
                     }
 
-                    path = Path.Combine(Directory.FullName, group.icon);
+                    path = Path.Combine(Directory.FullName, pile.icon);
 
                     if (!File.Exists(path))
                     {
-                        throw GenerateFileDoesNotExistException(path, "Group", group.name, "icon", group.icon);
+                        throw GenerateFileDoesNotExistException(path, "Group", pile.name, "icon", pile.icon);
                     }
 
-                    groups.Add(group.name);
+                    groups.Add(pile.name);
 
                     //Test shortcuts
-                    this.TestShortcut(group.shortcut);
-                    this.TestGroupsShortcuts(group.Items);
+                    this.TestShortcut(pile.shortcut);
+                    this.TestShortcut(pile.shuffle);
+                    this.TestGroupsShortcuts(pile.Items);
                 }
 
                 foreach (var counter in game.player.Items.OfType<counter>())
@@ -371,42 +371,36 @@
             List<string> sharedGroups = new List<string>();    //setup for shared deck section target testing.
             if (game.shared != null)
             {
-                if (game.shared.counter != null)
+                foreach (var counter in game.shared.Items.OfType<counter>())
                 {
-                    foreach (var counter in game.shared.counter)
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(counter.icon))
                     {
-                        // Check for valid attributes
-                        if (String.IsNullOrWhiteSpace(counter.icon))
-                        {
-                            throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
-                        }
+                        throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
+                    }
 
-                        path = Path.Combine(Directory.FullName, counter.icon);
+                    path = Path.Combine(Directory.FullName, counter.icon);
 
-                        if (!File.Exists(path))
-                        {
-                            throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
-                        }
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
                     }
                 }
-                if (game.shared.group != null)
+                foreach (var pile in game.shared.Items.OfType<pile>())
                 {
-                    foreach (var group in game.shared.group)
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(pile.icon))
                     {
-                        // Check for valid attributes
-                        if (String.IsNullOrWhiteSpace(group.icon))
-                        {
-                            throw GenerateEmptyAttributeException("Global Group", "icon", group.name);
-                        }
-
-                        path = Path.Combine(Directory.FullName, group.icon);
-
-                        if (!File.Exists(path))
-                        {
-                            throw GenerateFileDoesNotExistException(path, "Global Group", group.name, "icon", group.icon);
-                        }
-                        sharedGroups.Add(group.name);
+                        throw GenerateEmptyAttributeException("Global Group", "icon", pile.name);
                     }
+
+                    path = Path.Combine(Directory.FullName, pile.icon);
+
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException(path, "Global Group", pile.name, "icon", pile.icon);
+                    }
+                    sharedGroups.Add(pile.name);
                 }
             }
 
