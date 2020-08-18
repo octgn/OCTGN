@@ -91,10 +91,10 @@ namespace Octgn.DataNew
             if (defSize.BackCornerRadius < 0)
                 defSize.BackCornerRadius = defSize.CornerRadius;
             ret.CardSizes.Add("", defSize);
-
             #region table
-
-            ret.Table = this.DeserialiseGroup(g.table, 0);
+            ret.Table = this.DeserializeGroup(g.table, 0);
+            ret.Table.Height = Int32.Parse(g.table.height);
+            ret.Table.Width = Int32.Parse(g.table.width);
             ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
 
             switch (g.table.backgroundStyle)
@@ -114,8 +114,6 @@ namespace Octgn.DataNew
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            ret.Table.Height = Int32.Parse(g.table.height);
-            ret.Table.Width = Int32.Parse(g.table.width);
             #endregion table
             #region gameBoards
             if (g.gameboards == null)
@@ -185,34 +183,34 @@ namespace Octgn.DataNew
             if (g.shared != null)
             {
                 var player = new GlobalPlayer
-                                   {
-                                     IndicatorsFormat = g.shared.summary
-                                   };
+                {
+                    IndicatorsFormat = g.shared.summary
+                };
 
                 var curCounter = 1;
-                var curGroup = 1;
-                if (g.shared.counter != null)
+                var curPile = 1;
+                if (g.shared.Items != null)
                 {
-                    foreach (var i in g.shared.counter)
+                    foreach (var item in g.shared.Items)
                     {
-                        (player.Counters as List<Counter>).Add(
-                            new Counter
+                        if (item is counter counter)
+                        {
+                            (player.Counters as List<Counter>).Add(
+                                new Counter
                                 {
                                     Id = (byte)curCounter,
-                                    Name = i.name,
-                                    Icon = Path.Combine(directory, i.icon ?? ""),
-                                    Reset = bool.Parse(i.reset.ToString()),
-                                    Start = int.Parse(i.@default)
+                                    Name = counter.name,
+                                    Icon = Path.Combine(directory, counter.icon ?? ""),
+                                    Reset = bool.Parse(counter.reset.ToString()),
+                                    Start = int.Parse(counter.@default)
                                 });
-                        curCounter++;
-                    }
-                }
-                if (g.shared.group != null)
-                {
-                    foreach (var i in g.shared.group)
-                    {
-                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                        curGroup++;
+                            curCounter++;
+                        }
+                        else if (item is pile pile)
+                        {
+                            (player.Groups as List<Group>).Add(this.DeserializePile(pile, curPile));
+                            curPile++;
+                        }
                     }
                 }
                 ret.GlobalPlayer = player;
@@ -225,15 +223,15 @@ namespace Octgn.DataNew
             if (g.player != null)
             {
                 var player = new Player
-                                 {
-                                     IndicatorsFormat = g.player.summary
-                                 };
+                {
+                    IndicatorsFormat = g.player.summary
+                };
                 var curCounter = 1;
-                var curGroup = 1;
+                var curPile = 1;
                 if (g.player.Items != null)
                 {
-                foreach (var item in g.player.Items)
-                {
+                    foreach (var item in g.player.Items)
+                    {
                         if (item is counter counter)
                         {
                             (player.Counters as List<Counter>)
@@ -250,25 +248,26 @@ namespace Octgn.DataNew
                         else if (item is gamePlayerGlobalvariable globalvariable)
                         {
                             player.GlobalVariables.Add(globalvariable.name, new GlobalVariable()
-                                                                            {
-                                                                                Name = globalvariable.name,
-                                                                                Value = globalvariable.value
-                                                                            });
+                            {
+                                Name = globalvariable.name,
+                                Value = globalvariable.value
+                            });
                         }
                         #region LEGACY CODE FOR THE OLD HAND GROUP
                         else if (item is hand hand)
                         {
-                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(hand, curGroup));
-                            curGroup++;
-                            legacyHandGroup = player.Groups.Last();
+                            legacyHandGroup = this.DeserializeGroup(hand, curPile);
+                            legacyHandGroup.ViewState = GroupViewState.Collapsed;
+                            (player.Groups as List<Group>).Add(legacyHandGroup);
+                            curPile++;
                         }
                         #endregion
-                        else if (item is group group)
+                        else if (item is pile pile)
                         {
-                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(group, curGroup));
-                            curGroup++;
+                            (player.Groups as List<Group>).Add(this.DeserializePile(pile, curPile));
+                            curPile++;
                         }
-                }
+                    }
                 }
                 ret.Player = player;
             }
@@ -581,7 +580,45 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        internal Group DeserialiseGroup(group grp, int id)
+        internal Group DeserializePile(pile grp, int id)
+        {
+            var ret = DeserializeGroup(grp, id);
+
+            ret.Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon);
+
+            ret.Ordered = bool.Parse(grp.ordered.ToString());
+            ret.Shortcut = grp.shortcut;
+            ret.MoveTo = bool.Parse(grp.moveto.ToString());
+            if (!string.IsNullOrWhiteSpace(grp.shuffle))
+            {
+                ret.ShuffleShortcut = grp.shuffle;
+            }
+
+            if (grp.collapsed == boolean.True)
+            {
+                ret.ViewState = GroupViewState.Collapsed;
+            }
+            else
+            {
+                switch (grp.viewState)
+                {
+                    case pileViewState.collapsed:
+                        ret.ViewState = GroupViewState.Collapsed;
+                        break;
+                    case pileViewState.expanded:
+                        ret.ViewState = GroupViewState.Expanded;
+                        break;
+                    case pileViewState.pile:
+                        ret.ViewState = GroupViewState.Pile;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            return ret;
+        }
+
+        internal Group DeserializeGroup(group grp, int id)
         {
             if (grp == null)
                 return null;
@@ -589,48 +626,11 @@ namespace Octgn.DataNew
             {
                 Id = (byte)id,
                 Name = grp.name,
-                Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
-                Ordered = bool.Parse(grp.ordered.ToString()),
-                Shortcut = grp.shortcut,
-                MoveTo = bool.Parse(grp.moveto.ToString())
             };
-            if (ret.Width == 0)
-            {
-                ret.Width = 1;
-            }
-            if (ret.Height == 0)
-            {
-                ret.Height = 1;
-            }
-            if (!string.IsNullOrWhiteSpace(grp.shuffle))
-            {
-                ret.ShuffleShortcut = grp.shuffle;
-            }
             if (grp.Items != null)
             {
                 ret.CardActions = DeserializeGroupActionList(grp.Items, false);
                 ret.GroupActions = DeserializeGroupActionList(grp.Items, true);
-            }
-            #region LEGACY CODE FOR THE OLD HAND GROUP
-            if (grp is hand) ret.ViewState = GroupViewState.Expanded;
-            else if (grp.collapsed == boolean.True) ret.ViewState = GroupViewState.Collapsed;
-            else
-            #endregion
-            {
-                switch (grp.viewState)
-                {
-                    case groupViewState.collapsed:
-                        ret.ViewState = GroupViewState.Collapsed;
-                        break;
-                    case groupViewState.expanded:
-                        ret.ViewState = GroupViewState.Expanded;
-                        break;
-                    case groupViewState.pile:
-                        ret.ViewState = GroupViewState.Pile;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
             }
             switch (grp.visibility)
             {
@@ -780,7 +780,27 @@ namespace Octgn.DataNew
             save.scriptVersion = game.ScriptVersion?.ToString();
 
             #region table
-            save.table = SerializeTable(game.Table, parsedRootPath);
+            var table = new table();
+            SerializeGroup(game.Table, table);
+            table.background = game.Table.Background == null ? null : (game.Table.Background ?? "").Replace(rootPath, "");
+            table.height = game.Table.Height.ToString();
+            table.width = game.Table.Width.ToString();
+            switch (game.Table.BackgroundStyle)
+            {
+                case BackgroundStyle.Stretch:
+                    table.backgroundStyle = tableBackgroundStyle.stretch;
+                    break;
+                case BackgroundStyle.Tile:
+                    table.backgroundStyle = tableBackgroundStyle.tile;
+                    break;
+                case BackgroundStyle.Uniform:
+                    table.backgroundStyle = tableBackgroundStyle.uniform;
+                    break;
+                case BackgroundStyle.UniformToFill:
+                    table.backgroundStyle = tableBackgroundStyle.uniformToFill;
+                    break;
+            };
+            save.table = table;
             #endregion table
             #region phases
             if (game.Phases != null)
@@ -841,7 +861,7 @@ namespace Octgn.DataNew
 
             if (game.GlobalPlayer != null)
             {
-                var clist = new List<counter>();
+                var ilist = new List<object>();
                 foreach (var c in game.GlobalPlayer.Counters)
                 {
                     var counter = new counter
@@ -851,17 +871,15 @@ namespace Octgn.DataNew
                         reset = c.Reset ? boolean.True : boolean.False,
                         @default = c.Start.ToString()
                     };
-                    clist.Add(counter);
+                    ilist.Add(counter);
                 }
-                var glist = new List<group>();
                 foreach (var group in game.GlobalPlayer.Groups)
                 {
-                    glist.Add(SerializeGroup(group, parsedRootPath, new group()));
+                    ilist.Add(SerializePile(group, parsedRootPath));
                 }
                 save.shared = new gameShared
                 {
-                    group = glist.ToArray(),
-                    counter = clist.ToArray()
+                    Items = ilist.ToArray()
                 };
             }
             #endregion shared
@@ -891,7 +909,7 @@ namespace Octgn.DataNew
                 }
                 foreach (var g in game.Player.Groups)
                 {
-                    ilist.Add(SerializeGroup(g, parsedRootPath, new group()));
+                    ilist.Add(SerializePile(g, parsedRootPath));
                 }
                 save.player = new gamePlayer
                 {
@@ -1220,69 +1238,33 @@ namespace Octgn.DataNew
             return null;
         }
 
-        internal table SerializeTable(Group group, string rootPath)
+        internal pile SerializePile(Group pile, string rootpath)
         {
-            if (group == null)
-                return null;
-            var ret = new table
+            var ret = new pile();
+            SerializeGroup(pile, ret);
+            ret.icon = pile.Icon?.Replace(rootpath, "");
+            ret.ordered = pile.Ordered ? boolean.True : boolean.False;
+            ret.shortcut = pile.Shortcut;
+            ret.shuffle = pile.ShuffleShortcut;
+            ret.moveto = pile.MoveTo ? boolean.True : boolean.False;
+            switch (pile.ViewState)
             {
-                name = group.Name,
-                background = group.Background == null ? null : (group.Background ?? "").Replace(rootPath, ""),
-                height = group.Height.ToString(),
-                width = group.Width.ToString(),
-                ordered = group.Ordered ? boolean.True : boolean.False,
-                shortcut = group.Shortcut,
-                moveto = group.MoveTo ? boolean.True : boolean.False
-            };
-            if (group.CardActions != null)
-            {
-                var itemList = SerializeActions(group.CardActions, false).ToList();
-                itemList.AddRange(SerializeActions(group.GroupActions, true).ToArray());
-                ret.Items = itemList.ToArray();
-            }
-            switch (group.BackgroundStyle)
-            {
-                case BackgroundStyle.Stretch:
-                    ret.backgroundStyle = tableBackgroundStyle.stretch;
+                case GroupViewState.Collapsed:
+                    ret.viewState = pileViewState.collapsed;
                     break;
-                case BackgroundStyle.Tile:
-                    ret.backgroundStyle = tableBackgroundStyle.tile;
+                case GroupViewState.Pile:
+                    ret.viewState = pileViewState.pile;
                     break;
-                case BackgroundStyle.Uniform:
-                    ret.backgroundStyle = tableBackgroundStyle.uniform;
-                    break;
-                case BackgroundStyle.UniformToFill:
-                    ret.backgroundStyle = tableBackgroundStyle.uniformToFill;
-                    break;
-            }
-            switch (group.Visibility)
-            {
-                case GroupVisibility.Undefined:
-                    ret.visibility = groupVisibility.undefined;
-                    break;
-                case GroupVisibility.Nobody:
-                    ret.visibility = groupVisibility.none;
-                    break;
-                case GroupVisibility.Owner:
-                    ret.visibility = groupVisibility.me;
-                    break;
-                case GroupVisibility.Everybody:
-                    ret.visibility = groupVisibility.all;
+                case GroupViewState.Expanded:
+                    ret.viewState = pileViewState.expanded;
                     break;
             }
             return ret;
         }
 
-        internal group SerializeGroup(Group group, string rootPath, group ret)
+        internal void SerializeGroup(Group group, group ret)
         {
-            if (group == null)
-                return null;
             ret.name = group.Name;
-            ret.icon = group.Icon == null ? null : (group.Icon ?? "").Replace(rootPath, "");
-            ret.ordered = group.Ordered ? boolean.True : boolean.False;
-            ret.shortcut = group.Shortcut;
-            ret.shuffle = group.ShuffleShortcut;
-            ret.moveto = group.MoveTo ? boolean.True : boolean.False;
             List<baseAction> itemList = new List<baseAction>();
             if (group.CardActions != null)
                 itemList.AddRange(SerializeActions(group.CardActions, false));
@@ -1290,18 +1272,6 @@ namespace Octgn.DataNew
                 itemList.AddRange(SerializeActions(group.GroupActions, true));
             if (itemList.Count > 0)
                 ret.Items = itemList.ToArray();
-            switch (group.ViewState)
-            {
-                case GroupViewState.Collapsed:
-                    ret.viewState = groupViewState.collapsed;
-                    break;
-                case GroupViewState.Pile:
-                    ret.viewState = groupViewState.pile;
-                    break;
-                case GroupViewState.Expanded:
-                    ret.viewState = groupViewState.expanded;
-                    break;
-            }
             switch (group.Visibility)
             {
                 case GroupVisibility.Undefined:
@@ -1317,7 +1287,6 @@ namespace Octgn.DataNew
                     ret.visibility = groupVisibility.all;
                     break;
             }
-            return ret;
         }
 
         internal IEnumerable<baseAction> SerializeActions(IEnumerable<IGroupAction> actions, bool IsGroup)

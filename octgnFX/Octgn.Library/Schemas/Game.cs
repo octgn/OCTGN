@@ -832,6 +832,7 @@ public partial class groupActionSubmenu : actionSubmenu {
 
 /// <remarks/>
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(table))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(pile))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(hand))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
 [System.SerializableAttribute()]
@@ -843,28 +844,12 @@ public partial class group {
     
     private string nameField;
     
-    private string iconField;
-    
     private groupVisibility visibilityField;
     
-    private boolean orderedField;
-    
-    private string shortcutField;
-    
-    private string shuffleField;
-    
-    private boolean movetoField;
-    
-    private boolean collapsedField;
-    
-    private groupViewState viewStateField;
+    private System.Xml.XmlAttribute[] anyAttrField;
     
     public group() {
         this.visibilityField = groupVisibility.none;
-        this.orderedField = boolean.True;
-        this.movetoField = boolean.True;
-        this.collapsedField = boolean.False;
-        this.viewStateField = groupViewState.pile;
     }
     
     /// <remarks/>
@@ -896,17 +881,6 @@ public partial class group {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string icon {
-        get {
-            return this.iconField;
-        }
-        set {
-            this.iconField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(groupVisibility.none)]
     public groupVisibility visibility {
         get {
@@ -918,72 +892,13 @@ public partial class group {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
-    public boolean ordered {
+    [System.Xml.Serialization.XmlAnyAttributeAttribute()]
+    public System.Xml.XmlAttribute[] AnyAttr {
         get {
-            return this.orderedField;
+            return this.anyAttrField;
         }
         set {
-            this.orderedField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string shortcut {
-        get {
-            return this.shortcutField;
-        }
-        set {
-            this.shortcutField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string shuffle {
-        get {
-            return this.shuffleField;
-        }
-        set {
-            this.shuffleField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
-    public boolean moveto {
-        get {
-            return this.movetoField;
-        }
-        set {
-            this.movetoField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
-    public boolean collapsed {
-        get {
-            return this.collapsedField;
-        }
-        set {
-            this.collapsedField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(groupViewState.pile)]
-    public groupViewState viewState {
-        get {
-            return this.viewStateField;
-        }
-        set {
-            this.viewStateField = value;
+            this.anyAttrField = value;
         }
     }
 }
@@ -1005,22 +920,6 @@ public enum groupVisibility {
     
     /// <remarks/>
     undefined,
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public enum groupViewState {
-    
-    /// <remarks/>
-    collapsed,
-    
-    /// <remarks/>
-    expanded,
-    
-    /// <remarks/>
-    pile,
 }
 
 /// <remarks/>
@@ -1134,11 +1033,138 @@ public enum tableBackgroundStyle {
 }
 
 /// <remarks/>
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(hand))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-public partial class hand : group {
+public partial class pile : group {
+    
+    private boolean orderedField;
+    
+    private string iconField;
+    
+    private string shortcutField;
+    
+    private string shuffleField;
+    
+    private boolean movetoField;
+    
+    private boolean collapsedField;
+    
+    private pileViewState viewStateField;
+    
+    public pile() {
+        this.orderedField = boolean.True;
+        this.movetoField = boolean.True;
+        this.collapsedField = boolean.False;
+        this.viewStateField = pileViewState.pile;
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean ordered {
+        get {
+            return this.orderedField;
+        }
+        set {
+            this.orderedField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string icon {
+        get {
+            return this.iconField;
+        }
+        set {
+            this.iconField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string shortcut {
+        get {
+            return this.shortcutField;
+        }
+        set {
+            this.shortcutField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string shuffle {
+        get {
+            return this.shuffleField;
+        }
+        set {
+            this.shuffleField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean moveto {
+        get {
+            return this.movetoField;
+        }
+        set {
+            this.movetoField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
+    public boolean collapsed {
+        get {
+            return this.collapsedField;
+        }
+        set {
+            this.collapsedField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(pileViewState.pile)]
+    public pileViewState viewState {
+        get {
+            return this.viewStateField;
+        }
+        set {
+            this.viewStateField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum pileViewState {
+    
+    /// <remarks/>
+    collapsed,
+    
+    /// <remarks/>
+    expanded,
+    
+    /// <remarks/>
+    pile,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class hand : pile {
 }
 
 /// <remarks/>
@@ -2231,7 +2257,7 @@ public partial class gamePlayer {
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("counter", typeof(counter), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("globalvariable", typeof(gamePlayerGlobalvariable), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("group", typeof(group), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("group", typeof(pile), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("hand", typeof(hand), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
@@ -2297,31 +2323,19 @@ public partial class gamePlayerGlobalvariable {
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class gameShared {
     
-    private counter[] counterField;
-    
-    private group[] groupField;
+    private object[] itemsField;
     
     private string summaryField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("counter", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public counter[] counter {
+    [System.Xml.Serialization.XmlElementAttribute("counter", typeof(counter), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("group", typeof(pile), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public object[] Items {
         get {
-            return this.counterField;
+            return this.itemsField;
         }
         set {
-            this.counterField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("group", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public group[] group {
-        get {
-            return this.groupField;
-        }
-        set {
-            this.groupField = value;
+            this.itemsField = value;
         }
     }
     

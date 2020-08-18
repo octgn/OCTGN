@@ -638,7 +638,7 @@
               </xs:element>
               <xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded" />
               <xs:element name="hand" type="hand" minOccurs="0" />
-              <xs:element name="group" type="group" minOccurs="0" maxOccurs="unbounded" />
+              <xs:element name="group" type="pile" minOccurs="0" maxOccurs="unbounded" />
             </xs:choice>
             <xs:attribute name="summary" type="xs:string" use="optional">
               <xs:annotation>
@@ -656,10 +656,10 @@
             </xs:documentation>
           </xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
               <xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded" />
-              <xs:element name="group" type="group" minOccurs="0" maxOccurs="unbounded" />
-            </xs:sequence>
+              <xs:element name="group" type="pile" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
             <xs:attribute name="summary" type="xs:string" use="optional">
               <xs:annotation>
                 <xs:documentation>
@@ -1018,13 +1018,6 @@
         <xs:documentation>Name of this group.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="icon" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>
-          An image resource for this group.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
     <xs:attribute name="visibility" default="none" >
       <xs:annotation>
         <xs:documentation>
@@ -1040,68 +1033,90 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="ordered" type="boolean" default="True">
-      <xs:annotation>
-        <xs:documentation>
-          True if the order of the cards in the group is important, false otherwise.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="shortcut" type="xs:string" use="optional">
-      <xs:annotation>
-        <xs:documentation>
-          Keyboard shortcut used to move cards to this group.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="shuffle" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>
-          Keyboard shortcut used to shuffle this group.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="moveto" type="boolean" use="optional" default="True">
-      <xs:annotation>
-        <xs:documentation>
-          True if the group appears in the Move Card To submenus
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="collapsed" type="boolean" use="optional" default="False">
-      <xs:annotation>
-        <xs:documentation>
-          For piles, indicates if the group is initially collapsed or expanded.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="viewState" use="optional" default="pile">
-      <xs:annotation>
-        <xs:documentation>
-          For piles, indicates if the group is initially collapsed or expanded.
-        </xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="collapsed" />
-          <xs:enumeration value="expanded" />
-          <xs:enumeration value="pile" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
+    <xs:anyAttribute processContents="lax"/>
   </xs:complexType>
 
-  <xs:complexType name="hand">
+
+
+  <xs:complexType name="pile">
     <xs:annotation>
       <xs:documentation>
-        Defines the properties of one card group.
+        Defines the properties of a pile subset of group.
       </xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="group"/>
+      <xs:extension base="group">
+        <xs:attribute name="ordered" type="boolean" default="True">
+          <xs:annotation>
+            <xs:documentation>
+              True if the order of the cards in the group is important, false otherwise.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="icon" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              An image resource for this group.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="shortcut" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Keyboard shortcut used to move cards to this group.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="shuffle" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Keyboard shortcut used to shuffle this group.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="moveto" type="boolean" use="optional" default="True">
+          <xs:annotation>
+            <xs:documentation>
+              True if the group appears in the Move Card To submenus
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="collapsed" type="boolean" use="optional" default="False">
+          <xs:annotation>
+            <xs:documentation>
+              Indicates if the group is initially collapsed or expanded. (deprecated)
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="viewState" use="optional" default="pile">
+          <xs:annotation>
+            <xs:documentation>
+              Indicates if the group is initially collapsed or expanded.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="collapsed" />
+              <xs:enumeration value="expanded" />
+              <xs:enumeration value="pile" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
+  
+  <xs:complexType name="hand">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the properties of the specialized hand pile (deprecated).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="pile"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
   <xs:complexType name="table">
     <xs:annotation>
       <xs:documentation>
