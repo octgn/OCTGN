@@ -1,1 +1,3 @@
-
+'shuffle' attribute added to group element in game definitions.  It expects a hotkey string.
+If 'shuffle' is defined on a group, it will activate a shuffle action in the group's context menu with the given hotkey.
+'shuffle' by default is null, so the menu action won't appear by default.
