@@ -493,6 +493,10 @@ namespace Octgn
         }
 
         public void OnStart() {
+            if (Program.CurrentHostedGame.DateStarted == null) {
+                Program.CurrentHostedGame.DateStarted = DateTimeOffset.Now;
+            }
+
             Program.Discord.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, IsReplay, Spectator, false, Player.AllExceptGlobal.Count());
 
             if (IsReplay) {
