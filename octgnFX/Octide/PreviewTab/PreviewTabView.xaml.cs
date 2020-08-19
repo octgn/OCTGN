@@ -262,7 +262,7 @@ namespace Octide.Views
                 CardActionsPanel.Visibility = Visibility.Collapsed;
 
             }
-            else if (data is GroupItemModel group)
+            else if (data is PileItemModel group)
             {
                 ActionMenuPopup.DataContext = group;
                 ActionMenuPopup.Tag = "group";

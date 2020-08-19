@@ -111,11 +111,11 @@ namespace Octide.ViewModel
             Piles = new IdeCollection<IdeBaseItem>(this);
             foreach (var pile in _game.Player.Groups)
             {
-                Piles.Add(new GroupItemModel(pile, Piles));
+                Piles.Add(new PileItemModel(pile, Piles));
             }
             Piles.CollectionChanged += (sender, args) =>
             {
-                _game.Player.Groups = Piles.Select(x => ((GroupItemModel)x)._group);
+                _game.Player.Groups = Piles.Select(x => ((PileItemModel)x)._group);
                 RaisePropertyChanged("CollapsedPiles");
                 RaisePropertyChanged("VisiblePiles");
                 Messenger.Default.Send(new GroupChangedMessage(args));
@@ -142,11 +142,11 @@ namespace Octide.ViewModel
             GlobalPiles = new IdeCollection<IdeBaseItem>(this);
             foreach (var pile in _game.GlobalPlayer.Groups)
             {
-                GlobalPiles.Add(new GroupItemModel(pile, GlobalPiles));
+                GlobalPiles.Add(new PileItemModel(pile, GlobalPiles));
             }
             GlobalPiles.CollectionChanged += (sender, args) =>
             {
-                _game.GlobalPlayer.Groups = GlobalPiles.Select(x => ((GroupItemModel)x)._group);
+                _game.GlobalPlayer.Groups = GlobalPiles.Select(x => ((PileItemModel)x)._group);
                 RaisePropertyChanged("CollapsedGlobalPiles");
                 RaisePropertyChanged("VisibleGlobalPiles");
                 Messenger.Default.Send(new GroupChangedMessage(args));
@@ -271,7 +271,7 @@ namespace Octide.ViewModel
 
         public void AddPile()
         {
-            var ret = new GroupItemModel(Piles);
+            var ret = new PileItemModel(Piles);
             Piles.Add(ret);
             Selection = ret;
             RaisePropertyChanged("Piles");
@@ -279,7 +279,7 @@ namespace Octide.ViewModel
 
         public void AddGlobalPile()
         {
-            var ret = new GroupItemModel(GlobalPiles);
+            var ret = new PileItemModel(GlobalPiles);
             GlobalPiles.Add(ret);
             Selection = ret;
             RaisePropertyChanged("GlobalPiles");
