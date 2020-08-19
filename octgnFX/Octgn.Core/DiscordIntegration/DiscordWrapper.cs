@@ -28,13 +28,15 @@ namespace Octgn.Core.DiscordIntegration
 
         private readonly Discord.Discord _discord;
         private readonly Timer _updateTimer;
+        private readonly Discord.ActivityManager _activityManager;
 
         private static readonly DateTime _epoch = new DateTime(1970, 1, 1);
 
         public DiscordWrapper() {
-            _discord = new Discord.Discord(_clientId, (UInt64)Discord.CreateFlags.Default);
-            _discord.ActivityManagerInstance.OnActivityJoin += ActivityManagerInstance_OnActivityJoin;
-            _discord.ActivityManagerInstance.OnActivitySpectate += ActivityManagerInstance_OnActivitySpectate;
+            _discord = new Discord.Discord(_clientId, (UInt64)CreateFlags.Default);
+            _activityManager = _discord.GetActivityManager() ?? throw new InvalidOperationException($"Discord ActivityManager null");
+            _activityManager.OnActivityJoin += ActivityManagerInstance_OnActivityJoin;
+            _activityManager.OnActivitySpectate += ActivityManagerInstance_OnActivitySpectate;
             _updateTimer = new Timer(UpdateDiscord, this, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
         }
 
@@ -75,9 +77,11 @@ namespace Octgn.Core.DiscordIntegration
 
         public void UpdateStatusInGame(HostedGame game, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount) {
             var activity = new Activity();
+            activity.Instance = true;
             activity.Type = ActivityType.Playing;
             activity.Details = game.GameName;
             activity.Assets.LargeImage = "bruco";
+            activity.Party.Id = game.Id.ToString();
 
             String state;
             if (isReplay) {
@@ -153,8 +157,8 @@ namespace Octgn.Core.DiscordIntegration
         protected virtual void Dispose(bool disposing) {
             if (!disposedValue) {
                 if (disposing) {
-                    _discord.ActivityManagerInstance.OnActivityJoin -= ActivityManagerInstance_OnActivityJoin;
-                    _discord.ActivityManagerInstance.OnActivitySpectate -= ActivityManagerInstance_OnActivitySpectate;
+                    _activityManager.OnActivityJoin -= ActivityManagerInstance_OnActivityJoin;
+                    _activityManager.OnActivitySpectate -= ActivityManagerInstance_OnActivitySpectate;
                 }
 
                 _discord.Dispose();
