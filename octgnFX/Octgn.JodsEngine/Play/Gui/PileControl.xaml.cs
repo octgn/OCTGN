@@ -1,8 +1,9 @@
 using System;
+using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -255,6 +256,20 @@ namespace Octgn.Play.Gui
             _fanPanel.HandDensity = DensitySlider.Value / 100;
             _fanPanel.InvalidateMeasure();
             this.InvalidateArrange();
+        }
+    }
+
+    // Because tooltips ignore StringFormat, and this way populates AutomationProperties.HelpText
+    public class SliderTooltipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString() + " Density Slider";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
