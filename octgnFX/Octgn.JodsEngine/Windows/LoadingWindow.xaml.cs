@@ -2,15 +2,10 @@ using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
-
 using Octgn.Annotations;
-using Octgn.Library;
-
 using log4net;
 using Octgn.Loaders;
 using Octgn.Launchers;
-using Octgn.Library.Exceptions;
-using System.Threading.Tasks;
 
 namespace Octgn.Windows
 {
@@ -32,57 +27,30 @@ namespace Octgn.Windows
             Log.Debug(nameof(OnWindowLoaded));
 
             var shutdown = false;
-            try {
-                UpdateStatus("Loading...");
-                Log.Info("Loading...");
 
-                await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+            UpdateStatus("Loading...");
+            Log.Info("Loading...");
 
-                var loader = new Loader();
+            await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
 
-                loader.Loaders.Add(new ConfigLoader());
-                loader.Loaders.Add(new NetworkLoader());
-                loader.Loaders.Add(new GraphicsLoader());
-                loader.Loaders.Add(new GameMessageLoader());
-                loader.Loaders.Add(new EnvironmentLoader());
-                loader.Loaders.Add(new VersionedLoader());
-                loader.Loaders.Add(new DiscordLoader());
+            var loader = new Loader();
 
-                await loader.Load(this);
+            loader.Loaders.Add(new ConfigLoader());
+            loader.Loaders.Add(new NetworkLoader());
+            loader.Loaders.Add(new GraphicsLoader());
+            loader.Loaders.Add(new GameMessageLoader());
+            loader.Loaders.Add(new EnvironmentLoader());
+            loader.Loaders.Add(new VersionedLoader());
+            loader.Loaders.Add(new DiscordLoader());
 
-                if (Program.Launcher == null) {
-                    Log.Warn($"No launcher specified, using Deck Editor");
-                    Program.Launcher = new DeckEditorLauncher();
-                }
+            await loader.Load(this);
 
-                if (!await Program.Launcher.Launch(this)) {
-                    shutdown = true;
-                }
-            } catch (UserMessageException ex) {
-                Log.Error($"Error loading: {ex.Message}", ex);
+            if (Program.Launcher == null) {
+                Log.Warn($"No launcher specified, using Deck Editor");
+                Program.Launcher = new DeckEditorLauncher();
+            }
 
-                var message = ex.Message;
-                if (X.Instance.Debug) {
-                    message = message + Environment.NewLine + ex.ToString();
-                }
-
-                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                Environment.ExitCode = 70;
-
-                shutdown = true;
-            } catch (Exception ex) {
-                Log.Error($"Error loading: {ex.Message}", ex);
-
-                var message = $"There was an error loading Octgn. Please try again. If this continues to happen, let us know.";
-                if (X.Instance.Debug) {
-                    message = message + Environment.NewLine + ex.ToString();
-                }
-
-                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                Environment.ExitCode = 69;
-
+            if (!await Program.Launcher.Launch(this)) {
                 shutdown = true;
             }
 
