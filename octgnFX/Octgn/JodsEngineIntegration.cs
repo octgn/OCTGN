@@ -176,14 +176,14 @@ namespace Octgn
         private static void DebugValidate(HostedGame hostedGame, bool isHosting) {
             DateTimeOffset minCreatedDate;
             if (isHosting)
-                minCreatedDate = DateTimeOffset.Now.AddMinutes(-2);
+                minCreatedDate = DateTimeOffset.UtcNow.AddMinutes(-2);
             else
-                minCreatedDate = DateTimeOffset.Now.AddHours(-6);
+                minCreatedDate = DateTimeOffset.UtcNow.AddHours(-6);
 
-            DateTimeOffset maxCreatedDate = DateTimeOffset.Now;
+            DateTimeOffset maxCreatedDate = DateTimeOffset.UtcNow;
 
-            Debug.Assert(hostedGame.DateCreated >= minCreatedDate, $"Hosted game DateCreated is too ancient {hostedGame.DateCreated}");
-            Debug.Assert(hostedGame.DateCreated <= maxCreatedDate, $"Hosted game DateCreated is too far in the future {hostedGame.DateCreated}");
+            Debug.Assert(hostedGame.DateCreated.UtcDateTime >= minCreatedDate, $"Hosted game DateCreated is too ancient {hostedGame.DateCreated}");
+            Debug.Assert(hostedGame.DateCreated.UtcDateTime <= maxCreatedDate, $"Hosted game DateCreated is too far in the future {hostedGame.DateCreated}");
 
             Debug.Assert(hostedGame.Id != Guid.Empty, $"Hosted game Id is empty");
         }
