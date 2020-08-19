@@ -137,7 +137,7 @@ namespace Octgn.Play
                 }
 
                 if(Program.GameEngine != null)
-                    Program.Discord.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, Program.GameEngine.IsReplay, Program.GameEngine.Spectator, Program.InPreGame, Player.AllExceptGlobal.Count());
+                    Program.Discord?.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, Program.GameEngine.IsReplay, Program.GameEngine.Spectator, Program.InPreGame, Player.AllExceptGlobal.Count());
             };
         }
 
