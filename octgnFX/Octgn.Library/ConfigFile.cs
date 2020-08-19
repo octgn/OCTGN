@@ -118,6 +118,12 @@
             return true;
         }
 
+        public void Remove(string key)
+        {
+            if (!OpenedFile) return;
+            ConfigData.Remove(key);
+        }
+
         public void Save()
         {
             if (!OpenedFile) return;

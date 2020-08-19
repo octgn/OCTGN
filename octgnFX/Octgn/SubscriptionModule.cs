@@ -95,14 +95,7 @@ namespace Octgn
                 if (Program.LobbyClient.IsConnected)
                 {
                     var client = new ApiClient();
-                    var res = IsSubbedResult.UnknownError;
-
-                    if (!String.IsNullOrWhiteSpace(Prefs.Password.Decrypt()))
-                    {
-                        res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
-                    }
-                    else
-                        res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
+                    var res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
                     switch (res)
                     {
                         case IsSubbedResult.Ok:

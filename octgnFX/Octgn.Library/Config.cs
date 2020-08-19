@@ -216,6 +216,26 @@ namespace Octgn.Library
             }
         }
 
+        public void RemoveValue(string valName)
+        {
+            try
+            {
+                var configPath = ConfigPath;
+
+                _locker.EnterWriteLock();
+                using (var cf = new ConfigFile(configPath))
+                {
+                    cf.Remove(valName);
+                    RemoveFromCache(valName);
+                    cf.Save();
+                }
+            }
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
+        }
+
         #region Cache
 
         internal bool GetFromCache<T>(string name, out T val) {
@@ -257,6 +277,20 @@ namespace Octgn.Library
                 _cacheLocker.EnterWriteLock();
                 _cache.Set(name, val, DateTime.Now.AddMinutes(1));
             } finally {
+                _cacheLocker.ExitWriteLock();
+            }
+        }
+
+        internal void RemoveFromCache(string name)
+        {
+            try
+            {
+                _cacheLocker.EnterWriteLock();
+                if (_cache.Contains(name))
+                    _cache.Remove(name, CacheEntryRemovedReason.Removed);
+            }
+            finally
+            {
                 _cacheLocker.ExitWriteLock();
             }
         }
