@@ -158,8 +158,10 @@
         private static void Validate(HostedGame hostedGame) {
             var minCreatedDate = DateTimeOffset.Now.AddHours(6);
             var maxCreatedDate = DateTimeOffset.Now.AddMinutes(1);
-            if (hostedGame.DateCreated.UtcDateTime < minCreatedDate || hostedGame.DateCreated > maxCreatedDate)
-                throw new UserMessageException($"Invalid game CreatedDate {hostedGame.DateCreated}");
+            if (hostedGame.DateCreated.UtcDateTime <= minCreatedDate)
+                throw new UserMessageException($"Invalid game CreatedDate is too ancient {hostedGame.DateCreated}");
+            if (hostedGame.DateCreated >= maxCreatedDate)
+                throw new UserMessageException($"Invalid game CreatedDate is in the future {hostedGame.DateCreated}");
 
             if (hostedGame.Id == Guid.Empty)
                 throw new UserMessageException($"Game Id Empty");
