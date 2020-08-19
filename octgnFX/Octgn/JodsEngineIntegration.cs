@@ -6,6 +6,7 @@ using log4net;
 using Octgn.Communication;
 using Octgn.Core;
 using Octgn.Library;
+using Octgn.Library.Exceptions;
 using Octgn.Online.Hosting;
 using Octgn.Tabs.Play;
 using Octgn.ViewModels;
@@ -42,7 +43,7 @@ namespace Octgn
         }
 
         public void HostGame(int? hostPort, Guid? gameId) {
-            throw new NotImplementedException();
+            throw new UserMessageException("Haven't implemented Table mode yet.");
         }
 
         public Task<bool> LaunchDeckEditor(string deckPath = null) {
