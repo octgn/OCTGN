@@ -182,7 +182,7 @@ namespace Octgn.DeckBuilder
                             }
                             catch (Exception e)
                             {
-                                new ErrorWindow(e).Show();
+                                new ErrorWindow($"Error running plugin {p.Id} {p.Name} -> ({m.Name})", e).Show();
                             }
                         };
                         MenuPlugins.Items.Add(mi);
