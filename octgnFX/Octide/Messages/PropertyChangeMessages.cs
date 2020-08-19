@@ -53,10 +53,10 @@ namespace Octide.Messages
         public GroupChangedMessage() { }
         public GroupChangedMessage(NotifyCollectionChangedEventArgs args)
         {
-            Group = GetObject(args) as GroupItemModel;
+            Group = GetObject(args) as PileItemModel;
             Action = GetEnum(args);
         }
-        public GroupItemModel Group { get; set; }
+        public BaseGroupItemModel Group { get; set; }
     }
 
     public class CustomPropertyChangedMessage : PropertyChangedMessage

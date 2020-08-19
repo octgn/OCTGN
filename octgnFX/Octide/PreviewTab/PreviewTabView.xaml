@@ -314,8 +314,8 @@
             <ContentControl.Resources>
 
 
-                <DataTemplate DataType="{x:Type model:GroupItemModel}" >
-                    <views:GroupItemView />
+                <DataTemplate DataType="{x:Type model:PileItemModel}" >
+                    <views:PileItemView />
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type model:CounterItemModel}" >

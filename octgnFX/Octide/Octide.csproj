@@ -253,6 +253,10 @@
     <Compile Include="PreviewTab\ActionMenu\ActionSubmenuItemModel.cs" />
     <Compile Include="PreviewTab\ActionMenu\IBaseAction.cs" />
     <Compile Include="PreviewTab\BoardItemModel.cs" />
+    <Compile Include="PreviewTab\BaseGroupItemModel.cs" />
+    <Compile Include="PreviewTab\PileItemView.cs">
+      <DependentUpon>PileItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProxyTab\DragDropHandlers\LinkContainerDropHandler.cs" />
     <Compile Include="ProxyTab\DragDropHandlers\TemplateDragHandler.cs" />
     <Compile Include="ProxyTab\DragDropHandlers\TemplateDropHandler.cs" />
@@ -289,7 +293,7 @@
     <Compile Include="SetTab\CardTab\Property.cs" />
     <Compile Include="SetTab\CardTab\Card.cs" />
     <Compile Include="PreviewTab\CounterItemModel.cs" />
-    <Compile Include="PreviewTab\GroupItemModel.cs" />
+    <Compile Include="PreviewTab\PileItemModel.cs" />
     <Compile Include="SetTab\CardTab\CardItemView.xaml.cs">
       <DependentUpon>CardItemView.xaml</DependentUpon>
     </Compile>
@@ -412,9 +416,6 @@
     <Compile Include="GameTab\PropertyTab\PropertyTabView.xaml.cs">
       <DependentUpon>PropertyTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PreviewTab\GroupItemView.xaml.cs">
-      <DependentUpon>GroupItemView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PreviewTab\PreviewTabView.xaml.cs">
       <DependentUpon>PreviewTabView.xaml</DependentUpon>
     </Compile>
@@ -509,6 +510,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GameTab\GameModeTab\GameModeTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewTab\PileItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -633,10 +638,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GameTab\PropertyTab\PropertyTabView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PreviewTab\GroupItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -10,11 +10,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Octide"
              mc:Ignorable="d" 
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             params:Design.Theme="Dark"
              d:DesignHeight="600" d:DesignWidth="800" >
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" >
         <ItemsControl Style="{StaticResource OctideInputPanel}" >
             <TextBlock Text="Table Editor" />
+
+            <TextBlock Text="Table Visibility"/>
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Content="Everybody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Everybody}"/>
+                <RadioButton Content="Nobody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Nobody}"/>
+                <RadioButton Content="Owner" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Owner}"/>
+                <RadioButton Content="Undefined" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Undefined}"/>
+                <RadioButton Content="Custom" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Custom}"/>
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Background"/>

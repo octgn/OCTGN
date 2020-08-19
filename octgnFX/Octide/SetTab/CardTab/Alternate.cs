@@ -420,12 +420,6 @@ namespace Octide.SetTab.ItemModel
             allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.NameProperty, _cachedValue = Name });
             allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.SizeProperty, _cachedValue = SizeProperty.Name });
 
-            foreach (var x in allCardProperties)
-            {
-                var y = x._cachedValue;
-                var z = x.Name;
-            }
-
             ActiveTextLayers = new ObservableCollection<ProxyTextBlockItemModel>(
                 activeTemplate._def
                 .GetTextBlocks(properties)

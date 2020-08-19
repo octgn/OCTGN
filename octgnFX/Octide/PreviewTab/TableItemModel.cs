@@ -19,7 +19,7 @@ using Octide.ViewModel;
 
 namespace Octide.ItemModel
 {
-    public class TableItemModel : GroupItemModel
+    public class TableItemModel : PileItemModel
     {
         private double _zoom;
         private Vector _offset;
@@ -30,7 +30,7 @@ namespace Octide.ItemModel
         public TableItemModel(Group group, IdeCollection<IdeBaseItem> src) : base(group, src)
         {
             Background = new AssetController(AssetType.Image);
-            Background.Register(_group.Background);
+            Background.Register(group.Background);
             Background.PropertyChanged += BackgroundAssetUpdated;
             Zoom = 1;
             CenterView();

@@ -17,7 +17,7 @@ namespace Octide.ItemModel
         public DeckSectionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             _deckSection = new DeckSection();
-            SelectedGroup = (GroupItemModel)Groups.First();
+            SelectedGroup = (PileItemModel)Groups.First();
             Name = "New Section";
 
         //    Messenger.Default.Register<GroupChangedMessage>(this, action => UpdateDeckSectionDef(action));
@@ -68,11 +68,11 @@ namespace Octide.ItemModel
         }
 
 
-        public GroupItemModel SelectedGroup
+        public PileItemModel SelectedGroup
         {
             get
             {
-                return (GroupItemModel)Groups.FirstOrDefault(x => ((GroupItemModel)x)._group == _deckSection.Group);
+                return (PileItemModel)Groups.FirstOrDefault(x => ((PileItemModel)x)._group == _deckSection.Group);
             }
             set
             {

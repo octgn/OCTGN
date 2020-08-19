@@ -9,9 +9,9 @@ namespace Octide.Views
     /// <summary>
     /// Interaction logic for GroupItemView.xaml
     /// </summary>
-    public partial class GroupItemView : UserControl
+    public partial class PileItemView : UserControl
     {
-        public GroupItemView()
+        public PileItemView()
         {
             InitializeComponent();
         }

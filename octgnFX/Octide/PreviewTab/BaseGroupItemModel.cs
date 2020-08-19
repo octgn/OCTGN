@@ -7,27 +7,23 @@ using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
 using Octgn.DataNew.Entities;
 using Octide.Messages;
-using Octide.ViewModel;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Octide.ItemModel
 {
-    public class GroupItemModel : IdeBaseItem
+    public class BaseGroupItemModel : IdeBaseItem
     {
         public Group _group;
-        public bool _isHand;
 
         public IdeCollection<IdeBaseItem> GroupActions { get; set; }
         public IdeCollection<IdeBaseItem> CardActions { get; set; }
-        public AssetController Asset { get; set; }
-
-        public GroupItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
+        public BaseGroupItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
+
             NewActionCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewAction);
             NewSubmenuCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSubmenu);
             NewSeparatorCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSeparator);
@@ -44,15 +40,11 @@ namespace Octide.ItemModel
             {
                 _group.CardActions = CardActions.Select(x => ((IBaseAction)x)._action);
             };
-            Asset = new AssetController(AssetType.Image);
-            _group.Icon = Asset.FullPath;
-            Asset.PropertyChanged += AssetUpdated;
-            Name = "New Group";
-            RaisePropertyChanged("Asset");
         }
 
-        public GroupItemModel(Group g, IdeCollection<IdeBaseItem> source) : base(source) //load
+        public BaseGroupItemModel(Group g, IdeCollection<IdeBaseItem> source) : base(source) //load item
         {
+
             NewActionCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewAction);
             NewSubmenuCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSubmenu);
             NewSeparatorCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSeparator);
@@ -77,28 +69,20 @@ namespace Octide.ItemModel
             {
                 _group.CardActions = CardActions.Select(x => ((IBaseAction)x)._action);
             };
-            Asset = new AssetController(AssetType.Image);
-            Asset.Register(g.Icon);
-            Asset.PropertyChanged += AssetUpdated;
         }
 
-        public GroupItemModel(GroupItemModel g, IdeCollection<IdeBaseItem> source) : base(source) // copy item
+        public BaseGroupItemModel(BaseGroupItemModel g, IdeCollection<IdeBaseItem> source) : base(source) //copy item
         {
+            _group = new Group
+            {
+                Visibility = g.GroupVisibility,
+            };
+            Name = g.Name;
+
             NewActionCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewAction);
             NewSubmenuCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSubmenu);
             NewSeparatorCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSeparator);
             ActionsDropHandler = new ActionsDropHandler();
-
-            _group = new Group
-            {
-                Visibility = g.GroupVisibility,
-                Shortcut = g.Shortcut,
-                Ordered = g.Ordered,
-                MoveTo = g.MoveTo,
-                ViewState = g.ViewState
-            };
-
-            Name = g.Name;
 
             GroupActions = new IdeCollection<IdeBaseItem>(this);
             GroupActions.CollectionChanged += (a, b) =>
@@ -115,40 +99,9 @@ namespace Octide.ItemModel
             };
             foreach (var item in g.CardActions)
                 CardActions.Add(IBaseAction.CopyActionItems(item, CardActions));
-            
-            Asset = new AssetController(AssetType.Image);
-            Asset.Register(g._group.Icon);
-            _group.Icon = Asset.FullPath;
-            Asset.PropertyChanged += AssetUpdated;
         }
 
-        private void AssetUpdated(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Path")
-            {
-                _group.Icon = Asset.FullPath;
-                RaisePropertyChanged("Asset");
-                RaisePropertyChanged("Icon");
-            }
-        }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
-        }
-
-        public override object Clone()
-        {
-            return new GroupItemModel(this, Source);
-        }
-        public override object Create()
-        {
-            return new GroupItemModel(Source);
-        }
-
-        public IEnumerable<string> UniqueNames => Source.Select(x => ((GroupItemModel)x).Name);
-        public new string Icon => Asset.SafePath;
-
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((PileItemModel)x).Name);
         public string Name
         {
             get
@@ -178,64 +131,6 @@ namespace Octide.ItemModel
             }
         }
 
-        public GroupViewState ViewState
-        {
-            get
-            {
-                return _group.ViewState;
-            }
-            set
-            {
-                if (_group.ViewState == value) return;
-                _group.ViewState = value;
-                RaisePropertyChanged("ViewState");
-            }
-        }
-
-        public bool MoveTo
-        {
-
-            get
-            {
-                return _group.MoveTo;
-            }
-            set
-            {
-                if (value == _group.MoveTo) return;
-                _group.MoveTo = value;
-                RaisePropertyChanged("MoveTo");
-            }
-        }
-
-        public bool Ordered
-        {
-
-            get
-            {
-                return _group.Ordered;
-            }
-            set
-            {
-                if (value == _group.Ordered) return;
-                _group.Ordered = value;
-                RaisePropertyChanged("Ordered");
-            }
-        }
-
-
-        public string Shortcut
-        {
-            get
-            {
-                return _group.Shortcut;
-            }
-            set
-            {
-                if (value == _group.Shortcut) return;
-                _group.Shortcut = value;
-                RaisePropertyChanged("Shortcut");
-            }
-        }
 
         #region ActionMenu
 
@@ -247,27 +142,26 @@ namespace Octide.ItemModel
 
         private void NewAction(IdeCollection<IdeBaseItem> actions)
         {
-            actions.Add(new ActionItemModel(actions) );
+            actions.Add(new ActionItemModel(actions));
         }
 
         private void NewSubmenu(IdeCollection<IdeBaseItem> actions)
         {
-            actions.Add(new ActionSubmenuItemModel(actions) );
+            actions.Add(new ActionSubmenuItemModel(actions));
         }
 
         private void NewSeparator(IdeCollection<IdeBaseItem> actions)
         {
-            actions.Add(new ActionSeparatorItemModel(actions) );
+            actions.Add(new ActionSeparatorItemModel(actions));
         }
         #endregion
     }
-
     public class ActionsDropHandler : IDropTarget
     {
         public void Drop(IDropInfo dropInfo)
         {
             GongSolutions.Wpf.DragDrop.DragDrop.DefaultDropHandler.Drop(dropInfo);
-         //   (dropInfo.Data as IBaseAction).ItemSource = ((IBaseAction)dropInfo.TargetItem).ItemSource;
+            //   (dropInfo.Data as IBaseAction).ItemSource = ((IBaseAction)dropInfo.TargetItem).ItemSource;
             (dropInfo.Data as IBaseAction).Source = dropInfo.TargetCollection as IdeCollection<IdeBaseItem>;
             //   (dropInfo.Data as IBaseAction).IsGroup = ((dropInfo.VisualTarget as TreeView).Name == "GroupActions") ? true : false;
         }
@@ -283,4 +177,3 @@ namespace Octide.ItemModel
         }
     }
 }
-
