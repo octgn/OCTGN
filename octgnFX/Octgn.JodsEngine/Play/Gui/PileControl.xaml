@@ -3,6 +3,10 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
                      xmlns:ctrl="clr-namespace:Octgn.Controls">
 
+    <gui:PileBaseControl.Resources>
+        <gui:SliderTooltipConverter x:Key="SliderTooltipConverter" />
+    </gui:PileBaseControl.Resources>
+    
     <gui:PileBaseControl.LayoutTransform>
         <ScaleTransform x:Name="scaleTransform" />
     </gui:PileBaseControl.LayoutTransform>
@@ -77,11 +81,12 @@
 
                 <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" Height="16" HorizontalAlignment="Right" />
 
-                <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" 
-                   Style="{x:Null}" />
+                <TextBlock Text="{Binding Cards.Count}" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                           TextAlignment="Right" FontWeight="Bold" Margin="5 0 0 0" Style="{x:Null}" />
 
-                <Slider Width="80" x:Name="DensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" ToolTip="Adjust Card Density" HorizontalAlignment="Left" 
-                        LargeChange="10" SmallChange="1" TickFrequency="25" AutoToolTipPlacement="TopLeft" 
+                <Slider Width="80" x:Name="DensitySlider" HorizontalAlignment="Left" Visibility="Collapsed"
+                        ToolTip="{Binding Name, Converter={StaticResource SliderTooltipConverter}}" AutoToolTipPlacement="TopLeft" 
+                        TickPlacement="BottomRight" TickFrequency="25" LargeChange="10" SmallChange="1" Maximum="100" Minimum="1" 
                         Thumb.DragStarted="DensitySlider_DragStarted" Thumb.DragCompleted="DensitySlider_DragCompleted" />
 
                 <Button Style="{StaticResource RightArrowButtonStyle}" Margin="5 0 0 0" HorizontalAlignment="Right"

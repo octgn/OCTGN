@@ -393,7 +393,7 @@
                           DragDelta="GridSplitter_DragDelta" Margin="300,0,0,0">
             <GridSplitter.Template>
                 <ControlTemplate TargetType="{x:Type GridSplitter}">
-                    <Grid Background="#55333333" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid Background="#55333333" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Focusable="False">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                             <Image Source="pack://application:,,,/Octgn.JodsEngine;component/Resources/greybullet.png" />
                             <Image Source="pack://application:,,,/Octgn.JodsEngine;component/Resources/greybullet.png" />

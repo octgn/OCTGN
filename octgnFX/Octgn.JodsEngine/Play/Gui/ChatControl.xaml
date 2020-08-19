@@ -25,7 +25,7 @@
                 <CheckBox Content="Hide Debug" Foreground="Black" Visibility="{Binding DevMode,ElementName=Me,Converter={StaticResource BooleanToVisibilityConverter}}" IsChecked="{Binding ElementName=Me,Path=HideDebug}"></CheckBox>
             </StackPanel>
 
-            <RichTextBox x:Name="output" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
+            <RichTextBox x:Name="output" AutomationProperties.Name="Chat/Game Log" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
                    BorderThickness="0" Background="Transparent" Grid.Row="1" FontSize="{Binding ElementName=Me, Path=ChatFontSize}">
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type Paragraph}">
@@ -36,9 +36,9 @@
 
             <Rectangle Fill="White" Grid.Row="2" Height="1" />
 
-            <TextBox x:Name="input" Grid.Row="3" KeyDown="KeyDownHandler" GotFocus="InputGotFocus" LostFocus="InputLostFocus"
+            <TextBox x:Name="input" Grid.Row="3" KeyDown="KeyDownHandler" GotFocus="InputGotFocus" LostFocus="InputLostFocus" AutomationProperties.Name="Chat Input"
                BorderThickness="1" Background="Transparent" Style="{x:Null}" DataContext="{Binding ElementName=Me}"  Visibility="{Binding ShowInput,Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <TextBlock x:Name="watermark" Grid.Row="3" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False"
+            <TextBlock x:Name="watermark" Grid.Row="3" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False" IsEnabled="False"
                  Text="Type here to chat" Style="{StaticResource HintText}" DataContext="{Binding ElementName=Me}"  Visibility="{Binding ShowInput,Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
     </Border>
