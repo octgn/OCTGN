@@ -269,6 +269,7 @@ namespace Octgn.Controls
                 OctgnVersion = octgnVersion.ToString(),
                 GameIconUrl = game.IconUrl,
                 Spectators = true,
+                DateCreated = DateTimeOffset.Now
             };
             if (Program.LobbyClient?.User != null) {
                 hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
