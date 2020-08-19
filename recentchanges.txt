@@ -1,1 +1,2 @@
 Minor accessibility improvements - Ben
+Minor improvments to card fan performance - Ben
