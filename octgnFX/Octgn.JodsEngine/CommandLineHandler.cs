@@ -7,6 +7,7 @@
     using log4net;
     using Octgn.DataNew;
     using Octgn.Launchers;
+    using Octgn.Library.Exceptions;
     using Octgn.Online.Hosting;
 
     public class CommandLineHandler
@@ -138,6 +139,9 @@
                 {
                     return new DeckEditorLauncher(deckPath);
                 }
+            }
+            catch (UserMessageException) {
+                throw;
             }
             catch (Exception e)
             {
