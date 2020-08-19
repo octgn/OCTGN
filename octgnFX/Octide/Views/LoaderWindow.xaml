@@ -21,6 +21,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Foreground="WhiteSmoke" Text="OCTGN Game Development Studio" FontFamily="EucrosiaUPC" FontSize="30" HorizontalAlignment="Center"/>
         <Grid Grid.Row="1">
@@ -51,7 +52,8 @@
                 -->
             </DockPanel>
         </Grid>
-        <Border Grid.Row="2" Margin="5" BorderThickness="0" Background="Transparent">
+        <TextBlock TextWrapping="Wrap" Margin="10" Grid.Row="2" Text="WARNING: This app is still in development and may not be stable.  Make sure to create a backup of any game files before attempting to load it." />
+        <Border Grid.Row="3" Margin="5" BorderThickness="0" Background="Transparent">
             <TextBlock HorizontalAlignment="Right" Foreground="DarkGray">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="Version: {0}">
