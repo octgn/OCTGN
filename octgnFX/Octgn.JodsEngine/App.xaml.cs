@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Octgn.Library;
@@ -12,12 +11,12 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using Octgn.Core;
 using Octgn.Library.Exceptions;
-
 using log4net;
 using Octgn.Utils;
 using Octgn.Communication;
 using System.Threading;
-using System.Runtime.CompilerServices;
+using Octgn.Windows;
+using System.Threading.Tasks;
 
 namespace Octgn
 {
@@ -28,18 +27,7 @@ namespace Octgn
         protected override void OnStartup(StartupEventArgs e) {
             Thread.CurrentThread.Name = "MAIN";
 
-            { // Configure logging
-                GlobalContext.Properties["version"] = Const.OctgnVersion;
-                GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
-
-                var repository = LogManager.GetRepository(Assembly.GetCallingAssembly());
-
-                var fileInfo = new FileInfo("logging.config");
-
-                log4net.Config.XmlConfigurator.Configure(repository, fileInfo);
-
-                LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
-            }
+            ConfigureLogging();
 
             var i = 0;
             foreach (var arg in e.Args) {
@@ -57,38 +45,39 @@ namespace Octgn
             base.OnStartup(e);
         }
 
-        private static void ShowUserMessageException(UserMessageException userMessageException) {
-            switch (userMessageException.Mode) {
-                case UserMessageExceptionMode.Blocking:
-                    ShowErrorMessageBox("Error", userMessageException.Message);
+        private static void ConfigureLogging() {
+            GlobalContext.Properties["version"] = Const.OctgnVersion;
+            GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
 
-                    break;
-                case UserMessageExceptionMode.Background:
-                    //TODO: Show windows/growl notification
-                    Log.Error($"Can not show background error to user.");
-                    Debug.Fail($"Can not show background error to user");
+            var repository = LogManager.GetRepository(Assembly.GetCallingAssembly());
 
-                    break;
-                default:
-                    Log.Error($"{nameof(UserMessageExceptionMode)}.{userMessageException.Mode} not implemented.");
+            var fileInfo = new FileInfo("logging.config");
 
-                    break;
-            }
+            log4net.Config.XmlConfigurator.Configure(repository, fileInfo);
+
+            LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
         }
 
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
-            if (e.Exception is UserMessageException userMessageException) {
-                ShowUserMessageException(userMessageException);
-
-                e.Handled = true;
-            }
             if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)) {
                 e.Handled = true;
+            } else {
+                e.Handled = true;
+
+                HandleUnhandledException(e.Exception);
             }
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
-            var ex = (Exception)e.ExceptionObject;
+            HandleUnhandledException((Exception)e.ExceptionObject);
+        }
+
+        private void Signal_OnException(object sender, ExceptionEventArgs args) {
+            Log.Warn("Signal_OnException: " + args.Message, args.Exception);
+            HandleUnhandledException(args.Exception);
+        }
+
+        private static void HandleUnhandledException(Exception ex) {
             var handled = false;
             var ge = Program.GameEngine;
             var gameString = "";
@@ -98,50 +87,112 @@ namespace Octgn
             if (ex is UserMessageException userMessageException) {
                 Log.Warn("Unhandled UserMessageException " + gameString, ex);
 
-                ShowUserMessageException(userMessageException);
+                switch (userMessageException.Mode) {
+                    case UserMessageExceptionMode.Blocking:
+                        ShowErrorMessageBox(userMessageException);
 
-                handled = true;
-            } else if (ex is XamlParseException) {
-                var er = ex as XamlParseException;
-                Log.Warn("unhandled exception " + gameString, ex);
-                handled = true;
-                ShowErrorMessageBox("Error", "There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
-            } else if (ex is IOException && (ex as IOException).Message.Contains("not enough space")) {
-                handled = true;
-                ShowErrorMessageBox("Error", "Your computer has run out of hard drive space and OCTGN will have to shut down. Please resolve this before opening OCTGN back up again.");
-            }
-            if (!handled) {
-                if (e.IsTerminating)
-                    Log.Fatal("UNHANDLED EXCEPTION " + gameString, ex);
-                else
-                    Log.Error("UNHANDLED EXCEPTION " + gameString, ex);
-            }
-            if (e.IsTerminating) {
-                var exceptionString = string.Empty;
-                if (Program.IsReleaseTest || X.Instance.Debug) {
-                    exceptionString = Environment.NewLine + Environment.NewLine + ex.ToString();
+                        handled = true;
 
-                    ShowErrorMessageBox("Error", exceptionString);
-                } else {
-                    if (handled)
-                        ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!" + exceptionString);
-                    else
-                        ShowErrorMessageBox("Error", "Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!" + exceptionString);
+                        break;
+                    case UserMessageExceptionMode.Background:
+                        //TODO: Show windows/growl notification
+                        Log.Error($"Can not show background error to user.");
+                        Debug.Fail($"Can not show background error to user");
+
+                        handled = true;
+
+                        break;
+                    default:
+                        Log.Error($"{nameof(UserMessageExceptionMode)}.{userMessageException.Mode} not implemented.");
+
+                        break;
                 }
-                Sounds.Close();
-                Application.Current.Shutdown(-1);
+            } else if (ex is XamlParseException er) {
+                Log.Warn("unhandled exception " + gameString, ex);
+
+                ShowErrorMessageBox(
+                    "There was an unexpected error.\nIf you are using Wine(linux/mac) most likely you didn't set it up right.\nIf you are running on windows, then you should try and repair your .net installation and/or update windows.\nYou can also try reinstalling OCTGN.",
+                    ex);
+
+                handled = true;
+            } else if (ex is IOException && (ex as IOException).Message.Contains("not enough space")) {
+                Log.Warn("unhandled exception out of space ", ex);
+
+                ShowErrorMessageBox(
+                    "Your computer has run out of hard drive space and OCTGN will have to shut down. Please resolve this before opening OCTGN back up again.",
+                    ex);
+
+                handled = true;
+            }
+
+            if (!handled) {
+                Log.Fatal("UNHANDLED EXCEPTION " + gameString, ex);
+
+                ShowErrorMessageBox("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", ex);
+            }
+
+            Program.Exit();
+        }
+
+        private static void ShowErrorMessageBox(UserMessageException exception) {
+            ShowErrorMessageBox(exception.Message, exception);
+        }
+
+        private static void ShowErrorMessageBox(string message, Exception exception) {
+            if (Current.Dispatcher.Thread == Thread.CurrentThread) {
+                ShowErrorMessageBoxSync(message, exception);
+            } else {
+                ShowErrorMessageBoxAsync(message, exception).Wait();
             }
         }
 
-        private void Signal_OnException(object sender, ExceptionEventArgs args) {
-            Log.Warn("Signal_OnException: " + args.Message, args.Exception);
-            Application.Current.Dispatcher.InvokeAsync(() => {
-                CurrentDomainUnhandledException(sender, new UnhandledExceptionEventArgs(args.Exception, true));
-            });
+        private static void ShowErrorMessageBoxSync(string message, Exception exception) {
+            Current.Dispatcher.VerifyAccess(); // Consider calling ShowErrorMessageBox
+
+            try {
+                var window = new ErrorWindow(message, exception);
+
+                window.ShowDialog();
+            } catch (Exception ex) {
+                Log.Error($"Error showing error window {ex}");
+            }
         }
 
-        private static void ShowErrorMessageBox(string title, string message) {
-            Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+        private static async Task ShowErrorMessageBoxAsync(string message, Exception exception) {
+            if (Current.Dispatcher.Thread == Thread.CurrentThread) // Consider calling ShowErrorMessageBox
+                throw new InvalidOperationException($"Do not run this from the Dispatcher thread");
+
+            try {
+                ErrorWindow errorWindow; // Do not set errorWindow to null here, instead consider fixing your broken ass logic.
+                using (var cancellationSource = new CancellationTokenSource(TimeSpan.FromSeconds(5))) {
+                    // This timeout stuff here is mostly to catch any dispatcher deadlocks
+
+                    var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), cancellationSource.Token); // Just in case it doesn't respect the cancellation token
+
+                    var createWindowTask = Current.Dispatcher.InvokeAsync(()
+                        => new ErrorWindow(message, exception), DispatcherPriority.Normal, cancellationSource.Token);
+
+                    var completedTask = await Task.WhenAny(timeoutTask, createWindowTask.Task);
+
+                    if (completedTask == timeoutTask)
+                        throw new TimeoutException("Timed out creating ErrorWindow. Dispatcher failed to respect CancellationToken");
+
+                    if (completedTask != createWindowTask.Task) throw new InvalidOperationException("Task wait logic is borked");
+
+                    try {
+                        errorWindow = await createWindowTask.Task;
+                    } catch (OperationCanceledException ex) {
+                        throw new TimeoutException("Timed out creating ErrorWindow");
+                    }
+                }
+
+                // If we survived the onslaught above, the Dispatcher isn't locked up, so just call like normal
+                Current.Dispatcher.Invoke(() => {
+                    errorWindow.ShowDialog();
+                });
+            } catch (Exception ex) {
+                Log.Error($"Error showing error window {ex}");
+            }
         }
 
         protected override void OnExit(ExitEventArgs e) {
