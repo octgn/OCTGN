@@ -17,6 +17,7 @@ using log4net;
 using Octgn.Utils;
 using Octgn.Communication;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace Octgn
 {
@@ -48,7 +49,7 @@ namespace Octgn
             }
 
             Signal.OnException += Signal_OnException;
-            if (!X.Instance.Debug) {
+            if (!Debugger.IsAttached) {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                 Dispatcher.UnhandledException += CurrentOnDispatcherUnhandledException;
             }
@@ -116,10 +117,17 @@ namespace Octgn
                     Log.Error("UNHANDLED EXCEPTION " + gameString, ex);
             }
             if (e.IsTerminating) {
-                if (handled)
-                    ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!");
-                else
-                    ShowErrorMessageBox("Error", "Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!");
+                var exceptionString = string.Empty;
+                if (Program.IsReleaseTest || X.Instance.Debug) {
+                    exceptionString = Environment.NewLine + Environment.NewLine + ex.ToString();
+
+                    ShowErrorMessageBox("Error", exceptionString);
+                } else {
+                    if (handled)
+                        ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!" + exceptionString);
+                    else
+                        ShowErrorMessageBox("Error", "Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!" + exceptionString);
+                }
                 Sounds.Close();
                 Application.Current.Shutdown(-1);
             }
