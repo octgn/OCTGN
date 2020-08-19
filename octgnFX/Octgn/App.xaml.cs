@@ -76,6 +76,9 @@ namespace Octgn
                 return;
             }
 
+            Log.Info("Cleaning up Config");
+            Config.Instance.RemoveValue("Password");
+
             Environment.SetEnvironmentVariable("OCTGN_DATA", Config.Instance.DataDirectoryFull, EnvironmentVariableTarget.Process);
 
             if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {

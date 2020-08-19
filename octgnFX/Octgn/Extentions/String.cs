@@ -26,7 +26,6 @@ namespace Octgn.Extentions
 
         public static string Encrypt(this string text)
         {
-            // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
             var un = (Prefs.Username ?? string.Empty).Clone() as string;
             byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(un));
