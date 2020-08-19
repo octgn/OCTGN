@@ -25,6 +25,8 @@ namespace Octgn
         private readonly static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public Task<bool> HostGame(HostedGame hostedGame, string username, string password) {
+            DebugValidate(hostedGame, true);
+
             var args = "-h ";
 
             new HostedGameProcess(
@@ -61,6 +63,8 @@ namespace Octgn
 
             var hostedGame = hostedGameViewModel.HostedGame;
 
+            DebugValidate(hostedGame, false);
+
             var args = "-j ";
 
             new HostedGameProcess(
@@ -90,6 +94,8 @@ namespace Octgn
                 HostAddress = $"{host}:{port}",
                 Password = password
             };
+
+            DebugValidate(hostedGame, false);
 
             var args = "-j ";
 
@@ -167,6 +173,21 @@ namespace Octgn
             }
 
             return true;
+        }
+
+        private static void DebugValidate(HostedGame hostedGame, bool isHosting) {
+            DateTimeOffset minDate;
+            if (isHosting)
+                minDate = DateTimeOffset.Now.AddMinutes(-2);
+            else
+                minDate = DateTimeOffset.Now.AddHours(-6);
+
+            DateTimeOffset maxStartDate = DateTimeOffset.Now;
+
+            Debug.Assert(hostedGame.DateStarted > minDate, $"Hosted game DateStarted is too ancient {hostedGame.DateStarted}");
+            Debug.Assert(hostedGame.DateStarted < maxStartDate, $"Hosted game DateStarted is too far in the future {hostedGame.DateStarted}");
+
+            Debug.Assert(hostedGame.Id != Guid.Empty, $"Hosted game Id is empty");
         }
     }
 }
