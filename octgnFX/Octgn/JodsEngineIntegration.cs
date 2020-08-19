@@ -17,7 +17,6 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Octgn
 {
@@ -154,9 +153,7 @@ namespace Octgn
                     }, cts.Token);
                 }
             } catch (OperationCanceledException) {
-                Log.Warn("Engine did not show UI withing alloted time.");
-
-                MessageBox.Show("Engine appears to be frozen, please try again. If this continues to happen, let us know.", "Frozen Engine", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Warn("Engine did not show UI withing alloted time. Probably frozen.");
 
                 try {
                     proc.Kill();
@@ -168,7 +165,7 @@ namespace Octgn
             }
 
             if (proc.HasExited) {
-                MessageBox.Show("Engine prematurely shutdown, please try again. If this continues to happen, let us know.", "Engine Shutdown", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Warn("Engine prematurely shutdown");
 
                 return false;
             }
