@@ -6,7 +6,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
-using Octgn.Core.DataExtensionMethods;
 using Octgn.DataNew.Entities;
 using Octgn.Library;
 using Octide.ItemModel;
@@ -18,11 +17,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -122,7 +118,7 @@ namespace Octide.SetTab.ItemModel
                     break;
             }
             if (Source.SelectedItem == this)
-              RaisePropertyChanged("GetProperties");
+                RaisePropertyChanged("GetProperties");
         }
         public void CardSizeChanged(CardSizeChangedMesssage message)
         {
@@ -209,81 +205,85 @@ namespace Octide.SetTab.ItemModel
 
         #region image section
 
-        public Card GetTempCard()
-        {
-            var ret = ((CardModel)Source.Parent)._card.Clone();
-            ret.Alternate = _altDef.Type;
-            return ret;
-        }
-
-        public BitmapImage CardImage
+        private string _cardImage;
+        public string CardImage
         {
             get
             {
-                return GetImage();
+                if (_cardImage == null)
+                {
+                    _cardImage = GetImages()?.FirstOrDefault() ?? SizeProperty.BackAsset.SafePath;
+                }
+                return _cardImage;
+            }
+            set
+            {
+                if (_cardImage == value) return;
+                _cardImage = value;
+                RaisePropertyChanged("CardImage");
             }
         }
-        
-        public BitmapImage GetImage()
+
+        public CardModel Card => Source.Parent as CardModel;
+        public SetModel Set => Card.Source.Parent as SetModel;
+
+        public string imageDirectory => Path.Combine(
+                        Config.Instance.ImageDirectoryFull,
+                        ViewModelLocator.GameLoader.Game.Id.ToString(),
+                        "Sets",
+                        Set.Id.ToString(),
+                        "Cards"
+                        );
+
+        public string proxyDirectory => Path.Combine(imageDirectory, "Proxies");
+
+        public string imageFileName
         {
-            var defaultCardBack = "pack://application:,,,/Resources/Back.png";
-            var tempCard = GetTempCard();
-            var files = Directory.GetFiles(tempCard.GetSet().ImagePackUri, tempCard.GetImageUri() + ".*")
+            get
+            {
+                var ret = Card.Id.ToString();
+                if (Type != "")
+                {
+                    ret += "." + Type;
+                }
+                return ret;
+            }
+        }
+
+        public string[] GetImages()
+        {
+            if (!Directory.Exists(imageDirectory)) return null;
+
+            return Directory.GetFiles(imageDirectory, imageFileName + ".*")
                             .Where(x => Path.GetFileNameWithoutExtension(x)
-                            .Equals(tempCard.GetImageUri(), StringComparison.InvariantCultureIgnoreCase))
-                            .OrderBy(x => x.Length)
-                            .ToArray();
-            if (files.Length > 0) defaultCardBack = tempCard.GetPicture();
-            Stream imageStream = null;
-            if (defaultCardBack.StartsWith("pack"))
-            {
-                var sri = Application.GetResourceStream(new Uri(defaultCardBack));
-                imageStream = sri.Stream;
-            }
-            else
-            {
-                imageStream = File.OpenRead(defaultCardBack);
-            }
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-            image.StreamSource = imageStream;
-            image.EndInit();
-            imageStream.Close();
-            return image;
+                            .Equals(imageFileName, StringComparison.InvariantCultureIgnoreCase))
+                            .OrderBy(x => x.Length).ToArray();
         }
 
         public void DeleteImage()
         {
-            var garbage = Config.Instance.Paths.GraveyardPath;
-            if (!Directory.Exists(garbage))
-                Directory.CreateDirectory(garbage);
-            var tempCard = GetTempCard();
-
-            var files =
-                Directory.GetFiles(tempCard.GetSet().ImagePackUri, tempCard.GetImageUri() + ".*")
-                    .Where(x => Path.GetFileNameWithoutExtension(x)
-                    .Equals(tempCard.GetImageUri(), StringComparison.InvariantCultureIgnoreCase))
-                    .OrderBy(x => x.Length)
-                    .ToArray();
-            if (files.Length == 0) return;
-
-            // Delete all the old picture files
-            foreach (var f in files.Select(x => new FileInfo(x)))
+            var images = GetImages();
+            if (images?.Length > 0)
             {
-                f.MoveTo(Path.Combine(garbage, f.Name));
+                var garbage = Config.Instance.Paths.GraveyardPath;
+                if (!Directory.Exists(garbage))
+                    Directory.CreateDirectory(garbage);
+                CardImage = SizeProperty.BackAsset.SafePath;
+                // Delete all the old picture files
+                foreach (var image in images.Select(x => new FileInfo(x)))
+                {
+                    image.MoveTo(Path.Combine(garbage, image.Name));
+                }
             }
-            RaisePropertyChanged("CardImage");
         }
 
         public void SaveImage(string file)
         {
-            var tempCard = GetTempCard();
             DeleteImage();
-            var newPath = Path.Combine(tempCard.GetSet().ImagePackUri, tempCard.GetImageUri() + Path.GetExtension(file));
+            Directory.CreateDirectory(imageDirectory);
+            var newPath = Path.Combine(imageDirectory, imageFileName + Path.GetExtension(file));
             File.Copy(file, newPath);
-            RaisePropertyChanged("CardImage");
+            CardImage = newPath;
         }
 
         public void DragOver(IDropInfo dropInfo)
@@ -389,27 +389,23 @@ namespace Octide.SetTab.ItemModel
 
         public void UpdateProxyTemplate()
         {
-            var tempCard = GetTempCard();
-            var properties = tempCard.GetProxyMappings();
+            var properties = GetProperties.ToDictionary(x => x.Name, y => y.Value);
+            properties.Add("SetName", Set.Name);
+            properties.Add("Name", Name);
+            properties.Add("CardSizeName", SizeProperty.Name);
+            properties.Add("CardSizeHeight", SizeProperty.Height.ToString());
+            properties.Add("CardSizeWidth", SizeProperty.Width.ToString());
+
             TemplateModel activeTemplate = (TemplateModel)ViewModelLocator.ProxyTabViewModel.Templates.DefaultItem;
             foreach (TemplateModel template in ViewModelLocator.ProxyTabViewModel.Templates)
             {
-                bool isValidTemplate = true;
-                foreach (var match in template._def.Matches)
-                {
-                    if (!properties.ContainsKey(match.Name) || properties[match.Name] != match.Value)
-                    {
-                        isValidTemplate = false;
-                        break;
-                    }
-                }
-                if (isValidTemplate == true)
+                if (template._def.Matches.All(x => properties.ContainsKey(x.Name) && properties[x.Name] == x.Value))
                 {
                     activeTemplate = template;
                     break;
                 }
             }
-            BaseImage = activeTemplate._def.src;
+            BaseImage = activeTemplate.Asset.SafePath;
             BitmapImage image = new BitmapImage(new Uri(BaseImage));
             BaseWidth = image.PixelWidth;
             BaseHeight = image.PixelHeight;
