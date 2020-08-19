@@ -33,19 +33,6 @@ namespace Octgn.Launchers
             _spectate = spectate;
             _isHost = isHost;
             _game = game ?? throw new ArgumentNullException(nameof(game));
-
-            Validate();
-        }
-
-        private void Validate() {
-            var minCreatedDate = DateTimeOffset.Now.AddHours(6);
-            var maxCreatedDate = DateTimeOffset.Now.AddMinutes(1);
-            if (_game.DateCreated.UtcDateTime < minCreatedDate || _game.DateCreated > maxCreatedDate) throw new UserMessageException($"Invalid game CreatedDate {_game.DateCreated}");
-            //if (this.gameId == null) {
-            //    MessageBox.Show("You must supply a GameId with -g=GUID on the command line.", "Error",
-            //        MessageBoxButton.OK, MessageBoxImage.Error);
-            //    this.Shutdown = true;
-            //}
         }
 
         protected override async Task<Window> Load(ILoadingView loadingView) {

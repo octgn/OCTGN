@@ -102,6 +102,8 @@
                 } else if (joinGame) {
                     var hostedGame = HostedGame.Deserialize(hostedGameString);
 
+                    Validate(hostedGame);
+
                     return new JoinGameLauncher(
                         hostedGame,
                         username,
@@ -110,6 +112,8 @@
                     );
                 } else if (hostGame) {
                     var hostedGame = HostedGame.Deserialize(hostedGameString);
+
+                    Validate(hostedGame);
 
                     return new JoinGameLauncher(
                         hostedGame,
@@ -149,6 +153,16 @@
                 if (args != null) Log.Error(string.Join(Environment.NewLine, args));
             }
             return null;
+        }
+
+        private static void Validate(HostedGame hostedGame) {
+            var minCreatedDate = DateTimeOffset.Now.AddHours(6);
+            var maxCreatedDate = DateTimeOffset.Now.AddMinutes(1);
+            if (hostedGame.DateCreated.UtcDateTime < minCreatedDate || hostedGame.DateCreated > maxCreatedDate)
+                throw new UserMessageException($"Invalid game CreatedDate {hostedGame.DateCreated}");
+
+            if (hostedGame.Id == Guid.Empty)
+                throw new UserMessageException($"Game Id Empty");
         }
 
         internal ILauncher HandleProtocol(Uri url)
