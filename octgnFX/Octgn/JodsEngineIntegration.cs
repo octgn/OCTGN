@@ -182,8 +182,8 @@ namespace Octgn
 
             DateTimeOffset maxCreatedDate = DateTimeOffset.Now;
 
-            Debug.Assert(hostedGame.DateCreated > minCreatedDate, $"Hosted game DateCreated is too ancient {hostedGame.DateCreated}");
-            Debug.Assert(hostedGame.DateCreated < maxCreatedDate, $"Hosted game DateCreated is too far in the future {hostedGame.DateCreated}");
+            Debug.Assert(hostedGame.DateCreated >= minCreatedDate, $"Hosted game DateCreated is too ancient {hostedGame.DateCreated}");
+            Debug.Assert(hostedGame.DateCreated <= maxCreatedDate, $"Hosted game DateCreated is too far in the future {hostedGame.DateCreated}");
 
             Debug.Assert(hostedGame.Id != Guid.Empty, $"Hosted game Id is empty");
         }
