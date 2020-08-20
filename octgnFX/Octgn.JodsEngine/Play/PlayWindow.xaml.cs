@@ -678,7 +678,7 @@ namespace Octgn.Play
                     e.Handled = true;
                     return;
                 }
-                else if (g is Pile pile && pile.ShuffleShortcut != null && pile.ShuffleShortcut.Matches(this, e))
+                else if (g is Pile pile && pile.ShufflePileShortcut != null && pile.ShufflePileShortcut.Matches(this, e))
                 {
                     pile.Shuffle();
                     e.Handled = true;

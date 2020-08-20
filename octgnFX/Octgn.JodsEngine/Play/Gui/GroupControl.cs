@@ -141,7 +141,7 @@ namespace Octgn.Play.Gui
                     ScriptEngine.ExecuteOnGroup(match.ActionDef.AsAction().Execute, @group);
                 e.Handled = e.KeyEventArgs.Handled = true;
             }
-            else if (group is Pile pile && pile.ShuffleShortcut != null && pile.ShuffleShortcut.Matches(this, e.KeyEventArgs))
+            else if (group is Pile pile && pile.ShufflePileShortcut != null && pile.ShufflePileShortcut.Matches(this, e.KeyEventArgs))
             {
                 pile.Shuffle();
                 e.Handled = e.KeyEventArgs.Handled = true;
@@ -297,7 +297,7 @@ namespace Octgn.Play.Gui
                     items.AddRange(actions.Select(action => CreateActionMenuItem(action, GroupActionClicked, null)).Where(x => x.Visibility == Visibility.Visible));
                 items.Add(new Separator());
 
-                if (group.ShuffleShortcut != null && group is Pile pile)
+                if (group is Pile pile && def.ShuffleShortcut != null)
                 {
                     var shuffleItem = new MenuItem { Header = "Shuffle " + pile.Name , InputGestureText = def.ShuffleShortcut};
                     shuffleItem.Click += delegate { pile.Shuffle(); };

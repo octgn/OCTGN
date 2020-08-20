@@ -589,10 +589,7 @@ namespace Octgn.DataNew
             ret.Ordered = bool.Parse(grp.ordered.ToString());
             ret.Shortcut = grp.shortcut;
             ret.MoveTo = bool.Parse(grp.moveto.ToString());
-            if (!string.IsNullOrWhiteSpace(grp.shuffle))
-            {
-                ret.ShuffleShortcut = grp.shuffle;
-            }
+            ret.ShuffleShortcut = grp.shuffle;
 
             if (grp.collapsed == boolean.True)
             {
