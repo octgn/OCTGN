@@ -10,9 +10,9 @@ namespace Octgn.Library
         public static void SavePassword(string pass)
         {
             var path = Config.Instance.Paths.ConfigDirectory + "\\" + FileName;
+            _locker.EnterWriteLock();
             try
             {
-                _locker.EnterWriteLock();
                 if (!File.Exists(path))
                     File.Create(path);
                 File.WriteAllText(path, pass);
@@ -26,9 +26,9 @@ namespace Octgn.Library
         public static string GetPassword()
         {
             var path = Config.Instance.Paths.ConfigDirectory + "\\" + FileName;
+            _locker.EnterReadLock();
             try
             {
-                _locker.EnterReadLock();
                 if (!File.Exists(path))
                     return "";
                 return File.ReadAllText(path);
