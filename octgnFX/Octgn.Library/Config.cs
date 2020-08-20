@@ -78,18 +78,18 @@ namespace Octgn.Library
 
         public string DataDirectory {
             get {
-                try {
-                    _locker.EnterReadLock();
-
+                _locker.EnterReadLock();
+                try
+                {
                     return _dataDirectory;
                 } finally {
                     _locker.ExitReadLock();
                 }
             }
             set {
-                try {
-                    _locker.EnterWriteLock();
-
+                _locker.EnterWriteLock();
+                try
+                {
                     var originalDataDirectory = _dataDirectory;
 
                     if (originalDataDirectory == value) return;
@@ -167,13 +167,15 @@ namespace Octgn.Library
 
         public T ReadValue<T>(string valName, T def) {
             T val = def;
-            try {
-                _locker.EnterUpgradeableReadLock();
+            _locker.EnterUpgradeableReadLock();
+            try
+            {
                 if (!GetFromCache(valName, out val)) {
-                    try {
-                        var configPath = ConfigPath;
+                    var configPath = ConfigPath;
 
-                        _locker.EnterWriteLock();
+                    _locker.EnterWriteLock();
+                    try {
+                        
                         using (var cf = new ConfigFile(configPath)) {
                             if (!cf.Contains(valName)) {
                                 cf.Add(valName, def);
@@ -202,10 +204,10 @@ namespace Octgn.Library
         }
 
         public void WriteValue<T>(string valName, T value) {
-            try {
-                var configPath = ConfigPath;
+            var configPath = ConfigPath;
 
-                _locker.EnterWriteLock();
+            _locker.EnterWriteLock();
+            try {
                 using (var cf = new ConfigFile(configPath)) {
                     cf.AddOrSet(valName, value);
                     AddToCache(valName, value);
@@ -218,11 +220,11 @@ namespace Octgn.Library
 
         public void RemoveValue(string valName)
         {
+            var configPath = ConfigPath;
+
+            _locker.EnterWriteLock();
             try
             {
-                var configPath = ConfigPath;
-
-                _locker.EnterWriteLock();
                 using (var cf = new ConfigFile(configPath))
                 {
                     cf.Remove(valName);
@@ -239,8 +241,9 @@ namespace Octgn.Library
         #region Cache
 
         internal bool GetFromCache<T>(string name, out T val) {
-            try {
-                _cacheLocker.EnterReadLock();
+            _cacheLocker.EnterReadLock();
+            try
+            {
                 if (_cache.Contains(name)) {
                     if (_cache[name] is NullObject)
                         val = default(T);
@@ -256,8 +259,9 @@ namespace Octgn.Library
         }
 
         internal void AddToCache<T>(string name, T val) {
-            try {
-                _cacheLocker.EnterWriteLock();
+            _cacheLocker.EnterWriteLock();
+            try
+            {
                 Object addObj;
                 if (typeof(T).IsValueType == false && val == null)
                     addObj = new NullObject();
@@ -273,8 +277,9 @@ namespace Octgn.Library
         }
 
         internal void SetToCache<T>(string name, T val) {
-            try {
-                _cacheLocker.EnterWriteLock();
+            _cacheLocker.EnterWriteLock();
+            try
+            {
                 _cache.Set(name, val, DateTime.Now.AddMinutes(1));
             } finally {
                 _cacheLocker.ExitWriteLock();
@@ -283,9 +288,9 @@ namespace Octgn.Library
 
         internal void RemoveFromCache(string name)
         {
+            _cacheLocker.EnterWriteLock();
             try
             {
-                _cacheLocker.EnterWriteLock();
                 if (_cache.Contains(name))
                     _cache.Remove(name, CacheEntryRemovedReason.Removed);
             }
