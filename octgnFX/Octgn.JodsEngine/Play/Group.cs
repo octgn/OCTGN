@@ -54,7 +54,7 @@ namespace Octgn.Play
             if (def.Shortcut != null)
                 MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
             if (def.ShuffleShortcut != null)
-                ShuffleShortcut = (KeyGesture)KeyConverter.ConvertFromInvariantString(def.ShuffleShortcut);
+                ShufflePileShortcut = (KeyGesture)KeyConverter.ConvertFromInvariantString(def.ShuffleShortcut);
         }
 
         public DataNew.Entities.Group Definition
@@ -69,7 +69,7 @@ namespace Octgn.Play
         }
 
         public KeyGesture MoveToShortcut { get; private set; }
-        public KeyGesture ShuffleShortcut { get; private set; }
+        public KeyGesture ShufflePileShortcut { get; private set; }
 
         // Are cards visible when they arrive in this group ?                
         internal GroupVisibility Visibility
