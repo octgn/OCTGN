@@ -9,7 +9,7 @@
 		xmlns:metro="http://schemas.codeplex.com/elysium"
         xmlns:params="http://schemas.codeplex.com/elysium/params"
         xmlns:views="clr-namespace:Octide.Views"
-        Title="{Binding GameTabViewModel.Name,  Source={StaticResource Locator}}" Height="800" Width="1200"
+        Title="{Binding GameInformationTabViewModel.Name,  Source={StaticResource Locator}, StringFormat='OCTGN Game Development Studio  -  {0}'}" Height="800" Width="1200"
         DataContext="{Binding MainViewModel, Source={StaticResource WindowLocator}}"
         params:Design.Theme="Dark"
         WindowStartupLocation="CenterScreen"

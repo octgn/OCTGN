@@ -9,7 +9,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
@@ -20,26 +22,38 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <DockPanel >
-            <TextBlock Text="Filter by Type: " Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16"/>
-            <ComboBox VerticalAlignment="Center" Padding="5,2,2,2"  SelectedValue="{Binding FilterType}" ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:AssetType}}}" />
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <TextBlock Text="Filter by Type: " Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16"/>
+                <ComboBox VerticalAlignment="Center" Padding="5,2,2,2" Width="100" SelectedValue="{Binding FilterType}" ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:AssetType}}}" />
+            </StackPanel>
+            <CheckBox DockPanel.Dock="Top" Content="Only show unlinked assets" IsChecked="{Binding FilterLinked}" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16" />
+            <ListBox gong:DragDrop.IsDragSource="False" gong:DragDrop.IsDropTarget="False" 
+                     Style="{StaticResource OctideListBoxBaseStyle}" ItemsSource="{Binding AssetList}" 
+                     SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="RelativePath" >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLinked}" Value="False">
+                                <Setter Property="Foreground" Value="{StaticResource DisabledBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
         </DockPanel>
-        <CheckBox Grid.Row="1" Content="Only show unlinked assets" IsChecked="{Binding FilterLinked}" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="16" />
-        <ListBox Grid.Row="2" ItemsSource="{Binding AssetList}" SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="FileName" />
 
-        <ContentControl Grid.Column="1" Grid.RowSpan="3" Content="{Binding SelectedAsset}">
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding SelectedAsset}" Header="File Asset Information"
+                                     Description="Provides details on all file assets used by this game. An asset is linked if it is being used at least once by an asset control in this game.">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type local:Asset}" >
                     <views:AssetItemView />
                 </DataTemplate>
             </ContentControl.Resources>
-        </ContentControl>
+        </controls:ItemPropertiesView>
     </Grid>
 </UserControl>

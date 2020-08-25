@@ -9,41 +9,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="600" d:DesignWidth="800" >
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Table Editor" />
-
-            <TextBlock Text="Table Visibility"/>
-            <StackPanel Orientation="Horizontal">
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Card Visibility" >
+            <StackPanel Orientation="Vertical">
                 <RadioButton Content="Everybody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Everybody}"/>
                 <RadioButton Content="Nobody" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Nobody}"/>
                 <RadioButton Content="Owner" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Owner}"/>
                 <RadioButton Content="Undefined" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Undefined}"/>
                 <RadioButton Content="Custom" IsChecked="{Binding GroupVisibility, Converter={StaticResource RadioConverter}, ConverterParameter=Custom}"/>
             </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Background"/>
-                <Image Source="{Binding Background.FullPath, Mode=OneWay}" />
+        <controls:PropertyFieldControl Header="Background Image"  >
+            <controls:AssetControllerView DataContext="{Binding Background}" />
+        </controls:PropertyFieldControl>
+
+        <controls:PropertyFieldControl Header="Background Image Style"  >
+            <StackPanel Orientation="Vertical">
+                <RadioButton Content="Fill with Tiling" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Tile}"/>
+                <RadioButton Content="Fill with Overflow" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=UniformToFill}"/>
+                <RadioButton Content="Fill without Overflow" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Uniform}"/>
+                <RadioButton Content="Stretch to Fill" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Stretch}"/>
             </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <local:AssetControllerView DataContext="{Binding Background}" />
-
-            <TextBlock Text="Background Style"/>
-
-            <StackPanel Orientation="Horizontal">
-                <RadioButton Content="Tile" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Tile}"/>
-                <RadioButton Content="Uniform" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Uniform}"/>
-                <RadioButton Content="UniformToFill" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=UniformToFill}"/>
-                <RadioButton Content="Stretch" IsChecked="{Binding BackgroundStyle, Converter={StaticResource RadioConverter}, ConverterParameter=Stretch}"/>
-            </StackPanel>
-
-            <TextBlock Text="Minimum Viewable Grid Width"/>
+        <controls:PropertyFieldControl Header="Minimum Visible Grid Width"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -56,8 +52,9 @@
                 </TextBox>
                 <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="50" Maximum="3000"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Minimum Viewable Grid Height"/>
+        <controls:PropertyFieldControl Header="Minimum Visible Grid Height"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -70,6 +67,6 @@
                 </TextBox>
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="50" Maximum="3000"/>
             </DockPanel>
-        </ItemsControl>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

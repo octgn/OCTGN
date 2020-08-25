@@ -9,17 +9,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}">
+    <ItemsControl>
 
-            <TextBlock Text="Phase Editor" />
-
-            <TextBlock Text="Phase Name"  />
+        <controls:PropertyFieldControl Header="Name" >
             <TextBox>
                 <TextBox.Text>
                     <Binding Path="Name" >
@@ -29,14 +27,10 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Phase Icon"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
-
-            <local:AssetControllerView DataContext="{Binding Asset}" />
-
-        </ItemsControl>
-    </ScrollViewer>
+        <controls:PropertyFieldControl Header="Icon Image" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

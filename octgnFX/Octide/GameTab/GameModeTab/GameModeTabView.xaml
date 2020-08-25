@@ -8,6 +8,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:model="clr-namespace:Octide.ItemModel"
              mc:Ignorable="d" 
@@ -19,27 +20,26 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0">
-            <Button Content="New Symbol" Margin="1" Command="{Binding AddCommand}" />
-        </StackPanel>
-
-        <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-        <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding Items.SelectedItem}">
-            <ContentControl.Resources>
+        <DockPanel>
+            <Button DockPanel.Dock="Bottom" Content="New Game Mode" Margin="1" Command="{Binding AddCommand}" />
+            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding Items.SelectedItem}"
+                                     Header="Game Mode Editor"
+                                     Description="Defines the different pre-set game configurations to be used with the OCTGN matchmaking feature.&#x0a;This feature is currently disabled in OCTGN.">
+            <controls:ItemPropertiesView.Resources>
                 <DataTemplate DataType="{x:Type model:GameModeItemModel}" >
                     <views:GameModeItemView />
                 </DataTemplate>
-            </ContentControl.Resources>
-        </ContentControl>
+            </controls:ItemPropertiesView.Resources>
+        </controls:ItemPropertiesView>
     </Grid>
 </UserControl>

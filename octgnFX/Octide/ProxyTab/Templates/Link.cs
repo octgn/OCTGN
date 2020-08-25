@@ -91,7 +91,7 @@ namespace Octide.ProxyTab.ItemModel
                 NestedProperties = new List<Property>()
             };
             _wrapper = new LinkDefinition.LinkWrapper() { Link = _linkDefinition };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(TextLinkPropertyModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildPropertyDefinition(b);
@@ -102,7 +102,7 @@ namespace Octide.ProxyTab.ItemModel
         public TextLinkModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _wrapper = lw;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(TextLinkPropertyModel));
             foreach (var property in lw.Link.NestedProperties)
             {
                 Items.Add(new TextLinkPropertyModel(property, Items));
@@ -125,7 +125,7 @@ namespace Octide.ProxyTab.ItemModel
             };
             _wrapper = new LinkDefinition.LinkWrapper() { Link = _linkDefinition };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(TextLinkPropertyModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildPropertyDefinition(b);

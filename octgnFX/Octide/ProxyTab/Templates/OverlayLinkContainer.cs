@@ -20,7 +20,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 Container = this
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OverlayLinkModel));
             Items.CollectionChanged += LinkContainerUpdated;
         }
 
@@ -32,7 +32,7 @@ namespace Octide.ProxyTab.ItemModel
                 Container = this
             };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OverlayLinkModel));
             foreach (OverlayLinkModel link in lc.Items)
             {
                 Items.Add(new OverlayLinkModel(link, Items));

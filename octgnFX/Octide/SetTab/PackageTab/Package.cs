@@ -37,12 +37,12 @@ namespace Octide.SetTab.ItemModel
                 Items = new List<object>(),
                 Set = ((SetModel)Source.Parent)._set
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionsModel), typeof(PickModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildPackDef(b);
             };
-            Includes = new IdeCollection<IdeBaseItem>(this);
+            Includes = new IdeCollection<IdeBaseItem>(this, typeof(IncludeModel));
             Includes.CollectionChanged += (a, b) =>
             {
                 BuildIncludesDef(b);
@@ -57,7 +57,7 @@ namespace Octide.SetTab.ItemModel
         public PackageModel(Pack p, IdeCollection<IdeBaseItem> src) : base(src) //loading item
         {
             _pack = p;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionsModel), typeof(PickModel));
             foreach (var item in p.Items)
             {
                 if (item is OptionsList options)
@@ -70,7 +70,7 @@ namespace Octide.SetTab.ItemModel
                 BuildPackDef(b);
             };
 
-            Includes = new IdeCollection<IdeBaseItem>(this);
+            Includes = new IdeCollection<IdeBaseItem>(this, typeof(IncludeModel));
             foreach (var include in p.Includes)
             {
                 Includes.Add(new IncludeModel(include, Includes));
@@ -98,7 +98,7 @@ namespace Octide.SetTab.ItemModel
                 Items = new List<object>(),
                 Includes = new List<Include>()
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(PickModel), typeof(OptionsModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildPackDef(b);
@@ -114,7 +114,7 @@ namespace Octide.SetTab.ItemModel
                     Items.Add(new OptionsModel(options, Items) );
                 }
             }
-            Includes = new IdeCollection<IdeBaseItem>(this);
+            Includes = new IdeCollection<IdeBaseItem>(this, typeof(IncludeModel));
             Includes.CollectionChanged += (a, b) =>
             {
                 BuildIncludesDef(b);

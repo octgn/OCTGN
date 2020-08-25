@@ -27,7 +27,7 @@ namespace Octide.ViewModel
             AddCommand = new RelayCommand(AddItem);
             _mediaPlayer = new MediaPlayer();
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(SoundItemModel));
             foreach (var sound in ViewModelLocator.GameLoader.Game.Sounds)
             {
                 Items.Add(new SoundItemModel(sound.Value, Items));

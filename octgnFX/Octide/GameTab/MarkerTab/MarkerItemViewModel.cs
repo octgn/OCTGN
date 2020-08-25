@@ -5,6 +5,7 @@
 using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -85,6 +86,21 @@ namespace Octide.ItemModel
                 if (value == _marker.Name) return;
                 _marker.Name = value;
                 RaisePropertyChanged("Name");
+            }
+        }
+        public IEnumerable<string> UniqueNames => Source.Select(x => ((MarkerItemModel)x).Id);
+
+        public string Id
+        {
+            get
+            {
+                return _marker.Id;
+            }
+            set
+            {
+                if (value == _marker.Id) return;
+                _marker.Id = value;
+                RaisePropertyChanged("Id");
             }
         }
         public new string Icon => Asset.SafePath;

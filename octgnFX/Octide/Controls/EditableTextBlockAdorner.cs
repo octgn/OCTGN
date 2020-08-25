@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Octide
+namespace Octide.Controls
 {
     /// <summary>
     /// Adorner class which shows textbox over the text block when the Edit mode is on.

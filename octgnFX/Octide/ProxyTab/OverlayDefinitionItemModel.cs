@@ -28,6 +28,8 @@ namespace Octide.ItemModel
         public BlockDefinition _def;
         public AssetController Asset { get; set; }
 
+        public new string Icon => Asset?.SafePath;
+
         public OverlayBlockDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new overlay
         {
             _def = new BlockDefinition

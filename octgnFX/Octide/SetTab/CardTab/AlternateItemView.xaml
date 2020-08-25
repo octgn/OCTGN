@@ -9,6 +9,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"      
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:gong="urn:gong-wpf-dragdrop"
@@ -17,132 +18,132 @@
              params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700">
 
-    <UserControl.Resources>
-        <local:InverseBooleanConverter x:Key="inverseBooleanConverter" />
-    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical">
-                <ItemsControl Style="{StaticResource OctideInputPanel}" >
-                    <TextBlock Text="Name" />
-                    <TextBox>
-                        <TextBox.Text>
-                            <Binding Path="Name" >
-                                <Binding.ValidationRules>
-                                    <local:StringRestrictionValidationRule />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-
-                    <StackPanel>
-                        <StackPanel.Style>
-                            <Style TargetType="{x:Type StackPanel}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDefault}" Value="True" >
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </StackPanel.Style>
-                        <TextBlock Text="Alternate Identifier" />
+        <Border BorderBrush="#FF555555" BorderThickness="1" Margin="1" Padding="3">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" >
+                <StackPanel Orientation="Vertical">
+                    <controls:PropertyFieldControl Header="Name">
                         <TextBox>
-                            <TextBox.Resources>
-                                <local:BindingProxy x:Key="proxy" Data="{Binding }" />
-                            </TextBox.Resources>
                             <TextBox.Text>
-                                <Binding Path="Type" >
+                                <Binding Path="Name" >
                                     <Binding.ValidationRules>
                                         <local:StringRestrictionValidationRule />
-                                        <local:UniqueValueValidationRule>
-                                            <local:UniqueValueValidationRule.Wrapper>
-                                                <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
-                                            </local:UniqueValueValidationRule.Wrapper>
-                                        </local:UniqueValueValidationRule>
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
                         </TextBox>
-                    </StackPanel>
-                    
-                    <TextBlock Text="Size"/>
-                    <ComboBox IsReadOnly="True" ItemsSource="{Binding CardSizes}" DisplayMemberPath="Name" SelectedItem="{Binding SizeProperty, Mode=TwoWay}" >
-                    </ComboBox>
-                </ItemsControl>
-                <ItemsControl ItemsSource="{Binding GetProperties}" Margin="2,10,0,0" >
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <CheckBox Grid.RowSpan="2" VerticalAlignment="Center" IsChecked="{Binding IsDefined}" ToolTip="Check this box to include this property in the XML." />
-                                <TextBlock Grid.Column="1" Margin="0" Text="{Binding Name, Mode=OneWay}" >
-                                    <TextBlock.Style>
-                                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource OctideInputTextBlock}" >
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsDefined}" Value="False" >
-                                                    <Setter Property="Foreground" Value="DimGray" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
+                    </controls:PropertyFieldControl>
 
-                                <ContentPresenter Content="{Binding }" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsDefined}">
-                                    <ContentPresenter.Resources>
-                                        <DataTemplate x:Key="richTextProperty">
-                                            <TextBox AcceptsReturn="True" MaxHeight="100" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                                <TextBox.Style>
-                                                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
-                                                </TextBox.Style>
-                                                <TextBox.Text>
-                                                    <Binding Path="Value" >
-                                                        <Binding.ValidationRules>
-                                                            <local:RichTextValidationRule />
-                                                        </Binding.ValidationRules>
-                                                    </Binding>
-                                                </TextBox.Text>
-                                            </TextBox>
-                                        </DataTemplate>
-                                        <DataTemplate x:Key="stringProperty">
-                                            <TextBox Text="{Binding Value}">
-                                                <TextBox.Style>
-                                                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
-                                                </TextBox.Style>
-                                            </TextBox>
-                                        </DataTemplate>
-                                    </ContentPresenter.Resources>
-                                    <ContentPresenter.Style>
-                                        <Style TargetType="{x:Type ContentPresenter}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsRich}" Value="True">
-                                                    <Setter Property="ContentTemplate" Value="{StaticResource richTextProperty}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsRich}" Value="False">
-                                                    <Setter Property="ContentTemplate" Value="{StaticResource stringProperty}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ContentPresenter.Style>
-                                </ContentPresenter>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
-        <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+                    <Border>
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <controls:PropertyFieldControl Header="Alternate Identifier" >
+                            <TextBox>
+                                <TextBox.Resources>
+                                    <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="Type" >
+                                        <Binding.ValidationRules>
+                                            <local:StringRestrictionValidationRule />
+                                            <local:UniqueValueValidationRule>
+                                                <local:UniqueValueValidationRule.Wrapper>
+                                                    <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                                </local:UniqueValueValidationRule.Wrapper>
+                                            </local:UniqueValueValidationRule>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </controls:PropertyFieldControl>
+                    </Border>
+
+                    <controls:PropertyFieldControl Header="Size">
+                        <ComboBox IsReadOnly="True" ItemsSource="{Binding CardSizes}" DisplayMemberPath="Name" SelectedItem="{Binding SizeProperty, Mode=TwoWay}" />
+                    </controls:PropertyFieldControl>
+
+                    <ItemsControl ItemsSource="{Binding GetProperties}"  >
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.RowSpan="2" VerticalAlignment="Center" IsChecked="{Binding IsDefined}" ToolTip="Check this box to include this property in the XML." />
+                                    <TextBlock Grid.Column="1" Margin="0" Text="{Binding Name, Mode=OneWay}" >
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource OctideInputTextBlock}" >
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsDefined}" Value="False" >
+                                                        <Setter Property="Foreground" Value="DimGray" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <ContentPresenter Content="{Binding }" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsDefined}">
+                                        <ContentPresenter.Resources>
+                                            <DataTemplate x:Key="richTextProperty">
+                                                <TextBox AcceptsReturn="True" MaxHeight="100" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
+                                                    </TextBox.Style>
+                                                    <TextBox.Text>
+                                                        <Binding Path="Value" >
+                                                            <Binding.ValidationRules>
+                                                                <local:RichTextValidationRule />
+                                                            </Binding.ValidationRules>
+                                                        </Binding>
+                                                    </TextBox.Text>
+                                                </TextBox>
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="stringProperty">
+                                                <TextBox Text="{Binding Value}">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                            </DataTemplate>
+                                        </ContentPresenter.Resources>
+                                        <ContentPresenter.Style>
+                                            <Style TargetType="{x:Type ContentPresenter}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsRich}" Value="True">
+                                                        <Setter Property="ContentTemplate" Value="{StaticResource richTextProperty}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsRich}" Value="False">
+                                                        <Setter Property="ContentTemplate" Value="{StaticResource stringProperty}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentPresenter.Style>
+                                    </ContentPresenter>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        <GridSplitter Grid.Column="1"  ResizeDirection="Columns" />
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

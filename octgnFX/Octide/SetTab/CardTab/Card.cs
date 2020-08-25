@@ -32,7 +32,7 @@ namespace Octide.SetTab.ItemModel
                 ((SizeItemModel)ViewModelLocator.PreviewTabViewModel.CardSizes.DefaultItem)._size,  //size
                 new Dictionary<string, CardPropertySet>());     //property sets
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(AlternateModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);
@@ -51,7 +51,7 @@ namespace Octide.SetTab.ItemModel
         public CardModel(Card c, IdeCollection<IdeBaseItem> src) : base(src) //for loading an existing collection
         {
             _card = c;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(AlternateModel));
             foreach (var alt in c.PropertySets)
             {
                 var AltItem = new AlternateModel(alt.Value, Items);
@@ -78,7 +78,7 @@ namespace Octide.SetTab.ItemModel
                 Id = Guid.NewGuid(),
                 ImageUri = guid.ToString()
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(AlternateModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);

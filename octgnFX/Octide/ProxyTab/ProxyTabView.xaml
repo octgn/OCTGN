@@ -14,7 +14,7 @@
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
              xmlns:itemModel="clr-namespace:Octide.ItemModel"
              xmlns:item="clr-namespace:Octide.ProxyTab.ItemModel"
-             xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
@@ -28,7 +28,7 @@
                         <RowDefinition Height="60" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Image Source="{Binding Asset.FullPath}" Stretch="Uniform"/>
+                    <Image Source="{Binding Asset.SafePath}" Stretch="Uniform"/>
                     <TextBlock Foreground="WhiteSmoke" Grid.Row="1" Text="{Binding Name}" />
                 </Grid>
             </Border>
@@ -39,138 +39,148 @@
             </Border>
         </DataTemplate>
     </UserControl.Resources>
-    
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="200" />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="300" MinWidth="250" />
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="300" />
-            </Grid.ColumnDefinitions>
-            <StackPanel>
-                <Button Content="New Template" Margin="1" Command="{Binding AddTemplateCommand}" />
-            </StackPanel>
-            <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Templates}" SelectedValue="{Binding SelectedTemplate, Mode=TwoWay}" >
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Delete" Command="{Binding SelectedItem.RemoveCommand}" />
-                </ListBox.InputBindings>
-            </ListBox>
-            <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding SelectedTemplate}">
-                <ContentControl.Resources>
-                    <DataTemplate DataType="{x:Type item:TemplateModel}" >
-                        <views:ProxyTemplateItemView />
-                    </DataTemplate>
-                </ContentControl.Resources>
-            </ContentControl>
-            <Viewbox Stretch="Uniform" Grid.Row="1" Grid.Column="2" >
-                <Grid ClipToBounds="True" >
-                    <Image Source="{Binding BaseImage}" Width="{Binding BaseWidth}" Height="{Binding BaseHeight}" Panel.ZIndex="0" />
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Templates" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="20" FontWeight="Bold"/>
+                <Button DockPanel.Dock="Bottom" Content="New Template" Margin="1" Command="{Binding AddTemplateCommand}" />
+                <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Templates}" SelectedValue="{Binding Templates.SelectedItem, Mode=TwoWay}" 
+                             gong:DragDrop.DropHandler="{Binding Templates}">
+                    <ListBox.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding Templates.SelectedItem.RemoveCommand}" />
+                    </ListBox.InputBindings>
+                </ListBox>
+            </DockPanel>
+            <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
+            <DockPanel Grid.Row="2">
+                <TextBlock DockPanel.Dock="Top" Text="Text Blocks" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="20" FontWeight="Bold"/>
+                <Button DockPanel.Dock="Bottom" Content="New Text Block" Margin="1" Command="{Binding AddTextBlockCommand}" />
+                <ListBox Style="{StaticResource OctideListBoxStyle}" 
+                             ItemsSource="{Binding TextBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
+                             gong:DragDrop.DropHandler="{Binding TextBlocks}" 
+                             gong:DragDrop.DragAdornerTemplate="{StaticResource IdeTextItemAdorner}" >
+                </ListBox>
 
-                    <ItemsControl ItemsSource="{Binding ActiveOverlayLayers}" x:Name="OverlayBlocks" >
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style>
-                                <Setter Property="Canvas.Left" Value="{Binding Left}"/>
-                                <Setter Property="Canvas.Top" Value="{Binding Top}"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
-                                <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+            </DockPanel>
+        </Grid>
 
-                    <ItemsControl ItemsSource="{Binding ActiveTextLayers}" x:Name="TextBlocks" >
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style>
-                                <Setter Property="Canvas.Left" Value="{Binding TextBlock.Left}"/>
-                                <Setter Property="Canvas.Top" Value="{Binding TextBlock.Top}"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Value}" Width="{Binding TextBlock.Width}" Height="{Binding TextBlock.Height}"
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="150" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="300" />
+                </Grid.ColumnDefinitions>
+                <ContentControl Content="{Binding Templates.SelectedItem}" Margin="3">
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type item:TemplateModel}" >
+                            <views:ProxyTemplateItemView />
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
+                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+
+                <Viewbox Stretch="Uniform" Grid.Column="2" Margin="3" >
+                    <Grid ClipToBounds="True" >
+                        <Image Source="{Binding BaseImage}" Width="{Binding BaseWidth}" Height="{Binding BaseHeight}" Panel.ZIndex="0" />
+
+                        <ItemsControl ItemsSource="{Binding ActiveOverlayLayers}" x:Name="OverlayBlocks" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
+                                    <Image Source="{Binding Asset.SafePath}" Width="{Binding Width}" Height="{Binding Height}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <ItemsControl ItemsSource="{Binding ActiveTextLayers}" x:Name="TextBlocks" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding TextBlock.Left}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding TextBlock.Top}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value}" Width="{Binding TextBlock.Width}" Height="{Binding TextBlock.Height}"
                                              TextAlignment="{Binding TextBlock.TextAlignment}" VerticalAlignment="{Binding TextBlock.VerticalAlignment}"
                                              FontSize="{Binding TextBlock.FontSize}" Foreground="{Binding TextBlock.FontBrush}" FontFamily="{Binding TextBlock.Font}"
                                                          
                                              TextWrapping="{Binding TextBlock.WordWrap}" >
-                                </TextBlock>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Grid>
-            </Viewbox>
-        </Grid>
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="130"/>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Text Blocks" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold"/>
-            <ListBox Grid.Row="1" ItemsSource="{Binding TextBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}" Style="{StaticResource IdeListBoxControl}"
-                     gong:DragDrop.DragAdornerTemplate="{StaticResource IdeTextItemAdorner}">
-            </ListBox>
-            <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Viewbox>
+            </Grid>
 
-            <TextBlock Text="Overlay Blocks" Grid.Column="2" Foreground="WhiteSmoke" FontSize="20" TextDecorations="UnderLine" FontWeight="Bold" />
-            <ListBox Grid.Row="1" Grid.Column="2" Style="{StaticResource IdeHorizontalListBoxControl}" 
-                     ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
-                     gong:DragDrop.DragAdornerTemplate="{StaticResource IdeAssetItemAdorner}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
-                        <Grid Margin="4" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Image Source="{Binding Asset.FullPath, TargetNullValue={x:Null}}" Stretch="Uniform" Margin="0,0,0,4" />
-                            <TextBlock Text="{Binding Name}" Grid.Row="1" Foreground="White" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+
+            <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
+            <DockPanel Grid.Row="2">
+
+                <TextBlock DockPanel.Dock="Top" Text="Overlay Blocks" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="20" FontWeight="Bold" />
+                <Button DockPanel.Dock="Right" Style="{StaticResource NewItemButton}"
+                            Content="New Overlay Block" Command="{Binding AddOverlayCommand}" />
+                <Border>
+                    <ListBox Style="{StaticResource OctideHorizontalListBoxStyle}" 
+                                 ItemsSource="{Binding OverlayBlocks}" SelectedValue="{Binding Selection, Mode=TwoWay}"
+                                 gong:DragDrop.DropHandler="{Binding OverlayBlocks}"
+                                 gong:DragDrop.DragAdornerTemplate="{StaticResource IdeAssetItemAdorner}">
+                    </ListBox>
+                </Border>
+            </DockPanel>
         </Grid>
 
-        <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+        <GridSplitter Grid.Column="3" ResizeDirection="Columns" />
 
-
-        <ContentControl Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="3">
+        <ContentControl Grid.Column="4">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
-                    <views:OverlayBlockDefinitionItemView />
+                    <controls:ItemPropertiesView Header="Overlay Block Editor" Description="Defines an overlay image layer which is used to build a proxy card template." >
+                        <views:OverlayBlockDefinitionItemView />
+                    </controls:ItemPropertiesView>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type itemModel:TextBlockDefinitionItemModel}">
-                    <views:TextBlockDefinitionItemView />
+                    <controls:ItemPropertiesView Header="Text Block Editor" Description="Defines a region on the proxy card template to display text.  Each template can specify which custom property value to show.">
+                        <views:TextBlockDefinitionItemView />
+                    </controls:ItemPropertiesView>
                 </DataTemplate>
             </ContentControl.Resources>
             <ContentControl.Content>
@@ -204,5 +214,6 @@
                 </Binding>
             </ContentControl.Content>
         </ContentControl>
+
     </Grid>
 </UserControl>

@@ -9,6 +9,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:set="clr-namespace:Octide.SetTab.Views"
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
              d:DesignHeight="700" d:DesignWidth="1100"
@@ -19,22 +20,21 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <StackPanel>
-            <Button Content="New Set" Margin="1" Command="{Binding AddSetCommand}" />
-        </StackPanel>
+        <DockPanel>
+            <Button DockPanel.Dock="Bottom" Content="New Set" Margin="1" Command="{Binding AddSetCommand}" />
 
-        <ListBox Grid.Row="2" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-        <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding Items.SelectedItem}">
+            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}"
+                     gong:DragDrop.DropHandler="{Binding Items}">
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <ContentControl Grid.Column="2" Content="{Binding Items.SelectedItem}" >
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type item:SetModel}" >
                     <set:SetItemView />

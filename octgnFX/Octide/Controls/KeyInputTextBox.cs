@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Data;
 using System.Text;
 
-namespace Octide
+namespace Octide.Controls
 {
     public partial class KeyInputTextBox : TextBox
     {

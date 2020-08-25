@@ -24,7 +24,7 @@ namespace Octide.SetTab.ItemModel
                 Properties = new List<PickProperty>()
             };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(PackagePropertyModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildIncludeDef(b);
@@ -38,7 +38,7 @@ namespace Octide.SetTab.ItemModel
         {
             _include = i;
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(PackagePropertyModel));
             foreach (var include in i.Properties)
             {
                 Items.Add(new PackagePropertyModel(include, Items) { isIncludeProperty = true });
@@ -60,7 +60,7 @@ namespace Octide.SetTab.ItemModel
                 Properties = new List<PickProperty>()
             };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(PackagePropertyModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildIncludeDef(b);

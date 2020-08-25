@@ -11,14 +11,13 @@
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600"
              params:Design.Theme="Dark"
              >
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}" ScrollViewer.VerticalScrollBarVisibility="Auto" >
-
-            <TextBlock Text="Marker Name"/>
+    <ItemsControl>
+        <controls:PropertyFieldControl Header="Name" DataContext="{Binding }"  >
             <TextBox>
                 <TextBox.Text>
                     <Binding Path="Name" >
@@ -28,13 +27,31 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Icon"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
-            <local:AssetControllerView DataContext="{Binding Asset}" />
+        <controls:PropertyFieldControl Header="Unique Identifier" >
+            <TextBox>
+                <TextBox.Resources>
+                    <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                </TextBox.Resources>
+                <TextBox.Text>
+                    <Binding Path="Id" >
+                        <Binding.ValidationRules>
+                            <local:StringRestrictionValidationRule />
+                            <local:UniqueValueValidationRule>
+                                <local:UniqueValueValidationRule.Wrapper>
+                                    <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                </local:UniqueValueValidationRule.Wrapper>
+                            </local:UniqueValueValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </controls:PropertyFieldControl>
 
-        </ItemsControl>
-    </ScrollViewer>
+        <controls:PropertyFieldControl Header="Icon Image" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
+
+    </ItemsControl>
 </UserControl>

@@ -30,8 +30,8 @@ namespace Octide.ItemModel
             ActionsDropHandler = new ActionsDropHandler();
 
             _group = new Group();
-            GroupActions = new IdeCollection<IdeBaseItem>(this);
-            CardActions = new IdeCollection<IdeBaseItem>(this);
+            GroupActions = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
+            CardActions = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             GroupActions.CollectionChanged += (a, b) =>
             {
                 _group.GroupActions = GroupActions.Select(x => ((IBaseAction)x)._action);
@@ -51,7 +51,7 @@ namespace Octide.ItemModel
             ActionsDropHandler = new ActionsDropHandler();
 
             _group = g;
-            GroupActions = new IdeCollection<IdeBaseItem>(this);
+            GroupActions = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             foreach (var action in g.GroupActions)
             {
                 GroupActions.Add(IBaseAction.CreateActionItem(action, GroupActions));
@@ -60,7 +60,7 @@ namespace Octide.ItemModel
             {
                 _group.GroupActions = GroupActions.Select(x => ((IBaseAction)x)._action);
             };
-            CardActions = new IdeCollection<IdeBaseItem>(this);
+            CardActions = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             foreach (var action in g.CardActions)
             {
                 CardActions.Add(IBaseAction.CreateActionItem(action, CardActions));
@@ -84,7 +84,7 @@ namespace Octide.ItemModel
             NewSeparatorCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSeparator);
             ActionsDropHandler = new ActionsDropHandler();
 
-            GroupActions = new IdeCollection<IdeBaseItem>(this);
+            GroupActions = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             GroupActions.CollectionChanged += (a, b) =>
             {
                 _group.GroupActions = GroupActions.Select(x => ((IBaseAction)x)._action);
@@ -92,7 +92,7 @@ namespace Octide.ItemModel
             foreach (var item in g.GroupActions)
                 GroupActions.Add(IBaseAction.CopyActionItems(item, GroupActions));
 
-            CardActions = new IdeCollection<IdeBaseItem>(this);
+            CardActions = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             CardActions.CollectionChanged += (a, b) =>
             {
                 _group.CardActions = CardActions.Select(x => ((IBaseAction)x)._action);

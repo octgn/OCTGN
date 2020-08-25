@@ -8,6 +8,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:views="clr-namespace:Octide.Views"
              mc:Ignorable="d" 
@@ -15,32 +16,30 @@
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding SoundTabViewModel, Source={StaticResource Locator}}">
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        
-        <StackPanel Grid.Column="0">
-            <Button Content="New Sound" Margin="1" Command="{Binding AddCommand}" />
-        </StackPanel>
-
-        <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-        <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding Items.SelectedItem}">
+        <DockPanel>
+            <Button DockPanel.Dock="Bottom" Content="New Sound" Margin="1" Command="{Binding AddCommand}" />
+            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding Items.SelectedItem}"
+                                     Header="Sound Editor"
+                                     Description="Sound files defined here can be accessed by Python scripting using the 'playSound()' function, passing the sound's name as a parameter.">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type model:SoundItemModel}" >
                     <views:SoundItemView />
                 </DataTemplate>
             </ContentControl.Resources>
-        </ContentControl>
+        </controls:ItemPropertiesView>
     </Grid>
 </UserControl>

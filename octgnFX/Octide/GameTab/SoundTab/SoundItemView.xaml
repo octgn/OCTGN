@@ -9,15 +9,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:ely="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <ItemsControl Style="{StaticResource OctideInputPanel}">
-            <TextBlock Text="Sound Name"/>
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Name">
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -35,13 +35,13 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
-
-            <TextBlock Text="Sound Asset"/>
+        </controls:PropertyFieldControl>
+        <controls:PropertyFieldControl Header="File Asset" >
             <StackPanel Orientation="Horizontal">
-                <local:AssetControllerView DataContext="{Binding Asset}" />
+                <controls:AssetControllerView DataContext="{Binding Asset}" />
                 <Button Margin="5" Content="Play" Command="{Binding PlayCommand }"/>
                 <Button Margin="5" Content="Stop" Command="{Binding StopCommand }"/>
             </StackPanel>
-        </ItemsControl>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

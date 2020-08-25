@@ -11,6 +11,7 @@
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
@@ -22,7 +23,7 @@
         <DataTemplate x:Key="FontControl" >
             <StackPanel Margin="10,0,0,0" >
                 <StackPanel Orientation="Horizontal">
-                    <local:AssetControllerView DataContext="{Binding Asset}" Width="350" />
+                    <controls:AssetControllerView DataContext="{Binding Asset}" Width="350" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Style="{StaticResource OctideInputTextBlock}" Margin="0" Text="Font Size:" />
@@ -36,14 +37,14 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <StackPanel Style="{StaticResource OctideInputPanel}" Margin="0,0,50,0" >
+        <ItemsControl Style="{StaticResource OctideInputPanel}" Margin="0,0,50,0" >
             <TextBlock Text="Deck Editor Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding DeckEditorFont}" />
 
             <TextBlock Text="Notes Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding NotesFont}" />
 
-            <Grid Margin="50,5,5,5" Background="BlanchedAlmond" Height="120" Width="170" 
+            <Grid Margin="50,5,5,5" Height="120" Width="170" 
                           HorizontalAlignment="Left" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="24" />
@@ -51,14 +52,30 @@
                 </Grid.RowDefinitions>
                 <Border Background="#11000000" />
                 <Border Margin="5" Grid.Row="1" >
-                    <TextBox Background="Transparent" Foreground="Black" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto"
+                    <TextBox Background="Transparent" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto"
                                      TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
                                      VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                     FontFamily="{Binding NotesFont.FontAsset}" FontSize="{Binding NotesFont.Size}"/>
+                                     FontFamily="{Binding NotesFont.FontAsset}" FontSize="{Binding NotesFont.Size}">
+                        <TextBox.Foreground>
+                            <SolidColorBrush Color="{Binding NoteForegroundColor}" />
+                        </TextBox.Foreground>
+                    </TextBox>
                 </Border>
+                <Grid.Background>
+                    <SolidColorBrush Color="{Binding NoteBackgroundColor}" />
+                </Grid.Background>
             </Grid>
-        </StackPanel>
-        <StackPanel Style="{StaticResource OctideInputPanel}" Grid.Column="1" >
+            
+            <controls:PropertyFieldControl Header="Note Font Color" >
+                <xctk:ColorPicker SelectedColor="{Binding NoteForegroundColor, Mode=TwoWay}" ShowDropDownButton="False" Width="100" HorizontalAlignment="Left"/>
+            </controls:PropertyFieldControl>
+
+            <controls:PropertyFieldControl Header="Note Background Color" >
+                <xctk:ColorPicker SelectedColor="{Binding NoteBackgroundColor, Mode=TwoWay}" ShowDropDownButton="False" Width="100" HorizontalAlignment="Left"/>
+            </controls:PropertyFieldControl>
+
+        </ItemsControl>
+        <ItemsControl Style="{StaticResource OctideInputPanel}" Grid.Column="1" >
             <TextBlock Text="Chat Font" FontSize="30" />
             <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ChatFont}" />
 
@@ -94,6 +111,6 @@
             <Border Width="200" Height="300" Style="{StaticResource OctgnActionMenuTemplate}">
                 <Menu ItemsSource="{Binding Menu}"  />
             </Border>
-        </StackPanel>
+        </ItemsControl>
     </Grid>
 </UserControl>

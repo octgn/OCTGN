@@ -20,7 +20,7 @@ namespace Octide.ItemModel
         public ActionSubmenuItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
             _action = new GroupActionSubmenu();
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             Items.CollectionChanged += (a, b) =>
             {
                 ((GroupActionSubmenu)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
@@ -32,7 +32,7 @@ namespace Octide.ItemModel
         public ActionSubmenuItemModel(GroupActionSubmenu a, IdeCollection<IdeBaseItem> source) : base(source)  //load item
         {
             _action = a;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseAction));
             foreach (var action in a.Children)
             {
                 Items.Add(CreateActionItem(action, Items));
@@ -53,12 +53,12 @@ namespace Octide.ItemModel
                 Name = a.Name,
                 ShowExecute = a._action.ShowExecute
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IdeBaseItem));
             Items.CollectionChanged += (b, c) =>
             {
                 ((GroupActionSubmenu)_action).Children = Items.Select(x => ((ActionSubmenuItemModel)x)._action);
             };
-            foreach (ActionSubmenuItemModel action in a.Items)
+            foreach (IdeBaseItem action in a.Items)
             {
                 Items.Add(CopyActionItems(action, Items));
             };

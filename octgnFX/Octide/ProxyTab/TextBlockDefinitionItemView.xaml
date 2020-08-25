@@ -10,17 +10,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <StackPanel Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Proxy Text Block Editor" />
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Unique Identifier" >
 
-            <TextBlock Text="Identifier Name"/>
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -38,11 +37,13 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Font"/>
-            <local:AssetControllerView DataContext="{Binding Asset}" />
+        <controls:PropertyFieldControl Header="Font" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Font Size"/>
+        <controls:PropertyFieldControl Header="Font Size" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -55,11 +56,13 @@
                 </TextBox>
                 <Slider Value="{Binding FontSize, Mode=TwoWay}" Minimum="1" Maximum="100"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Font Color" />
-            <xctk:ColorPicker SelectedColor="{Binding FontColor, Mode=TwoWay}" ShowDropDownButton="True" Width="100" HorizontalAlignment="Left"/>
+        <controls:PropertyFieldControl Header="Font Color" >
+            <xctk:ColorPicker SelectedColor="{Binding FontColor, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="X Position"/>
+        <controls:PropertyFieldControl Header="X Position Offset" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -72,8 +75,9 @@
                 </TextBox>
                 <Slider Value="{Binding Left, Mode=TwoWay}" Minimum="-1000" Maximum="3000"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Y Position"/>
+        <controls:PropertyFieldControl Header="Y Position Offset" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -86,8 +90,9 @@
                 </TextBox>
                 <Slider Value="{Binding Top, Mode=TwoWay}" Minimum="-1000" Maximum="3000"/>
             </DockPanel>
-            
-            <TextBlock Text="Rotation"/>
+        </controls:PropertyFieldControl>
+
+        <controls:PropertyFieldControl Header="Text Rotation" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -100,14 +105,17 @@
                 </TextBox>
                 <Slider Value="{Binding Rotate, Mode=TwoWay}" Minimum="-360" Maximum="360"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Use Alternate Rotation Algorithm"/>
-            <metro:ToggleSwitch IsChecked="{Binding AltRotate, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left" />
+        <controls:PropertyFieldControl Header="Use Alternate Rotation Algorithm" >
+            <metro:ToggleSwitch IsChecked="{Binding AltRotate, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Mirror Horizontally"/>
-            <metro:ToggleSwitch IsChecked="{Binding Flip, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left" />
+        <controls:PropertyFieldControl Header="Mirror Text" >
+            <metro:ToggleSwitch IsChecked="{Binding Flip, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Width"/>
+        <controls:PropertyFieldControl Header="Width" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -120,8 +128,9 @@
                 </TextBox>
                 <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Height"/>
+        <controls:PropertyFieldControl Header="Height" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -134,29 +143,33 @@
                 </TextBox>
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
             </DockPanel>
-            
-            <TextBlock Text="Horizontal Alignment"/>
-            <StackPanel Orientation="Horizontal">
+        </controls:PropertyFieldControl>
+
+        <controls:PropertyFieldControl Header="Horizontal Text Alignment" >
+            <StackPanel Orientation="Vertical">
                 <RadioButton Content="Left" IsChecked="{Binding HorizontalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Left}"/>
                 <RadioButton Content="Center" IsChecked="{Binding HorizontalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Center}"/>
                 <RadioButton Content="Right" IsChecked="{Binding HorizontalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Right}"/>
             </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Vertical Alignment"/>
-            <StackPanel Orientation="Horizontal">
+        <controls:PropertyFieldControl Header="Vertical Text Alignment" >
+            <StackPanel Orientation="Vertical">
                 <RadioButton Content="Top" IsChecked="{Binding VerticalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Top}"/>
                 <RadioButton Content="Center" IsChecked="{Binding VerticalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Center}"/>
                 <RadioButton Content="Bottom" IsChecked="{Binding VerticalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Bottom}"/>
             </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Shrink Text To Fit Dimensions"/>
-            <metro:ToggleSwitch IsChecked="{Binding ShrinkToFit, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left" />
+        <controls:PropertyFieldControl Header="Shrink Font Size to Fit Dimensions" >
+            <metro:ToggleSwitch IsChecked="{Binding ShrinkToFit, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
+        <controls:PropertyFieldControl Header="Border Color" >
+            <xctk:ColorPicker SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Border Color" />
-            <xctk:ColorPicker SelectedColor="{Binding BorderColor, Mode=TwoWay}" ShowDropDownButton="True" Width="100" HorizontalAlignment="Left"/>
-
-            <TextBlock Text="Border Thickness" />
+        <controls:PropertyFieldControl Header="Border Thickness" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -169,6 +182,6 @@
                 </TextBox>
                 <Slider Value="{Binding BorderThickness, Mode=TwoWay}" Minimum="0" Maximum="1000"/>
             </DockPanel>
-        </StackPanel>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl> 
 </UserControl>

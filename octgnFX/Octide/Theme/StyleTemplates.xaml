@@ -11,6 +11,7 @@
                     xmlns:gong="urn:gong-wpf-dragdrop"
                     xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
                     xmlns:local="clr-namespace:Octide"
+                    xmlns:controls="clr-namespace:Octide.Controls"
                     xmlns:model="clr-namespace:Octide.ItemModel"
                     xmlns:metro="http://schemas.codeplex.com/elysium"
                     xmlns:params="http://schemas.codeplex.com/elysium/params">
@@ -20,7 +21,6 @@
 
     <Style x:Key="OctideInputTextBlock" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="20"/>
-        <Setter Property="Margin" Value="10,15,0,0"/>
         <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
     </Style>
 
@@ -32,18 +32,23 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
-    <Style x:Key="OctideInputPanel" >
+
+    <Style x:Key="OctideInputPanel" TargetType="{x:Type ItemsControl}" >
         <Style.Resources>
             <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type RadioButton}}">
-                <Setter Property="Margin" Value="0,0,10,0" />
+                <Setter Property="Margin" Value="15,0,5,0" />
             </Style>
             <Style TargetType="{x:Type StackPanel}">
                 <Setter Property="Orientation" Value="Vertical" />
             </Style>
             <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource OctideInputTextBlock}">
+                <Setter Property="Margin" Value="0,10,0,3"/>
             </Style>
             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}">
+                <Setter Property="Margin" Value="15,0,0,0"/>
+            </Style>
+            <Style TargetType="{x:Type controls:AssetControllerView}">
+                <Setter Property="Margin" Value="15,0,0,0" />
             </Style>
             <Style TargetType="{x:Type Image}">
                 <Setter Property="MaxHeight" Value="20"/>
@@ -52,17 +57,20 @@
                 <Setter Property="Margin" Value="10,15,0,0" />
             </Style>
             <Style TargetType="{x:Type Slider}">
-                <Setter Property="Margin" Value="10,0,0,0" />
+                <Setter Property="Margin" Value="15,0,0,0" />
             </Style>
         </Style.Resources>
     </Style>
 
-    <Style x:Key="OctideTreeViewItemStyle" >
+    <Style x:Key="OctideTreeViewItemStyle" TargetType="{x:Type Border}" >
+        <Setter Property="Padding" Value="1" />
+        <Setter Property="Margin" Value="1" />
         <Style.Resources>
             <Style TargetType="{x:Type TextBlock}" >
                 <Setter Property="Margin" Value="2,0,2,0" />
                 <Setter Property="FontSize" Value="12" />
                 <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="Black" />
             </Style>
 
             <Style TargetType="{x:Type StackPanel}" >
@@ -72,8 +80,8 @@
 
             <Style TargetType="{x:Type Button}" >
                 <Setter Property="Padding" Value="2,0,2,0" />
-                <Setter Property="Margin" Value="1,0,1,0" />
-                <Setter Property="FontSize" Value="9" />
+                <Setter Property="Margin" Value="2,0,2,0" />
+                <Setter Property="FontSize" Value="10" />
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -83,9 +91,10 @@
             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
                 <Setter Property="Foreground" Value="Yellow" />
                 <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="2,0,2,0" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="MinWidth" Value="20" />
-                <Setter Property="FontSize" Value="11" />
+                <Setter Property="MinWidth" Value="80" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
                 <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
                 <Style.Triggers>
@@ -99,14 +108,23 @@
                 <Setter Property="IsReadOnly" Value="True" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Padding" Value="2"/>
+                <Setter Property="Margin" Value="2,0,2,0"/>
                 <Setter Property="MinWidth" Value="70"/>
                 <Setter Property="DisplayMemberPath" Value="Name"/>
-                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="FontSize" Value="11"/>
             </Style>
         </Style.Resources>
     </Style>
 
-    <Style TargetType="{x:Type local:KeyInputTextBox}" BasedOn="{StaticResource {x:Type TextBox}}"/>
+    <Style x:Key="IdeTreeViewControl" TargetType="{x:Type TreeView}" BasedOn="{StaticResource {x:Type TreeView}}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
+        <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
+        <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
+        <Setter Property="gong:DragDrop.UseDefaultEffectDataTemplate" Value="True" />
+    </Style>
+
+    <Style TargetType="{x:Type controls:KeyInputTextBox}" BasedOn="{StaticResource {x:Type TextBox}}"/>
 
     <Style x:Key="GridSplitterPreviewStyle" >
         <Setter Property="Control.Template">
@@ -120,7 +138,7 @@
 
     <Style TargetType="{x:Type GridSplitter}">
         <Setter Property="Background"
-                Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                Value="{StaticResource BackgroundBrush}"/>
         <Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -131,7 +149,7 @@
                         <ControlTemplate TargetType="{x:Type GridSplitter}">
                             <Border BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="Black"
+                            Background="{TemplateBinding Background}"
                             CornerRadius="5">
                                 <Canvas RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True"
                                 Height="50" VerticalAlignment="Center"
@@ -156,7 +174,7 @@
                         <ControlTemplate TargetType="{x:Type GridSplitter}">
                             <Border BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="Black"
+                            Background="{TemplateBinding Background}"
                             CornerRadius="5">
                                 <Canvas RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True"
                                 Height="5" VerticalAlignment="Center"
@@ -177,10 +195,6 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-    <DataTemplate x:Key="ComboBoxItem" >
-        <TextBlock Text="{Binding }" />
-    </DataTemplate>
 
     <Style x:Key="VirtualListBox" TargetType="{x:Type ToggleButton}">
         <Setter Property="Background" Value="Transparent" />
@@ -206,12 +220,12 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Button" x:Key="XButton">
+    <Style x:Key="XButton" TargetType="{x:Type Button}" >
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="ToolTip" Value="Remove" />
-        <Setter Property="Margin" Value="5,0,2,0" />
+        <Setter Property="Margin" Value="5,0,5,0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
@@ -362,7 +376,7 @@
                 <Setter Property="Background" Value="SkyBlue"/>
             </Trigger>
             <DataTrigger Binding="{Binding IsDefault}" Value="True" >
-                <Setter Property="BorderThickness" Value="5"/>
+                <Setter Property="BorderThickness" Value="3"/>
                 <Setter Property="BorderBrush" Value="Red" />
             </DataTrigger>
             <DataTrigger Binding="{Binding IsVisible}" Value="False" >
@@ -371,45 +385,86 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="IdeListBoxItemControl" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+    <Style x:Key="OctideListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                    <StackPanel Orientation="Horizontal" Background="{TemplateBinding Background}" >
-                        <Image Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
-                        <local:EditableTextBlock Padding="6" Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" />
-                    </StackPanel>
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <DockPanel>
+                            <Image DockPanel.Dock="Left" Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
+                            <controls:EditableTextBlock Padding="6" Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" />
+                        </DockPanel>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="IdeBaseItemContainerStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}" >
+    <Style x:Key="OctideHorizontalListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
+                    <Border Margin="3" Padding="5" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" >
+                        <DockPanel >
+                            <controls:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" />
+                            <Image Source="{Binding Icon}" Stretch="Uniform" Margin="0 0 0 4"/>
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- base style for vertical listboxes -->
+    <Style x:Key="OctideListBoxBaseStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}" >
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
         <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
         <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
         <Setter Property="gong:DragDrop.UseDefaultEffectDataTemplate" Value="True" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource IdeBaseItemStyle}" />
-    </Style>
-
-    <Style x:Key="IdeListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource IdeBaseItemContainerStyle}" >
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="gong:DragDrop.UseDefaultDragAdorner" Value="True" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource IdeListBoxItemControl}" />
         <Setter Property="local:ScrollViewerHelper.ScrollSelectedIntoView" Value="True" />
-    </Style>
-
-    <Style x:Key="IdeHorizontalListBoxControl" TargetType="{x:Type ListBox}" BasedOn="{StaticResource IdeBaseItemContainerStyle}">
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource IdeBaseItemStyle}" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Horizontal" />
+                    <VirtualizingStackPanel Margin="2" />
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- base style for horizontal listboxes -->
+    <Style x:Key="OctideHorizontalListBoxBaseStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideListBoxBaseStyle}">
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="local:ScrollViewerHelper.ShiftWheelScrollsHorizontally" Value="True" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Margin="2" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        
+    </Style>
+
+    <!-- style for vertical listboxes -->
+    <Style x:Key="OctideListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideListBoxBaseStyle}" >
+        <Setter Property="BorderBrush" Value="#FF555555" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource OctideListBoxItemStyle}" />
+    </Style>
+
+    <!-- style for horizontal listboxes -->
+    <Style x:Key="OctideHorizontalListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideHorizontalListBoxBaseStyle}">
+        <Setter Property="BorderBrush" Value="#FF555555" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource OctideHorizontalListBoxItemStyle}" />
     </Style>
 
     <Style TargetType="Border" x:Key="PanelControl">
@@ -421,65 +476,18 @@
         <Setter Property="Padding" Value="3" />
     </Style>
 
-    <Style x:Key="SpinUp" TargetType="{x:Type RepeatButton}">
-        <Setter Property="FontSize" Value="9" />
-        <Setter Property="Template">
+
+    <Style x:Key="NewItemButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}" >
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="LayoutTransform">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ButtonBase}">
-                    <Border x:Name="Bd" SnapsToDevicePixels="True" HorizontalAlignment="Stretch"
-                            BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="0,0,0,1" Background="Transparent">
-                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                        HorizontalAlignment="Center" Margin="0,-1,0,0" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="Bd" Value="#10000000" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-   
-    <Style x:Key="SpinDown" TargetType="{x:Type RepeatButton}">
-        <Setter Property="FontSize" Value="9" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ButtonBase}">
-                    <Border x:Name="Bd" SnapsToDevicePixels="True" HorizontalAlignment="Stretch"
-                            BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="0,1,0,0" Background="Transparent">
-                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                        HorizontalAlignment="Center" Margin="0,-1,0,0" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="Bd" Value="#10000000" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
+                <RotateTransform Angle="90" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="NewItemButton" TargetType="{x:Type Button}" >
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="Width" Value="40" />
-        <Setter Property="Content" Value="+" />
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
-        <Setter Property="Opacity" Value="0.5" />
-    </Style>
-
-    <Style x:Key="NewActionButton" TargetType="{x:Type Button}" >
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Foreground" Value="White" />
-        <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
-        <Setter Property="Margin" Value="2" />
-        <Setter Property="Padding" Value="2" />
-    </Style>
 
     <Color x:Key="MainColor">#FF595959</Color>
     <SolidColorBrush x:Key="NormalBrush" Color="{StaticResource MainColor}" />

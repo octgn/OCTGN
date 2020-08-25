@@ -40,7 +40,7 @@ namespace Octide.ProxyTab.ItemModel
             var _conditonalDefinition = new ConditionalDefinition();
             _wrapper = new LinkDefinition.LinkWrapper() { Conditional = _conditonalDefinition };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildSwitchDefinitions(b);
@@ -55,7 +55,7 @@ namespace Octide.ProxyTab.ItemModel
         {
             _wrapper = lw;
             _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property.Name == _wrapper.Conditional.switchProperty);
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             if (lw.Conditional.switchNodeList != null)
             {
                 foreach (var switchcase in lw.Conditional.switchNodeList)
@@ -84,7 +84,7 @@ namespace Octide.ProxyTab.ItemModel
                 }
             };
             Property = switchItem.Property;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildSwitchDefinitions(b);

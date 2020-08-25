@@ -26,8 +26,8 @@
         <ScrollViewer Style="{StaticResource NuclearScrollViewer}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
             <StackPanel Orientation="Horizontal" >
 
-                <ListBox Style="{StaticResource IdeBaseItemContainerStyle}"
-                     ItemsSource="{Binding Items}" SelectedValue="{Binding Items.SelectedItem}"  >
+                <ListBox
+                     ItemsSource="{Binding Items}" SelectedValue="{Binding Items.SelectedItem}" >
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Style.Triggers>
@@ -57,7 +57,7 @@
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="10,10,0,0" Padding="15,1,15,1" Margin="5,0,0,0" >
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" >
-                                                <TextBlock Text="{Binding Type}" FontWeight="Bold" >
+                                                <TextBlock Text="{Binding Type}" >
                                                     <TextBlock.Style>
                                                         <Style TargetType="{x:Type TextBlock}" >
                                                             <Style.Triggers>
@@ -68,7 +68,7 @@
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                                <TextBlock Text="{Binding Name}"  />
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"  />
                                             </StackPanel>
                                         </Border>
                                     </ControlTemplate>
@@ -78,7 +78,7 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <VirtualizingStackPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                 </ListBox>

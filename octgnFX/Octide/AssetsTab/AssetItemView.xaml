@@ -11,13 +11,13 @@
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600"
              params:Design.Theme="Dark"
              >
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Asset File Name" />
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="File Name">
             <TextBox IsEnabled="{Binding LockName, Converter={StaticResource InverseBooleanConverter}}">
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -35,20 +35,21 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Asset Type" />
+        <controls:PropertyFieldControl Header="Type">
             <TextBox Text="{Binding Type, Mode=OneWay}" IsEnabled="False" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Relative Path" />
+        <controls:PropertyFieldControl Header="Relative Path">
             <TextBox Text="{Binding RelativePath, Mode=OneWay}" IsEnabled="False" />
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Links to this Asset: " />
-                <TextBlock Text="{Binding LinkedAssetsCount}" Foreground="WhiteSmoke" />
-            </StackPanel>
-            
-            <TextBlock Text="Preview" />
+        <controls:PropertyFieldControl Header="Number of Links to this Asset">
+            <TextBlock Text="{Binding LinkedAssetsCount}" Foreground="WhiteSmoke" />
+        </controls:PropertyFieldControl>
 
+        <controls:PropertyFieldControl Header="Preview" >
             <ContentControl Content="{Binding }">
                 <ContentControl.Style>
                     <Style TargetType="{x:Type ContentControl}">
@@ -72,8 +73,8 @@
                     </Style>
                 </ContentControl.Style>
             </ContentControl>
+        </controls:PropertyFieldControl>
 
 
-        </ItemsControl>
-    </ScrollViewer>
+    </ItemsControl>
 </UserControl>

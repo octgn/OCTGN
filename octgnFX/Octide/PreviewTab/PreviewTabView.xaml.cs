@@ -287,21 +287,5 @@ namespace Octide.Views
         {
             ViewModelLocator.PreviewTabViewModel.Selection = e.NewValue;
         }
-
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs args)
-        {
-            ScrollViewer scrollViewer = sender as ScrollViewer;
-
-            if (scrollViewer == null)
-                return;
-
-            if (args.Delta < 0)
-                scrollViewer.LineRight();
-            else
-                scrollViewer.LineLeft();
-
-            args.Handled = true;
-
-        }
     }
 }

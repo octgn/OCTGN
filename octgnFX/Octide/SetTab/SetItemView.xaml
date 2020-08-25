@@ -11,63 +11,77 @@
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              mc:Ignorable="d"
+             xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:set="clr-namespace:Octide.SetTab.Views"
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
              d:DesignHeight="700" d:DesignWidth="1100"
              params:Design.Theme="Dark">
 
-    <TabControl Margin="10,0,0,0" Grid.Column="1" >
+    <TabControl Margin="10,0,0,0" >
         <TabItem Header="Summary" >
-            <ScrollViewer VerticalScrollBarVisibility="Auto" >
-                <ItemsControl Style="{StaticResource OctideInputPanel}">
-                    <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                        <Button HorizontalAlignment="Left" Content="Import Cards from Spreadsheet" Command="{Binding ImportCSVCommand}" />
-                    </StackPanel>
-                    <TextBlock Text="Name" />
-                    <TextBox>
-                        <TextBox.Text>
-                            <Binding Path="Name" >
-                                <Binding.ValidationRules>
-                                    <local:StringRestrictionValidationRule />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <TextBlock Text="GUID" />
-                    <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
-                    <TextBlock Text="Abbreviation Code" />
-                    <TextBox Text="{Binding Code}" />
-                    <TextBlock Text="Description" />
-                    <TextBox Text="{Binding Description}" />
-                    <TextBlock Text="Release Date" />
-                    <DatePicker Foreground="WhiteSmoke" SelectedDate="{Binding ReleaseDate}" HorizontalAlignment="Left" SelectedDateFormat="Long"/>
-                    <TextBlock Text="Hide Set from Deck Editor" />
-                    <StackPanel Orientation="Horizontal">
-                        <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                        <TextBlock Text="{Binding Hidden, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </ItemsControl>
-            </ScrollViewer>
+            <controls:ItemPropertiesView Header="Set Editor">
+                <controls:ItemPropertiesView.Content>
+
+                    <ItemsControl >
+                        <StackPanel Orientation="Horizontal" Visibility="Collapsed">
+                            <Button HorizontalAlignment="Left" Content="Import Cards from Spreadsheet" Command="{Binding ImportCSVCommand}" />
+                        </StackPanel>
+                        <controls:PropertyFieldControl Header="Name">
+                            <TextBox>
+                                <TextBox.Text>
+                                    <Binding Path="Name" >
+                                        <Binding.ValidationRules>
+                                            <local:StringRestrictionValidationRule />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </controls:PropertyFieldControl>
+
+                        <controls:PropertyFieldControl Header="GUID">
+                            <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
+                        </controls:PropertyFieldControl>
+
+                        <controls:PropertyFieldControl Header="Abbreviated Set Code">
+                            <TextBox Text="{Binding Code}" />
+                        </controls:PropertyFieldControl>
+
+                        <controls:PropertyFieldControl Header="Description">
+                            <TextBox Text="{Binding Description}" />
+                        </controls:PropertyFieldControl>
+
+                        <controls:PropertyFieldControl Header="Release Date">
+                            <DatePicker Foreground="WhiteSmoke" SelectedDate="{Binding ReleaseDate}" HorizontalAlignment="Left" SelectedDateFormat="Long"/>
+                        </controls:PropertyFieldControl>
+
+                        <controls:PropertyFieldControl Header="Hide from Deck Editor">
+                            <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" />
+                        </controls:PropertyFieldControl>
+                    </ItemsControl>
+                </controls:ItemPropertiesView.Content>
+            </controls:ItemPropertiesView>
         </TabItem>
 
         <TabItem Header="Packages">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Button Content="New Package" Margin="1" Command="{Binding AddPackageCommand}" />
-                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding PackageItems}" SelectedItem="{Binding PackageItems.SelectedItem}" >
-                    <ListBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding PackageItems.SelectedItem.RemoveCommand}" />
-                    </ListBox.InputBindings>
-                </ListBox>
-                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding PackageItems.SelectedItem}">
+                <DockPanel>
+                    <Button Content="New Package" DockPanel.Dock="Bottom" Margin="1" Command="{Binding AddPackageCommand}" />
+                    <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding PackageItems}" SelectedItem="{Binding PackageItems.SelectedItem}"
+                                 gong:DragDrop.DropHandler="{Binding PackageItems}">
+                        <ListBox.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding PackageItems.SelectedItem.RemoveCommand}" />
+                        </ListBox.InputBindings>
+                    </ListBox>
+                </DockPanel>
+                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+                <ContentControl Grid.Column="2" Content="{Binding PackageItems.SelectedItem}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type item:PackageModel}" >
                             <set:PackageItemView />
@@ -77,23 +91,25 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Cards" IsSelected="True" >
+        <TabItem Header="Cards" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Button Content="New Card" Margin="1" Command="{Binding AddCardCommand}" />
-                <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding CardItems}" SelectedItem="{Binding CardItems.SelectedItem}" >
-                    <ListBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding CardItems.SelectedItem.RemoveCommand}" />
-                    </ListBox.InputBindings>
-                </ListBox>
-                <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding CardItems.SelectedItem}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Bottom" Content="New Card" Margin="1" Command="{Binding AddCardCommand}" />
+                    <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding CardItems}" 
+                             SelectedValue="{Binding CardItems.SelectedItem}" 
+                             gong:DragDrop.DropHandler="{Binding CardItems}">
+                        <ListBox.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding CardItems.SelectedItem.RemoveCommand}" />
+                        </ListBox.InputBindings>
+                    </ListBox>
+                </DockPanel>
+                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+                <ContentControl Grid.Column="2" Content="{Binding CardItems.SelectedItem}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type item:CardModel}" >
                             <set:CardItemView />

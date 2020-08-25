@@ -33,7 +33,7 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Asset.FullPath}" Width="{Binding Width}" Height="{Binding Height}"/>
+                        <Image Source="{Binding Asset.SafePath}" Width="{Binding Width}" Height="{Binding Height}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

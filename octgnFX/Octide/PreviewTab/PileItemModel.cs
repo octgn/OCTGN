@@ -112,7 +112,6 @@ namespace Octide.ItemModel
             }
         }
 
-
         public string Shortcut
         {
             get
@@ -126,6 +125,21 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Shortcut");
             }
         }
+
+        public bool Shuffle
+        {
+            get
+            {
+                return ShuffleShortcut != null;
+            }
+            set
+            {
+                if (value == Shuffle) return;
+                ShuffleShortcut = value == true ? "" : null;
+                RaisePropertyChanged("Shuffle");
+            }
+        }
+
         public string ShuffleShortcut
         {
             get

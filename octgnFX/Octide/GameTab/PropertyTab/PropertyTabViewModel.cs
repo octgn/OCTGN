@@ -40,7 +40,7 @@ namespace Octide.ViewModel
 
         public PropertyTabViewModel()
         {
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(PropertyItemModel));
             foreach (var property in ViewModelLocator.GameLoader.Game.CustomProperties)
             {
                 Items.Add(new PropertyItemModel(property, Items));

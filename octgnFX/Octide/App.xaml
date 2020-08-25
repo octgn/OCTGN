@@ -19,6 +19,7 @@
             </ResourceDictionary.MergedDictionaries>
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octide.ViewModel" />
             <vm:WindowLocator x:Key="WindowLocator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octide.ViewModel" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

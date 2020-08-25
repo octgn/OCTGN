@@ -88,7 +88,7 @@ namespace Octide.SetTab.ItemModel
 
             };
             Type = a.Type;
-            Items = new IdeCollection<CardPropertyModel>(this);
+            Items = new IdeCollection<CardPropertyModel>(this, typeof(CardPropertyModel));
             Items.CollectionChanged += (c, b) =>
             {
                 BuildAltDef(b);
@@ -389,7 +389,7 @@ namespace Octide.SetTab.ItemModel
 
         public void UpdateProxyTemplate()
         {
-            var properties = GetProperties.ToDictionary(x => x.Name, y => y.Value);
+            var properties = GetProperties.ToDictionary(x => x.Name, y => y.Value ?? "");
             properties.Add("SetName", Set.Name);
             properties.Add("Name", Name);
             properties.Add("CardSizeName", SizeProperty.Name);

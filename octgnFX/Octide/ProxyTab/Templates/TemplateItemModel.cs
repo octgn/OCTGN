@@ -3,6 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight.Command;
+using Microsoft.Web.XmlTransform;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ProxyTab.Handlers;
 using Octide.ViewModel;
@@ -50,7 +51,7 @@ namespace Octide.ProxyTab.ItemModel
             Asset.PropertyChanged += AssetUpdated;
 
 
-            Matches = new IdeCollection<IdeBaseItem>(this);
+            Matches = new IdeCollection<IdeBaseItem>(this, typeof(MatchModel));
             Matches.CollectionChanged += (a, b) =>
             {
                 BuildMatchDef(b);
@@ -85,7 +86,7 @@ namespace Octide.ProxyTab.ItemModel
             Asset.Register(t.src);
             Asset.PropertyChanged += AssetUpdated;
 
-            Matches = new IdeCollection<IdeBaseItem>(this);
+            Matches = new IdeCollection<IdeBaseItem>(this, typeof(MatchModel));
             foreach (var match in t.Matches)
             {
                 Matches.Add(new MatchModel(match, Matches));
@@ -131,7 +132,7 @@ namespace Octide.ProxyTab.ItemModel
             _def.src = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
 
-            Matches = new IdeCollection<IdeBaseItem>(this);
+            Matches = new IdeCollection<IdeBaseItem>(this, typeof(MatchModel));
             Matches.CollectionChanged += (a, b) =>
             {
                 BuildMatchDef(b);
@@ -199,27 +200,32 @@ namespace Octide.ProxyTab.ItemModel
         {
             var ret = new MatchModel(Matches);
             Matches.Add(ret);
+            Matches.SelectedItem = ret;
         }
 
         public void AddOverlayConditional()
         {
             var ret = new ConditionalBlockModel(OverlayContainer.Items);
             OverlayContainer.Items.Add(ret);
+            OverlayContainer.Items.SelectedItem = ret;
         }
         public void AddOverlaySwitch()
         {
             var ret = new SwitchBlockModel(OverlayContainer.Items);
             OverlayContainer.Items.Add(ret);
+            OverlayContainer.Items.SelectedItem = ret;
         }
         public void AddTextConditional()
         {
             var ret = new ConditionalBlockModel(TextBlockContainer.Items);
             TextBlockContainer.Items.Add(ret);
+            TextBlockContainer.Items.SelectedItem = ret;
         }
         public void AddTextSwitch()
         {
             var ret = new SwitchBlockModel(TextBlockContainer.Items);
             TextBlockContainer.Items.Add(ret);
+            TextBlockContainer.Items.SelectedItem = ret;
         }
 
         public string Name

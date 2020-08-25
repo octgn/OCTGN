@@ -18,19 +18,19 @@
     <UserControl.Resources>
 
         <ControlTemplate x:Key="IncludeHeader" TargetType="ContentControl" >
-            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushRed}" Style="{StaticResource OctideTreeViewItemStyle}">
+            <Border Background="{StaticResource BlendBrushRed}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel >
                     <TextBlock Text="INCLUDE" FontWeight="Bold" />
                     <TextBlock Text="set:" />
-                    <ComboBox IsReadOnly="True" MinWidth="100" ItemsSource="{Binding Sets}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedSet, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding Sets}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedSet, Mode=TwoWay}" />
                     <TextBlock Text="card:" />
-                    <ComboBox IsReadOnly="True" MinWidth="100" ItemsSource="{Binding Cards}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedCard, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding Cards}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedCard, Mode=TwoWay}" />
                     <Button Content="+Property" Background="{StaticResource BlendBrushYellow}" Command="{Binding AddPropertyCommand}" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="OptionsHeader" TargetType="ContentControl" >
-            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushPurple}" Style="{StaticResource OctideTreeViewItemStyle}">
+            <Border Background="{StaticResource BlendBrushPurple}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel >
                     <TextBlock Text="OPTIONS" FontWeight="Bold" />
                     <Button Content="+Option" Background="{StaticResource BlendBrushBlue}" Command="{Binding AddOptionCommand}" />
@@ -38,10 +38,10 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="OptionHeader" TargetType="ContentControl" >
-            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushBlue}"  Style="{StaticResource OctideTreeViewItemStyle}">
+            <Border Background="{StaticResource BlendBrushBlue}"  Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel >
                     <TextBlock Text="OPTION" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="1" Text="probability:" />
+                    <TextBlock Text="probability:" />
                     <TextBox MinWidth="50" >
                         <TextBox.Text>
                             <Binding Path="Probability" >
@@ -57,7 +57,7 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="PickHeader" TargetType="ContentControl" >
-            <Border Margin="1" Padding="1" Background="{StaticResource BlendBrushGreen}" Style="{StaticResource OctideTreeViewItemStyle}">
+            <Border Background="{StaticResource BlendBrushGreen}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel >
                     <TextBlock Text="PICK" FontWeight="Bold" />
                     <TextBlock Text="quantity:" />
@@ -77,13 +77,13 @@
             </Border>
         </ControlTemplate>
         <ControlTemplate x:Key="PropertyHeader" TargetType="ContentControl"  >
-            <Border Padding="1" Margin="1" Background="{StaticResource BlendBrushYellow}" Style="{StaticResource OctideTreeViewItemStyle}" >
+            <Border Background="{StaticResource BlendBrushYellow}" Style="{StaticResource OctideTreeViewItemStyle}" >
                 <StackPanel >
                     <TextBlock Text="PROPERTY" FontWeight="Bold" />
                     <TextBlock Text="name:" />
-                    <ComboBox IsReadOnly="True" MinWidth="80" ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
                     <TextBlock Text="value:" />
-                    <TextBox Text="{Binding Value}" MinWidth="100"/>
+                    <TextBox Text="{Binding Value}" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
@@ -141,7 +141,7 @@
                     <ContentControl Template="{StaticResource OptionsHeader}" />
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type item:OptionModel}">
-                    <ContentControl Template="{StaticResource OptionsHeader}" />
+                    <ContentControl Template="{StaticResource OptionHeader}" />
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type item:PickModel}">
                     <ContentControl Template="{StaticResource PickHeader}" />
@@ -167,18 +167,13 @@
         <TabControl>
             <TabItem Header="Pick Selectors">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Button Content="Add Options" Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
-                    <Button Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushGreen}"/>
-                    <TreeView Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent" 
+                    <TreeView Background="Transparent" 
                               ItemsSource="{Binding Items}"
+                              ScrollViewer.CanContentScroll="True"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True"
                               gong:DragDrop.DropHandler="{Binding PackageDropHandler}"
                               gong:DragDrop.DragDropCopyKeyState="ControlKey" 
@@ -189,18 +184,24 @@
                             </Style>
                         </TreeView.ItemContainerStyle>
                     </TreeView>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Add Options" Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
+                        <Button Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushGreen}"/>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Included Cards">
 
                 <Grid Grid.Row="2">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Button Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
-
-                    <TreeView Grid.Row="1" Background="Transparent"
+                    <TreeView Background="Transparent"
                               ItemsSource="{Binding Includes}"
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
                               gong:DragDrop.DropHandler="{Binding IncludeDropHandler}"
@@ -212,6 +213,8 @@
                             </Style>
                         </TreeView.ItemContainerStyle>
                     </TreeView>
+                    <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
+
                 </Grid>
             </TabItem>
         </TabControl>
