@@ -97,6 +97,7 @@ namespace Octide
             if (Source.DefaultItem == this) return;
             Source.DefaultItem = this;
             RaisePropertyChanged("IsDefault");
+            RaisePropertyChanged("CanRemove");
 
         }
 
@@ -140,7 +141,7 @@ namespace Octide
         {
             get
             {
-                return _canRemove;
+                return IsDefault ? false : _canRemove;
             }
             set
             {

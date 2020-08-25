@@ -218,6 +218,12 @@
     <Compile Include="AssetsTab\AssetItemView.xaml.cs">
       <DependentUpon>AssetItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ItemPropertiesView.xaml.cs">
+      <DependentUpon>ItemPropertiesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PropertyFieldControl.xaml.cs">
+      <DependentUpon>PropertyFieldControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GameTab\DeckSectionTab\DeckSectionView.xaml.cs">
       <DependentUpon>DeckSectionView.xaml</DependentUpon>
     </Compile>
@@ -302,9 +308,10 @@
     </Compile>
     <Compile Include="GameTab\MarkerTab\MarkerItemViewModel.cs" />
     <Compile Include="SetTab\PackageTab\DropHandlers.cs" />
-    <Compile Include="AssetsTab\AssetControllerView.xaml.cs">
+    <Compile Include="Controls\AssetControllerView.xaml.cs">
       <DependentUpon>AssetControllerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\DataTemplateSelectors.cs" />
     <Compile Include="Utils\EnumBindingSourceExtension.cs" />
     <Compile Include="Utils\AsyncObservableCollection.cs" />
     <Compile Include="Utils\ValidationRules.cs" />
@@ -343,12 +350,12 @@
     <Compile Include="GameTab\SymbolTab\SymbolItemView.xaml.cs">
       <DependentUpon>SymbolItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\KeyInputTextBox.cs" />
+    <Compile Include="Controls\KeyInputTextBox.cs" />
     <Compile Include="Utils\IdeBaseItem.cs" />
     <Compile Include="Utils\ScrollViewerHelper.cs" />
     <Compile Include="Utils\Utils.cs" />
-    <Compile Include="Utils\EditableTextBlock.cs" />
-    <Compile Include="Utils\EditableTextBlockAdorner.cs" />
+    <Compile Include="Controls\EditableTextBlock.cs" />
+    <Compile Include="Controls\EditableTextBlockAdorner.cs" />
     <Compile Include="AssetsTab\AssetsTabViewModel.cs" />
     <Compile Include="PreviewTab\SampleCardItemModel.cs" />
     <Compile Include="ProxyTab\TextBlockDefinitionItemModel.cs" />
@@ -485,6 +492,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\ItemPropertiesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PropertyFieldControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="GameTab\DeckSectionTab\DeckSectionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -549,7 +564,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AssetsTab\AssetControllerView.xaml">
+    <Page Include="Controls\AssetControllerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -725,6 +740,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\About.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

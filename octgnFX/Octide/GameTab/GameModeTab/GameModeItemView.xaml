@@ -9,15 +9,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <ItemsControl Style="{StaticResource OctideInputPanel}">
-            <TextBlock Text="Game Mode Name"/>
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Name">
             <TextBox>
                 <TextBox.Text>
                     <Binding Path="Name" >
@@ -27,18 +27,18 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
-            
-            <TextBlock Text="Game Mode Description" />
-            <TextBox Text="{Binding ShortDescription}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Height="100" />
-            
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Game Mode Image"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <local:AssetControllerView DataContext="{Binding Asset}" />
+        <controls:PropertyFieldControl Header="Description" >
+            <TextBox Text="{Binding ShortDescription}" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" MinHeight="50" MaxHeight="150" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Player Count"/>
+
+        <controls:PropertyFieldControl Header="Icon Image" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
+
+        <controls:PropertyFieldControl Header="Number of Players Allowed" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -49,12 +49,12 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding PlayerCount , Mode=TwoWay}" Minimum="1" Maximum="16"/>
+                <Slider Value="{Binding PlayerCount , Mode=TwoWay}" Margin="5,0,0,0" Minimum="1" Maximum="16"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Game Uses Two-Sided Table"/>
-            <metro:ToggleSwitch IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left" />
-
-        </ItemsControl>
-    </ScrollViewer>
+        <controls:PropertyFieldControl Header="Use Two-Sided Table" >
+            <metro:ToggleSwitch IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

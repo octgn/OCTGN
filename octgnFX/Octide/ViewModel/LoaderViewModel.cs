@@ -91,7 +91,7 @@ namespace Octide.ViewModel
 		{
 			get
 			{
-				return "OCTIDE";
+				return "OCTGN Game Development Studio";
 			}
 		}
 

@@ -10,16 +10,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:local="clr-namespace:Octide"
-             xmlns:model="clr-namespace:Octide.ItemModel"
-             xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600" >
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <ItemsControl Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Property Name"/>
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Name" >
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -37,34 +35,30 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Property Data Type"/>
-
-            <StackPanel Orientation="Horizontal">
-                <RadioButton Content="String" IsChecked="{Binding Type, Converter={StaticResource RadioConverter}, ConverterParameter=String}"/>
+        <controls:PropertyFieldControl Header="Text Format" >
+            <StackPanel Orientation="Vertical">
+                <RadioButton Content="Plain Text" IsChecked="{Binding Type, Converter={StaticResource RadioConverter}, ConverterParameter=String}"/>
                 <RadioButton Content="Integer" IsChecked="{Binding Type, Converter={StaticResource RadioConverter}, ConverterParameter=Integer}"/>
                 <RadioButton Content="Rich Text" IsChecked="{Binding Type, Converter={StaticResource RadioConverter}, ConverterParameter=RichText}"/>
             </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Property Search Filter Method"/>
-
-            <StackPanel Orientation="Horizontal">
-                <RadioButton Content="Plain Text" IsChecked="{Binding TextKind, Converter={StaticResource RadioConverter}, ConverterParameter=FreeText}"/>
-                <RadioButton Content="Enumeration" IsChecked="{Binding TextKind, Converter={StaticResource RadioConverter}, ConverterParameter=Enumeration}"/>
-                <RadioButton Content="Tokens" IsChecked="{Binding TextKind, Converter={StaticResource RadioConverter}, ConverterParameter=Tokens}"/>
+        <controls:PropertyFieldControl Header="Method for Creating Filter Groups" >
+            <StackPanel Orientation="Vertical">
+                <RadioButton Content="Enumeration (entire text is grouped)" IsChecked="{Binding TextKind, Converter={StaticResource RadioConverter}, ConverterParameter=Enumeration}"/>
+                <RadioButton Content="Tokens (group by individual words)" IsChecked="{Binding TextKind, Converter={StaticResource RadioConverter}, ConverterParameter=Tokens}"/>
+                <RadioButton Content="None (no grouping)" IsChecked="{Binding TextKind, Converter={StaticResource RadioConverter}, ConverterParameter=FreeText}"/>
             </StackPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Hide Property Column in Deck Editor" />
-            <StackPanel Orientation="Horizontal">
-                <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding Hidden, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
-            </StackPanel>
+        <controls:PropertyFieldControl Header="Hide from Deck Editor" >
+            <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Ignore Values in Searches" />
-            <StackPanel Orientation="Horizontal">
-                <metro:ToggleSwitch IsChecked="{Binding IgnoreText, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding IgnoreText, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
-            </StackPanel>
-        </ItemsControl>
-    </ScrollViewer>
+        <controls:PropertyFieldControl Header="Ignore in Searches" >
+            <metro:ToggleSwitch IsChecked="{Binding IgnoreText, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

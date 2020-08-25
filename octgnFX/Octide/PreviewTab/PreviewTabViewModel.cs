@@ -34,11 +34,7 @@ namespace Octide.ViewModel
 
 
         public IdeCollection<IdeBaseItem> Piles { get; set; }
-    //    public ObservableCollection<GroupItemModel> VisiblePiles => new ObservableCollection<GroupItemModel>(Piles.Where(x => x.Collapsed == false));
-    //    public ObservableCollection<GroupItemModel> CollapsedPiles => new ObservableCollection<GroupItemModel>(Piles.Where(x => x.Collapsed == true));
         public IdeCollection<IdeBaseItem> GlobalPiles { get; set; }
-    //    public ObservableCollection<GroupItemModel> VisibleGlobalPiles => new ObservableCollection<GroupItemModel>(GlobalPiles.Where(x => x.Collapsed == false));
-    //    public ObservableCollection<GroupItemModel> CollapsedGlobalPiles => new ObservableCollection<GroupItemModel>(GlobalPiles.Where(x => x.Collapsed == true));
         public IdeCollection<IdeBaseItem> Counters { get; set; }
         public IdeCollection<IdeBaseItem> GlobalCounters { get; set; }
         public IdeCollection<IdeBaseItem> CardSizes { get; set; }
@@ -108,7 +104,7 @@ namespace Octide.ViewModel
             {
                 _game.Player = new Player();
             }
-            Piles = new IdeCollection<IdeBaseItem>(this);
+            Piles = new IdeCollection<IdeBaseItem>(this, typeof(PileItemModel));
             foreach (var pile in _game.Player.Groups)
             {
                 Piles.Add(new PileItemModel(pile, Piles));
@@ -123,7 +119,7 @@ namespace Octide.ViewModel
             AddPileCommand = new RelayCommand(AddPile);
             #endregion
             #region counters
-            Counters = new IdeCollection<IdeBaseItem>(this);
+            Counters = new IdeCollection<IdeBaseItem>(this, typeof(CounterItemModel));
             foreach (var counter in _game.Player.Counters)
             {
                 Counters.Add(new CounterItemModel(counter, Counters));
@@ -139,7 +135,7 @@ namespace Octide.ViewModel
             {
                 _game.GlobalPlayer = new GlobalPlayer();
             }
-            GlobalPiles = new IdeCollection<IdeBaseItem>(this);
+            GlobalPiles = new IdeCollection<IdeBaseItem>(this, typeof(PileItemModel));
             foreach (var pile in _game.GlobalPlayer.Groups)
             {
                 GlobalPiles.Add(new PileItemModel(pile, GlobalPiles));
@@ -154,7 +150,7 @@ namespace Octide.ViewModel
             AddGlobalPileCommand = new RelayCommand(AddGlobalPile);
             #endregion
             #region globalcounters
-            GlobalCounters = new IdeCollection<IdeBaseItem>(this);
+            GlobalCounters = new IdeCollection<IdeBaseItem>(this, typeof(CounterItemModel));
             foreach (var counter in _game.GlobalPlayer.Counters)
             {
                 GlobalCounters.Add(new CounterItemModel(counter, GlobalCounters));
@@ -166,7 +162,7 @@ namespace Octide.ViewModel
             AddGlobalCounterCommand = new RelayCommand(AddGlobalCounter);
             #endregion
             #region sizes
-            CardSizes = new IdeCollection<IdeBaseItem>(this);
+            CardSizes = new IdeCollection<IdeBaseItem>(this, typeof(SizeItemModel));
             foreach (var sizeDef in _game.CardSizes)
             {
                 var size = new SizeItemModel(sizeDef.Value, CardSizes);
@@ -188,7 +184,7 @@ namespace Octide.ViewModel
             AddSizeCommand = new RelayCommand(AddSize);
             #endregion
             #region phases
-            Phases = new IdeCollection<IdeBaseItem>(this);
+            Phases = new IdeCollection<IdeBaseItem>(this, typeof(PhaseItemModel));
             foreach (var phase in _game.Phases)
             {
                 Phases.Add(new PhaseItemModel(phase, Phases));
@@ -200,7 +196,7 @@ namespace Octide.ViewModel
             AddPhaseCommand = new RelayCommand(AddPhase);
             #endregion
             #region boards
-            Boards = new IdeCollection<IdeBaseItem>(this);
+            Boards = new IdeCollection<IdeBaseItem>(this, typeof(BoardItemModel));
             foreach (var boardDef in _game.GameBoards)
             {
                 var board = new BoardItemModel(boardDef.Value, Boards);

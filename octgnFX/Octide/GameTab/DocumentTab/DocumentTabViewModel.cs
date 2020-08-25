@@ -35,7 +35,7 @@ namespace Octide.ViewModel
         {
             AddCommand = new RelayCommand(AddItem);
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(DocumentItemModel));
             foreach (var document in ViewModelLocator.GameLoader.Game.Documents)
             {
                 Items.Add(new DocumentItemModel(document, Items));

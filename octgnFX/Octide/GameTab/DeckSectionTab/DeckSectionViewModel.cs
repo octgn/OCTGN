@@ -32,7 +32,7 @@ namespace Octide.ViewModel
             AddGlobalCommand = new RelayCommand(AddGlobalItem);
             DeckSectionDropHandler = new DeckSectionDropHandler();
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(DeckSectionItemModel));
             foreach (var deckSection in ViewModelLocator.GameLoader.Game.DeckSections.Values)
             {
                 Items.Add(new DeckSectionItemModel(deckSection, Items));
@@ -41,7 +41,7 @@ namespace Octide.ViewModel
             {
                 ViewModelLocator.GameLoader.Game.DeckSections = Items.ToDictionary(x => ((DeckSectionItemModel)x).Name, y => ((DeckSectionItemModel)y)._deckSection);
             };
-            GlobalItems = new IdeCollection<IdeBaseItem>(this);
+            GlobalItems = new IdeCollection<IdeBaseItem>(this, typeof(DeckSectionItemModel));
             foreach (var globalDeckSection in ViewModelLocator.GameLoader.Game.SharedDeckSections.Values)
             {
                 GlobalItems.Add(new DeckSectionItemModel(globalDeckSection, GlobalItems));

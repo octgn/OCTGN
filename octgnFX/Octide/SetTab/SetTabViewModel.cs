@@ -23,7 +23,7 @@ namespace Octide.ViewModel
         {
             AddSetCommand = new RelayCommand(AddSet);
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(SetModel));
 
             var setSerializer = new SetSerializer() { Game = ViewModelLocator.GameLoader.Game };
 

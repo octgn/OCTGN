@@ -19,7 +19,7 @@ namespace Octide.SetTab.ItemModel
         {
             _options = new OptionsList();
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildOptionsDef(b);
@@ -31,7 +31,7 @@ namespace Octide.SetTab.ItemModel
         public OptionsModel(OptionsList p, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _options = p;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildOptionsDef(b);
@@ -47,7 +47,7 @@ namespace Octide.SetTab.ItemModel
         public OptionsModel(OptionsModel p, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _options = new OptionsList();
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildOptionsDef(b);

@@ -21,7 +21,7 @@ namespace Octide.ViewModel
         {
             AddCommand = new RelayCommand(AddItem);
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(SymbolItemModel));
             foreach (var symbol in ViewModelLocator.GameLoader.Game.Symbols)
             {
                 Items.Add(new SymbolItemModel(symbol, Items));

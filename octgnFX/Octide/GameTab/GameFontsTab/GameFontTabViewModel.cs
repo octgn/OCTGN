@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -75,5 +76,32 @@ namespace Octide.ViewModel
 
         public List<Control> Menu { get; set; }
 
+        public Color NoteBackgroundColor
+        {
+            get
+            {
+                return (Color)ColorConverter.ConvertFromString(ViewModelLocator.GameLoader.Game.NoteBackgroundColor);
+            }
+            set
+            {
+                ViewModelLocator.GameLoader.Game.NoteBackgroundColor = new ColorConverter().ConvertToString(value);
+                RaisePropertyChanged("NoteBackgroundColor");
+                ViewModelLocator.GameLoader.GameChanged(this);
+            }
+        }
+
+        public Color NoteForegroundColor
+        {
+            get
+            {
+                return (Color)ColorConverter.ConvertFromString(ViewModelLocator.GameLoader.Game.NoteForegroundColor);
+            }
+            set
+            {
+                ViewModelLocator.GameLoader.Game.NoteForegroundColor = new ColorConverter().ConvertToString(value);
+                RaisePropertyChanged("NoteForegroundColor");
+                ViewModelLocator.GameLoader.GameChanged(this);
+            }
+        }
     }
 }

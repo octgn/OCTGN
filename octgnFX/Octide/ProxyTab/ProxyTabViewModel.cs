@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Xml;
 using Octgn.Library;
 using System.Windows.Forms;
+using Octide.Views;
 
 namespace Octide.ViewModel
 {
@@ -76,7 +77,7 @@ namespace Octide.ViewModel
                 Asset.SelectedAsset.IsReserved = true;
             }
 
-            Templates = new IdeCollection<IdeBaseItem>(this);
+            Templates = new IdeCollection<IdeBaseItem>(this, typeof(TemplateModel));
             foreach (TemplateDefinition templateDef in _proxydef.TemplateSelector.GetTemplates())
             {
                 var template = new TemplateModel(templateDef, Templates);
@@ -100,8 +101,12 @@ namespace Octide.ViewModel
                 ((TemplateModel)args.OldItem)._def.defaultTemplate = false;
                 ((TemplateModel)args.NewItem)._def.defaultTemplate = true;
             };
+            Templates.SelectedItemChanged += (sender, args) =>
+            {
+                Selection = null;
+            };
 
-            TextBlocks = new IdeCollection<IdeBaseItem>(this);
+            TextBlocks = new IdeCollection<IdeBaseItem>(this, typeof(TextBlockDefinitionItemModel));
             foreach (var textblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "text"))
             {
                 TextBlocks.Add(new TextBlockDefinitionItemModel(textblock, TextBlocks));
@@ -119,7 +124,7 @@ namespace Octide.ViewModel
                 }
             };
 
-            OverlayBlocks = new IdeCollection<IdeBaseItem>(this);
+            OverlayBlocks = new IdeCollection<IdeBaseItem>(this, typeof(OverlayBlockDefinitionItemModel));
             foreach (var overlayblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "overlay"))
             {
                 OverlayBlocks.Add(new OverlayBlockDefinitionItemModel(overlayblock, OverlayBlocks));
@@ -154,12 +159,13 @@ namespace Octide.ViewModel
 
         public void UpdateProxyTemplate(ProxyTemplateChangedMessage message)
         {
-            if (SelectedTemplate == null) return;
+            if (Templates.SelectedItem == null) return;
+            var selectedTemplate = ((TemplateModel)Templates.SelectedItem);
 
             var properties = StoredProxyProperties.Where(x => x.Name != null).ToDictionary(x => x.Name, x => x.Value);
 
             //this stuff generates the real proxy image, maybe we'll need to keep it in for more accurate image
-            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, SelectedTemplate._def, properties, null);
+            var proxy = ProxyGenerator.GenerateProxy(_proxydef.BlockManager, selectedTemplate._def, properties, null);
             using (var ms = new MemoryStream())
             {
                 proxy.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -173,12 +179,12 @@ namespace Octide.ViewModel
             }
             proxy.Dispose();
 
-            BaseImage = new BitmapImage(new Uri(SelectedTemplate._def.src));
+            BaseImage = new BitmapImage(new Uri(selectedTemplate._def.src));
             ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
-                SelectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
+                selectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
                     x => (OverlayBlockDefinitionItemModel)OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block)));
             ActiveTextLayers = new ObservableCollection<ProxyTextLinkItemModel>(
-                SelectedTemplate._def.GetTextBlocks(properties).Select(
+                selectedTemplate._def.GetTextBlocks(properties).Select(
                     x => new ProxyTextLinkItemModel(x) ));
 
             RaisePropertyChanged("BaseImage");
@@ -198,23 +204,6 @@ namespace Octide.ViewModel
         public ObservableCollection<OverlayBlockDefinitionItemModel> ActiveOverlayLayers { get; private set; }
         public ObservableCollection<ProxyTextLinkItemModel> ActiveTextLayers { get; private set; }
 
-        public TemplateModel _selectedTemplate;
-
-        public TemplateModel SelectedTemplate
-        {
-            get
-            {
-                return _selectedTemplate;
-            }
-            set
-            {
-                if (value == _selectedTemplate) return;
-                _selectedTemplate = value;
-                Selection = null;
-                RaisePropertyChanged("SelectedTemplate");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
-            }
-        }
         
         public object _selection;
 
@@ -236,7 +225,7 @@ namespace Octide.ViewModel
         {
             var ret = new TemplateModel(Templates);
             Templates.Add(ret);
-            SelectedTemplate = ret;
+            Templates.SelectedItem = ret;
         }
 
         public void AddOverlay()

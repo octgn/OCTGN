@@ -8,21 +8,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600" >
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Action Separator Editor" />
+    <ItemsControl>
 
-            <TextBlock Text="Custom Submenu Name Command"  />
-            <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding HeaderExecute}" />
+        <controls:PropertyFieldControl Header="Conditional Display Command" >
 
-
-            <TextBlock Text="Conditional Display Command" />
             <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding ShowExecute}" />
-
-
-        </ItemsControl>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

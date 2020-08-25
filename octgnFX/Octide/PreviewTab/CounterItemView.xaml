@@ -10,14 +10,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Counter Editor" />
-
-            <TextBlock Text="Counter Name"/>
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Name" >
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -35,22 +33,19 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Icon"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
-            <local:AssetControllerView DataContext="{Binding Asset}" />
+        <controls:PropertyFieldControl Header="Icon Image" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Starting Value"/>
+        <controls:PropertyFieldControl Header="Default Value" >
             <TextBox Text="{Binding DefaultValue, Mode=TwoWay}"/>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Reset Value on Game Reset"/>
-            <StackPanel Orientation="Horizontal">
-                <metro:ToggleSwitch IsChecked="{Binding Reset, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding Reset, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
-            </StackPanel>
+        <controls:PropertyFieldControl Header="Reset To Default Value on Game Resets" >
+            <metro:ToggleSwitch IsChecked="{Binding Reset, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-        </ItemsControl>
-    </ScrollViewer>
+    </ItemsControl>
 </UserControl>

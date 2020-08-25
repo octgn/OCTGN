@@ -4,7 +4,7 @@
 
 using System.Windows.Controls;
 
-namespace Octide
+namespace Octide.Controls
 {
     /// <summary>
     /// Interaction logic for AssetControllerView.xaml

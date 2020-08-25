@@ -137,7 +137,7 @@
                 <TextBlock Text="Global Variables" Margin="5" Foreground="WhiteSmoke" HorizontalAlignment="Center" />
                 <Button Content="New Global Variable" Grid.Row="1" Margin="1" Command="{Binding AddGlobalVariableCommand}" />
 
-                <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Grid.Row="2" Style="{StaticResource IdeListBoxControl}"
+                <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Grid.Row="2" Style="{StaticResource OctideListBoxStyle}"
                          ItemsSource="{Binding GlobalVariables}" SelectedItem="{Binding GlobalVariables.SelectedItem}" >
                     <ListBox.InputBindings>
                         <KeyBinding Key="Delete" Command="{Binding GlobalVariables.SelectedItem.RemoveCommand}" />
@@ -146,7 +146,7 @@
                 <TextBlock Grid.Column="2" Text="Player Variables" Margin="5" Foreground="WhiteSmoke" HorizontalAlignment="Center" />
                 <Button Content="New Player Variable" Grid.Row="1" Grid.Column="2" Margin="1" Command="{Binding AddPlayerVariableCommand}" />
 
-                <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Grid.Row="2" Grid.Column="2" Style="{StaticResource IdeListBoxControl}" 
+                <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Grid.Row="2" Grid.Column="2" Style="{StaticResource OctideListBoxStyle}" 
                          ItemsSource="{Binding PlayerVariables}" SelectedItem="{Binding PlayerVariables.SelectedItem}" >
                     <ListBox.InputBindings>
                         <KeyBinding Key="Delete" Command="{Binding PlayerVariables.SelectedItem.RemoveCommand}" />
@@ -166,7 +166,7 @@
                 </Grid.RowDefinitions>
                 <Button Content="New Event Trigger" Margin="1" Command="{Binding AddEventCommand}" />
 
-                <ListBox ItemContainerStyle="{StaticResource GameEventItemStyle}" Grid.Row="1" Style="{StaticResource IdeListBoxControl}" 
+                <ListBox ItemContainerStyle="{StaticResource GameEventItemStyle}" Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
                          ItemsSource="{Binding Events}" SelectedItem="{Binding Events.SelectedItem}" >
                     <ListBox.InputBindings>
                         <KeyBinding Key="Delete" Command="{Binding Events.SelectedItem.RemoveCommand}" />
@@ -189,7 +189,7 @@
                     </Grid.RowDefinitions>
                     <Button Content="New Script File" Margin="1" Command="{Binding AddScriptCommand}" />
 
-                    <ListBox Grid.Row="1" Style="{StaticResource IdeListBoxControl}" 
+                    <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
                          ItemsSource="{Binding Scripts}" SelectedItem="{Binding Scripts.SelectedItem}" >
                         <ListBox.InputBindings>
                             <KeyBinding Key="Delete" Command="{Binding Scripts.SelectedItem.RemoveCommand}" />

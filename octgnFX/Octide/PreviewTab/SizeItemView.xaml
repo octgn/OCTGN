@@ -9,55 +9,40 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}">
+    <ItemsControl>
 
-            <TextBlock Text="Card Size Editor" />
+        <controls:PropertyFieldControl Header="Name"  >
+            <TextBox>
+                <TextBox.Resources>
+                    <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                </TextBox.Resources>
+                <TextBox.Text>
+                    <Binding Path="Name" >
+                        <Binding.ValidationRules>
+                            <local:StringRestrictionValidationRule Restriction="default" />
+                            <local:UniqueValueValidationRule>
+                                <local:UniqueValueValidationRule.Wrapper>
+                                    <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                </local:UniqueValueValidationRule.Wrapper>
+                            </local:UniqueValueValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </controls:PropertyFieldControl>
 
-            <StackPanel>
-                <StackPanel.Style>
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsDefault}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-                <TextBlock Text="Card Size Name" />
-                <TextBox>
-                    <TextBox.Resources>
-                        <local:BindingProxy x:Key="proxy" Data="{Binding }" />
-                    </TextBox.Resources>
-                    <TextBox.Text>
-                        <Binding Path="Name" >
-                            <Binding.ValidationRules>
-                                <local:StringRestrictionValidationRule Restriction="default" />
-                                <local:UniqueValueValidationRule>
-                                    <local:UniqueValueValidationRule.Wrapper>
-                                        <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
-                                    </local:UniqueValueValidationRule.Wrapper>
-                                </local:UniqueValueValidationRule>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-            </StackPanel>
+        <controls:PropertyFieldControl Header="Front Face Default Image"  >
+            <controls:AssetControllerView DataContext="{Binding FrontAsset}" />
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Front Card Image"/>
-                <Image Source="{Binding FrontAsset.FullPath, Mode=OneWay}" />
-            </StackPanel>
-
-            <local:AssetControllerView DataContext="{Binding FrontAsset}" />
-
-            <TextBlock Text="Front Card Height"/>
+        <controls:PropertyFieldControl Header="Front Face Height"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -70,8 +55,9 @@
                 </TextBox>
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="1" Maximum="300"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Front Card Width"/>
+        <controls:PropertyFieldControl Header="Front Face Width"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -81,11 +67,12 @@
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
-                </TextBox> 
+                </TextBox>
                 <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="1" Maximum="300"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Front Card Corner Radius"/>
+        <controls:PropertyFieldControl Header="Front Face Corner Radius"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -98,15 +85,13 @@
                 </TextBox>
                 <Slider Value="{Binding CornerRadius, Mode=TwoWay}" Minimum="0" Maximum="50"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Back Card Image"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
+        <controls:PropertyFieldControl Header="Back Face Default Image"  >
+            <controls:AssetControllerView DataContext="{Binding BackAsset}" />
+        </controls:PropertyFieldControl>
 
-            <local:AssetControllerView DataContext="{Binding BackAsset}" />
-
-            <TextBlock Text="Back Card Height"/>
+        <controls:PropertyFieldControl Header="Back Face Height"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -119,8 +104,9 @@
                 </TextBox>
                 <Slider Value="{Binding BackHeight, Mode=TwoWay}" Minimum="1" Maximum="300"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Back Card Width"/>
+        <controls:PropertyFieldControl Header="Back Face Width"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -133,8 +119,9 @@
                 </TextBox>
                 <Slider Value="{Binding BackWidth, Mode=TwoWay}" Minimum="1" Maximum="300"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Back Card Corner Radius"/>
+        <controls:PropertyFieldControl Header="Back Face Corner Radius"  >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -147,6 +134,6 @@
                 </TextBox>
                 <Slider Value="{Binding BackCornerRadius, Mode=TwoWay}" Minimum="0" Maximum="50"/>
             </DockPanel>
-        </ItemsControl>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

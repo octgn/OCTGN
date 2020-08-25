@@ -120,7 +120,7 @@ namespace Octide
         {
             get
             {
-                return (CanRemove && SelectedAsset != null) ? Visibility.Visible : Visibility.Hidden;
+                return (CanRemove && SelectedAsset != null) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

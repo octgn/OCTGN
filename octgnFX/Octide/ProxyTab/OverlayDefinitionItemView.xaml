@@ -9,17 +9,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:local="clr-namespace:Octide"
+             xmlns:local="clr-namespace:Octide" 
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <StackPanel Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Proxy Overlay Editor" />
-
-            <TextBlock Text="Identifier Name"/>
+    <ItemsControl>
+        <controls:PropertyFieldControl Header="Unique Identifier" >
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -37,15 +35,13 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Overlay Image"/>
-                <Image Source="{Binding Asset.FullPath, Mode=OneWay}" />
-            </StackPanel>
+        <controls:PropertyFieldControl Header="Image" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
 
-            <local:AssetControllerView DataContext="{Binding Asset}" />
-
-            <TextBlock Text="X Position"/>
+        <controls:PropertyFieldControl Header="X Position Offset" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -58,8 +54,9 @@
                 </TextBox>
                 <Slider Value="{Binding Left, Mode=TwoWay}" Minimum="-1000" Maximum="3000"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Y Position"/>
+        <controls:PropertyFieldControl Header="Y Position Offset" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -72,6 +69,6 @@
                 </TextBox>
                 <Slider Value="{Binding Top, Mode=TwoWay}" Minimum="-1000" Maximum="3000"/>
             </DockPanel>
-        </StackPanel>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

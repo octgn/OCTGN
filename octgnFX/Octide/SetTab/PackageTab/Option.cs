@@ -24,7 +24,7 @@ namespace Octide.SetTab.ItemModel
             {
                 Items = new List<object>()
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionsModel), typeof(PickModel));
 
             Items.CollectionChanged += (a, b) =>
             {
@@ -37,7 +37,7 @@ namespace Octide.SetTab.ItemModel
         public OptionModel(Option o, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             Option = o;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionsModel), typeof(PickModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildOptionDef(b);
@@ -60,7 +60,7 @@ namespace Octide.SetTab.ItemModel
                 Items = new List<object>(),
                 Probability = p.Probability
             };
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(OptionsModel), typeof(PickModel));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildOptionDef(b);

@@ -9,18 +9,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}">
+    <ItemsControl>
+        <controls:PropertyFieldControl Header="Name" >
 
-            <TextBlock Text="Game Board Editor" />
-
-            <TextBlock Text="Game Board Name" />
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />
@@ -38,14 +36,12 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
+        </controls:PropertyFieldControl>
+        <controls:PropertyFieldControl Header="Image" >
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Game Board Image"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
-            <local:AssetControllerView DataContext="{Binding Asset}" />
-
-            <TextBlock Text="Game Board Height"/>
+        <controls:PropertyFieldControl Header="Height" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -58,8 +54,9 @@
                 </TextBox>
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Game Board Width"/>
+        <controls:PropertyFieldControl Header="Width" >
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
@@ -72,19 +69,20 @@
                 </TextBox>
                 <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Game Board X Position"/>
+        <controls:PropertyFieldControl Header="X Position Offset" >
             <DockPanel >
                 <TextBox Text="{Binding XPos, Mode=TwoWay}" Width="60"/>
                 <Slider Value="{Binding XPos, Mode=TwoWay}" Minimum="-500" Maximum="500"/>
             </DockPanel>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Game Board Y Position"/>
+        <controls:PropertyFieldControl Header="Y Position Offset" >
             <DockPanel>
                 <TextBox Text="{Binding YPos, Mode=TwoWay}" Width="60" />
                 <Slider Value="{Binding YPos, Mode=TwoWay}" Minimum="-500" Maximum="500" />
             </DockPanel>
-
-        </ItemsControl>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

@@ -40,7 +40,7 @@ namespace Octide.ProxyTab.ItemModel
             var _conditonalDefinition = new ConditionalDefinition();
             _wrapper = new LinkDefinition.LinkWrapper() { Conditional = _conditonalDefinition };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildConditionalDefinitions(b);
@@ -53,7 +53,7 @@ namespace Octide.ProxyTab.ItemModel
         public ConditionalBlockModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _wrapper = lw;
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             if (lw.Conditional.ifNode != null)
                 Items.Add(new IfCaseModel(lw.Conditional.ifNode, Items));
             if (lw.Conditional.elseifNodeList != null)
@@ -77,7 +77,7 @@ namespace Octide.ProxyTab.ItemModel
         {
             _wrapper = new LinkDefinition.LinkWrapper() { Conditional = new ConditionalDefinition() };
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildConditionalDefinitions(b);

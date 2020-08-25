@@ -10,42 +10,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600" >
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <ItemsControl Style="{StaticResource OctideInputPanel}" >
-            <TextBlock Text="Action Editor" />
+    <ItemsControl>
+        <controls:PropertyFieldControl Header="Is Default Action" >
+            <metro:ToggleSwitch IsChecked="{Binding IsDefault, Mode=TwoWay}"/>
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Default Action" />
-            <StackPanel Orientation="Horizontal" >
-                <metro:ToggleSwitch IsChecked="{Binding IsDefault, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding IsDefault, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
-            </StackPanel>
-            
-            <TextBlock Text="Action Name" />
+        <controls:PropertyFieldControl Header="Label" >
             <TextBox Text="{Binding Name, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Custom Action Name Command"  />
+        <controls:PropertyFieldControl Header="Custom Action Name Command" >
             <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding HeaderExecute}" />
+        </controls:PropertyFieldControl>
 
+        <controls:PropertyFieldControl Header="Keyboard Shortcut" >
+            <controls:KeyInputTextBox Text="{Binding Shortcut, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Keyboard Shortcut" />
-            <local:KeyInputTextBox Text="{Binding Shortcut, Mode=TwoWay}" />
-
-            <TextBlock Text="Execute Command" />
+        <controls:PropertyFieldControl Header="Executable Python Function" >
             <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding Execute}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Batch Execute" />
-            <StackPanel Orientation="Horizontal" >
-                <metro:ToggleSwitch IsChecked="{Binding Batch, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding Batch, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
-            </StackPanel>
+        <controls:PropertyFieldControl Header="Batch Execute Mode" Description="If enabled, all cards in a selection will be passed to the Executable Python function as a single list. If disabled, the function will be executed individually for every card in the selection." >
+            <metro:ToggleSwitch IsChecked="{Binding Batch, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
 
-            <TextBlock Text="Conditional Display Command" />
+        <controls:PropertyFieldControl Header="Conditional Display Command" >
             <ComboBox DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding ShowExecute}" />
-
-
-        </ItemsControl>
-    </ScrollViewer>
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

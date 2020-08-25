@@ -22,7 +22,7 @@ namespace Octide.ViewModel
         {
             AddCommand = new RelayCommand(AddItem);
 
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(MarkerItemModel));
             foreach (var marker in ViewModelLocator.GameLoader.Game.Markers)
             {
                 Items.Add(new MarkerItemModel(marker.Value, Items));

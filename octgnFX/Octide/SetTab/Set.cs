@@ -51,7 +51,7 @@ namespace Octide.SetTab.ItemModel
             _set.Filename = setAsset.FullPath;
             _set.ImagePackUri = Path.Combine(Config.Instance.ImageDirectoryFull, _set.GameId.ToString(), "Sets", _set.Id.ToString());
 
-            CardItems = new IdeCollection<IdeBaseItem>(this);
+            CardItems = new IdeCollection<IdeBaseItem>(this, typeof(CardModel));
             CardItems.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);
@@ -61,7 +61,7 @@ namespace Octide.SetTab.ItemModel
                 SelectDefaultAlt(b);
             };
 
-            PackageItems = new IdeCollection<IdeBaseItem>(this);
+            PackageItems = new IdeCollection<IdeBaseItem>(this, typeof(PackageModel));
             PackageItems.CollectionChanged += (a, b) =>
             {
                 BuildPackageDef(b);
@@ -87,7 +87,7 @@ namespace Octide.SetTab.ItemModel
                 Asset.SelectedAsset.IsReserved = true;
             };
 
-            CardItems = new IdeCollection<IdeBaseItem>(this);
+            CardItems = new IdeCollection<IdeBaseItem>(this, typeof(CardModel));
             foreach (var card in _set.Cards)
             {
                 CardItems.Add(new CardModel(card, CardItems));
@@ -101,7 +101,7 @@ namespace Octide.SetTab.ItemModel
                 SelectDefaultAlt(b);
             };
 
-            PackageItems = new IdeCollection<IdeBaseItem>(this);
+            PackageItems = new IdeCollection<IdeBaseItem>(this, typeof(PackageModel));
             foreach (var package in _set.Packs)
             {
                 PackageItems.Add(new PackageModel(package, PackageItems));
@@ -142,7 +142,7 @@ namespace Octide.SetTab.ItemModel
             Asset.SelectedAsset = setAsset;
             Asset.PropertyChanged += AssetUpdated;
 
-            CardItems = new IdeCollection<IdeBaseItem>(this);
+            CardItems = new IdeCollection<IdeBaseItem>(this, typeof(CardModel));
             CardItems.CollectionChanged += (a, b) =>
             {
                 BuildCardDef(b);
@@ -156,7 +156,7 @@ namespace Octide.SetTab.ItemModel
                 CardItems.Add(new CardModel(card, CardItems) );
             }
 
-            PackageItems = new IdeCollection<IdeBaseItem>(this);
+            PackageItems = new IdeCollection<IdeBaseItem>(this, typeof(PackageModel));
             PackageItems.CollectionChanged += (a, b) =>
             {
                 BuildPackageDef(b);

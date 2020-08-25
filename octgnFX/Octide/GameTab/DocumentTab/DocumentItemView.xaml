@@ -9,26 +9,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <ItemsControl Style="{StaticResource OctideInputPanel}">
-            <TextBlock Text="Document Name"/>
+    <ItemsControl >
+        <controls:PropertyFieldControl Header="Name" >
             <TextBox Text="{Binding Name, Mode=TwoWay}"/>
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Document Asset"/>
-            </StackPanel>
-            <local:AssetControllerView DataContext="{Binding DocumentAsset}" />
+        <controls:PropertyFieldControl Header="File Asset" >
+            <controls:AssetControllerView DataContext="{Binding DocumentAsset}" />
+        </controls:PropertyFieldControl>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Document Icon"/>
-                <Image Source="{Binding Icon, Mode=OneWay}" />
-            </StackPanel>
-            <local:AssetControllerView DataContext="{Binding IconAsset}" />
-        </ItemsControl>
-    </ScrollViewer>
+        <controls:PropertyFieldControl Header="Icon Image" >
+            <controls:AssetControllerView DataContext="{Binding IconAsset}" />
+        </controls:PropertyFieldControl>
+    </ItemsControl>
 </UserControl>

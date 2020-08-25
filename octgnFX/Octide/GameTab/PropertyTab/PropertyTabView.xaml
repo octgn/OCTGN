@@ -7,39 +7,38 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:model="clr-namespace:Octide.ItemModel"
-             xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              mc:Ignorable="d" 
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding PropertyTabViewModel, Source={StaticResource Locator}}">
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Button Content="New Property" Margin="1" Command="{Binding AddCommand}" />
-
-        <ListBox x:Name="ListBox" Grid.Row="1" Style="{StaticResource IdeListBoxControl}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-        <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding Items.SelectedItem}">
+        <DockPanel>
+            <Button DockPanel.Dock="Bottom" Content="New Property" Margin="1" Command="{Binding AddCommand}" />
+            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding Items.SelectedItem}"
+                                     Header="Card Property Editor"
+                                     Description="Defines the full set of characteristics used to describe a card, including those which may be relevant for gameplay. These properties can be filtered and searched in the Deck Editor, accessed in Python scripting, and used to assign proxy image templates.">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type model:PropertyItemModel}" >
                     <views:PropertyItemView />
                 </DataTemplate>
             </ContentControl.Resources>
-        </ContentControl>
+        </controls:ItemPropertiesView>
     </Grid>
 </UserControl>

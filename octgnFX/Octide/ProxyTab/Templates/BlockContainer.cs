@@ -20,7 +20,7 @@ namespace Octide.ProxyTab.ItemModel
 
         public BlockContainer() //new
         {
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseBlock));
             Items.CollectionChanged += (a, b) =>
             {
                 OnContainerChanged?.Invoke(this, b);
@@ -29,7 +29,7 @@ namespace Octide.ProxyTab.ItemModel
 
         public BlockContainer(List<LinkDefinition.LinkWrapper> items) //load
         {
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseBlock));
             foreach (LinkDefinition.LinkWrapper item in items)
             {
                 if (item.Conditional != null)
@@ -81,7 +81,7 @@ namespace Octide.ProxyTab.ItemModel
 
         public BlockContainer(BlockContainer bc) //copy
         {
-            Items = new IdeCollection<IdeBaseItem>(this);
+            Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseBlock));
             Items.CollectionChanged += (a, b) =>
             {
                 OnContainerChanged?.Invoke(this, b);

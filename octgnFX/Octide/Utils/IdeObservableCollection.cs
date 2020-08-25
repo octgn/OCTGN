@@ -2,30 +2,37 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using GalaSoft.MvvmLight.Command;
+using GongSolutions.Wpf.DragDrop;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using DragDrop = GongSolutions.Wpf.DragDrop.DragDrop;
 
 namespace Octide
 {
     public delegate void NotifyDefaultChangedEventHandler(object sender, NotifyDefaultChangedEventArgs e);
     public delegate void NotifySelectedItemChangedEventHandler(object sender, NotifySelectedItemChangedEventArgs e);
 
-    public class IdeCollection<T> : ObservableCollection<T>
+    public class IdeCollection<T> : ObservableCollection<T>, IDropTarget
     {
         public object Parent { get; private set; }
+        
+        public Type[] RestrictedTypes { get; private set; }
         public IdeCollection(): base()
         {
             Parent = null;
+            RestrictedTypes = new Type[0];
         }
         public IdeCollection(object parent): base()
         {
             Parent = parent;
+        }
+        public IdeCollection(object parent, params Type[] types ): base()
+        {
+            Parent = parent;
+            RestrictedTypes = types;
         }
 
         public virtual event NotifyDefaultChangedEventHandler DefaultItemChanged;
@@ -67,13 +74,30 @@ namespace Octide
                 var oldItem = selectedItem;
                 var newItem = value;
                 selectedItem = value;
-                OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem"));
                 OnSelectedItemChanged(new NotifySelectedItemChangedEventArgs(oldItem, newItem));
+                OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem"));
             }
         }
         protected virtual void OnSelectedItemChanged(NotifySelectedItemChangedEventArgs e)
         {
             SelectedItemChanged?.Invoke(this, e);
+        }
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            if (RestrictedTypes.Length > 0 && !RestrictedTypes.Contains(dropInfo.Data.GetType()))
+            {
+                dropInfo.Effects = DragDropEffects.None;
+            }
+            else
+            {
+                DragDrop.DefaultDropHandler.DragOver(dropInfo);
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            DragDrop.DefaultDropHandler.Drop(dropInfo);
         }
     }
 

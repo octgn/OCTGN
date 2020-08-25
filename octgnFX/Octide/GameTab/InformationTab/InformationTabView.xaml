@@ -11,52 +11,54 @@
              xmlns:metro="http://schemas.codeplex.com/elysium"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:Octide"
-             xmlns:views="clr-namespace:Octide.Views"
-             xmlns:gong="urn:gong-wpf-dragdrop"
+             xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              params:Design.Theme="Dark"
              DataContext="{Binding GameInformationTabViewModel, Source={StaticResource Locator}}">
-    <ScrollViewer Grid.Column="1" Grid.RowSpan="4"  VerticalScrollBarVisibility="Auto">
-        <StackPanel Style="{StaticResource OctideInputPanel}">
 
-            <TextBlock Text="Name"/>
-            <TextBox Text="{Binding Name, Mode=TwoWay}"/>
+    <controls:ItemPropertiesView Header="Game Information Editor" Description="Defines important information regarding the game.">
+        <ItemsControl>
+            <controls:PropertyFieldControl Header="Game Name" >
+                <TextBox Text="{Binding Name, Mode=TwoWay}"/>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Description"/>
-            <TextBox Text="{Binding Description, Mode=TwoWay}" MaxHeight="150" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+            <controls:PropertyFieldControl Header="Description" >
+                <TextBox Text="{Binding Description, Mode=TwoWay}" VerticalContentAlignment="Top" MinHeight="50" MaxHeight="150" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+            </controls:PropertyFieldControl>
+            
+            <controls:PropertyFieldControl Header="Package Version Number" >
+                <TextBox Text="{Binding Version, Mode=TwoWay}"/>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Game URL"/>
-            <TextBox Text="{Binding GameUrl, Mode=TwoWay}"/>
+            <controls:PropertyFieldControl Header="Game Information Website URL" >
+                <TextBox Text="{Binding GameUrl, Mode=TwoWay}"/>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Icon URL"/>
-            <TextBox Text="{Binding IconUrl, Mode=TwoWay}"/>
+            <controls:PropertyFieldControl Header="Game Icon Image Website URL" >
+                <TextBox Text="{Binding IconUrl, Mode=TwoWay}"/>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Marker Size" />
-            <DockPanel>
-                <TextBox Text="{Binding MarkerSize, Mode=TwoWay}" Width="60"/>
-                <Slider Value="{Binding MarkerSize, Mode=TwoWay}" Minimum="0" Maximum="200"/>
-            </DockPanel>
+            <controls:PropertyFieldControl Header="Marker Size" >
+                <DockPanel>
+                    <TextBox Text="{Binding MarkerSize, Mode=TwoWay}" Width="60"/>
+                    <Slider Value="{Binding MarkerSize, Mode=TwoWay}" Minimum="0" Maximum="200"/>
+                </DockPanel>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Version"/>
-            <TextBox Text="{Binding Version, Mode=TwoWay}"/>
+            <controls:PropertyFieldControl Header="Authors" >
+                <TextBox Text="{Binding Authors, Mode=TwoWay}"/>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Authors"/>
-            <TextBox Text="{Binding Authors, Mode=TwoWay}"/>
+            <controls:PropertyFieldControl Header="Tags" >
+                <TextBox Text="{Binding Tags, Mode=TwoWay}"/>
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Tags"/>
-            <TextBox Text="{Binding Tags, Mode=TwoWay}"/>
+            <controls:PropertyFieldControl Header="Enable Two-Sided Table" >
+                <metro:ToggleSwitch IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" />
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Use Two Sided Table"/>
-            <metro:ToggleSwitch IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
-
-            <TextBlock Text="Note Background Color"/>
-            <xctk:ColorPicker SelectedColor="{Binding NoteBackgroundColor, Mode=TwoWay}" ShowDropDownButton="False" Width="100" HorizontalAlignment="Left"/>
-
-            <TextBlock Text="Note Foreground Color"/>
-            <xctk:ColorPicker SelectedColor="{Binding NoteForegroundColor, Mode=TwoWay}" ShowDropDownButton="False" Width="100" HorizontalAlignment="Left"/>
-
-        </StackPanel>
-    </ScrollViewer>
+        </ItemsControl>
+    </controls:ItemPropertiesView>
 </UserControl>

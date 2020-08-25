@@ -4,7 +4,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Data;
 
-namespace Octide
+namespace Octide.Controls
 {
     public class EditableTextBlock : TextBlock
     {
