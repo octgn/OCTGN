@@ -107,12 +107,20 @@ namespace Octgn.Controls
         private void HostGameSettings_Loaded(object sender, RoutedEventArgs e) {
             this.Loaded -= HostGameSettings_Loaded;
 
+            var ease = new CubicEase();
+            ease.EasingMode = EasingMode.EaseIn;
+
             var animation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(200)));
+            animation.EasingFunction = ease;
             animation.FillBehavior = FillBehavior.HoldEnd;
 
             BeginAnimation(OpacityProperty, animation);
 
-            var animation2 = new ThicknessAnimation(new Thickness(0, -60, 0, 0), new Thickness(0), new Duration(TimeSpan.FromMilliseconds(500)));
+            var ease2 = new CubicEase();
+            ease2.EasingMode = EasingMode.EaseOut;
+
+            var animation2 = new ThicknessAnimation(new Thickness(0, -100, 0, 0), new Thickness(0), new Duration(TimeSpan.FromMilliseconds(200)));
+            animation2.EasingFunction = ease2;
             animation2.FillBehavior = FillBehavior.HoldEnd;
 
             BeginAnimation(MarginProperty, animation2);

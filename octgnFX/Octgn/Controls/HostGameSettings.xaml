@@ -6,11 +6,11 @@
              mc:Ignorable="d" d:DesignWidth="650"
              Panel.ZIndex="5" Height="410">
     <Border x:Name="BorderHostGame" Width="650" MinHeight="200" Visibility="Visible" Padding="0"
-            Style="{StaticResource Panel}" CornerRadius="5"
-            BorderThickness="2" BorderBrush="#AA2B6DFF"
-            Background="#FF2B6DFF">
+            Style="{StaticResource Panel}" CornerRadius="2"
+            BorderThickness="1" BorderBrush="#711E1B"
+            Background="#711E1B">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="1" Color="#2B6DFF"/>
+            <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.5" Color="#880026"/>
         </Border.Effect>
         <Grid Margin="0">
             <Grid.RowDefinitions>
@@ -18,7 +18,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Background="#2B6DFF" CornerRadius="5 5 0 0"
+            <Border Grid.Row="0" CornerRadius="5 5 0 0"
                     Padding="5 5" BorderThickness="0">
                 <Grid>
                     <Image Source="pack://application:,,,/Octgn;component/Resources/icon.ico"
@@ -173,19 +173,39 @@
                         <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,30" IsIndeterminate="false"></ProgressBar>
                     </StackPanel>
                 </Border>
-                <Border Grid.Column="1" Background="#111111">
-                    <controls:GameSelector Margin="5 60 5 5" x:Name="GameSelector" VerticalAlignment="Bottom">
+                <Border Grid.Column="1" Background="#02020F" Panel.ZIndex="101">
+                    <controls:GameSelector Margin="-20 60 0 0" x:Name="GameSelector"
+                                           VerticalAlignment="Bottom"
+                                           >
+                        <controls:GameSelector.Effect>
+                            <DropShadowEffect BlurRadius="50" ShadowDepth="0" Opacity="1"
+                                              Color="White"/>
+                        </controls:GameSelector.Effect>
                     </controls:GameSelector>
                 </Border>
             </Grid>
             <Border Grid.Row="2" Style="{StaticResource Panel}"
-                    CornerRadius="0 0 5 5"
-                    Margin="0 0 0 -0.5"
-                    Padding="5">
-                <Grid>
-                    <Button Width="101" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                    <Button Width="101" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start" Style="{StaticResource FlatDarkButtonStyle}" Background="Green"></Button>
-                </Grid>
+                    CornerRadius="0 0 2 2"
+                    Margin="0 0 0 0"
+                    Background="#02020F"
+                    BorderThickness="0"
+                    Padding="10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Width="101" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel"
+                            Margin="0 0 10 0"
+                            Style="{StaticResource FlatDarkButtonStyle}">
+                        <Button.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.2" Color="#AAA"/>
+                        </Button.Effect>
+
+                    </Button>
+
+                    <Button Width="101" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start" Style="{StaticResource FlatDarkButtonStyle}" Background="Green">
+                        <Button.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="1" Color="Green"/>
+                        </Button.Effect>
+                    </Button>
+                </StackPanel>
             </Border>
         </Grid>
     </Border>
