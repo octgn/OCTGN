@@ -193,16 +193,18 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Width="101" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel"
                             Margin="0 0 10 0"
-                            Style="{StaticResource FlatDarkButtonStyle}">
+                            Style="{StaticResource FlatDarkButtonStyle}"
+                            BorderBrush="#33000000" BorderThickness="1">
                         <Button.Effect>
-                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.2" Color="#AAA"/>
+                            <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.2" Color="#CCC"/>
                         </Button.Effect>
 
                     </Button>
 
-                    <Button Width="101" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start" Style="{StaticResource FlatDarkButtonStyle}" Background="Green">
+                    <Button Width="101" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start" Style="{StaticResource FlatDarkButtonStyle}" Background="Green"
+                            BorderBrush="#33000000" BorderThickness="1">
                         <Button.Effect>
-                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="1" Color="Green"/>
+                            <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.5" Color="LightGreen"/>
                         </Button.Effect>
                     </Button>
                 </StackPanel>
