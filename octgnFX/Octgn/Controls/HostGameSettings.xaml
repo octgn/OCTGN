@@ -173,9 +173,10 @@
                         <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,30" IsIndeterminate="false"></ProgressBar>
                     </StackPanel>
                 </Border>
-                <Border Grid.Column="1" Background="#02020F" Panel.ZIndex="101">
-                    <controls:GameSelector Margin="-20 60 0 0" x:Name="GameSelector"
-                                           VerticalAlignment="Bottom"
+                <Border Grid.Column="1" Background="#02020F" Panel.ZIndex="101" Padding="0 60 0 0">
+                    <controls:GameSelector x:Name="GameSelector"
+                                           VerticalAlignment="Stretch"
+                                           Height="350"
                                            >
                         <controls:GameSelector.Effect>
                             <DropShadowEffect BlurRadius="50" ShadowDepth="0" Opacity="1"

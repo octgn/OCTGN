@@ -8,8 +8,7 @@
 
         <Viewport3D x:Name="list" Grid.RowSpan="2" VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch"
-                    Height="300"
-                    Margin="0 0 0 60">
+                    >
             <Viewport3D.Camera>
                 <OrthographicCamera Width="15" Position="0,3.5,5" LookDirection="0,-0.3,-1" />
             </Viewport3D.Camera>

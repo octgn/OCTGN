@@ -19,6 +19,7 @@ using Octgn.Online.Hosting;
 using Octgn.Online;
 using System.ComponentModel;
 using System.Windows.Media.Animation;
+using Microsoft.Scripting.Utils;
 
 namespace Octgn.Controls
 {
@@ -101,7 +102,24 @@ namespace Octgn.Controls
 
             SetError();
 
+            GameSelector.GameChanged += GameSelector_GameChanged;
+            ComboBoxGame.SelectionChanged += ComboBoxGame_SelectionChanged;
+
             this.Loaded += HostGameSettings_Loaded;
+        }
+
+        private void ComboBoxGame_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            var selected = (DataGameViewModel)ComboBoxGame.SelectedItem;
+
+            GameSelector.Select(selected?.Id);
+        }
+
+        private void GameSelector_GameChanged(object sender, DataNew.Entities.Game e) {
+            var gameIndex = Games.FindIndex(g => g.Id == e?.Id);
+
+            if (gameIndex == -1) gameIndex = 0;
+
+            ComboBoxGame.SelectedIndex = gameIndex;
         }
 
         private void HostGameSettings_Loaded(object sender, RoutedEventArgs e) {
