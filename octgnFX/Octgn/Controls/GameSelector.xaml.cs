@@ -10,11 +10,15 @@ using Octgn.DataNew.Entities;
 using Octgn.DataNew;
 using System.Linq;
 using Octgn.Core.DataExtensionMethods;
+using Octgn.Extentions;
+using Microsoft.Scripting.Utils;
 
 namespace Octgn.Controls
 {
     public sealed partial class GameSelector : UserControl
     {
+        public event EventHandler<Game> GameChanged;
+
         private int selectedIdx = 0;
 
         private Game[] _games;
@@ -97,13 +101,16 @@ namespace Octgn.Controls
             if (_games.Length > 0) {
                 selectedIdx = 0;
 
-                GameName.Text = _games[0].Name;
+                GameChanged?.Invoke(this, Game);
             }
         }
 
         private void Select(object sender, RoutedEventArgs e) {
             e.Handled = true;
             var idx = container.Children.IndexOf((Visual3D)sender);
+            Select(idx);
+        }
+        private void Select(int idx) {
             if (idx == selectedIdx) return;
             for (int i = 0; i < container.Children.Count; ++i) {
                 var item = (ModelUIElement3D)container.Children[i];
@@ -118,7 +125,30 @@ namespace Octgn.Controls
                 ((AxisAngleRotation3D)rotate.Rotation).BeginAnimation(AxisAngleRotation3D.AngleProperty, anim, HandoffBehavior.SnapshotAndReplace);
             }
             selectedIdx = idx;
-            GameName.Text = _games[idx].Name;
+            GameChanged?.Invoke(this, Game);
+        }
+
+        public void Select(Guid? gameId) {
+            if (_games == null) return;
+
+            if (_games.Length == 0) return;
+
+            int selectIndex;
+            if (gameId == null) {
+                if (selectedIdx == 0) return;
+
+                selectIndex = 0;
+            } else {
+                var gameIndex = _games.FindIndex(g => g.Id == gameId);
+
+                if (gameIndex == -1) gameIndex = 0;
+
+                if (gameIndex == selectedIdx) return;
+
+                selectIndex = gameIndex;
+            }
+
+            Select(selectIndex);
         }
     }
 }
