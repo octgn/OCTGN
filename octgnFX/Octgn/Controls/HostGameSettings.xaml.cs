@@ -128,7 +128,7 @@ namespace Octgn.Controls
             var ease = new CubicEase();
             ease.EasingMode = EasingMode.EaseIn;
 
-            var animation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(200)));
+            var animation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(300)));
             animation.EasingFunction = ease;
             animation.FillBehavior = FillBehavior.HoldEnd;
 
@@ -137,7 +137,7 @@ namespace Octgn.Controls
             var ease2 = new CubicEase();
             ease2.EasingMode = EasingMode.EaseOut;
 
-            var animation2 = new ThicknessAnimation(new Thickness(0, -100, 0, 0), new Thickness(0), new Duration(TimeSpan.FromMilliseconds(200)));
+            var animation2 = new ThicknessAnimation(new Thickness(0, -100, 0, 0), new Thickness(0), new Duration(TimeSpan.FromMilliseconds(300)));
             animation2.EasingFunction = ease2;
             animation2.FillBehavior = FillBehavior.HoldEnd;
 

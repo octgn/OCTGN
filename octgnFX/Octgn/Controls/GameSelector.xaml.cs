@@ -88,7 +88,7 @@ namespace Octgn.Controls
                                     {
                                         Rotation = new AxisAngleRotation3D(new Vector3D(0,1,0), i == 0 ? 0 : -40)
                                     },
-                                    new TranslateTransform3D(i == 0 ? 0 : 0.5+i, 0, i != 0 ? -1 : 0)
+                                    new TranslateTransform3D(i == 0 ? 0 : 1+i, i == 0 ? 1.5 : 0, i != 0 ? -1 : 0)
                                 }
                         }
                     }
@@ -110,22 +110,63 @@ namespace Octgn.Controls
             var idx = container.Children.IndexOf((Visual3D)sender);
             Select(idx);
         }
-        private void Select(int idx) {
-            if (idx == selectedIdx) return;
-            for (int i = 0; i < container.Children.Count; ++i) {
-                var item = (ModelUIElement3D)container.Children[i];
-                var rotate = (RotateTransform3D)((Transform3DGroup)item.Model.Transform).Children[0];
-                var translate = (TranslateTransform3D)((Transform3DGroup)item.Model.Transform).Children[1];
+        private void Select(int newSelectedCardIndex) {
+            if (newSelectedCardIndex == selectedIdx) return;
 
-                var anim = new DoubleAnimation(i == idx ? 0 : -1, dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
-                translate.BeginAnimation(TranslateTransform3D.OffsetZProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                anim = new DoubleAnimation(i - idx + 0.5 * Math.Sign(i - idx), dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
-                translate.BeginAnimation(TranslateTransform3D.OffsetXProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                anim = new DoubleAnimation(i < idx ? 40 : i > idx ? -40 : 0, dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
-                ((AxisAngleRotation3D)rotate.Rotation).BeginAnimation(AxisAngleRotation3D.AngleProperty, anim, HandoffBehavior.SnapshotAndReplace);
+            for (int i = 0; i < container.Children.Count; ++i) {
+                AnimateCard_SelectionChanged(i, newSelectedCardIndex, selectedIdx);
             }
-            selectedIdx = idx;
+
+            selectedIdx = newSelectedCardIndex;
+
             GameChanged?.Invoke(this, Game);
+        }
+
+        private void AnimateCard_SelectionChanged(int cardIndex, int newSelectedCardIndex, int currentSelectedCardIndex) {
+            var item = (ModelUIElement3D)container.Children[cardIndex];
+            var rotate = (RotateTransform3D)((Transform3DGroup)item.Model.Transform).Children[0];
+            var translate = (TranslateTransform3D)((Transform3DGroup)item.Model.Transform).Children[1];
+
+            TimeSpan beginTime;
+            if (newSelectedCardIndex < currentSelectedCardIndex) {
+                // shift card right
+                if(cardIndex > newSelectedCardIndex) {
+                    beginTime = TimeSpan.Zero;
+                } else {
+                    beginTime = new TimeSpan(dt.TimeSpan.Ticks / 2);
+                }
+            } else {
+                // shift card left
+                if(cardIndex < newSelectedCardIndex) {
+                    beginTime = TimeSpan.Zero;
+                } else {
+                    beginTime = new TimeSpan(dt.TimeSpan.Ticks / 2);
+                }
+
+            }
+
+            // Z
+            var anim = new DoubleAnimation(cardIndex == newSelectedCardIndex ? 0 : -1, dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
+            translate.BeginAnimation(TranslateTransform3D.OffsetZProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+            // X
+            anim = new DoubleAnimation(cardIndex - newSelectedCardIndex + 0.5 * Math.Sign(cardIndex - newSelectedCardIndex), dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
+            anim.BeginTime = beginTime;
+            translate.BeginAnimation(TranslateTransform3D.OffsetXProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+            // Y
+            if (cardIndex == newSelectedCardIndex) {
+                anim = new DoubleAnimation(1.5, dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.85 };
+                anim.BeginTime = TimeSpan.FromMilliseconds(100);
+            } else {
+                anim = new DoubleAnimation(0, dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
+            }
+            translate.BeginAnimation(TranslateTransform3D.OffsetYProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+            // ANGLE
+            anim = new DoubleAnimation(cardIndex < newSelectedCardIndex ? 40 : cardIndex > newSelectedCardIndex ? -40 : 0, dt, FillBehavior.HoldEnd) { DecelerationRatio = 0.65 };
+            anim.BeginTime = beginTime;
+            ((AxisAngleRotation3D)rotate.Rotation).BeginAnimation(AxisAngleRotation3D.AngleProperty, anim, HandoffBehavior.SnapshotAndReplace);
         }
 
         public void Select(Guid? gameId) {

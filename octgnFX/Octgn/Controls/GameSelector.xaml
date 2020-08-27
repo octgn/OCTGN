@@ -4,24 +4,23 @@
     MinWidth="200"
     >
 
-    <Grid>
-
+    <Border>
         <Viewport3D x:Name="list" Grid.RowSpan="2" VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch"
                     >
             <Viewport3D.Camera>
-                <OrthographicCamera Width="15" Position="0,3.5,5" LookDirection="0,-0.3,-1" />
+                <PerspectiveCamera FieldOfView="35" Position="-1,12.5,30" LookDirection="0,-0.3,-1.1" />
             </Viewport3D.Camera>
             <ContainerUIElement3D x:Name="container"  />
             <ModelVisual3D>
                 <ModelVisual3D.Content>
                     <Model3DGroup>
-                        <AmbientLight Color="#aaa"/>
-                        <SpotLight Color="White" Position="0,3.5,5" Direction="0,-0.3,-1" InnerConeAngle="100" OuterConeAngle="50" />
+                        <AmbientLight Color="#333"/>
+                        <SpotLight Color="White" Position="0,2,50" Direction="0,0.1,-1" InnerConeAngle="10" OuterConeAngle="15" />
                     </Model3DGroup>
                 </ModelVisual3D.Content>
             </ModelVisual3D>
         </Viewport3D>
-    </Grid>
+    </Border>
 
 </UserControl>
