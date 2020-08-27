@@ -52,7 +52,7 @@
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
+        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" Panel.ZIndex="10" Margin="0 -34 0 0"></Border>
         <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
             <DockPanel>
                 <Border DockPanel.Dock="Right" Height="35">
