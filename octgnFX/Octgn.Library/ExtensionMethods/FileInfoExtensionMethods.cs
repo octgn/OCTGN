@@ -34,5 +34,42 @@
                 f.ClearReadonlyFlag();
             }
         }
+
+        public static void MoveDirectory(this DirectoryInfo source, string target)
+        {
+            var targetDirectory = new DirectoryInfo(target);
+            source.MoveDirectory(targetDirectory);
+        }
+
+        public static void MoveDirectory(this DirectoryInfo source, DirectoryInfo target)
+        {
+            source.ClearReadonlyFlag();
+            if (source.Root == target.Root)
+            {
+                source.MoveTo(target.FullName);
+            }
+            else
+            {
+                source.MoveContents(target);
+                source.Delete(true);
+            }
+        }
+
+        private static void MoveContents(this DirectoryInfo source, DirectoryInfo target)
+        {
+            if (!target.Exists)
+            {
+                target.Create();
+            }
+            foreach (FileInfo file in source.GetFiles())
+            {
+                file.CopyTo(Path.Combine(target.FullName, file.Name), true);
+            }
+            foreach (DirectoryInfo sourceSubdirectory in source.GetDirectories())
+            {
+                DirectoryInfo targetSubdirectory = target.CreateSubdirectory(sourceSubdirectory.Name);
+                MoveContents(sourceSubdirectory, targetSubdirectory);
+            }
+        }
     }
 }
