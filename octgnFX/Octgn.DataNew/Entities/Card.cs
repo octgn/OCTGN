@@ -40,7 +40,7 @@ namespace Octgn.DataNew.Entities
                     (x => x.Key,
                     y =>
                     {
-                        var pset = y.Value;
+                        var pset = y.Value.Clone() as CardPropertySet;
                         var nameProp = new PropertyDef() { Name = "Name", Type = PropertyType.String };
                         pset.Properties[nameProp] = pset.Name;
                         return pset;
@@ -86,7 +86,7 @@ namespace Octgn.DataNew.Entities
                               Size = this.Size as CardSize,
                               Properties =
                                   this.Properties.ToDictionary(
-                                      x => x.Key.Clone() as PropertyDef, x => x.Value)
+                                      x => x.Key, x => x.Value)
                           };
             return ret;
         }
