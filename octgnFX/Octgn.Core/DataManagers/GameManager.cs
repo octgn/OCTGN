@@ -480,8 +480,8 @@ namespace Octgn.Core.DataManagers
                         if (DbContext.Get() is IDbContextCaching dbWithCaching)
                             dbWithCaching.Invalidate(game);
 
-                        gamePathDi.ClearReadonlyFlag();
-                        gamePathDi.MoveTo(Config.Instance.Paths.GraveyardPath);
+                        var gravePath = Config.Instance.Paths.GraveyardPath;
+                        gamePathDi.MoveDirectory(gravePath);
                         break;
                     }
                     catch
