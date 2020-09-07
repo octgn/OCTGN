@@ -373,23 +373,23 @@
     <param name="defined" type="bool" />
     <param name="visible" type="bool" />
   </msg>
-  <msg name="GroupVisAddReq" server="true">
+  <msg name="GroupVisAddReq" server="true" allowedbyspectator="true" >
     <param name="group" type="Group" />
-    <param name="who" type="Player" />
+    <param name="who" type="PlayerOrSpectator" />
   </msg>
-  <msg name="GroupVisAdd" client="true">
+  <msg name="GroupVisAdd" client="true" allowedbyspectator="true">
     <param name="player" type="Player" />
     <param name="group" type="Group" />
-    <param name="who" type="Player" />
+    <param name="who" type="PlayerOrSpectator" />
   </msg>
-  <msg name="GroupVisRemoveReq" server="true">
+  <msg name="GroupVisRemoveReq" server="true" allowedbyspectator="true">
     <param name="group" type="Group" />
-    <param name="who" type="Player" />
+    <param name="who" type="PlayerOrSpectator" />
   </msg>
-  <msg name="GroupVisRemove" client="true">
+  <msg name="GroupVisRemove" client="true" allowedbyspectator="true">
     <param name="player" type="Player" />
     <param name="group" type="Group" />
-    <param name="who" type="Player" />
+    <param name="who" type="PlayerOrSpectator" />
   </msg>
 
   <msg name="LookAtReq" server="true">
