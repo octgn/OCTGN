@@ -611,7 +611,7 @@ namespace Octgn.Networking
 					var arg1 = Group.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[GroupVisAdd] Group not found."); return; }
-					var arg2 = Player.Find(reader.ReadByte());
+					var arg2 = Player.FindIncludingSpectators(reader.ReadByte());
 					if (arg2 == null)
 					{ Debug.WriteLine("[GroupVisAdd] Player not found."); return; }
 					Log.Debug($"OCTGN IN: GroupVisAdd");
@@ -626,7 +626,7 @@ namespace Octgn.Networking
 					var arg1 = Group.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[GroupVisRemove] Group not found."); return; }
-					var arg2 = Player.Find(reader.ReadByte());
+					var arg2 = Player.FindIncludingSpectators(reader.ReadByte());
 					if (arg2 == null)
 					{ Debug.WriteLine("[GroupVisRemove] Player not found."); return; }
 					Log.Debug($"OCTGN IN: GroupVisRemove");

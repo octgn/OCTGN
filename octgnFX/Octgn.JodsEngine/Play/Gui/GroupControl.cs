@@ -433,17 +433,20 @@ namespace Octgn.Play.Gui
         private MenuItem CreateVisibilityItem()
         {
             var item = new MenuItem { Header = "Visibility" };
-            var playerItem = new MenuItem { Header = "Nobody", IsCheckable = true };
-            playerItem.Click += delegate { group.SetVisibility(false, true); };
-            item.Items.Add(playerItem);
-            playerItem = new MenuItem { Header = "Everybody", IsCheckable = true };
-            playerItem.Click += delegate { group.SetVisibility(true, true); };
-            item.Items.Add(playerItem);
+            var nobodyItem = new MenuItem { Header = "Nobody", IsCheckable = true };
+            nobodyItem.Click += delegate { group.SetVisibility(false, true); };
+            item.Items.Add(nobodyItem);
+            var everybodyItem = new MenuItem { Header = "Everybody", IsCheckable = true };
+            everybodyItem.Click += delegate { group.SetVisibility(true, true); };
+            item.Items.Add(everybodyItem);
             // HACK: this is a quick hack to enable some BlueMoon card scenario. One should find a better solution
             //playerItem = new MenuItem { Header = "Freeze current cards" };
             //playerItem.Click += delegate { group.FreezeCardsVisibility(true); };
             //item.Items.Add(playerItem);
             item.Items.Add(new Separator());
+            var spectatorMenu = new MenuItem { Header = "Spectators" };
+
+
             item.SubmenuOpened += delegate
                                       {
                                           ((MenuItem)item.Items[0]).IsChecked = group.Visibility ==
@@ -452,19 +455,20 @@ namespace Octgn.Play.Gui
                                                                                  GroupVisibility.Everybody;
                                           //((MenuItem)item.Items[2]).IsChecked = group.Visibility == GroupVisibility.Undefined;
                                           //while (item.Items.Count > 4) item.Items.RemoveAt(item.Items.Count - 1);
+                                          spectatorMenu.Items.Clear();
                                           while (item.Items.Count > 3) item.Items.RemoveAt(item.Items.Count - 1);
                                           foreach (Player p in Player.AllExceptGlobal)
                                           {
-                                              playerItem = new MenuItem
-                                                               {
-                                                                   Header = p.Name,
-                                                                   Tag = p,
-                                                                   IsCheckable = true,
-                                                                   IsChecked =
-                                                                       group.Visibility == GroupVisibility.Custom &&
-                                                                       group.Viewers.Contains(p),
-                                                               };
-                                              playerItem.Click += delegate(object sender, RoutedEventArgs e)
+                                              var playerItem = new MenuItem
+                                              {
+                                                  Header = p.Name,
+                                                  Tag = p,
+                                                  IsCheckable = true,
+                                                  IsChecked =
+                                                            group.Visibility == GroupVisibility.Custom &&
+                                                            group.Viewers.Contains(p),
+                                              };
+                                              playerItem.Click += delegate (object sender, RoutedEventArgs e)
                                                                       {
                                                                           var clickedItem = (MenuItem)sender;
                                                                           var player = (Player)clickedItem.Tag;
@@ -475,6 +479,30 @@ namespace Octgn.Play.Gui
                                                                       };
                                               item.Items.Add(playerItem);
                                           }
+                                          foreach (Player s in Player.Spectators)
+                                          {
+                                              var spectatorItem = new MenuItem
+                                              {
+                                                  Header = s.Name,
+                                                  Tag = s,
+                                                  IsCheckable = true,
+                                                  IsChecked =
+                                                            group.Visibility == GroupVisibility.Custom &&
+                                                            group.Viewers.Contains(s),
+                                              };
+                                              spectatorItem.Click += delegate (object sender, RoutedEventArgs e)
+                                                                      {
+                                                                          var clickedItem = (MenuItem)sender;
+                                                                          var player = (Player)clickedItem.Tag;
+                                                                          if (clickedItem.IsChecked)
+                                                                              group.AddViewer(player, true);
+                                                                          else
+                                                                              group.RemoveViewer(player, true);
+                                                                      };
+                                              spectatorMenu.Items.Add(spectatorItem);
+                                          }
+                                          if (spectatorMenu.Items.Count > 0)
+                                              item.Items.Add(spectatorMenu);
                                       };
             return item;
         }

@@ -26,7 +26,7 @@ namespace Octgn.Play.State
             if (group.Controller != null)
                 this.Controller = group.Controller.Id;
             this.Cards = group.Cards.Select(x => new CardSaveState().Create(x, fromPlayer)).ToArray();
-            this.Viewers = group.Viewers.Select(x => x.Id).ToArray();
+            this.Viewers = group.Viewers.Where(x => x.Spectator == false).Select(x => x.Id).ToArray();
             this.Visiblity = group.Visibility;
             return this;
         }
