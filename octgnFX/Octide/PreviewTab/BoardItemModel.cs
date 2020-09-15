@@ -80,7 +80,7 @@ namespace Octide.ItemModel
         
         public override object Create()
         {
-            return new BoardItemModel(this, Source);
+            return new BoardItemModel(Source);
         }
         public IEnumerable<string> UniqueNames => Source.Select(x => ((BoardItemModel)x).Name);
 

@@ -67,9 +67,10 @@ namespace Octide.ViewModel
             }
         }
 
+        //TODO: Properly handle games with no global player
         public string GlobalSummary
         {
-            get { return ViewModelLocator.GameLoader.Game.GlobalPlayer.IndicatorsFormat; }
+            get { return ViewModelLocator.GameLoader.Game.GlobalPlayer?.IndicatorsFormat; }
             set
             {
                 if (ViewModelLocator.GameLoader.Game.GlobalPlayer.IndicatorsFormat == value) return;

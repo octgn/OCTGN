@@ -394,7 +394,37 @@ namespace Octide.ItemModel
     {
         public TextBlockDefinitionItemModel LinkedTextBlock { get; private set; }
         public string Format { get; private set; }
-        public CardPropertyModel Property { get; set; }
+
+        public PropertyItemModel LinkedProperty { get; set; }
+        public AlternateModel Card { get; set; }
+        public string Value
+        {
+            get
+            {
+                if (LinkedProperty == PropertyTabViewModel.NameProperty)
+                {
+                    return Card.Name;
+                }
+                else
+                {
+                    Card._altDef.Properties.TryGetValue(LinkedProperty._property, out var ret);
+                    return ret?.ToString();
+                }
+            }
+            set
+            {
+                if (LinkedProperty == PropertyTabViewModel.NameProperty)
+                {
+                    Card.Name = value;
+                }
+                else
+                {
+                    Card._altDef.Properties[LinkedProperty._property] = value;
+                }
+                Card.UpdateProxyTemplate();
+            }
+        }
+
 
         public ObservableCollection<ProxyInputPropertyItemModel> EditableProperties;
 

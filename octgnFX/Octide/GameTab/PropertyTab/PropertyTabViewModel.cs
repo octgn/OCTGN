@@ -26,15 +26,16 @@ namespace Octide.ViewModel
     {
         public IdeCollection<IdeBaseItem> Items { get; private set; }
 
-        public PropertyItemModel NameProperty;
-        public PropertyItemModel IdProperty;
-        public PropertyItemModel AlternateProperty;
-
-        public PropertyItemModel SizeProperty;
-        public PropertyItemModel SizeNameProperty;
-        public PropertyItemModel SizeHeightProperty;
-        public PropertyItemModel SizeWidthProperty;
-        public PropertyItemModel ProxyNameProperty;
+        public static PropertyItemModel NameProperty = new PropertyItemModel(new PropertyDef() { Name = "Name" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel IdProperty = new PropertyItemModel(new PropertyDef() { Name = "Id" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel AlternateProperty = new PropertyItemModel(new PropertyDef() { Name = "Alternate" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel SizeProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSize" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel SetProperty = new PropertyItemModel(new PropertyDef() { Name = "SetName" }, new IdeCollection<IdeBaseItem>());
+            //Proxy Properties
+        public static PropertyItemModel ProxyNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardName" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel SizeNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeName" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel SizeHeightProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeHeight" }, new IdeCollection<IdeBaseItem>());
+        public static PropertyItemModel SizeWidthProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeWidth" }, new IdeCollection<IdeBaseItem>());
 
         public RelayCommand AddCommand { get; private set; }
 
@@ -51,18 +52,6 @@ namespace Octide.ViewModel
                 Messenger.Default.Send(new CustomPropertyChangedMessage(args)) ;
             };
             AddCommand = new RelayCommand(AddItem);
-            
-            //TODO: Make sure these property names aren't already set
-
-            NameProperty = new PropertyItemModel(new PropertyDef() { Name = "Name" }, Items);
-            IdProperty = new PropertyItemModel(new PropertyDef() { Name = "Id" }, Items);
-            AlternateProperty = new PropertyItemModel(new PropertyDef() { Name = "Alternate" }, Items);
-            SizeProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSize" }, Items);
-            //Proxy Properties
-            ProxyNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardName" }, Items);
-            SizeNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeName" }, Items);
-            SizeHeightProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeHeight" }, Items);
-            SizeWidthProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeWidth" }, Items);
         }
         
 

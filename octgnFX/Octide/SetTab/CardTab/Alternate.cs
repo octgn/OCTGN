@@ -28,7 +28,7 @@ namespace Octide.SetTab.ItemModel
     {
 
         public CardPropertySet _altDef;
-        public ObservableCollection<CardPropertyModel> Items { get; private set; }
+        public Dictionary<PropertyItemModel, object> CachedProperties { get; private set; }
 
         public IdeCollection<IdeBaseItem> CardSizes => ViewModelLocator.PreviewTabViewModel.CardSizes;
 
@@ -36,21 +36,17 @@ namespace Octide.SetTab.ItemModel
 
         public AlternateModel(IdeCollection<IdeBaseItem> source) : base(source) //for adding new items
         {
-
             _altDef = new CardPropertySet
             {
                 Properties = new Dictionary<PropertyDef, object>(),
                 Size = ((SizeItemModel)CardSizes.DefaultItem)._size,
                 Name = "Card",
             };
-            Type = (Source.Count == 0) ? "" : "alt";
-            Items = new ObservableCollection<CardPropertyModel>();
-            Items.CollectionChanged += (a, b) =>
-            {
-                BuildAltDef(b);
-            };
+            Type = "";
+            CachedProperties = new Dictionary<PropertyItemModel, object>();
+
             DeleteImageCommand = new RelayCommand(DeleteImage);
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+       //     Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
@@ -58,23 +54,14 @@ namespace Octide.SetTab.ItemModel
         {
             _altDef = altData;
 
-            Items = new ObservableCollection<CardPropertyModel>();
-            foreach (var prop in altData.Properties)
-            {
-                Items.Add(new CardPropertyModel
-                {
-                    Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemModel)._property.Equals(prop.Key)) as PropertyItemModel,
-                    _cachedValue = prop.Value,
-                    Parent = this,
-                    _isDefined = true
-                });
-            }
-            Items.CollectionChanged += (a, b) =>
-            {
-                BuildAltDef(b);
-            };
+            CachedProperties = new Dictionary<PropertyItemModel, object>();
+            //    foreach (var prop in altData.Properties)
+            //    {
+            //        Items.Add(new CardPropertyModel(this, ViewModelLocator.PropertyTabViewModel.Items.First(x => (x as PropertyItemModel)._property.Equals(prop.Key)) as PropertyItemModel));
+            //    }
+
             DeleteImageCommand = new RelayCommand(DeleteImage);
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+         //   Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
@@ -88,24 +75,10 @@ namespace Octide.SetTab.ItemModel
 
             };
             Type = a.Type;
-            Items = new IdeCollection<CardPropertyModel>(this, typeof(CardPropertyModel));
-            Items.CollectionChanged += (c, b) =>
-            {
-                BuildAltDef(b);
-            };
-            foreach (var prop in _altDef.Properties)
-            {
-                Items.Add(new CardPropertyModel
-                {
-                    Property = ViewModelLocator.PropertyTabViewModel.Items.First(y => (y as PropertyItemModel)._property.Equals(prop.Key)) as PropertyItemModel,
-                    _cachedValue = prop.Value,
-                    _isDefined = true,
-                    Parent = this
-                });
-            }
+            CachedProperties = a.CachedProperties.ToDictionary(x => x.Key, y => y.Value);
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+          //  Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
@@ -129,23 +102,19 @@ namespace Octide.SetTab.ItemModel
         }
         public void BuildAltDef(NotifyCollectionChangedEventArgs args)
         {
-            _altDef.Properties = Items.ToDictionary(x => x.Property._property, y => y._cachedValue);
+        //    _altDef.Properties = CachedProperties.ToDictionary(x => x.LinkedProperty._property, y => y.CachedValue);
         }
 
         public List<CardPropertyModel> GetProperties
         {
             get
             {
-                return ViewModelLocator.PropertyTabViewModel.Items
-                    .Select(x => Items.FirstOrDefault(y => y.Property == x) ?? new CardPropertyModel()
-                    {
-                        Property = (PropertyItemModel)x,
-                        Parent = this,
-                        _isDefined = false
-                    })
-                    .ToList();
+                return ViewModelLocator.PropertyTabViewModel.Items.Select(x => new CardPropertyModel(this, (PropertyItemModel)x)).ToList();
             }
         }
+
+        public new bool CanRemove => !IsDefault;
+        public new bool CanDragDrop => !IsDefault;
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((AlternateModel)x).Type);
 
@@ -191,6 +160,7 @@ namespace Octide.SetTab.ItemModel
                 _altDef.Size = value._size ?? ((SizeItemModel)CardSizes.DefaultItem)._size;
                 UpdateProxyTemplate();
                 RaisePropertyChanged("SizeProperty");
+                RaisePropertyChanged("CardImage");
             }
         }
 
@@ -205,22 +175,33 @@ namespace Octide.SetTab.ItemModel
 
         #region image section
 
-        private string _cardImage;
-        public string CardImage
+        public string ImagePath
         {
             get
             {
-                if (_cardImage == null)
+                var imageFiles = GetImages();
+                if (imageFiles?.Length > 0)
                 {
-                    _cardImage = GetImages()?.FirstOrDefault() ?? SizeProperty.BackAsset.SafePath;
+                    return imageFiles.First();
                 }
-                return _cardImage;
+                else
+                {
+                    return SizeProperty.BackAsset.SafePath;
+                }
             }
-            set
+        }
+
+        public BitmapImage CardImage
+        {
+            get
             {
-                if (_cardImage == value) return;
-                _cardImage = value;
-                RaisePropertyChanged("CardImage");
+                var ret = new BitmapImage();
+                ret.BeginInit();
+                ret.CacheOption = BitmapCacheOption.OnLoad;
+                ret.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                ret.UriSource = new Uri(ImagePath, UriKind.RelativeOrAbsolute);
+                ret.EndInit();
+                return ret;
             }
         }
 
@@ -250,6 +231,7 @@ namespace Octide.SetTab.ItemModel
             }
         }
 
+
         public string[] GetImages()
         {
             if (!Directory.Exists(imageDirectory)) return null;
@@ -260,6 +242,7 @@ namespace Octide.SetTab.ItemModel
                             .OrderBy(x => x.Length).ToArray();
         }
 
+
         public void DeleteImage()
         {
             var images = GetImages();
@@ -268,12 +251,12 @@ namespace Octide.SetTab.ItemModel
                 var garbage = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(garbage))
                     Directory.CreateDirectory(garbage);
-                CardImage = SizeProperty.BackAsset.SafePath;
                 // Delete all the old picture files
                 foreach (var image in images.Select(x => new FileInfo(x)))
                 {
                     image.MoveTo(Path.Combine(garbage, image.Name));
                 }
+                RaisePropertyChanged("CardImage");
             }
         }
 
@@ -283,7 +266,7 @@ namespace Octide.SetTab.ItemModel
             Directory.CreateDirectory(imageDirectory);
             var newPath = Path.Combine(imageDirectory, imageFileName + Path.GetExtension(file));
             File.Copy(file, newPath);
-            CardImage = newPath;
+            RaisePropertyChanged("CardImage");
         }
 
         public void DragOver(IDropInfo dropInfo)
@@ -389,17 +372,19 @@ namespace Octide.SetTab.ItemModel
 
         public void UpdateProxyTemplate()
         {
-            var properties = GetProperties.ToDictionary(x => x.Name, y => y.Value ?? "");
-            properties.Add("SetName", Set.Name);
-            properties.Add("Name", Name);
-            properties.Add("CardSizeName", SizeProperty.Name);
-            properties.Add("CardSizeHeight", SizeProperty.Height.ToString());
-            properties.Add("CardSizeWidth", SizeProperty.Width.ToString());
+            var properties = GetProperties.ToDictionary(x => x.LinkedProperty, y => y.Value ?? "");
+            properties.Add(PropertyTabViewModel.SetProperty, Set.Name);
+            properties.Add(PropertyTabViewModel.NameProperty, Name);
+            properties.Add(PropertyTabViewModel.SizeNameProperty, SizeProperty.Name);
+            properties.Add(PropertyTabViewModel.SizeHeightProperty, SizeProperty.Height.ToString());
+            properties.Add(PropertyTabViewModel.SizeWidthProperty, SizeProperty.Width.ToString());
+
+            var proxymapping = properties.ToDictionary(x => x.Key.Name, y => y.Value);
 
             TemplateModel activeTemplate = (TemplateModel)ViewModelLocator.ProxyTabViewModel.Templates.DefaultItem;
             foreach (TemplateModel template in ViewModelLocator.ProxyTabViewModel.Templates)
             {
-                if (template._def.Matches.All(x => properties.ContainsKey(x.Name) && properties[x.Name] == x.Value))
+                if (template._def.Matches.All(x => proxymapping.ContainsKey(x.Name) && proxymapping[x.Name] == x.Value))
                 {
                     activeTemplate = template;
                     break;
@@ -412,20 +397,17 @@ namespace Octide.SetTab.ItemModel
 
             ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
                 activeTemplate._def
-                .GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null)
+                .GetOverLayBlocks(proxymapping).Where(x => x.SpecialBlock == null)
                 .Select(x => (OverlayBlockDefinitionItemModel)ViewModelLocator.ProxyTabViewModel.OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block))
                 );
 
-            var allCardProperties = new List<CardPropertyModel>(GetProperties);
-            allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.NameProperty, _cachedValue = Name });
-            allCardProperties.Add(new CardPropertyModel() { Property = ViewModelLocator.PropertyTabViewModel.SizeProperty, _cachedValue = SizeProperty.Name });
-
             ActiveTextLayers = new ObservableCollection<ProxyTextBlockItemModel>(
                 activeTemplate._def
-                .GetTextBlocks(properties)
+                .GetTextBlocks(proxymapping)
                 .Select(x => new ProxyTextBlockItemModel(x)
                 {
-                    Property = allCardProperties.First(y => y.Name == x.NestedProperties.First().Name)
+                    Card = this,
+                    LinkedProperty = properties.First(y => y.Key.Name == x.NestedProperties.First().Name).Key
                 }
                 ));
         }

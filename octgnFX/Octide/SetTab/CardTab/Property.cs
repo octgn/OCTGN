@@ -9,72 +9,94 @@ using Octgn.DataNew.Entities;
 using System.Xml;
 using System.Xml.Linq;
 using Octgn.DataNew;
+using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
-    public class CardPropertyModel : ViewModelBase
+
+    public class CardPropertyModel : ViewModelBase, ICleanup
     {
         public AlternateModel Parent { get; set; }
-        public PropertyItemModel Property { get; set; }
-        public object _cachedValue;
-        public bool _isDefined;
+        public PropertyItemModel LinkedProperty { get; set; }
 
-        public bool IsRich => Property.Type == Octgn.DataNew.Entities.PropertyType.RichText;
+        public bool IsRich => LinkedProperty.Type == Octgn.DataNew.Entities.PropertyType.RichText;
 
-        public bool IsValid => ViewModelLocator.PropertyTabViewModel.Items.Contains(Property);
+        public bool IsValid => ViewModelLocator.PropertyTabViewModel.Items.Contains(LinkedProperty);
 
-        public CardPropertyModel()
-        { 
+        public CardPropertyModel(AlternateModel parent, PropertyItemModel property)
+        {
+            Parent = parent;
+            LinkedProperty = property;
         }
 
         public bool IsDefined
         {
             get
             {
-                return _isDefined;
+                return Parent._altDef.Properties.ContainsKey(LinkedProperty._property);
             }
             set
             {
-                if (_isDefined == value) return;
-                _isDefined = value;
-                if (value == true)
+                if (value == true) // define this property value and add its last known value to the card data
                 {
-                    Parent._altDef.Properties[Property._property] = _cachedValue;
+                    Parent.CachedProperties.TryGetValue(LinkedProperty, out object cachedValue);
+                    Parent._altDef.Properties[LinkedProperty._property] = cachedValue;
+                    Parent.CachedProperties.Remove(LinkedProperty);
                 }
-                else
+                else // remove this 
                 {
-                    Parent._altDef.Properties.Remove(Property._property);
+                    if (Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object cachedValue));
+                    {
+                        Parent.CachedProperties.Add(LinkedProperty, cachedValue);
+                        Parent._altDef.Properties.Remove(LinkedProperty._property);
+                    }
                 }
                 RaisePropertyChanged("IsDefined");
+                RaisePropertyChanged("Value");
             }
         }
 
-        public string Name => Property.Name;
+        public string Name => LinkedProperty.Name;
+
+        public object CurrentValue
+        {
+            get
+            {
+                if (IsDefined)
+                {
+                    Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object ret);
+                    return ret;
+                }
+                else
+                {
+                    Parent.CachedProperties.TryGetValue(LinkedProperty, out object ret);
+                    return ret;
+                }
+            }
+        }
 
         public string Value
         {
             get
             {
-                if (_cachedValue is RichTextPropertyValue richValue)
+                if (CurrentValue is RichTextPropertyValue richValue)
                     return richValue.ToLiteralString();
-                return _cachedValue?.ToString();
+                return CurrentValue?.ToString();
             }
             set
             {
                 if (IsRich)
                 {
                     var richText = ConvertStringToRichText(value);
-                    if (_cachedValue == richText) return;
-                    _cachedValue = richText;
+                    if (CurrentValue == richText) return;
+                    Parent._altDef.Properties[LinkedProperty._property] = richText;
                 }
                 else
                 {
-                    if ((string)_cachedValue == value) return;
-                    _cachedValue = value;
-
+                    if ((string)CurrentValue == value) return;
+                    Parent._altDef.Properties[LinkedProperty._property] = value;
                 }
 
-                Parent._altDef.Properties[Property._property] = _cachedValue;
 
                // Parent.UpdateAltPropertySet();
                 Parent.UpdateProxyTemplate();
