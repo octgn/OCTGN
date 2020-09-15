@@ -37,13 +37,10 @@ namespace Octide.SetTab.ItemModel
             {
                 BuildCardDef(b);
             };
-            var baseCardAlt = new AlternateModel(Items)
-            {
-                CanRemove = false,
-                CanDragDrop = false
-            };
-            Items.DefaultItem = baseCardAlt;
+            var baseCardAlt = new AlternateModel(Items);
             Items.Add(baseCardAlt);
+            Items.DefaultItem = baseCardAlt;
+            Items.SelectedItem = baseCardAlt;
 
             AddAltCommand = new RelayCommand(AddAlt);
         }
@@ -57,9 +54,8 @@ namespace Octide.SetTab.ItemModel
                 var AltItem = new AlternateModel(alt.Value, Items);
                 if (alt.Key == "") // deals with the default card alt
                 {
-                    AltItem.CanDragDrop = false;
-                    AltItem.CanRemove = false;
                     Items.DefaultItem = AltItem;
+                    Items.SelectedItem = AltItem;
                 }
                 Items.Add(AltItem);
             }
@@ -75,8 +71,7 @@ namespace Octide.SetTab.ItemModel
             var guid = Guid.NewGuid();
             _card = new Card(c._card)
             {
-                Id = Guid.NewGuid(),
-                ImageUri = guid.ToString()
+                Id = Guid.NewGuid()
             };
             Items = new IdeCollection<IdeBaseItem>(this, typeof(AlternateModel));
             Items.CollectionChanged += (a, b) =>
@@ -88,9 +83,8 @@ namespace Octide.SetTab.ItemModel
                 AlternateModel newAlt = new AlternateModel(alt, Items);
                 if (alt.IsDefault)
                 {
-                    newAlt.CanDragDrop = false;
-                    newAlt.CanRemove = false;
                     Items.DefaultItem = newAlt;
+                    Items.SelectedItem = newAlt;
                 }
                 Items.Add(newAlt);
             }

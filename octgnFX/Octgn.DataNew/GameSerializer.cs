@@ -1784,7 +1784,6 @@ namespace Octgn.DataNew
                         var props = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
-                            if (p.Value == null) continue;
                             var prop = new property
                             {
                                 name = p.Key.Name,
@@ -1793,9 +1792,13 @@ namespace Octgn.DataNew
                             {
                                 prop.Items = SerializeRichText(richText.Value).ToArray();
                             }
-                            else
+                            else if (p.Value is string stringText)
                             {
-                                prop.value = p.Value.ToString();
+                                prop.value = stringText;
+                            }
+                            else if (p.Value is int intText)
+                            {
+                                prop.value = intText.ToString();
                             }
                             props.Add(prop);
                         }
@@ -1821,7 +1824,6 @@ namespace Octgn.DataNew
                         var altprops = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
-                            if (p.Value == null) continue;
                             var prop = new property
                             {
                                 name = p.Key.Name
@@ -1830,9 +1832,13 @@ namespace Octgn.DataNew
                             {
                                 prop.Items = SerializeRichText(richText.Value).ToArray();
                             }
-                            else
+                            else if (p.Value is string stringText)
                             {
-                                prop.value = p.Value.ToString();
+                                prop.value = stringText;
+                            }
+                            else if (p.Value is int intText)
+                            {
+                                prop.value = intText.ToString();
                             }
                             altprops.Add(prop);
                         }

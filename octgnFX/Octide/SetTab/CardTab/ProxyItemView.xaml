@@ -52,7 +52,7 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBox Text="{Binding Property.Value}" Margin="0" Padding="0" Background="#33000000" BorderThickness="1"
+                        <TextBox Text="{Binding Value}" Margin="0" Padding="0" Background="#33000000" BorderThickness="1"
                                  Width="{Binding LinkedTextBlock.Width}" Height="{Binding LinkedTextBlock.Height}"
                                  FontSize="{Binding LinkedTextBlock.FontSize}" Foreground="{Binding LinkedTextBlock.FontColor}" FontFamily="{Binding LinkedTextBlock.Font}"
                                  VerticalContentAlignment="{Binding LinkedTextBlock.VerticalAlignment}" HorizontalContentAlignment="{Binding LinkedTextBlock.HorizontalAlignment}"

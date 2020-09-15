@@ -91,26 +91,26 @@ namespace Octide.ViewModel
 
 				NameHeader = new PropertyMappingItem()
 				{
-					Property = ViewModelLocator.PropertyTabViewModel.NameProperty,
+					Property = PropertyTabViewModel.NameProperty,
 					Header = Headers.FirstOrDefault(x => x.PropertyName.Equals("Name", StringComparison.InvariantCultureIgnoreCase))
 					
 				};
 				RaisePropertyChanged("NameHeader");
 				SizeHeader = new PropertyMappingItem()
 				{
-					Property = ViewModelLocator.PropertyTabViewModel.SizeProperty,
+					Property = PropertyTabViewModel.SizeProperty,
 					Header = Headers.FirstOrDefault(x => x.PropertyName.Equals("Size", StringComparison.InvariantCultureIgnoreCase))
 				};
 				RaisePropertyChanged("SizeHeader");
 				IdHeader = new PropertyMappingItem()
 				{
-					Property = ViewModelLocator.PropertyTabViewModel.IdProperty,
+					Property = PropertyTabViewModel.IdProperty,
 					Header = Headers.FirstOrDefault(x => x.PropertyName.Equals("Id", StringComparison.InvariantCultureIgnoreCase))
 				};
 				RaisePropertyChanged("IdHeader");
 				AlternateHeader = new PropertyMappingItem()
 				{
-					Property = ViewModelLocator.PropertyTabViewModel.AlternateProperty,
+					Property = PropertyTabViewModel.AlternateProperty,
 					Header = Headers.FirstOrDefault(x => x.PropertyName.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase))
 				};
 				RaisePropertyChanged("AlternateHeader");
@@ -226,17 +226,12 @@ namespace Octide.ViewModel
 						{
 							continue;
 						}						
-						var altProperty = cardAlternate.Items.FirstOrDefault(x => x.Property == mapping.Property);
-						if (altProperty == null)
-						{
-							altProperty = new CardPropertyModel
-							{
-								Property = mapping.Property,
-								Parent = cardAlternate,
-								_isDefined = true
-							};
-						}
-						altProperty.Value = propertyValue;
+						var altProperty = cardAlternate.CachedProperties.FirstOrDefault(x => x.Key == mapping.Property);
+				//		if (altProperty == null)
+				//		{
+				//			altProperty = new CardPropertyModel(cardAlternate, mapping.Property);
+				//		}
+				//		altProperty.Value = propertyValue;
 					}
 				}
 				setCard.UpdateCardName();

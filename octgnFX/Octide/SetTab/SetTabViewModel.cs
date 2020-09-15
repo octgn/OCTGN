@@ -9,6 +9,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew;
 using Octgn.DataNew.Entities;
+using Octgn.Library;
+using Octide.ItemModel;
 using Octide.SetTab.ItemModel;
 
 namespace Octide.ViewModel
@@ -41,6 +43,15 @@ namespace Octide.ViewModel
             {
     //            ViewModelLocator.GameLoader.Sets = Items.Select(x => ((SetModel)x)._set);
             };
+
+            // import set markers from deprecated code
+            foreach (var marker in setSerializer.Game.Markers)
+            {
+                if (!ViewModelLocator.MarkerTabViewModel.Items.Any(x => ((MarkerItemModel)x).Id == marker.Key))
+                {
+                    ViewModelLocator.MarkerTabViewModel.Items.Add(new MarkerItemModel(marker.Value, ViewModelLocator.MarkerTabViewModel.Items));
+                }
+            }
         }
 
 
