@@ -1,3 +1,5 @@
+#3.4.326.0
+
 #3.4.325.0
 + Minor accessibility improvements - Ben
 + Minor improvments to card fan performance - Ben
@@ -3924,6 +3926,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
