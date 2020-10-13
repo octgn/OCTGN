@@ -456,7 +456,7 @@ namespace Octgn.Scripting.Versions
 
         public string[] CardProperties()
         {
-            return Program.GameEngine.Definition.AllProperties().Select(x => x.Name).ToArray();
+            return Program.GameEngine.Definition.CardProperties.Values.Select(x => x.Name).ToArray();
         }
 
         public void CardSwitchTo(int id, string alternate)
@@ -1142,15 +1142,27 @@ namespace Octgn.Scripting.Versions
                     var tempCardList = new List<DataNew.Entities.Card>();
                     foreach (var propertyValue in property.Value)
                     {
-                        if (match)
-                            tempCardList.AddRange(query
-                                .Where(x => x.GetFullCardProperties()
-                                .Any(y => y.Key.Name.ToLower() == property.Key.ToLower() && y.Value.ToString().ToLower() == propertyValue.ToLower())).ToList());
+                        if (propertyValue.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            if (match)
+                                tempCardList.AddRange(query
+                                    .Where(x => x.GetName().Equals(propertyValue, StringComparison.InvariantCultureIgnoreCase)));
+                            else
+                                tempCardList.AddRange(query
+                                    .Where(x => x.GetName().ToLower().Contains(propertyValue.ToLower()))); 
+                        }
                         else
-                            tempCardList.AddRange(query
-                                .Where(x => x.GetFullCardProperties()
-                                .Any(y => y.Key.Name.ToLower() == property.Key.ToLower() && y.Value.ToString().ToLower().Contains(propertyValue.ToLower()))).ToList());
+                        {
+                            if (match)
+                                tempCardList.AddRange(query
+                                    .Where(x => x.GetCardProperties()
+                                    .Any(y => y.Key.Name.ToLower() == property.Key.ToLower() && y.Value.ToString().ToLower() == propertyValue.ToLower())).ToList());
+                            else
+                                tempCardList.AddRange(query
+                                    .Where(x => x.GetCardProperties()
+                                    .Any(y => y.Key.Name.ToLower() == property.Key.ToLower() && y.Value.ToString().ToLower().Contains(propertyValue.ToLower()))).ToList());
 
+                        }
                     }
                     query = tempCardList;
                 }

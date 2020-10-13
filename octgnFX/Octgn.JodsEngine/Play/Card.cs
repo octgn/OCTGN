@@ -513,7 +513,7 @@ namespace Octgn.Play
                 var ret = new Dictionary<PropertyDef, object>();
                 if (FaceUp && _type.Model != null)
                 {
-                    foreach (var gameProperty in Program.GameEngine.Definition.CustomProperties)
+                    foreach (var gameProperty in Program.GameEngine.Definition.CardProperties.Values)
                     {
                         var cardProperty = GetProperty(gameProperty.Name, alternate: Alternate());
                         if (cardProperty != null)

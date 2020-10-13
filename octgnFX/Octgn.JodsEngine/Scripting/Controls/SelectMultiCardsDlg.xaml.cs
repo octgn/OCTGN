@@ -41,7 +41,7 @@ namespace Octgn.Scripting.Controls
         private string _filter2Text = "";
         private int? _min;
         private int? _max;
-        private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
+        private IEnumerable<string> textProperties = Program.GameEngine.Definition.CardProperties.Values
                     .Where(p => !p.IgnoreText)
                     .Select(p => p.Name);
 

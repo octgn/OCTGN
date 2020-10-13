@@ -35,11 +35,13 @@ namespace Octgn.Play.Dialogs
             UnlimitedPoolView = new ListCollectionView(UnlimitedPool);
             UnlimitedPoolView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             LimitedDeck = Program.GameEngine.Definition.CreateDeck().AsObservable();
+            SortProperties = Enumerable.Repeat<object>(new NamePropertyDef(), 1).Union(Program.GameEngine.Definition.CardProperties.Values.Where(p => !p.Hidden)).ToList();
             CreateFilters();
             InitializeComponent();
         }
 
         public ListCollectionView CardPoolView { get; private set; }
+        public List<object> SortProperties { get; private set; }
         public ObservableCollection<ObservableMultiCard> CardPool { get; private set; }
         public ListCollectionView UnlimitedPoolView { get; private set; }
         public ObservableCollection<ObservableMultiCard> UnlimitedPool { get; private set; }
@@ -50,7 +52,7 @@ namespace Octgn.Play.Dialogs
         private void SortChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sortBox.SelectedItem == null) return;
-            CardPoolView.CustomSort = new CardPropertyComparer(((PropertyDef)sortBox.SelectedItem).Name);
+            CardPoolView.CustomSort = new CardPropertyComparer(((PropertyDef)sortBox.SelectedItem));
         }
 
         public void OpenPacks(IEnumerable<Guid> packs)
@@ -325,7 +327,7 @@ namespace Octgn.Play.Dialogs
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (Filter filter in Program.GameEngine.Definition.CustomProperties
+            foreach (Filter filter in Program.GameEngine.Definition.CardProperties.Values
                 .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
                 Select(prop => new Filter
                                    {

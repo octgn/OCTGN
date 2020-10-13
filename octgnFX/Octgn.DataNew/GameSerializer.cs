@@ -64,8 +64,8 @@ namespace Octgn.DataNew
                               MarkerSize = int.Parse(g.markersize),
                               FileHash = fileHash,
                               InstallPath = root_dir,
-                              UseTwoSidedTable = g.usetwosidedtable == boolean.True ? true : false,
-                              ChangeTwoSidedTable = g.changetwosidedtable == boolean.True ? true : false,
+                              UseTwoSidedTable = g.usetwosidedtable == boolean.True,
+                              ChangeTwoSidedTable = g.changetwosidedtable == boolean.True,
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
@@ -390,7 +390,8 @@ namespace Octgn.DataNew
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
-                        ret.CustomProperties.Add(propertyDef);
+                        ret.CardProperties.Add(propertyDef.Name, propertyDef);
+                        //warn if adding a duplicate key
                     }
                 }
                 if (g.card.size != null)
@@ -1065,10 +1066,8 @@ namespace Octgn.DataNew
             #endregion markers
             #region card
 
-            if (game.CustomProperties != null)
-            {
                 var propertyDefList = new List<propertyDef>();
-                foreach (var p in game.CustomProperties)
+            foreach (var p in game.CardProperties.Values)
                 {
                     var propertyDef = new propertyDef
                     {
@@ -1123,7 +1122,6 @@ namespace Octgn.DataNew
                     sizeList.Add(cardSize);
             }
                 save.card.size = sizeList.ToArray();
-            }
             #endregion card
             #region fonts
 
@@ -1534,8 +1532,7 @@ namespace Octgn.DataNew
         {
             foreach (var propertyElement in cardPropertyElements)
             {
-                PropertyDef gameDefinedProperty = game.CustomProperties.FirstOrDefault(x => x.Name == propertyElement.Attribute("name").Value);
-                if (gameDefinedProperty == null)
+                if (game.CardProperties.TryGetValue(propertyElement.Attribute("name").Value, out PropertyDef gameDefinedProperty) == false)
                 {
                     throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
                 }
@@ -1664,25 +1661,6 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        private static PropertyDef _nameProperty;
-        private static PropertyDef NameProperty
-        {
-            get
-            {
-                if (_nameProperty == null)
-                {
-                    _nameProperty = new PropertyDef
-                    {
-                        Name = "Name",
-                        Type = PropertyType.String,
-                        Hidden = true,
-                        IgnoreText = true
-                    };
-                }
-                return _nameProperty;
-            }
-        }
-
         internal List<object> DeserializePack(IEnumerable<XElement> element, Game game)
         {
             var ret = new List<object>();
@@ -1698,24 +1676,10 @@ namespace Octgn.DataNew
                         var qtyAttr = e.Attributes().FirstOrDefault(x => x.Name.LocalName == "qty");
                         if (qtyAttr != null) pick.Quantity = qtyAttr.Value == "unlimited" ? -1 : int.Parse(qtyAttr.Value);
                         var propertyList = new List<PickProperty>();
-                        var baseProp = new PickProperty
-                        {
-                            Property = e.Attribute("key").Value.Equals("Name", StringComparison.InvariantCultureIgnoreCase)
-                                ? NameProperty
-                                : game.CustomProperties.FirstOrDefault(x => x.Name.Equals(e.Attribute("key").Value, StringComparison.InvariantCultureIgnoreCase)),
-                            Value = e.Attribute("value").Value
-                        };
-                        propertyList.Add(baseProp);
+                        propertyList.Add(DeserializePickProperty(e, game));
                         foreach (var p in e.Elements("property"))
                         {
-                            var prop = new PickProperty
-                            {
-                                Property = p.Attribute("key").Value.Equals("Name", StringComparison.InvariantCultureIgnoreCase)
-                                    ? NameProperty
-                                    : game.CustomProperties.FirstOrDefault(x => x.Name.Equals(p.Attribute("key").Value, StringComparison.InvariantCultureIgnoreCase)),
-                                Value = p.Attribute("value").Value
-                            };
-                            propertyList.Add(prop);
+                            propertyList.Add(DeserializePickProperty(p, game));
                         }
                         pick.Properties = propertyList;
                         ret.Add(pick);
@@ -1723,6 +1687,32 @@ namespace Octgn.DataNew
                 }
             }
             return ret;
+        }
+        internal PickProperty DeserializePickProperty(XElement e, Game game)
+        {
+            if (e.Attribute("key").Value.Equals("Name", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var prop = new NamePickProperty
+                {
+                    Value = e.Attribute("value").Value
+                };
+                return prop;
+            }
+
+            else if (game.CardProperties.TryGetValue(e.Attribute("key").Value, out PropertyDef gameDefinedProperty))
+            {
+
+                var prop = new PickProperty
+                {
+                    Property = gameDefinedProperty,
+                    Value = e.Attribute("value").Value
+                };
+                return prop;
+            }
+            else
+            {
+                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+            }
         }
 
         public byte[] Serialize(object obj)
@@ -1922,14 +1912,14 @@ namespace Octgn.DataNew
                     {
                         if (ret.key == null)
                         {
-                            ret.key = prop.Property.Name;
+                            ret.key = prop is NamePickProperty ? "Name" : prop.Property.Name;
                             ret.value = prop.Value.ToString();
                         }
                         else
                         {
                             var property = new pickProperty
                             {
-                                key = prop.Property.Name,
+                                key = prop is NamePickProperty ? "Name" : prop.Property.Name,
                                 value = prop.Value?.ToString()
                             };
                             propertylist.Add(property);

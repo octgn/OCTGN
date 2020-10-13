@@ -5,4 +5,9 @@
         public PropertyDef Property { get; set; }
         public object Value { get; set; }
     }
+
+    public class NamePickProperty : PickProperty
+    {
+
+    }
 }

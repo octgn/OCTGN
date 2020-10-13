@@ -27,7 +27,7 @@ namespace Octgn.Scripting.Controls
 
         private List<Card> _allCards;
         private string _filterText = "";
-        private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
+        private IEnumerable<string> textProperties = Program.GameEngine.Definition.CardProperties.Values
                     .Where(p => !p.IgnoreText)
                     .Select(p => p.Name);
 

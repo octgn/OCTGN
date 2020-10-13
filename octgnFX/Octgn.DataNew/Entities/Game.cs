@@ -25,7 +25,10 @@
         public List<string> Tags { get; set; } 
         public Dictionary<string,DeckSection> DeckSections { get; set; }
         public Dictionary<string,DeckSection> SharedDeckSections { get; set; }
-        public List<PropertyDef> CustomProperties { get; set; }
+
+        [Obsolete("The CustomProperties property will soon be deprecated. The CardProperties dictionary indexes by card name and should be used instead.")]
+        public List<PropertyDef> CustomProperties => CardProperties.Values.ToList();
+        public Dictionary<string, PropertyDef> CardProperties { get; set; }
         public Dictionary<string, GlobalVariable> GlobalVariables { get; set; }
         public Font ChatFont { get; set; }
         public Font ContextFont { get; set; }
@@ -60,7 +63,7 @@
         {
             CardSizes = new Dictionary<string, CardSize>();
             GameBoards = new Dictionary<string, GameBoard>();
-            CustomProperties = new List<PropertyDef>();
+            CardProperties = new Dictionary<string, PropertyDef>();
             DeckSections = new Dictionary<string, DeckSection>();
             SharedDeckSections = new Dictionary<string, DeckSection>();
             GlobalVariables = new Dictionary<string, GlobalVariable>();

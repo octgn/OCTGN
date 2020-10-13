@@ -96,7 +96,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildIncludeDef(NotifyCollectionChangedEventArgs args)
         {
-            _include.Properties = Items.Select(x => ((PackagePropertyModel)x).PropertyDef).ToList();
+            _include.Properties = Items.Select(x => ((PackagePropertyModel)x)._def).ToList();
         }
 
         public IEnumerable<IdeBaseItem> Sets => ViewModelLocator.SetTabViewModel.Items.Where(x => ((PackageModel)Source.Parent).Source.Parent != x && ((SetModel)x).CardItems.Count > 0); //TODO : test this rewrite

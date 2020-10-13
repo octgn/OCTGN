@@ -61,8 +61,9 @@ namespace Octgn.DeckBuilder
             InitializeComponent();
             var source = 
                 Enumerable.Repeat<object>("First", 1)
+                     .Union(Enumerable.Repeat<object>(new NamePropertyDef(), 1))
                      .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1))
-                     .Union(game.AllProperties().Where(p => !p.Hidden));
+                     .Union(game.CardProperties.Values.Where(p => !p.Hidden));
 
             filtersList.ItemsSource = source;
             GenerateColumns(game);
@@ -92,8 +93,9 @@ namespace Octgn.DeckBuilder
             InitializeComponent();
             filtersList.ItemsSource =
                 Enumerable.Repeat<object>("First", 1)
+                    .Union(Enumerable.Repeat<object>(new NamePropertyDef(), 1))
                     .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1))
-                    .Union(game.AllProperties().Where(p => !p.Hidden));
+                    .Union(game.CardProperties.Values.Where(p => !p.Hidden));
             this.GenerateColumns(game);
             FileName = "";
             if (save != null)
@@ -111,7 +113,7 @@ namespace Octgn.DeckBuilder
                     }
                     else
                     {
-                        prop = loadedGame.AllProperties().FirstOrDefault(
+                        prop = filtersList.Items.OfType<PropertyDef>().FirstOrDefault(
                                 x => x.Name.Equals(filter.PropertyName, StringComparison.InvariantCultureIgnoreCase));
                     }
                     if (prop == null) continue;
@@ -367,9 +369,9 @@ namespace Octgn.DeckBuilder
 
         private void GenerateColumns(DataNew.Entities.Game game)
         {
-            foreach (DataNew.Entities.PropertyDef prop in game.CustomProperties)
+            foreach (DataNew.Entities.PropertyDef prop in game.CardProperties.Values)
             {
-                if (prop.Name == "Name" || prop.Hidden) continue;
+                if (prop.Hidden) continue;
                 if (prop.Type == DataNew.Entities.PropertyType.RichText)
                 {
                     var binding = new Binding

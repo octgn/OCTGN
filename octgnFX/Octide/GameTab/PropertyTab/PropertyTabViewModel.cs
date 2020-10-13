@@ -42,13 +42,13 @@ namespace Octide.ViewModel
         public PropertyTabViewModel()
         {
             Items = new IdeCollection<IdeBaseItem>(this, typeof(PropertyItemModel));
-            foreach (var property in ViewModelLocator.GameLoader.Game.CustomProperties)
+            foreach (var property in ViewModelLocator.GameLoader.Game.CardProperties.Values)
             {
                 Items.Add(new PropertyItemModel(property, Items));
             }
             Items.CollectionChanged += (sender, args) =>
             {
-                ViewModelLocator.GameLoader.Game.CustomProperties = Items.Select(x => ((PropertyItemModel)x)._property).ToList();
+                ViewModelLocator.GameLoader.Game.CardProperties = Items.ToDictionary(x => ((PropertyItemModel)x).Name, y => ((PropertyItemModel)y)._property);
                 Messenger.Default.Send(new CustomPropertyChangedMessage(args)) ;
             };
             AddCommand = new RelayCommand(AddItem);

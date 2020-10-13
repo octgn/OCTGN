@@ -44,10 +44,8 @@
                 var card = new Card(picked.Card);
 
                 foreach (var include in picked.Include.Properties)
-                { 
-                    var property = game.CustomProperties.FirstOrDefault(x => x.Name.Equals(include.Property.Name, StringComparison.InvariantCultureIgnoreCase));
-                    if (property != null)
-                        card.PropertySets[""].Properties[property] = include.Value;
+                {
+                    card.PropertySets[""].Properties[include.Property] = include.Value;
                 };
                 return card;
             });
@@ -66,16 +64,28 @@
                 if (item is Pick pick)
                 {
                     var filteredPool = new List<Card>(cardPool);
-                    foreach (PickProperty pickProperty in pick.Properties)
+                    foreach (var pickProperty in pick.Properties)
                     {
-                        var Prop = pickProperty.Property;
-                        var Value = pickProperty.Value;
-                        var list = (
-                            from card in filteredPool
-                            where
-                                card.MatchesPropertyValue(Prop.Name, Value)
-                            select card).ToList();
-                        filteredPool = list;
+                        if (pickProperty is NamePickProperty)
+                        {
+                            var list = (
+                                from card in filteredPool
+                                where
+                                    card.GetName().Equals(pickProperty.Value.ToString(), StringComparison.InvariantCultureIgnoreCase)
+                                select card).ToList();
+                            filteredPool = list;
+                        }
+                        else
+                        {
+                            var Prop = pickProperty.Property;
+                            var Value = pickProperty.Value;
+                            var list = (
+                                from card in filteredPool
+                                where
+                                    card.MatchesPropertyValue(Prop, Value)
+                                select card).ToList();
+                            filteredPool = list;
+                        }
                     }
 
                     if (pick.Quantity < 0)

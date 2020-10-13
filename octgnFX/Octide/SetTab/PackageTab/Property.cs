@@ -10,46 +10,68 @@ using Octide.ItemModel;
 using Octide.Messages;
 using Octide.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Documents;
 
 namespace Octide.SetTab.ItemModel
 {
     public class PackagePropertyModel : IdeBaseItem, IDroppable
     {
         public bool isIncludeProperty { get; set; }
-        public PickProperty PropertyDef { get; set; }
+        public PickProperty _def { get; set; }
         public PropertyItemModel _activeProperty;
 
-        public IdeCollection<IdeBaseItem> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
+        public ObservableCollection<IdeBaseItem> CustomProperties
+        {
+            get
+            {
+                var ret = new ObservableCollection<IdeBaseItem>(ViewModelLocator.PropertyTabViewModel.Items);
+                ret.Insert(0, PropertyTabViewModel.NameProperty);
+                return ret;
+            }
+        }
 
         public PackagePropertyModel(IdeCollection<IdeBaseItem> src) : base(src) // new item
         {
-            PropertyDef = new PickProperty();
+            _def = new PickProperty();
             ActiveProperty = (PropertyItemModel)CustomProperties.First();
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
         public PackagePropertyModel(PickProperty p, IdeCollection<IdeBaseItem> src) : base(src) // loading item
         {
-            PropertyDef = p;
-            ActiveProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property == PropertyDef.Property);
+            if (p is NamePickProperty)
+            {
+                _def = new PickProperty
+                {
+                    Property = PropertyTabViewModel.NameProperty._property,
+                    Value = p.Value
+                };
+                ActiveProperty = PropertyTabViewModel.NameProperty;
+            }
+            else
+            {
+                _def = (PickProperty)p;
+                ActiveProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property == _def.Property);
+            }
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
         public PackagePropertyModel(PackagePropertyModel p, IdeCollection<IdeBaseItem> src) : base(src) // copy item
         {
-            PropertyDef = new PickProperty();
+            _def = new PickProperty();
             ActiveProperty = p.ActiveProperty;
-            PropertyDef.Value = p.PropertyDef.Value;
+            _def.Value = p._def.Value;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
         {
-            if (ActiveProperty == args.Prop)
+            if (ActiveProperty == args.Prop && _def is PickProperty pickprop)
             {
-                PropertyDef.Property = args.Prop._property;
+                pickprop.Property = args.Prop._property;
                 RaisePropertyChanged("ActiveProperty");
             }
         }
@@ -82,7 +104,7 @@ namespace Octide.SetTab.ItemModel
                     value = (PropertyItemModel)CustomProperties.First();
                 }
                 _activeProperty = value;
-                PropertyDef.Property = value._property;
+                _def.Property = value._property;
                 RaisePropertyChanged("ActiveProperty");
             }
         }
@@ -91,12 +113,12 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                return PropertyDef.Value;
+                return _def.Value;
             }
             set
             {
-                if (PropertyDef.Value == value) return;
-                PropertyDef.Value = value;
+                if (_def.Value == value) return;
+                _def.Value = value;
                 RaisePropertyChanged("Value");
             }
         }
