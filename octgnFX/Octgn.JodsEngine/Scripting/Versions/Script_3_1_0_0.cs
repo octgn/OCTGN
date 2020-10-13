@@ -323,7 +323,7 @@ namespace Octgn.Scripting.Versions
 
         public string[] CardProperties()
         {
-            return Program.GameEngine.Definition.AllProperties().Select(x => x.Name).ToArray();
+            return Program.GameEngine.Definition.CardProperties.Values.Select(x => x.Name).ToArray();
         }
 
         public Tuple<int, int> DefaultCardSize()

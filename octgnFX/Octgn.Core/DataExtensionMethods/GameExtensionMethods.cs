@@ -32,22 +32,6 @@ namespace Octgn.Core.DataExtensionMethods
         }
         private static IFileSystem io;
 
-        private static PropertyDef _nameProperty;
-        
-        public static PropertyDef NameProperty
-        {
-            get
-            {
-                if (_nameProperty == null)
-                    _nameProperty = new PropertyDef()
-                    {
-                        Name = "Name",
-                        Type = PropertyType.String
-                    };
-                return _nameProperty;
-            }
-        }
-
         public static IEnumerable<Set> Sets(this Game game)
         {
             var ret = SetManager.Get().GetByGameId(game.Id);
@@ -119,7 +103,7 @@ namespace Octgn.Core.DataExtensionMethods
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<PropertyDef>();
-            return Enumerable.Repeat(NameProperty, 1).Union(game.CustomProperties);
+            return game.CardProperties.Values;
         }
 
         public static IEnumerable<Card> AllCards(this Game game)
@@ -140,9 +124,9 @@ namespace Octgn.Core.DataExtensionMethods
         {
             DataTable table = new DataTable();
 
-            var values = new object[game.CustomProperties.Count + 6];
-            var defaultValues = new object[game.CustomProperties.Count + 6];
-            var indexes = new Dictionary<int, string>();
+            var values = new object[game.CardProperties.Count + 6];
+            var defaultValues = new object[game.CardProperties.Count + 6];
+            var indices = new Dictionary<PropertyDef, int>();
             var setCache = new Dictionary<Guid, string>();
             var i = 6;
             table.Columns.Add("Name", typeof(string));
@@ -157,7 +141,7 @@ namespace Octgn.Core.DataExtensionMethods
             defaultValues[4] = "";
             table.Columns.Add("Alternates", typeof(string));
             defaultValues[5] = "";
-            foreach (var prop in game.CustomProperties)
+            foreach (var prop in game.CardProperties.Values)
             {
                 switch (prop.Type)
                 {
@@ -184,7 +168,7 @@ namespace Octgn.Core.DataExtensionMethods
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                indexes.Add(i, prop.Name);
+                indices.Add(prop, i);
                 i++;
             }
 
@@ -200,24 +184,23 @@ namespace Octgn.Core.DataExtensionMethods
                 values[2] = item.SetId;
                 values[3] = item.GetImageUri();
                 values[4] = item.Id;
-                foreach (CardPropertySet alt in item.PropertySets.Values)
+                foreach (var alt in item.PropertySets)
                 {
-                    values[5] = alt.Type;
-                    values[0] = alt.Name;
-                    foreach (var prop in alt.Properties)
+                    values[5] = alt.Value.Type;
+                    values[0] = alt.Value.Name;
+                    foreach (var prop in alt.Value.Properties)
                     {
-                        var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { x.Key, x.Value }).FirstOrDefault();
-                        if (ix == null)
+                        if (indices.TryGetValue(prop.Key, out var ix) == false)
                             throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
                         if (prop.Key.Type == PropertyType.Integer)
                         {
                             if (prop.Value == null || !int.TryParse(prop.Value as string, out _))
                             {
-                                values[ix.Key] = null;
+                                values[ix] = null;
                                 continue;
                             }
                         }
-                        values[ix.Key] = prop.Value;
+                        values[ix] = prop.Value;
                     }
                     table.Rows.Add(values);
 

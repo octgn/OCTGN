@@ -168,7 +168,7 @@ Template="{StaticResource ExpanderButton}" />
                     <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="4">
                         <TextBlock Text="Sort:" FontWeight="Bold" Width="31" VerticalAlignment="Center" TextAlignment="Right" 
                                RenderTransformOrigin="0.884,0.614" Foreground="White" Margin="0 0 5 0"/>
-                        <ComboBox x:Name="sortBox" ItemsSource="{Binding Definition.CustomProperties, Mode=OneTime}"
+                        <ComboBox x:Name="sortBox" ItemsSource="{Binding SortProperties, ElementName=This, Mode=OneTime}"
                             DisplayMemberPath="Name" SelectionChanged="SortChanged" Height="24" MinWidth="100"/>
                         <Grid Margin="0,0,10,0"/>
                         <TextBlock Text="Move all remaining cards to:" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center"

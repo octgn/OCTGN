@@ -246,18 +246,18 @@ namespace Octgn.Core.DataExtensionMethods
         }
 
 
-        [Obsolete("The PropertySet method will soon be deprecated. Use GetFullCardProperties() instead.")]
-        public static IDictionary<PropertyDef, object> PropertySet(this ICard card) => GetFullCardProperties(card);
+        [Obsolete("The PropertySet method will soon be deprecated. Use GetCardProperties() instead.")]
+        public static IDictionary<PropertyDef, object> PropertySet(this ICard card) => GetCardProperties(card);
 
         /// <summary>
         /// Returns the full property dictionary for this card, respecting its current alternate state.
         /// <para>Includes this card's name as a custom property.</para>
         /// </summary>
+        /// 
+        [Obsolete("The GetFullCardProperties method will soon be deprecated.  It no longer considers the card's Name as a custom property.")]
         public static IDictionary<PropertyDef, object> GetFullCardProperties(this ICard card)
         {
-            var ret = GetCardProperties(card);
-            ret.Add(GameExtensionMethods.NameProperty, card.Name);
-            return ret;
+            return GetCardProperties(card);
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace Octgn.Core.DataExtensionMethods
         /// <param name="value">A value to compare with this card's property value.</param>
         public static bool MatchesPropertyValue(this ICard card, PropertyDef prop, object value)
         {
-            var cardProperties = GetFullCardProperties(card);
+            var cardProperties = GetCardProperties(card);
             if (cardProperties.ContainsKey(prop))
             {
                 if (string.IsNullOrWhiteSpace(cardProperties[prop]?.ToString()) && string.IsNullOrWhiteSpace(value?.ToString()))
@@ -291,7 +291,11 @@ namespace Octgn.Core.DataExtensionMethods
         /// <param name="value">A value to compare with this card's property value.</param>
         public static bool MatchesPropertyValue(this ICard card, string prop, object value)
         {
-            var cardProperties = GetFullCardProperties(card);
+            var cardProperties = GetCardProperties(card);
+            if (prop.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return card.GetName().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            }
             var matchedProperty = cardProperties.Keys.FirstOrDefault(x => x.Name.Equals(prop, StringComparison.InvariantCultureIgnoreCase));
             if (matchedProperty == null)
             {

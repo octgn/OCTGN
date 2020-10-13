@@ -68,7 +68,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildPickDef(NotifyCollectionChangedEventArgs args)
         {
-            _pick.Properties = Items.Select(x => ((PackagePropertyModel)x).PropertyDef).ToList();
+            _pick.Properties = Items.Select(x => ((PackagePropertyModel)x)._def).ToList();
         }
 
         public void AddProperty()

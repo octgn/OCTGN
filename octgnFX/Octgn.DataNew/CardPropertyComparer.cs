@@ -8,11 +8,11 @@
 
     public class CardPropertyComparer : IComparer, IComparer<ICard>
     {
-        private readonly string _propertyName;
+        private readonly PropertyDef _property;
 
-        public CardPropertyComparer(string propertyName)
+        public CardPropertyComparer(PropertyDef property)
         {
-            _propertyName = propertyName;
+            _property = property;
         }
 
         #region IComparer Members
@@ -28,10 +28,14 @@
 
         public int Compare(ICard x, ICard y)
         {
-            object px = x.PropertySets[x.Alternate].Properties[new PropertyDef(){Name=_propertyName}];
-            object py = y.PropertySets[y.Alternate].Properties[new PropertyDef() { Name = _propertyName }];
+            if (_property is NamePropertyDef || _property == null)
+            {
+                return x.PropertySets[x.Alternate].Name.CompareTo(y.PropertySets[y.Alternate].Name);
+            }
+            x.PropertySets[x.Alternate].Properties.TryGetValue(_property, out object px);
+            y.PropertySets[y.Alternate].Properties.TryGetValue(_property, out object py);
             if (px == null) return py == null ? 0 : -1;
-            return ((IComparable)px).CompareTo(py);
+            return px.ToString().CompareTo(py.ToString());
         }
 
         #endregion

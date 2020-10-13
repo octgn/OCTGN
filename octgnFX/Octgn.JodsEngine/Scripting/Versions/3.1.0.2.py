@@ -279,8 +279,8 @@ class Card(object):
 	def __hash__(self):
 		return self._id
 	def __getattr__(self, name):
-		if name.lower() in cardProperties:
-			return self.properties[name]
+		if name.lower() == "name": return _api.CardName(self._id)
+		elif name.lower() in cardProperties: return self.properties[name]
 		return object.__getattr__(self, name)
 	def __setattr__(self, name, val):
 		if name.lower() == "id" or name.lower() == "name": return

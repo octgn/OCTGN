@@ -46,18 +46,24 @@ namespace Octgn.Scripting.Controls
                         _allCards = new List<Card>();
                         foreach (var p in properties)
                         {
-                            if (p.Key.ToLower() == "model")
+                            if (p.Key.Equals("model", StringComparison.InvariantCultureIgnoreCase))
                                 foreach (var v in p.Value)
                                 {
                                     var tlist = game.AllCards()
                                         .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList();
                                     _allCards.AddRange(tlist);
                                 }
+                            else if (p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                                foreach (var v in p.Value)
+                                {
+                                    var tlist = game.AllCards().Where(x => x.GetName().Equals(v, StringComparison.InvariantCultureIgnoreCase));
+                                    _allCards.AddRange(tlist);
+                                }
                             else
                                 foreach (var v in p.Value)
                                 {
                                     var tlist = game.AllCards()
-                                        .Where(x => x.GetFullCardProperties()
+                                        .Where(x => x.GetCardProperties()
                                             .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                                 && y.Value.ToString().ToLower() == v.ToLower())).ToList();
                                     _allCards.AddRange(tlist);
@@ -69,15 +75,18 @@ namespace Octgn.Scripting.Controls
                         foreach (var p in properties)
                         {
                             var tlist = new List<Card>();
-                            if (p.Key.ToLower() == "model")
+                            if (p.Key.Equals("model", StringComparison.InvariantCultureIgnoreCase))
                                 foreach (var v in p.Value)
                                     tlist.AddRange(query
                                         .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList());
+                            else if (p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                                foreach (var v in p.Value)
+                                    tlist.AddRange(query = query.Where(x => x.GetName().Equals(v, StringComparison.InvariantCultureIgnoreCase)));
                             else
                                 foreach (var v in p.Value)
                                 {
                                     tlist.AddRange(query
-                                        .Where(x => x.GetFullCardProperties()
+                                        .Where(x => x.GetCardProperties()
                                             .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                                 && y.Value.ToString().ToLower() == v.ToLower())).ToList());
                                 }
@@ -109,22 +118,33 @@ namespace Octgn.Scripting.Controls
                           _allCards = new List<Card>();
                           foreach (var p in properties)
                           {
-                              var tlist = game.AllCards()
-                                  .Where(x => x.GetFullCardProperties()
-                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
-                                          && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
-                              _allCards.AddRange(tlist);
+                              if (p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                              {
+                                  var tlist = game.AllCards().Where(x => x.GetName().Equals(p.Value, StringComparison.InvariantCultureIgnoreCase));
+                                  _allCards.AddRange(tlist);
+                              }
+                              else
+                              {
+                                  var tlist = game.AllCards()
+                                      .Where(x => x.GetCardProperties()
+                                          .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                              && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
+                                  _allCards.AddRange(tlist);
+                              }
                           }
                           break;
                       default:
                           var query = game.AllCards();
                           foreach (var p in properties)
                           {
-                              query = query
-                                  .Where(
-                                  x => x.GetFullCardProperties()
-                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
-                                          && y.Value.ToString().ToLower() == p.Value.ToLower()));
+                              if (p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                                  query = query.Where(x => x.GetName().Equals(p.Value, StringComparison.InvariantCultureIgnoreCase));
+                              else
+                                  query = query
+                                    .Where(
+                                    x => x.GetCardProperties()
+                                        .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                            && y.Value.ToString().ToLower() == p.Value.ToLower()));
                           }
                           _allCards = query.ToList();
                           break;

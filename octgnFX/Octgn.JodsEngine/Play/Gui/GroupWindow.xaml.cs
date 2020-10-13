@@ -131,7 +131,7 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
+                IEnumerable<string> textProperties = Program.GameEngine.Definition.CardProperties.Values
                     .Where(p => !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;

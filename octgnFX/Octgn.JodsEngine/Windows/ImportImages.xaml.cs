@@ -38,7 +38,7 @@
                 FolderDir = Prefs.ImportImagesLastPath;
             Items = new ObservableCollection<ImportImagesItem>();
             Sets = (new SetPropertyDef(Game.Sets())).Sets;
-            Properties = game.AllProperties();
+            Properties = game.CardProperties.Values;
             InitializeComponent();
             setsCombo.SelectedIndex = 0;
             propertyCombo.SelectedIndex = 0;
