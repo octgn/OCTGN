@@ -226,7 +226,7 @@ namespace Octide.ViewModel
 						{
 							continue;
 						}						
-						var altProperty = cardAlternate.CachedProperties.FirstOrDefault(x => x.Key == mapping.Property);
+						var altProperty = cardAlternate._altDef.Properties.FirstOrDefault(x => x.Key == mapping.Property._property);
 				//		if (altProperty == null)
 				//		{
 				//			altProperty = new CardPropertyModel(cardAlternate, mapping.Property);

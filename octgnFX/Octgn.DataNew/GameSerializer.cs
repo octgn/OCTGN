@@ -1790,6 +1790,14 @@ namespace Octgn.DataNew
                             {
                                 prop.value = intText.ToString();
                             }
+                            else if (p.Value is null)
+                            {
+                                prop.value = null;
+                            }
+                            else
+                            {
+                                continue;
+                            }
                             props.Add(prop);
                         }
                         card.name = propset.Value.Name;
@@ -1829,6 +1837,14 @@ namespace Octgn.DataNew
                             else if (p.Value is int intText)
                             {
                                 prop.value = intText.ToString();
+                            }
+                            else if (p.Value is null)
+                            {
+                                prop.value = null;
+                            }
+                            else
+                            {
+                                continue;
                             }
                             altprops.Add(prop);
                         }

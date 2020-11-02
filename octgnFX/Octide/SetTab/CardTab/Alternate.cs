@@ -28,7 +28,6 @@ namespace Octide.SetTab.ItemModel
     {
 
         public CardPropertySet _altDef;
-        public Dictionary<PropertyItemModel, object> CachedProperties { get; private set; }
 
         public IdeCollection<IdeBaseItem> CardSizes => ViewModelLocator.PreviewTabViewModel.CardSizes;
 
@@ -43,7 +42,6 @@ namespace Octide.SetTab.ItemModel
                 Name = "Card",
             };
             Type = "";
-            CachedProperties = new Dictionary<PropertyItemModel, object>();
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
        //     Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
@@ -54,7 +52,6 @@ namespace Octide.SetTab.ItemModel
         {
             _altDef = altData;
 
-            CachedProperties = new Dictionary<PropertyItemModel, object>();
             //    foreach (var prop in altData.Properties)
             //    {
             //        Items.Add(new CardPropertyModel(this, ViewModelLocator.PropertyTabViewModel.Items.First(x => (x as PropertyItemModel)._property.Equals(prop.Key)) as PropertyItemModel));
@@ -75,7 +72,6 @@ namespace Octide.SetTab.ItemModel
 
             };
             Type = a.Type;
-            CachedProperties = a.CachedProperties.ToDictionary(x => x.Key, y => y.Value);
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
           //  Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
