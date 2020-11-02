@@ -13,7 +13,15 @@ using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {
+    public class CachedPropertyValue : ViewModelBase
+    {
+        public object Property { get; set; }
 
+        public override string ToString()
+        {
+            return Property?.ToString();
+        }
+    }
     public class CardPropertyModel : ViewModelBase, ICleanup
     {
         public AlternateModel Parent { get; set; }
@@ -33,23 +41,27 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                return Parent._altDef.Properties.ContainsKey(LinkedProperty._property);
+                if (Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object ret))
+                    return !(ret is CachedPropertyValue);
+                return false;
             }
             set
             {
                 if (value == true) // define this property value and add its last known value to the card data
                 {
-                    Parent.CachedProperties.TryGetValue(LinkedProperty, out object cachedValue);
-                    Parent._altDef.Properties[LinkedProperty._property] = cachedValue;
-                    Parent.CachedProperties.Remove(LinkedProperty);
+                    if (PropertyValue is CachedPropertyValue cachedValue)
+                    {
+                        Parent._altDef.Properties[LinkedProperty._property] = cachedValue.Property;
+                    }
+                    else
+                    {
+                        Parent._altDef.Properties[LinkedProperty._property] = PropertyValue;
+                    }
                 }
                 else // remove this 
                 {
-                    if (Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object cachedValue));
-                    {
-                        Parent.CachedProperties.Add(LinkedProperty, cachedValue);
-                        Parent._altDef.Properties.Remove(LinkedProperty._property);
-                    }
+                    var cachedValue = new CachedPropertyValue() { Property = PropertyValue };
+                    Parent._altDef.Properties[LinkedProperty._property] = cachedValue;
                 }
                 RaisePropertyChanged("IsDefined");
                 RaisePropertyChanged("Value");
@@ -58,20 +70,12 @@ namespace Octide.SetTab.ItemModel
 
         public string Name => LinkedProperty.Name;
 
-        public object CurrentValue
+        public object PropertyValue
         {
             get
             {
-                if (IsDefined)
-                {
-                    Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object ret);
-                    return ret;
-                }
-                else
-                {
-                    Parent.CachedProperties.TryGetValue(LinkedProperty, out object ret);
-                    return ret;
-                }
+                Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object ret);
+                return ret;
             }
         }
 
@@ -79,21 +83,25 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                if (CurrentValue is RichTextPropertyValue richValue)
+                if (PropertyValue is RichTextPropertyValue richValue)
                     return richValue.ToLiteralString();
-                return CurrentValue?.ToString();
+                return PropertyValue?.ToString();
             }
             set
             {
                 if (IsRich)
                 {
                     var richText = ConvertStringToRichText(value);
-                    if (CurrentValue == richText) return;
+                    if (PropertyValue == richText) return;
                     Parent._altDef.Properties[LinkedProperty._property] = richText;
                 }
                 else
                 {
-                    if ((string)CurrentValue == value) return;
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        value = null;
+                    }
+                    if (PropertyValue?.ToString() == value) return;
                     Parent._altDef.Properties[LinkedProperty._property] = value;
                 }
 
