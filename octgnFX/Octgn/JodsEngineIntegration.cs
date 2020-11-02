@@ -28,6 +28,8 @@ namespace Octgn
             DebugValidate(hostedGame, true);
 
             var args = "-h ";
+            if (CommandLineHandler.Instance.DevMode)
+                args += "-x ";
 
             new HostedGameProcess(
                 hostedGame,
@@ -67,6 +69,9 @@ namespace Octgn
 
             var args = "-j ";
 
+            if (CommandLineHandler.Instance.DevMode)
+                args += "-x ";
+
             new HostedGameProcess(
                 hostedGame,
                 X.Instance.Debug,
@@ -98,6 +103,8 @@ namespace Octgn
             DebugValidate(hostedGame, false);
 
             var args = "-j ";
+            if (CommandLineHandler.Instance.DevMode)
+                args += "-x ";
 
             args += $"-u \"{username}\" ";
             if (spectate) {

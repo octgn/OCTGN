@@ -1,1 +1,1 @@
-
+developer mode flag works again
