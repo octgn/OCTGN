@@ -251,6 +251,7 @@
     </event>
     <event name="OnDeckLoaded">
       <param name="player" type="Player"/>
+      <param name="isLimited" type="bool"/>
       <!-- Groups cards are loaded into -->
       <param name="groups" type="Group[]"/>
     </event>
