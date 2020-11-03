@@ -1098,7 +1098,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnDeckLoaded_3_1_0_2(Player player, Group[] groups)
+		public void OnDeckLoaded_3_1_0_2(Player player, bool isLimited, Group[] groups)
 		{
 			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
@@ -1109,12 +1109,13 @@ namespace Octgn.Scripting
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
 				args.player = player;
+				args.isLimited = isLimited;
 				args.groups = groups;
 			}
 			foreach(var e in eventCache["OnDeckLoaded"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, groups);
+					engine.ExecuteFunction(e.PythonFunction,player, isLimited, groups);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
