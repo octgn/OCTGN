@@ -1418,13 +1418,11 @@ namespace Octgn.Scripting.Versions
         {
             if (name == null)
             {
-              //  QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
-                Program.Client.Rpc.RemoveBoard(Player.LocalPlayer);
+                QueueAction(() => Program.Client.Rpc.RemoveBoard(Player.LocalPlayer));
             }
             else if (GetBoardList().Contains(name))
             {
-            //    QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
-                Program.Client.Rpc.SetBoard(Player.LocalPlayer, name);
+                QueueAction(() => Program.Client.Rpc.SetBoard(Player.LocalPlayer, name));
             }
             else
             {
