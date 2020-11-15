@@ -54,7 +54,7 @@ namespace Octgn.Play.Dialogs
                     TopMostMessageBox.Show(
                         "Some players have cards currently loaded.\n\nReset the game before starting limited game?",
                         "Warning", MessageBoxButton.YesNo))
-                    Program.Client.Rpc.ResetReq();
+                    Program.Client.Rpc.ResetReq(false);
             }
             if (addCards.Visibility == Visibility.Visible)
             {

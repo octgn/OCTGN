@@ -590,10 +590,19 @@ namespace Octgn.Play
 
         private void ResetGame(object sender, RoutedEventArgs e)
         {
+            this.Reset(false);
+        }
+        private void SoftResetGame(object sender, RoutedEventArgs e)
+        {
+            this.Reset(true);
+        }
+
+        private void Reset(bool isSoft)
+        {
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameReset") )
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
             {
-                Program.GameEngine.EventProxy.OverrideGameReset_3_1_0_2();
+                Program.GameEngine.EventProxy.OverrideGameReset_3_1_0_2(isSoft);
                 return;
             }
             // Prompt for a confirmation
@@ -601,7 +610,7 @@ namespace Octgn.Play
                 TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
                                 "Confirmation", MessageBoxButton.YesNo))
             {
-                Program.Client.Rpc.ResetReq();
+                Program.Client.Rpc.ResetReq(isSoft);
             }
         }
 

@@ -369,7 +369,9 @@
     <event name="OverrideTurnPassed">
       <param name="player" type="Player"/>
     </event>
-    <event name="OverrideGameReset" />
+    <event name="OverrideGameReset" >
+      <param name="isSoft" type="bool"/>
+    </event>
     <event name="OverridePhasePassed">
       <param name="name" type="string"/>
       <param name="id" type="int" />

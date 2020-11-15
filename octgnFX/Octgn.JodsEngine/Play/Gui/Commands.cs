@@ -4,7 +4,7 @@ namespace Octgn.Play.Gui
 {
     public static class Commands
     {
-        public static readonly RoutedUICommand Quit, FullScreen, ResetGame, Chat, ResetScreen;
+        public static readonly RoutedUICommand Quit, FullScreen, ResetGame, SoftResetGame, Chat, ResetScreen;
         public static readonly RoutedUICommand LoadDeck, LoadPrebuiltDeck, NewDeck, SaveDeck, SaveDeckAs, ExportDeckAs;
         public static readonly RoutedUICommand LimitedGame, AlwaysShowProxy;
 
@@ -39,6 +39,7 @@ namespace Octgn.Play.Gui
             AlwaysShowProxy.InputGestures.Add(new KeyGesture(Key.F12));
 
             ResetGame = new RoutedUICommand("Reset game", "ResetGame", typeof (Commands));
+            SoftResetGame = new RoutedUICommand("Soft-reset game", "SoftResetGame", typeof (Commands));
 
             Chat = new RoutedUICommand("Activate chat textbox", "Chat", typeof (Commands));
             Chat.InputGestures.Add(new KeyGesture(Key.T, ModifierKeys.Control));

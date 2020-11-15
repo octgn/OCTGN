@@ -691,7 +691,7 @@ namespace Octgn
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password);
         }
 
-        public void Reset()
+        public void Reset(bool isSoft)
         {
             TurnNumber = 0;
             ActivePlayer = null;
@@ -718,6 +718,24 @@ namespace Octgn
                 GlobalVariables[g.Key] = g.Value.Value;
 
             DeckStats.Reset();
+
+            if (isSoft)
+            {
+                var currentDeck = new Deck()
+                {
+                    GameId = LoadedCards.GameId,
+                    IsShared = LoadedCards.IsShared,
+                    Notes = LoadedCards.Notes,
+                    Sections = LoadedCards.Sections.ToList(),
+                    Sleeve = LoadedCards.Sleeve
+                };
+                LoadedCards.Sections = new ObservableCollection<ObservableSection>();
+                LoadDeck(currentDeck, false);
+            }
+            else
+            {
+                LoadedCards.Sections = new ObservableCollection<ObservableSection>();
+            }
 
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
@@ -794,7 +812,7 @@ namespace Octgn
                         var existingCard = loadedCardsSection.Cards.FirstOrDefault(x => x.Id == card.Id);
                         if (existingCard != null)
                         {
-                            existingCard.Quantity++;
+                            existingCard.Quantity += card.Quantity;
                         }
                         else
                         {

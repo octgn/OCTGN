@@ -23,12 +23,12 @@ namespace Octgn.Server
         /// Reset the game state and broadcast the reset to other players
         /// </summary>
         /// <param name="playerId">The player initiating the reset</param>
-        public void Reset(byte playerId) {
+        public void Reset(byte playerId, bool isSoft) {
             State.TurnNumber = 0;
             State.PhaseNumber = 0;
             State.TurnStopPlayers.Clear();
             State.PhaseStops.Clear();
-            Broadcaster.Reset(playerId);
+            Broadcaster.Reset(playerId, isSoft);
         }
 
         private readonly object _dispatcherLock = new object();

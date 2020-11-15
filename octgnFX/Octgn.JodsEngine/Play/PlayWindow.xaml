@@ -34,6 +34,7 @@
         <CommandBinding Command="gui:Commands.LimitedGame" Executed="LimitedGame" />
         <CommandBinding Command="gui:Commands.FullScreen" Executed="ToggleFullScreen" />
         <CommandBinding Command="gui:Commands.ResetGame" Executed="ResetGame" />
+        <CommandBinding Command="gui:Commands.SoftResetGame" Executed="SoftResetGame" />
         <CommandBinding Command="gui:Commands.ResetScreen" Executed="ResetScreen" />
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
     </ctrl:DecorableWindow.CommandBindings>
@@ -73,7 +74,8 @@
                 <MenuItem Header="Full Game Log" Click="ShowGameLog"/>
                 <Separator></Separator>
                 <MenuItem Header="Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
-                <MenuItem Header="Reset" Command="gui:Commands.ResetGame" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Reset Game" Command="gui:Commands.ResetGame" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Soft-Reset Game" Command="gui:Commands.SoftResetGame" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <MenuItem Header="Quit" Command="gui:Commands.Quit"/>
             </MenuItem>
             <MenuItem Header="Options">

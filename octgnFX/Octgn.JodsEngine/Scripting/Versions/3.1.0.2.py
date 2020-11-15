@@ -568,3 +568,5 @@ def fd():
 	_api.ForceDisconnect()
 def resetGame():
 	_api.ResetGame()
+def softResetGame():
+	_api.SoftResetGame()

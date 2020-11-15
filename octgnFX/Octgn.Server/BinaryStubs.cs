@@ -165,7 +165,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void Reset(byte player)
+    public void Reset(byte player, bool isSoft)
     {
 		Log.Debug($"SERVER OUT: {nameof(Reset)}");
 		using(var stream = new MemoryStream(512)) {
@@ -174,6 +174,7 @@ namespace Octgn.Server
 				writer.Write(_socket?.Server.Context.State.IsMuted ?? 0);
 				writer.Write((byte)12);
 				writer.Write(player);
+				writer.Write(isSoft);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
 				writer.Close();

@@ -104,8 +104,9 @@ namespace Octgn.Networking
 					var arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
 					{ Debug.WriteLine("[Reset] Player not found."); return; }
+					var arg1 = reader.ReadBoolean();
 					Log.Debug($"OCTGN IN: Reset");
-					handler.Reset(arg0);
+					handler.Reset(arg0, arg1);
 					break;
 				}
 				case 13:

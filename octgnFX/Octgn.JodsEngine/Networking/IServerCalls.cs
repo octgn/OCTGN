@@ -18,7 +18,7 @@ namespace Octgn.Networking
 		void PlayerSettings(Player playerId, bool invertedTable, bool spectator);
 		void Leave(Player player);
 		void Start();
-		void ResetReq();
+		void ResetReq(bool isSoft);
 		void NextTurn(Player player, bool setActive, bool force);
 		void StopTurnReq(int turnNumber, bool stop);
 		void SetPhaseReq(byte nextPhase, bool force);

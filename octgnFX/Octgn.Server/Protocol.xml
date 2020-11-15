@@ -64,9 +64,12 @@
     <param name="player" type="PlayerOrSpectator" />
   </msg>
   <msg name="Start" client="true" server="true" />
-  <msg name="ResetReq" server="true" />
+  <msg name="ResetReq" server="true" >
+    <param name="isSoft" type="bool" />
+  </msg>
   <msg name="Reset" client="true">
     <param name="player" type="Player" />
+    <param name="isSoft" type="bool" />
   </msg>
 
   <msg name="NextTurn" client="true" server="true">

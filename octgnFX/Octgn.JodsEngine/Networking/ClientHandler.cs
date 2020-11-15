@@ -163,11 +163,14 @@ namespace Octgn.Networking
             Player.RefreshSpectators();
         }
 
-        public void Reset(Player player)
+        public void Reset(Player player, bool isSoft)
         {
             WriteReplayReset(player.Id);
-            Program.GameEngine.Reset();
-            Program.GameMess.System("{0} reset the game", player);
+            Program.GameEngine.Reset(isSoft);
+            if (isSoft)
+                Program.GameMess.System("{0} soft-resets the game.", player);
+            else
+                Program.GameMess.System("{0} resets the game.", player);
         }
 
         public void NextTurn(Player player, bool setActive, bool force)

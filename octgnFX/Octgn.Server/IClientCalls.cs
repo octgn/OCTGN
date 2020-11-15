@@ -16,7 +16,7 @@ namespace Octgn.Server
 		void NewPlayer(byte id, string nick, string userId, ulong pkey, bool tableSide, bool spectator);
 		void Leave(byte player);
 		void Start();
-		void Reset(byte player);
+		void Reset(byte player, bool isSoft);
 		void NextTurn(byte player, bool setActive, bool force);
 		void StopTurn(byte player);
 		void SetPhase(byte phase, byte[] players, bool force);

@@ -294,7 +294,7 @@ namespace Octgn.Play.Save
 
             if(when < CurrentTime) {
                 _currentEvent = null;
-                Program.GameEngine.Reset();
+                Program.GameEngine.Reset(false);
                 CurrentTime = Replay.GameStartTime;
 
                 _lastTickTime = null;

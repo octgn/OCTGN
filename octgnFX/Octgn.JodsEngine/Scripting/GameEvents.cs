@@ -1552,7 +1552,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OverrideGameReset_3_1_0_2()
+		public void OverrideGameReset_3_1_0_2(bool isSoft)
 		{
 			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
@@ -1562,14 +1562,15 @@ namespace Octgn.Scripting
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
+				args.isSoft = isSoft;
 			}
 			foreach(var e in eventCache["OverrideGameReset"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction);
+					engine.ExecuteFunction(e.PythonFunction,isSoft);
 				else
 				{
-					engine.ExecuteFunction(e.PythonFunction);
+					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
