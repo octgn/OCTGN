@@ -1324,7 +1324,7 @@ namespace Octgn.Scripting.Versions
 
         public void ResetGame()
         {
-            QueueAction(() => Program.Client.Rpc.ResetReq());
+            QueueAction(() => Program.Client.Rpc.ResetReq(false));
         }
 
         public void ShowWinForm(System.Windows.Forms.Form form)

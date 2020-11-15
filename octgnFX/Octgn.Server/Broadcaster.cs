@@ -91,11 +91,11 @@ namespace Octgn.Server
 		}
 	}
 
-	public void Reset(byte player)
+	public void Reset(byte player, bool isSoft)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
-				ply.Rpc.Reset(player);
+				ply.Rpc.Reset(player, isSoft);
 			}
 		}
 	}

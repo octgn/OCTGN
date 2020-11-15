@@ -109,8 +109,9 @@ namespace Octgn.Server
 				}
 				case 11:
 				{
+					bool arg0 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  ResetReq");
-					_socket.Handler.ResetReq();
+					_socket.Handler.ResetReq(arg0);
 					break;
 				}
 				case 13:

@@ -99,8 +99,8 @@ namespace Octgn.Server
             p.Settings = new PlayerSettings(invertedTable, spectator);
         }
 
-        public void ResetReq() {
-            _context.Reset(_player.Id);
+        public void ResetReq(bool isSoft) {
+            _context.Reset(_player.Id, isSoft);
         }
 
         public void ChatReq(string text) {
