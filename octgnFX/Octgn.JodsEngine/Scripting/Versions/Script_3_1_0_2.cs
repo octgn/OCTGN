@@ -722,6 +722,12 @@ namespace Octgn.Scripting.Versions
             });
         }
 
+        public bool CardIsSelected(int id)
+        {
+            Card c = Card.Find(id);
+            return c.Selected;
+        }
+
         //Returns the card's index
         //ralig98
         public int CardGetIndex(int CardId)

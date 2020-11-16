@@ -361,6 +361,8 @@ class Card(object):
 	@index.setter
 	def index(self, index):
 		_api.CardSetIndex(self._id,index, True)
+	@property
+	def isSelected(self): return _api.CardIsSelected(self._id)
 	def select(self, selection = True): _api.CardSelect(self._id, selection)
 	def peek(self): _api.CardPeek(self._id)
 	@property
