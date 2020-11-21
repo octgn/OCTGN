@@ -719,6 +719,13 @@ namespace Octgn
 
             DeckStats.Reset();
 
+            //fix MAINWINDOW bug
+            PlayWindow mainWin = WindowManager.PlayWindow;
+            mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
+            EventProxy.OnGameStart_3_1_0_0();
+            EventProxy.OnGameStart_3_1_0_1();
+            EventProxy.OnGameStarted_3_1_0_2();
+
             if (isSoft)
             {
                 var currentDeck = new Deck()
@@ -737,12 +744,6 @@ namespace Octgn
                 LoadedCards.Sections = new ObservableCollection<ObservableSection>();
             }
 
-            //fix MAINWINDOW bug
-            PlayWindow mainWin = WindowManager.PlayWindow;
-            mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
-            EventProxy.OnGameStart_3_1_0_0();
-            EventProxy.OnGameStart_3_1_0_1();
-            EventProxy.OnGameStarted_3_1_0_2();
         }
 
         public void End()
