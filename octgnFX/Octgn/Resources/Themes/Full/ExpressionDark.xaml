@@ -1693,6 +1693,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="#FF000000"/>
+        <Setter Property="Padding" Value="6 5"/>
     </Style>
 
     <ControlTemplate x:Key="TextBoxTemplate" TargetType="{x:Type TextBox}">
@@ -1766,6 +1767,7 @@
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="AllowDrop" Value="true" />
+        <Setter Property="Padding" Value="6 5"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type PasswordBox}">
