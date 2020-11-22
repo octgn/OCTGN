@@ -24,18 +24,20 @@ namespace Octgn
     {
         private readonly static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Task<bool> HostGame(HostedGame hostedGame, string username, string password) {
+        public Task<bool> HostGame(HostedGame hostedGame, HostedGameSource source, string username, string password) {
             DebugValidate(hostedGame, true);
 
             var args = "-h ";
             if (CommandLineHandler.Instance.DevMode)
                 args += "-x ";
 
-            new HostedGameProcess(
-                hostedGame,
-                X.Instance.Debug,
-                true
-            ).Start();
+            if (source == HostedGameSource.Lan) {
+                new HostedGameProcess(
+                    hostedGame,
+                    X.Instance.Debug,
+                    true
+                ).Start();
+            }
 
             args += $"-u \"{username}\" ";
             args += "-k \"" + HostedGame.Serialize(hostedGame) + "\"";

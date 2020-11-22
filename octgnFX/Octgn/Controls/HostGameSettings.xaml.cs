@@ -301,7 +301,7 @@ namespace Octgn.Controls
                 hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
-            return Program.JodsEngine.HostGame(hg, username, password);
+            return Program.JodsEngine.HostGame(hg, HostedGameSource.Lan, username, password);
         }
 
         async Task<bool> StartOnlineGame(DataNew.Entities.Game game, string name, string password)
@@ -341,6 +341,7 @@ namespace Octgn.Controls
 
             var launchedEngine = await Program.JodsEngine.HostGame(
                 result,
+                HostedGameSource.Online,
                 lobbyClient.User.DisplayName,
                 Password
             );
