@@ -41,8 +41,16 @@ namespace Octgn.Tabs.Login
 
         private async Task<IEnumerable<NewsItemViewModel>> GetNewsItems() {
             var feed = await Task.Run(() => {
-                using (var reader = XmlReader.Create(AppConfig.NewsFeedPath)) {
-                    return SyndicationFeed.Load(reader);
+                try
+                {
+                    using (var reader = XmlReader.Create(AppConfig.NewsFeedPath))
+                    {
+                        return SyndicationFeed.Load(reader);
+                    }
+                }
+                catch (Exception e)
+                {
+                    return new SyndicationFeed();
                 }
             });
 
