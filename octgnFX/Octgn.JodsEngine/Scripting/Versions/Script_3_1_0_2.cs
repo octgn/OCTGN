@@ -422,6 +422,16 @@ namespace Octgn.Scripting.Versions
             Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
         }
 
+        public void TableResetScreen()
+        {
+            QueueAction(() => Program.GameEngine.ResetTableView());
+        }
+        public void TableRefitScreen()
+        {
+
+            QueueAction(() => Program.GameEngine.RefitTableView());
+        }
+
         public void GroupSetController(int id, int player)
         {
             var g = Group.Find(id);

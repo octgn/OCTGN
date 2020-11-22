@@ -470,6 +470,11 @@ class Table(Group):
 	@invertBackground.setter
 	def invertBackground(self, value):
 		_api.SetTableBackgroundFlipped(value)
+	def reset(self):
+		_api.TableResetScreen()
+	def refit(self):
+		_api.TableRefitScreen()
+
 
 class Pile(Group):
 	def __init__(self, id, name, player):
