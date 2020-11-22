@@ -370,7 +370,8 @@
       <param name="player" type="Player"/>
     </event>
     <event name="OverrideGameReset" >
-      <param name="isSoft" type="bool"/>
+    </event>
+    <event name="OverrideGameSoftReset" >
     </event>
     <event name="OverridePhasePassed">
       <param name="name" type="string"/>

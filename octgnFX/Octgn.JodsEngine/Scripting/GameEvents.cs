@@ -144,6 +144,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OverrideGameReset",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
 				eventCache["OverrideGameReset"] = gameEngine.Definition.Events["OverrideGameReset"];
+								eventCache.Add("OverrideGameSoftReset",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverrideGameSoftReset"))
+				eventCache["OverrideGameSoftReset"] = gameEngine.Definition.Events["OverrideGameSoftReset"];
 								eventCache.Add("OverridePhasePassed",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
 				eventCache["OverridePhasePassed"] = gameEngine.Definition.Events["OverridePhasePassed"];
@@ -1552,7 +1555,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OverrideGameReset_3_1_0_2(bool isSoft)
+		public void OverrideGameReset_3_1_0_2()
 		{
 			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
 			if(MuteEvents)return;
@@ -1562,15 +1565,35 @@ namespace Octgn.Scripting
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
-				args.isSoft = isSoft;
 			}
 			foreach(var e in eventCache["OverrideGameReset"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,isSoft);
+					engine.ExecuteFunction(e.PythonFunction);
 				else
 				{
-					engine.ExecuteFunction(e.PythonFunction, args);
+					engine.ExecuteFunction(e.PythonFunction);
+				}
+			}
+		}
+		public void OverrideGameSoftReset_3_1_0_2()
+		{
+			if(Player.LocalPlayer.Spectator || Program.GameEngine.IsReplay)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+			}
+			foreach(var e in eventCache["OverrideGameSoftReset"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction);
 				}
 			}
 		}
