@@ -97,7 +97,8 @@ namespace Octgn
                 OctgnVersion = Const.OctgnVersion.ToString(),
                 GameVersion = game.Version.ToString(),
                 HostAddress = $"{host}:{port}",
-                Password = password
+                Password = password,
+                DateCreated = DateTime.UtcNow
             };
 
             DebugValidate(hostedGame, false);
