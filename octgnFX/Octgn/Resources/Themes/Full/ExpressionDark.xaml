@@ -1456,6 +1456,7 @@
                 <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
             <Rectangle Margin="0 0 2 0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" RadiusX="3" RadiusY="3" Fill="{DynamicResource LightBrush}" Stroke="{DynamicResource NormalBorderBrush}" />
+            <Rectangle Margin="2 0 2 0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" RadiusX="3" RadiusY="3" Fill="{DynamicResource LightBrush}" Stroke="{DynamicResource NormalBorderBrush}" />
             <Border Margin="2,0,2,0" Background="#5D0000" CornerRadius="3,3,3,3" x:Name="HoverBorder" Grid.Column="1" Opacity="0" />
             <Border Margin="2,0,2,0" Background="{DynamicResource HoverShineBrush}" CornerRadius="3,3,3,3" x:Name="HoverShineBorder" Grid.Column="1" Opacity="0" Visibility="Collapsed"/>
             <Path Grid.Column="1" HorizontalAlignment="Center" x:Name="Arrow" VerticalAlignment="Center" Fill="{x:Null}" Data="M0.5,0.5 L3,6.5 5.5,0.5" Stroke="White" Margin="8,2,8,2" Height="7" StrokeThickness="2" Stretch="Fill" >
@@ -1497,7 +1498,7 @@
     <ControlTemplate x:Key="ComboBoxTemplate" TargetType="{x:Type ComboBox}">
         <Grid x:Name="grid">
             <ToggleButton Grid.Column="2" Template="{DynamicResource ComboBoxToggleButton}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" />
-            <ContentPresenter HorizontalAlignment="Left" Height="18" Margin="9,5,38,7" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False" />
+            <ContentPresenter HorizontalAlignment="Left" Height="18" Margin="9,7,38,7" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False" />
             <TextBox Visibility="Hidden" Template="{DynamicResource ComboBoxTextBox}" HorizontalAlignment="Left" Margin="3,3,23,3" x:Name="PART_EditableTextBox" Style="{x:Null}" VerticalAlignment="Center" Focusable="True" Background="{DynamicResource LightBrush}" IsReadOnly="{TemplateBinding IsReadOnly}" BorderBrush="{DynamicResource NormalBorderBrush}" Foreground="{DynamicResource TextBrush}" />
             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" ClipToBounds="False" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
                 <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
@@ -1576,7 +1577,7 @@
                                 <DropShadowEffect BlurRadius="5" Color="#3D0000" Direction="0" ShadowDepth="0"/>
                             </Rectangle.Effect>
                         </Rectangle>
-                        <ContentPresenter Margin="5 5 30 10" x:Name="contentPresenter" VerticalAlignment="Center" />
+                        <ContentPresenter Margin="5 6 30 8" x:Name="contentPresenter" VerticalAlignment="Center" />
                         <Rectangle x:Name="FocusVisualElement" Visibility="Collapsed" Stroke="{DynamicResource HoverShineBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
                     </Grid>
                     <ControlTemplate.Triggers>
