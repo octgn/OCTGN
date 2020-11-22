@@ -212,6 +212,10 @@ namespace Octgn
         {
             get
             {
+                if (System.Diagnostics.Debugger.IsAttached) {
+                    // Don't update when running debugger
+                    return false;
+                }
                 var iu = IsUpToDate ?? true;
                 if (IsFaulted) return false;
                 return iu == false;
