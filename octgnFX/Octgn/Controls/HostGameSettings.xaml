@@ -21,7 +21,7 @@
                 <controls:GameSelector x:Name="GameSelector">
                     <controls:GameSelector.Effect>
                         <DropShadowEffect BlurRadius="50" ShadowDepth="0" Opacity="1"
-                                          Color="White"/>
+                                          Color="White" RenderingBias="Performance"/>
                     </controls:GameSelector.Effect>
                 </controls:GameSelector>
             </Border>
