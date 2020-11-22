@@ -1,3 +1,5 @@
+#3.4.332.0
+
 #3.4.330.0
 + developer mode flag works again
 + added isLimited flag to 3.1.0.2 OnDeckLoaded event
@@ -3937,6 +3939,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
