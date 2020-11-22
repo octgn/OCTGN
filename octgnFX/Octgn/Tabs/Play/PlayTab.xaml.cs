@@ -301,6 +301,7 @@ namespace Octgn.Tabs.Play
                 ConnectOfflineGame dialog = null;
                 try {
                     dialog = new ConnectOfflineGame();
+                    dialog.VerticalAlignment = VerticalAlignment.Center;
                     dialog.Show(DialogPlaceHolder);
                     dialog.OnClose += ConnectOfflineGameDialogOnClose;
                     BorderButtons.IsEnabled = false;
