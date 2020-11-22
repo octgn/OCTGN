@@ -590,21 +590,27 @@ namespace Octgn.Play
 
         private void ResetGame(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
+            {
+                Program.GameEngine.EventProxy.OverrideGameReset_3_1_0_2();
+                return;
+            }
             this.Reset(false);
         }
         private void SoftResetGame(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameSoftReset"))
+            {
+                Program.GameEngine.EventProxy.OverrideGameSoftReset_3_1_0_2();
+                return;
+            }
             this.Reset(true);
         }
 
         private void Reset(bool isSoft)
         {
-            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
-            {
-                Program.GameEngine.EventProxy.OverrideGameReset_3_1_0_2(isSoft);
-                return;
-            }
             // Prompt for a confirmation
             if (MessageBoxResult.Yes ==
                 TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
