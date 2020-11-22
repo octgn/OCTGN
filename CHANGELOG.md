@@ -1,3 +1,10 @@
+#3.4.330.0
++ developer mode flag works again
++ added isLimited flag to 3.1.0.2 OnDeckLoaded event
++ API to change the table's game board can be muted.
++ Soft-Reset option added to game menu and API softResetGame(), will reset the game and return decks to their loaded state.
++ new API property card.isSelected to check if a card is selected
+
 #3.4.329.0
 
 #3.4.327.0
@@ -3930,6 +3937,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
