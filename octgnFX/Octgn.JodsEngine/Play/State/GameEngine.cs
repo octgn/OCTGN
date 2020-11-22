@@ -680,6 +680,18 @@ namespace Octgn
             discord?.UpdateStatusInGame(hostGame, Program.IsHost, IsReplay, Spectator, true, allPlayers.Length);
         }
 
+        public event Action ResetTableViewAction;
+        public void ResetTableView()
+        {
+            ResetTableViewAction?.Invoke();
+        }
+
+        public event Action RefitTableViewAction;
+        public void RefitTableView()
+        {
+            RefitTableViewAction?.Invoke();
+        }
+
         public void Resume()
         {
             //throw new NotImplementedException();
@@ -713,6 +725,7 @@ namespace Octgn
             Card.Reset();
             CardIdentity.Reset();
             Selection.Clear();
+            ResetTableView();
 
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Key] = g.Value.Value;
@@ -722,6 +735,7 @@ namespace Octgn
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
+
             EventProxy.OnGameStart_3_1_0_0();
             EventProxy.OnGameStart_3_1_0_1();
             EventProxy.OnGameStarted_3_1_0_2();

@@ -159,6 +159,10 @@ namespace Octgn.Play.Gui
             }
 
             Player.LocalPlayer.PropertyChanged += LocalPlayerOnPropertyChanged;
+
+            Program.GameEngine.ResetTableViewAction += ResetScreen;
+
+            Program.GameEngine.RefitTableViewAction += RefitScreen;
         }
 
         private void LocalPlayerOnPropertyChanged(object sender, PropertyChangedEventArgs args)
@@ -729,6 +733,57 @@ namespace Octgn.Play.Gui
             }
 
             UpdateYCenterOffset();
+        }
+
+        protected void RefitScreen()
+        {
+            var cards = Program.GameEngine.Table.Cards;
+            if (cards.Count > 0)
+            {
+                Rect newBounds = Rect.Empty;
+                foreach (var c in cards)
+                {
+                    var cardRect = new Rect(c.X, c.Y, c.RealWidth, c.RealHeight);
+                    if (newBounds.IsEmpty) newBounds = cardRect;
+                    else newBounds.Union(cardRect);
+                }
+
+                if (Player.LocalPlayer.InvertedTable)
+                {
+                    newBounds.X = -newBounds.Right;
+                    newBounds.Y = -newBounds.Bottom;
+                }
+
+                double newZoom = Math.Min(
+                    (Program.GameEngine.Table.Definition.Width + 2 * _stretchMargins.Width) / newBounds.Width,
+                    (Program.GameEngine.Table.Definition.Height + 2 * _stretchMargins.Height) / newBounds.Height);
+
+                var newOffset = new Vector(
+                    -_stretchMargins.Width - newBounds.X * newZoom,
+                    -_stretchMargins.Height - newBounds.Y * newZoom);
+
+                double oldZoom = Zoom;
+                Vector oldOffset = Offset;
+                Zoom = newZoom;
+                Offset = newOffset;
+
+                AnimationTimeline anim = new DoubleAnimation
+                {
+                    From = oldZoom,
+                    To = newZoom,
+                    Duration = TimeSpan.FromMilliseconds(150),
+                    FillBehavior = FillBehavior.Stop
+                };
+                BeginAnimation(ZoomProperty, anim);
+                anim = new VectorAnimation
+                {
+                    From = oldOffset,
+                    To = newOffset,
+                    Duration = TimeSpan.FromMilliseconds(150),
+                    FillBehavior = FillBehavior.Stop
+                };
+                BeginAnimation(OffsetProperty, anim);
+            }
         }
 
         protected void BringCardIntoView(Card card)
