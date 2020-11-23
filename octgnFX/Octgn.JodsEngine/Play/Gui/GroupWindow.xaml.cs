@@ -149,7 +149,10 @@ namespace Octgn.Play.Gui
                                                                                   StringComparison.
                                                                                       CurrentCultureIgnoreCase) >= 0);
                                             };
-                alphaOrderBtn.IsChecked = true;
+                if (cardsList.SortMethod == SortTypes.None)
+                {
+                    IdOrderBtn.IsChecked = true;
+                }
             }
         }
 
@@ -164,17 +167,34 @@ namespace Octgn.Play.Gui
         {
             if (alphaOrderBtn == null)
                 return; // Happens during the control initialization, when the event is first called
+            if (cardsList.SortMethod == SortTypes.None) return;
+
+            positionOrderBtn.IsChecked = true;
             alphaOrderBtn.IsChecked = false;
-            cardsList.SortByName = false;
+            IdOrderBtn.IsChecked = false;
             filterBox.Text = "";
+            cardsList.SortCards(SortTypes.None);
         }
 
         private void AlphaOrderChecked(object sender, RoutedEventArgs e)
         {
+            if (cardsList.SortMethod == SortTypes.Alpha) return;
             CardControl.SetAnimateLoad(this, false);
 
+            alphaOrderBtn.IsChecked = true;
             positionOrderBtn.IsChecked = false;
-            cardsList.SortByName = true;
+            IdOrderBtn.IsChecked = false;
+            cardsList.SortCards(SortTypes.Alpha);
+        }
+        private void IdOrderChecked(object sender, RoutedEventArgs e)
+        {
+            if (cardsList.SortMethod == SortTypes.Id) return;
+            CardControl.SetAnimateLoad(this, false);
+
+            IdOrderBtn.IsChecked = true;
+            positionOrderBtn.IsChecked = false;
+            alphaOrderBtn.IsChecked = false;
+            cardsList.SortCards(SortTypes.Id);
         }
 
         public void CardsChanged(object sender, NotifyCollectionChangedEventArgs e)

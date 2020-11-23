@@ -12,6 +12,12 @@ using System.Windows.Threading;
 
 namespace Octgn.Play.Gui
 {
+    public enum SortTypes
+    {
+        None,
+        Alpha,
+        Id
+    }
     public partial class CardListControl
     {
         public static readonly DependencyProperty IsAlwaysUpProperty =
@@ -21,7 +27,6 @@ namespace Octgn.Play.Gui
         private ObservableCollection<Card> _cards;
 
         private Predicate<Card> _filterCards;
-        private bool _sort;
         private ListCollectionView _view;
         private WrapPanel _wrapPanel;
 
@@ -59,31 +64,36 @@ namespace Octgn.Play.Gui
 
         public bool RestrictDrop { get; set; }
 
-        public bool SortByName
+        public SortTypes SortMethod { get; private set; }
+
+        public void SortCards(SortTypes sort)
         {
-            get { return _sort; }
-            set
+            if (SortMethod == sort) return;
+            SortMethod = sort;
+            using (_view.DeferRefresh())
             {
-                if (_sort == value) return;
-                _sort = value;
-                using (_view.DeferRefresh())
+                if (_view.GroupDescriptions != null) _view.GroupDescriptions.Clear();
+                switch (sort)
                 {
-                    if (value)
-                    {
+                    case SortTypes.Alpha:
                         _view.CustomSort = IsAlwaysUp
                                                ? (IComparer)new Card.RealNameComparer()
                                                : new Card.NameComparer();
-                        if (_view.GroupDescriptions != null)
-                            _view.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
-                    }
-                    else
-                    {
+                        _view.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
+                        break;
+                    case SortTypes.Id:
+                        _view.CustomSort = IsAlwaysUp
+                                               ? (IComparer)new Card.RealNameComparer()
+                                               : new Card.NameComparer();
+                        _view.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealModel" : "Model"));
+                        break;
+                    case SortTypes.None:
                         _view.CustomSort = null;
-                        if (_view.GroupDescriptions != null) _view.GroupDescriptions.Clear();
-                    }
+                        break;
                 }
             }
         }
+
 
         private void SaveWrapPanel(object sender, RoutedEventArgs e)
         {
@@ -124,7 +134,7 @@ namespace Octgn.Play.Gui
             if (IsAlwaysUp) e.FaceUp = true;
 
             // Drop is forbidden when not ordered by position
-            if (SortByName)
+            if (SortMethod != SortTypes.None)
             {
                 e.CanDrop = false;
                 return;
@@ -161,7 +171,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             // Drop is forbidden when not ordered by position
-            if (SortByName)
+            if (SortMethod != SortTypes.None)
             {
                 e.Handled = true;
                 e.CanDrop = false;

@@ -260,6 +260,16 @@ namespace Octgn.Play
         {
             get { return _type.Model != null ? _type.Model.GetName() : "Card"; }
         }
+
+        public string Model
+        {
+            get { return FaceUp && _type.Model != null ? _type.Model.Id.ToString() : null; }
+        }
+        public string RealModel
+        {
+            get { return _type.Model != null ? _type.Model.Id.ToString() : null; }
+        }
+
         public bool CardMoved
         {
             get { return _cardMoved; }
