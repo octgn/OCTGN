@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,12 +58,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\Octgn.Core\ViewModelBase.cs">
+      <Link>ViewModelBase.cs</Link>
+    </Compile>
     <Compile Include="Controls\Field.cs" />
+    <Compile Include="Models\NewGame.cs" />
     <Compile Include="Pages\BasicInfoPage.xaml.cs">
       <DependentUpon>BasicInfoPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\TableSidesPage.xaml.cs">
+      <DependentUpon>TableSidesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Converters\BooleanAndConverter.cs" />
-    <Compile Include="WizardPage.cs" />
+    <Compile Include="Controls\WizardPage.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -74,6 +84,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\BasicInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TableSidesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -107,6 +121,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -115,6 +130,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
+      <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
+      <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\dualsidepng.png" />
+    <Resource Include="Resources\Images\singlesidepng.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

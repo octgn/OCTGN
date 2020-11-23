@@ -1,0 +1,33 @@
+﻿<controls:WizardPage x:Class="Octgn.GameWizard.Pages.TableSidesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Octgn.GameWizard.Pages"
+      xmlns:controls="clr-namespace:Octgn.GameWizard.Controls"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Table Sides">
+    <StackPanel HorizontalAlignment="Center" Margin="0 50 0 0">
+        <StackPanel Orientation="Horizontal">
+            <RadioButton Width="200" x:Name="SingleSideOption">
+                <StackPanel>
+                    <Image Source="/Octgn.GameWizard;component/Resources/Images/singlesidepng.png"
+                               Width="128" Height="128"
+                               HorizontalAlignment="Left"/>
+                    <TextBlock>Single Side</TextBlock>
+                    <TextBlock FontSize="10" TextWrapping="Wrap">All cards are orientated the same way</TextBlock>
+                </StackPanel>
+            </RadioButton>
+            <RadioButton Width="200" x:Name="DualSideOption">
+                <StackPanel>
+                    <Image Source="/Octgn.GameWizard;component/Resources/Images/dualsidepng.png"
+                               Width="128" Height="128"
+                               HorizontalAlignment="Left"/>
+                    <TextBlock>Dual Side</TextBlock>
+                    <TextBlock FontSize="10" TextWrapping="Wrap">Table has two side. Cards on the opposite side of the table are inverted.</TextBlock>
+                </StackPanel>
+            </RadioButton>
+        </StackPanel>
+    </StackPanel>
+</controls:WizardPage>
