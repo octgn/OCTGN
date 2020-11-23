@@ -1,5 +1,5 @@
 ﻿<gamewizard:WizardPage
-    xmlns:gamewizard="clr-namespace:Octgn.GameWizard"
+    xmlns:gamewizard="clr-namespace:Octgn.GameWizard.Controls"
     x:Class="Octgn.GameWizard.Pages.WelcomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Octgn.GameWizard"
+        xmlns:controls="clr-namespace:Octgn.GameWizard.Controls"
         xmlns:pages="clr-namespace:Octgn.GameWizard.Pages"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Game Wizard" Height="450" Width="800">
+        Title="Game Wizard" Height="500" Width="800">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="362*"/>
@@ -23,7 +24,7 @@
                  SelectedItem="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow, Mode=FindAncestor}, Path=Page, Mode=OneWay}"
                  >
             <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:WizardPage}">
+                <DataTemplate DataType="{x:Type controls:WizardPage}">
                     <TextBlock Text="{Binding Path=Title}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -1,5 +1,4 @@
-﻿<gamewizard:WizardPage
-    xmlns:gamewizard="clr-namespace:Octgn.GameWizard"
+﻿<controls:WizardPage
     x:Class="Octgn.GameWizard.Pages.BasicInfoPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,11 +15,62 @@
             </Style>
         </StackPanel.Resources>
         <controls:Field FieldName="Game Name">
-            <TextBox/>
+            <TextBox Text="{Binding Path=Name, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+        </controls:Field>
+        <controls:Field FieldName="Game Url">
+            <StackPanel>
+                <TextBlock FontSize="10">The URL where users will be able to get support and/or download card images for this game.</TextBlock>
+                <TextBox Text="{Binding Path=Url, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </controls:Field>
+        <controls:Field FieldName="Author">
+            <StackPanel>
+                <TextBlock FontSize="10">The author who is building this OCTGN game.</TextBlock>
+                <TextBox Text="{Binding Path=Authors, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </controls:Field>
+        <controls:Field FieldName="Game Image Url">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0 0 10 0">
+                    <TextBlock FontSize="10">The URL to the image for this game. This is the image users will see when they install this game.</TextBlock>
+                    <TextBox Text="{Binding Path=ImageUrl, NotifyOnTargetUpdated=True, UpdateSourceTrigger=LostFocus}"/>
+                </StackPanel>
+                <Border Grid.Column="1" BorderThickness="1" BorderBrush="#333333" Background="#a4a4a4">
+                    <Image Width="64" Height="64" Source="{Binding Path=ImageUrl}"/>
+                </Border>
+            </Grid>
         </controls:Field>
         <controls:Field FieldName="Description">
-            <TextBox AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
-                     Height="75"/>
+            <StackPanel>
+                <TextBlock FontSize="10">Provide additional details about this game.</TextBlock>
+                <TextBox AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                     Height="75" Text="{Binding Path=Description, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
         </controls:Field>
+        <!--<Expander Header="Advanced Details" IsExpanded="False">
+            <StackPanel>
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type controls:Field}">
+                        <Setter Property="Margin" Value="0,0,0,10"/>
+                    </Style>
+                </StackPanel.Resources>
+                <controls:Field FieldName="Game Id">
+                    <StackPanel>
+                        <TextBlock FontSize="10">This is the unique GUID for your game. In most cases the default value should be used.</TextBlock>
+                        <TextBox Text="{Binding Path=Id, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </controls:Field>
+                <controls:Field FieldName="Game Version">
+                    <StackPanel>
+                        <TextBlock FontSize="10">Using the default value of 1.0.0.0 should be fine in most cases.</TextBlock>
+                        <TextBox Text="{Binding Path=Version, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </controls:Field>
+            </StackPanel>
+        </Expander>-->
     </StackPanel>
-</gamewizard:WizardPage>
+</controls:WizardPage>

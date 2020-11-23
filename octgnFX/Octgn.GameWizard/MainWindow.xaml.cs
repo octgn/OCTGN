@@ -1,4 +1,6 @@
-﻿using Octgn.GameWizard.Pages;
+﻿using Octgn.GameWizard.Controls;
+using Octgn.GameWizard.Models;
+using Octgn.GameWizard.Pages;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -53,6 +55,13 @@ namespace Octgn.GameWizard
 
             Pages.Add(new WelcomePage());
             Pages.Add(new BasicInfoPage());
+            Pages.Add(new TableSidesPage());
+
+            var newgame = new NewGame();
+            foreach (var page in Pages) {
+                page.Game = newgame;
+                page.DataContext = newgame;
+            }
 
             Page = Pages[0];
 
@@ -81,7 +90,11 @@ namespace Octgn.GameWizard
 
             if (nextPageIndex < 0) throw new InvalidOperationException($"Can't go back, we're on the first page already.");
 
+            Page.OnLeavingPage();
+
             Page = Pages[nextPageIndex];
+
+            Page.OnEnteringPage();
 
             UpdateForwardBack();
         }
@@ -92,7 +105,11 @@ namespace Octgn.GameWizard
 
             if (nextPageIndex >= Pages.Count) throw new InvalidOperationException($"Can't go forward, we're on the last page already.");
 
+            Page.OnLeavingPage();
+
             Page = Pages[nextPageIndex];
+
+            Page.OnEnteringPage();
 
             UpdateForwardBack();
         }

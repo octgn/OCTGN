@@ -20,7 +20,13 @@ namespace Octgn.Core
         }
 
         public bool Set<T>(ref T field, T value) {
-            return EqualityComparer<T>.Default.Equals(field, value);
+            if (!EqualityComparer<T>.Default.Equals(field, value)) {
+                field = value;
+
+                return true;
+            }
+
+            return false;
         }
 
         public void Notify([CallerMemberName] string propertyName = null) {
