@@ -1,3 +1,6 @@
 [submodule "octgnFX/Octgn.Communication"]
 	path = octgnFX/Octgn.Communication
 	url = https://github.com/octgn/Octgn.Communication.git
+[submodule ".\\octgnFX\\Octgn.GameStudio\\Resources\\Templates\\Basic-Game"]
+	path = .\\octgnFX\\Octgn.GameStudio\\Resources\\Templates\\Basic-Game
+	url = git@github.com:octgn/Basic-Game.git
