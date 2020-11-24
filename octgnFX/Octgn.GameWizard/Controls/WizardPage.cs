@@ -47,5 +47,13 @@ namespace Octgn.GameWizard.Controls
         public virtual void OnEnteringPage() {
 
         }
+
+        public virtual void OnForward(object sender, RoutedEventArgs args) {
+
+        }
+
+        public virtual void OnBackward(object sender, RoutedEventArgs args) {
+
+        }
     }
 }

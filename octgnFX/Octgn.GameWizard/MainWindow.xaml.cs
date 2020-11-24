@@ -56,8 +56,15 @@ namespace Octgn.GameWizard
             Pages.Add(new WelcomePage());
             Pages.Add(new BasicInfoPage());
             Pages.Add(new TableSidesPage());
+            Pages.Add(new CreatePage());
+            Pages.Add(new FinalPage());
 
             var newgame = new NewGame();
+            newgame.Authors = Environment.UserName;
+            newgame.Name = "Game";
+            newgame.Url = "https://www.octgn.net";
+            newgame.Description = "A basic OCTGN game plugin.";
+
             foreach (var page in Pages) {
                 page.Game = newgame;
                 page.DataContext = newgame;
@@ -81,11 +88,18 @@ namespace Octgn.GameWizard
             var nextPageIndex = CurrentPageIndex + 1;
 
             BackEnabled = previousPageIndex >= 0;
-            ForwardEnabled = nextPageIndex < Pages.Count;
+
+            // or equal to, so that the very last page will also allow next, which is used to exit
+            ForwardEnabled = nextPageIndex <= Pages.Count;
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
+        private void BackButton_Click(object sender, RoutedEventArgs e) {
+            Page.OnBackward(sender, e);
+
+            if (e.Handled) {
+                return;
+            }
+
             var nextPageIndex = CurrentPageIndex - 1;
 
             if (nextPageIndex < 0) throw new InvalidOperationException($"Can't go back, we're on the first page already.");
@@ -94,13 +108,19 @@ namespace Octgn.GameWizard
 
             Page = Pages[nextPageIndex];
 
-            Page.OnEnteringPage();
-
             UpdateForwardBack();
+
+            Page.OnEnteringPage();
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
+            Page.OnForward(sender, e);
+
+            if (e.Handled) {
+                return;
+            }
+
             var nextPageIndex = CurrentPageIndex + 1;
 
             if (nextPageIndex >= Pages.Count) throw new InvalidOperationException($"Can't go forward, we're on the last page already.");
@@ -109,9 +129,9 @@ namespace Octgn.GameWizard
 
             Page = Pages[nextPageIndex];
 
-            Page.OnEnteringPage();
-
             UpdateForwardBack();
+
+            Page.OnEnteringPage();
         }
     }
 }

@@ -58,6 +58,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="..\Octgn.Core\ViewModelBase.cs">
       <Link>ViewModelBase.cs</Link>
     </Compile>
@@ -65,6 +68,12 @@
     <Compile Include="Models\NewGame.cs" />
     <Compile Include="Pages\BasicInfoPage.xaml.cs">
       <DependentUpon>BasicInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CreatePage.xaml.cs">
+      <DependentUpon>CreatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FinalPage.xaml.cs">
+      <DependentUpon>FinalPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TableSidesPage.xaml.cs">
       <DependentUpon>TableSidesPage.xaml</DependentUpon>
@@ -84,6 +93,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\BasicInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CreatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\FinalPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -134,6 +151,10 @@
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
       <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
       <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
