@@ -92,10 +92,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+	  <None Include="Resources\Templates\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\definition.xml" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Proxies\back.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Proxies\proxydef.xml" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\back.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\deck.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\discard.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\front.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\hand.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\icon.jpg" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\score.png" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Resources\wood.jpg" />
+    <Content Include="Resources\Templates\Basic-Game\Game Plugin\Scripts\actions.py" />
+    <Resource Include="Resources\Templates\Basic-Game\Game Plugin\Sets\Base-Set\set.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Octgn.Core;
+using Octgn.DataNew.Entities;
 using System;
 
 namespace Octgn.GameWizard.Models
@@ -60,5 +61,12 @@ namespace Octgn.GameWizard.Models
         }
 
         private bool _isDualSided = true;
+
+        public string Directory {
+            get => _directory;
+            set => SetAndNotify(ref _directory, value);
+        }
+
+        private string _directory;
     }
 }
