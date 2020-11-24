@@ -24,8 +24,6 @@ namespace Octgn.DataNew
     {
         public ICollectionDefinition Def { get; set; }
 
-        private string directory;
-
         public string OutputPath { get; set; }
         public object Deserialize(string fileName)
         {
@@ -33,7 +31,7 @@ namespace Octgn.DataNew
             // Fix: Do it this way so that it doesn't throw a BindingFailure
             // See Also: http://stackoverflow.com/questions/2209443/c-sharp-xmlserializer-bindingfailure#answer-22187247
             var serializer = XmlSerializer.FromTypes(new[] { typeof(game) })[0];
-            directory = new FileInfo(fileName).Directory.FullName;
+            var root_dir = new FileInfo(fileName).Directory.FullName;
             game g = null;
             var fileHash = "";
             using (var fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -65,7 +63,7 @@ namespace Octgn.DataNew
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               MarkerSize = int.Parse(g.markersize),
                               FileHash = fileHash,
-                              InstallPath = directory,
+                              InstallPath = root_dir,
                               UseTwoSidedTable = g.usetwosidedtable == boolean.True ? true : false,
                               ChangeTwoSidedTable = g.changetwosidedtable == boolean.True ? true : false,
                               NoteBackgroundColor = g.noteBackgroundColor,
@@ -75,8 +73,8 @@ namespace Octgn.DataNew
             var defSize = new CardSize
             {
                 Name = g.card.name,
-                Back = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
-                Front = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front),
+                Back = AbsolutePath(root_dir, g.card.back, "pack://application:,,,/Resources/Back.jpg"),
+                Front = AbsolutePath(root_dir, g.card.front, "pack://application:,,,/Resources/Front.jpg"),
                 Height = int.Parse(g.card.height),
                 Width = int.Parse(g.card.width),
                 CornerRadius = int.Parse(g.card.cornerRadius),
@@ -95,7 +93,7 @@ namespace Octgn.DataNew
             ret.Table = this.DeserializeGroup(g.table, 0);
             ret.Table.Height = Int32.Parse(g.table.height);
             ret.Table.Width = Int32.Parse(g.table.width);
-            ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
+            ret.Table.Background = g.table.background == null ? null : AbsolutePath(root_dir, g.table.background);
 
             switch (g.table.backgroundStyle)
             {
@@ -122,7 +120,7 @@ namespace Octgn.DataNew
                 {
                     // if the game doesn't have the gameboards element, check for the default board in the table property
 
-                    var boardPath = Path.Combine(directory, g.table.board);
+                    var boardPath = AbsolutePath(root_dir, g.table.board);
 
                     var position = g.table.boardPosition?.Split(',');
                     var defBoard = new GameBoard
@@ -148,7 +146,7 @@ namespace Octgn.DataNew
                     var defaultBoard = new GameBoard
                     {
                         Name = g.gameboards.name,
-                        Source = Path.Combine(directory, g.gameboards.src),
+                        Source = AbsolutePath(root_dir, g.gameboards.src),
                         XPos = int.Parse(g.gameboards.x),
                         YPos = int.Parse(g.gameboards.y),
                         Width = int.Parse(g.gameboards.width),
@@ -172,7 +170,7 @@ namespace Octgn.DataNew
                             YPos = int.Parse(board.y),
                             Width = int.Parse(board.width),
                             Height = int.Parse(board.height),
-                            Source = Path.Combine(directory, board.src)
+                            Source = AbsolutePath(root_dir, board.src)
                         };
                         ret.GameBoards.Add(board.name, b);
                     }
@@ -200,7 +198,7 @@ namespace Octgn.DataNew
                                 {
                                     Id = (byte)curCounter,
                                     Name = counter.name,
-                                    Icon = Path.Combine(directory, counter.icon ?? ""),
+                                    Icon = AbsolutePath(root_dir, counter.icon, string.Empty),
                                     Reset = bool.Parse(counter.reset.ToString()),
                                     Start = int.Parse(counter.@default)
                                 });
@@ -208,7 +206,7 @@ namespace Octgn.DataNew
                         }
                         else if (item is pile pile)
                         {
-                            (player.Groups as List<Group>).Add(this.DeserializePile(pile, curPile));
+                            (player.Groups as List<Group>).Add(this.DeserializePile(root_dir, pile, curPile));
                             curPile++;
                         }
                     }
@@ -239,7 +237,7 @@ namespace Octgn.DataNew
                                 {
                                     Id = (byte)curCounter,
                                     Name = counter.name,
-                                    Icon = Path.Combine(directory, counter.icon ?? ""),
+                                    Icon = AbsolutePath(root_dir, counter.icon, string.Empty),
                                     Reset = bool.Parse(counter.reset.ToString()),
                                     Start = int.Parse(counter.@default)
                                 });
@@ -264,7 +262,7 @@ namespace Octgn.DataNew
                         #endregion
                         else if (item is pile pile)
                         {
-                            (player.Groups as List<Group>).Add(this.DeserializePile(pile, curPile));
+                            (player.Groups as List<Group>).Add(this.DeserializePile(root_dir, pile, curPile));
                             curPile++;
                         }
                     }
@@ -280,7 +278,7 @@ namespace Octgn.DataNew
                 {
                     var gamePhase = new GamePhase
                     {
-                        Icon = Path.Combine(directory, p.icon),
+                        Icon = AbsolutePath(root_dir, p.icon),
                         Name = p.name
                     };
                     ret.Phases.Add(gamePhase);
@@ -297,7 +295,7 @@ namespace Octgn.DataNew
                     {
                         Name = s.name,
                         Id = s.id,
-                        Source = Path.Combine(directory, s.src)
+                        Source = AbsolutePath(root_dir, s.src)
                     };
                     ret.Symbols.Add(symbol);
                 }
@@ -311,9 +309,9 @@ namespace Octgn.DataNew
                 {
                     var document = new Document
                     {
-                        Icon = (d.icon == null) ? null : Path.Combine(directory, d.icon),
+                        Icon = AbsolutePath(root_dir, d.icon),
                         Name = d.name,
-                        Source = Path.Combine(directory, d.src)
+                        Source = AbsolutePath(root_dir, d.src)
                     };
                     ret.Documents.Add(document);
                 }
@@ -328,7 +326,7 @@ namespace Octgn.DataNew
                     {
                         Gameid = ret.Id,
                         Name = s.name,
-                        Src = Path.Combine(directory, s.src)
+                        Src = AbsolutePath(root_dir, s.src)
                     };
                     ret.Sounds.Add(gameSound.Name.ToLowerInvariant(), gameSound);
                 }
@@ -362,7 +360,7 @@ namespace Octgn.DataNew
                     var marker = new GameMarker
                     {
                         Name = m.name,
-                        Source = Path.Combine(directory, m.src),
+                        Source = AbsolutePath(root_dir, m.src),
                         Id = m.id
                     };
                     ret.Markers.Add(marker.Id, marker);
@@ -413,8 +411,8 @@ namespace Octgn.DataNew
                             BackWidth = int.Parse(s.backWidth),
                             BackHeight = int.Parse(s.backHeight),
                             BackCornerRadius = int.Parse(s.backCornerRadius),
-                            Front = String.IsNullOrWhiteSpace(s.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, s.front),
-                            Back = String.IsNullOrWhiteSpace(s.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, s.back)
+                            Front = String.IsNullOrWhiteSpace(s.front) ? "pack://application:,,,/Resources/Front.jpg" : AbsolutePath(root_dir, s.front),
+                            Back = String.IsNullOrWhiteSpace(s.back) ? "pack://application:,,,/Resources/Back.jpg" : AbsolutePath(root_dir, s.back)
                         };
                         // xsd sets the default values for the back side sizes to -1 so the deserializer knows they were missing
                         // TODO: handle this better for mising values
@@ -436,7 +434,7 @@ namespace Octgn.DataNew
                 {
                     Font font = new Font
                     {
-                        Src = (f.src == null) ? null : Path.Combine(directory, f.src).Replace("/", "\\"),
+                        Src = (f.src == null) ? null : AbsolutePath(root_dir, f.src),
                         Size = int.Parse(f.size),
                         Type = f.target.ToString()
                     };
@@ -509,7 +507,7 @@ namespace Octgn.DataNew
             #region proxygen
             if (g.proxygen != null && g.proxygen.definitionsrc != null)
             {
-                ret.ProxyGenSource = Path.Combine(directory, g.proxygen.definitionsrc);
+                ret.ProxyGenSource = AbsolutePath(root_dir, g.proxygen.definitionsrc);
                 if (Def != null && !Def.Config.IsExternalDb) {
                     var coll = Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                             .OverrideRoot(x => x.Directory("GameDatabase"))
@@ -552,7 +550,7 @@ namespace Octgn.DataNew
                         Name = m.name,
                         PlayerCount = int.Parse(m.playerCount),
                         ShortDescription = m.shortDescription,
-                        Image = Path.Combine(directory, m.image),
+                        Image = AbsolutePath(root_dir, m.image),
                         UseTwoSidedTable = bool.Parse(m.usetwosidedtable.ToString())
                     };
                     ret.Modes.Add(gameMode);
@@ -580,11 +578,11 @@ namespace Octgn.DataNew
             return ret;
         }
 
-        internal Group DeserializePile(pile grp, int id)
+        internal Group DeserializePile(string root_dir, pile grp, int id)
         {
             var ret = DeserializeGroup(grp, id);
 
-            ret.Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon);
+            ret.Icon = grp.icon == null ? null : AbsolutePath(root_dir, grp.icon);
 
             ret.Ordered = bool.Parse(grp.ordered.ToString());
             ret.Shortcut = grp.shortcut;
@@ -748,14 +746,64 @@ namespace Octgn.DataNew
             return ret;
         }
 
+        private string AbsolutePath(string root, string path, string default_path = null) {
+            if (string.IsNullOrWhiteSpace(path)) {
+                return default_path;
+            }
+
+            root = SystemDirectorySeperators(root);
+
+            path = SystemDirectorySeperators(path);
+
+            path = Path.Combine(root, path);
+
+            return path;
+        }
+
+        private string PathRelativeToGame(Game game, string path) {
+            if (path == null) {
+                return string.Empty;
+            }
+
+            path = NormalizeDirectorySeperators(path);
+
+            var game_path = NormalizeDirectorySeperators(game.InstallPath);
+
+            if (game_path.Last() != '/') {
+                game_path += '/';
+            }
+
+            path = path.Replace(game_path, "");
+
+            return path;
+        }
+
+        private string SystemDirectorySeperators(string path) {
+            if (Path.DirectorySeparatorChar == '\\') {
+                path = path.Replace('/', '\\');
+            } else if (Path.DirectorySeparatorChar == '/') {
+                path = path.Replace('\\', '/');
+            } else {
+                throw new InvalidOperationException($"Unexpected system directory separator {Path.DirectorySeparatorChar}");
+            }
+
+            return path;
+        }
+
+        private string NormalizeDirectorySeperators(string path) {
+            path = path.Replace('\\', '/');
+
+            return path;
+        }
+
         public byte[] Serialize(object obj)
         {
             if ((obj is Game) == false)
                 throw new InvalidOperationException("obj must be typeof Game");
 
             var game = obj as Game;
-            var rootPath = new DirectoryInfo(game.InstallPath).FullName;
-            var parsedRootPath = string.Join("", rootPath, "\\");
+            //var rootPath = new DirectoryInfo(game.InstallPath).FullName;
+            //var parsedRootPath = string.Join("", rootPath, "\\");
 
             var save = new game();
             save.id = game.Id.ToString();
@@ -779,7 +827,7 @@ namespace Octgn.DataNew
             #region table
             var table = new table();
             SerializeGroup(game.Table, table);
-            table.background = game.Table.Background == null ? null : (game.Table.Background ?? "").Replace(rootPath, "");
+            table.background = PathRelativeToGame(game, game.Table.Background);
             table.height = game.Table.Height.ToString();
             table.width = game.Table.Width.ToString();
             switch (game.Table.BackgroundStyle)
@@ -807,7 +855,7 @@ namespace Octgn.DataNew
                 {
                     var gamePhase = new gamePhase
                     {
-                        icon = (p.Icon ?? "").Replace(parsedRootPath, ""),
+                        icon = PathRelativeToGame(game, p.Icon),
                         name = p.Name
                     };
                     phaseList.Add(gamePhase);
@@ -829,7 +877,7 @@ namespace Octgn.DataNew
                         gameboards.width = gbdic.Value.Width.ToString();
                         gameboards.x = gbdic.Value.XPos.ToString();
                         gameboards.y = gbdic.Value.YPos.ToString();
-                        gameboards.src = (gbdic.Value.Source).Replace(parsedRootPath, "").Replace(rootPath, "");
+                        gameboards.src = PathRelativeToGame(game, gbdic.Value.Source);
                         continue;
                 }
                     if (gbdic.Value.Source == null) continue;
@@ -840,7 +888,7 @@ namespace Octgn.DataNew
                         y = gbdic.Value.YPos.ToString(),
                         width = gbdic.Value.Width.ToString(),
                         height = gbdic.Value.Height.ToString(),
-                        src = (gbdic.Value.Source).Replace(parsedRootPath, "").Replace(rootPath, "")
+                        src = PathRelativeToGame(game, gbdic.Value.Source)
                     };
                     boardList.Add(gameboard);
                 }
@@ -864,7 +912,7 @@ namespace Octgn.DataNew
                     var counter = new counter
                     {
                         name = c.Name,
-                        icon = (c.Icon ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        icon = PathRelativeToGame(game, c.Icon),
                         reset = c.Reset ? boolean.True : boolean.False,
                         @default = c.Start.ToString()
                     };
@@ -872,7 +920,7 @@ namespace Octgn.DataNew
                 }
                 foreach (var group in game.GlobalPlayer.Groups)
                 {
-                    ilist.Add(SerializePile(group, parsedRootPath));
+                    ilist.Add(SerializePile(game, group));
                 }
                 save.shared = new gameShared
                 {
@@ -889,7 +937,7 @@ namespace Octgn.DataNew
                     var counter = new counter
                     {
                         name = c.Name,
-                        icon = (c.Icon ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        icon = PathRelativeToGame(game, c.Icon),
                         reset = c.Reset ? boolean.True : boolean.False,
                         @default = c.Start.ToString()
                     };
@@ -906,7 +954,7 @@ namespace Octgn.DataNew
                 }
                 foreach (var g in game.Player.Groups)
                 {
-                    ilist.Add(SerializePile(g, parsedRootPath));
+                    ilist.Add(SerializePile(game, g));
                 }
                 save.player = new gamePlayer
                 {
@@ -924,9 +972,9 @@ namespace Octgn.DataNew
                 {
                     var gameDocument = new gameDocument
                     {
-                        icon = (d.Icon ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        icon = PathRelativeToGame(game, d.Icon),
                         name = d.Name,
-                        src = (d.Source ?? "").Replace(parsedRootPath, "").Replace(rootPath, "")
+                        src = PathRelativeToGame(game, d.Source)
                     };
                     documentList.Add(gameDocument);
                 }
@@ -944,7 +992,7 @@ namespace Octgn.DataNew
                     var gameSound = new gameSound
                     {
                         name = s.Value.Name,
-                        src = (s.Value.Src ?? "").Replace(parsedRootPath, "").Replace(rootPath, "")
+                        src = PathRelativeToGame(game, s.Value.Src)
                     };
                     soundList.Add(gameSound);
                 }
@@ -962,7 +1010,7 @@ namespace Octgn.DataNew
                     var gameSymbol = new gameSymbol
                     {
                         name = g.Name,
-                        src = (g.Source ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        src = PathRelativeToGame(game, g.Source),
                         id = g.Id
                     };
                     symbolList.Add(gameSymbol);
@@ -1012,7 +1060,7 @@ namespace Octgn.DataNew
                     var marker = new gameMarker
                     {
                         name = m.Name,
-                        src = (m.Source ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        src = PathRelativeToGame(game, m.Source),
                         id = m.Id
                     };
                     markersList.Add(marker);
@@ -1056,8 +1104,8 @@ namespace Octgn.DataNew
                     if (c.Key == "")
                     {
                         save.card.name = c.Value.Name;
-                        save.card.back = c.Value.Back.Replace(parsedRootPath, "").Replace(rootPath, "");
-                        save.card.front = c.Value.Front.Replace(parsedRootPath, "").Replace(rootPath, "");
+                        save.card.back = PathRelativeToGame(game, c.Value.Back);
+                        save.card.front = PathRelativeToGame(game, c.Value.Front);
                         save.card.height = c.Value.Height.ToString();
                         save.card.width = c.Value.Width.ToString();
                         save.card.cornerRadius = c.Value.CornerRadius.ToString();
@@ -1068,11 +1116,11 @@ namespace Octgn.DataNew
                     var cardSize = new cardsizeDef
                     {
                         name = c.Value.Name,
-                        front = c.Value.Front.Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        front = PathRelativeToGame(game, c.Value.Front),
                         height = c.Value.Height.ToString(),
                         width = c.Value.Width.ToString(),
                         cornerRadius = c.Value.CornerRadius.ToString(),
-                        back = c.Value.Back.Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        back = PathRelativeToGame(game, c.Value.Back),
                         backHeight = c.Value.BackHeight.ToString(),
                         backWidth = c.Value.BackWidth.ToString(),
                         backCornerRadius = c.Value.BackCornerRadius.ToString()
@@ -1087,7 +1135,7 @@ namespace Octgn.DataNew
             var fontList = new List<gameFont>();
             if (game.ChatFont.IsSet())
             {
-                var gameFont = SerializeFont(game.ChatFont, parsedRootPath, rootPath);
+                var gameFont = SerializeFont(game, game.ChatFont);
                 if (gameFont != null)
                 {
                     gameFont.target = fonttarget.chat;
@@ -1096,7 +1144,7 @@ namespace Octgn.DataNew
             }
             if (game.ContextFont.IsSet())
             {
-                var gameFont = SerializeFont(game.ContextFont, parsedRootPath, rootPath);
+                var gameFont = SerializeFont(game, game.ContextFont);
                 if (gameFont != null)
                 {
                     gameFont.target = fonttarget.context;
@@ -1105,7 +1153,7 @@ namespace Octgn.DataNew
             }
             if (game.NoteFont.IsSet())
             {
-                var gameFont = SerializeFont(game.NoteFont, parsedRootPath, rootPath);
+                var gameFont = SerializeFont(game, game.NoteFont);
                 if (gameFont != null)
                 {
                     gameFont.target = fonttarget.notes;
@@ -1114,7 +1162,7 @@ namespace Octgn.DataNew
             }
             if (game.DeckEditorFont.IsSet())
             {
-                var gameFont = SerializeFont(game.DeckEditorFont, parsedRootPath, rootPath);
+                var gameFont = SerializeFont(game, game.DeckEditorFont);
                 if (gameFont != null)
                 {
                     gameFont.target = fonttarget.deckeditor;
@@ -1162,7 +1210,7 @@ namespace Octgn.DataNew
 
             save.proxygen = new gameProxygen
             {
-                definitionsrc = game.ProxyGenSource.Replace(parsedRootPath, "").Replace(rootPath, "")
+                definitionsrc = PathRelativeToGame(game, game.ProxyGenSource)
             };
             #endregion proxygen
             #region globalvariables
@@ -1194,7 +1242,7 @@ namespace Octgn.DataNew
                     var gameMode = new gameGameMode
                     {
                         name = m.Name,
-                        image = m.Image = (m.Image ?? "").Replace(parsedRootPath, "").Replace(rootPath, ""),
+                        image = m.Image = PathRelativeToGame(game, m.Image),
                         playerCount = m.PlayerCount.ToString(),
                         shortDescription = m.ShortDescription
                     };
@@ -1217,7 +1265,7 @@ namespace Octgn.DataNew
             return File.ReadAllBytes(outputPath);
         }
 
-        internal gameFont SerializeFont(Font font, string parsedRootPath, string rootPath)
+        internal gameFont SerializeFont(Game game, Font font)
         {
             var ret = new gameFont();
             bool hasValue = false;
@@ -1229,17 +1277,17 @@ namespace Octgn.DataNew
             if (font.Src != null)
             {
                 hasValue = true;
-                ret.src = font.Src.Replace(parsedRootPath, "").Replace(rootPath, "");
+                ret.src = PathRelativeToGame(game, font.Src);
             }
             if (hasValue) return ret;
             return null;
         }
 
-        internal pile SerializePile(Group pile, string rootpath)
+        internal pile SerializePile(Game game, Group pile)
         {
             var ret = new pile();
             SerializeGroup(pile, ret);
-            ret.icon = pile.Icon?.Replace(rootpath, "");
+            ret.icon = PathRelativeToGame(game, pile.Icon);
             ret.ordered = pile.Ordered ? boolean.True : boolean.False;
             ret.shortcut = pile.Shortcut;
             ret.shuffle = pile.ShuffleShortcut;
