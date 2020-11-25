@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="Dir.StartMenu.Dev">
+      <Component Id="Comp.StartMenu.Dev.GameWizard" Guid="{48E1D685-A62B-45DE-8FD7-383654412D40}" Location="local">
+        <Shortcut Id="Comp.StartMenu.Dev.GameWizard.Shortcut"
+                  Name="Game Wizard"
+                  Description="Game Wizard"
+                  Target="[#fil5DDB7773FA15E3A2816CA9EFEB1C60C9]"
+                  WorkingDirectory="INSTALLDIR"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

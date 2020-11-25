@@ -3,4 +3,5 @@ http://www.desiquintans.com/articles.php?page=nounlist
 http://wordlist.sourceforge.net/
 Icons from
 http://www.fatcow.com/free-icons
-za
+Wizard Icon from
+http://www.flaticon.com
