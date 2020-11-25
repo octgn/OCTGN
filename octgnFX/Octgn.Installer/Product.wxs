@@ -72,6 +72,9 @@
         <Feature Id="Feat.Dev.StartMenu.ProxygenTest" Title="Proxy Tester" AllowAdvertise="no" Description="Tool for testing proxy definitions">
           <ComponentRef Id="Comp.StartMenu.Dev.ProxygenTest"/>
         </Feature>
+        <Feature Id="Feat.Dev.StartMenu.GameWizard" Title="Game Wizard" AllowAdvertise="no" Description="Wizard to build an OCTGN game.">
+          <ComponentRef Id="Comp.StartMenu.Dev.GameWizard"/>
+        </Feature>
       </Feature>
     </Feature>
   </Product>
