@@ -1,1 +1,1 @@
-Can now sort by unique cards in the 'view pile' window
+
