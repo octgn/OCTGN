@@ -10,7 +10,6 @@ using Octgn.DataNew.Entities;
 using Octgn.DataNew;
 using System.Linq;
 using Octgn.Core.DataExtensionMethods;
-using Octgn.Extentions;
 using Microsoft.Scripting.Utils;
 
 namespace Octgn.Controls
@@ -39,6 +38,8 @@ namespace Octgn.Controls
             _games = context.Games.ToArray();
 
             Create3DItems();
+
+            Select(_selectedId);
         }
 
         public Game Game {
@@ -96,12 +97,6 @@ namespace Octgn.Controls
                 item.MouseDown += Select;
                 container.Children.Add(item);
                 ++i;
-            }
-
-            if (_games.Length > 0) {
-                selectedIdx = 0;
-
-                GameChanged?.Invoke(this, Game);
             }
         }
 
@@ -169,7 +164,11 @@ namespace Octgn.Controls
             ((AxisAngleRotation3D)rotate.Rotation).BeginAnimation(AxisAngleRotation3D.AngleProperty, anim, HandoffBehavior.SnapshotAndReplace);
         }
 
+        private Guid? _selectedId;
+
         public void Select(Guid? gameId) {
+            _selectedId = gameId;
+
             if (_games == null) return;
 
             if (_games.Length == 0) return;
