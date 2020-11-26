@@ -1,3 +1,5 @@
+#3.4.341.0
+
 #3.4.340.0
 + Can now sort by unique cards in the 'view pile' window
 
@@ -3948,6 +3950,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
