@@ -1,2 +1,1 @@
-new python API - table.reset() to reset the table position to default settings
-new python API - table.refit() adjusts the table so that all cards will fit on the screen
+
