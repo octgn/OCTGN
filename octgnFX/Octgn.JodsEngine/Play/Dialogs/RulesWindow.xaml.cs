@@ -16,6 +16,7 @@ namespace Octgn.Play.Dialogs
         public RulesWindow(Document doc)
         {
             InitializeComponent();
+            this.Title = doc.Name;
             this.LoadText(doc);
         }
 
