@@ -1,1 +1,1 @@
-
+game documents display the document name in the title bar
