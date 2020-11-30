@@ -291,17 +291,17 @@ namespace Octgn.Play.Gui
                 {
                     var translate2 = (TranslateTransform) group.Children[2];
                     TimeSpan delay = TimeSpan.FromSeconds(animationDelay);
-
-                    StaticAnimation.To = StaticAnimation.From = Animation.From;
-                    StaticAnimation.Duration = delay;
-                    translate2.BeginAnimation(TranslateTransform.XProperty, StaticAnimation);
-
                     Animation.FillBehavior = FillBehavior.Stop;
                     Animation.From = oldPos - xposition;
                     Animation.To = 0;
                     Animation.BeginTime = delay;
+                    StaticAnimation.To = StaticAnimation.From = Animation.From;
+                    StaticAnimation.Duration = delay;
+                    if (animationDelay > 0)
+                        translate2.BeginAnimation(TranslateTransform.XProperty, StaticAnimation);
                     translate2.BeginAnimation(TranslateTransform.XProperty, Animation, HandoffBehavior.Compose);
-
+                    Animation.From = null;
+                    Animation.BeginTime = TimeSpan.Zero;
                     animationDelay += perChildDelay;
                 }
                 SetXPosition(child, xposition);
@@ -315,10 +315,6 @@ namespace Octgn.Play.Gui
             cardLocations.Add(0, xposition + Children[0].DesiredSize.Width - (Children[0].DesiredSize.Width * percentToShow));
 
             _mouseOverElement = newMouseOverElement;
-
-            Animation.From = null;
-            Animation.BeginTime = TimeSpan.Zero;
-
             return finalSize;
         }
 
