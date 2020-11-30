@@ -116,13 +116,12 @@ namespace Octgn.DataNew
             #region gameBoards
             if (g.gameboards == null)
             {
-                try
+                // DEPRECATED CODE FOR OLD TABLE-DEFINED GAMEBOARD
+                var boardPath = AbsolutePath(root_dir, g.table.board);
+
+                var position = g.table.boardPosition?.Split(',');
+                if (boardPath != null && position != null)
                 {
-                    // if the game doesn't have the gameboards element, check for the default board in the table property
-
-                    var boardPath = AbsolutePath(root_dir, g.table.board);
-
-                    var position = g.table.boardPosition?.Split(',');
                     var defBoard = new GameBoard
                     {
                         Name = "Default",
@@ -133,10 +132,6 @@ namespace Octgn.DataNew
                         Height = double.Parse(position[3])
                     };
                     ret.GameBoards.Add("", defBoard);
-                }
-                catch
-                {
-                    // ignores this game board instead of invalidating the entire game definition
                 }
             }
             else
