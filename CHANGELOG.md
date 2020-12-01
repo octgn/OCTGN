@@ -1,3 +1,5 @@
+#3.4.343.0
+
 #3.4.342.0
 + new python API - table.reset() to reset the table position to default settings
 + new python API - table.refit() adjusts the table so that all cards will fit on the screen
@@ -3954,6 +3956,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
