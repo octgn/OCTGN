@@ -1,3 +1,6 @@
+#3.4.344.0
++ game documents display the document name in the title bar
+
 #3.4.343.0
 
 #3.4.342.0
@@ -3956,6 +3959,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
