@@ -114,6 +114,7 @@
     <Compile Include="TaskContinuationHelpers.cs" />
     <Compile Include="Util\BigInteger.cs" />
     <Compile Include="Util\Crypto.cs" />
+    <Compile Include="Util\Cryptor.cs" />
     <Compile Include="Util\FileDownloader.cs" />
     <Compile Include="Util\TextUploader.cs" />
     <Compile Include="Versioned.cs" />
@@ -160,6 +161,7 @@
     <Reference Include="System.IO.Abstractions, Version=2.1.0.178, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.IO.Abstractions.2.1.0.178\lib\net40\System.IO.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />

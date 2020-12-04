@@ -11,12 +11,13 @@ namespace Octgn.Extentions
     using log4net;
 
     using Octgn.Core;
+    using Octgn.Core.Util;
 
     public static partial class StringExtensionMethods
     {
         public static string Decrypt(this string text)
         {
-            if( string.IsNullOrEmpty( text ) ) return text;
+            if (string.IsNullOrEmpty(text)) return text;
             RIPEMD160 hash = RIPEMD160.Create();
             var un = (Prefs.Username ?? string.Empty).Clone() as string;
             byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(un));
@@ -26,20 +27,19 @@ namespace Octgn.Extentions
 
         public static string Encrypt(this string text)
         {
-            // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
             var un = (Prefs.Username ?? string.Empty).Clone() as string;
             byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(un));
             return Cryptor.Encrypt(text, BitConverter.ToString(hasher));
         }
 
-		/// <summary>
-		/// Provides a cleaner method of string concatenation. (i.e. "Name {0}".With(firstName)
-		/// </summary>
-		public static string With(this string input, params object[] args)
-		{
-			return string.Format(input, args);
-		}
+        /// <summary>
+        /// Provides a cleaner method of string concatenation. (i.e. "Name {0}".With(firstName)
+        /// </summary>
+        public static string With(this string input, params object[] args)
+        {
+            return string.Format(input, args);
+        }
 
         public static string Sha1(this string text)
         {
@@ -67,7 +67,7 @@ namespace Octgn.Extentions
 
         public static int ToInt(this Guid guid)
         {
-            return guid.ToByteArray().Aggregate(0, (current, b) => current + b*2);
+            return guid.ToByteArray().Aggregate(0, (current, b) => current + b * 2);
         }
     }
 }

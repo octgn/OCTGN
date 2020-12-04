@@ -482,7 +482,6 @@
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
     <Compile Include="Utils\Converters\RichTextConverter.cs" />
-    <Compile Include="Utils\Cryptor.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\FileIcon.cs" />
     <Compile Include="Utils\GridViewSort.cs" />
