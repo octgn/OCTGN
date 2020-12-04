@@ -110,7 +110,15 @@
                 {
                     var card = new Card(c);
                     card.Alternate = alternate.Key;
-                    var cardPropertyValue = card.PropertySets[card.Alternate].Properties[selectedProperty].ToString();
+                    string cardPropertyValue;
+                    if (selectedProperty.Name == "Name")
+                    {
+                        cardPropertyValue = card.PropertySets[card.Alternate].Name;
+                    }
+                    else
+                    {
+                        cardPropertyValue = card.PropertySets[card.Alternate].Properties[selectedProperty].ToString();
+                    }
                     var sanitizedValue = SanitizeString(cardPropertyValue);
 
                     // first check for exact matches, then if none show up we check for partial matches
