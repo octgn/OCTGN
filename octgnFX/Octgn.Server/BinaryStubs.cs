@@ -72,7 +72,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
+    public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators, bool allowCardList)
     {
 		Log.Debug($"SERVER OUT: {nameof(Settings)}");
 		using(var stream = new MemoryStream(512)) {
@@ -83,6 +83,7 @@ namespace Octgn.Server
 				writer.Write(twoSidedTable);
 				writer.Write(allowSpectators);
 				writer.Write(muteSpectators);
+				writer.Write(allowCardList);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
 				writer.Close();

@@ -211,7 +211,8 @@ namespace Octgn.Play
                             if (Program.IsHost) {
                                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable,
                                                             Program.GameSettings.AllowSpectators,
-                                                            Program.GameSettings.MuteSpectators);
+                                                            Program.GameSettings.MuteSpectators,
+                                                            Program.GameSettings.AllowCardList);
                             }
                         };
                     } else {
@@ -705,7 +706,8 @@ namespace Octgn.Play
         protected override void OnKeyUp(KeyEventArgs e)
         {
             if(e.Key == Key.F9) {
-                Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
+                if (Program.GameSettings.AllowCardList)
+                    Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
 
                 e.Handled = true;
 

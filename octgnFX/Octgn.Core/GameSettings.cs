@@ -9,6 +9,7 @@ namespace Octgn.Data
         private bool _changeTwoSidedTable = true;
         private bool _hideBoard = false;
         private bool _allowSpectators = false;
+        private bool _allowCardList= false;
         private bool _muteSpectators = false;
 
         public GameSettings()
@@ -68,6 +69,20 @@ namespace Octgn.Data
                 if (_initialized)
                 {
                     OnPropertyChanged("AllowSpectators");
+                }
+			}
+        }
+        public bool AllowCardList
+        {
+            get { return _allowCardList; }
+			set
+			{
+			    if (value == _allowCardList)
+			        return;
+                _allowCardList = value;
+                if (_initialized)
+                {
+                    OnPropertyChanged("AllowCardList");
                 }
 			}
         }
