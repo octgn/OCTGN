@@ -1,3 +1,7 @@
+#3.4.345.0
++ fixed subscription check always failing in deck editor and play table
++ fixed image importer in deck editor
+
 #3.4.344.0
 + game documents display the document name in the title bar
 
@@ -3959,6 +3963,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
