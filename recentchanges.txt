@@ -1,1 +1,1 @@
-
+fixed subscription check always failing in deck editor and play table

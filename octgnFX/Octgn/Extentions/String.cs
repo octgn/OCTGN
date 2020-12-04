@@ -11,6 +11,7 @@ namespace Octgn.Extentions
     using log4net;
 
     using Octgn.Core;
+    using Octgn.Core.Util;
 
     public static partial class StringExtensionMethods
     {

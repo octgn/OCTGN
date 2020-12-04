@@ -416,7 +416,6 @@
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
     <Compile Include="Extentions\ControlExtensions.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
-    <Compile Include="Utils\Cryptor.cs" />
     <Compile Include="Extentions\String.cs" />
     <Compile Include="Controls\NumericUpDown.cs" />
     <Compile Include="Controls\AnimatedWrapPanel.cs" />
