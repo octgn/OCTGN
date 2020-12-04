@@ -1,1 +1,1 @@
-Host can enable the card list panel in the pre-game lobby (disabled by default)
+
