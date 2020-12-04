@@ -1,1 +1,2 @@
 fixed subscription check always failing in deck editor and play table
+fixed image importer in deck editor
