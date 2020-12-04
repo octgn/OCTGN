@@ -199,6 +199,15 @@
                                     <TextBlock Text="No Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
+                            <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowCardList, Mode=TwoWay}" Margin="10,0,0,0"
+                                IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
+                                <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                                    <TextBlock Text="Allow Card List" TextWrapping="Wrap"></TextBlock>
+                                </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                                <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                                    <TextBlock Text="Hidden Card List" TextWrapping="Wrap"></TextBlock>
+                                </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                            </toggleSwitch:HorizontalToggleSwitch>
                         </StackPanel>
                     </Border>
                     <Border Grid.Row="2" Margin="0,8,8,8" Style="{StaticResource PanelControl}" >

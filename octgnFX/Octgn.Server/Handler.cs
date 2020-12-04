@@ -74,20 +74,21 @@ namespace Octgn.Server
             }
         }
 
-        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators) {
+        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators, bool allowCardList) {
             var player = _player;
 
             if (player.Id != Player.HOSTPLAYERID) return;
 
             _context.State.Settings.AllowSpectators = allowSpectators;
             _context.State.Settings.MuteSpectators = muteSpectators;
+            _context.State.Settings.AllowCardList = allowCardList;
             _context.Game.Spectators = allowSpectators;
 
             // We can't change this after the game is started, so don't change it
             if (!GameStarted)
                 _context.State.Settings.UseTwoSidedTable = twoSidedTable;
 
-            _context.Broadcaster.Settings(_context.State.Settings.UseTwoSidedTable, allowSpectators, muteSpectators);
+            _context.Broadcaster.Settings(_context.State.Settings.UseTwoSidedTable, allowSpectators, muteSpectators, allowCardList);
         }
 
         public void PlayerSettings(byte player, bool invertedTable, bool spectator) {
@@ -226,7 +227,7 @@ namespace Octgn.Server
                 _player.Rpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.Settings.InvertedTable, player.Settings.IsSpectator);
 
             // Notify the newcomer of table sides
-            _player.Rpc.Settings(_context.State.Settings.UseTwoSidedTable, _context.State.Settings.AllowSpectators, _context.State.Settings.MuteSpectators);
+            _player.Rpc.Settings(_context.State.Settings.UseTwoSidedTable, _context.State.Settings.AllowSpectators, _context.State.Settings.MuteSpectators, _context.State.Settings.AllowCardList);
 
             // Add it to our lists
             if (GameStarted) {
@@ -275,7 +276,7 @@ namespace Octgn.Server
                 oldPlayerInfo.Rpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.Settings.InvertedTable, player.Settings.IsSpectator);
 
             // Notify the newcomer of some shared settings
-            oldPlayerInfo.Rpc.Settings(_context.State.Settings.UseTwoSidedTable, _context.State.Settings.AllowSpectators, _context.State.Settings.MuteSpectators);
+            oldPlayerInfo.Rpc.Settings(_context.State.Settings.UseTwoSidedTable, _context.State.Settings.AllowSpectators, _context.State.Settings.MuteSpectators, _context.State.Settings.AllowCardList);
             foreach (var player in _context.State.Players.Players)
                 oldPlayerInfo.Rpc.PlayerSettings(player.Id, player.Settings.InvertedTable, player.Settings.IsSpectator);
 

@@ -181,7 +181,7 @@ namespace Octgn.Controls
             if (Player.LocalPlayer.Id == 1 && !Program.GameEngine.IsReplay)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators, Program.GameSettings.AllowCardList);
             }
 			Player.LocalPlayer.SetPlayerColor(Player.LocalPlayer.Id);
             this.StartingGame = true;
@@ -191,7 +191,7 @@ namespace Octgn.Controls
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             if (Program.IsHost)
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators, Program.GameSettings.AllowCardList);
         }
 
         private bool calledStart = false;

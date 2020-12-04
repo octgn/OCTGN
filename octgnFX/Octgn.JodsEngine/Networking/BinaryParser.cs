@@ -57,8 +57,9 @@ namespace Octgn.Networking
 					var arg0 = reader.ReadBoolean();
 					var arg1 = reader.ReadBoolean();
 					var arg2 = reader.ReadBoolean();
+					var arg3 = reader.ReadBoolean();
 					Log.Debug($"OCTGN IN: Settings");
-					handler.Settings(arg0, arg1, arg2);
+					handler.Settings(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 7:

@@ -142,7 +142,7 @@ namespace Octgn.Networking
             }
         }
 
-        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
+        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators, bool allowCardList)
         {
             WriteReplayAction();
             // The host is the driver for this flag and should ignore notifications,
@@ -153,6 +153,7 @@ namespace Octgn.Networking
                 Program.GameSettings.UseTwoSidedTable = twoSidedTable;
                 Program.GameSettings.AllowSpectators = allowSpectators;
                 Program.GameSettings.MuteSpectators = muteSpectators;
+                Program.GameSettings.AllowCardList = allowCardList;
             }
         }
 

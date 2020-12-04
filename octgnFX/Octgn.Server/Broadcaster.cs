@@ -46,11 +46,11 @@ namespace Octgn.Server
 		}
 	}
 
-	public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
+	public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators, bool allowCardList)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
-				ply.Rpc.Settings(twoSidedTable, allowSpectators, muteSpectators);
+				ply.Rpc.Settings(twoSidedTable, allowSpectators, muteSpectators, allowCardList);
 			}
 		}
 	}

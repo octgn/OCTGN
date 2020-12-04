@@ -81,8 +81,9 @@ namespace Octgn.Server
 					bool arg0 = reader.ReadBoolean();
 					bool arg1 = reader.ReadBoolean();
 					bool arg2 = reader.ReadBoolean();
+					bool arg3 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  Settings");
-					_socket.Handler.Settings(arg0, arg1, arg2);
+					_socket.Handler.Settings(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 7:
