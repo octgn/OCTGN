@@ -480,6 +480,7 @@
     <Compile Include="Utils\CompoundCall.cs" />
     <Compile Include="Utils\Converters\BooleanInverterConverter.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
+    <Compile Include="Utils\Converters\UriToSafeImageConverter.cs" />
     <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
     <Compile Include="Utils\Converters\RichTextConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />

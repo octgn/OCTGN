@@ -10,6 +10,7 @@
     <gui:FilterColorConverter x:Key="FilterConverter" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibileHiddenConverter x:Key="BooleanToVisibilityHiddenConverter"/>
+    <converters:UriToSafeImageConverter x:Key="UriToSafeImageConverter"/>
     <converters:BooleanToFontBoldConverter x:Key="BooleanToFontBoldConverter"></converters:BooleanToFontBoldConverter>
     <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>
     <gui:GameMessageToBlockConverter x:Key="GameMessageToBlockConverter"/>
