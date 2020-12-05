@@ -39,7 +39,7 @@
                 <Grid x:Name="boardContainer" ClipToBounds="False">
                     <Image
                         Visibility="{Binding Source={x:Static octgn:Program.GameSettings}, Path=ShowBoard, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"
-                        Source="{Binding Source={x:Static octgn:Program.GameEngine},Path=BoardImage}"
+                        Source="{Binding Source={x:Static octgn:Program.GameEngine},Path=BoardImage, Converter={StaticResource UriToSafeImageConverter}}"
                         Width="{Binding Source={x:Static octgn:Program.GameEngine},Path=GameBoard.Width}"
                         Height="{Binding Source={x:Static octgn:Program.GameEngine},Path=GameBoard.Height}"
                         Margin="{Binding Source={x:Static octgn:Program.GameEngine},Path=BoardMargin}"

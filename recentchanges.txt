@@ -1,1 +1,3 @@
-
+added a uri to cached image converter to jodsengine utils
+game board image now caches properly
+fixes an issue preventing games from uninstalling after closing the play table
