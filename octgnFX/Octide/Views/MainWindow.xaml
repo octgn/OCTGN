@@ -40,7 +40,7 @@
             <TabItem Header="Play Table">
                 <views:PreviewTabView/>
             </TabItem>
-            <TabItem Header="Game" IsSelected="True">
+            <TabItem Header="Game Data" IsSelected="True">
                 <TabControl>
                     <TabItem Header="Information">
                         <views:GameInformationTabView/>
@@ -74,13 +74,13 @@
             <TabItem Header="Scripting">
                 <views:ScriptsTabView/>
             </TabItem>
-            <TabItem Header="Proxies" >
+            <TabItem Header="Proxy Templates" >
                 <views:ProxyTabView/>
             </TabItem>
-            <TabItem Header="Sets" >
+            <TabItem Header="Set Editor" >
                 <views:SetTabView/>
             </TabItem>
-            <TabItem Header="Assets">
+            <TabItem Header="Asset Manager">
                 <views:AssetsTabView/>
             </TabItem>
         </TabControl>
