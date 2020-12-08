@@ -21,7 +21,7 @@
 
     <TabControl Margin="10,0,0,0" >
         <TabItem Header="Summary" >
-            <controls:ItemPropertiesView Header="Set Editor">
+            <controls:ItemPropertiesView Header="Set Summary" Description="Sets are contained collections of many different cards.  Each card in OCTGN belongs to a set.  A set can define Packages, which OCTGN uses to generate randomized booster packs of cards from the set via its limited deck editor." >
                 <controls:ItemPropertiesView.Content>
 
                     <ItemsControl >
@@ -44,7 +44,7 @@
                             <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
                         </controls:PropertyFieldControl>
 
-                        <controls:PropertyFieldControl Header="Abbreviated Set Code">
+                        <controls:PropertyFieldControl Header="Abbreviated Set Code" Description="Used by some games to identify a game by shortened code names" >
                             <TextBox Text="{Binding Code}" />
                         </controls:PropertyFieldControl>
 
@@ -72,6 +72,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Packages" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="20" FontWeight="Bold" />
+
                     <Button Content="New Package" DockPanel.Dock="Bottom" Margin="1" Command="{Binding AddPackageCommand}" />
                     <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding PackageItems}" SelectedItem="{Binding PackageItems.SelectedItem}"
                                  gong:DragDrop.DropHandler="{Binding PackageItems}">
