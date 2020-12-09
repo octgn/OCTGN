@@ -14,6 +14,7 @@
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly List<string> HostList = new List<string>();
+        private static readonly List<string> BypassList = new List<string>();
 
         public SSLValidationHelper()
         {
@@ -38,23 +39,59 @@
                     Log.Info("No SSL Errors Detected");
                     return true;
                 }
-                Log.Info("SSL validation error detected");
-                if (HostList.Contains(request.RequestUri.Host))
+
+                var host = request.RequestUri.Host;
+                Log.Info($"SSL validation error detected for {host}, {sslPolicyErrors.ToString()}");
+                if (BypassList.Contains(host))
+                {
+                    Log.Info($"Host {host} is in temporary bypass list, ignoring certificate error");
+                    return true;
+                }
+
+                if (HostList.Contains(host))
                 {
                     Log.Info("Already showed dialog, failing ssl");
                     return false;
                 }
+
                 Log.Info("Host not listed, showing dialog");
-                HostList.Add(request.RequestUri.Host);
+                HostList.Add(host);
 
                 var sb = new System.Text.StringBuilder();
-                sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
-                sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
-                sb.AppendLine(
-                    "While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
-                sb.AppendLine();
-                sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
+                sb.AppendLine($"Problems were encountered while contacting the server {host}:");
 
+                if (sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNotAvailable))
+                {
+                    sb.AppendLine("   * No certificate was provided by the server.");
+                }
+                
+                if (sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNameMismatch))
+                {
+                    sb.AppendLine("   * The name on the certificate did not match the server's hostname.");
+                }
+
+                if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
+                {
+                    if (DateTime.TryParse(certificate.GetExpirationDateString(), out DateTime expiry)
+                        && expiry.ToUniversalTime() < DateTime.UtcNow)
+                    {
+                        sb.AppendLine("   * The server's certificate has expired.");
+                    }
+                    else
+                    {
+                        sb.AppendLine("   * The certificate failed validation.");
+                    }
+                }
+
+                sb.AppendLine("");
+                sb.AppendLine("The server's identity cannot be guaranteed in this situation.");
+                sb.AppendLine("");
+                sb.AppendLine("You may choose to connect anyway, at your own risk. Your choice for this server will be saved for the current OCTGN session only.");
+                sb.AppendLine("");
+                sb.AppendLine("If you are unsure, choose No and seek support online.");
+                sb.AppendLine();
+                sb.AppendLine("Would you like to allow connections to this host anyway?");
+                
                 var ret = false;
                 Application.Current.Dispatcher.Invoke(
                     new Action(
@@ -64,17 +101,18 @@
                                 Application.Current.MainWindow,
                                 sb.ToString(),
                                 "SSL Error",
-                                MessageBoxButton.YesNo);
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.None,
+                                MessageBoxResult.No);
                             if (result == MessageBoxResult.Yes)
                             {
-                                Log.Info("Chose to turn on SSL Validation Ignoring");
-                                Prefs.IgnoreSSLCertificates = true;
-
+                                Log.Info($"Chose to ignore validation issues for {host}");
+                                BypassList.Add(host);
                                 ret = true;
                             }
                             else
                             {
-                                Log.Info("Chose not to turn on SSL Validation Ignoring");
+                                Log.Info($"Chose not to ignore validation issues for {host}");
                                 ret = false;
                             }
                             sb.Clear();
