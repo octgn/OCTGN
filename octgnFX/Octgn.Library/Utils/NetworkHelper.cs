@@ -13,9 +13,9 @@ namespace Octgn.Library.Utils
         public static bool IsPortAvailable(int port)
         {
             var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-            var tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+            var tcpConnInfoArray = ipGlobalProperties.GetActiveTcpListeners();
 
-            return tcpConnInfoArray.All(tcpi => tcpi.LocalEndPoint.Port != port);
+            return tcpConnInfoArray.All(tcpi => tcpi.Port != port);
         }
     }
 }
