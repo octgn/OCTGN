@@ -47,7 +47,7 @@ namespace Octgn.Online.Test.GameService
                 // Wait for all the threads to be started before beginning work
                 startEvent.WaitOne();
 
-                var nh = new NetworkHelper(21000, 31000, "NetworkHelperTest");
+                var nh = new NetworkHelper(15000, 45000, "NetworkHelperTest");
                 var ports = new List<int>();
                 for(var i = 0; i < 1000; i++) {
                     var port = nh.NextPort;
