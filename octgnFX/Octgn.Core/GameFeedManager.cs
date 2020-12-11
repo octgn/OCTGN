@@ -388,7 +388,8 @@ namespace Octgn.Core
         /// <returns><see cref="FeedValidationResult"/></returns>
         public FeedValidationResult ValidateFeedUrl( string feed, string username, string password ) {
             Log.InfoFormat( "Validating feed url {0}", feed );
-            if( PathValidator.IsValidUrl( feed ) && PathValidator.IsValidSource( feed ) ) {
+            bool isValidUrl = PathValidator.IsValidUrl( feed );
+            if( isValidUrl && PathValidator.IsValidSource( feed ) ) {
                 Log.InfoFormat( "Path Validator says feed {0} is valid", feed );
                 OctgnFeedCredentialProvider.AddTemp( feed, username, password );
                 try {
@@ -410,10 +411,8 @@ namespace Octgn.Core
                     Log.WarnFormat( "{0} is an invalid feed.", feed );
                 }
                 OctgnFeedCredentialProvider.RemoveTemp( feed );
-                return FeedValidationResult.InvalidUrl;
-            } else {
-                return FeedValidationResult.InvalidFormat;
             }
+            return isValidUrl ? FeedValidationResult.InvalidFormat : FeedValidationResult.InvalidUrl;
             //Log.InfoFormat("Path validator failed for feed {0}", feed);
             //return FeedValidationResult.Unknown;
         }
