@@ -16,6 +16,12 @@ namespace Octgn.Test.Core
 
     public class GameFeedManagerTests
     {
+        [SetUp]
+        public void CreateConfiguration()
+        {
+            Config.Instance = new Config();
+        }
+
         [Test]
         public void GetPackages_NoDuplicates() {
             //var ret = (GameFeedManager.Get() as GameFeedManager).GetPackages();
@@ -33,14 +39,14 @@ namespace Octgn.Test.Core
         public void ValidateFeedUrl_FailsOnBadUri() {
             var ret = GameFeedManager.Get();
             var badUri = "sdflakwejfasw";
-            Assert.AreEqual( FeedValidationResult.InvalidFormat, ret.ValidateFeedUrl( badUri, null, null ) );
+            Assert.AreEqual( FeedValidationResult.InvalidUrl, ret.ValidateFeedUrl( badUri, null, null ) );
         }
 
         [Test]
         public void ValidateFeedUrl_FailsOnNotARepo() {
             var ret = GameFeedManager.Get();
             var goodUriButNotAFeed = "http://en.wikipedia.org/wiki/Human_feces/";
-            Assert.AreEqual( FeedValidationResult.InvalidUrl, ret.ValidateFeedUrl( goodUriButNotAFeed, null, null ) );
+            Assert.AreEqual( FeedValidationResult.InvalidFormat, ret.ValidateFeedUrl( goodUriButNotAFeed, null, null ) );
         }
 
         #region AddFeed
@@ -72,8 +78,8 @@ namespace Octgn.Test.Core
             bool pass = false;
             try {
                 fake.AddFeed( "asdf", "asdf", null, null );
-            } catch( TargetInvocationException ex ) {
-                if( ex.InnerException is UserMessageException ) pass = true;
+            } catch( UserMessageException ex ) {
+                if( ex.Message.Contains("not a valid feed") ) pass = true;
             }
 
             GameFeedManager.SingletonContext = cur;
@@ -106,8 +112,8 @@ namespace Octgn.Test.Core
 
                 try {
                     fakeGf.AddFeed( "asdf", "asdf", null, null );
-                } catch( TargetInvocationException e ) {
-                    if( e.InnerException is UserMessageException ) pass = true;
+                } catch( UserMessageException e ) {
+                    if (e.Message.Contains("already exists")) pass = true;
                 }
             } finally {
                 FeedProvider.SingletonContext = curFeedProvider;
@@ -159,7 +165,7 @@ namespace Octgn.Test.Core
                 FeedProvider.SingletonContext = fake;
 
                 var res = GameFeedManager.Get().GetFeeds();
-                Assert.IsNull( res );
+                Assert.IsEmpty( res );
                 A.CallTo( () => fake.AllFeeds ).MustHaveHappened( Repeated.Exactly.Once );
             } finally {
                 FeedProvider.SingletonContext = curFeedProvider;
