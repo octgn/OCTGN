@@ -15,6 +15,7 @@ namespace Octgn.Launchers
             Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
             this.DeckPath = string.IsNullOrWhiteSpace(deckPath) ? null : deckPath;
+            Shutdown = true;
         }
 
         public ILog Log { get; private set; }
