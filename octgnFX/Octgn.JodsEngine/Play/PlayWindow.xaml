@@ -63,7 +63,7 @@
                             <MenuItem DataContext="{Binding}" Header="{Binding Name}" Click="LoadDocument">
                                 <MenuItem.Icon>
                                     <Border Height="20" Width="40">
-                                        <Image Source="{Binding Icon}" />
+                                        <Image Source="{Binding Icon, Converter={StaticResource UriToSafeImageConverter}}" />
                                     </Border>
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -544,7 +544,7 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
-                                            <Image Source="{Binding Icon}" HorizontalAlignment="Right">
+                                            <Image Source="{Binding Icon, Converter={StaticResource UriToSafeImageConverter}}" HorizontalAlignment="Right">
                                                 <Image.Style>
                                                     <Style TargetType="Image">
                                                         <Style.Triggers>
