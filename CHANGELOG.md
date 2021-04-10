@@ -1,3 +1,5 @@
+#3.4.347.0
+
 #3.4.346.0
 + Host can enable the card list panel in the pre-game lobby (disabled by default)
 
@@ -3966,6 +3968,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
