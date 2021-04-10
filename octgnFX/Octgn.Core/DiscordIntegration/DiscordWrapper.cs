@@ -161,7 +161,7 @@ namespace Octgn.Core.DiscordIntegration
                     _activityManager.OnActivitySpectate -= ActivityManagerInstance_OnActivitySpectate;
                 }
 
-                _discord.Dispose();
+                _discord?.Dispose();
 
                 disposedValue = true;
             }
