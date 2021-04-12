@@ -1,3 +1,1 @@
-added a uri to cached image converter to jodsengine utils
-game board image, phase icons, and game document icons now cache properly
-fixes an issue preventing games from uninstalling after closing the play table
+

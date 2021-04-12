@@ -1,3 +1,8 @@
+#3.4.349.0
++ added a uri to cached image converter to jodsengine utils
++ game board image, phase icons, and game document icons now cache properly
++ fixes an issue preventing games from uninstalling after closing the play table
+
 #3.4.348.0
 
 #3.4.347.0
@@ -3970,6 +3975,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
