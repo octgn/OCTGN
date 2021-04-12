@@ -1,3 +1,5 @@
+#3.4.350.0
+
 #3.4.349.0
 + added a uri to cached image converter to jodsengine utils
 + game board image, phase icons, and game document icons now cache properly
@@ -3975,6 +3977,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
