@@ -1142,7 +1142,7 @@ namespace Octgn.Scripting.Versions
                     var tempCardList = new List<DataNew.Entities.Card>();
                     foreach (var propertyValue in property.Value)
                     {
-                        if (propertyValue.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                        if (property.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
                         {
                             if (match)
                                 tempCardList.AddRange(query
