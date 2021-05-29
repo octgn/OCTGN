@@ -1,1 +1,1 @@
-
+fixed a startup crash when parsing dateTime values with an Arabic culture configuration
