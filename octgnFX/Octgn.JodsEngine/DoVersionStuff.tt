@@ -15,7 +15,7 @@
 
     XDocument doc = XDocument.Load(Host.ResolvePath(@"Scripting\ApiVersions.xml"));
 
-    const string RegisterTemplate = "			Versioned.RegisterVersion(Version.Parse(\"{0}\"),DateTime.Parse(\"{1}\"),ReleaseMode.{2} );";
+    const string RegisterTemplate = "			Versioned.RegisterVersion(Version.Parse(\"{0}\"),DateTime.Parse(\"{1}\", System.Globalization.CultureInfo.InvariantCulture),ReleaseMode.{2} );";
     const string RegisterPythonApiTemplate = "			Versioned.RegisterFile(\"PythonApi\", \"pack://application:,,,/Scripting/Versions/{0}.py\", Version.Parse(\"{0}\"));";
 
 	var sbRegister = new StringBuilder();
