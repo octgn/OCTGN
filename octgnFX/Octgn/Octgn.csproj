@@ -477,18 +477,9 @@
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
     <Resource Include="Resources\noimage.png" />
-    <Resource Include="DoVersionStuff.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DoVersionStuff.tt</DependentUpon>
-    </Resource>
     <Resource Include="Resources\soul1355.png" />
     <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="app.manifest" />
-    <None Include="DoVersionStuff.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
-    </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Resource Include="Resources\Fonts\Entypo.otf" />
     <Resource Include="Resources\sub.png" />
