@@ -27,6 +27,11 @@ namespace Octgn
         public Task<bool> HostGame(HostedGame hostedGame, HostedGameSource source, string username, string password) {
             DebugValidate(hostedGame, true);
 
+            //duct-tape fix for a game server bug where online-hosted games lose the chosen password
+            //TODO: remove this check when the bug is fixed server-side (see git issue ticket #2109)
+            if (!password.Equals(hostedGame.Password))
+                hostedGame.Password = password;
+
             var args = "-h ";
             if (CommandLineHandler.Instance.DevMode)
                 args += "-x ";
