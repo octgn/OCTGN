@@ -1,5 +1,6 @@
 ﻿using Octgn.Core.DataManagers;
 using Octgn.Library.Exceptions;
+using Octgn.Online.Hosting;
 using Octgn.Play;
 using Octgn.Play.Save;
 using Octgn.Windows;
@@ -40,8 +41,21 @@ namespace Octgn.Launchers
                     loadingView.UpdateStatus("Loading Game...");
                     var game = GameManager.Get().GetById(reader.Replay.GameId);
 
+                    var hostedGame = new HostedGame()
+                    {
+                        Id = Guid.NewGuid(),
+                        GameId = game.Id,
+                        GameName = game.Name,
+                        OctgnVersion = Const.OctgnVersion.ToString(),
+                        GameVersion = game.Version.ToString(),
+                        DateCreated = DateTime.UtcNow
+                    };
+                    Program.CurrentHostedGame = hostedGame;
+
                     loadingView.UpdateStatus("Loading Game Engine...");
                     Program.CurrentOnlineGameName = game.Name;
+
+
                     Program.GameEngine = new GameEngine(engine, game, reader.Replay.User);
                 } catch {
                     reader?.Dispose();
