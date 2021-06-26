@@ -1,3 +1,6 @@
+#3.4.352.0
++ fixed a startup crash when parsing dateTime values with an Arabic culture configuration
+
 #3.4.351.0
 + QueryCard 3.1.0.2 API method works for the Name property
 
@@ -3980,6 +3983,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
