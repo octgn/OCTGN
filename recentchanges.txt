@@ -1,1 +1,1 @@
-QueryCard 3.1.0.2 API method works for the Name property
+

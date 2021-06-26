@@ -1,3 +1,6 @@
+#3.4.351.0
++ QueryCard 3.1.0.2 API method works for the Name property
+
 #3.4.350.0
 
 #3.4.349.0
@@ -3977,6 +3980,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
