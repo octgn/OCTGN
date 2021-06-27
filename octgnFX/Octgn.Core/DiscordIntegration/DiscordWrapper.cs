@@ -33,7 +33,7 @@ namespace Octgn.Core.DiscordIntegration
         private static readonly DateTime _epoch = new DateTime(1970, 1, 1);
 
         public DiscordWrapper() {
-            _discord = new Discord.Discord(_clientId, (UInt64)CreateFlags.Default);
+            _discord = new Discord.Discord(_clientId, (UInt64)CreateFlags.NoRequireDiscord);
             _activityManager = _discord.GetActivityManager() ?? throw new InvalidOperationException($"Discord ActivityManager null");
             _activityManager.OnActivityJoin += ActivityManagerInstance_OnActivityJoin;
             _activityManager.OnActivitySpectate += ActivityManagerInstance_OnActivitySpectate;
