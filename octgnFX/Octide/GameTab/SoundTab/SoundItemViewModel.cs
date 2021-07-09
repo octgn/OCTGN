@@ -14,7 +14,7 @@ namespace Octide.ItemModel
  
     public class SoundItemModel : IdeBaseItem
     {
-        public GameSound _sound { get; private set; }
+        public GameSound Sound { get; private set; }
         public RelayCommand PlayCommand { get; private set; }
         public RelayCommand StopCommand { get; private set; }
         public AssetController Asset { get; set; }
@@ -24,11 +24,11 @@ namespace Octide.ItemModel
             PlayCommand = new RelayCommand(PlaySound);
             StopCommand = new RelayCommand(StopSound);
 
-            _sound = new GameSound();
+            Sound = new GameSound();
             Name = "New Sound";
 
             Asset = new AssetController(AssetType.Sound);
-            _sound.Src = Asset.FullPath;
+            Sound.Src = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
 
         }
@@ -38,7 +38,7 @@ namespace Octide.ItemModel
             PlayCommand = new RelayCommand(PlaySound);
             StopCommand = new RelayCommand(StopSound);
 
-            _sound = s;
+            Sound = s;
             Asset = new AssetController(AssetType.Sound);
             Asset.Register(s.Src);
             Asset.PropertyChanged += AssetUpdated;
@@ -49,13 +49,13 @@ namespace Octide.ItemModel
             PlayCommand = new RelayCommand(PlaySound);
             StopCommand = new RelayCommand(StopSound);
 
-            _sound = new GameSound()
+            Sound = new GameSound()
             {
-                Gameid = s._sound.Gameid,
+                Gameid = s.Sound.Gameid,
             };
             Asset = new AssetController(AssetType.Sound);
-            Asset.Register(s._sound.Src);
-            _sound.Src = Asset.FullPath;
+            Asset.Register(s.Sound.Src);
+            Sound.Src = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
             Name = s.Name;
         }
@@ -64,7 +64,7 @@ namespace Octide.ItemModel
         {
             if (e.PropertyName == "Path")
             {
-                _sound.Src = Asset.FullPath;
+                Sound.Src = Asset.FullPath;
                 RaisePropertyChanged("Asset");
             }
         }
@@ -89,12 +89,12 @@ namespace Octide.ItemModel
         {
             get
             {
-                return _sound.Name;
+                return Sound.Name;
             }
             set
             {
-                if (_sound.Name == value) return;
-                _sound.Name = Utils.GetUniqueName(value, UniqueNames);
+                if (Sound.Name == value) return;
+                Sound.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
             }
         }

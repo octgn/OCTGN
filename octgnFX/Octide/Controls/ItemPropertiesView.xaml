@@ -8,57 +8,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              x:Name="me"
     d:DesignHeight="50" d:DesignWidth="800">
-    <UserControl.Style>
-        <Style TargetType="{x:Type UserControl}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type UserControl}">
-                        <DockPanel LastChildFill="True">
+    <UserControl.Template>
+        <ControlTemplate TargetType="{x:Type UserControl}">
+            <DockPanel LastChildFill="True">
 
-                            <TextBlock DockPanel.Dock="Top"
-                                       Text="{Binding Path=Header, ElementName=me}" 
-                                       FontSize="28" FontWeight="Bold" Foreground="{x:Static metro:AccentBrushes.Sky}">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Header, ElementName=me}" Value="{x:Null}">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <TextBlock DockPanel.Dock="Top" Text="{Binding Path=Description, ElementName=me}" 
-                                       Foreground="WhiteSmoke" TextWrapping="Wrap" Margin="15,5,5,5">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Description, ElementName=me}" Value="{x:Null}">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                <ContentPresenter Margin="10 0 0 0" Content="{Binding ElementName=me, Path=Header}" DockPanel.Dock="Top" >
+                    <ContentPresenter.Resources>
+                        <DataTemplate DataType="{x:Type sys:String}">
+                            <TextBlock Text="{Binding }" Style="{StaticResource OctideTitleStyle}" />
+                        </DataTemplate>
+                    </ContentPresenter.Resources>
+                </ContentPresenter>
+                <ContentPresenter
+                    Content="{Binding ElementName=me, Path=Description}" DockPanel.Dock="Top">
+                    <ContentPresenter.Resources>
+                        <DataTemplate DataType="{x:Type sys:String}">
+                            <TextBlock Text="{Binding }" Style="{StaticResource OctideDescriptionStyle}"/>
+                        </DataTemplate>
+                    </ContentPresenter.Resources>
+                </ContentPresenter>
 
-                            <Border DockPanel.Dock="Bottom" 
-                                    BorderBrush="#FF555555" BorderThickness="1"
-                                    Margin="1" Padding="3">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto" >
-                                    <ContentControl Content="{Binding Content, ElementName=me}" />
-                                </ScrollViewer>
-                            </Border>
-                        </DockPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Style>
+                <Border Grid.Column="2" BorderThickness="1" Padding="5" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}" >
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ContentPresenter Content="{Binding ElementName=me, Path=Content}" />
+                    </ScrollViewer>
+                </Border>
+            </DockPanel>
+        </ControlTemplate>
+    </UserControl.Template>
 </UserControl>

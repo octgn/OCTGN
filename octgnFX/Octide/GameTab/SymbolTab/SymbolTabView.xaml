@@ -12,34 +12,18 @@
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:model="clr-namespace:Octide.ItemModel"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding SymbolTabViewModel, Source={StaticResource Locator}}">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel>
-            <Button DockPanel.Dock="Bottom" Content="New Symbol" Margin="1" Command="{Binding AddCommand}" />
-            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-                </ListBox.InputBindings>
-            </ListBox>
-        </DockPanel>
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding Items.SelectedItem}"
-                                     Header="Symbol Editor"
+    <controls:OctideItemPropertyViewer ItemsSource="{Binding Items}" Title="Symbol Editor"
                                      Description="Rich-Text card properties can display these symbol objects in place of text in various locations within OCTGN, such as the deck editor or proxy card images.&#x0a;They are referenced in Rich-Text by their identifier, using the &lt;s&gt; element.">
-            <controls:ItemPropertiesView.Resources>
-                <DataTemplate DataType="{x:Type model:SymbolItemModel}" >
-                    <views:SymbolItemView />
-                </DataTemplate>
-            </controls:ItemPropertiesView.Resources>
-        </controls:ItemPropertiesView>
-    </Grid>
+        <controls:OctideItemPropertyViewer.Resources>
+            <DataTemplate DataType="{x:Type model:SymbolItemModel}" >
+                <views:SymbolItemView />
+            </DataTemplate>
+        </controls:OctideItemPropertyViewer.Resources>
+        <controls:OctideItemPropertyViewer.ListBoxButtons>
+            <Button Content="New Symbol" Command="{Binding AddCommand}" />
+        </controls:OctideItemPropertyViewer.ListBoxButtons>
+    </controls:OctideItemPropertyViewer>
 </UserControl>

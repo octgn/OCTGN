@@ -82,7 +82,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public List<PythonFunctionDefItemModel> PythonFunctions => ViewModelLocator.ScriptsTabViewModel.PythonFunctions;
+        public List<PythonFunctionDefItemModel> PythonFunctions => ViewModelLocator.PythonTabViewModel.PythonFunctions;
 
     }
 }

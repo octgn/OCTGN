@@ -48,8 +48,7 @@ namespace Octide.Controls
         /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void IsInEditModeUpdate(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            EditableTextBlock textBlock = obj as EditableTextBlock;
-            if (null != textBlock)
+            if (obj is EditableTextBlock textBlock)
             {
                 //Get the adorner layer of the uielement (here TextBlock)
                 AdornerLayer layer = AdornerLayer.GetAdornerLayer(textBlock);

@@ -19,8 +19,8 @@ namespace Octide.SetTab.ItemModel
 {
     public class PackagePropertyModel : IdeBaseItem, IDroppable
     {
-        public bool isIncludeProperty { get; set; }
-        public PickProperty _def { get; set; }
+        public bool IsIncludeProperty { get; set; }
+        public PickProperty Def { get; set; }
         public PropertyItemModel _activeProperty;
 
         public ObservableCollection<IdeBaseItem> CustomProperties
@@ -35,7 +35,7 @@ namespace Octide.SetTab.ItemModel
 
         public PackagePropertyModel(IdeCollection<IdeBaseItem> src) : base(src) // new item
         {
-            _def = new PickProperty();
+            Def = new PickProperty();
             ActiveProperty = (PropertyItemModel)CustomProperties.First();
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
@@ -44,34 +44,34 @@ namespace Octide.SetTab.ItemModel
         {
             if (p is NamePickProperty)
             {
-                _def = new PickProperty
+                Def = new PickProperty
                 {
-                    Property = PropertyTabViewModel.NameProperty._property,
+                    Property = PropertyTabViewModel.NameProperty.Property,
                     Value = p.Value
                 };
                 ActiveProperty = PropertyTabViewModel.NameProperty;
             }
             else
             {
-                _def = (PickProperty)p;
-                ActiveProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property == _def.Property);
+                Def = (PickProperty)p;
+                ActiveProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property == Def.Property);
             }
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
         public PackagePropertyModel(PackagePropertyModel p, IdeCollection<IdeBaseItem> src) : base(src) // copy item
         {
-            _def = new PickProperty();
+            Def = new PickProperty();
             ActiveProperty = p.ActiveProperty;
-            _def.Value = p._def.Value;
+            Def.Value = p.Def.Value;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
         {
-            if (ActiveProperty == args.Prop && _def is PickProperty pickprop)
+            if (ActiveProperty == args.Prop && Def is PickProperty pickprop)
             {
-                pickprop.Property = args.Prop._property;
+                pickprop.Property = args.Prop.Property;
                 RaisePropertyChanged("ActiveProperty");
             }
         }
@@ -104,7 +104,7 @@ namespace Octide.SetTab.ItemModel
                     value = (PropertyItemModel)CustomProperties.First();
                 }
                 _activeProperty = value;
-                _def.Property = value._property;
+                Def.Property = value.Property;
                 RaisePropertyChanged("ActiveProperty");
             }
         }
@@ -113,12 +113,12 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                return _def.Value;
+                return Def.Value;
             }
             set
             {
-                if (_def.Value == value) return;
-                _def.Value = value;
+                if (Def.Value == value) return;
+                Def.Value = value;
                 RaisePropertyChanged("Value");
             }
         }

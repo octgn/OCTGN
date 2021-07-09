@@ -10,70 +10,55 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
-             xmlns:local="clr-namespace:Octide"
              xmlns:set="clr-namespace:Octide.SetTab.Views"
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              d:DesignHeight="500" d:DesignWidth="700" >
 
-    <Grid>
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollViewer Style="{StaticResource NuclearScrollViewer}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-            <StackPanel Orientation="Horizontal" >
-
-                <ListBox
+        <Grid>
+            <DockPanel LastChildFill="True">
+                <ListBox MaxWidth="500" Margin="5 5 5 0" Foreground="{StaticResource MahApps.Brushes.Gray}" FontSize="12" Focusable="True" SnapsToDevicePixels="True" 
                      ItemsSource="{Binding Items}" SelectedValue="{Binding Items.SelectedItem}" >
                     <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsDefault}" Value="True">
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                    <Setter Property="BorderThickness" Value="3,3,3,0" />
-                                    <Setter Property="BorderBrush" Value="{x:Static metro:AccentBrushes.Blue}" />
-                                </DataTrigger>
-                                <Trigger Property="IsMouseOver" Value="true">
-                                    <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsSelected" Value="true">
-                                    <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                                    <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-                                </Trigger>
-                            </Style.Triggers>
-                            <Setter Property="FontSize" Value="12" />
-                            <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
-                            <Setter Property="Focusable" Value="True" />
-                            <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
-                            <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Transparent}" />
                             <Setter Property="Template" >
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type ListBoxItem}"  >
                                         <Border Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="10,10,0,0" Padding="15,1,15,1" Margin="5,0,0,0" >
+                                             Padding="8,1,8,1">
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" >
-                                                <TextBlock Text="{Binding Type}" >
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Name}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"  />
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Type}" Foreground="{TemplateBinding Foreground}" >
                                                     <TextBlock.Style>
                                                         <Style TargetType="{x:Type TextBlock}" >
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsDefault}" Value="True" >
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                    <Setter Property="Visibility" Value="Hidden" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"  />
                                             </StackPanel>
                                         </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDefault}" Value="true">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemsPanel>
@@ -82,35 +67,35 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                 </ListBox>
-                <Button Command="{Binding AddAltCommand}" ToolTip="Add a new Alternate">
+                <Button DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="5" Command="{Binding AddAltCommand}" ToolTip="Add a new Alternate">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="true">
-                                    <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsPressed"  Value="true">
-                                    <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                                    <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-                                </Trigger>
-                            </Style.Triggers>
-                            <Setter Property="Background" Value="{StaticResource WindowBack}" />
-                            <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
+                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Control.Background}" />
+                            <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid Margin="10,0,0,0" Width="24" Height="24">
+                                        <Grid Width="24" Height="24">
                                             <Ellipse Fill="{TemplateBinding Background}" />
                                             <Path HorizontalAlignment="Center" VerticalAlignment="Center" Data="M6,0 L6,12 M0,6 L12,6" StrokeThickness="2" Stroke="{TemplateBinding Foreground}" />
                                         </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Gray.MouseOver}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"  Value="true">
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Button.Flat.Foreground.Pressed}" />
+                                    <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Button.Flat.Background.Pressed}" />
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </Button.Style>
                 </Button>
-            </StackPanel>
-        </ScrollViewer>
+            </DockPanel>
+        </Grid>
         <ContentControl Grid.Row="1" Content="{Binding Items.SelectedItem}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type item:AlternateModel}" >

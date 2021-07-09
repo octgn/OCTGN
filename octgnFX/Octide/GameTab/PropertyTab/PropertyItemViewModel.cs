@@ -20,22 +20,22 @@ namespace Octide.ItemModel
 {
     public class PropertyItemModel : IdeBaseItem
     {
-        public PropertyDef _property { get; set; }
+        public PropertyDef Property { get; set; }
 
         public PropertyItemModel(IdeCollection<IdeBaseItem> source) : base(source)
         {
-            _property = new PropertyDef();
+            Property = new PropertyDef();
             Name = "New Property";
         }
 
         public PropertyItemModel(PropertyDef p, IdeCollection<IdeBaseItem> source) : base(source)
         {
-            _property = p;
+            Property = p;
         }
 
         public PropertyItemModel(PropertyItemModel p, IdeCollection<IdeBaseItem> source) : base(source)
         {
-            _property = p._property.Clone() as PropertyDef;
+            Property = p.Property.Clone() as PropertyDef;
             Name = p.Name;
         }
 
@@ -54,12 +54,12 @@ namespace Octide.ItemModel
         {
             get
             {
-                return _property.Name;
+                return Property.Name;
             }
             set
             {
-                if (value == _property.Name) return;
-                _property.Name = Utils.GetUniqueName(value, UniqueNames);
+                if (value == Property.Name) return;
+                Property.Name = Utils.GetUniqueName(value, UniqueNames);
                 RaisePropertyChanged("Name");
                 Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this, Action = PropertyChangedMessageAction.Modify});
             }
@@ -69,12 +69,12 @@ namespace Octide.ItemModel
         {
             get
             {
-                return _property.Type;
+                return Property.Type;
             }
             set
             {
-                if (value == _property.Type) return;
-                _property.Type = value;
+                if (value == Property.Type) return;
+                Property.Type = value;
                 RaisePropertyChanged("Type");
             }
         }
@@ -83,12 +83,12 @@ namespace Octide.ItemModel
         {
             get
             {
-                return _property.TextKind;
+                return Property.TextKind;
             }
             set
             {
-                if (value == _property.TextKind) return;
-                _property.TextKind = value;
+                if (value == Property.TextKind) return;
+                Property.TextKind = value;
                 RaisePropertyChanged("TextKind");
             }
         }
@@ -98,12 +98,12 @@ namespace Octide.ItemModel
 
             get
             {
-                return _property.Hidden;
+                return Property.Hidden;
             }
             set
             {
-                if (value == _property.Hidden) return;
-                _property.Hidden = value;
+                if (value == Property.Hidden) return;
+                Property.Hidden = value;
                 RaisePropertyChanged("Hidden");
             }
         }
@@ -112,12 +112,12 @@ namespace Octide.ItemModel
 
             get
             {
-                return _property.IgnoreText;
+                return Property.IgnoreText;
             }
             set
             {
-                if (value == _property.IgnoreText) return;
-                _property.IgnoreText = value;
+                if (value == Property.IgnoreText) return;
+                Property.IgnoreText = value;
                 RaisePropertyChanged("IgnoreText");
             }
         }

@@ -12,35 +12,28 @@
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:model="clr-namespace:Octide.ItemModel"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding MarkerTabViewModel, Source={StaticResource Locator}}">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel>
-            <Button DockPanel.Dock="Bottom" Content="New Marker" Margin="1" Command="{Binding AddCommand}" />
-            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-                </ListBox.InputBindings>
-            </ListBox>
-        </DockPanel>
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding Items.SelectedItem}"
-                                     Header="Marker Editor"
-                                     Description="Markers represent game pieces such as counters or tokens which can be placed on cards during a game.&#x0a;In OCTGN, markers will appear over a card object with their icon and a quantity value, which can be manipulated using drag-drop operations or Python scripts."
-                                     >
-            <controls:ItemPropertiesView.Resources>
-                <DataTemplate DataType="{x:Type model:MarkerItemModel}" >
-                    <views:MarkerItemView />
-                </DataTemplate>
-            </controls:ItemPropertiesView.Resources>
-        </controls:ItemPropertiesView>
-    </Grid>
+    <controls:OctideItemPropertyViewer ItemsSource="{Binding Items}" Title="Markers Editor">
+        <controls:OctideItemPropertyViewer.Resources>
+            <DataTemplate DataType="{x:Type model:MarkerItemModel}">
+                <views:MarkerItemView />
+            </DataTemplate>
+        </controls:OctideItemPropertyViewer.Resources>
+        <controls:OctideItemPropertyViewer.Description>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource OctideDescriptionStyle}" Text="Markers represent game pieces such as counters or tokens which can be placed on cards during a game.&#x0a;In OCTGN, markers will appear over a card object with their icon and a quantity value, which can be manipulated using drag-drop operations or Python scripts." />
+                <controls:PropertyFieldControl Header="Marker Size"  >
+                    <DockPanel>
+                        <TextBox Text="{Binding MarkerSize, Mode=TwoWay}" Width="60"/>
+                        <Slider Value="{Binding MarkerSize, Mode=TwoWay}" HorizontalAlignment="Left" Width="400" TickFrequency="10" Minimum="0" Maximum="200"/>
+                    </DockPanel>
+                </controls:PropertyFieldControl>
+            </StackPanel>
+        </controls:OctideItemPropertyViewer.Description>
+        <controls:OctideItemPropertyViewer.ListBoxButtons>
+            <Button Content="New Marker" Command="{Binding AddCommand}" />
+        </controls:OctideItemPropertyViewer.ListBoxButtons>
+    </controls:OctideItemPropertyViewer>
 </UserControl>

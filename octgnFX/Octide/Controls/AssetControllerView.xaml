@@ -12,7 +12,26 @@
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d"
              d:DesignHeight="50" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="XButton" TargetType="{x:Type Button}" >
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="ToolTip" Value="Remove" />
+            <Setter Property="Margin" Value="5,0,5,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Background="Transparent">
+                            <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>

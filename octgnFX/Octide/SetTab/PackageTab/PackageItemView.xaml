@@ -9,11 +9,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:gong="urn:gong-wpf-dragdrop"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
              xmlns:local="clr-namespace:Octide"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700">
     <UserControl.Resources>
 
@@ -164,7 +163,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TabControl>
+        <TabControl Margin="10,0,0,0" Style="{StaticResource MahApps.Styles.TabControl.AnimatedSingleRow}" 
+                metro:TabControlHelper.Underlined="SelectedTabItem" metro:HeaderedControlHelper.HeaderFontSize="16">
             <TabItem Header="Pick Selectors">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -177,7 +177,8 @@
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True"
                               gong:DragDrop.DropHandler="{Binding PackageDropHandler}"
                               gong:DragDrop.DragDropCopyKeyState="ControlKey" 
-                              gong:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}">
+                              gong:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}"
+                              BorderThickness="1" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}">
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="True" />
@@ -189,8 +190,8 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="Add Options" Margin="1" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
-                        <Button Grid.Column="1" Content="Add Pick"  Margin="1" Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushGreen}"/>
+                        <Button Content="Add Options" Command="{Binding AddOptionsCommand}" Background="{StaticResource BlendBrushPurple}" />
+                        <Button Grid.Column="1" Content="Add Pick"  Command="{Binding AddPickCommand}" Background="{StaticResource BlendBrushGreen}"/>
                     </Grid>
                 </Grid>
             </TabItem>
@@ -206,14 +207,15 @@
                               gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
                               gong:DragDrop.DropHandler="{Binding IncludeDropHandler}"
                               gong:DragDrop.DragDropCopyKeyState="ControlKey"
-                              gong:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}" >
+                              gong:DragDrop.DragAdornerTemplate="{StaticResource DragAdorner}" 
+                              BorderThickness="1" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}">
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="True" />
                             </Style>
                         </TreeView.ItemContainerStyle>
                     </TreeView>
-                    <Button Grid.Row="1" Content="Add Include" Margin="1" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
+                    <Button Grid.Row="1" Content="Add Include" Command="{Binding AddIncludeCommand}" Background="{DynamicResource BlendBrushRed}" />
 
                 </Grid>
             </TabItem>

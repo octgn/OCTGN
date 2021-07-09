@@ -148,7 +148,7 @@ namespace Octide.ViewModel
 						if (cell["Data"] != null)
 						{
 							var HeaderItem = new HeaderData();
-							HeaderItem.index = count;
+							HeaderItem.Index = count;
 							HeaderItem.PropertyName = cell["Data"].FirstChild.Value;
 							Headers.Add(HeaderItem);
 						}
@@ -166,7 +166,7 @@ namespace Octide.ViewModel
 						}
 						if (cell["Data"] != null)
 						{
-							HeaderData MatchedHeader = Headers.FirstOrDefault(x => x.index == count);
+							HeaderData MatchedHeader = Headers.FirstOrDefault(x => x.Index == count);
 							if (MatchedHeader != null)
 							{
 								CardItem.Properties.Add(MatchedHeader, cell["Data"].FirstChild.Value);
@@ -195,7 +195,7 @@ namespace Octide.ViewModel
 				if (setCard == null) //no card matches
 				{
 					setCard = new CardModel(Parent.CardItems);
-					setCard._card.Id = guid;
+					setCard.Card.Id = guid;
 					Parent.CardItems.Add(setCard);
 				}
 				AlternateModel cardAlternate = (string.IsNullOrEmpty(alternate)) ? (AlternateModel)setCard.Items.DefaultItem : (AlternateModel)setCard.Items.FirstOrDefault(x => ((AlternateModel)x).Type == alternate);
@@ -226,7 +226,7 @@ namespace Octide.ViewModel
 						{
 							continue;
 						}						
-						var altProperty = cardAlternate._altDef.Properties.FirstOrDefault(x => x.Key == mapping.Property._property);
+						var altProperty = cardAlternate._altDef.Properties.FirstOrDefault(x => x.Key == mapping.Property.Property);
 				//		if (altProperty == null)
 				//		{
 				//			altProperty = new CardPropertyModel(cardAlternate, mapping.Property);
@@ -263,7 +263,7 @@ namespace Octide.ViewModel
 
 	public class HeaderData
 	{
-		public int index { get; set; }
+		public int Index { get; set; }
 		public string PropertyName { get; set; }
 
 	}

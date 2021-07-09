@@ -247,18 +247,18 @@ namespace Octide.ItemModel
             }
         }
 
-        public HorizontalAlignment HorizontalAlignment
+        public TextAlignment TextAlignment
         {
             get
             {
                 switch (_def.wordwrap.align)
                 {
                     case "center":
-                        return HorizontalAlignment.Center;
+                        return TextAlignment.Center;
                     case "far":
-                        return HorizontalAlignment.Right;
+                        return TextAlignment.Right;
                     default:
-                        return HorizontalAlignment.Left;
+                        return TextAlignment.Left;
                 }
             }
             set
@@ -266,10 +266,10 @@ namespace Octide.ItemModel
                 string ret;
                 switch (value)
                 {
-                    case HorizontalAlignment.Center:
+                    case TextAlignment.Center:
                         ret = "center";
                         break;
-                    case HorizontalAlignment.Right:
+                    case TextAlignment.Right:
                         ret = "far";
                         break;
                     default:
@@ -278,7 +278,7 @@ namespace Octide.ItemModel
                 }
                 if (_def.wordwrap.align == ret) return;
                 _def.wordwrap.align = ret;
-                RaisePropertyChanged("HorizontalAlignment");
+                RaisePropertyChanged("TextAlignment");
             }
         }
 
@@ -351,16 +351,6 @@ namespace Octide.ItemModel
         }
         #endregion
 
-        public TextAlignment TextAlignment
-        {
-            get
-            {
-                if (_def.wordwrap.align == "center") return TextAlignment.Center;
-                if (_def.wordwrap.align == "far") return TextAlignment.Right;
-                return TextAlignment.Left;
-            }
-        }
-
         public TextWrapping WordWrap
         {
             get
@@ -407,7 +397,7 @@ namespace Octide.ItemModel
                 }
                 else
                 {
-                    Card._altDef.Properties.TryGetValue(LinkedProperty._property, out var ret);
+                    Card._altDef.Properties.TryGetValue(LinkedProperty.Property, out var ret);
                     return ret?.ToString();
                 }
             }
@@ -419,7 +409,7 @@ namespace Octide.ItemModel
                 }
                 else
                 {
-                    Card._altDef.Properties[LinkedProperty._property] = value;
+                    Card._altDef.Properties[LinkedProperty.Property] = value;
                 }
                 Card.UpdateProxyTemplate();
             }

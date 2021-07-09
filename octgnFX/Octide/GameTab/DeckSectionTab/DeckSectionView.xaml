@@ -8,92 +8,121 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:local="clr-namespace:Octide"
-             xmlns:views="clr-namespace:Octide.Views"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              DataContext="{Binding DeckSectionTabViewModel, Source={StaticResource Locator}}">
-    <UserControl.Resources>
-        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                        <Border Background="{TemplateBinding Background}">
-                            <Grid Margin="4">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="Name" TextAlignment="Right"/>
-                                <TextBox Grid.Column="1" Text="{Binding Name}" />
-                                <TextBlock Grid.Row="1" Text="Load into:" />
-                                <ComboBox FontSize="10" Grid.Row="1" Grid.Column="1"
-                                          ItemsSource="{Binding Groups}" DisplayMemberPath="Name" 
-                                          SelectedItem="{Binding SelectedGroup}" />
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="25" />
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Button Content="Add Deck Section" Margin="5" Command="{Binding AddCommand}" >
-            <Button.Style>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasPiles}" Value="False">
-                            <Setter Property="IsEnabled" Value="False" />
-                            <Setter Property="ToolTip" Value="Add a Shared Group to enable this button." />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
-        <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" ItemContainerStyle="{StaticResource {x:Type ListBoxItem} }"
+
+    <DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" Text="Deck Section Editor" Style="{StaticResource OctideTitleStyle}" />
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}" Text="Deck Sections are used to organize cards in a deck into categories in the Deck Editor.  Each deck section will load into a specific pile when the player loads that deck into the play table.&#xd;If a game defines shared piles, then the shared deck sections column will become active. Shared Deck Sections will load into shared piles." />
+        <Border BorderThickness="1" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}">
+            
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Content="Add Deck Section" Margin="5" Command="{Binding AddCommand}" >
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasPiles}" Value="False">
+                                <Setter Property="IsEnabled" Value="False" />
+                                <Setter Property="ToolTip" Value="Add a Shared Group to enable this button." />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
                      ItemsSource="{Binding Items}" gong:DragDrop.DropHandler="{Binding DeckSectionDropHandler}" SelectedValue="{Binding Items.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
+                                    <Border Background="{TemplateBinding Background}">
+                                        <Grid Margin="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Name: " TextAlignment="Right" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" Text="{Binding Name}" />
+                                            <TextBlock Grid.Row="1" Text="Load into: " VerticalAlignment="Center" TextAlignment="Right" />
+                                            <ComboBox FontSize="10" Grid.Row="1" Grid.Column="1" Style="{StaticResource OctideComboBoxStyle}"
+                                         ItemsSource="{Binding Groups}" SelectedValue="{Binding SelectedGroup}" >
+                                            </ComboBox>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
 
-        <Button Grid.Column="2" Content="Add Shared Deck Section" Margin="5" Command="{Binding AddGlobalCommand}" >
-            <Button.Style>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasGlobalPiles}" Value="False">
-                            <Setter Property="IsEnabled" Value="False" />
-                            <Setter Property="ToolTip" Value="Add a Shared Group to enable this button." />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
+            <Button Grid.Column="2" Content="Add Shared Deck Section" Margin="5" Command="{Binding AddGlobalCommand}" >
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasGlobalPiles}" Value="False">
+                                <Setter Property="IsEnabled" Value="False" />
+                                <Setter Property="ToolTip" Value="Add a Shared Group to enable this button." />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
-        <ListBox Grid.Column="2" Grid.Row="1"  Style="{StaticResource OctideListBoxStyle}" ItemContainerStyle="{StaticResource {x:Type ListBoxItem} }"
+            <ListBox Grid.Column="2" Grid.Row="1"  Style="{StaticResource OctideListBoxStyle}"
                      ItemsSource="{Binding GlobalItems}" SelectedValue="{Binding GlobalItems.SelectedItem}"  gong:DragDrop.DropHandler="{Binding DeckSectionDropHandler}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding GlobalItems.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-    </Grid>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
+                                    <Border Background="{TemplateBinding Background}">
+                                        <Grid Margin="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Name: " TextAlignment="Right" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" Text="{Binding Name}" />
+                                            <TextBlock Grid.Row="1" Text="Load into: " VerticalAlignment="Center" TextAlignment="Right" />
+                                            <ComboBox FontSize="10" Grid.Row="1" Grid.Column="1" Style="{StaticResource OctideComboBoxStyle}"
+                                         ItemsSource="{Binding SharedGroups}" SelectedValue="{Binding SelectedGroup}" >
+                                            </ComboBox>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding GlobalItems.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+            </Grid>
+        </Border>
+    </DockPanel>
 </UserControl>

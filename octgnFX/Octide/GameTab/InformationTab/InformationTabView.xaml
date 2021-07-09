@@ -8,57 +8,63 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              DataContext="{Binding GameInformationTabViewModel, Source={StaticResource Locator}}">
 
-    <controls:ItemPropertiesView Header="Game Information Editor" Description="Defines important information regarding the game.">
-        <ItemsControl>
-            <controls:PropertyFieldControl Header="Game Name" >
-                <TextBox Text="{Binding Name, Mode=TwoWay}"/>
-            </controls:PropertyFieldControl>
 
-            <controls:PropertyFieldControl Header="Description" >
-                <TextBox Text="{Binding Description, Mode=TwoWay}" VerticalContentAlignment="Top" MinHeight="50" MaxHeight="150" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
-            </controls:PropertyFieldControl>
-            
-            <controls:PropertyFieldControl Header="Package Version Number" >
-                <TextBox Text="{Binding Version, Mode=TwoWay}"/>
-            </controls:PropertyFieldControl>
+    <DockPanel LastChildFill="True">
+        <TextBlock Text="Game Information Editor" DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" />
+        <TextBlock Text="Defines important information regarding the game" DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}" />
 
-            <controls:PropertyFieldControl Header="Game Information Website URL" >
-                <TextBox Text="{Binding GameUrl, Mode=TwoWay}"/>
-            </controls:PropertyFieldControl>
+        <Border BorderThickness="1" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl>
+                    <controls:PropertyFieldControl Header="Game Name">
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="Name" >
+                                    <Binding.ValidationRules>
+                                        <local:StringRestrictionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </controls:PropertyFieldControl>
 
-            <controls:PropertyFieldControl Header="Game Icon Image Website URL" >
-                <TextBox Text="{Binding IconUrl, Mode=TwoWay}"/>
-            </controls:PropertyFieldControl>
+                    <controls:PropertyFieldControl Header="Description" Description="A description for your game.  Required for NuGet packages.">
+                        <TextBox Text="{Binding Description, Mode=TwoWay}" VerticalContentAlignment="Top" MinHeight="50" MaxHeight="150" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+                    </controls:PropertyFieldControl>
 
-            <controls:PropertyFieldControl Header="Marker Size" >
-                <DockPanel>
-                    <TextBox Text="{Binding MarkerSize, Mode=TwoWay}" Width="60"/>
-                    <Slider Value="{Binding MarkerSize, Mode=TwoWay}" Minimum="0" Maximum="200"/>
-                </DockPanel>
-            </controls:PropertyFieldControl>
+                    <controls:PropertyFieldControl Header="Package Version Number" >
+                        <TextBox Text="{Binding Version, Mode=TwoWay}"/>
+                    </controls:PropertyFieldControl>
 
-            <controls:PropertyFieldControl Header="Authors" >
-                <TextBox Text="{Binding Authors, Mode=TwoWay}"/>
-            </controls:PropertyFieldControl>
+                    <controls:PropertyFieldControl Header="Game Information Website URL" >
+                        <TextBox Text="{Binding GameUrl, Mode=TwoWay}"/>
+                    </controls:PropertyFieldControl>
 
-            <controls:PropertyFieldControl Header="Tags" >
-                <TextBox Text="{Binding Tags, Mode=TwoWay}"/>
-            </controls:PropertyFieldControl>
+                    <controls:PropertyFieldControl Header="Game Icon Image Website URL" >
+                        <TextBox Text="{Binding IconUrl, Mode=TwoWay}"/>
+                    </controls:PropertyFieldControl>
 
-            <controls:PropertyFieldControl Header="Enable Two-Sided Table" >
-                <metro:ToggleSwitch IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" />
-            </controls:PropertyFieldControl>
+                    <controls:PropertyFieldControl Header="Authors" >
+                        <TextBox Text="{Binding Authors, Mode=TwoWay}"/>
+                    </controls:PropertyFieldControl>
 
-        </ItemsControl>
-    </controls:ItemPropertiesView>
+                    <controls:PropertyFieldControl Header="Tags" >
+                        <TextBox Text="{Binding Tags, Mode=TwoWay}"/>
+                    </controls:PropertyFieldControl>
+
+                    <controls:PropertyFieldControl Header="Enable Two-Sided Table" >
+                        <metro:ToggleSwitch IsOn="{Binding UseTwoSidedTable, Mode=TwoWay}" />
+                    </controls:PropertyFieldControl>
+
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
 </UserControl>

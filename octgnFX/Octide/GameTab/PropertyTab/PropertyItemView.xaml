@@ -8,15 +8,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600" >
 
-    <ItemsControl >
+    <ItemsControl>
         <controls:PropertyFieldControl Header="Name" >
             <TextBox>
                 <TextBox.Resources>
@@ -54,11 +52,11 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Hide from Deck Editor" >
-            <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding Hidden, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Ignore in Searches" >
-            <metro:ToggleSwitch IsChecked="{Binding IgnoreText, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding IgnoreText, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
     </ItemsControl>
 </UserControl>

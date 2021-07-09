@@ -4,6 +4,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using MahApps.Metro.Controls;
 using Octgn.DataNew.Entities;
 using Octide.ViewModel;
 using System;
@@ -44,7 +45,7 @@ namespace Octide.ItemModel
                 IsBatchExecutable = a.Batch,
                 IsGroup = a.IsGroup,
                 Name = a.Name,
-                Shortcut = a.Shortcut,
+                Shortcut = a.Shortcut?.ToString(),
                 HeaderExecute = a._action.HeaderExecute,
                 ShowExecute = a._action.ShowExecute
             };
@@ -60,16 +61,17 @@ namespace Octide.ItemModel
         }
 
 
-        public string Shortcut
+        public HotKey Shortcut
         {
             get
             {
-                return ((GroupAction)_action).Shortcut;
+                return Utils.GetHotKey(((GroupAction)_action).Shortcut);
             }
             set
             {
-                if (value == ((GroupAction)_action).Shortcut) return;
-                ((GroupAction)_action).Shortcut = value;
+                var ret = value.ToString();
+                if (ret == ((GroupAction)_action).Shortcut) return;
+                ((GroupAction)_action).Shortcut = ret;
                 RaisePropertyChanged("Shortcut");
             }
         }

@@ -141,7 +141,7 @@ namespace Octide
         {
             get
             {
-                return IsDefault ? false : _canRemove;
+                return !IsDefault && _canRemove;
             }
             set
             {

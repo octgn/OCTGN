@@ -83,21 +83,6 @@ namespace Octide.ViewModel
             }
         }
 
-        public int MarkerSize
-        {
-            get
-            {
-                return ViewModelLocator.GameLoader.Game.MarkerSize;
-            }
-            set
-            {
-                if (value == ViewModelLocator.GameLoader.Game.MarkerSize) return;
-                ViewModelLocator.GameLoader.Game.MarkerSize = value;
-                RaisePropertyChanged("MarkerSize");
-                ViewModelLocator.GameLoader.GameChanged(this);
-            }
-        }
-
         public string Version
         {
             get

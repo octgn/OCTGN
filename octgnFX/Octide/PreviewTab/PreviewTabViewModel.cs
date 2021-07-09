@@ -79,21 +79,21 @@ namespace Octide.ViewModel
             }
         }
 
-        public Game _game => ViewModelLocator.GameLoader.Game;
+        public Game Game => ViewModelLocator.GameLoader.Game;
 
         public PreviewTabViewModel()
         {
             #region table
-            if (_game.Table == null)
+            if (Game.Table == null)
             {
-                _game.Table = new Group()
+                Game.Table = new Group()
                 {
                     Name = "Table",
                     Width = 640,
                     Height = 480
                 };
             }
-            Table = new TableItemModel(_game.Table, new IdeCollection<IdeBaseItem>(this))
+            Table = new TableItemModel(Game.Table, new IdeCollection<IdeBaseItem>(this))
             {
                 CanRemove = false,
                 CanCopy = false,
@@ -101,18 +101,18 @@ namespace Octide.ViewModel
             };
             #endregion
             #region piles
-            if (_game.Player == null)
+            if (Game.Player == null)
             {
-                _game.Player = new Player();
+                Game.Player = new Player();
             }
             Piles = new IdeCollection<IdeBaseItem>(this, typeof(PileItemModel));
-            foreach (var pile in _game.Player.Groups)
+            foreach (var pile in Game.Player.Groups)
             {
                 Piles.Add(new PileItemModel(pile, Piles));
             }
             Piles.CollectionChanged += (sender, args) =>
             {
-                _game.Player.Groups = Piles.Select(x => ((PileItemModel)x)._group);
+                Game.Player.Groups = Piles.Select(x => ((PileItemModel)x)._group);
                 RaisePropertyChanged("CollapsedPiles");
                 RaisePropertyChanged("VisiblePiles");
                 Messenger.Default.Send(new GroupChangedMessage(args));
@@ -121,29 +121,29 @@ namespace Octide.ViewModel
             #endregion
             #region counters
             Counters = new IdeCollection<IdeBaseItem>(this, typeof(CounterItemModel));
-            foreach (var counter in _game.Player.Counters)
+            foreach (var counter in Game.Player.Counters)
             {
                 Counters.Add(new CounterItemModel(counter, Counters));
             }
             Counters.CollectionChanged += (sender, args) =>
             {
-                _game.Player.Counters = Counters.Select(x => ((CounterItemModel)x)._counter);
+                Game.Player.Counters = Counters.Select(x => ((CounterItemModel)x)._counter);
             };
             AddCounterCommand = new RelayCommand(AddCounter);
             #endregion
             #region globalpiles
-            if (_game.GlobalPlayer == null)
+            if (Game.GlobalPlayer == null)
             {
-                _game.GlobalPlayer = new GlobalPlayer();
+                Game.GlobalPlayer = new GlobalPlayer();
             }
             GlobalPiles = new IdeCollection<IdeBaseItem>(this, typeof(PileItemModel));
-            foreach (var pile in _game.GlobalPlayer.Groups)
+            foreach (var pile in Game.GlobalPlayer.Groups)
             {
                 GlobalPiles.Add(new PileItemModel(pile, GlobalPiles));
             }
             GlobalPiles.CollectionChanged += (sender, args) =>
             {
-                _game.GlobalPlayer.Groups = GlobalPiles.Select(x => ((PileItemModel)x)._group);
+                Game.GlobalPlayer.Groups = GlobalPiles.Select(x => ((PileItemModel)x)._group);
                 RaisePropertyChanged("CollapsedGlobalPiles");
                 RaisePropertyChanged("VisibleGlobalPiles");
                 Messenger.Default.Send(new GroupChangedMessage(args));
@@ -152,19 +152,19 @@ namespace Octide.ViewModel
             #endregion
             #region globalcounters
             GlobalCounters = new IdeCollection<IdeBaseItem>(this, typeof(CounterItemModel));
-            foreach (var counter in _game.GlobalPlayer.Counters)
+            foreach (var counter in Game.GlobalPlayer.Counters)
             {
                 GlobalCounters.Add(new CounterItemModel(counter, GlobalCounters));
             }
             GlobalCounters.CollectionChanged += (sender, args) =>
             {
-                _game.GlobalPlayer.Counters = GlobalCounters.Select(x => ((CounterItemModel)x)._counter);
+                Game.GlobalPlayer.Counters = GlobalCounters.Select(x => ((CounterItemModel)x)._counter);
             };
             AddGlobalCounterCommand = new RelayCommand(AddGlobalCounter);
             #endregion
             #region sizes
             CardSizes = new IdeCollection<IdeBaseItem>(this, typeof(SizeItemModel));
-            foreach (var sizeDef in _game.CardSizes)
+            foreach (var sizeDef in Game.CardSizes)
             {
                 var size = new SizeItemModel(sizeDef.Value, CardSizes);
                 CardSizes.Add(size);
@@ -186,19 +186,19 @@ namespace Octide.ViewModel
             #endregion
             #region phases
             Phases = new IdeCollection<IdeBaseItem>(this, typeof(PhaseItemModel));
-            foreach (var phase in _game.Phases)
+            foreach (var phase in Game.Phases)
             {
                 Phases.Add(new PhaseItemModel(phase, Phases));
             }
             Phases.CollectionChanged += (sender, args) =>
             {
-                _game.Phases = Phases.Select(x => ((PhaseItemModel)x)._phase).ToList();
+                Game.Phases = Phases.Select(x => ((PhaseItemModel)x)._phase).ToList();
             };
             AddPhaseCommand = new RelayCommand(AddPhase);
             #endregion
             #region boards
             Boards = new IdeCollection<IdeBaseItem>(this, typeof(BoardItemModel));
-            foreach (var boardDef in _game.GameBoards)
+            foreach (var boardDef in Game.GameBoards)
             {
                 var board = new BoardItemModel(boardDef.Value, Boards);
                 Boards.Add(board);
@@ -334,9 +334,9 @@ namespace Octide.ViewModel
             {
                 if (value == _selection) return;
                 _selection = value;
-                if (value is BoardItemModel)
+                if (value is BoardItemModel model)
                 {
-                    ActiveBoard = (BoardItemModel)value;
+                    ActiveBoard = model;
                 }
                 RaisePropertyChanged("Selection");
                 RaisePropertyChanged("ClickHand");

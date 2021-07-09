@@ -37,7 +37,8 @@ namespace Octide.SetTab.ItemModel
                 GameId = ViewModelLocator.GameLoader.Game.Id,
                 Hidden = false,
                 Cards = new List<Card>(),
-                Packs = new List<Pack>()
+                Packs = new List<Pack>(),
+                ReleaseDate = DateTime.Today
             };
             Name = "New Set";
 
@@ -210,7 +211,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildCardDef(NotifyCollectionChangedEventArgs args)
         {
-            _set.Cards = CardItems.Select(x => ((CardModel)x)._card);
+            _set.Cards = CardItems.Select(x => ((CardModel)x).Card);
         }
 
         public void BuildPackageDef(NotifyCollectionChangedEventArgs args)

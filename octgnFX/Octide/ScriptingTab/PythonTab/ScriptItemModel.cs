@@ -12,12 +12,12 @@ using System.Linq;
 
 namespace Octide.ItemModel
 {
-    public class ScriptItemModel : IdeBaseItem
+    public class PythonItemModel : IdeBaseItem
     {
         public GameScript _script;
         public AssetController Asset { get; set; }
 
-        public ScriptItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
+        public PythonItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             _script = new GameScript()
             {
@@ -29,7 +29,7 @@ namespace Octide.ItemModel
 
         }
 
-        public ScriptItemModel(GameScript gameScript, IdeCollection<IdeBaseItem> source) : base(source) // load item
+        public PythonItemModel(GameScript gameScript, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _script = gameScript;
             Asset = new AssetController(AssetType.PythonScript);
@@ -38,7 +38,7 @@ namespace Octide.ItemModel
             ScriptDocument = new TextDocument(gameScript.Script);
         }
 
-        public ScriptItemModel(ScriptItemModel gameScript, IdeCollection<IdeBaseItem> source) : base(source) // copy item
+        public PythonItemModel(PythonItemModel gameScript, IdeCollection<IdeBaseItem> source) : base(source) // copy item
         {
             _script = new GameScript()
             {
@@ -67,11 +67,11 @@ namespace Octide.ItemModel
 
         public override object Clone()
         {
-            return new ScriptItemModel(this, Source);
+            return new PythonItemModel(this, Source);
         }
         public override object Create()
         {
-            return new ScriptItemModel(Source);
+            return new PythonItemModel(Source);
         }
 
 

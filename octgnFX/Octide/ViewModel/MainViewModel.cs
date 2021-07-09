@@ -33,6 +33,14 @@ namespace Octide.ViewModel
 
 		public MainViewModel()
 		{
+			if (IsInDesignMode)
+			{
+			    // Code runs in Blend --> create design time data.
+			}
+			else
+			{
+			    // Code runs "for real"
+			}
 			ExportCommand = new RelayCommand(ExportPackage);
 			SaveCommand = new RelayCommand(SaveGame);
 			LoadCommand = new RelayCommand(LoadLoaderWindow);

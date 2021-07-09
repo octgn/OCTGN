@@ -3,7 +3,9 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using Octgn.ProxyGenerator.Definitions;
+using Octide.Messages;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -24,6 +26,7 @@ namespace Octide.ProxyTab.ItemModel
             Items.CollectionChanged += (a, b) =>
             {
                 OnContainerChanged?.Invoke(this, b);
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
         }
 
@@ -56,15 +59,17 @@ namespace Octide.ProxyTab.ItemModel
                         else
                         {
                             container = Items.Last() as OverlayLinkContainer;
-                            container.Items.CollectionChanged -= (a, b) =>
+                            container.ContainerItems.CollectionChanged -= (a, b) =>
                             {
                                 OnContainerChanged?.Invoke(this, b);
+                                Messenger.Default.Send(new ProxyTemplateChangedMessage());
                             };
                         }
-                        container.Items.Add(new OverlayLinkModel(item, container.Items));
-                        container.Items.CollectionChanged += (a, b) =>
+                        container.ContainerItems.Add(new OverlayLinkModel(item, container.ContainerItems));
+                        container.ContainerItems.CollectionChanged += (a, b) =>
                         {
                             OnContainerChanged?.Invoke(this, b);
+                            Messenger.Default.Send(new ProxyTemplateChangedMessage());
                         };
                     }
                 }
@@ -76,6 +81,7 @@ namespace Octide.ProxyTab.ItemModel
             Items.CollectionChanged += (a, b) =>
             {
                 OnContainerChanged?.Invoke(this, b);
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
         }
 
@@ -85,6 +91,7 @@ namespace Octide.ProxyTab.ItemModel
             Items.CollectionChanged += (a, b) =>
             {
                 OnContainerChanged?.Invoke(this, b);
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
             foreach (var block in bc.Items)
             {
@@ -119,7 +126,7 @@ namespace Octide.ProxyTab.ItemModel
                 if (block is OverlayLinkContainer)
                 {
                     var container = block as OverlayLinkContainer;
-                    foreach (OverlayLinkModel item in container.Items)
+                    foreach (OverlayLinkModel item in container.ContainerItems)
                     {
                         ret.Add(item._wrapper);
                     }
@@ -142,15 +149,16 @@ namespace Octide.ProxyTab.ItemModel
             // if the previous item is the OverlayLinkContainer
             else if (index > 0 && Items[index - 1] is OverlayLinkContainer previousContainer)
             {
-                previousContainer.AddLink(previousContainer.Items.Count, link);
+                previousContainer.AddLink(previousContainer.ContainerItems.Count, link);
             }
             // if there isn't any adjacent OverlayLinkContainers
             else
             {
                 var newContainer = new OverlayLinkContainer(Items);
-                newContainer.Items.CollectionChanged += (a, b) =>
+                newContainer.ContainerItems.CollectionChanged += (a, b) =>
                 {
                     OnContainerChanged?.Invoke(this, b);
+                    Messenger.Default.Send(new ProxyTemplateChangedMessage());
                 };
                 Items.Insert(index, newContainer);
                 newContainer.AddLink(0, link);

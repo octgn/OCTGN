@@ -31,15 +31,17 @@ namespace Octide.ProxyTab.ItemModel
             };
             Property = (PropertyItemModel)CustomProperties.First();
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
 
         }
 
         public MatchModel(Property property, IdeCollection<IdeBaseItem> source) : base(source)  //load match
         {
             _match = property;
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property.Name == _match.Name);
+            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _match.Name);
 
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
 
         }
 
@@ -52,6 +54,7 @@ namespace Octide.ProxyTab.ItemModel
             };
             Property = property.Property;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
 
         }
 
@@ -80,7 +83,6 @@ namespace Octide.ProxyTab.ItemModel
                 _property = value;
                 _match.Name = value.Name;
                 RaisePropertyChanged("Property");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
 
@@ -95,7 +97,6 @@ namespace Octide.ProxyTab.ItemModel
                 if (_match.Format == value) return;
                 _match.Format = value;
                 RaisePropertyChanged("Format");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
         public string Value
@@ -109,7 +110,6 @@ namespace Octide.ProxyTab.ItemModel
                 if (_match.Value == value) return;
                 _match.Value = value;
                 RaisePropertyChanged("Value");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)

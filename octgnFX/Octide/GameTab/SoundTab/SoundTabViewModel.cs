@@ -34,7 +34,7 @@ namespace Octide.ViewModel
             }
             Items.CollectionChanged += (a, b) =>
             {
-                ViewModelLocator.GameLoader.Game.Sounds = Items.ToDictionary(x => (x as SoundItemModel).Name, y => (y as SoundItemModel)._sound);
+                ViewModelLocator.GameLoader.Game.Sounds = Items.ToDictionary(x => (x as SoundItemModel).Name, y => (y as SoundItemModel).Sound);
             };
         }
         

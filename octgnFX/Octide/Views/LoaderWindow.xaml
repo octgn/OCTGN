@@ -3,18 +3,14 @@
 * License, v. 2.0. If a copy of the MPL was not distributed with this
 * file, You can obtain one at http://mozilla.org/MPL/2.0/.s
 -->
-<metro:Window x:Class="Octide.Views.LoaderWindow"
+<metro:MetroWindow x:Class="Octide.Views.LoaderWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:metro="http://schemas.codeplex.com/elysium"
-        xmlns:params="http://schemas.codeplex.com/elysium/params" 
+		xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         Title="{Binding Title}" Height="400" Width="500"
         DataContext="{Binding LoaderViewModel, Source={StaticResource WindowLocator}}"
-        params:Design.Theme="Dark"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource BackgroundBrush}"
         ResizeMode="NoResize"
-        metro:HasDropShadow="True"
         Icon="/Octide;component/Resources/icon.ico" >
     <Grid>
         <Grid.RowDefinitions>
@@ -23,7 +19,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Foreground="WhiteSmoke" Text="OCTGN Game Development Studio" FontFamily="EucrosiaUPC" FontSize="30" HorizontalAlignment="Center"/>
+        <TextBlock Text="OCTGN Game Development Studio"  FontSize="30" HorizontalAlignment="Center"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
@@ -35,7 +31,7 @@
                 <Button Content="Import a Game Package" Margin="10" Command="{Binding ImportGameCommand}"/>
             </StackPanel>
             <DockPanel Grid.Column="1">
-                <TextBlock DockPanel.Dock="Top" Margin="10" FontSize="16" Text="Load a Recent Game:" Foreground="DarkGray" />
+                <TextBlock DockPanel.Dock="Top" Margin="10" FontSize="16" Text="Load a Recent Game:" />
                 <!--
                 <ListBox DockPanel.Dock="Bottom" VerticalAlignment="Stretch" BorderBrush="WhiteSmoke" BorderThickness="2" Margin="10" ItemsSource="{Binding IdeDevDatabaseGames}" SelectedItem="{Binding SelectedFile}" >
                     <ListBox.ItemTemplate>
@@ -53,16 +49,8 @@
             </DockPanel>
         </Grid>
         <TextBlock TextWrapping="Wrap" Margin="10" Grid.Row="2" Text="WARNING: This app is still in development and may not be stable.  Make sure to create a backup of any game files before attempting to load it." />
-        <Border Grid.Row="3" Margin="5" BorderThickness="0" Background="Transparent">
-            <TextBlock HorizontalAlignment="Right" Foreground="DarkGray">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="Version: {0}">
-                        <MultiBinding.Bindings>
-                            <Binding Path="Version"/>
-                        </MultiBinding.Bindings>
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+        <Border Grid.Row="3" Margin="5" >
+            <TextBlock HorizontalAlignment="Right" Foreground="DarkGray" Text="{Binding Version, StringFormat=Version: {0}}" />
         </Border>
     </Grid>
-</metro:Window>
+</metro:MetroWindow>

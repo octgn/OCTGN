@@ -19,12 +19,9 @@ namespace Octide
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            FrameworkElement element = container as FrameworkElement;
-
-            if (element != null && item != null && item is PileItemModel pile)
+            if (container is FrameworkElement element && item != null && item is PileItemModel pile)
             {
-                PropertyChangedEventHandler lambda = null;
-                lambda = (o, args) =>
+                void lambda(object o, PropertyChangedEventArgs args)
                 {
                     if (args.PropertyName == "ViewState")
                     {
@@ -33,7 +30,8 @@ namespace Octide
                         cp.ContentTemplateSelector = null;
                         cp.ContentTemplateSelector = this;
                     }
-                };
+                }
+
                 pile.PropertyChanged += lambda;
 
                 switch (pile.ViewState)

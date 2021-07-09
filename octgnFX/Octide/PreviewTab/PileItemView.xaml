@@ -8,13 +8,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600" >
 
     <ItemsControl >
@@ -53,19 +50,19 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Notify Players When Pile is Re-arranged" >
-            <metro:ToggleSwitch IsChecked="{Binding Ordered, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding Ordered, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Add Pile to Move-To Submenus" >
-            <metro:ToggleSwitch IsChecked="{Binding MoveTo, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding MoveTo, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Move-to Keyboard Shortcut" Visibility="{Binding MoveTo, Converter={StaticResource BooleanToVisibilityConverter}}" >
-            <controls:KeyInputTextBox Text="{Binding Shortcut, Mode=TwoWay}" />
+            <metro:HotKeyBox HotKey="{Binding Shortcut, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Add Shuffle Action to Pile Submenu" >
-            <metro:ToggleSwitch IsChecked="{Binding Shuffle, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding Shuffle, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
         
         <controls:PropertyFieldControl Header="Shuffle Pile Shortcut" Visibility="{Binding Shuffle, Converter={StaticResource BooleanToVisibilityConverter}}">

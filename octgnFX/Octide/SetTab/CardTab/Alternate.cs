@@ -83,7 +83,7 @@ namespace Octide.SetTab.ItemModel
             switch (message.Action)
             {
                 case PropertyChangedMessageAction.Remove:
-                    _altDef.Properties.Remove(message.Prop._property);
+                    _altDef.Properties.Remove(message.Prop.Property);
                     break;
             }
             if (Source.SelectedItem == this)
@@ -204,7 +204,7 @@ namespace Octide.SetTab.ItemModel
         public CardModel Card => Source.Parent as CardModel;
         public SetModel Set => Card.Source.Parent as SetModel;
 
-        public string imageDirectory => Path.Combine(
+        public string ImageDirectory => Path.Combine(
                         Config.Instance.ImageDirectoryFull,
                         ViewModelLocator.GameLoader.Game.Id.ToString(),
                         "Sets",
@@ -212,9 +212,9 @@ namespace Octide.SetTab.ItemModel
                         "Cards"
                         );
 
-        public string proxyDirectory => Path.Combine(imageDirectory, "Proxies");
+        public string ProxyDirectory => Path.Combine(ImageDirectory, "Proxies");
 
-        public string imageFileName
+        public string ImageFileName
         {
             get
             {
@@ -230,11 +230,11 @@ namespace Octide.SetTab.ItemModel
 
         public string[] GetImages()
         {
-            if (!Directory.Exists(imageDirectory)) return null;
+            if (!Directory.Exists(ImageDirectory)) return null;
 
-            return Directory.GetFiles(imageDirectory, imageFileName + ".*")
+            return Directory.GetFiles(ImageDirectory, ImageFileName + ".*")
                             .Where(x => Path.GetFileNameWithoutExtension(x)
-                            .Equals(imageFileName, StringComparison.InvariantCultureIgnoreCase))
+                            .Equals(ImageFileName, StringComparison.InvariantCultureIgnoreCase))
                             .OrderBy(x => x.Length).ToArray();
         }
 
@@ -259,8 +259,8 @@ namespace Octide.SetTab.ItemModel
         public void SaveImage(string file)
         {
             DeleteImage();
-            Directory.CreateDirectory(imageDirectory);
-            var newPath = Path.Combine(imageDirectory, imageFileName + Path.GetExtension(file));
+            Directory.CreateDirectory(ImageDirectory);
+            var newPath = Path.Combine(ImageDirectory, ImageFileName + Path.GetExtension(file));
             File.Copy(file, newPath);
             RaisePropertyChanged("CardImage");
         }
