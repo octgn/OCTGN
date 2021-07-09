@@ -14,34 +14,34 @@ namespace Octide.ItemModel
     public abstract class IBaseAction : IdeBaseItem
     {
         public IGroupAction _action;
-        public List<PythonFunctionDefItemModel> PythonFunctions => ViewModelLocator.ScriptsTabViewModel.PythonFunctions;
+        public List<PythonFunctionDefItemModel> PythonFunctions => ViewModelLocator.PythonTabViewModel.PythonFunctions;
 
         public IBaseAction(IdeCollection<IdeBaseItem> source) : base(source)
         {
 
         }
 
-        public static IBaseAction CreateActionItem(IGroupAction action, IdeCollection<IdeBaseItem> source)
+        public static IBaseAction CreateActionItem(IGroupAction iGroupAction, IdeCollection<IdeBaseItem> source)
         {
             IBaseAction ret = null;
-            if (action is GroupAction)
-                ret = new ActionItemModel((GroupAction)action, source);
-            else if (action is GroupActionSubmenu)
-                ret = new ActionSubmenuItemModel((GroupActionSubmenu)action, source);
-            else if (action is GroupActionSeparator)
-                ret = new ActionSeparatorItemModel((GroupActionSeparator)action, source);
+            if (iGroupAction is GroupAction action)
+                ret = new ActionItemModel(action, source);
+            else if (iGroupAction is GroupActionSubmenu submenu)
+                ret = new ActionSubmenuItemModel(submenu, source);
+            else if (iGroupAction is GroupActionSeparator separator)
+                ret = new ActionSeparatorItemModel(separator, source);
             return ret;
         }
 
-        public static IBaseAction CopyActionItems(IdeBaseItem action, IdeCollection<IdeBaseItem> source)
+        public static IBaseAction CopyActionItems(IdeBaseItem baseAction, IdeCollection<IdeBaseItem> source)
         {
             IBaseAction ret = null;
-            if (action is ActionItemModel)
-                ret = new ActionItemModel((ActionItemModel)action, source);
-            else if (action is ActionSubmenuItemModel)
-                ret = new ActionSubmenuItemModel((ActionSubmenuItemModel)action, source);
-            else if (action is ActionSeparatorItemModel)
-                ret = new ActionSeparatorItemModel((ActionSeparatorItemModel)action, source);
+            if (baseAction is ActionItemModel action)
+                ret = new ActionItemModel(action, source);
+            else if (baseAction is ActionSubmenuItemModel submenu)
+                ret = new ActionSubmenuItemModel(submenu, source);
+            else if (baseAction is ActionSeparatorItemModel separator)
+                ret = new ActionSeparatorItemModel(separator, source);
             return ret;
         }
 

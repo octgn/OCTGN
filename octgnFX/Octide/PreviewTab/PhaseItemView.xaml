@@ -10,8 +10,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 

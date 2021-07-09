@@ -9,22 +9,29 @@
                     mc:Ignorable="d"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:gong="urn:gong-wpf-dragdrop"
+                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
                     xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
                     xmlns:local="clr-namespace:Octide"
                     xmlns:controls="clr-namespace:Octide.Controls"
-                    xmlns:model="clr-namespace:Octide.ItemModel"
-                    xmlns:metro="http://schemas.codeplex.com/elysium"
-                    xmlns:params="http://schemas.codeplex.com/elysium/params">
+                    xmlns:model="clr-namespace:Octide.ItemModel">
 
     <local:RadioButtonStateConverter x:Key="RadioConverter"/>
     <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
-    <Style x:Key="OctideInputTextBlock" TargetType="{x:Type TextBlock}">
-        <Setter Property="FontSize" Value="20"/>
-        <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
+    <Style x:Key="OctideTitleStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Accent}"/>
+        <Setter Property="FontSize" Value="24"/>
+    </Style>
+    <Style x:Key="OctideDescriptionStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Margin" Value="5 2 2 2 "/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
     </Style>
 
-    <Style x:Key="OctideInputTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style x:Key="OctideInputTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MahApps.Styles.TextBox}" >
         <Setter Property="Focusable" Value="True"/>
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="true">
@@ -33,38 +40,10 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="OctideInputPanel" TargetType="{x:Type ItemsControl}" >
-        <Style.Resources>
-            <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type RadioButton}}">
-                <Setter Property="Margin" Value="15,0,5,0" />
-            </Style>
-            <Style TargetType="{x:Type StackPanel}">
-                <Setter Property="Orientation" Value="Vertical" />
-            </Style>
-            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource OctideInputTextBlock}">
-                <Setter Property="Margin" Value="0,10,0,3"/>
-            </Style>
-            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}">
-                <Setter Property="Margin" Value="15,0,0,0"/>
-            </Style>
-            <Style TargetType="{x:Type controls:AssetControllerView}">
-                <Setter Property="Margin" Value="15,0,0,0" />
-            </Style>
-            <Style TargetType="{x:Type Image}">
-                <Setter Property="MaxHeight" Value="20"/>
-                <Setter Property="MaxWidth" Value="40"/>
-                <Setter Property="Stretch" Value="Uniform" />
-                <Setter Property="Margin" Value="10,15,0,0" />
-            </Style>
-            <Style TargetType="{x:Type Slider}">
-                <Setter Property="Margin" Value="15,0,0,0" />
-            </Style>
-        </Style.Resources>
-    </Style>
-
     <Style x:Key="OctideTreeViewItemStyle" TargetType="{x:Type Border}" >
         <Setter Property="Padding" Value="1" />
         <Setter Property="Margin" Value="1" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
         <Style.Resources>
             <Style TargetType="{x:Type TextBlock}" >
                 <Setter Property="Margin" Value="2,0,2,0" />
@@ -94,6 +73,7 @@
                 <Setter Property="Margin" Value="2,0,2,0" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="MinWidth" Value="80" />
+                <Setter Property="MinHeight" Value="18" />
                 <Setter Property="FontSize" Value="12" />
                 <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
                 <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
@@ -110,14 +90,16 @@
                 <Setter Property="Padding" Value="2"/>
                 <Setter Property="Margin" Value="2,0,2,0"/>
                 <Setter Property="MinWidth" Value="70"/>
+                <Setter Property="MinHeight" Value="5"/>
                 <Setter Property="DisplayMemberPath" Value="Name"/>
                 <Setter Property="FontSize" Value="11"/>
             </Style>
         </Style.Resources>
     </Style>
 
-    <Style x:Key="IdeTreeViewControl" TargetType="{x:Type TreeView}" BasedOn="{StaticResource {x:Type TreeView}}">
-        <Setter Property="Background" Value="Transparent" />
+    <Style x:Key="IdeTreeViewControl" TargetType="{x:Type TreeView}" BasedOn="{StaticResource MahApps.Styles.TreeView.Virtualized}">
+        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Border.NonActive}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
         <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
         <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
@@ -137,8 +119,7 @@
     </Style>
 
     <Style TargetType="{x:Type GridSplitter}">
-        <Setter Property="Background"
-                Value="{StaticResource BackgroundBrush}"/>
+        <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Transparent}"/>
         <Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -220,22 +201,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="XButton" TargetType="{x:Type Button}" >
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="ToolTip" Value="Remove" />
-        <Setter Property="Margin" Value="5,0,5,0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border Background="Transparent">
-                        <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <ContextMenu x:Key="ListBoxContextMenu">
         <MenuItem Header="Make Default" Command="{Binding MakeDefaultCommand}" >
@@ -284,97 +249,30 @@
         </MenuItem>
     </ContextMenu>
 
-    <Style x:Key="IdeTabItemStyle" TargetType="{x:Type TabItem}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TabItem}">
-                    <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,4,4" Margin="2,0,2,2">
-                        <ContentPresenter x:Name="ContentSite"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        ContentSource="Header"
-                                        Margin="10,2"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="White" />
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="Border" Property="Background" Value="DarkGray" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="IdeTabStyleListBoxItem" TargetType="{x:Type ListBoxItem}">
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-            </Trigger>
-            <Trigger Property="IsSelected" Value="true">
-                <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-            </Trigger>
-        </Style.Triggers>
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
-        <Setter Property="Focusable" Value="True" />
-        <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-
-        <Setter Property="Template" >
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                    <Border Background="{TemplateBinding Background}" CornerRadius="10,10,0,0" Padding="10,5,10,5" Margin="5,0,0,0" >
-                        <StackPanel Orientation="Vertical">
-                            <ContentPresenter Content="{Binding Name}" />
-                            <ContentPresenter Content="{Binding CardName}" />
-                        </StackPanel>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    
-    <Style x:Key="IdeTabStyleButton" TargetType="{x:Type ToggleButton}">
-        <Style.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource DarkBackground}" />
-                <Setter Property="Background" Value="{StaticResource LowlightBrush}" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource MiddleLightBrush}" />
-            </Trigger>
-        </Style.Triggers>
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Background" Value="{x:Null}" />
-        <Setter Property="Foreground" Value="{StaticResource LowlightBrush}" />
-        <Setter Property="Focusable" Value="True" />
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-
-        <Setter Property="Template" >
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}" >
-                    <Border Background="{TemplateBinding Background}" CornerRadius="10,10,0,0" Padding="10,5,10,5" Margin="5,0,0,0" >
-                        <StackPanel Orientation="Vertical">
-                            <ContentPresenter Content="{TemplateBinding Content}" />
-                            <ContentPresenter Content="{Binding Name}" />
-                        </StackPanel>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="IdeBaseItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
         <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="SkyBlue"/>
-            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsSelected" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Highlight}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsSelected" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Gray.MouseOver}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False" />
+                    <Condition Property="IsSelected" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
+            </MultiTrigger>
             <DataTrigger Binding="{Binding IsDefault}" Value="True" >
                 <Setter Property="BorderThickness" Value="3"/>
                 <Setter Property="BorderBrush" Value="Red" />
@@ -383,6 +281,68 @@
                 <Setter Property="Visibility" Value="Collapsed" />
             </DataTrigger>
         </Style.Triggers>
+    </Style>
+
+
+    <Style x:Key="OctideComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
+                        <TextBlock FontSize="12" Padding="6" Text="{Binding Name, Mode=TwoWay}" />
+                    </DockPanel>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type ComboBoxItem}" >
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ComboBoxItem}" >
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                    <DockPanel>
+                                        <Image DockPanel.Dock="Left" Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
+                                        <TextBlock FontSize="12" Padding="6" Text="{Binding Name, Mode=TwoWay}" />
+                                    </DockPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Highlight}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Gray.MouseOver}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
+                        </MultiTrigger>
+                        <DataTrigger Binding="{Binding IsDefault}" Value="True" >
+                            <Setter Property="BorderThickness" Value="3"/>
+                            <Setter Property="BorderBrush" Value="Red" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="False" >
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="OctideListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
@@ -418,22 +378,17 @@
     <!-- base style for vertical listboxes -->
     <Style x:Key="OctideListBoxBaseStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}" >
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
         <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
         <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
         <Setter Property="gong:DragDrop.UseDefaultEffectDataTemplate" Value="True" />
         <Setter Property="gong:DragDrop.UseDefaultDragAdorner" Value="True" />
+        <Setter Property="local:ScrollViewerHelper.ScrollSelectedIntoView" Value="True" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-        <Setter Property="local:ScrollViewerHelper.ScrollSelectedIntoView" Value="True" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource IdeBaseItemStyle}" />
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Margin="2" />
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- base style for horizontal listboxes -->
@@ -441,27 +396,18 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="local:ScrollViewerHelper.ShiftWheelScrollsHorizontally" Value="True" />
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Margin="2" Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
-        
     </Style>
 
     <!-- style for vertical listboxes -->
     <Style x:Key="OctideListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideListBoxBaseStyle}" >
-        <Setter Property="BorderBrush" Value="#FF555555" />
+        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Control.Border}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource OctideListBoxItemStyle}" />
     </Style>
-
-    <!-- style for horizontal listboxes -->
-    <Style x:Key="OctideHorizontalListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideHorizontalListBoxBaseStyle}">
-        <Setter Property="BorderBrush" Value="#FF555555" />
+    <!-- style for Horizontal listboxes -->
+    <Style x:Key="OctideHorizontalListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideHorizontalListBoxBaseStyle}" >
+        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Control.Border}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource OctideHorizontalListBoxItemStyle}" />
@@ -489,243 +435,17 @@
     </Style>
 
 
-    <Color x:Key="MainColor">#FF595959</Color>
-    <SolidColorBrush x:Key="NormalBrush" Color="{StaticResource MainColor}" />
-    <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF333333" />
-    <Color x:Key="WhiteColor">#FFFFFFFF</Color>
-    <SolidColorBrush x:Key="GlyphBrush" Color="#FFD1D1D1" />
-    
-    <SolidColorBrush x:Key="SolidBorderBrush" Color="#888" />
+
     <DropShadowBitmapEffect x:Key="PopupDropShadow" ShadowDepth="1.5" Softness="0.15" />
     <SolidColorBrush x:Key="TextBrush" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="MenuItemHover" Color="DimGray"/>
     <SolidColorBrush x:Key="LightBrush" Color="#FF333333" />
 
-    <Style d:IsControlPart="True"  TargetType="{x:Type RepeatButton}" BasedOn="{x:Null}">
-        <Setter Property="Background" Value="{DynamicResource NormalBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <ControlTemplate.Resources>
-                        <Storyboard x:Key="HoverOn">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.8"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="HoverOff">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="PressedOn">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.1"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="PressedOff">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </ControlTemplate.Resources>
-                    <Grid>
-                        <Border x:Name="Border" BorderThickness="{TemplateBinding BorderThickness}" Opacity="1" />
-                        <ContentPresenter HorizontalAlignment="Center" x:Name="ContentPresenter" VerticalAlignment="Center" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" Opacity="0.3" Height="Auto" />
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsKeyboardFocused" Value="true" />
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Trigger.ExitActions>
-                                <BeginStoryboard Storyboard="{StaticResource HoverOff}" x:Name="HoverOff_BeginStoryboard"/>
-                            </Trigger.ExitActions>
-                            <Trigger.EnterActions>
-                                <BeginStoryboard Storyboard="{StaticResource HoverOn}"/>
-                            </Trigger.EnterActions>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Trigger.ExitActions>
-                                <BeginStoryboard Storyboard="{StaticResource PressedOff}" x:Name="PressedOff_BeginStoryboard"/>
-                            </Trigger.ExitActions>
-                            <Trigger.EnterActions>
-                                <BeginStoryboard Storyboard="{StaticResource PressedOn}" x:Name="PressedOn_BeginStoryboard"/>
-                            </Trigger.EnterActions>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Opacity" TargetName="ContentPresenter" Value="0.1"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style x:Key="NuclearThumbStyle" d:IsControlPart="True" TargetType="{x:Type Thumb}" BasedOn="{x:Null}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Thumb}">
-                    <ControlTemplate.Resources>
-                        <Storyboard x:Key="HoverOn">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.8"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="HoverOff">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="PressedOn">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.1"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="PressedOff">
-                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </ControlTemplate.Resources>
-                    <Grid Margin="0,0,0,0" x:Name="Grid">
-                        <Rectangle HorizontalAlignment="Stretch" x:Name="HoverRectangle" VerticalAlignment="Stretch" Width="Auto" Height="Auto" RadiusX="3" RadiusY="4" Stroke="{x:Null}" Margin="4.5,-2,4.5,-2" Opacity="0.3" MinHeight="10">
-                            <Rectangle.Fill>
-                                <SolidColorBrush Color="{DynamicResource WhiteColor}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <Rectangle HorizontalAlignment="Stretch" x:Name="PressedRectangle" VerticalAlignment="Stretch" Width="Auto" Height="Auto" RadiusX="3" RadiusY="4" Stroke="{x:Null}" Margin="4.5,-2,4.5,-2" Opacity="0.3" MinHeight="10">
-                            <Rectangle.Fill>
-                                <SolidColorBrush Color="{DynamicResource WhiteColor}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsFocused" Value="True" />
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Trigger.ExitActions>
-                                <BeginStoryboard Storyboard="{StaticResource HoverOff}" x:Name="HoverOff_BeginStoryboard"/>
-                            </Trigger.ExitActions>
-                            <Trigger.EnterActions>
-                                <BeginStoryboard Storyboard="{StaticResource HoverOn}"/>
-                            </Trigger.EnterActions>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False" >
-                            <Setter Property="Opacity" TargetName="Grid" Value="0.1"/>
-                        </Trigger>
-                        <Trigger Property="IsDragging" Value="True">
-                            <Trigger.ExitActions>
-                                <BeginStoryboard Storyboard="{StaticResource PressedOff}" x:Name="PressedOff_BeginStoryboard"/>
-                            </Trigger.ExitActions>
-                            <Trigger.EnterActions>
-                                <BeginStoryboard Storyboard="{StaticResource PressedOn}" x:Name="PressedOn_BeginStoryboard"/>
-                            </Trigger.EnterActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style x:Key="NuclearScrollRepeatButtonStyle" d:IsControlPart="True" TargetType="{x:Type RepeatButton}">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="IsTabStop" Value="false" />
-        <Setter Property="Focusable" Value="false" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Grid>
-                        <Rectangle Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="{TemplateBinding BorderThickness}" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="{x:Type ScrollBar}">
-        <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ScrollBar}">
-                    <Grid x:Name="GridRoot" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" >
-                        <Grid.RowDefinitions>
-                            <RowDefinition MaxHeight="18" />
-                            <RowDefinition Height="0.00001*" />
-                            <RowDefinition MaxHeight="18" />
-                        </Grid.RowDefinitions>
-                        <RepeatButton x:Name="DecreaseRepeat" Command="ScrollBar.LineUpCommand" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                            <Grid Margin="0,0,0,0">
-                                <Path Margin="4.742,3.997,4.946,5.327" VerticalAlignment="Stretch" Height="Auto" Fill="{DynamicResource GlyphBrush}" Stretch="Fill" Stroke="{DynamicResource GlyphBrush}" StrokeThickness="1" Data="M5.2422477,11.132184 L11.5544,11.132184 8.6412958,4.4969033 z" x:Name="DecreaseArrow" />
-                            </Grid>
-                        </RepeatButton>
-                        <Track Grid.Row="1" x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="true">
-                            <Track.Thumb>
-                                <Thumb Style="{DynamicResource NuclearThumbStyle}" Background="{x:Null}" Foreground="{x:Null}" />
-                            </Track.Thumb>
-                            <Track.IncreaseRepeatButton>
-                                <RepeatButton x:Name="PageUp" Style="{DynamicResource NuclearScrollRepeatButtonStyle}" Command="ScrollBar.PageDownCommand" />
-                            </Track.IncreaseRepeatButton>
-                            <Track.DecreaseRepeatButton>
-                                <RepeatButton x:Name="PageDown" Style="{DynamicResource NuclearScrollRepeatButtonStyle}" Command="ScrollBar.PageUpCommand" />
-                            </Track.DecreaseRepeatButton>
-                        </Track>
-                        <RepeatButton Grid.Row="2" x:Name="IncreaseRepeat" Command="ScrollBar.LineDownCommand">
-                            <Grid>
-                                <Path Margin="4.742,3.997,4.946,5.327" x:Name="IncreaseArrow" VerticalAlignment="Stretch" Height="Auto" Fill="{DynamicResource GlyphBrush}" Stretch="Fill" Stroke="{DynamicResource GlyphBrush}" StrokeThickness="1" Data="M5.2422477,11.132184 L11.5544,11.132184 8.6412958,4.4969033 z" RenderTransformOrigin="0.5,0.5">
-                                    <Path.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1" ScaleY="1" />
-                                            <SkewTransform AngleX="0" AngleY="0" />
-                                            <RotateTransform Angle="180" />
-                                            <TranslateTransform X="0" Y="0" />
-                                        </TransformGroup>
-                                    </Path.RenderTransform>
-                                </Path>
-                            </Grid>
-                        </RepeatButton>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Orientation" Value="Horizontal">
-                            <Setter Property="LayoutTransform" TargetName="GridRoot">
-                                <Setter.Value>
-                                    <RotateTransform Angle="-90" />
-                                </Setter.Value>
-                            </Setter>
-                            <Setter TargetName="PART_Track" Property="Orientation" Value="Vertical" />
-                            <Setter Property="Command" Value="ScrollBar.LineLeftCommand" TargetName="DecreaseRepeat" />
-                            <Setter Property="Command" Value="ScrollBar.LineRightCommand" TargetName="IncreaseRepeat" />
-                            <Setter Property="Command" Value="ScrollBar.PageLeftCommand" TargetName="PageDown" />
-                            <Setter Property="Command" Value="ScrollBar.PageRightCommand" TargetName="PageUp" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style x:Key="NuclearScrollViewer" TargetType="{x:Type ScrollViewer}" BasedOn="{x:Null}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid Background="{TemplateBinding Background}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <ScrollContentPresenter Grid.Column="0" Grid.Row="0" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" CanContentScroll="{TemplateBinding CanContentScroll}" />
-                        <ScrollBar Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Grid.Column="0" Grid.Row="1" x:Name="PART_HorizontalScrollBar" Orientation="Horizontal" Value="{Binding Path=HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Minimum="0" Maximum="{TemplateBinding ScrollableWidth}" AutomationProperties.AutomationId="HorizontalScrollBar" />
-                        <ScrollBar Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Grid.Column="1" Grid.Row="0" x:Name="PART_VerticalScrollBar" Orientation="Vertical" Value="{Binding Path=VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Minimum="0" Maximum="{TemplateBinding ScrollableHeight}" AutomationProperties.AutomationId="VerticalScrollBar" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="OctgnActionMenuTemplate">
         <Style.Resources>
             <Style TargetType="{x:Type Menu}">
                 <Setter Property="Background" Value="#333333" />
-                <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
+                <Setter Property="BorderBrush" Value="#FF333333" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -854,7 +574,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Separator}">
-                            <Border BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1" />
+                            <Border BorderBrush="#888" BorderThickness="1" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

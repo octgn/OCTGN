@@ -41,7 +41,7 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                if (Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object ret))
+                if (Parent._altDef.Properties.TryGetValue(LinkedProperty.Property, out object ret))
                     return !(ret is CachedPropertyValue);
                 return false;
             }
@@ -51,17 +51,17 @@ namespace Octide.SetTab.ItemModel
                 {
                     if (PropertyValue is CachedPropertyValue cachedValue)
                     {
-                        Parent._altDef.Properties[LinkedProperty._property] = cachedValue.Property;
+                        Parent._altDef.Properties[LinkedProperty.Property] = cachedValue.Property;
                     }
                     else
                     {
-                        Parent._altDef.Properties[LinkedProperty._property] = PropertyValue;
+                        Parent._altDef.Properties[LinkedProperty.Property] = PropertyValue;
                     }
                 }
                 else // remove this 
                 {
                     var cachedValue = new CachedPropertyValue() { Property = PropertyValue };
-                    Parent._altDef.Properties[LinkedProperty._property] = cachedValue;
+                    Parent._altDef.Properties[LinkedProperty.Property] = cachedValue;
                 }
                 RaisePropertyChanged("IsDefined");
                 RaisePropertyChanged("Value");
@@ -74,8 +74,14 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                Parent._altDef.Properties.TryGetValue(LinkedProperty._property, out object ret);
-                return ret;
+                Parent._altDef.Properties.TryGetValue(LinkedProperty.Property, out object ret);
+                switch (ret)
+                {
+                    case CachedPropertyValue cached:
+                        return cached.Property;
+                    default:
+                        return ret;
+                }
             }
         }
 
@@ -93,7 +99,7 @@ namespace Octide.SetTab.ItemModel
                 {
                     var richText = ConvertStringToRichText(value);
                     if (PropertyValue == richText) return;
-                    Parent._altDef.Properties[LinkedProperty._property] = richText;
+                    Parent._altDef.Properties[LinkedProperty.Property] = richText;
                 }
                 else
                 {
@@ -102,7 +108,7 @@ namespace Octide.SetTab.ItemModel
                         value = null;
                     }
                     if (PropertyValue?.ToString() == value) return;
-                    Parent._altDef.Properties[LinkedProperty._property] = value;
+                    Parent._altDef.Properties[LinkedProperty.Property] = value;
                 }
 
 

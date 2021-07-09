@@ -8,7 +8,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
@@ -16,10 +16,10 @@
 
     <ItemsControl>
         <controls:PropertyFieldControl Header="Is Default Action" >
-            <metro:ToggleSwitch IsChecked="{Binding IsDefault, Mode=TwoWay}"/>
+            <metro:ToggleSwitch IsOn="{Binding IsDefault, Mode=TwoWay}"/>
         </controls:PropertyFieldControl>
 
-        <controls:PropertyFieldControl Header="Label" >
+        <controls:PropertyFieldControl Header="Action Name" >
             <TextBox Text="{Binding Name, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
@@ -28,7 +28,7 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Keyboard Shortcut" >
-            <controls:KeyInputTextBox Text="{Binding Shortcut, Mode=TwoWay}" />
+            <metro:HotKeyBox HotKey="{Binding Shortcut, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Executable Python Function" >
@@ -36,7 +36,7 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Batch Execute Mode" Description="If enabled, all cards in a selection will be passed to the Executable Python function as a single list. If disabled, the function will be executed individually for every card in the selection." >
-            <metro:ToggleSwitch IsChecked="{Binding Batch, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding Batch, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Conditional Display Command" >

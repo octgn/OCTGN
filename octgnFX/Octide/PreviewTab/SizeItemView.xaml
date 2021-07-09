@@ -10,9 +10,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 
@@ -53,7 +51,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+                <Slider Value="{Binding Height, Mode=TwoWay}" TickFrequency="20" Minimum="1" Maximum="300"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -68,7 +66,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+                <Slider Value="{Binding Width, Mode=TwoWay}" TickFrequency="20" Minimum="1" Maximum="300"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -83,7 +81,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding CornerRadius, Mode=TwoWay}" Minimum="0" Maximum="50"/>
+                <Slider Value="{Binding CornerRadius, Mode=TwoWay}" TickFrequency="5" Minimum="0" Maximum="50" />
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -102,7 +100,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding BackHeight, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+                <Slider Value="{Binding BackHeight, Mode=TwoWay}" TickFrequency="20" Minimum="1" Maximum="300"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -117,7 +115,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding BackWidth, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+                <Slider Value="{Binding BackWidth, Mode=TwoWay}" TickFrequency="20" Minimum="1" Maximum="300"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -132,7 +130,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding BackCornerRadius, Mode=TwoWay}" Minimum="0" Maximum="50"/>
+                <Slider Value="{Binding BackCornerRadius, Mode=TwoWay}" TickFrequency="5" Minimum="0" Maximum="50"/>
             </DockPanel>
         </controls:PropertyFieldControl>
     </ItemsControl>

@@ -8,16 +8,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
+
              d:DesignHeight="900" d:DesignWidth="600"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              DataContext="{Binding GameFontTabViewModel, Source={StaticResource Locator}}">
     <UserControl.Resources>
         <DataTemplate x:Key="FontControl" >
@@ -26,23 +24,68 @@
                     <controls:AssetControllerView DataContext="{Binding Asset}" Width="350" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource OctideInputTextBlock}" Margin="0" Text="Font Size:" />
+                    <TextBlock  Margin="0" Text="Font Size:" />
                     <TextBox Text="{Binding Size}" MinWidth="40" MaxWidth="100" Margin="5" VerticalAlignment="Stretch" />
                 </StackPanel>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="50" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <ItemsControl Style="{StaticResource OctideInputPanel}" Margin="0,0,50,0" >
-            <TextBlock Text="Deck Editor Font" FontSize="30" />
-            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding DeckEditorFont}" />
+        <ItemsControl  >
+            <controls:PropertyFieldControl Header="Deck Editor Font" >
+                <controls:AssetControllerView DataContext="{Binding DeckEditorFont.Asset}"  />
+            </controls:PropertyFieldControl>
 
-            <TextBlock Text="Notes Font" FontSize="30" />
-            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding NotesFont}" />
+            <controls:PropertyFieldControl Header="Deck Editor Font Size">
+                <DockPanel>
+                    <TextBox Width="60">
+                        <TextBox.Text>
+                            <Binding Path="DeckEditorFont.Size" >
+                                <Binding.ValidationRules>
+                                    <local:IntegerValidationRule Minimum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Slider Value="{Binding DeckEditorFont.Size, Mode=TwoWay}" TickFrequency="10" Minimum="1" Maximum="100"/>
+                </DockPanel>
+            </controls:PropertyFieldControl>
+
+            <Separator Margin="0 20 0 20" />
+            
+            <controls:PropertyFieldControl Header="Notes Font" >
+                <controls:AssetControllerView DataContext="{Binding NotesFont.Asset}"  />
+            </controls:PropertyFieldControl>
+            
+            <controls:PropertyFieldControl Header="Notes Font Size">
+                <DockPanel>
+                    <TextBox Width="60">
+                        <TextBox.Text>
+                            <Binding Path="NotesFont.Size" >
+                                <Binding.ValidationRules>
+                                    <local:IntegerValidationRule Minimum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Slider Value="{Binding NotesFont.Size, Mode=TwoWay}" TickFrequency="10" Minimum="1" Maximum="100"/>
+                </DockPanel>
+            </controls:PropertyFieldControl>
+
+            <controls:PropertyFieldControl Header="Note Font Color" >
+                <metro:ColorPicker SelectedColor="{Binding NoteForegroundColor, Mode=TwoWay}" />
+            </controls:PropertyFieldControl>
+
+            <controls:PropertyFieldControl Header="Note Background Color" >
+                <metro:ColorPicker SelectedColor="{Binding NoteBackgroundColor, Mode=TwoWay}" />
+            </controls:PropertyFieldControl>
 
             <Grid Margin="50,5,5,5" Height="120" Width="170" 
                           HorizontalAlignment="Left" >
@@ -53,7 +96,7 @@
                 <Border Background="#11000000" />
                 <Border Margin="5" Grid.Row="1" >
                     <TextBox Background="Transparent" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto"
-                                     TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
+                                     TextWrapping="Wrap" AcceptsReturn="True"
                                      VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                      FontFamily="{Binding NotesFont.FontAsset}" FontSize="{Binding NotesFont.Size}">
                         <TextBox.Foreground>
@@ -65,19 +108,27 @@
                     <SolidColorBrush Color="{Binding NoteBackgroundColor}" />
                 </Grid.Background>
             </Grid>
-            
-            <controls:PropertyFieldControl Header="Note Font Color" >
-                <xctk:ColorPicker SelectedColor="{Binding NoteForegroundColor, Mode=TwoWay}" ShowDropDownButton="False" Width="100" HorizontalAlignment="Left"/>
-            </controls:PropertyFieldControl>
-
-            <controls:PropertyFieldControl Header="Note Background Color" >
-                <xctk:ColorPicker SelectedColor="{Binding NoteBackgroundColor, Mode=TwoWay}" ShowDropDownButton="False" Width="100" HorizontalAlignment="Left"/>
-            </controls:PropertyFieldControl>
 
         </ItemsControl>
-        <ItemsControl Style="{StaticResource OctideInputPanel}" Grid.Column="1" >
-            <TextBlock Text="Chat Font" FontSize="30" />
-            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ChatFont}" />
+        <ItemsControl Grid.Column="2" >
+            <controls:PropertyFieldControl Header="Chat Font" >
+                <controls:AssetControllerView DataContext="{Binding ChatFont.Asset}"  />
+            </controls:PropertyFieldControl>
+
+            <controls:PropertyFieldControl Header="Chat Font Size">
+                <DockPanel>
+                    <TextBox Width="60">
+                        <TextBox.Text>
+                            <Binding Path="ChatFont.Size" >
+                                <Binding.ValidationRules>
+                                    <local:IntegerValidationRule Minimum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Slider Value="{Binding ChatFont.Size, Mode=TwoWay}" TickFrequency="10" Minimum="1" Maximum="100"/>
+                </DockPanel>
+            </controls:PropertyFieldControl>
 
             <Border CornerRadius="2" Margin="50,5,5,5" HorizontalAlignment="Left" Height="200" Width="280" BorderBrush="{StaticResource ControlBorderBrush}" 
                             BorderThickness="1" Background="{StaticResource ControlFillBrush}">
@@ -87,7 +138,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <ScrollViewer Style="{StaticResource NuclearScrollViewer}"  VerticalScrollBarVisibility="Visible" Background="Transparent">
+                    <ScrollViewer   VerticalScrollBarVisibility="Visible" Background="Transparent">
                         <TextBlock Text="{Binding Chat }" Margin="0" Padding="0" Background="Transparent" TextWrapping="Wrap"
                                                    FontFamily="{Binding ChatFont.FontAsset}"
                                      FontSize="{Binding ChatFont.Size}" Foreground="Black"  />
@@ -95,22 +146,41 @@
 
                     <Rectangle Fill="White" Grid.Row="1" Height="1" />
 
-                    <xctk:WatermarkTextBox Foreground="WhiteSmoke" Background="Transparent" Grid.Row="2" Watermark="Type here to chat (Ctrl+T)" Text="{Binding ChatInputText, UpdateSourceTrigger=PropertyChanged}" >
-                        <xctk:WatermarkTextBox.InputBindings>
+                    <TextBox Foreground="WhiteSmoke" Background="Transparent" Grid.Row="2" 
+                             metro:TextBoxHelper.Watermark="Type here to chat (Ctrl+T)"
+                             Text="{Binding ChatInputText, UpdateSourceTrigger=PropertyChanged}" >
+                        <TextBox.InputBindings>
                             <KeyBinding Command="{Binding EnterChatCommand}" Key="Enter" />
-                            <KeyBinding Command="{Binding CancelChatCommand}" Key="Esc" />
-                        </xctk:WatermarkTextBox.InputBindings>
-                    </xctk:WatermarkTextBox>
+                            <KeyBinding Command="{Binding EscChatCommand}" Key="Esc" />
+                        </TextBox.InputBindings>
+                    </TextBox>
                 </Grid>
             </Border>
 
 
-            <TextBlock Text="Context Menu Font" FontSize="30" />
-            <ContentControl ContentTemplate="{StaticResource FontControl}" Content="{Binding ContextFont}" />
+            <controls:PropertyFieldControl Header="Context Menu Font" >
+                <controls:AssetControllerView DataContext="{Binding ContextFont.Asset}"  />
+            </controls:PropertyFieldControl>
+
+            <controls:PropertyFieldControl Header="Context Font Size">
+                <DockPanel>
+                    <TextBox Width="60">
+                        <TextBox.Text>
+                            <Binding Path="ContextFont.Size" >
+                                <Binding.ValidationRules>
+                                    <local:IntegerValidationRule Minimum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Slider Value="{Binding ContextFont.Size, Mode=TwoWay}" TickFrequency="10" Minimum="1" Maximum="100"/>
+                </DockPanel>
+            </controls:PropertyFieldControl>
 
             <Border Width="200" Height="300" Style="{StaticResource OctgnActionMenuTemplate}">
                 <Menu ItemsSource="{Binding Menu}"  />
             </Border>
         </ItemsControl>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

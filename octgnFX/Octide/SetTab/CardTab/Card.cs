@@ -15,7 +15,7 @@ namespace Octide.SetTab.ItemModel
 {
     public class CardModel : IdeBaseItem
     {
-        public Card _card { get; private set; }
+        public Card Card { get; private set; }
         public IdeCollection<IdeBaseItem> Items { get; private set; }
 
         public RelayCommand AddAltCommand { get; private set; }
@@ -23,7 +23,7 @@ namespace Octide.SetTab.ItemModel
         public CardModel(IdeCollection<IdeBaseItem> src) : base(src) //for adding new items
         {
             var guid = Guid.NewGuid();  //every card has a new GUID
-            _card = new Card(
+            Card = new Card(
                 guid,                           //card guid
                 ((SetModel)Source.Parent).Id,   //set guid
                 "Card",                         //card name
@@ -47,7 +47,7 @@ namespace Octide.SetTab.ItemModel
 
         public CardModel(Card c, IdeCollection<IdeBaseItem> src) : base(src) //for loading an existing collection
         {
-            _card = c;
+            Card = c;
             Items = new IdeCollection<IdeBaseItem>(this, typeof(AlternateModel));
             foreach (var alt in c.PropertySets)
             {
@@ -69,7 +69,7 @@ namespace Octide.SetTab.ItemModel
         public CardModel(CardModel c, IdeCollection<IdeBaseItem> src) : base(src) //for copying the item
         {
             var guid = Guid.NewGuid();
-            _card = new Card(c._card)
+            Card = new Card(c.Card)
             {
                 Id = Guid.NewGuid()
             };
@@ -101,7 +101,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildCardDef(NotifyCollectionChangedEventArgs args)
         {
-            _card.PropertySets = Items.Select(x => (AlternateModel)x).ToDictionary(x => (x.IsDefault) ? "" : x.Type, x => x._altDef);
+            Card.PropertySets = Items.Select(x => (AlternateModel)x).ToDictionary(x => (x.IsDefault) ? "" : x.Type, x => x._altDef);
         }
 
         public override object Clone()
@@ -136,7 +136,7 @@ namespace Octide.SetTab.ItemModel
         {
             get
             {
-                return _card.Id;
+                return Card.Id;
             }
         }
     }

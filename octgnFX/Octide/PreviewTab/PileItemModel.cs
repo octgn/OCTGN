@@ -2,8 +2,10 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using MahApps.Metro.Controls;
 using Octgn.DataNew.Entities;
 using System.ComponentModel;
+using Octide;
 
 namespace Octide.ItemModel
 {
@@ -30,7 +32,7 @@ namespace Octide.ItemModel
         public PileItemModel(PileItemModel g, IdeCollection<IdeBaseItem> source) : base(g, source) // copy item
         {
 
-            _group.Shortcut = g.Shortcut;
+            _group.Shortcut = g.Shortcut.ToString();
             _group.Ordered = g.Ordered;
             _group.MoveTo = g.MoveTo;
             _group.ViewState = g.ViewState;
@@ -112,16 +114,17 @@ namespace Octide.ItemModel
             }
         }
 
-        public string Shortcut
+        public HotKey Shortcut
         {
             get
             {
-                return _group.Shortcut;
+                return Utils.GetHotKey(_group.Shortcut);
             }
             set
             {
-                if (value == _group.Shortcut) return;
-                _group.Shortcut = value;
+                var ret = value.ToString();
+                if (ret == _group.Shortcut) return;
+                _group.Shortcut = ret;
                 RaisePropertyChanged("Shortcut");
             }
         }

@@ -23,6 +23,43 @@ using System.ComponentModel;
 namespace Octide.ItemModel
 {
 
+    public class ArtCropDefinitionItemModel : OverlayBlockDefinitionItemModel
+    {
+        public ArtCropDefinitionItemModel(IdeCollection<IdeBaseItem> source) : base(source)
+        {
+
+        }
+        public ArtCropDefinitionItemModel(BlockDefinition b, IdeCollection<IdeBaseItem> source) : base(b, source)
+        {
+
+        }
+        public new int Width
+        {
+            get
+            {
+                return _def.wordwrap.width;
+            }
+            set
+            {
+                if (_def.wordwrap.width == value) return;
+                _def.wordwrap.width = value;
+                RaisePropertyChanged("Width");
+            }
+        }
+        public new int Height
+        {
+            get
+            {
+                return _def.wordwrap.height;
+            }
+            set
+            {
+                if (_def.wordwrap.height == value) return;
+                _def.wordwrap.height = value;
+                RaisePropertyChanged("Height");
+            }
+        }
+    }
     public class OverlayBlockDefinitionItemModel : IdeBaseItem
     {
         public BlockDefinition _def;

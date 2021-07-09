@@ -2,7 +2,10 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using GalaSoft.MvvmLight.Messaging;
 using Octgn.ProxyGenerator.Definitions;
+using Octide.Messages;
+
 namespace Octide.ProxyTab.ItemModel
 {
     public class ArtOverlayBlockModel : IBaseBlock
@@ -14,11 +17,13 @@ namespace Octide.ProxyTab.ItemModel
             {
             };
             _wrapper = new LinkDefinition.LinkWrapper() {  CardArtCrop = _blockDefinition };
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ArtOverlayBlockModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _wrapper = lw;
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ArtOverlayBlockModel(ArtOverlayBlockModel artOverlay, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -26,9 +31,8 @@ namespace Octide.ProxyTab.ItemModel
             _wrapper = new LinkDefinition.LinkWrapper()
             {
                 CardArtCrop = new BlockDefinition()
-                {
-                }
             };
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public override object Clone()

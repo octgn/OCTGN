@@ -161,6 +161,8 @@ namespace Octide
                 Version = new Version(1, 0, 0, 0),
                 ScriptVersion = new Version(3, 1, 0, 2),
                 OctgnVersion = typeof(Config).Assembly.GetName().Version,
+                Authors = new List<string>() { "OCTIDE"},
+                Description = "A game created using OCTGN Game Development Studio",
                 NoteBackgroundColor = "#FFEBE8C5",
                 NoteForegroundColor = "#FF000000",
                 Filename = Path.Combine(WorkingDirectory.FullName, "definition.xml"),
@@ -335,7 +337,7 @@ namespace Octide
                     set.Asset.SelectedAsset.SafeFile = new FileInfo(setTempPath);
                 }
                 var scriptSerializer = new GameScriptSerializer(Game.Id) { Game = Game };
-                foreach (ScriptItemModel script in ViewModelLocator.ScriptsTabViewModel.Scripts)
+                foreach (PythonItemModel script in ViewModelLocator.PythonTabViewModel.Scripts)
                 {
                     scriptSerializer.OutputPath = script.Asset.SafePath;
                     scriptSerializer.Serialize(script._script);
@@ -366,14 +368,14 @@ namespace Octide
             var builder = new PackageBuilder()
             {
                 Id = Game.Id.ToString(),
-                Description = Game.Description,
-                ProjectUrl = new Uri(Game.GameUrl),
+                Description = Game.Description ?? "A placeholder description.  Don't forget to include one!",
+                ProjectUrl = new Uri(Game.GameUrl ?? "https://www.octgn.net"),
+                IconUrl = new Uri(Game.IconUrl ?? "https://github.com/octgn/OCTGN/raw/b69fe2cca3b337acc138491ee3f647a2a69fbda5/octgnFX/Octide/Resources/icon.jpg"),
                 Version = new NuGetVersion(Game.Version),
-                Title = Game.Name,
-                IconUrl = new Uri(Game.IconUrl),
-
+                Title = Game.Name
             };
             foreach (var a in Game.Authors) builder.Authors.Add(a);
+            if (builder.Authors.Count == 0) builder.Authors.Add("OCTIDE");
             foreach (var t in Game.Tags) builder.Authors.Add(t);
 
             var baseRefPath = "\\def";

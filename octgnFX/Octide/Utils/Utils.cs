@@ -1,10 +1,12 @@
-﻿using Octgn.Library;
+﻿using MahApps.Metro.Controls;
+using Octgn.Library;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Octide
 {
@@ -93,6 +95,21 @@ namespace Octide
             }
             return fullPath;
         }
+
+        private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
+        public static HotKey GetHotKey(string keystring)
+        {
+            try
+            {
+                var keygesture = (KeyGesture)KeyConverter.ConvertFromInvariantString(keystring);
+                return new HotKey(keygesture.Key, keygesture.Modifiers);
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
     }
 
     [ValueConversion(typeof(bool), typeof(bool))]
@@ -118,7 +135,21 @@ namespace Octide
         #endregion
     }
 
-    
+
+    public class BooleanToInverseVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var boolean = false;
+            if (value is bool) boolean = (bool)value;
+            return boolean ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value is Visibility && (Visibility)value == Visibility.Collapsed;
+        }
+    }
     public class RadioButtonStateConverter : IValueConverter
     {
         #region IValueConverter Members
@@ -127,8 +158,7 @@ namespace Octide
             Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            string parameterString = parameter as string;
-            if (parameterString == null)
+            if (!(parameter is string parameterString))
                 return DependencyProperty.UnsetValue;
 
             if (Enum.IsDefined(value.GetType(), value) == false)
@@ -141,8 +171,7 @@ namespace Octide
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string parameterString = parameter as string;
-            if (parameterString == null)
+            if (!(parameter is string parameterString))
                 return DependencyProperty.UnsetValue;
 
             return Enum.Parse(targetType, parameterString);

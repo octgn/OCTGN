@@ -48,6 +48,7 @@ namespace Octide.ProxyTab.ItemModel
             Items.Add(new IfCaseModel(Items)) ;
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ConditionalBlockModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
@@ -71,6 +72,7 @@ namespace Octide.ProxyTab.ItemModel
             };
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ConditionalBlockModel(ConditionalBlockModel conditional, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -93,6 +95,7 @@ namespace Octide.ProxyTab.ItemModel
             }
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
 
         }
         public void BuildConditionalDefinitions(NotifyCollectionChangedEventArgs args)
@@ -150,7 +153,7 @@ namespace Octide.ProxyTab.ItemModel
             }
             if (item is ElseCaseModel)
             {
-                return (ElseCase == null) ? true : false;
+                return (ElseCase == null);
             }
             return false;
         }
@@ -173,12 +176,13 @@ namespace Octide.ProxyTab.ItemModel
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             CanDragDrop = false;
             CanRemove = false;
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public IfCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _case = caseItem; 
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property.Name == _case.property);
+            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
 
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
@@ -188,6 +192,7 @@ namespace Octide.ProxyTab.ItemModel
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             CanDragDrop = false;
             CanRemove = false;
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public IfCaseModel(IfCaseModel conditionalCase, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -208,6 +213,7 @@ namespace Octide.ProxyTab.ItemModel
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             CanDragDrop = false;
             CanRemove = false;
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public override object Clone()
@@ -236,18 +242,20 @@ namespace Octide.ProxyTab.ItemModel
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ElseIfCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _case = caseItem;
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x)._property.Name == _case.property);
+            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ElseIfCaseModel(ElseIfCaseModel conditionalCase, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -266,6 +274,7 @@ namespace Octide.ProxyTab.ItemModel
             _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
             Property = conditionalCase.Property;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public override object Clone()
@@ -289,6 +298,7 @@ namespace Octide.ProxyTab.ItemModel
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ElseCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
@@ -300,6 +310,7 @@ namespace Octide.ProxyTab.ItemModel
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
+            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 
         public ElseCaseModel(ElseCaseModel caseItem, IdeCollection<IdeBaseItem> source) : base(source) //copy

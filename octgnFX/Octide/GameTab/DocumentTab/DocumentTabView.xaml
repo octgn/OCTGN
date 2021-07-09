@@ -12,34 +12,19 @@
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:model="clr-namespace:Octide.ItemModel"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding DocumentTabViewModel, Source={StaticResource Locator}}">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel>
-            <Button DockPanel.Dock="Bottom" Content="New Document" Margin="1" Command="{Binding AddCommand}" />
-            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}" >
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-                </ListBox.InputBindings>
-            </ListBox>
-        </DockPanel>
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding Items.SelectedItem}"
-                                     Header="Document Editor"
+    <controls:OctideItemPropertyViewer ItemsSource="{Binding Items}" Title="Document Editor"
                                      Description="Defines documents such as instruction manuals, rulebooks, or guides, which can be loaded from OCTGN's in-game menu.  PDF, HTML and TXT files are supported." >
-            <controls:ItemPropertiesView.Resources>
-                <DataTemplate DataType="{x:Type model:DocumentItemModel}" >
-                    <views:DocumentItemView />
-                </DataTemplate>
-            </controls:ItemPropertiesView.Resources>
-        </controls:ItemPropertiesView>
-    </Grid>
+        <controls:OctideItemPropertyViewer.Resources>
+            <DataTemplate DataType="{x:Type model:DocumentItemModel}" >
+                <views:DocumentItemView />
+            </DataTemplate>
+        </controls:OctideItemPropertyViewer.Resources>
+        <controls:OctideItemPropertyViewer.ListBoxButtons>
+            <Button Content="New Document" Command="{Binding AddCommand}" />
+        </controls:OctideItemPropertyViewer.ListBoxButtons>
+    </controls:OctideItemPropertyViewer>
+    
 </UserControl>

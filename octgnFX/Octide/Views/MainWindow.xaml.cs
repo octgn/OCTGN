@@ -55,7 +55,7 @@ namespace Octide.Views
             if (!_realClose)
             {
                 e.Cancel = true;
-                CloseCommand(null, default(ExecutedRoutedEventArgs));
+                CloseCommand(null, default);
             }
         }
 
@@ -69,6 +69,11 @@ namespace Octide.Views
 
                 Dispatcher.BeginInvoke(new Action(Close));
             }
+        }
+
+        private void MetroWindow_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
         }
     }
 }

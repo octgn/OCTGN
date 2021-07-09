@@ -8,8 +8,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:local="clr-namespace:Octide"
@@ -17,108 +16,76 @@
              xmlns:set="clr-namespace:Octide.SetTab.Views"
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
              d:DesignHeight="700" d:DesignWidth="1100"
-             params:Design.Theme="Dark">
+             >
 
-    <TabControl Margin="10,0,0,0" >
+    <TabControl Margin="10,0,0,0" Style="{StaticResource MahApps.Styles.TabControl.AnimatedSingleRow}" 
+                metro:TabControlHelper.Underlined="SelectedTabItem" metro:HeaderedControlHelper.HeaderFontSize="16">
         <TabItem Header="Summary" >
-            <controls:ItemPropertiesView Header="Set Summary" Description="Sets are contained collections of many different cards.  Each card in OCTGN belongs to a set.  A set can define Packages, which OCTGN uses to generate randomized booster packs of cards from the set via its limited deck editor." >
-                <controls:ItemPropertiesView.Content>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl>
+                <StackPanel Orientation="Horizontal" Visibility="Collapsed">
+                    <Button HorizontalAlignment="Left" Content="Import Cards from Spreadsheet" Command="{Binding ImportCSVCommand}" />
+                </StackPanel>
+                <controls:PropertyFieldControl Header="Name">
+                    <TextBox>
+                        <TextBox.Text>
+                            <Binding Path="Name" >
+                                <Binding.ValidationRules>
+                                    <local:StringRestrictionValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </controls:PropertyFieldControl>
 
-                    <ItemsControl >
-                        <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                            <Button HorizontalAlignment="Left" Content="Import Cards from Spreadsheet" Command="{Binding ImportCSVCommand}" />
-                        </StackPanel>
-                        <controls:PropertyFieldControl Header="Name">
-                            <TextBox>
-                                <TextBox.Text>
-                                    <Binding Path="Name" >
-                                        <Binding.ValidationRules>
-                                            <local:StringRestrictionValidationRule />
-                                        </Binding.ValidationRules>
-                                    </Binding>
-                                </TextBox.Text>
-                            </TextBox>
-                        </controls:PropertyFieldControl>
+                <controls:PropertyFieldControl Header="GUID">
+                    <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
+                </controls:PropertyFieldControl>
 
-                        <controls:PropertyFieldControl Header="GUID">
-                            <TextBox IsEnabled="False" Text="{Binding Id, Mode=OneWay}" />
-                        </controls:PropertyFieldControl>
+                <controls:PropertyFieldControl Header="Abbreviated Set Code" Description="Used by some games to identify a game by shortened code names" >
+                    <TextBox Text="{Binding Code}" />
+                </controls:PropertyFieldControl>
 
-                        <controls:PropertyFieldControl Header="Abbreviated Set Code" Description="Used by some games to identify a game by shortened code names" >
-                            <TextBox Text="{Binding Code}" />
-                        </controls:PropertyFieldControl>
+                <controls:PropertyFieldControl Header="Description">
+                    <TextBox Text="{Binding Description}" />
+                </controls:PropertyFieldControl>
 
-                        <controls:PropertyFieldControl Header="Description">
-                            <TextBox Text="{Binding Description}" />
-                        </controls:PropertyFieldControl>
+                <controls:PropertyFieldControl Header="Release Date">
+                    <DatePicker IsTodayHighlighted="True" SelectedDate="{Binding ReleaseDate}"
+                                               HorizontalAlignment="Left" SelectedDateFormat="Long"/>
+                </controls:PropertyFieldControl>
 
-                        <controls:PropertyFieldControl Header="Release Date">
-                            <DatePicker Foreground="WhiteSmoke" SelectedDate="{Binding ReleaseDate}" HorizontalAlignment="Left" SelectedDateFormat="Long"/>
-                        </controls:PropertyFieldControl>
-
-                        <controls:PropertyFieldControl Header="Hide from Deck Editor">
-                            <metro:ToggleSwitch IsChecked="{Binding Hidden, Mode=TwoWay}" />
-                        </controls:PropertyFieldControl>
-                    </ItemsControl>
-                </controls:ItemPropertiesView.Content>
-            </controls:ItemPropertiesView>
+                <controls:PropertyFieldControl Header="Hide from Deck Editor">
+                    <metro:ToggleSwitch IsOn="{Binding Hidden, Mode=TwoWay}" />
+                </controls:PropertyFieldControl>
+                </ItemsControl>
+            </ScrollViewer>
         </TabItem>
 
         <TabItem Header="Packages">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="Packages" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="20" FontWeight="Bold" />
-
-                    <Button Content="New Package" DockPanel.Dock="Bottom" Margin="1" Command="{Binding AddPackageCommand}" />
-                    <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding PackageItems}" SelectedItem="{Binding PackageItems.SelectedItem}"
-                                 gong:DragDrop.DropHandler="{Binding PackageItems}">
-                        <ListBox.InputBindings>
-                            <KeyBinding Key="Delete" Command="{Binding PackageItems.SelectedItem.RemoveCommand}" />
-                        </ListBox.InputBindings>
-                    </ListBox>
-                </DockPanel>
-                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-                <ContentControl Grid.Column="2" Content="{Binding PackageItems.SelectedItem}">
-                    <ContentControl.Resources>
-                        <DataTemplate DataType="{x:Type item:PackageModel}" >
-                            <set:PackageItemView />
-                        </DataTemplate>
-                    </ContentControl.Resources>
-                </ContentControl>
-            </Grid>
+            <controls:OctideItemPropertyViewer ItemsSource="{Binding PackageItems}"  VerticalScrollBarVisibility="Disabled">
+                <controls:OctideItemPropertyViewer.Resources>
+                    <DataTemplate DataType="{x:Type item:PackageModel}" >
+                        <set:PackageItemView />
+                    </DataTemplate>
+                </controls:OctideItemPropertyViewer.Resources>
+                <controls:OctideItemPropertyViewer.ListBoxButtons>
+                    <Button DockPanel.Dock="Bottom" Content="New Package" Command="{Binding AddPackageCommand}" />
+                </controls:OctideItemPropertyViewer.ListBoxButtons>
+            </controls:OctideItemPropertyViewer>
         </TabItem>
 
         <TabItem Header="Cards" >
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <DockPanel>
-                    <Button DockPanel.Dock="Bottom" Content="New Card" Margin="1" Command="{Binding AddCardCommand}" />
-                    <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding CardItems}" 
-                             SelectedValue="{Binding CardItems.SelectedItem}" 
-                             gong:DragDrop.DropHandler="{Binding CardItems}">
-                        <ListBox.InputBindings>
-                            <KeyBinding Key="Delete" Command="{Binding CardItems.SelectedItem.RemoveCommand}" />
-                        </ListBox.InputBindings>
-                    </ListBox>
-                </DockPanel>
-                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-                <ContentControl Grid.Column="2" Content="{Binding CardItems.SelectedItem}">
-                    <ContentControl.Resources>
-                        <DataTemplate DataType="{x:Type item:CardModel}" >
-                            <set:CardItemView />
-                        </DataTemplate>
-                    </ContentControl.Resources>
-                </ContentControl>
-            </Grid>
+            <controls:OctideItemPropertyViewer ItemsSource="{Binding CardItems}" VerticalScrollBarVisibility="Disabled" >
+                <controls:OctideItemPropertyViewer.Resources>
+                    <DataTemplate DataType="{x:Type item:CardModel}" >
+                        <set:CardItemView />
+                    </DataTemplate>
+                </controls:OctideItemPropertyViewer.Resources>
+                <controls:OctideItemPropertyViewer.ListBoxButtons>
+                    <Button DockPanel.Dock="Bottom" Content="New Card" Command="{Binding AddCardCommand}" />
+                </controls:OctideItemPropertyViewer.ListBoxButtons>
+            </controls:OctideItemPropertyViewer>
         </TabItem>
     </TabControl>
 </UserControl>

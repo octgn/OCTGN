@@ -8,7 +8,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
@@ -44,7 +44,7 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Reset To Default Value on Game Resets" >
-            <metro:ToggleSwitch IsChecked="{Binding Reset, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding Reset, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
     </ItemsControl>

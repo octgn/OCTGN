@@ -25,7 +25,7 @@ namespace Octide.ProxyTab.Handlers
             }
 
             //dropping a definition into the overlaycontainer
-            if (sourceItem is OverlayBlockDefinitionItemModel overlayDef)
+            if (sourceItem is OverlayBlockDefinitionItemModel)
             {
                 //targeting an existing overlaylink will update it to the definition
                 if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter))
@@ -66,11 +66,11 @@ namespace Octide.ProxyTab.Handlers
                 }
                 else
                 {
-                    var item = new OverlayLinkModel(Container.Items)
+                    var item = new OverlayLinkModel(Container.ContainerItems)
                     {
                         LinkedBlock = dropItem
                     };
-                    Container.Items.Insert(dropInfo.UnfilteredInsertIndex, item);
+                    Container.ContainerItems.Insert(dropInfo.UnfilteredInsertIndex, item);
                 }
             }
             else if (dropInfo.Data is OverlayLinkModel)

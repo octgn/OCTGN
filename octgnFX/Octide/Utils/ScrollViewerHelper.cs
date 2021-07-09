@@ -34,8 +34,7 @@ namespace Octide
 
         private static void OnScrollSelectedIntoViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var selector = d as Selector;
-            if (selector == null) return;
+            if (!(d is Selector selector)) return;
 
             if (e.NewValue is bool == false)
                 return;
@@ -77,9 +76,7 @@ namespace Octide
 
         private static void UseHorizontalScrollingChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var element = d as UIElement;
-
-            if (element == null)
+            if (!(d is UIElement element))
                 throw new Exception("Attached property must be used with UIElement.");
 
             if ((bool)e.NewValue)

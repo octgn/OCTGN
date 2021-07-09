@@ -32,11 +32,11 @@ namespace Octide.Controls
             _textBox.SetBinding(TextBox.TextProperty, binding);
             _textBox.AcceptsReturn = true;
             _textBox.MaxLength = adornedElement.MaxLength;
-            _textBox.KeyUp += _textBox_KeyUp;
+            _textBox.KeyUp += TextBox_KeyUp;
             _collection.Add(_textBox);
         }
 
-        void _textBox_KeyUp(object sender, KeyEventArgs e)
+        void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

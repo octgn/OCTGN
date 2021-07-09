@@ -11,22 +11,20 @@
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700">
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="#FF555555" BorderThickness="1" Margin="1" Padding="3">
+        <Border BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}" BorderThickness="1" Margin="1" Padding="3">
             <ScrollViewer VerticalScrollBarVisibility="Auto" >
-                <StackPanel Orientation="Vertical">
+                <ItemsControl>
                     <controls:PropertyFieldControl Header="Name">
                         <TextBox>
                             <TextBox.Text>
@@ -39,36 +37,25 @@
                         </TextBox>
                     </controls:PropertyFieldControl>
 
-                    <Border>
-                        <Border.Style>
-                            <Style TargetType="{x:Type Border}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDefault}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <controls:PropertyFieldControl Header="Alternate Identifier" >
-                            <TextBox>
-                                <TextBox.Resources>
-                                    <local:BindingProxy x:Key="proxy" Data="{Binding }" />
-                                </TextBox.Resources>
-                                <TextBox.Text>
-                                    <Binding Path="Type" >
-                                        <Binding.ValidationRules>
-                                            <local:StringRestrictionValidationRule />
-                                            <local:UniqueValueValidationRule>
-                                                <local:UniqueValueValidationRule.Wrapper>
-                                                    <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
-                                                </local:UniqueValueValidationRule.Wrapper>
-                                            </local:UniqueValueValidationRule>
-                                        </Binding.ValidationRules>
-                                    </Binding>
-                                </TextBox.Text>
-                            </TextBox>
-                        </controls:PropertyFieldControl>
-                    </Border>
+                    <controls:PropertyFieldControl Header="Alternate Identifier" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToInverseVisibilityConverter}}" >
+                        <TextBox>
+                            <TextBox.Resources>
+                                <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <Binding Path="Type" >
+                                    <Binding.ValidationRules>
+                                        <local:StringRestrictionValidationRule />
+                                        <local:UniqueValueValidationRule>
+                                            <local:UniqueValueValidationRule.Wrapper>
+                                                <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                            </local:UniqueValueValidationRule.Wrapper>
+                                        </local:UniqueValueValidationRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </controls:PropertyFieldControl>
 
                     <controls:PropertyFieldControl Header="Size">
                         <ComboBox IsReadOnly="True" ItemsSource="{Binding CardSizes}" DisplayMemberPath="Name" SelectedItem="{Binding SizeProperty, Mode=TwoWay}" />
@@ -77,70 +64,50 @@
                     <ItemsControl ItemsSource="{Binding GetProperties}"  >
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,0,0,5">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.RowSpan="2" VerticalAlignment="Center" IsChecked="{Binding IsDefined}" ToolTip="Check this box to include this property in the XML." />
-                                    <TextBlock Grid.Column="1" Margin="0" Text="{Binding Name, Mode=OneWay}" >
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource OctideInputTextBlock}" >
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsDefined}" Value="False" >
-                                                        <Setter Property="Foreground" Value="DimGray" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                <controls:PropertyFieldControl Header="{Binding Name}" >
+                                    <DockPanel >
+                                        <CheckBox Grid.RowSpan="2" VerticalAlignment="Center" IsChecked="{Binding IsDefined}" Style="{StaticResource MahApps.Styles.CheckBox}"
+                                              ToolTip="Check this box to include this property in the XML." />
 
-                                    <ContentPresenter Content="{Binding }" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsDefined}">
-                                        <ContentPresenter.Resources>
-                                            <DataTemplate x:Key="richTextProperty">
-                                                <TextBox AcceptsReturn="True" MaxHeight="100" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                                    <TextBox.Style>
-                                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
-                                                    </TextBox.Style>
-                                                    <TextBox.Text>
-                                                        <Binding Path="Value" >
-                                                            <Binding.ValidationRules>
-                                                                <local:RichTextValidationRule />
-                                                            </Binding.ValidationRules>
-                                                        </Binding>
-                                                    </TextBox.Text>
-                                                </TextBox>
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="stringProperty">
-                                                <TextBox Text="{Binding Value}">
-                                                    <TextBox.Style>
-                                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" />
-                                                    </TextBox.Style>
-                                                </TextBox>
-                                            </DataTemplate>
-                                        </ContentPresenter.Resources>
-                                        <ContentPresenter.Style>
-                                            <Style TargetType="{x:Type ContentPresenter}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsRich}" Value="True">
-                                                        <Setter Property="ContentTemplate" Value="{StaticResource richTextProperty}"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsRich}" Value="False">
-                                                        <Setter Property="ContentTemplate" Value="{StaticResource stringProperty}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ContentPresenter.Style>
-                                    </ContentPresenter>
-                                </Grid>
+                                        <ContentPresenter Content="{Binding }" IsEnabled="{Binding IsDefined}">
+                                            <ContentPresenter.Resources>
+                                                <DataTemplate x:Key="richTextProperty">
+                                                    <TextBox AcceptsReturn="True" MaxHeight="100" HorizontalScrollBarVisibility="Auto" 
+                                                             VerticalScrollBarVisibility="Auto" Style="{StaticResource OctideInputTextBox}">
+                                                        <TextBox.Text>
+                                                            <Binding Path="Value" >
+                                                                <Binding.ValidationRules>
+                                                                    <local:RichTextValidationRule />
+                                                                </Binding.ValidationRules>
+                                                            </Binding>
+                                                        </TextBox.Text>
+                                                    </TextBox>
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="stringProperty">
+                                                    <TextBox Text="{Binding Value}" Style="{StaticResource OctideInputTextBox}">
+                                                    </TextBox>
+                                                </DataTemplate>
+                                            </ContentPresenter.Resources>
+                                            <ContentPresenter.Style>
+                                                <Style TargetType="{x:Type ContentPresenter}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsRich}" Value="True">
+                                                            <Setter Property="ContentTemplate" Value="{StaticResource richTextProperty}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsRich}" Value="False">
+                                                            <Setter Property="ContentTemplate" Value="{StaticResource stringProperty}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ContentPresenter.Style>
+                                        </ContentPresenter>
+                                    </DockPanel>
+                                </controls:PropertyFieldControl>
+                                
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </StackPanel>
+                </ItemsControl>
             </ScrollViewer>
         </Border>
         <GridSplitter Grid.Column="1"  ResizeDirection="Columns" />
@@ -150,8 +117,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Button VerticalAlignment="Top" BorderThickness="1,0,1,1" Height="Auto" Width="90" Command="{Binding DeleteImageCommand}">
-                <TextBlock Text="Delete Image" HorizontalAlignment="Center" Foreground="White"/>
+            <Button VerticalAlignment="Top" Style="{StaticResource MahApps.Styles.Button}" Content="Delete Image" Width="100" Command="{Binding DeleteImageCommand}">
             </Button>
             <Grid Grid.Row="1" >
                 <Image Source="{Binding CardImage, Mode=OneWay}" gong:DragDrop.DropHandler="{Binding }" gong:DragDrop.IsDropTarget="True" />

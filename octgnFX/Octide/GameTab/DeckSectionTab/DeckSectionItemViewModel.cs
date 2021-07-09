@@ -12,12 +12,13 @@ namespace Octide.ItemModel
     {
 
         public DeckSection _deckSection;
-        public IdeCollection<IdeBaseItem> Groups => _deckSection.Shared ? ViewModelLocator.PreviewTabViewModel.GlobalPiles : ViewModelLocator.PreviewTabViewModel.Piles;
+        public IdeCollection<IdeBaseItem> Groups => ViewModelLocator.PreviewTabViewModel.Piles;
+        public IdeCollection<IdeBaseItem> SharedGroups => ViewModelLocator.PreviewTabViewModel.GlobalPiles;
 
         public DeckSectionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             _deckSection = new DeckSection();
-            SelectedGroup = (PileItemModel)Groups.First();
+              SelectedGroup = (PileItemModel) (IsShared ? SharedGroups.First() : Groups.First()); 
             Name = "New Section";
 
         //    Messenger.Default.Register<GroupChangedMessage>(this, action => UpdateDeckSectionDef(action));
@@ -53,7 +54,7 @@ namespace Octide.ItemModel
             }
         }
 
-        public bool Global
+        public bool IsShared
         {
             get
             {
@@ -63,7 +64,7 @@ namespace Octide.ItemModel
             {
                 if (_deckSection.Shared == value) return;
                 _deckSection.Shared = value;
-                RaisePropertyChanged("Global");
+                RaisePropertyChanged("IsShared");
             }
         }
 
@@ -72,7 +73,10 @@ namespace Octide.ItemModel
         {
             get
             {
-                return (PileItemModel)Groups.FirstOrDefault(x => ((PileItemModel)x)._group == _deckSection.Group);
+                if (IsShared)
+                    return (PileItemModel)SharedGroups.FirstOrDefault(x => ((PileItemModel)x)._group == _deckSection.Group);
+                else
+                    return (PileItemModel)Groups.FirstOrDefault(x => ((PileItemModel)x)._group == _deckSection.Group);
             }
             set
             {
