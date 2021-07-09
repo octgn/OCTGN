@@ -8,13 +8,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
     <ItemsControl >
@@ -54,12 +51,12 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding FontSize, Mode=TwoWay}" Minimum="1" Maximum="100"/>
+                <Slider Value="{Binding FontSize, Mode=TwoWay}" TickFrequency="10" Minimum="1" Maximum="100"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Font Color" >
-            <xctk:ColorPicker SelectedColor="{Binding FontColor, Mode=TwoWay}" />
+            <metro:ColorPicker SelectedColor="{Binding FontColor, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="X Position Offset" >
@@ -73,7 +70,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Left, Mode=TwoWay}" Minimum="-1000" Maximum="3000"/>
+                <Slider Value="{Binding Left, Mode=TwoWay}" TickFrequency="200" Minimum="-1000" Maximum="3000"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -88,7 +85,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Top, Mode=TwoWay}" Minimum="-1000" Maximum="3000"/>
+                <Slider Value="{Binding Top, Mode=TwoWay}" TickFrequency="200" Minimum="-1000" Maximum="3000"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -96,23 +93,23 @@
             <DockPanel>
                 <TextBox Width="60">
                     <TextBox.Text>
-                        <Binding Path="Left" >
+                        <Binding Path="Rotate" >
                             <Binding.ValidationRules>
                                 <local:IntegerValidationRule Maximum="360" Minimum="-360" />
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Rotate, Mode=TwoWay}" Minimum="-360" Maximum="360"/>
+                <Slider Value="{Binding Rotate, Mode=TwoWay}" TickFrequency="30" Minimum="-360" Maximum="360"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Use Alternate Rotation Algorithm" >
-            <metro:ToggleSwitch IsChecked="{Binding AltRotate, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding AltRotate, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Mirror Text" >
-            <metro:ToggleSwitch IsChecked="{Binding Flip, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding Flip, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Width" >
@@ -147,9 +144,9 @@
 
         <controls:PropertyFieldControl Header="Horizontal Text Alignment" >
             <StackPanel Orientation="Vertical">
-                <RadioButton Content="Left" IsChecked="{Binding HorizontalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Left}"/>
-                <RadioButton Content="Center" IsChecked="{Binding HorizontalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Center}"/>
-                <RadioButton Content="Right" IsChecked="{Binding HorizontalAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Right}"/>
+                <RadioButton Content="Left" IsChecked="{Binding TextAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Left}"/>
+                <RadioButton Content="Center" IsChecked="{Binding TextAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Center}"/>
+                <RadioButton Content="Right" IsChecked="{Binding TextAlignment, Converter={StaticResource RadioConverter}, ConverterParameter=Right}"/>
             </StackPanel>
         </controls:PropertyFieldControl>
 
@@ -162,11 +159,11 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Shrink Font Size to Fit Dimensions" >
-            <metro:ToggleSwitch IsChecked="{Binding ShrinkToFit, Mode=TwoWay}" />
+            <metro:ToggleSwitch IsOn="{Binding ShrinkToFit, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Border Color" >
-            <xctk:ColorPicker SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
+            <metro:ColorPicker SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Border Thickness" >
@@ -180,7 +177,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding BorderThickness, Mode=TwoWay}" Minimum="0" Maximum="1000"/>
+                <Slider Value="{Binding BorderThickness, Mode=TwoWay}" Minimum="0" Maximum="30"/>
             </DockPanel>
         </controls:PropertyFieldControl>
     </ItemsControl> 

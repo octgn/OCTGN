@@ -1,0 +1,30 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.PythonTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:controls="clr-namespace:Octide.Controls"
+             xmlns:model="clr-namespace:Octide.ItemModel"
+             xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             DataContext="{Binding PythonTabViewModel, Source={StaticResource Locator}}">
+
+    <controls:OctideItemPropertyViewer Title="Python Script Editor" ItemsSource="{Binding Scripts}">
+        <controls:OctideItemPropertyViewer.ListBoxButtons>
+            <Button Content="New Script File" Command="{Binding AddScriptCommand}" />
+        </controls:OctideItemPropertyViewer.ListBoxButtons>
+        <controls:OctideItemPropertyViewer.Resources>
+            <DataTemplate DataType="{x:Type model:PythonItemModel}" >
+                <views:ScriptItemView />
+            </DataTemplate>
+        </controls:OctideItemPropertyViewer.Resources>
+    </controls:OctideItemPropertyViewer>
+</UserControl>

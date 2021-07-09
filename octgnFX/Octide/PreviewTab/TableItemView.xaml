@@ -11,8 +11,6 @@
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="600" d:DesignWidth="800" >
 
     <ItemsControl >
@@ -50,7 +48,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="50" Maximum="3000"/>
+                <Slider Value="{Binding Width, Mode=TwoWay}" TickFrequency="100" Minimum="50" Maximum="3000"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -65,7 +63,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="50" Maximum="3000"/>
+                <Slider Value="{Binding Height, Mode=TwoWay}" TickFrequency="100" Minimum="50" Maximum="3000"/>
             </DockPanel>
         </controls:PropertyFieldControl>
     </ItemsControl>

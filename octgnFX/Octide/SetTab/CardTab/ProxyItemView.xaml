@@ -12,8 +12,6 @@
              xmlns:utils="clr-namespace:Octide"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="500" d:DesignWidth="700" >
     <Viewbox Stretch="Uniform">
         <Grid ClipToBounds="True" >

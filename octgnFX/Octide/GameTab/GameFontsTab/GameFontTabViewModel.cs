@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -72,6 +73,7 @@ namespace Octide.ViewModel
         public void EscapeChat()
         {
             ChatInputText = null;
+            Keyboard.ClearFocus();
         }
 
         public List<Control> Menu { get; set; }

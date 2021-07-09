@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="Octide.Controls.OctideItemPropertyViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             x:Name="me"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Template>
+        <ControlTemplate TargetType="{x:Type UserControl}">
+            <DockPanel LastChildFill="True">
+                <ContentPresenter Content="{Binding ElementName=me, Path=Title}" DockPanel.Dock="Top" >
+                    <ContentPresenter.Resources>
+                        <DataTemplate DataType="{x:Type sys:String}">
+                            <TextBlock Text="{Binding }" Style="{StaticResource OctideTitleStyle}" />
+                        </DataTemplate>
+                    </ContentPresenter.Resources>
+                </ContentPresenter>
+                <ContentPresenter
+                    Content="{Binding ElementName=me, Path=Description}" DockPanel.Dock="Top">
+                    <ContentPresenter.Resources>
+                        <DataTemplate DataType="{x:Type sys:String}">
+                            <TextBlock Text="{Binding }" Style="{StaticResource OctideDescriptionStyle}"/>
+                        </DataTemplate>
+                    </ContentPresenter.Resources>
+                </ContentPresenter>
+                <Grid DockPanel.Dock="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="200" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel x:Name="ItemListPanel" LastChildFill="True">
+                        <ContentPresenter DockPanel.Dock="Top" Content="{Binding ElementName=me, Path=ListBoxButtons}" />
+                        <ListBox x:Name="ListBox" ItemsSource="{Binding ElementName=me, Path=ItemsSource}" VerticalAlignment="Stretch"
+                                 SelectedValue="{Binding ElementName=me, Path=ItemsSource.SelectedItem}" Style="{StaticResource OctideListBoxStyle}" >
+                            <ListBox.InputBindings>
+                                <KeyBinding Key="Delete" Command="{Binding ElementName=ListBox, Path=SelectedItem.RemoveCommand}" />
+                            </ListBox.InputBindings>
+                        </ListBox>
+                    </DockPanel>
+                    <GridSplitter x:Name="GridSplitter" Width="10" Grid.Column="1" ResizeDirection="Columns" />
+                    <Border Grid.Column="2" BorderThickness="1" Padding="5" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}" >
+                        <ScrollViewer VerticalScrollBarVisibility="{Binding ElementName=me, Path=VerticalScrollBarVisibility}">
+                            <ContentPresenter Content="{Binding ElementName=me, Path=ItemsSource.SelectedItem}" />
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </DockPanel>
+        </ControlTemplate>
+    </UserControl.Template>
+</UserControl>

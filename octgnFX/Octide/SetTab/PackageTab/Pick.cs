@@ -36,7 +36,7 @@ namespace Octide.SetTab.ItemModel
         public PickModel(Pick p, IdeCollection<IdeBaseItem> source) : base(source) // load item
         {
             _pick = p;
-            IsUnlimited = p.Quantity == -1 ? true : false;
+            IsUnlimited = p.Quantity == -1;
             Items = new IdeCollection<IdeBaseItem>(this, typeof(PackagePropertyModel));
             foreach (PickProperty item in p.Properties)
             {
@@ -68,7 +68,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildPickDef(NotifyCollectionChangedEventArgs args)
         {
-            _pick.Properties = Items.Select(x => ((PackagePropertyModel)x)._def).ToList();
+            _pick.Properties = Items.Select(x => ((PackagePropertyModel)x).Def).ToList();
         }
 
         public void AddProperty()

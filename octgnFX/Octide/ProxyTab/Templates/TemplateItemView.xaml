@@ -8,14 +8,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:item="clr-namespace:Octide.ProxyTab.ItemModel"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600" >
 
     <UserControl.Resources>
@@ -49,8 +47,8 @@
             <Border Background="{StaticResource BlendBrushOrange}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel>
                     <TextBlock Text="LINK" FontWeight="Bold" />
-                    <Border BorderThickness="1" BorderBrush="Black" Margin="2,0,2,0" >
-                        <TextBlock Style="{x:Null}" MinWidth="50" TextAlignment="Center" VerticalAlignment="Stretch" Text="{Binding LinkedBlock.Name}" Foreground="WhiteSmoke" Background="#88000000" />
+                    <Border BorderThickness="1" BorderBrush="Black" Margin="2,0,2,0" Background="#88000000" Height="20" >
+                        <TextBlock Style="{x:Null}" MinWidth="50" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding LinkedBlock.Name}" />
                     </Border>
                     <TextBlock Text="separator:" />
                     <TextBox Text="{Binding Separator}" MinWidth="25" />
@@ -148,16 +146,47 @@
             </ContentControl>
         </DataTemplate>
         <DataTemplate DataType="{x:Type item:OverlayLinkContainer}" >
-            <ListBox Margin="1" Padding="0" Background="{StaticResource BlendBrushOrange}" ItemsSource="{Binding Items}"
-                          gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" 
+            <Border Background="{StaticResource BlendBrushOrange}" Style="{StaticResource OctideTreeViewItemStyle}">
+                <DockPanel>
+                    <TextBlock Text="OVERLAYS" FontWeight="Bold"/>
+                    <ListBox Margin="1" Padding="0" ItemsSource="{Binding ContainerItems}" HorizontalAlignment="Left" Background="#88000000"
+                          gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True"
                           gong:DragDrop.DragDropCopyKeyState="ControlKey" gong:DragDrop.UseDefaultDragAdorner="True"
-                          gong:DragDrop.DropHandler="{Binding DropHandler}" gong:DragDrop.UseDefaultEffectDataTemplate="True">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ListBox>
+                          gong:DragDrop.DropHandler="{Binding DropHandler}" gong:DragDrop.UseDefaultEffectDataTemplate="True"
+                             SelectedValue="{Binding Source={StaticResource Locator}, Path=ProxyTabViewModel.Selection}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}" >
+                                <Setter Property="Padding" Value="2" />
+                                <Setter Property="ToolTip" Value="{Binding LinkedBlock.Name}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <Border BorderBrush="Black" BorderThickness="1" Background="{TemplateBinding Background}">
+                                                    <Image Source="{Binding LinkedBlock.Asset.SafePath, TargetNullValue={x:Null}}" MaxHeight="40" Stretch="Uniform"/>
+                                                <Border.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Delete" Command="{Binding RemoveCommand}" />
+                                                    </ContextMenu>
+                                                </Border.ContextMenu>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Gray.MouseOver}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </DockPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate DataType="{x:Type item:OverlayLinkModel}">
             <Border BorderBrush="Black" Margin="1" BorderThickness="2">
@@ -169,7 +198,7 @@
                 </Border.ContextMenu>
             </Border>
         </DataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type item:TextLinkModel}" ItemsSource="{Binding Items}" >
+        <HierarchicalDataTemplate DataType="{x:Type item:TextLinkModel}" ItemsSource="{Binding Items}">
             <ContentControl Template="{StaticResource TextLinkHeader}" >
                 <ContentControl.ContextMenu>
                     <ContextMenu>
@@ -271,22 +300,24 @@
             <ContentControl Content="{Binding }"/>
         </DataTemplate>
     </UserControl.Resources>
-    <TabControl>
+    <TabControl Style="{StaticResource MahApps.Styles.TabControl.AnimatedSingleRow}" metro:HeaderedControlHelper.HeaderFontSize="16" metro:TabControlHelper.Underlined="SelectedTabItem">
         <TabItem Header="Main">
-            <DockPanel >
-
-                <controls:PropertyFieldControl Header="Base Image" DockPanel.Dock="Top">
+            <DockPanel LastChildFill="True">
+                <controls:PropertyFieldControl Grid.Row="0" Header="Is Default Template" DockPanel.Dock="Top">
+                    <metro:ToggleSwitch IsOn="{Binding IsDefault, Mode=TwoWay}" />
+                </controls:PropertyFieldControl>
+                <controls:PropertyFieldControl Grid.Row="1" Header="Base Image" DockPanel.Dock="Top">
                     <controls:AssetControllerView DataContext="{Binding Asset}" />
                 </controls:PropertyFieldControl>
-                <Button Content="Add Match" DockPanel.Dock="Bottom" Margin="1" Command="{Binding AddMatchCommand}" Background="{StaticResource BlendBrushRed}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" Text="Template Match Conditions">
+                    
+                </TextBlock>
+                <Button Content="Add Match" DockPanel.Dock="Top" Command="{Binding AddMatchCommand}" Background="{StaticResource BlendBrushRed}" />
 
-                <TextBlock Text="Template Match Conditions" DockPanel.Dock="Top"
-                                           Foreground="{x:Static metro:AccentBrushes.Sky}"
-                                           FontSize="20" />
-                <ListBox Style="{StaticResource OctideListBoxStyle}"
+                <ListBox Grid.Row="2" Style="{StaticResource OctideListBoxStyle}"
                          ItemsSource="{Binding Matches}" SelectedValue="{Binding Matches.SelectedItem}"
                          gong:DragDrop.DropHandler="{Binding Matches}">
-                    
+
                     <ListBox.InputBindings>
                         <KeyBinding Key="Delete" Command="{Binding Matches.SelectedItem.RemoveCommand}" />
                     </ListBox.InputBindings>
@@ -316,62 +347,61 @@
             <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="WhiteSmoke"
-                           Text="Use conditional and switch cases to control the selection of image overlays for this template.  Add or replace overlay layers by dragging overlay blocks into this box." />
-                <TreeView Grid.Row="1" Style="{StaticResource IdeTreeViewControl}"
-                          ItemsSource="{Binding OverlayContainer.Items}"
-                          gong:DragDrop.DropHandler="{Binding OverlayDropHandler}"
-                          gong:DragDrop.DragHandler="{Binding DragHandler}"
-                          gong:DragDrop.DragAdornerTemplate="{StaticResource TemplateDragAdorner}"
-                     >
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="True" />
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                </TreeView>
-                <Grid Grid.Row="2">
+                <TextBlock Style="{StaticResource OctideDescriptionStyle}"
+                           Text="Use conditional and switch cases to control the logic for layering overlay images. Overlay blocks can be dragged to insert into the tree." />
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Add Conditional" Margin="1" Command="{Binding AddOverlayConditionalCommand}" Background="{DynamicResource BlendBrushPurple}" />
-                    <Button Grid.Column="1" Content="Add Switch" Margin="1" Command="{Binding AddOverlaySwitchCommand}" Background="{DynamicResource BlendBrushBlue}" />
+                    <Button Margin="2" Content="Add Conditional" Command="{Binding AddOverlayConditionalCommand}" Background="{DynamicResource BlendBrushPurple}" />
+                    <Button Margin="2" Grid.Column="1" Content="Add Switch" Command="{Binding AddOverlaySwitchCommand}" Background="{DynamicResource BlendBrushBlue}" />
                 </Grid>
+                <TreeView Grid.Row="2" Style="{StaticResource IdeTreeViewControl}"
+                          ItemsSource="{Binding OverlayContainer.Items}"
+                          gong:DragDrop.DropHandler="{Binding OverlayDropHandler}"
+                          gong:DragDrop.DragHandler="{Binding DragHandler}"
+                          gong:DragDrop.DragAdornerTemplate="{StaticResource TemplateDragAdorner}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
             </Grid>
         </TabItem>
         <TabItem Header="Text Links">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="WhiteSmoke"
-                           Text="Use conditional and switch cases to control the selection of text fields for this template.  Add or replace text fields by dragging text blocks into this box." />
+                <TextBlock Style="{StaticResource OctideDescriptionStyle}"
+                           Text="Use conditional and switch cases to control the logic for displaying text fields. Text blocks can be dragged to insert into the tree." />
 
-                <TreeView Grid.Row="1" Style="{StaticResource IdeTreeViewControl}"
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button Margin="2" Content="Add Conditional" Command="{Binding AddTextConditionalCommand}" Background="{DynamicResource BlendBrushPurple}" />
+                    <Button Margin="2" Grid.Column="1" Content="Add Switch" Command="{Binding AddTextSwitchCommand}" Background="{DynamicResource BlendBrushBlue}" />
+                </Grid>
+                <TreeView Grid.Row="2" Style="{StaticResource IdeTreeViewControl}"
                           ItemsSource="{Binding TextBlockContainer.Items}"
                           gong:DragDrop.DropHandler="{Binding TextDropHandler}"
                           gong:DragDrop.DragHandler="{Binding DragHandler}"
                           gong:DragDrop.DragAdornerTemplate="{StaticResource TemplateDragAdorner}">
                     <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
+                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
                             <Setter Property="IsExpanded" Value="True" />
                         </Style>
                     </TreeView.ItemContainerStyle>
                 </TreeView>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Content="Add Conditional" Margin="1" Command="{Binding AddTextConditionalCommand}" Background="{DynamicResource BlendBrushPurple}" />
-                    <Button Grid.Column="1" Content="Add Switch" Margin="1" Command="{Binding AddTextSwitchCommand}" Background="{DynamicResource BlendBrushBlue}" />
-                </Grid>
             </Grid>
         </TabItem>
     </TabControl>

@@ -9,66 +9,67 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              x:Name="me"
     d:DesignHeight="50" d:DesignWidth="800">
-    <UserControl.Style>
-        <Style TargetType="{x:Type UserControl}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type UserControl}">
-                        <Border Margin="0,0,0,10">
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Path=Header, ElementName=me}" 
-                                           Foreground="{x:Static metro:AccentBrushes.Sky}"
-                                           FontSize="20" />
-                                    <Image VerticalAlignment="Center" Source="/Octide;component/Resources/About.png" Margin="15,0,0,0" Height="24" >
-                                        <Image.Style>
-                                            <Style TargetType="{x:Type Image}">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                                <Setter Property="ToolTip" Value="{Binding Description, ElementName=me}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Description, ElementName=me}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                        <Setter Property="ToolTip" Value="{x:Null}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Image.Style>
-                                    </Image>
-                                </StackPanel>
-                                <ContentControl Margin="15,5,0,0" Content="{TemplateBinding Content}" />
-                            </StackPanel>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Resources>
-                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}">
-                    <Setter Property="Foreground" Value="WhiteSmoke" />
-                </Style>
-                <Style TargetType="{x:Type controls:AssetControllerView}">
-                </Style>
-                <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type RadioButton}}">
-                    <Setter Property="Foreground" Value="WhiteSmoke" />
-                </Style>
-                <Style TargetType="{x:Type Slider}">
-                </Style>
-                <Style TargetType="{x:Type metro:ToggleSwitch}" BasedOn="{StaticResource {x:Type metro:ToggleSwitch}}" >
-                    <Setter Property="Width" Value="90"/>
-                    <Setter Property="HorizontalAlignment" Value="Left" />
-                    <Setter Property="OnHeader" Value="True" />
-                    <Setter Property="OffHeader" Value="False" />
-                </Style>
-                <Style TargetType="{x:Type xctk:ColorPicker}" BasedOn="{StaticResource {x:Type xctk:ColorPicker}}">
-                    <Setter Property="ShowDropDownButton" Value="True" />
-                    <Setter Property="Width" Value="100" />
-                    <Setter Property="HorizontalAlignment" Value="Left" />
-                </Style>
-            </Style.Resources>
+    <UserControl.Template>
+        <ControlTemplate TargetType="{x:Type UserControl}">
+            <Border Margin="0,0,0,10">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=Header, ElementName=me}" Foreground="{StaticResource MahApps.Brushes.Accent}" FontSize="20" />
+                        <Image VerticalAlignment="Center" Source="/Octide;component/Resources/About.png" Margin="15,0,0,0" Height="24" >
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="ToolTip" Value="{Binding Description, ElementName=me}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Description, ElementName=me}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Setter Property="ToolTip" Value="{x:Null}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                        <TextBlock Margin="15 0 0 0" Foreground="Red" VerticalAlignment="Center" FontSize="14" FontWeight="Bold">
+                            <TextBlock.Text>
+                                <Binding Path="Content.(Validation.Errors)[0].ErrorContent" StringFormat="Error: {0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                    <ContentControl Margin="15,5,0,0" Content="{Binding Content, ElementName=me}">
+                    </ContentControl>
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+    </UserControl.Template>
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}">
+            <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}" />
         </Style>
-    </UserControl.Style>
+        <Style TargetType="{x:Type controls:AssetControllerView}">
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource MahApps.Styles.RadioButton}">
+            <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}" />
+            <Setter Property="Margin" Value="0 0 0 2" />
+        </Style>
+        <Style TargetType="{x:Type Slider}" BasedOn="{StaticResource MahApps.Styles.Slider}">
+            <Setter Property="Margin" Value="5 0 0 0" />
+            <Setter Property="TickPlacement" Value="BottomRight"/>
+        </Style>
+        <Style TargetType="{x:Type metro:ToggleSwitch}" BasedOn="{StaticResource MahApps.Styles.ToggleSwitch}" >
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MahApps.Styles.ComboBox.Virtualized}" >
+            
+        </Style>
+        <Style TargetType="{x:Type metro:ColorPicker}" BasedOn="{StaticResource {x:Type metro:ColorPicker}}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+    </UserControl.Resources>
 </UserControl>

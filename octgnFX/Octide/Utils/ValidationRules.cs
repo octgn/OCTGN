@@ -23,8 +23,7 @@ namespace Octide
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             string text = value.ToString();
-            int confirmedInteger;
-            if (int.TryParse(text, out confirmedInteger) == false)
+            if (int.TryParse(text, out int confirmedInteger) == false)
                 return new ValidationResult(false, "Not a valid integer.");
             if (confirmedInteger > Maximum)
                 return new ValidationResult(false, string.Format("Integer value must be smaller than {0}.", Maximum));
@@ -41,8 +40,7 @@ namespace Octide
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             string text = value.ToString();
-            double confirmedDouble;
-            if (double.TryParse(text, out confirmedDouble) == false)
+            if (double.TryParse(text, out double confirmedDouble) == false)
                 return new ValidationResult(false, "Not a valid number.");
             if (confirmedDouble > Maximum)
                 return new ValidationResult(false, string.Format("Number value must be smaller than {0}.", Maximum));
@@ -73,7 +71,7 @@ namespace Octide
             {
                 var xmlElement = XElement.Parse("<rich>" + value + "</rich>");
             }
-            catch (XmlException ex)
+            catch (XmlException)
             {
                 return new ValidationResult(false, "Invalid XML structure.");
 

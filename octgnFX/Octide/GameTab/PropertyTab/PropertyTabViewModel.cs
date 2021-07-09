@@ -48,7 +48,7 @@ namespace Octide.ViewModel
             }
             Items.CollectionChanged += (sender, args) =>
             {
-                ViewModelLocator.GameLoader.Game.CardProperties = Items.ToDictionary(x => ((PropertyItemModel)x).Name, y => ((PropertyItemModel)y)._property);
+                ViewModelLocator.GameLoader.Game.CardProperties = Items.ToDictionary(x => ((PropertyItemModel)x).Name, y => ((PropertyItemModel)y).Property);
                 Messenger.Default.Send(new CustomPropertyChangedMessage(args)) ;
             };
             AddCommand = new RelayCommand(AddItem);

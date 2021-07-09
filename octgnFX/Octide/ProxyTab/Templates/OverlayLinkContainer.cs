@@ -11,7 +11,7 @@ namespace Octide.ProxyTab.ItemModel
     public class OverlayLinkContainer : IBaseBlock, IDroppable
     {
         public TemplateLinkContainerDropHandler DropHandler { get; set; }
-        public IdeCollection<IdeBaseItem> Items { get; set; }
+        public IdeCollection<IdeBaseItem> ContainerItems { get; set; }
 
         public OverlayLinkContainer(IdeCollection<IdeBaseItem> source) : base(source)
         {
@@ -20,8 +20,8 @@ namespace Octide.ProxyTab.ItemModel
             {
                 Container = this
             };
-            Items = new IdeCollection<IdeBaseItem>(this, typeof(OverlayLinkModel));
-            Items.CollectionChanged += LinkContainerUpdated;
+            ContainerItems = new IdeCollection<IdeBaseItem>(this, typeof(OverlayLinkModel));
+            ContainerItems.CollectionChanged += LinkContainerUpdated;
         }
 
         public OverlayLinkContainer(OverlayLinkContainer lc, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -32,23 +32,23 @@ namespace Octide.ProxyTab.ItemModel
                 Container = this
             };
 
-            Items = new IdeCollection<IdeBaseItem>(this, typeof(OverlayLinkModel));
-            foreach (OverlayLinkModel link in lc.Items)
+            ContainerItems = new IdeCollection<IdeBaseItem>(this, typeof(OverlayLinkModel));
+            foreach (OverlayLinkModel link in lc.ContainerItems)
             {
-                Items.Add(new OverlayLinkModel(link, Items));
+                ContainerItems.Add(new OverlayLinkModel(link, ContainerItems));
             }
-            Items.CollectionChanged += LinkContainerUpdated;
+            ContainerItems.CollectionChanged += LinkContainerUpdated;
         }
 
         public void LinkContainerUpdated(object sender, NotifyCollectionChangedEventArgs args)
         {
-            if (Items.Count == 0)
+            if (ContainerItems.Count == 0)
                 RemoveItem();
         }
 
         public void AddLink(int index, OverlayLinkModel link)
         {
-            Items.Insert(index, new OverlayLinkModel(link, Items));
+            ContainerItems.Insert(index, new OverlayLinkModel(link, ContainerItems));
         }
         public bool CanAccept(object item)
         {

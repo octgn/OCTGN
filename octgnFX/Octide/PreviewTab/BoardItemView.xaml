@@ -10,9 +10,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600">
 
@@ -52,7 +50,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
+                <Slider Value="{Binding Height, Mode=TwoWay}" TickFrequency="100" Minimum="1" Maximum="3000"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
@@ -67,21 +65,21 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
+                <Slider Value="{Binding Width, Mode=TwoWay}" TickFrequency="100" Minimum="1" Maximum="3000"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="X Position Offset" >
             <DockPanel >
                 <TextBox Text="{Binding XPos, Mode=TwoWay}" Width="60"/>
-                <Slider Value="{Binding XPos, Mode=TwoWay}" Minimum="-500" Maximum="500"/>
+                <Slider Value="{Binding XPos, Mode=TwoWay}" TickFrequency="50" Minimum="-500" Maximum="500"/>
             </DockPanel>
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Y Position Offset" >
             <DockPanel>
                 <TextBox Text="{Binding YPos, Mode=TwoWay}" Width="60" />
-                <Slider Value="{Binding YPos, Mode=TwoWay}" Minimum="-500" Maximum="500" />
+                <Slider Value="{Binding YPos, Mode=TwoWay}" TickFrequency="50" Minimum="-500" Maximum="500" />
             </DockPanel>
         </controls:PropertyFieldControl>
     </ItemsControl>

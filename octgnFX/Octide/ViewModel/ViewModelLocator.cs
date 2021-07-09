@@ -48,7 +48,9 @@ namespace Octide.ViewModel
 			ViewModelLocator.ViewModelKernel.Bind<GameModeTabViewModel>().To<GameModeTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SoundTabViewModel>().To<SoundTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
-			ViewModelLocator.ViewModelKernel.Bind<ScriptsTabViewModel>().To<ScriptsTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<PythonTabViewModel>().To<PythonTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<VariableTabViewModel>().To<VariableTabViewModel>().InSingletonScope();
+			ViewModelLocator.ViewModelKernel.Bind<GameEventTabViewModel>().To<GameEventTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<ProxyTabViewModel>().To<ProxyTabViewModel>().InSingletonScope();
 			ViewModelLocator.ViewModelKernel.Bind<PreviewTabViewModel>().To<PreviewTabViewModel>().InSingletonScope();
@@ -84,7 +86,9 @@ namespace Octide.ViewModel
 		public static GameModeTabViewModel GameModeTabViewModel => ServiceLocator.Current.GetInstance<GameModeTabViewModel>();
 		public static SymbolTabViewModel SymbolTabViewModel => ServiceLocator.Current.GetInstance<SymbolTabViewModel>();
 		public static PropertyTabViewModel PropertyTabViewModel => ServiceLocator.Current.GetInstance<PropertyTabViewModel>();
-		public static ScriptsTabViewModel ScriptsTabViewModel => ServiceLocator.Current.GetInstance<ScriptsTabViewModel>();
+		public static PythonTabViewModel PythonTabViewModel => ServiceLocator.Current.GetInstance<PythonTabViewModel>();
+		public static GameEventTabViewModel GameEventTabViewModel => ServiceLocator.Current.GetInstance<GameEventTabViewModel>();
+		public static VariableTabViewModel VariableTabViewModel => ServiceLocator.Current.GetInstance<VariableTabViewModel>();
 		public static SetTabViewModel SetTabViewModel => ServiceLocator.Current.GetInstance<SetTabViewModel>();
 		public static ProxyTabViewModel ProxyTabViewModel => ServiceLocator.Current.GetInstance<ProxyTabViewModel>();
 		public static PreviewTabViewModel PreviewTabViewModel => ServiceLocator.Current.GetInstance<PreviewTabViewModel>();
@@ -103,7 +107,9 @@ namespace Octide.ViewModel
 			ServiceLocator.Current.GetInstance<MarkerTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SymbolTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<PropertyTabViewModel>().Cleanup();
-			ServiceLocator.Current.GetInstance<ScriptsTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<GameEventTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<PythonTabViewModel>().Cleanup();
+			ServiceLocator.Current.GetInstance<VariableTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<SetTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<ProxyTabViewModel>().Cleanup();
 			ServiceLocator.Current.GetInstance<PreviewTabViewModel>().Cleanup();

@@ -41,7 +41,7 @@ namespace Octide.SetTab.ItemModel
             Items = new IdeCollection<IdeBaseItem>(this, typeof(PackagePropertyModel));
             foreach (var include in i.Properties)
             {
-                Items.Add(new PackagePropertyModel(include, Items) { isIncludeProperty = true });
+                Items.Add(new PackagePropertyModel(include, Items) { IsIncludeProperty = true });
 
             }
             Items.CollectionChanged += (a, b) =>
@@ -67,7 +67,7 @@ namespace Octide.SetTab.ItemModel
             };
             foreach (PackagePropertyModel item in i.Items)
             {
-                Items.Add(new PackagePropertyModel(item, Items) { isIncludeProperty = true });
+                Items.Add(new PackagePropertyModel(item, Items) { IsIncludeProperty = true });
             }
 
             AddPropertyCommand = new RelayCommand(AddProperty);
@@ -75,7 +75,7 @@ namespace Octide.SetTab.ItemModel
 
         public void AddProperty()
         {
-            Items.Add(new PackagePropertyModel(Items) { isIncludeProperty = true });
+            Items.Add(new PackagePropertyModel(Items) { IsIncludeProperty = true });
         }
 
         public override object Clone()
@@ -96,7 +96,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildIncludeDef(NotifyCollectionChangedEventArgs args)
         {
-            _include.Properties = Items.Select(x => ((PackagePropertyModel)x)._def).ToList();
+            _include.Properties = Items.Select(x => ((PackagePropertyModel)x).Def).ToList();
         }
 
         public IEnumerable<IdeBaseItem> Sets => ViewModelLocator.SetTabViewModel.Items.Where(x => ((PackageModel)Source.Parent).Source.Parent != x && ((SetModel)x).CardItems.Count > 0); //TODO : test this rewrite

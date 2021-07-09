@@ -45,7 +45,11 @@ namespace Octide.ViewModel
 
         public ProxyTabViewModel()
         {
-            StoredProxyProperties = new ObservableCollection<ProxyInputPropertyItemModel>();
+            StoredProxyProperties = new ObservableCollection<ProxyInputPropertyItemModel>() 
+            { 
+                new ProxyInputPropertyItemModel("Type", "Creature"),
+                new ProxyInputPropertyItemModel("Color", "Blue")
+            };
 
             StoredProxyProperties.CollectionChanged += (a, b) =>
             {
@@ -104,6 +108,7 @@ namespace Octide.ViewModel
             Templates.SelectedItemChanged += (sender, args) =>
             {
                 Selection = null;
+                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
 
             TextBlocks = new IdeCollection<IdeBaseItem>(this, typeof(TextBlockDefinitionItemModel));
@@ -180,9 +185,24 @@ namespace Octide.ViewModel
             proxy.Dispose();
 
             BaseImage = new BitmapImage(new Uri(selectedTemplate._def.src));
-            ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
-                selectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
-                    x => (OverlayBlockDefinitionItemModel)OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block)));
+
+            ActiveOverlayLayers = new ObservableCollection<IdeBaseItem>();
+            foreach (var linkDefinition in selectedTemplate._def.GetOverLayBlocks(properties))
+            {
+                if (linkDefinition.SpecialBlock == null)
+                {
+                    ActiveOverlayLayers.Add((OverlayBlockDefinitionItemModel)OverlayBlocks.First(x => ((OverlayBlockDefinitionItemModel)x).Name == linkDefinition.Block));
+                }
+                else
+                {
+                    ActiveOverlayLayers.Add(new ArtCropDefinitionItemModel(linkDefinition.SpecialBlock,new IdeCollection<IdeBaseItem>())
+                    {
+                    }); 
+                }
+            }
+          //  ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
+          //      selectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
+          //          x =>  (OverlayBlockDefinitionItemModel)OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block)));
             ActiveTextLayers = new ObservableCollection<ProxyTextLinkItemModel>(
                 selectedTemplate._def.GetTextBlocks(properties).Select(
                     x => new ProxyTextLinkItemModel(x) ));
@@ -201,7 +221,7 @@ namespace Octide.ViewModel
 
         public double BaseHeight => BaseImage?.PixelHeight ?? 0;
         
-        public ObservableCollection<OverlayBlockDefinitionItemModel> ActiveOverlayLayers { get; private set; }
+        public ObservableCollection<IdeBaseItem> ActiveOverlayLayers { get; private set; }
         public ObservableCollection<ProxyTextLinkItemModel> ActiveTextLayers { get; private set; }
 
         

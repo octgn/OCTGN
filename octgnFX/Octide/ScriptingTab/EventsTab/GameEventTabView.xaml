@@ -1,0 +1,92 @@
+﻿<!--
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.s
+-->
+<UserControl x:Class="Octide.Views.GameEventTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:local="clr-namespace:Octide"
+             xmlns:model="clr-namespace:Octide.ItemModel"
+             xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             DataContext="{Binding GameEventTabViewModel, Source={StaticResource Locator}}">
+
+    <UserControl.Resources>
+
+        <Style x:Key="GameEventItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}" >
+                        <Border Background="{TemplateBinding Background}">
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Name:" TextAlignment="Right"/>
+                                <TextBox Grid.Column="1">
+                                    <TextBox.Style>
+                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                                            <Style.Triggers>
+                                                <Trigger Property="Validation.HasError" Value="true">
+                                                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                    <TextBox.Resources>
+                                        <local:BindingProxy x:Key="proxy" Data="{Binding }" />
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="Name" >
+                                            <Binding.ValidationRules>
+                                                <local:StringRestrictionValidationRule />
+                                                <local:UniqueValueValidationRule>
+                                                    <local:UniqueValueValidationRule.Wrapper>
+                                                        <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
+                                                    </local:UniqueValueValidationRule.Wrapper>
+                                                </local:UniqueValueValidationRule>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <TextBlock Grid.Row="1" Text="Value:" TextAlignment="Right" />
+                                <ComboBox Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding PythonFunction}" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Content="New Event Trigger" Command="{Binding AddEventCommand}" />
+
+        <ListBox ItemContainerStyle="{StaticResource GameEventItemStyle}" Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
+                         ItemsSource="{Binding Events}" SelectedItem="{Binding Events.SelectedItem}" >
+            <ListBox.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding Events.SelectedItem.RemoveCommand}" />
+            </ListBox.InputBindings>
+        </ListBox>
+
+    </Grid>
+</UserControl>

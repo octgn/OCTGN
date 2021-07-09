@@ -8,41 +8,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
 
              mc:Ignorable="d" 
              xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:set="clr-namespace:Octide.SetTab.Views"
              xmlns:item="clr-namespace:Octide.SetTab.ItemModel"
+             xmlns:controls="clr-namespace:Octide.Controls"
              d:DesignHeight="700" d:DesignWidth="1100"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              DataContext="{Binding SetTabViewModel, Source={StaticResource Locator}}">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Sets" Foreground="{x:Static metro:AccentBrushes.Sky}" FontSize="20" FontWeight="Bold" />
-            <Button DockPanel.Dock="Bottom" Content="New Set" Margin="1" Command="{Binding AddSetCommand}" />
-
-            <ListBox Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding Items}" SelectedItem="{Binding Items.SelectedItem}"
-                     gong:DragDrop.DropHandler="{Binding Items}">
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Delete" Command="{Binding Items.SelectedItem.RemoveCommand}" />
-                </ListBox.InputBindings>
-            </ListBox>
-        </DockPanel>
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-        <ContentControl Grid.Column="2" Content="{Binding Items.SelectedItem}" >
-            <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type item:SetModel}" >
-                    <set:SetItemView />
-                </DataTemplate>
-            </ContentControl.Resources>
-        </ContentControl>
-    </Grid>
+    <controls:OctideItemPropertyViewer ItemsSource="{Binding Items}" Title="Set Editor" VerticalScrollBarVisibility="Disabled"
+                                     Description="Create collections of cards for your game, organized into Sets. A Set can define Packages, which OCTGN uses to generate randomized selections of cards from the set for Limited/Sealed deck building.">
+        <controls:OctideItemPropertyViewer.Resources>
+            <DataTemplate DataType="{x:Type item:SetModel}" >
+                <set:SetItemView />
+            </DataTemplate>
+        </controls:OctideItemPropertyViewer.Resources>
+        <controls:OctideItemPropertyViewer.ListBoxButtons>
+            <Button Content="New Set" Command="{Binding AddSetCommand}" />
+        </controls:OctideItemPropertyViewer.ListBoxButtons>
+    </controls:OctideItemPropertyViewer>
+    
+    
 </UserControl>

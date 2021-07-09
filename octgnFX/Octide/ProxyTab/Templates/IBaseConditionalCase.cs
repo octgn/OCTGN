@@ -46,7 +46,6 @@ namespace Octide.ProxyTab.ItemModel
                 _property = value;
                 _case.property = value.Name;
                 RaisePropertyChanged("Property");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
@@ -80,7 +79,6 @@ namespace Octide.ProxyTab.ItemModel
                 }
                 RaisePropertyChanged("ExactMatch");
                 RaisePropertyChanged("Value");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
         public string Value
@@ -101,7 +99,6 @@ namespace Octide.ProxyTab.ItemModel
                     _case.contains = value;
                 }
                 RaisePropertyChanged("Value");
-                Messenger.Default.Send(new ProxyTemplateChangedMessage());
             }
         }
     }

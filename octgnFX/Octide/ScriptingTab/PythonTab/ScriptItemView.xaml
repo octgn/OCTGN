@@ -10,13 +10,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:folding="clr-namespace:ICSharpCode.AvalonEdit.Folding;assembly=ICSharpCode.AvalonEdit"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:Octide"
              xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600" >
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

@@ -11,11 +11,9 @@
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
              mc:Ignorable="d" 
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             params:Design.Theme="Dark"
              d:DesignHeight="900" d:DesignWidth="600">
 
-    <ItemsControl >
+    <ItemsControl>
         <controls:PropertyFieldControl Header="Name" >
             <TextBox Text="{Binding Name, Mode=TwoWay}"/>
         </controls:PropertyFieldControl>
