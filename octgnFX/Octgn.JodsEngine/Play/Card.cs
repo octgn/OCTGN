@@ -253,7 +253,17 @@ namespace Octgn.Play
 
         public override string Name
         {
-            get { return FaceUp && _type.Model != null ? _type.Model.GetName() : "Card"; }
+            get { return FaceUp ? RealName : "Card"; }
+        }
+
+        public string ToolTip
+        {
+            get { return LocalPlayerCanSee ? RealName : "Card"; }
+        }
+
+        private bool LocalPlayerCanSee
+        {
+            get { return FaceUp || PeekingPlayers.Contains(Player.LocalPlayer); }
         }
 
         public string RealName

@@ -1196,7 +1196,7 @@ namespace Octgn.Play.Gui
             if (e.OriginalSource is CardControl source && source.ToolTip is TextBlock tooltipTextBlock)
             {
                 tooltipTextBlock.Inlines.Clear();
-                tooltipTextBlock.Inlines.Add(new Run(Card.Name) { FontWeight = FontWeights.Bold });
+                tooltipTextBlock.Inlines.Add(new Run(Card.ToolTip) { FontWeight = FontWeights.Bold });
                 if (Octgn.Core.Prefs.ExtendedTooltips)
                 {
                     foreach (var property in Card.VisibleCardProperties)
