@@ -96,7 +96,7 @@ namespace Octgn
 
                 if (deckPath != null || editorOnly)
                 {
-                    return new DeckEditorLauncher(deckPath);
+                    return new DeckEditorLauncher(deckPath, true);
                 }
             }
             catch (Exception e)
