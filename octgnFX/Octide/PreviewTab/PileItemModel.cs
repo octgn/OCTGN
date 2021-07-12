@@ -32,7 +32,7 @@ namespace Octide.ItemModel
         public PileItemModel(PileItemModel g, IdeCollection<IdeBaseItem> source) : base(g, source) // copy item
         {
 
-            _group.Shortcut = g.Shortcut.ToString();
+            _group.Shortcut = g.Shortcut?.ToString();
             _group.Ordered = g.Ordered;
             _group.MoveTo = g.MoveTo;
             _group.ViewState = g.ViewState;

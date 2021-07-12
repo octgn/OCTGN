@@ -443,7 +443,6 @@
     <Compile Include="Controls\AssetControllerView.xaml.cs">
       <DependentUpon>AssetControllerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\DataTemplateSelectors.cs" />
     <Compile Include="Utils\EnumBindingSourceExtension.cs" />
     <Compile Include="Utils\AsyncObservableCollection.cs" />
     <Compile Include="Utils\TextOutline.cs" />

@@ -11,6 +11,7 @@
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:entity="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:local="clr-namespace:Octide"
              xmlns:controls="clr-namespace:Octide.Controls"
@@ -21,34 +22,39 @@
              PreviewMouseLeftButtonUp="ControlMouseUp"
              >
     <UserControl.Resources>
-        <DataTemplate x:Key="GroupPanel" >
-            <Border VerticalAlignment="Stretch" Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonUp="CreateActionsMenu" >
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                    <Image Source="{Binding Icon}" Height="16" />
-                    <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
-                </StackPanel>
-            </Border>
-        </DataTemplate>
 
-        <DataTemplate x:Key="CollapsedGroupPanel" >
-            <Border Style="{StaticResource PanelControl}" MinWidth="100" VerticalAlignment="Bottom" PreviewMouseRightButtonUp="CreateActionsMenu">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                    <Image Source="{Binding Icon}" Height="16" />
-                    <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
-                </StackPanel>
+        <ControlTemplate x:Key="GroupPanelTemplate" TargetType="{x:Type ListBoxItem}" >
+            <Border Background="{TemplateBinding Background}">
+                <Border VerticalAlignment="Stretch" Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonUp="CreatePileActionsMenu" >
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Image Source="{Binding Icon}" Height="16" />
+                        <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
+                    </StackPanel>
+                </Border>
             </Border>
-        </DataTemplate>
-        
-        <DataTemplate x:Key="ExpandedGroupPanel" >
-            <Border Style="{StaticResource PanelControl}" MinWidth="300" PreviewMouseRightButtonUp="CreateActionsMenu">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                    <Image Source="{Binding Icon}" Height="16" />
-                    <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
-                </StackPanel>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="CollapsedGroupPanelTemplate" TargetType="{x:Type ListBoxItem}" >
+            <Border Background="{TemplateBinding Background}">
+                <Border Style="{StaticResource PanelControl}" MinWidth="100" VerticalAlignment="Bottom" PreviewMouseRightButtonUp="CreatePileActionsMenu">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Image Source="{Binding Icon}" Height="16" />
+                        <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
+                    </StackPanel>
+                </Border>
             </Border>
-        </DataTemplate>
-        
-        <local:PlayerGroupPanelTemplateSelector x:Key="PlayerGroupPanelTemplateSelector" />
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ExpandedGroupPanelTemplate" TargetType="{x:Type ListBoxItem}" >
+            <Border Background="{TemplateBinding Background}">
+                <Border Style="{StaticResource PanelControl}" MinWidth="300" PreviewMouseRightButtonUp="CreatePileActionsMenu">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Image Source="{Binding Icon}" Height="16" />
+                        <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" Foreground="Black" FontSize="12" VerticalAlignment="Center" ClipToBounds="False" />
+                    </StackPanel>
+                </Border>
+            </Border>
+        </ControlTemplate>
 
         <Style x:Key="SpinUp" TargetType="{x:Type RepeatButton}">
             <Setter Property="FontSize" Value="9" />
@@ -89,28 +95,30 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <DataTemplate x:Key="CounterPanel">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="{Binding Icon}" Height="20" />
-                <controls:EditableTextBlock VerticalAlignment="Center" Text="{Binding Name}" Foreground="White" FontSize="12" MinWidth="20" Width="Auto" />
-                <Border BorderThickness="1" CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}" VerticalAlignment="Center">
-                    <Grid Height="20" Width="60">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <TextBox Text="{Binding DefaultValue}" BorderThickness="1" Foreground="Black" BorderBrush="Gray" Background="#11000000" FontWeight="Bold"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
-                        <RepeatButton Content="+" Command="{Binding IncreaseCommand}" Style="{StaticResource SpinUp}" Focusable="False" Grid.Column="1" Grid.Row="0" />
-                        <RepeatButton Content="-" Command="{Binding DecreaseCommand}" Style="{StaticResource SpinDown}" Focusable="False" Grid.Column="1" Grid.Row="1" />
-                    </Grid>
-                </Border>
-            </StackPanel>
-        </DataTemplate>
+
+        <ControlTemplate x:Key="CounterPanel" TargetType="{x:Type ListBoxItem}">
+            <Border Background="{TemplateBinding Background}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding Icon}" Height="20" />
+                    <controls:EditableTextBlock VerticalAlignment="Center" Text="{Binding Name}" Foreground="White" FontSize="12" MinWidth="20" Width="Auto" />
+                    <Border BorderThickness="1" CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}" VerticalAlignment="Center">
+                        <Grid Height="20" Width="60">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBox Text="{Binding DefaultValue}" BorderThickness="1" Foreground="Black" BorderBrush="Gray" Background="#11000000" FontWeight="Bold"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+                            <RepeatButton Content="+" Command="{Binding IncreaseCommand}" Style="{StaticResource SpinUp}" Focusable="False" Grid.Column="1" Grid.Row="0" />
+                            <RepeatButton Content="-" Command="{Binding DecreaseCommand}" Style="{StaticResource SpinDown}" Focusable="False" Grid.Column="1" Grid.Row="1" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
 
         <Style x:Key="NewActionButton" TargetType="{x:Type Button}" >
             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -147,41 +155,48 @@
                         </Grid.RowDefinitions>
                         <Button Content="Add Phase" Foreground="Black" Padding="0" HorizontalAlignment="Stretch" Height="25" VerticalContentAlignment="Center"
                             Background="{StaticResource ControlFillBrush}" BorderBrush="{StaticResource ControlBorderBrush}" Command="{Binding AddPhaseCommand}" />
-                        <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxBaseStyle}" 
-                             ItemsSource="{Binding Phases}" SelectedValue="{Binding Selection}"
-                             Padding="0" HorizontalContentAlignment="Right" Background="Transparent" 
-                                 gong:DragDrop.DropHandler="{Binding Phases}">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" Padding="3" Background="#444444" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" ClipToBounds="False" />
-                                        <Border BorderThickness="3" BorderBrush="Gray">
-                                            <Image Source="{Binding Icon}" StretchDirection="DownOnly" MaxHeight="50" />
-                                        </Border>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
+                        <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
+                             ItemsSource="{Binding Phases}" SelectedValue="{Binding Selection}" BorderThickness="0"
+                             Padding="0" gong:DragDrop.DropHandler="{Binding Phases}">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <Border Background="{TemplateBinding Background}">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                                                        <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" Padding="3" Background="#444444" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" ClipToBounds="False" />
+                                                        <Border BorderThickness="3" BorderBrush="Gray">
+                                                            <Image Source="{Binding Icon}" StretchDirection="DownOnly" MaxHeight="50" />
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
                         </ListBox>
                     </Grid>
                 </Border>
-                <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickTable, Mode=TwoWay}"  gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" >
-                    <Border DataContext="{Binding Table}" Background="{Binding PreviewTabViewModel.Table.BackgroundImage, Source={StaticResource Locator}}" PreviewMouseRightButtonUp="CreateActionsMenu" />
-                </ToggleButton>
-                <Viewbox Stretch="Uniform">
-                    <AdornerDecorator >
-                        <AdornerDecorator.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="{Binding Table.Zoom}" ScaleY="{Binding Table.Zoom}"
-                            CenterX="0" CenterY="0" />
-                                <TranslateTransform X="{Binding Table.Offset.X}"
-                                Y="{Binding Table.Offset.Y}" />
-                            </TransformGroup>
-                        </AdornerDecorator.RenderTransform>
-                        <Grid ClipToBounds="False">
-                            <Canvas x:Name="boardView" Focusable="False" MouseMove="BoardViewMove" MouseLeave="ResetCursor" Width="{Binding Table.Width}" Height="{Binding Table.Height}" 
-                                gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
-                                <Canvas DataContext="{Binding ActiveBoard}" Left="{Binding XPos, Mode=TwoWay}" Top="{Binding YPos, Mode=TwoWay}" MouseLeftButtonDown="BoardMouseDown" PreviewMouseLeftButtonUp="BoardMouseUp" >
-                                    <Border Width="{Binding Width}" Height="{Binding Height}" Canvas.ZIndex="2" Background="Transparent"
+                <Border Background="{Binding Table.BackgroundImage}" MouseRightButtonUp="CreateTableActionsMenu" 
+                                    gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" ClipToBounds="True" >
+                    <Border.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding ClickTableCommand}" />
+                    </Border.InputBindings>
+                    <Viewbox Stretch="Uniform" >
+                        <AdornerDecorator >
+                            <AdornerDecorator.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="{Binding Table.Zoom}" ScaleY="{Binding Table.Zoom}" CenterX="0" CenterY="0" />
+                                    <TranslateTransform X="{Binding Table.Offset.X}" Y="{Binding Table.Offset.Y}" />
+                                </TransformGroup>
+                            </AdornerDecorator.RenderTransform>
+                            <Canvas x:Name="TableCanvas" Width="{Binding Table.Width}" Height="{Binding Table.Height}" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
+                                <Grid x:Name="boardView" Focusable="False" DataContext="{Binding ActiveBoard}" Canvas.Left="{Binding XPos}" Canvas.Top="{Binding YPos}"
+                                      MouseMove="BoardMove" MouseLeave="ResetCursor" 
+                                      MouseLeftButtonDown="BoardMouseDown" MouseLeftButtonUp="BoardMouseUp">
+                                    <Border Width="{Binding Width}" Height="{Binding Height}"  Background="Transparent"
                                                 BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
                                         <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
                                             <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
@@ -195,54 +210,56 @@
                                         </Border>
                                     </Border>
                                     <Image Source="{Binding Icon}" Width="{Binding Width}" Height="{Binding Height}"/>
-                                </Canvas>
-                            </Canvas>
-                            <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove" MouseLeave="ResetCursor" 
-                                      gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}" >
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Canvas Left="{Binding X, Mode=TwoWay}" Top="{Binding Y,Mode=TwoWay}" PreviewMouseMove="CardMouseMove" MouseLeftButtonDown="CardMouseDown" PreviewMouseLeftButtonUp="CardMouseUp" >
-                                            <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" PreviewMouseRightButtonUp="CreateActionsMenu" 
-                                                BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False" Background="Transparent">
-                                                <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
-                                                    <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0}, {1:0}">
-                                                                <Binding Path="X" />
-                                                                <Binding Path="Y" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
+                                </Grid>
+                                <ItemsControl ItemsSource="{Binding Cards}" Focusable="False" x:Name="cardsView" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Canvas.Left="{Binding X, Mode=TwoWay}" Canvas.Top="{Binding Y,Mode=TwoWay}" 
+                                                  MouseLeftButtonDown="CardMouseDown" MouseLeftButtonUp="CardMouseUp"
+                                                  MouseRightButtonUp="CreateCardActionsMenu" 
+                                                  MouseMove="CardMouseMove" MouseLeave="ResetCursor" >
+
+                                                <Rectangle Width="{Binding CardWidth}" Height="{Binding CardHeight}" RadiusX="{Binding CardCornerRadius}" RadiusY="{Binding CardCornerRadius}" >
+                                                    <Rectangle.Fill>
+                                                        <ImageBrush ImageSource="{Binding CardImage}" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+                                                <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" BorderBrush="#88FF7F50" BorderThickness="1" Background="Transparent">
+                                                    <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
+                                                        <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}, {1:0}">
+                                                                    <Binding Path="X" />
+                                                                    <Binding Path="Y" />
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </Border>
                                                 </Border>
-                                            </Border>
-                                            <Rectangle Width="{Binding CardWidth}" Height="{Binding CardHeight}" RadiusX="{Binding CardCornerRadius}" RadiusY="{Binding CardCornerRadius}" >
-                                                <Rectangle.Fill>
-                                                    <ImageBrush ImageSource="{Binding CardImage}" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                        </Canvas>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <Canvas Width="{Binding Table.Width}" Height="{Binding Table.Height}" ClipToBounds="False" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </Grid>
-                    </AdornerDecorator>
-                </Viewbox>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                            <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas Width="{Binding Table.Width}" Height="{Binding Table.Height}" ClipToBounds="False" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </Canvas>
+                        </AdornerDecorator>
+                    </Viewbox>
+                </Border>
             </Grid>
 
-            <GridSplitter Grid.Row="1" ResizeDirection="Rows"  />
-            
-            <TabControl Grid.Row="2" Style="{x:Null}" Background="Transparent" Margin="0" Padding="0" BorderThickness="0" >
+            <GridSplitter Grid.Row="1"  ResizeDirection="Rows" />
+
+            <TabControl Grid.Row="2" Margin="0 5 0 0" Padding="0" BorderThickness="0" >
                 <TabControl.ItemContainerStyle>
                     <Style TargetType="{x:Type TabItem}">
                         <Setter Property="Template">
@@ -269,7 +286,7 @@
                     </Style>
                 </TabControl.ItemContainerStyle>
 
-                    <TabItem>
+                <TabItem>
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" >
                             <TextBlock Text="Global Tab" VerticalAlignment="Center" Margin="0,0,5,0" />
@@ -286,11 +303,16 @@
                         <DockPanel >
                             <Button DockPanel.Dock="Right" Style="{StaticResource NewItemButton}" 
                                 Content="New Counter" Command="{Binding AddGlobalCounterCommand}" />
-                            <ListBox Style="{StaticResource OctideHorizontalListBoxBaseStyle}" 
-                                     ItemTemplate="{StaticResource CounterPanel}"
-                                 ItemsSource="{Binding GlobalCounters}" SelectedValue="{Binding Selection}"
-                                 gong:DragDrop.DropHandler="{Binding GlobalCounters}"
-                                 Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox Style="{StaticResource OctideHorizontalListBoxStyle}" BorderThickness="0"
+                                     ItemsSource="{Binding GlobalCounters}" 
+                                     SelectedValue="{Binding Selection}"
+                                     gong:DragDrop.DropHandler="{Binding GlobalCounters}"
+                                     Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideHorizontalListBoxItemStyle}">
+                                        <Setter Property="Template" Value="{StaticResource CounterPanel}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal"/>
@@ -301,10 +323,25 @@
                         <DockPanel Grid.Row="1">
                             <Button DockPanel.Dock="Right" Style="{StaticResource NewItemButton}"
                                  Content="New Pile"  Command="{Binding AddGlobalPileCommand}" />
-                            <ListBox Style="{StaticResource OctideHorizontalListBoxBaseStyle}" ItemTemplateSelector="{StaticResource PlayerGroupPanelTemplateSelector}"
+                            <ListBox Style="{StaticResource OctideHorizontalListBoxStyle}" BorderThickness="0"
                                  ItemsSource="{Binding GlobalPiles}" SelectedValue="{Binding Selection}"
                                  Focusable="False"
                                  gong:DragDrop.DropHandler="{Binding GlobalPiles}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideHorizontalListBoxItemStyle}" >
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ViewState}" Value="Pile">
+                                                <Setter Property="Template" Value="{StaticResource GroupPanelTemplate }" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ViewState}" Value="Collapsed">
+                                                <Setter Property="Template" Value="{StaticResource CollapsedGroupPanelTemplate }" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ViewState}" Value="Expanded">
+                                                <Setter Property="Template" Value="{StaticResource ExpandedGroupPanelTemplate }" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -334,10 +371,15 @@
                             <Button DockPanel.Dock="Right" Style="{StaticResource NewItemButton}" 
                                     Content="New Counter" Command="{Binding AddCounterCommand}" />
 
-                            <ListBox Style="{StaticResource OctideHorizontalListBoxBaseStyle}" ItemTemplate="{StaticResource CounterPanel}"
+                            <ListBox Style="{StaticResource OctideHorizontalListBoxStyle}" BorderThickness="0"
                                      ItemsSource="{Binding Counters}" SelectedValue="{Binding Selection}" 
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" Focusable="False"
                                      gong:DragDrop.DropHandler="{Binding Counters}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideHorizontalListBoxItemStyle}">
+                                        <Setter Property="Template" Value="{StaticResource CounterPanel}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal"/>
@@ -348,10 +390,25 @@
                         <DockPanel Grid.Row="1">
                             <Button DockPanel.Dock="Right" Style="{StaticResource NewItemButton}"
                                     Content="New Pile" Command="{Binding AddPileCommand}"/>
-                            <ListBox Style="{StaticResource OctideHorizontalListBoxBaseStyle}" ItemTemplateSelector="{StaticResource PlayerGroupPanelTemplateSelector}" 
+                            <ListBox Style="{StaticResource OctideHorizontalListBoxStyle}" BorderThickness="0"
                                      ItemsSource="{Binding Piles}" SelectedValue="{Binding Selection}" 
                                      Focusable="False" 
                                      gong:DragDrop.DropHandler="{Binding Piles}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideHorizontalListBoxItemStyle}" >
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ViewState}" Value="Pile">
+                                                <Setter Property="Template" Value="{StaticResource GroupPanelTemplate }" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ViewState}" Value="Collapsed">
+                                                <Setter Property="Template" Value="{StaticResource CollapsedGroupPanelTemplate }" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ViewState}" Value="Expanded">
+                                                <Setter Property="Template" Value="{StaticResource ExpandedGroupPanelTemplate }" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -394,7 +451,7 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns"  />
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
 
         <ContentControl Margin="0,0,10,0" Grid.Column="2" Content="{Binding Selection}" >
             <ContentControl.Resources>
@@ -465,8 +522,7 @@
                     <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
                     <Setter Property="ItemContainerStyle">
                         <Setter.Value>
-                            <Style TargetType="{x:Type TreeViewItem}" >
-                                <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                            <Style TargetType="{x:Type TreeViewItem}"  >
                                 <Style.Triggers>
                                     <MultiTrigger>
                                         <MultiTrigger.Conditions>
@@ -497,8 +553,6 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
-                </Style>
                 <DataTemplate DataType="{x:Type model:ActionItemModel}" >
                     <Grid ContextMenu="{StaticResource ListBoxContextMenu}">
                         <Grid.ColumnDefinitions>
@@ -520,10 +574,22 @@
                     </Grid>
                 </DataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type model:ActionSubmenuItemModel}" ItemsSource="{Binding Items}" >
-                    <controls:EditableTextBlock Text="{Binding Name}" ContextMenu="{StaticResource ListBoxContextMenu}" Margin="0,0,4,0" FontSize="12" Foreground="WhiteSmoke"/>
+                    <Grid ContextMenu="{StaticResource ListBoxContextMenu}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="A" Width="*" />
+                            <ColumnDefinition SharedSizeGroup="B" Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <controls:EditableTextBlock Text="{Binding Name}" ContextMenu="{StaticResource ListBoxContextMenu}" Margin="0,0,4,0" FontSize="12" Grid.ColumnSpan="2" Foreground="WhiteSmoke" />
+                    </Grid>
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type model:ActionSeparatorItemModel}" >
-                    <Separator HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="50" Grid.ColumnSpan="2" ContextMenu="{StaticResource ListBoxContextMenu}" />
+                    <Grid ContextMenu="{StaticResource ListBoxContextMenu}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="A" Width="*" />
+                            <ColumnDefinition SharedSizeGroup="B" Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Margin="5,10,5,10" Fill="{StaticResource MahApps.Brushes.Separator}" ContextMenu="{StaticResource ListBoxContextMenu}"/>
+                    </Grid>
                 </DataTemplate>
             </Popup.Resources>
 
@@ -552,41 +618,48 @@
 
                 <Rectangle Height="1" Margin="5,10,5,10" Fill="WhiteSmoke" />
 
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Remove Group" Command="{Binding RemoveCommand}" >
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CanRemove}" Value="False">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Content="Copy Group" Command="{Binding CopyCommand}">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CanCopy}" Value="False">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Content="Insert Group" Command="{Binding InsertCommand}">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CanInsert}" Value="False">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
+                <ContentControl Content="{Binding }" >
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type model:TableItemModel}" />
+                        <DataTemplate DataType="{x:Type model:PileItemModel}">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Remove Group" Command="{Binding RemoveCommand}" >
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CanRemove}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                                <Button Content="Copy Group" Command="{Binding CopyCommand}">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CanCopy}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                                <Button Content="Insert Group" Command="{Binding InsertCommand}">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CanInsert}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
             </StackPanel>
         </Popup>
     </Grid>

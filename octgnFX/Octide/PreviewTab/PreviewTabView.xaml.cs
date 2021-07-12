@@ -24,7 +24,7 @@ namespace Octide.Views
 
         private bool mouseDown = false;
         private Point mouseDownOffset = new Point();
-        private Canvas DragItem = null;
+        private FrameworkElement DragItem = null;
         HitType MouseHitType = HitType.None;
 
 
@@ -147,7 +147,7 @@ namespace Octide.Views
 
         private void BoardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            DragItem = sender as Canvas;
+            DragItem = sender as FrameworkElement;
             BoardItemModel board = DragItem.DataContext as BoardItemModel;
             ViewModelLocator.PreviewTabViewModel.Selection = board;
             mouseDownOffset = e.GetPosition(DragItem);
@@ -156,15 +156,16 @@ namespace Octide.Views
             SetMouseCursor();
             mouseDown = true;
             boardView.CaptureMouse();
+            e.Handled = true;
         }
 
-        private void BoardViewMove(object sender, MouseEventArgs e)
+        private void BoardMove(object sender, MouseEventArgs e)
         {
+            FrameworkElement obj = sender as FrameworkElement;
             if (!mouseDown)
             {
-                Canvas itemCanvas = (sender as Canvas).Children[0] as Canvas;
-                BoardItemModel board = itemCanvas.DataContext as BoardItemModel;
-                MouseHitType = SetHitType(new Rect(board.XPos, board.YPos, board.Width, board.Height), e.GetPosition(itemCanvas));
+                BoardItemModel board = obj.DataContext as BoardItemModel;
+                MouseHitType = SetHitType(new Rect(board.XPos, board.YPos, board.Width, board.Height), e.GetPosition(obj));
                 SetMouseCursor();
                 return;
             }
@@ -174,7 +175,8 @@ namespace Octide.Views
                 e.Handled = true;
 
                 var vm = DragItem.DataContext as BoardItemModel;
-                Rect newrect = RectTransform(new Rect(vm.XPos, vm.YPos, vm.Width, vm.Height), e.GetPosition(boardView));
+                
+                Rect newrect = RectTransform(new Rect(vm.XPos, vm.YPos, vm.Width, vm.Height), e.GetPosition(TableCanvas));
                 vm.XPos = Convert.ToInt32(newrect.X);
                 vm.YPos = Convert.ToInt32(newrect.Y);
                 vm.Width = Convert.ToInt32(newrect.Width);
@@ -185,7 +187,7 @@ namespace Octide.Views
         
         private void CardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            DragItem = sender as Canvas;
+            DragItem = sender as FrameworkElement;
             SampleCardItemModel card = DragItem.DataContext as SampleCardItemModel;
             if (e.ClickCount == 2)
             {
@@ -198,20 +200,28 @@ namespace Octide.Views
             if (MouseHitType == HitType.None) return;
             SetMouseCursor();
             mouseDown = true;
-            cardsView.CaptureMouse();
+            DragItem.CaptureMouse();
+            e.Handled = true;
             
         }
 
-        private void CardsViewMouseMove(object sender, MouseEventArgs e)
+        private void CardMouseMove(object sender, MouseEventArgs e)
         {
-            if (!mouseDown) return;
+            FrameworkElement obj = sender as FrameworkElement;
+            if (!mouseDown)
+            {
+                SampleCardItemModel card = obj.DataContext as SampleCardItemModel;
+                MouseHitType = SetHitType(new Rect(card.X, card.Y, card.CardWidth, card.CardHeight), e.GetPosition(obj));
+                SetMouseCursor();
+                return;
+            }
             if (DragItem.DataContext is SampleCardItemModel)
             {
                 base.OnMouseMove(e);
                 e.Handled = true;
 
                 var vm = DragItem.DataContext as SampleCardItemModel;
-                Rect rect = RectTransform(new Rect(vm.X, vm.Y, vm.CardWidth, vm.CardHeight), e.GetPosition(boardView));
+                Rect rect = RectTransform(new Rect(vm.X, vm.Y, vm.CardWidth, vm.CardHeight), e.GetPosition(TableCanvas));
                 vm.X = Convert.ToInt32(rect.X);
                 vm.Y = Convert.ToInt32(rect.Y);
                 vm.CardWidth = Convert.ToInt32(rect.Width);
@@ -219,23 +229,12 @@ namespace Octide.Views
                 vm.RefreshValues();
             }
         }
-        
-        private void CardMouseMove(object sender, MouseEventArgs e)
-        {
-            if (mouseDown) return;
-            SampleCardItemModel card = (sender as Canvas).DataContext as SampleCardItemModel;
-            MouseHitType = SetHitType(new Rect(card.X, card.Y, card.CardWidth, card.CardHeight), e.GetPosition(sender as Canvas));
-            SetMouseCursor();
-            e.Handled = true;
-            return;
-        }
 
         private void ControlMouseUp(object sender, MouseButtonEventArgs e)
         {
             mouseDown = false;
+            DragItem?.ReleaseMouseCapture();
             DragItem = null;
-            cardsView.ReleaseMouseCapture();
-            boardView.ReleaseMouseCapture();
         }
 
         private void CardMouseUp(object sender, MouseButtonEventArgs e)
@@ -246,29 +245,28 @@ namespace Octide.Views
         {
 
         }
-        private void CreateActionsMenu(object sender, MouseButtonEventArgs e)
+        private void CreateTableActionsMenu(object sender, MouseButtonEventArgs e)
         {
-            var data = ((FrameworkElement)sender).DataContext;
-            if (data is SampleCardItemModel)
-            {
-                ActionMenuPopup.DataContext = ViewModelLocator.PreviewTabViewModel.Table;
-                GroupActionsPanel.Visibility = Visibility.Collapsed;
-                CardActionsPanel.Visibility = Visibility.Visible;
-            }
-            else if (data is TableItemModel table)
-            {
-                ActionMenuPopup.DataContext = table;
-                GroupActionsPanel.Visibility = Visibility.Visible;
-                CardActionsPanel.Visibility = Visibility.Collapsed;
-
-            }
-            else if (data is PileItemModel group)
-            {
-                ActionMenuPopup.DataContext = group;
-                ActionMenuPopup.Tag = "group";
-                GroupActionsPanel.Visibility = Visibility.Visible;
-                CardActionsPanel.Visibility = Visibility.Visible;
-            }
+            ActionMenuPopup.DataContext = ViewModelLocator.PreviewTabViewModel.Table;
+            GroupActionsPanel.Visibility = Visibility.Visible;
+            CardActionsPanel.Visibility = Visibility.Collapsed;
+            ActionMenuPopup.IsOpen = true;
+            e.Handled = true;
+        }
+        private void CreateCardActionsMenu(object sender, MouseButtonEventArgs e)
+        {
+            ActionMenuPopup.DataContext = ViewModelLocator.PreviewTabViewModel.Table;
+            GroupActionsPanel.Visibility = Visibility.Collapsed;
+            CardActionsPanel.Visibility = Visibility.Visible;
+            ActionMenuPopup.IsOpen = true;
+            e.Handled = true;
+        }
+        private void CreatePileActionsMenu(object sender, MouseButtonEventArgs e)
+        {
+            ActionMenuPopup.DataContext = ((FrameworkElement)sender).DataContext;
+            ActionMenuPopup.Tag = "group";
+            GroupActionsPanel.Visibility = Visibility.Visible;
+            CardActionsPanel.Visibility = Visibility.Visible;
             ActionMenuPopup.IsOpen = true;
             e.Handled = true;
         }

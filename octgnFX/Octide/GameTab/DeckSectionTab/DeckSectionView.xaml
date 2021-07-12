@@ -43,7 +43,7 @@
             <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
                      ItemsSource="{Binding Items}" gong:DragDrop.DropHandler="{Binding DeckSectionDropHandler}" SelectedValue="{Binding Items.SelectedItem}" >
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}" >
@@ -91,7 +91,7 @@
             <ListBox Grid.Column="2" Grid.Row="1"  Style="{StaticResource OctideListBoxStyle}"
                      ItemsSource="{Binding GlobalItems}" SelectedValue="{Binding GlobalItems.SelectedItem}"  gong:DragDrop.DropHandler="{Binding DeckSectionDropHandler}" >
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+                    <Style TargetType="{x:Type ListBoxItem}" >
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}" >
