@@ -22,8 +22,8 @@ namespace Octide.ItemModel
             CanBeDefault = true;
             _board = new GameBoard
             {
-                Height = 15,
-                Width = 15
+                Height = 50,
+                Width = 50
             };
             Asset = new AssetController(AssetType.Image);
             _board.Source = Asset.FullPath;

@@ -15,8 +15,10 @@
              d:DesignHeight="900" d:DesignWidth="600">
 
     <ItemsControl>
+        <controls:PropertyFieldControl Header="Is the Default Board">
+            <metro:ToggleSwitch IsOn="{Binding IsDefault, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
         <controls:PropertyFieldControl Header="Name" >
-
             <TextBox>
                 <TextBox.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding }" />

@@ -22,10 +22,10 @@ namespace Octide.ItemModel
             CanBeDefault = true;
             _size = new CardSize
             {
-                Width = 15,
-                Height = 15,
-                BackWidth = 15,
-                BackHeight = 15
+                Width = 35,
+                Height = 50,
+                BackWidth = 35,
+                BackHeight = 50
             };
             Name = "New Size";
             BackAsset = new AssetController(AssetType.Image);
