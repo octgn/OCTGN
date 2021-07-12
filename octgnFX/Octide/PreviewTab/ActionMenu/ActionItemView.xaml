@@ -15,7 +15,7 @@
              d:DesignHeight="900" d:DesignWidth="600" >
 
     <ItemsControl>
-        <controls:PropertyFieldControl Header="Is Default Action" >
+        <controls:PropertyFieldControl Header="Is the Default Action" >
             <metro:ToggleSwitch IsOn="{Binding IsDefault, Mode=TwoWay}"/>
         </controls:PropertyFieldControl>
 

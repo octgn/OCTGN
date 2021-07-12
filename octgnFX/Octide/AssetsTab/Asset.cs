@@ -38,6 +38,9 @@ namespace Octide
                 UpdateLinkedAssetPaths();
             }
         }
+
+        public bool IsDefault { get; set; } = false;
+        public bool IsVisible { get; set; } = true;
         public bool LockName { get; set; }
         public string Extension { get; set; }
 

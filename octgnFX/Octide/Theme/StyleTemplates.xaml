@@ -249,39 +249,6 @@
         </MenuItem>
     </ContextMenu>
 
-    <Style x:Key="IdeBaseItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-        <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
-        <Style.Triggers>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True" />
-                    <Condition Property="IsSelected" Value="True" />
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Highlight}"/>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True" />
-                    <Condition Property="IsSelected" Value="False" />
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Gray.MouseOver}"/>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="False" />
-                    <Condition Property="IsSelected" Value="True" />
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
-            </MultiTrigger>
-            <DataTrigger Binding="{Binding IsDefault}" Value="True" >
-                <Setter Property="BorderThickness" Value="3"/>
-                <Setter Property="BorderBrush" Value="Red" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding IsVisible}" Value="False" >
-                <Setter Property="Visibility" Value="Collapsed" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
 
 
     <Style x:Key="OctideComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
@@ -344,72 +311,91 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <ControlTemplate x:Key="OctideListBoxItemTemplate" TargetType="{x:Type ListBoxItem}">
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <DockPanel>
+                <Image DockPanel.Dock="Left" Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
+                <controls:EditableTextBlock Padding="6" Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" />
+            </DockPanel>
+        </Border>
+    </ControlTemplate>
+    
+    <ControlTemplate x:Key="OctideHorizontalListBoxItemTemplate" TargetType="{x:Type ListBoxItem}">
+        <Border Margin="3" Padding="5" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" >
+            <DockPanel >
+                <controls:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" />
+                <Image Source="{Binding Icon}" Stretch="Uniform" Margin="0 0 0 4"/>
+            </DockPanel>
+        </Border>
+    </ControlTemplate>
 
-    <Style x:Key="OctideListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <DockPanel>
-                            <Image DockPanel.Dock="Left" Stretch="Uniform" Margin="1" MaxHeight="28" VerticalAlignment="Center" Source="{Binding Icon, TargetNullValue={x:Null}}" />
-                            <controls:EditableTextBlock Padding="6" Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" />
-                        </DockPanel>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+
+    <Style x:Key="OctideListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        <Setter Property="Template" Value="{StaticResource OctideListBoxItemTemplate}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="ContextMenu" Value="{StaticResource ListBoxContextMenu}" />
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsSelected" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Highlight}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsSelected" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Gray.MouseOver}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False" />
+                    <Condition Property="IsSelected" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}"/>
+            </MultiTrigger>
+            <DataTrigger Binding="{Binding IsDefault}" Value="True" >
+                <Setter Property="BorderThickness" Value="3"/>
+                <Setter Property="BorderBrush" Value="Red" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsVisible}" Value="False" >
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="OctideHorizontalListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
+        <Setter Property="Template" Value="{StaticResource OctideHorizontalListBoxItemTemplate}" />
     </Style>
 
-    <Style x:Key="OctideHorizontalListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                    <Border Margin="3" Padding="5" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" >
-                        <DockPanel >
-                            <controls:EditableTextBlock DockPanel.Dock="Bottom" Text="{Binding Name, Mode=TwoWay}" />
-                            <Image Source="{Binding Icon}" Stretch="Uniform" Margin="0 0 0 4"/>
-                        </DockPanel>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!-- base style for vertical listboxes -->
-    <Style x:Key="OctideListBoxBaseStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}" >
+    <!-- style for vertical listboxes -->
+    <Style x:Key="OctideListBoxStyle" TargetType="{x:Type ListBox}" >
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Control.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource OctideListBoxItemStyle}" />
         <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
         <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
         <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
         <Setter Property="gong:DragDrop.UseDefaultEffectDataTemplate" Value="True" />
         <Setter Property="gong:DragDrop.UseDefaultDragAdorner" Value="True" />
+        <Setter Property="gong:DragDrop.SelectDroppedItems" Value="True" />
         <Setter Property="local:ScrollViewerHelper.ScrollSelectedIntoView" Value="True" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource IdeBaseItemStyle}" />
-    </Style>
-
-    <!-- base style for horizontal listboxes -->
-    <Style x:Key="OctideHorizontalListBoxBaseStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideListBoxBaseStyle}">
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="local:ScrollViewerHelper.ShiftWheelScrollsHorizontally" Value="True" />
-    </Style>
-
-    <!-- style for vertical listboxes -->
-    <Style x:Key="OctideListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideListBoxBaseStyle}" >
-        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Control.Border}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="3" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource OctideListBoxItemStyle}" />
     </Style>
     <!-- style for Horizontal listboxes -->
-    <Style x:Key="OctideHorizontalListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideHorizontalListBoxBaseStyle}" >
-        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Control.Border}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="3" />
+    <Style x:Key="OctideHorizontalListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource OctideListBoxStyle}" >
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="local:ScrollViewerHelper.ShiftWheelScrollsHorizontally" Value="True" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource OctideHorizontalListBoxItemStyle}" />
     </Style>
 

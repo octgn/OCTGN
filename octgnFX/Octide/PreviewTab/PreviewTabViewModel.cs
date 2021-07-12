@@ -51,6 +51,7 @@ namespace Octide.ViewModel
         public RelayCommand AddSizeCommand { get; private set; }
         public RelayCommand AddBoardCommand { get; private set; }
         public RelayCommand AddPhaseCommand { get; private set; }
+        public RelayCommand ClickTableCommand { get; private set; }
         
         public CardsizeDropHandler CardsizeDropHandler{ get; set; } = new CardsizeDropHandler();
         public TableDropHandler TableDropHandler{ get; set; } = new TableDropHandler();
@@ -99,6 +100,9 @@ namespace Octide.ViewModel
                 CanCopy = false,
                 CanInsert = false
             };
+
+            ClickTableCommand = new RelayCommand(ClickTable);
+
             #endregion
             #region piles
             if (Game.Player == null)
@@ -252,17 +256,10 @@ namespace Octide.ViewModel
         }
 
 
-        public bool ClickTable
+        public void ClickTable()
         {
-            get
-            {
-                return (Selection == Table);
-            }
-            set
-            {
-                Selection = Table;
-                RaisePropertyChanged("Selection");
-            }
+            Selection = Table;
+            RaisePropertyChanged("Selection");
         }
 
 
@@ -386,6 +383,7 @@ namespace Octide.ViewModel
                 {
                     Size = item
                 };
+
                 ViewModelLocator.PreviewTabViewModel.Cards.Add(card);
             }
         }

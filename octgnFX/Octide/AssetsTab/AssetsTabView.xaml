@@ -31,10 +31,33 @@
             <CheckBox DockPanel.Dock="Top" Content="Only show unlinked assets" IsChecked="{Binding FilterLinked}"
                       Foreground="{StaticResource MahApps.Brushes.Accent}" FontSize="16" />
             <ListBox gong:DragDrop.IsDragSource="False" gong:DragDrop.IsDropTarget="False" 
-                     Style="{StaticResource OctideListBoxBaseStyle}" ItemsSource="{Binding AssetList}" 
-                     SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="RelativePath" >
+                     Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding AssetList}" 
+                     SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="RelativePath">
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                        <DockPanel>
+                                            <Image Height="32" Margin="0,0,5,0" >
+                                                <Image.Style>
+                                                    <Style TargetType="{x:Type Image}">
+                                                        <Setter Property="Source" Value="{x:Null}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:AssetType.Image}">
+                                                                <Setter Property="Source" Value="{Binding SafeFilePath, TargetNullValue={x:Null}}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                            <TextBlock Padding="6" Text="{Binding RelativePath}"  />
+                                        </DockPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsLinked}" Value="False">
                                 <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Control.Disabled}" />
@@ -42,6 +65,11 @@
                         </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
             </ListBox>
         </DockPanel>
 

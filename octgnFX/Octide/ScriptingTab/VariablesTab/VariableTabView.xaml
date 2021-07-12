@@ -19,7 +19,7 @@
 
     <UserControl.Resources>
 
-        <Style x:Key="VariableItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource IdeBaseItemStyle}">
+        <Style x:Key="VariableItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}" >

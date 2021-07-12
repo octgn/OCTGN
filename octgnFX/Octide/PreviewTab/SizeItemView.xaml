@@ -16,6 +16,10 @@
 
     <ItemsControl>
 
+        <controls:PropertyFieldControl Header="Is the Default Size">
+            <metro:ToggleSwitch IsOn="{Binding IsDefault, Mode=TwoWay}" />
+        </controls:PropertyFieldControl>
+        
         <controls:PropertyFieldControl Header="Name"  >
             <TextBox>
                 <TextBox.Resources>
