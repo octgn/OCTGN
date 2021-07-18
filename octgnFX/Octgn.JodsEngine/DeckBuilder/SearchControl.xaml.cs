@@ -73,8 +73,9 @@ namespace Octgn.DeckBuilder
             UpdateCount();
         }
 
-        public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
+        public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save, DeckBuilderWindow deckWindow)
         {
+            _deckWindow = deckWindow;
             NumMod = "";
             var game = GameManager.Get().GetById(save.GameId);
             if (game == null)
