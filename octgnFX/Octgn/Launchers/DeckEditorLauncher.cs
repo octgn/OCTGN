@@ -10,11 +10,12 @@ namespace Octgn.Launchers
         internal string DeckPath;
         internal IDeck Deck;
 
-        public DeckEditorLauncher(string deckPath = null) {
+        public DeckEditorLauncher(string deckPath = null, bool shutdown = false) {
             // This way Deck == null instead of an empty string
             Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
             this.DeckPath = string.IsNullOrWhiteSpace(deckPath) ? null : deckPath;
+            this.Shutdown = shutdown;
         }
 
         public ILog Log { get; private set; }
