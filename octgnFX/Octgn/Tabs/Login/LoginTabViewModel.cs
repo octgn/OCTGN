@@ -85,7 +85,7 @@ namespace Octgn.Tabs.Login
             }
         }
 
-        public NewsViewModel News { get; } = new NewsViewModel();
+  //      public NewsViewModel News { get; } = new NewsViewModel();
 
         public LoginTabViewModel()
         {

@@ -26,7 +26,7 @@ namespace Octgn.Tabs.Login
             if (!this.IsInDesignMode())
             {
                 LoginVM = new LoginTabViewModel();
-                this.Loaded += RefreshNews_EventCallback;
+         //       this.Loaded += RefreshNews_EventCallback;
             }
             InitializeComponent();
 
@@ -44,13 +44,13 @@ namespace Octgn.Tabs.Login
                     }
                 };
 
-            var timer = new DispatcherTimer(TimeSpan.FromMinutes(2), DispatcherPriority.Normal, RefreshNews_EventCallback, Dispatcher);
-            timer.Start();
+ //           var timer = new DispatcherTimer(TimeSpan.FromMinutes(2), DispatcherPriority.Normal, RefreshNews_EventCallback, Dispatcher);
+ //           timer.Start();
         }
 
-        private async void RefreshNews_EventCallback(object sender, EventArgs e) {
-            await LoginVM.News.Refresh();
-        }
+ //       private async void RefreshNews_EventCallback(object sender, EventArgs e) {
+ //           await LoginVM.News.Refresh();
+ //       }
 
         #region UI Events
         private void Button1Click(object sender, RoutedEventArgs e) {
