@@ -661,7 +661,7 @@ namespace Octgn
             var allPlayers = Player.AllExceptGlobal.ToArray();
             var discord = Program.Discord;
 
-            if (allPlayers.Length <= 0) throw new InvalidOperationException($"All player count is {allPlayers.Length}");
+            if (Spectator == false && allPlayers.Length <= 0) throw new InvalidOperationException($"All player count is {allPlayers.Length}");
 
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
