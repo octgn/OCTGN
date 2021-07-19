@@ -63,7 +63,7 @@
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent" Style="{StaticResource MainTabItem}">
                 <login:LoginTab></login:LoginTab>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Play or Spectate" Style="{StaticResource MainTabItem}">
+            <TabItem x:Name="TabCustomGames" Header="Game Lobby" Style="{StaticResource MainTabItem}">
                 <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
             </TabItem>
             <TabItem x:Name="TabItemHistory" Header="Game History" Style="{StaticResource MainTabItem}">

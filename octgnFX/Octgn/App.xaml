@@ -8,6 +8,8 @@
         </ResourceDictionary>
         <ResourceDictionary Source="/Resources/Themes/Global.xaml">
         </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/GridSplitter.xaml">
+        </ResourceDictionary>
         <ResourceDictionary Source="/Resources/Themes/NumericUpDown.xaml">
         </ResourceDictionary>
         <ResourceDictionary Source="/Resources/Themes/ChildWindow.xaml">

@@ -299,7 +299,7 @@ namespace Octgn.Library.Localization
 
         public string LoginMessage__UnknownError => "An unknown error occured. Please try again.";
 
-        public string ConnectionStatus__Disconnected => "Offline";
+        public string ConnectionStatus__Disconnected => "Not Logged In";
 
         public string ConnectionStatus__Connecting => "Connecting...";
 
