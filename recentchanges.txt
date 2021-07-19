@@ -1,1 +1,3 @@
-
+Redesigned the play/spectate tab to provide more useful user-feedback
+Changed some of the wording in the pre-game lobby controls
+A slightly less condescending notification when a player intentionally leaves the game

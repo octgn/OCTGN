@@ -25,6 +25,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using Octgn.Controls;
 using Octgn.Library;
+using System.Windows.Data;
 
 namespace Octgn.Tabs.Play
 {
@@ -34,74 +35,77 @@ namespace Octgn.Tabs.Play
 
         public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
 
-        public bool Spectate {
-            get => _spectate;
+        private HostedGameViewModel _selectedGame;
+        public HostedGameViewModel SelectedGame
+        {
+            get { return _selectedGame; }
             set {
-                if (NotifyAndUpdate(ref _spectate, value)) {
-                    Prefs.SpectateGames = _spectate;
-                    foreach (var g in HostedGameList.ToArray()) {
-                        g.UpdateVisibility();
-                    }
-                }
+
+                this.IsJoinableGameSelected = value?.CanPlay == true;
+                if (value != null)
+                    Log.InfoFormat("Selected game {0} {1}", value.GameId, value.Name);
+                NotifyAndUpdate(ref _selectedGame, value);
             }
         }
 
-        public bool ShowUninstalledGames {
-            get => _showUninstalledGames;
+        public bool HideUninstalledGames {
+            get => Prefs.HideUninstalledGamesInList;
             set {
-                if (NotifyAndUpdate(ref _showUninstalledGames, value)) {
-                    Prefs.HideUninstalledGamesInList = _showUninstalledGames == false;
-                    foreach (var g in HostedGameList.ToArray()) {
-                        g.UpdateVisibility();
-                    }
-                }
-            }
-        }
+                Prefs.HideUninstalledGamesInList = value;
+                OnPropertyChanged(nameof(HideUninstalledGames));
+        }}
+        
 
+        private bool _showKillGameButton;
         public bool ShowKillGameButton {
             get => _showKillGameButton;
             set => NotifyAndUpdate(ref _showKillGameButton, value);
         }
 
+        private int _gameCount;
         public int GameCount {
             get => _gameCount;
             set => NotifyAndUpdate(ref _gameCount, value);
         }
 
+        private bool _isLoggedIn;
+        public bool IsLoggedIn
+        {
+            get => _isLoggedIn;
+            set => NotifyAndUpdate(ref _isLoggedIn, value);
+        }
+
+
         private readonly GameBroadcastListener broadcastListener;
 
-        private bool _spectate;
-        private bool _showUninstalledGames;
-        private bool _showKillGameButton;
-        private int _gameCount;
 
         public PlayTab() {
             InitializeComponent();
             broadcastListener = new GameBroadcastListener();
             broadcastListener.StartListening();
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
+            Program.LobbyClient.Connected += LobbyClient_OnConnect;
             Program.LobbyClient.Disconnected += LobbyClient_OnDisconnect;
 
-            Spectate = Prefs.SpectateGames;
             ShowKillGameButton = Prefs.IsAdmin;
-            ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
 
             _refreshGameListTimer = new DispatcherTimer(InitialRefreshDelay.TimeSpan, DispatcherPriority.Normal, RefreshGameListTimer_Tick, Dispatcher);
         }
 
         #region Game List Refreshing
 
+        private readonly DispatcherTimer _refreshGameListTimer;
+
+        private bool _isRefreshingGameList;
         public bool IsRefreshingGameList {
             get => _isRefreshingGameList;
             set => NotifyAndUpdate(ref _isRefreshingGameList, value);
         }
 
-        private bool _isRefreshingGameList;
-        private readonly DispatcherTimer _refreshGameListTimer;
-
         public static Duration InitialRefreshDelay { get; } = new Duration(TimeSpan.FromSeconds(2));
         public static Duration NormalRefreshDelay { get; } = new Duration(TimeSpan.FromSeconds(15));
 
+        private Duration _currentRefreshDelay = new Duration(TimeSpan.FromDays(10));
         public Duration CurrentRefreshDelay {
             get => _currentRefreshDelay;
             set {
@@ -112,9 +116,6 @@ namespace Octgn.Tabs.Play
         }
 
         public bool IsInitialRefresh => CurrentRefreshDelay.TimeSpan == InitialRefreshDelay.TimeSpan;
-
-        private Duration _currentRefreshDelay = new Duration(TimeSpan.FromDays(10));
-
 
         private async void RefreshGameListTimer_Tick(object sender, EventArgs e) {
             ShowKillGameButton = Prefs.IsAdmin;
@@ -135,6 +136,7 @@ namespace Octgn.Tabs.Play
                     var client = new ApiClient();
                     var hostedGames = await client.GetGameList();
                     games.AddRange(hostedGames.Select(x=>new HostedGameViewModel(x)));
+                    IsLoggedIn = true;
                 }
 
                 // Add local and lan games
@@ -160,7 +162,8 @@ namespace Octgn.Tabs.Play
                 GameCount = HostedGameList.Count;
             } catch (Exception ex) {
                 Log.Warn(nameof(RefreshGameListTimer_Tick), ex);
-            } finally {
+            } finally
+            {
                 IsRefreshingGameList = false;
                 _refreshGameListTimer.IsEnabled = true;
             }
@@ -175,9 +178,21 @@ namespace Octgn.Tabs.Play
 
         }
 
+        void LobbyClient_OnConnect(object sender, ConnectedEventArgs e) {
+            Log.Info("Connected");
+            Dispatcher.InvokeAsync(new Action(() => {
+                this.HostedGameList.Clear();
+                this.IsLoggedIn = true;
+                this.CurrentRefreshDelay = InitialRefreshDelay;
+            }));
+        }
+
         void LobbyClient_OnDisconnect(object sender, DisconnectedEventArgs e) {
             Log.Info("Disconnected");
-            Dispatcher.InvokeAsync(new Action(() => this.HostedGameList.Clear()));
+            Dispatcher.InvokeAsync(new Action(() => {
+                this.HostedGameList.Clear();
+                this.IsLoggedIn = false;
+            }));
         }
 
         #endregion Game List Refreshing
@@ -222,15 +237,6 @@ namespace Octgn.Tabs.Play
             private set => SetValue(IsJoinableGameSelectedProperty, value);
         }
 
-        private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e) {
-            Log.Info("Changed game selection");
-            var game = ListViewGameList.SelectedItem as HostedGameViewModel;
-            this.IsJoinableGameSelected = game?.CanPlay == true;
-
-            if (game != null)
-                Log.InfoFormat("Selected game {0} {1}", game.GameId, game.Name);
-        }
-
         private async void GameListItemDoubleClick(object sender, MouseButtonEventArgs e) {
             await JoinGame();
         }
@@ -267,13 +273,13 @@ namespace Octgn.Tabs.Play
         }
 
         private async Task<HostedGameViewModel> VerifyCanJoinGame() {
-            var hostedGame = ListViewGameList.SelectedItem as HostedGameViewModel;
+            if (SelectedGame == null) return null;
 
-            if (hostedGame.Status == HostedGameStatus.GameInProgress && hostedGame.Spectator == false) {
+            if (SelectedGame.Status == HostedGameStatus.GameInProgress && SelectedGame.Spectator == false) {
                 throw new UserMessageException("You can't join a game that is already in progress.");
             }
 
-            if (hostedGame.GameSource == "Online") {
+            if (SelectedGame.GameSource == "Online") {
                 var client = new ApiClient();
                 try {
                     if (!await client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt())) {
@@ -284,12 +290,12 @@ namespace Octgn.Tabs.Play
                 }
             }
 
-            var game = GameManager.Get().GetById(hostedGame.GameId);
+            var game = GameManager.Get().GetById(SelectedGame.GameId);
             if (game == null) {
                 throw new UserMessageException("You don't have the required game installed.");
             }
 
-            return hostedGame;
+            return SelectedGame;
         }
 
         #endregion Join Game
@@ -326,8 +332,7 @@ namespace Octgn.Tabs.Play
         #endregion Join Offline Game
 
         private void ButtonKillGame(object sender, RoutedEventArgs e) {
-            var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
-            if (hostedgame == null) return;
+            if (SelectedGame == null) return;
             if (Program.LobbyClient != null && Program.LobbyClient.User != null && Program.LobbyClient.IsConnected) {
                 throw new NotImplementedException("sorry bro");
             }
