@@ -229,6 +229,10 @@ namespace Octgn
                 Log.Warn("Sending stats error", e);
             }
 
+            Log.Info("Loading Discord Integration");
+            Discord = new DiscordWrapper();
+            Discord.Error += Discord_Error;
+
             Log.Info("Getting Launcher");
             Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             DeveloperMode = CommandLineHandler.Instance.DevMode;

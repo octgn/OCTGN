@@ -53,7 +53,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" Panel.ZIndex="10" Margin="0 -34 0 0"></Border>
-        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
+        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" IsEnabled="{Binding LoadingGame, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" Grid.Row="0" Grid.Column="0">
             <DockPanel>
                 <Border DockPanel.Dock="Right" Height="35">
                     <Border Padding="5,0,5,0" CornerRadius="5" Background="#dd333333" Visibility="Visible">
