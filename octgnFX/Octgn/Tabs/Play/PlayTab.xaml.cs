@@ -34,6 +34,12 @@ namespace Octgn.Tabs.Play
 
         public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
 
+        public bool LoadingGame
+        {
+            get => _loadingGame;
+            set => NotifyAndUpdate(ref _loadingGame, value);
+        }
+
         public bool Spectate {
             get => _spectate;
             set {
@@ -70,6 +76,7 @@ namespace Octgn.Tabs.Play
 
         private readonly GameBroadcastListener broadcastListener;
 
+        private bool _loadingGame;
         private bool _spectate;
         private bool _showUninstalledGames;
         private bool _showKillGameButton;
@@ -81,8 +88,10 @@ namespace Octgn.Tabs.Play
             broadcastListener.StartListening();
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.Disconnected += LobbyClient_OnDisconnect;
+            Program.Discord.JoinGame += Discord_JoinGame;
 
             Spectate = Prefs.SpectateGames;
+            LoadingGame = true;
             ShowKillGameButton = Prefs.IsAdmin;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
 
@@ -115,6 +124,13 @@ namespace Octgn.Tabs.Play
 
         private Duration _currentRefreshDelay = new Duration(TimeSpan.FromDays(10));
 
+
+        private async void Discord_JoinGame(object sender, Guid guid)
+        {
+            var game = HostedGameList.FirstOrDefault(x => x.Id == guid);
+            if (game == null) return;
+            await JoinGame(game);
+        }
 
         private async void RefreshGameListTimer_Tick(object sender, EventArgs e) {
             ShowKillGameButton = Prefs.IsAdmin;
@@ -191,11 +207,11 @@ namespace Octgn.Tabs.Play
                     dialog = new HostGameSettings();
                     dialog.Show(DialogPlaceHolder);
                     dialog.OnClose += HostGameSettingsDialogOnClose;
-                    BorderButtons.IsEnabled = false;
+                    LoadingGame = false;
                 } catch {
                     dialog.OnClose -= HostGameSettingsDialogOnClose;
                     dialog.Dispose();
-                    BorderButtons.IsEnabled = true;
+                    LoadingGame = true;
                     throw;
                 }
             } catch (Exception ex) {
@@ -204,7 +220,7 @@ namespace Octgn.Tabs.Play
         }
 
         private void HostGameSettingsDialogOnClose(object sender, DialogResult dialogResult) {
-            BorderButtons.IsEnabled = true;
+            LoadingGame = true;
             using (var dialog = sender as HostGameSettings) {
                 dialog.OnClose -= HostGameSettingsDialogOnClose;
             }
@@ -231,21 +247,23 @@ namespace Octgn.Tabs.Play
                 Log.InfoFormat("Selected game {0} {1}", game.GameId, game.Name);
         }
 
-        private async void GameListItemDoubleClick(object sender, MouseButtonEventArgs e) {
-            await JoinGame();
+        private async void GameListItemDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            await JoinGame((HostedGameViewModel)ListViewGameList.SelectedItem);
         }
 
-        private async void ButtonJoinClick(object sender, RoutedEventArgs e) {
-            await JoinGame();
+        private async void ButtonJoinClick(object sender, RoutedEventArgs e)
+        {
+            await JoinGame((HostedGameViewModel)ListViewGameList.SelectedItem);
         }
 
-        private async Task JoinGame() {
+        private async Task JoinGame(HostedGameViewModel game) {
             try {
                 Log.Info($"{nameof(JoinGame)}");
 
-                BorderButtons.IsEnabled = false;
+                LoadingGame = false;
 
-                var hostedGame = await VerifyCanJoinGame();
+                var hostedGame = await VerifyCanJoinGame(game);
 
                 string username;
                 if (hostedGame.GameSource == "Online") {
@@ -262,12 +280,11 @@ namespace Octgn.Tabs.Play
             } catch (Exception ex) {
                 HandleException(ex);
             } finally {
-                BorderButtons.IsEnabled = true;
+                LoadingGame = true;
            }
         }
 
-        private async Task<HostedGameViewModel> VerifyCanJoinGame() {
-            var hostedGame = ListViewGameList.SelectedItem as HostedGameViewModel;
+        private async Task<HostedGameViewModel> VerifyCanJoinGame(HostedGameViewModel hostedGame) {
 
             if (hostedGame.Status == HostedGameStatus.GameInProgress && hostedGame.Spectator == false) {
                 throw new UserMessageException("You can't join a game that is already in progress.");
@@ -304,11 +321,11 @@ namespace Octgn.Tabs.Play
                     dialog.VerticalAlignment = VerticalAlignment.Center;
                     dialog.Show(DialogPlaceHolder);
                     dialog.OnClose += ConnectOfflineGameDialogOnClose;
-                    BorderButtons.IsEnabled = false;
+                    LoadingGame = false;
                 } catch {
                     dialog.OnClose -= ConnectOfflineGameDialogOnClose;
                     dialog.Dispose();
-                    BorderButtons.IsEnabled = true;
+                    LoadingGame = true;
                     throw;
                 }
             } catch (Exception ex) {
@@ -317,7 +334,7 @@ namespace Octgn.Tabs.Play
         }
 
         private void ConnectOfflineGameDialogOnClose(object sender, DialogResult dialogResult) {
-            BorderButtons.IsEnabled = true;
+            LoadingGame = true;
             using (var dialog = sender as ConnectOfflineGame) {
                 dialog.OnClose -= ConnectOfflineGameDialogOnClose;
             }
@@ -337,6 +354,7 @@ namespace Octgn.Tabs.Play
             broadcastListener.StopListening();
             broadcastListener.Dispose();
             Program.LobbyClient.Disconnected -= LobbyClient_OnDisconnect;
+            Program.Discord.JoinGame -= Discord_JoinGame;
             _refreshGameListTimer.IsEnabled = false;
         }
 
