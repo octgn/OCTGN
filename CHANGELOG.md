@@ -1,3 +1,6 @@
+#3.4.359.0
++ Fixed a bug with hosting passworded games online
+
 #3.4.358.0
 + fix replay loading
 
@@ -4001,6 +4004,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
