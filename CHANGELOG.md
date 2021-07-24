@@ -1,3 +1,6 @@
+#3.4.354.0
++ fixed zombie OCTGN process running when launching the deck editor with -e
+
 #3.4.353.0
 + Ignore discord integration when discord is not installed.
 
@@ -3986,6 +3989,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
