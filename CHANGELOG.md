@@ -1,3 +1,6 @@
+#3.4.355.0
++ Peeked cards now show the card name as the tooltip instead of 'Card'
+
 #3.4.354.0
 + fixed zombie OCTGN process running when launching the deck editor with -e
 
@@ -3989,6 +3992,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
