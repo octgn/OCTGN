@@ -1,3 +1,6 @@
+#3.4.360.0
++ fixed broken spectator mode
+
 #3.4.359.0
 + Fixed a bug with hosting passworded games online
 
@@ -4004,6 +4007,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
