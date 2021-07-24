@@ -1,1 +1,1 @@
-fixes a deck editor crash handling keypresses after loading a saved search
+

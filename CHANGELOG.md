@@ -1,3 +1,6 @@
+#3.4.357.0
++ fixes a deck editor crash handling keypresses after loading a saved search
+
 #3.4.356.0
 + Fixed a crash for new users joining a game when they don't have a nickname set
 
@@ -3995,6 +3998,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
