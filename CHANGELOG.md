@@ -1,3 +1,6 @@
+#3.4.358.0
++ fix replay loading
+
 #3.4.357.0
 + fixes a deck editor crash handling keypresses after loading a saved search
 
@@ -3998,6 +4001,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
