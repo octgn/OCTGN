@@ -1,1 +1,1 @@
-Ignore discord integration when discord is not installed.
+

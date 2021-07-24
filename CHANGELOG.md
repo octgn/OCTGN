@@ -1,3 +1,6 @@
+#3.4.353.0
++ Ignore discord integration when discord is not installed.
+
 #3.4.352.0
 + fixed a startup crash when parsing dateTime values with an Arabic culture configuration
 
@@ -3983,6 +3986,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
