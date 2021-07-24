@@ -1,3 +1,6 @@
+#3.4.356.0
++ Fixed a crash for new users joining a game when they don't have a nickname set
+
 #3.4.355.0
 + Peeked cards now show the card name as the tooltip instead of 'Card'
 
@@ -3992,6 +3995,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

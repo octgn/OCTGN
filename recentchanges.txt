@@ -1,1 +1,1 @@
-Fixed a crash for new users joining a game when they don't have a nickname set
+
