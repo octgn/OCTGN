@@ -1,3 +1,6 @@
+#3.4.361.0
++ Removed the news feed to silence the SSL validation error
+
 #3.4.360.0
 + fixed broken spectator mode
 
@@ -4007,6 +4010,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
