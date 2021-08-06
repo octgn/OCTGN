@@ -41,7 +41,7 @@ namespace Octide.ViewModel
 
             Items.CollectionChanged += (a, b) =>
             {
-    //            ViewModelLocator.GameLoader.Sets = Items.Select(x => ((SetModel)x)._set);
+                //            ViewModelLocator.GameLoader.Sets = Items.Select(x => ((SetModel)x)._set);
             };
 
             // import set markers from deprecated code
@@ -61,6 +61,6 @@ namespace Octide.ViewModel
             Items.Add(ret);
             Items.SelectedItem = ret;
         }
-        
+
     }
 }

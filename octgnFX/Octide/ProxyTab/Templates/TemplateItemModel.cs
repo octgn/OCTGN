@@ -47,7 +47,7 @@ namespace Octide.ProxyTab.ItemModel
             };
 
             Asset = new AssetController(AssetType.Image);
-            _def.src= Asset.SelectedAsset.FullPath;
+            _def.src = Asset.SelectedAsset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
 
 

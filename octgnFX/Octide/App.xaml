@@ -23,6 +23,7 @@
       <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octide.ViewModel" />
       <vm:WindowLocator x:Key="WindowLocator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octide.ViewModel" />
       <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+      <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
       <local:BooleanToInverseVisibilityConverter x:Key="BooleanToInverseVisibilityConverter" />
     </ResourceDictionary>
   </Application.Resources>

@@ -18,18 +18,18 @@ namespace Octide
     public class IdeCollection<T> : ObservableCollection<T>, IDropTarget
     {
         public object Parent { get; private set; }
-        
+
         public Type[] RestrictedTypes { get; private set; }
-        public IdeCollection(): base()
+        public IdeCollection() : base()
         {
             Parent = null;
             RestrictedTypes = new Type[0];
         }
-        public IdeCollection(object parent): base()
+        public IdeCollection(object parent) : base()
         {
             Parent = parent;
         }
-        public IdeCollection(object parent, params Type[] types ): base()
+        public IdeCollection(object parent, params Type[] types) : base()
         {
             Parent = parent;
             RestrictedTypes = types;

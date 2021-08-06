@@ -65,7 +65,7 @@ namespace Octide
         }
 
         //loads the asset from an existing location within the working directory
-        public Asset(FileInfo file): this()
+        public Asset(FileInfo file) : this()
         {
             var safeFilePath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
             SafeFile = file.CopyTo(safeFilePath);

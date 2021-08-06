@@ -434,9 +434,6 @@
     <Compile Include="Utils\TextOutline.cs" />
     <Compile Include="Utils\ValidationRules.cs" />
     <Compile Include="Utils\IdeObservableCollection.cs" />
-    <Compile Include="Views\ImportCardsWindow.xaml.cs">
-      <DependentUpon>ImportCardsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SetTab\PackageTab\Include.cs" />
     <Compile Include="SetTab\PackageTab\Property.cs" />
     <Compile Include="SetTab\PackageTab\Pick.cs" />
@@ -482,7 +479,6 @@
     <Compile Include="ProxyTab\ProxyTabViewModel.cs" />
     <Compile Include="SetTab\SetTabViewModel.cs" />
     <Compile Include="GameTab\PropertyTab\PropertyTabViewModel.cs" />
-    <Compile Include="ViewModel\ImportCardsViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\LoaderViewModel.cs" />
     <Compile Include="PreviewTab\PreviewTabViewModel.cs" />
@@ -696,10 +692,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ImportCardsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SetTab\SetItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -863,9 +855,7 @@
   <ItemGroup>
     <None Include="Resources\score.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SetTab\ImportCardsDlg\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

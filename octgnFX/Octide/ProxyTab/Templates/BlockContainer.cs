@@ -53,7 +53,7 @@ namespace Octide.ProxyTab.ItemModel
                         OverlayLinkContainer container;
                         if (!(Items.LastOrDefault() is OverlayLinkContainer))
                         {
-                            container = new OverlayLinkContainer(Items) ;
+                            container = new OverlayLinkContainer(Items);
                             Items.Add(container); //adds a new link container at the end
                         }
                         else
@@ -173,7 +173,7 @@ namespace Octide.ProxyTab.ItemModel
             if (index > 0 && Items[index - 1] is OverlayLinkContainer)
                 return Items[index - 1] as OverlayLinkContainer;
             return null;
-            
+
         }
 
         public bool CanAccept(object item)

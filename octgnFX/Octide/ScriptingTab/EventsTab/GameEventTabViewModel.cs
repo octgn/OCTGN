@@ -41,7 +41,7 @@ namespace Octide.ViewModel
 
             Events.CollectionChanged += (a, b) =>
             {
-                var items = 
+                var items =
                 ViewModelLocator.GameLoader.Game.Events = Events.GroupBy(x => ((GameEventItemModel)x).Name)
                                                                 .ToDictionary(
                                                                     x => x.Key,

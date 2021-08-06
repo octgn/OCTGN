@@ -24,7 +24,7 @@ namespace Octide.SetTab.ItemModel
             {
                 BuildOptionsDef(b);
             };
-            Items.Add(new OptionModel(Items) );
+            Items.Add(new OptionModel(Items));
             AddOptionCommand = new RelayCommand(AddOption);
         }
 
@@ -54,7 +54,7 @@ namespace Octide.SetTab.ItemModel
             };
             foreach (OptionModel item in p.Items)
             {
-                Items.Add(new OptionModel(item, Items) );
+                Items.Add(new OptionModel(item, Items));
             }
             AddOptionCommand = new RelayCommand(AddOption);
         }

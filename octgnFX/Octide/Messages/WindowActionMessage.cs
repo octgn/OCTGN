@@ -22,6 +22,6 @@ namespace Octide.Messages
 
     public enum WindowActionType
     {
-        Close,Show,Create,SetMain,Hide
+        Close, Show, Create, SetMain, Hide
     }
 }

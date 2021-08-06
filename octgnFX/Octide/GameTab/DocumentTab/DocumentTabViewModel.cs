@@ -40,7 +40,7 @@ namespace Octide.ViewModel
             {
                 Items.Add(new DocumentItemModel(document, Items));
             }
-            Items.CollectionChanged += (a, b) => 
+            Items.CollectionChanged += (a, b) =>
             {
                 ViewModelLocator.GameLoader.Game.Documents = Items.Select(x => (x as DocumentItemModel)._document).ToList();
             };

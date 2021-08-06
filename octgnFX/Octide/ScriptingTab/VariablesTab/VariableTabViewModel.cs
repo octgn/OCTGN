@@ -27,7 +27,7 @@ namespace Octide.ViewModel
     {
         public IdeCollection<IdeBaseItem> GlobalVariables { get; private set; }
         public RelayCommand AddGlobalVariableCommand { get; private set; }
-        
+
         public IdeCollection<IdeBaseItem> PlayerVariables { get; private set; }
         public RelayCommand AddPlayerVariableCommand { get; private set; }
 

@@ -23,9 +23,6 @@
         <TabItem Header="Summary" >
             <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl>
-                <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                    <Button HorizontalAlignment="Left" Content="Import Cards from Spreadsheet" Command="{Binding ImportCSVCommand}" />
-                </StackPanel>
                 <controls:PropertyFieldControl Header="Name">
                     <TextBox>
                         <TextBox.Text>

@@ -13,65 +13,65 @@ using System.Windows;
 
 namespace Octide.ViewModel
 {
-	/// <summary>
-	/// This class contains properties that the main View can data bind to.
-	/// <para>
-	/// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-	/// </para>
-	/// <para>
-	/// You can also use Blend to data bind with the tool's support.
-	/// </para>
-	/// <para>
-	/// See http://www.galasoft.ch/mvvm
-	/// </para>
-	/// </summary>
-	public class MainViewModel : ViewModelBase
-	{
-		public RelayCommand LoadCommand { get; private set; }
-		public RelayCommand SaveCommand { get; private set; }
-		public RelayCommand ExportCommand { get; private set; }
+    /// <summary>
+    /// This class contains properties that the main View can data bind to.
+    /// <para>
+    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
+    /// </para>
+    /// <para>
+    /// You can also use Blend to data bind with the tool's support.
+    /// </para>
+    /// <para>
+    /// See http://www.galasoft.ch/mvvm
+    /// </para>
+    /// </summary>
+    public class MainViewModel : ViewModelBase
+    {
+        public RelayCommand LoadCommand { get; private set; }
+        public RelayCommand SaveCommand { get; private set; }
+        public RelayCommand ExportCommand { get; private set; }
 
-		public MainViewModel()
-		{
-			if (IsInDesignMode)
-			{
-			    // Code runs in Blend --> create design time data.
-			}
-			else
-			{
-			    // Code runs "for real"
-			}
-			ExportCommand = new RelayCommand(ExportPackage);
-			SaveCommand = new RelayCommand(SaveGame);
-			LoadCommand = new RelayCommand(LoadLoaderWindow);
-		}
+        public MainViewModel()
+        {
+            if (IsInDesignMode)
+            {
+                // Code runs in Blend --> create design time data.
+            }
+            else
+            {
+                // Code runs "for real"
+            }
+            ExportCommand = new RelayCommand(ExportPackage);
+            SaveCommand = new RelayCommand(SaveGame);
+            LoadCommand = new RelayCommand(LoadLoaderWindow);
+        }
 
-		private void SaveGame()
-		{
-			ViewModelLocator.GameLoader.SaveGame();
-		}
+        private void SaveGame()
+        {
+            ViewModelLocator.GameLoader.SaveGame();
+        }
 
         private void ExportPackage()
         {
             if (AskToSave())
             {
-				ViewModelLocator.GameLoader.ExportGame();
-			}
+                ViewModelLocator.GameLoader.ExportGame();
+            }
 
         }
 
-		private void LoadLoaderWindow()
-		{
-			//TODO: Make this work -- app doesn't like showing previously-closed windows.
-			if (CleanupCurrentGame())
-			{
-				ViewModelLocator.Cleanup();
-				Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Create));
-				Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Show));
-				Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.SetMain));
-				Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Close));
-			}
-		}
+        private void LoadLoaderWindow()
+        {
+            //TODO: Make this work -- app doesn't like showing previously-closed windows.
+            if (CleanupCurrentGame())
+            {
+                ViewModelLocator.Cleanup();
+                Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Create));
+                Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Show));
+                Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.SetMain));
+                Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Close));
+            }
+        }
 
         public bool AskToSave()
         {
@@ -92,13 +92,13 @@ namespace Octide.ViewModel
             }
             return ret;
         }
-		public bool CleanupCurrentGame()
-		{
-			if (!AskToSave())
-			{
-				return false;
-			}
-			return true;
-		}
-	}
+        public bool CleanupCurrentGame()
+        {
+            if (!AskToSave())
+            {
+                return false;
+            }
+            return true;
+        }
+    }
 }

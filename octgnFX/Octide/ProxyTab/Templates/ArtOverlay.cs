@@ -16,7 +16,7 @@ namespace Octide.ProxyTab.ItemModel
             var _blockDefinition = new BlockDefinition()
             {
             };
-            _wrapper = new LinkDefinition.LinkWrapper() {  CardArtCrop = _blockDefinition };
+            _wrapper = new LinkDefinition.LinkWrapper() { CardArtCrop = _blockDefinition };
             PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
 

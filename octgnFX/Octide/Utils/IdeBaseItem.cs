@@ -47,7 +47,7 @@ namespace Octide
             MakeDefaultCommand = new RelayCommand(MakeDefault);
         }
 
-        public void SetSource(IdeCollection<IdeBaseItem> src) 
+        public void SetSource(IdeCollection<IdeBaseItem> src)
         {
             Source = src;
             Source.DefaultItemChanged += (sender, args) =>

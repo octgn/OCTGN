@@ -9,16 +9,20 @@ namespace Octide
     {
         private readonly IKernel _kernel;
 
-        public NInjectServiceLocator(IKernel kernel) {
+        public NInjectServiceLocator(IKernel kernel)
+        {
             _kernel = kernel;
         }
 
-        protected override IEnumerable<object> DoGetAllInstances(Type serviceType) {
+        protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
+        {
             return _kernel.GetAll(serviceType);
         }
 
-        protected override object DoGetInstance(Type serviceType, string key) {
-            if (key == null) {
+        protected override object DoGetInstance(Type serviceType, string key)
+        {
+            if (key == null)
+            {
                 return _kernel.Get(serviceType);
             }
 

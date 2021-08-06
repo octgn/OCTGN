@@ -32,7 +32,7 @@ namespace Octide.Views
         {
             InitializeComponent();
         }
-        
+
         private enum HitType
         {
             None, Body, TL, TR, BR, BL, L, R, T, B
@@ -52,7 +52,7 @@ namespace Octide.Views
                 if (point.Y < GAP) return HitType.TL;
                 if (rect.Height - point.Y < GAP) return HitType.BL;
                 return HitType.L;
-    }
+            }
             else if (rect.Width - point.X < GAP)
             {
                 // Right edge.
@@ -95,7 +95,7 @@ namespace Octide.Views
                     desired_cursor = Cursors.SizeWE;
                     break;
             }
-            
+
             if (Cursor != desired_cursor) Cursor = desired_cursor;
         }
 
@@ -175,7 +175,7 @@ namespace Octide.Views
                 e.Handled = true;
 
                 var vm = DragItem.DataContext as BoardItemModel;
-                
+
                 Rect newrect = RectTransform(new Rect(vm.XPos, vm.YPos, vm.Width, vm.Height), e.GetPosition(TableCanvas));
                 vm.XPos = Convert.ToInt32(newrect.X);
                 vm.YPos = Convert.ToInt32(newrect.Y);
@@ -184,7 +184,7 @@ namespace Octide.Views
                 vm.RefreshValues();
             }
         }
-        
+
         private void CardMouseDown(object sender, MouseButtonEventArgs e)
         {
             DragItem = sender as FrameworkElement;
@@ -202,7 +202,7 @@ namespace Octide.Views
             mouseDown = true;
             DragItem.CaptureMouse();
             e.Handled = true;
-            
+
         }
 
         private void CardMouseMove(object sender, MouseEventArgs e)
@@ -240,7 +240,7 @@ namespace Octide.Views
         private void CardMouseUp(object sender, MouseButtonEventArgs e)
         {
         }
-        
+
         private void BoardMouseUp(object sender, MouseButtonEventArgs e)
         {
 

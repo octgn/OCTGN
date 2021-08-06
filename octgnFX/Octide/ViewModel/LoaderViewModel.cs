@@ -23,92 +23,81 @@ namespace Octide.ViewModel
     using Octide.Messages;
     using Octide.Views;
 
-	public class LoaderViewModel : ViewModelBase
-	{
-		public RelayCommand NewGameCommand { get; private set; }
-		public RelayCommand ImportGameCommand { get; private set; }
-		public RelayCommand LoadGameCommand { get; private set; }
-		public LoaderViewModel()
-		{
-			NewGameCommand = new RelayCommand(NewGame);
-			ImportGameCommand = new RelayCommand(ImportGame);
-			LoadGameCommand = new RelayCommand(LoadGame);
-			var garbageFolder = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
-			foreach (var dir in garbageFolder.GetDirectories())
-			{
-				try
-				{
-					dir.Delete(true);
-				}
-				catch
-				{
-				}
-			}
-		}
-		public void NewGame()
-		{
-			ViewModelLocator.GameLoader.CreateGame();
-			Task.Factory.StartNew(LoadMainWindow);
+    public class LoaderViewModel : ViewModelBase
+    {
+        public RelayCommand NewGameCommand { get; private set; }
+        public RelayCommand ImportGameCommand { get; private set; }
+        public RelayCommand LoadGameCommand { get; private set; }
+        public LoaderViewModel()
+        {
+            NewGameCommand = new RelayCommand(NewGame);
+            ImportGameCommand = new RelayCommand(ImportGame);
+            LoadGameCommand = new RelayCommand(LoadGame);
+        }
+        public void NewGame()
+        {
+            ViewModelLocator.GameLoader.CreateGame();
+            Task.Factory.StartNew(LoadMainWindow);
 
-		}
-		public void LoadGame()
-		{
-			var fo = new OpenFileDialog
-			{
-				Title = "Load a Game (select the definition.xml file within the root folder.)",
-				Filter = "Definition File|definition.xml"
-			};
-			if ((bool)fo.ShowDialog() == false)
-			{
-				return;
-			}
+        }
+        public void LoadGame()
+        {
+            var fo = new OpenFileDialog
+            {
+                Title = "Load a Game (select the definition.xml file within the root folder.)",
+                Filter = "Definition File|definition.xml"
+            };
+            if ((bool)fo.ShowDialog() == false)
+            {
+                return;
+            }
 
-			var fileInfo = new FileInfo(fo.FileName);
+            var fileInfo = new FileInfo(fo.FileName);
 
-			ViewModelLocator.GameLoader.LoadGame(fileInfo);
-			Task.Factory.StartNew(LoadMainWindow);
+            ViewModelLocator.GameLoader.LoadGame(fileInfo);
+            Task.Factory.StartNew(LoadMainWindow);
 
 
-		}
-		public void ImportGame()
-		{
-			var fo = new OpenFileDialog
-			{
-				Title = "Import a Game Package",
-				Filter = "OCTGN Game Package (*.nupkg)|*.nupkg"
-			};
-			if (fo.ShowDialog() == false) return;
+        }
+        public void ImportGame()
+        {
+            var fo = new OpenFileDialog
+            {
+                Title = "Import a Game Package",
+                Filter = "OCTGN Game Package (*.nupkg)|*.nupkg"
+            };
+            if (fo.ShowDialog() == false) return;
 
-			var fileInfo = new FileInfo(fo.FileName);
+            var fileInfo = new FileInfo(fo.FileName);
 
-			ViewModelLocator.GameLoader.ImportGame(fileInfo);
-			Task.Factory.StartNew(LoadMainWindow);
+            ViewModelLocator.GameLoader.ImportGame(fileInfo);
+            Task.Factory.StartNew(LoadMainWindow);
 
 
-		}
+        }
 
-		public string Title
-		{
-			get
-			{
-				return "OCTGN Game Development Studio";
-			}
-		}
+        public string Title
+        {
+            get
+            {
+                return "OCTGN Game Development Studio";
+            }
+        }
 
-		public Version Version
-		{
-			get
-			{
-				return typeof(LoaderViewModel).Assembly.GetName().Version;
-			}
-		}
+        public Version Version
+        {
+            get
+            {
+                return typeof(LoaderViewModel).Assembly.GetName().Version;
+            }
+        }
 
-		private void LoadMainWindow()
-		{
-			Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Create));
-			Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Show));
-			Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.SetMain));
-			Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Close));
-		}
-	}
+        private void LoadMainWindow()
+        {
+            Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Create));
+            Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Show));
+            Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.SetMain));
+            Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Close));
+        }
+    }
 }
