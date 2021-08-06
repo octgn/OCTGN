@@ -8,6 +8,7 @@ namespace Octide
 {
     using GalaSoft.MvvmLight.Threading;
     using Octgn.Library;
+    using System.IO;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -16,7 +17,18 @@ namespace Octide
     {
         private void StartupHandler(object sender, System.Windows.StartupEventArgs e)
         {
-			Config.Instance = new Config();
+            Config.Instance = new Config();
+            var garbageFolder = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
+            foreach (var dir in garbageFolder.GetDirectories())
+            {
+                try
+                {
+                    dir.Delete(true);
+                }
+                catch
+                {
+                }
+            }
         }
 
         static App()

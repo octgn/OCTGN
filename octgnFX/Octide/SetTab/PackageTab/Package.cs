@@ -63,7 +63,7 @@ namespace Octide.SetTab.ItemModel
                 if (item is OptionsList options)
                     Items.Add(new OptionsModel(options, Items));
                 else if (item is Pick pick)
-                    Items.Add(new PickModel(pick, Items) );
+                    Items.Add(new PickModel(pick, Items));
             }
             Items.CollectionChanged += (a, b) =>
             {
@@ -74,7 +74,7 @@ namespace Octide.SetTab.ItemModel
             foreach (var include in p.Includes)
             {
                 Includes.Add(new IncludeModel(include, Includes));
-            }       
+            }
             Includes.CollectionChanged += (a, b) =>
             {
                 BuildIncludesDef(b);
@@ -107,11 +107,11 @@ namespace Octide.SetTab.ItemModel
             {
                 if (packItem is PickModel pick)
                 {
-                    Items.Add(new PickModel(pick, Items) );
+                    Items.Add(new PickModel(pick, Items));
                 }
                 else if (packItem is OptionsModel options)
                 {
-                    Items.Add(new OptionsModel(options, Items) );
+                    Items.Add(new OptionsModel(options, Items));
                 }
             }
             Includes = new IdeCollection<IdeBaseItem>(this, typeof(IncludeModel));
@@ -147,7 +147,7 @@ namespace Octide.SetTab.ItemModel
             }
             _pack.Items = items;
         }
-        
+
         public void BuildIncludesDef(NotifyCollectionChangedEventArgs args)
         {
             _pack.Includes = Includes.Select(x => ((IncludeModel)x)._include).ToList();

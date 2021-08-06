@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 namespace Octide.ItemModel
 {
-     public class DocumentItemModel : IdeBaseItem
+    public class DocumentItemModel : IdeBaseItem
     {
         public Document _document;
 

@@ -36,7 +36,7 @@ namespace Octide.ProxyTab.ItemModel
             _wrapper = lw;
             PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
-        
+
         public OverlayLinkModel(OverlayLinkModel link, IdeCollection<IdeBaseItem> source) : base(source)  //copy
         {
             var _linkDefinition = new LinkDefinition()
@@ -151,7 +151,7 @@ namespace Octide.ProxyTab.ItemModel
         {
             return new TextLinkModel(this, Source);
         }
-        
+
         public override object Create()
         {
             return new TextLinkModel(Source);
@@ -264,7 +264,7 @@ namespace Octide.ProxyTab.ItemModel
         {
             return new TextLinkPropertyModel(this, Source);
         }
-        
+
         public override object Create()
         {
             return new TextLinkPropertyModel(Source);

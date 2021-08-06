@@ -120,14 +120,7 @@
             </Border>
         </ControlTemplate>
 
-        <Style x:Key="NewActionButton" TargetType="{x:Type Button}" >
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
-            <Setter Property="Margin" Value="2" />
-            <Setter Property="Padding" Value="2" />
+        <Style x:Key="NewActionButton" TargetType="{x:Type Button}"  BasedOn="{StaticResource MahApps.Styles.Button}">
         </Style>
 
     </UserControl.Resources>
@@ -194,8 +187,9 @@
                             </AdornerDecorator.RenderTransform>
                             <Canvas x:Name="TableCanvas" Width="{Binding Table.Width}" Height="{Binding Table.Height}" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
                                 <Grid x:Name="boardView" Focusable="False" DataContext="{Binding ActiveBoard}" Canvas.Left="{Binding XPos}" Canvas.Top="{Binding YPos}"
-                                      MouseMove="BoardMove" MouseLeave="ResetCursor" 
+                                      MouseMove="BoardMove" MouseLeave="ResetCursor" Visibility="{Binding Path=., Converter={StaticResource NullToVisibilityConverter}}"
                                       MouseLeftButtonDown="BoardMouseDown" MouseLeftButtonUp="BoardMouseUp">
+                                    <Image Source="{Binding Icon}" Width="{Binding Width}" Height="{Binding Height}"/>
                                     <Border Width="{Binding Width}" Height="{Binding Height}"  Background="Transparent"
                                                 BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
                                         <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
@@ -209,7 +203,6 @@
                                             </TextBlock>
                                         </Border>
                                     </Border>
-                                    <Image Source="{Binding Icon}" Width="{Binding Width}" Height="{Binding Height}"/>
                                 </Grid>
                                 <ItemsControl ItemsSource="{Binding Cards}" Focusable="False" x:Name="cardsView" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding TableDropHandler}">
                                     <ItemsControl.ItemTemplate>
@@ -599,9 +592,9 @@
                     <Rectangle Height="1" Fill="WhiteSmoke" />
                     <TreeView x:Name="GroupActionsTreeView" BorderThickness="0" ItemsSource="{Binding GroupActions, Mode=TwoWay}" SelectedItemChanged="ClickGroupAction" />
                     <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource NewActionButton}" Content="Add Action" Command="{Binding NewActionCommand}" CommandParameter="{Binding GroupActions}"/>
-                        <Button Style="{StaticResource NewActionButton}" Content="Add Submenu" Command="{Binding NewSubmenuCommand}" CommandParameter="{Binding GroupActions}"/>
-                        <Button Style="{StaticResource NewActionButton}" Content="Add Separator" Command="{Binding NewSeparatorCommand}" CommandParameter="{Binding GroupActions}"/>
+                        <Button Content="Add Action" Command="{Binding NewActionCommand}" CommandParameter="{Binding GroupActions}"/>
+                        <Button Content="Add Submenu" Command="{Binding NewSubmenuCommand}" CommandParameter="{Binding GroupActions}"/>
+                        <Button Content="Add Separator" Command="{Binding NewSeparatorCommand}" CommandParameter="{Binding GroupActions}"/>
                     </StackPanel>
 
                 </StackPanel>
@@ -610,9 +603,9 @@
                     <Rectangle Height="1" Fill="WhiteSmoke" />
                     <TreeView x:Name="CardActionsTreeView" HorizontalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding CardActions, Mode=TwoWay}" SelectedItemChanged="ClickCardAction"  />
                     <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource NewActionButton}" Content="Add Action" Command="{Binding NewActionCommand}" CommandParameter="{Binding CardActions}"/>
-                        <Button Style="{StaticResource NewActionButton}" Content="Add Submenu" Command="{Binding NewSubmenuCommand}" CommandParameter="{Binding CardActions}"/>
-                        <Button Style="{StaticResource NewActionButton}" Content="Add Separator" Command="{Binding NewSeparatorCommand}" CommandParameter="{Binding CardActions}"/>
+                        <Button Content="Add Action" Command="{Binding NewActionCommand}" CommandParameter="{Binding CardActions}"/>
+                        <Button Content="Add Submenu" Command="{Binding NewSubmenuCommand}" CommandParameter="{Binding CardActions}"/>
+                        <Button Content="Add Separator" Command="{Binding NewSeparatorCommand}" CommandParameter="{Binding CardActions}"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -625,7 +618,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Remove Group" Command="{Binding RemoveCommand}" >
                                     <Button.Style>
-                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding CanRemove}" Value="False">
                                                     <Setter Property="IsEnabled" Value="False" />
@@ -636,7 +629,7 @@
                                 </Button>
                                 <Button Content="Copy Group" Command="{Binding CopyCommand}">
                                     <Button.Style>
-                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding CanCopy}" Value="False">
                                                     <Setter Property="IsEnabled" Value="False" />
@@ -647,7 +640,7 @@
                                 </Button>
                                 <Button Content="Insert Group" Command="{Binding InsertCommand}">
                                     <Button.Style>
-                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource NewActionButton}">
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding CanInsert}" Value="False">
                                                     <Setter Property="IsEnabled" Value="False" />

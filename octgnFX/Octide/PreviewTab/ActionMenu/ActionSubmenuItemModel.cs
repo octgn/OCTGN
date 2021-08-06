@@ -68,7 +68,7 @@ namespace Octide.ItemModel
         {
             return new ActionSubmenuItemModel(this, Source);
         }
-        
+
         public override object Create()
         {
             return new ActionSubmenuItemModel(Source);

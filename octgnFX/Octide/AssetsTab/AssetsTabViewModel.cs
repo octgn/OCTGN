@@ -49,10 +49,10 @@ namespace Octide.ViewModel
 
             Watcher = new FileSystemWatcher();
             Watcher.IncludeSubdirectories = true;
-      //      Watcher.Changed += FileChanged;
-      //      Watcher.Created += FileCreated;
-      //      Watcher.Renamed += FileRenamed;
-      //      Watcher.Deleted += FileDeleted;
+            //      Watcher.Changed += FileChanged;
+            //      Watcher.Created += FileCreated;
+            //      Watcher.Renamed += FileRenamed;
+            //      Watcher.Deleted += FileDeleted;
             if (ViewModelLocator.GameLoader.WorkingDirectory != null)
             {
                 Watcher.Path = ViewModelLocator.GameLoader.WorkingDirectory.FullName;

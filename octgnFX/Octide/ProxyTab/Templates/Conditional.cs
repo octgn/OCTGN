@@ -45,7 +45,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 BuildConditionalDefinitions(b);
             };
-            Items.Add(new IfCaseModel(Items)) ;
+            Items.Add(new IfCaseModel(Items));
             AddElseIfCommand = new RelayCommand(AddElseIf);
             AddElseCommand = new RelayCommand(AddElse);
             PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
@@ -65,7 +65,7 @@ namespace Octide.ProxyTab.ItemModel
                 }
             }
             if (lw.Conditional.elseNode != null)
-                Items.Add(new ElseCaseModel(lw.Conditional.elseNode, Items) );
+                Items.Add(new ElseCaseModel(lw.Conditional.elseNode, Items));
             Items.CollectionChanged += (a, b) =>
             {
                 BuildConditionalDefinitions(b);
@@ -87,7 +87,7 @@ namespace Octide.ProxyTab.ItemModel
             foreach (IBaseConditionalCase caseItem in conditional.Items)
             {
                 if (caseItem is IfCaseModel ifCase)
-                    Items.Add(new IfCaseModel(ifCase, Items) );
+                    Items.Add(new IfCaseModel(ifCase, Items));
                 if (caseItem is ElseIfCaseModel elseIfCase)
                     Items.Add(new ElseIfCaseModel(elseIfCase, Items));
                 if (caseItem is ElseCaseModel elseCase)
@@ -109,10 +109,10 @@ namespace Octide.ProxyTab.ItemModel
         {
             if (ElseCase == null)
 
-                Items.Add(new ElseIfCaseModel(Items) );
+                Items.Add(new ElseIfCaseModel(Items));
             else
             {
-                Items.Insert(Items.IndexOf(ElseCase), new ElseIfCaseModel(Items) );
+                Items.Insert(Items.IndexOf(ElseCase), new ElseIfCaseModel(Items));
             }
         }
         public void AddElse()
@@ -181,7 +181,7 @@ namespace Octide.ProxyTab.ItemModel
 
         public IfCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
-            _case = caseItem; 
+            _case = caseItem;
             _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
 
             BlockContainer = new BlockContainer(caseItem.linkList);

@@ -29,7 +29,7 @@ namespace Octide.ItemModel
             };
             Name = "New Size";
             BackAsset = new AssetController(AssetType.Image);
-            _size.Back= BackAsset.FullPath;
+            _size.Back = BackAsset.FullPath;
             BackAsset.PropertyChanged += BackAssetUpdated;
             RaisePropertyChanged("Back");
             FrontAsset = new AssetController(AssetType.Image);

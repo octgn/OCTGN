@@ -22,13 +22,14 @@ namespace Octide.Controls
             : base(adornedElement)
         {
             _collection = new VisualCollection(this);
-            _textBox = new TextBox() {
+            _textBox = new TextBox()
+            {
                 FontSize = adornedElement.FontSize,
                 FontWeight = adornedElement.FontWeight,
                 FontStyle = adornedElement.FontStyle
-             };
+            };
             _textBlock = adornedElement;
-            Binding binding = new Binding("Text") {Source = adornedElement};
+            Binding binding = new Binding("Text") { Source = adornedElement };
             _textBox.SetBinding(TextBox.TextProperty, binding);
             _textBox.AcceptsReturn = true;
             _textBox.MaxLength = adornedElement.MaxLength;

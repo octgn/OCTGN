@@ -37,21 +37,21 @@ namespace Octide.ViewModel
                 ViewModelLocator.GameLoader.Game.Sounds = Items.ToDictionary(x => (x as SoundItemModel).Name, y => (y as SoundItemModel).Sound);
             };
         }
-        
+
         public void AddItem()
         {
             var ret = new SoundItemModel(Items);
             Items.Add(ret);
             Items.SelectedItem = ret;
         }
-        
+
         public void PlaySound(Asset sound)
         {
             _mediaPlayer.Open(new Uri(sound.SafeFilePath));
 
             _mediaPlayer.Play();
         }
-        
+
         public void StopSound()
         {
 

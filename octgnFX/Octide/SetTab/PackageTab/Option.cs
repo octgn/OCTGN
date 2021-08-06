@@ -68,9 +68,9 @@ namespace Octide.SetTab.ItemModel
             foreach (var packItem in p.Items)
             {
                 if (packItem is PickModel pick)
-                    Items.Add(new PickModel(pick, Items) );
+                    Items.Add(new PickModel(pick, Items));
                 if (packItem is OptionsModel options)
-                    Items.Add(new OptionsModel(options, Items) );
+                    Items.Add(new OptionsModel(options, Items));
             }
             AddOptionsCommand = new RelayCommand(AddOptions);
             AddPickCommand = new RelayCommand(AddPick);
@@ -94,7 +94,7 @@ namespace Octide.SetTab.ItemModel
 
         public void AddPick()
         {
-            Items.Add(new PickModel(Items) );
+            Items.Add(new PickModel(Items));
         }
 
         public void AddOptions()

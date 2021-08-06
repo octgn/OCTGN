@@ -43,7 +43,7 @@ namespace Octide.Messages
     {
 
     }
-    
+
     public class CardPropertiesChangedMessage
     {
         public NotifyCollectionChangedEventArgs Args { get; set; }

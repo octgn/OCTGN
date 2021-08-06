@@ -77,7 +77,7 @@ namespace Octide.ItemModel
         {
             return new BoardItemModel(this, Source);
         }
-        
+
         public override object Create()
         {
             return new BoardItemModel(Source);

@@ -52,9 +52,9 @@ namespace Octide.ViewModel
         public RelayCommand AddBoardCommand { get; private set; }
         public RelayCommand AddPhaseCommand { get; private set; }
         public RelayCommand ClickTableCommand { get; private set; }
-        
-        public CardsizeDropHandler CardsizeDropHandler{ get; set; } = new CardsizeDropHandler();
-        public TableDropHandler TableDropHandler{ get; set; } = new TableDropHandler();
+
+        public CardsizeDropHandler CardsizeDropHandler { get; set; } = new CardsizeDropHandler();
+        public TableDropHandler TableDropHandler { get; set; } = new TableDropHandler();
 
 
         public string Summary
@@ -235,7 +235,7 @@ namespace Octide.ViewModel
             #region activeboard
             if (Boards.DefaultItem != null)
             {
-                ActiveBoard = (BoardItemModel)Boards.DefaultItem;
+                ActiveBoard = Boards.DefaultItem as BoardItemModel;
             }
             #endregion
         }
@@ -318,7 +318,7 @@ namespace Octide.ViewModel
             Selection = ret;
         }
 
-        
+
         public object _selection;
 
         public object Selection
@@ -335,6 +335,10 @@ namespace Octide.ViewModel
                 {
                     ActiveBoard = model;
                 }
+                else
+                {
+                    ActiveBoard = (BoardItemModel)Boards.DefaultItem;
+                }
                 RaisePropertyChanged("Selection");
                 RaisePropertyChanged("ClickHand");
                 RaisePropertyChanged("ClickTable");
@@ -342,7 +346,7 @@ namespace Octide.ViewModel
             }
         }
     }
-    
+
     public class CardsizeDropHandler : IDropTarget
     {
         public void DragEnter(IDropInfo dropInfo) {}

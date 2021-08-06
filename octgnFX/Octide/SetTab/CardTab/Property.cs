@@ -112,7 +112,7 @@ namespace Octide.SetTab.ItemModel
                 }
 
 
-               // Parent.UpdateAltPropertySet();
+                // Parent.UpdateAltPropertySet();
                 Parent.UpdateProxyTemplate();
                 RaisePropertyChanged("Value");
             }
@@ -125,7 +125,7 @@ namespace Octide.SetTab.ItemModel
             var richSpan = new RichSpan();
 
             SetSerializer.DeserializeRichCardProperty(richSpan, xmlElement, ViewModelLocator.GameLoader.Game);
-            
+
 
             return new RichTextPropertyValue() { Value = richSpan };
         }

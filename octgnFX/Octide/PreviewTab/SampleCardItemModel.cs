@@ -93,7 +93,7 @@ namespace Octide.ItemModel
         {
             get
             {
-               return IsBack ? Size.BackWidth : Size.Width;
+                return IsBack ? Size.BackWidth : Size.Width;
             }
             set
             {
@@ -107,7 +107,7 @@ namespace Octide.ItemModel
         {
             get
             {
-               return IsBack ? Size.BackHeight : Size.Height;
+                return IsBack ? Size.BackHeight : Size.Height;
             }
             set
             {

@@ -44,7 +44,7 @@ namespace Octide.ViewModel
 
             Scripts.CollectionChanged += (a, b) =>
             {
-           //     ViewModelLocator.GameLoader.Scripts = Scripts.Select(x => ((ScriptItemModel)x)._script);
+                //     ViewModelLocator.GameLoader.Scripts = Scripts.Select(x => ((ScriptItemModel)x)._script);
             };
             AddScriptCommand = new RelayCommand(AddScript);
         }

@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Octide.ItemModel
 {
- 
+
     public class SoundItemModel : IdeBaseItem
     {
         public GameSound Sound { get; private set; }
@@ -103,7 +103,7 @@ namespace Octide.ItemModel
         public void PlaySound()
         {
             if (Asset.SelectedAsset != null)
-               ViewModelLocator.SoundTabViewModel.PlaySound(Asset.SelectedAsset);
+                ViewModelLocator.SoundTabViewModel.PlaySound(Asset.SelectedAsset);
         }
         public void StopSound()
         {

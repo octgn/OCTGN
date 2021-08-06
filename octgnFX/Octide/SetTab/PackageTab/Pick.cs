@@ -73,7 +73,7 @@ namespace Octide.SetTab.ItemModel
 
         public void AddProperty()
         {
-            Items.Add(new PackagePropertyModel(Items) );
+            Items.Add(new PackagePropertyModel(Items));
         }
 
         public override object Clone()

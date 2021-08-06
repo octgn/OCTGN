@@ -31,7 +31,7 @@ namespace Octide.ViewModel
         public static PropertyItemModel AlternateProperty = new PropertyItemModel(new PropertyDef() { Name = "Alternate" }, new IdeCollection<IdeBaseItem>());
         public static PropertyItemModel SizeProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSize" }, new IdeCollection<IdeBaseItem>());
         public static PropertyItemModel SetProperty = new PropertyItemModel(new PropertyDef() { Name = "SetName" }, new IdeCollection<IdeBaseItem>());
-            //Proxy Properties
+        //Proxy Properties
         public static PropertyItemModel ProxyNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardName" }, new IdeCollection<IdeBaseItem>());
         public static PropertyItemModel SizeNameProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeName" }, new IdeCollection<IdeBaseItem>());
         public static PropertyItemModel SizeHeightProperty = new PropertyItemModel(new PropertyDef() { Name = "CardSizeHeight" }, new IdeCollection<IdeBaseItem>());
@@ -49,11 +49,11 @@ namespace Octide.ViewModel
             Items.CollectionChanged += (sender, args) =>
             {
                 ViewModelLocator.GameLoader.Game.CardProperties = Items.ToDictionary(x => ((PropertyItemModel)x).Name, y => ((PropertyItemModel)y).Property);
-                Messenger.Default.Send(new CustomPropertyChangedMessage(args)) ;
+                Messenger.Default.Send(new CustomPropertyChangedMessage(args));
             };
             AddCommand = new RelayCommand(AddItem);
         }
-        
+
 
         public void AddItem()
         {
