@@ -116,10 +116,10 @@ namespace Octide
             }
         }
 
-		public GameLoader()
+        public GameLoader()
         {
         }
-         
+
         public void CreateGame()
         {
             _workingDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "Game"));
@@ -153,7 +153,7 @@ namespace Octide
             var background = Path.Combine(resourcePath, "background.jpg");
             Properties.Resources.background.Save(background);
             ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(background));
-            
+
             Game = new Game()
             {
                 Id = Guid.NewGuid(),
@@ -161,7 +161,7 @@ namespace Octide
                 Version = new Version(1, 0, 0, 0),
                 ScriptVersion = new Version(3, 1, 0, 2),
                 OctgnVersion = typeof(Config).Assembly.GetName().Version,
-                Authors = new List<string>() { "OCTIDE"},
+                Authors = new List<string>() { "OCTIDE" },
                 Description = "A game created using OCTGN Game Development Studio",
                 NoteBackgroundColor = "#FFEBE8C5",
                 NoteForegroundColor = "#FF000000",
@@ -172,10 +172,19 @@ namespace Octide
             {
                 Name = "Default",
                 Height = 88,
+                BackHeight = 88,
                 Width = 63,
+                BackWidth = 63,
                 Back = back,
                 Front = front
             });
+            Game.Table = new Group()
+            {
+                Background = background,
+                Name = "Table",
+                Width = 640,
+                Height = 480
+            };
 
             var gameAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { }, "definition", ".xml");
             gameAsset.LockName = true;
@@ -188,8 +197,8 @@ namespace Octide
         }
 
 
-		public void ImportGame(FileInfo package)
-		{
+        public void ImportGame(FileInfo package)
+        {
             //TODO: Extracts into a temp folder, but then it needs to save to a proper location via prompt as well
             livesInTempDirectory = true;
             var ExtractLocation = Config.Instance.Paths.GraveyardPath;
@@ -205,7 +214,7 @@ namespace Octide
             {
                 // throw an invalid game exception if it can't find the game xml
             }
-		}
+        }
 
 
         public void LoadGame(FileInfo path)
@@ -345,7 +354,7 @@ namespace Octide
 
                 var proxyTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
 
-                var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game};
+                var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game };
                 proxySerializer.OutputPath = proxyTempPath;
                 proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
                 ViewModelLocator.ProxyTabViewModel.Asset.SelectedAsset.SafeFile = new FileInfo(proxyTempPath);
@@ -383,9 +392,9 @@ namespace Octide
 
             foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.IsLinked))
             {
-                    var refpath = baseRefPath + "\\" + asset.RelativePath;
-                    var pf = new PhysicalPackageFile() { SourcePath = asset.SafeFilePath, TargetPath = refpath };
-                    builder.Files.Add(pf);
+                var refpath = baseRefPath + "\\" + asset.RelativePath;
+                var pf = new PhysicalPackageFile() { SourcePath = asset.SafeFilePath, TargetPath = refpath };
+                builder.Files.Add(pf);
             }
 
             var feedPath = Path.Combine(WorkingDirectory.FullName, Game.Name + '-' + Game.Version + ".nupkg");

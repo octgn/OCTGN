@@ -86,7 +86,7 @@ namespace Octide
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             string text = value.ToString();
-           if (Wrapper.UniqueValues.Contains(text))
+            if (Wrapper.UniqueValues.Contains(text))
                 return new ValidationResult(false, "An item with this name already exists!");
 
             return ValidationResult.ValidResult;

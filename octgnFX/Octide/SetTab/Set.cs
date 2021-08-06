@@ -24,7 +24,6 @@ namespace Octide.SetTab.ItemModel
 
         public RelayCommand AddCardCommand { get; private set; }
         public RelayCommand AddPackageCommand { get; private set; }
-        public RelayCommand ImportCSVCommand { get; private set; }
 
         public IdeCollection<IdeBaseItem> CardItems { get; private set; }
         public IdeCollection<IdeBaseItem> PackageItems { get; private set; }
@@ -42,7 +41,7 @@ namespace Octide.SetTab.ItemModel
             };
             Name = "New Set";
 
-            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString()}, "set", ".xml");
+            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString() }, "set", ".xml");
             setAsset.IsReserved = true;
             setAsset.LockName = true;
             Asset = new AssetController(AssetType.Xml);
@@ -71,7 +70,6 @@ namespace Octide.SetTab.ItemModel
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-            ImportCSVCommand = new RelayCommand(ImportCSV);
 
             CanDragDrop = false;
         }
@@ -114,7 +112,6 @@ namespace Octide.SetTab.ItemModel
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-            ImportCSVCommand = new RelayCommand(ImportCSV);
 
             CanDragDrop = false;
         }
@@ -132,7 +129,7 @@ namespace Octide.SetTab.ItemModel
                 ReleaseDate = s._set.ReleaseDate
             };
 
-            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString()}, "set", ".xml");
+            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString() }, "set", ".xml");
 
             _set.Filename = setAsset.FullPath;
             _set.ImagePackUri = Path.Combine(Config.Instance.ImageDirectoryFull, _set.GameId.ToString(), "Sets", _set.Id.ToString());
@@ -154,7 +151,7 @@ namespace Octide.SetTab.ItemModel
             };
             foreach (CardModel card in s.CardItems)
             {
-                CardItems.Add(new CardModel(card, CardItems) );
+                CardItems.Add(new CardModel(card, CardItems));
             }
 
             PackageItems = new IdeCollection<IdeBaseItem>(this, typeof(PackageModel));
@@ -169,7 +166,6 @@ namespace Octide.SetTab.ItemModel
 
             AddCardCommand = new RelayCommand(AddCard);
             AddPackageCommand = new RelayCommand(AddPackage);
-            ImportCSVCommand = new RelayCommand(ImportCSV);
 
             CanDragDrop = false;
         }
@@ -193,14 +189,6 @@ namespace Octide.SetTab.ItemModel
             var ret = new CardModel(CardItems);
             CardItems.Add(ret);
             CardItems.SelectedItem = ret;
-        }
-
-        public void ImportCSV()
-        {
-            var dlg = new ImportCardsWindow();
-            dlg.DataContext = new ImportCardsViewModel() { Parent = this };
-            dlg.ShowDialog();
-
         }
 
         public void SelectDefaultAlt(NotifySelectedItemChangedEventArgs args)
@@ -302,6 +290,5 @@ namespace Octide.SetTab.ItemModel
                 RaisePropertyChanged("Hidden");
             }
         }
-
     }
 }

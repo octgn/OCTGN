@@ -44,7 +44,7 @@ namespace Octide.SetTab.ItemModel
             Type = "";
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
-       //     Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            //     Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
@@ -58,7 +58,7 @@ namespace Octide.SetTab.ItemModel
             //    }
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
-         //   Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            //   Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
@@ -74,7 +74,7 @@ namespace Octide.SetTab.ItemModel
             Type = a.Type;
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
-          //  Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            //  Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
@@ -101,7 +101,7 @@ namespace Octide.SetTab.ItemModel
         }
         public void BuildAltDef(NotifyCollectionChangedEventArgs args)
         {
-        //    _altDef.Properties = CachedProperties.ToDictionary(x => x.LinkedProperty._property, y => y.CachedValue);
+            //    _altDef.Properties = CachedProperties.ToDictionary(x => x.LinkedProperty._property, y => y.CachedValue);
         }
 
         public List<CardPropertyModel> GetProperties
@@ -308,7 +308,7 @@ namespace Octide.SetTab.ItemModel
         public int _baseHeight;
 
         public string BaseImage { get; private set; }
-        
+
         public int BaseWidth
         {
             get

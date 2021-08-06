@@ -12,10 +12,10 @@ namespace Octide.Views
     using Octide.Messages;
     using Octide.ViewModel;
 
-	/// <summary>
-	/// Interaction logic for LoaderWindow.xaml
-	/// </summary>
-	public partial class LoaderWindow
+    /// <summary>
+    /// Interaction logic for LoaderWindow.xaml
+    /// </summary>
+    public partial class LoaderWindow
     {
         public LoaderWindow()
         {
@@ -41,7 +41,7 @@ namespace Octide.Views
                 case WindowActionType.Show:
                     this.Show();
                     break;
-				case WindowActionType.SetMain:
+                case WindowActionType.SetMain:
                     Application.Current.MainWindow = this;
                     break;
             }

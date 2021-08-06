@@ -100,7 +100,7 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("BackgroundStyle");
             }
         }
-        
+
         public int Width
         {
             get
@@ -132,7 +132,7 @@ namespace Octide.ItemModel
                 CenterView();
             }
         }
-        
+
         internal void SetBackground()
         {
             if (Background.SafePath == null)
@@ -147,23 +147,23 @@ namespace Octide.ItemModel
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
-                switch (_group.BackgroundStyle)
-                {
-                    case BackgroundStyle.Tile:
-                        backBrush.TileMode = TileMode.Tile;
-                        backBrush.Viewport = new Rect(0, 0, backBrush.ImageSource.Width, backBrush.ImageSource.Height);
-                        backBrush.ViewportUnits = BrushMappingMode.Absolute;
-                        break;
-                    case BackgroundStyle.Uniform:
-                        backBrush.Stretch = Stretch.Uniform;
-                        break;
-                    case BackgroundStyle.UniformToFill:
-                        backBrush.Stretch = Stretch.UniformToFill;
-                        break;
-                    case BackgroundStyle.Stretch:
-                        backBrush.Stretch = Stretch.Fill;
-                        break;
-                }
+            switch (_group.BackgroundStyle)
+            {
+                case BackgroundStyle.Tile:
+                    backBrush.TileMode = TileMode.Tile;
+                    backBrush.Viewport = new Rect(0, 0, backBrush.ImageSource.Width, backBrush.ImageSource.Height);
+                    backBrush.ViewportUnits = BrushMappingMode.Absolute;
+                    break;
+                case BackgroundStyle.Uniform:
+                    backBrush.Stretch = Stretch.Uniform;
+                    break;
+                case BackgroundStyle.UniformToFill:
+                    backBrush.Stretch = Stretch.UniformToFill;
+                    break;
+                case BackgroundStyle.Stretch:
+                    backBrush.Stretch = Stretch.Fill;
+                    break;
+            }
             BackgroundImage = backBrush;
         }
 

@@ -19,10 +19,10 @@ namespace Octide.Controls
                 SetValue(CanEditProperty, value);
             }
         }
-        
+
         public static readonly DependencyProperty CanEditProperty =
             DependencyProperty.Register("CanEdit", typeof(bool), typeof(EditableTextBlock), new UIPropertyMetadata(true));
-        
+
         public bool IsInEditMode
         {
             get
@@ -34,7 +34,7 @@ namespace Octide.Controls
                 SetValue(IsInEditModeProperty, value);
             }
         }
-        
+
         private EditableTextBlockAdorner _adorner;
 
         // Using a DependencyProperty as the backing store for IsInEditMode.  This enables animation, styling, binding, etc...

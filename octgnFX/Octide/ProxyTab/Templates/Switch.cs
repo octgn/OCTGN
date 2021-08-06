@@ -103,7 +103,7 @@ namespace Octide.ProxyTab.ItemModel
             AddDefaultCommand = new RelayCommand(AddDefault);
             PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
         }
-        
+
         public void BuildSwitchDefinitions(NotifyCollectionChangedEventArgs args)
         {
             _wrapper.Conditional.switchNodeList = Items.Where(x => x is SwitchCaseModel).Select(x => ((SwitchCaseModel)x)._case).ToList();

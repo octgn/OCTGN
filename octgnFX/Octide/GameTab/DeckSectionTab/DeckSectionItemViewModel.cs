@@ -18,10 +18,10 @@ namespace Octide.ItemModel
         public DeckSectionItemModel(IdeCollection<IdeBaseItem> source) : base(source) // new item
         {
             _deckSection = new DeckSection();
-              SelectedGroup = (PileItemModel) (IsShared ? SharedGroups.First() : Groups.First()); 
+            SelectedGroup = (PileItemModel)(IsShared ? SharedGroups.First() : Groups.First());
             Name = "New Section";
 
-        //    Messenger.Default.Register<GroupChangedMessage>(this, action => UpdateDeckSectionDef(action));
+            //    Messenger.Default.Register<GroupChangedMessage>(this, action => UpdateDeckSectionDef(action));
         }
 
         public DeckSectionItemModel(DeckSection d, IdeCollection<IdeBaseItem> source) : base(source) // load item

@@ -45,8 +45,8 @@ namespace Octide.ViewModel
 
         public ProxyTabViewModel()
         {
-            StoredProxyProperties = new ObservableCollection<ProxyInputPropertyItemModel>() 
-            { 
+            StoredProxyProperties = new ObservableCollection<ProxyInputPropertyItemModel>()
+            {
                 new ProxyInputPropertyItemModel("Type", "Creature"),
                 new ProxyInputPropertyItemModel("Color", "Blue")
             };
@@ -153,7 +153,7 @@ namespace Octide.ViewModel
             RaisePropertyChanged("StoredProxyProperties");
             Messenger.Default.Register<ProxyTemplateChangedMessage>(this, action => UpdateProxyTemplate(action));
         }
-        
+
         public void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")
@@ -195,17 +195,17 @@ namespace Octide.ViewModel
                 }
                 else
                 {
-                    ActiveOverlayLayers.Add(new ArtCropDefinitionItemModel(linkDefinition.SpecialBlock,new IdeCollection<IdeBaseItem>())
+                    ActiveOverlayLayers.Add(new ArtCropDefinitionItemModel(linkDefinition.SpecialBlock, new IdeCollection<IdeBaseItem>())
                     {
-                    }); 
+                    });
                 }
             }
-          //  ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
-          //      selectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
-          //          x =>  (OverlayBlockDefinitionItemModel)OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block)));
+            //  ActiveOverlayLayers = new ObservableCollection<OverlayBlockDefinitionItemModel>(
+            //      selectedTemplate._def.GetOverLayBlocks(properties).Where(x => x.SpecialBlock == null).Select(
+            //          x =>  (OverlayBlockDefinitionItemModel)OverlayBlocks.First(y => ((OverlayBlockDefinitionItemModel)y).Name == x.Block)));
             ActiveTextLayers = new ObservableCollection<ProxyTextLinkItemModel>(
                 selectedTemplate._def.GetTextBlocks(properties).Select(
-                    x => new ProxyTextLinkItemModel(x) ));
+                    x => new ProxyTextLinkItemModel(x)));
 
             RaisePropertyChanged("BaseImage");
             RaisePropertyChanged("BaseWidth");
@@ -220,11 +220,11 @@ namespace Octide.ViewModel
         public double BaseWidth => BaseImage?.PixelWidth ?? 0;
 
         public double BaseHeight => BaseImage?.PixelHeight ?? 0;
-        
+
         public ObservableCollection<IdeBaseItem> ActiveOverlayLayers { get; private set; }
         public ObservableCollection<ProxyTextLinkItemModel> ActiveTextLayers { get; private set; }
 
-        
+
         public object _selection;
 
         public object Selection

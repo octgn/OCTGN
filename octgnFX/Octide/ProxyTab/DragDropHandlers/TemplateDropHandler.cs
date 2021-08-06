@@ -23,7 +23,7 @@ namespace Octide.ProxyTab.Handlers
             {
                 return;
             }
-            
+
             //deal specifically with the definition blocks
             if (sourceItem is TextBlockDefinitionItemModel)
             {
@@ -83,7 +83,7 @@ namespace Octide.ProxyTab.Handlers
                 }
             }
         }
-        
+
         public void Drop(IDropInfo dropInfo)
         {
             if (dropInfo.Data is TextBlockDefinitionItemModel textDef)
