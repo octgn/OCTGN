@@ -3,10 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using Octgn.DataNew.Entities;
-using Octide.ViewModel;
-using System;
 using System.ComponentModel;
-using System.Linq;
 namespace Octide.ItemModel
 {
     public class DocumentItemModel : IdeBaseItem

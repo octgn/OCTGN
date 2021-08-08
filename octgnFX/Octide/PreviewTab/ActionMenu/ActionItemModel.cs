@@ -2,18 +2,9 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using MahApps.Metro.Controls;
 using Octgn.DataNew.Entities;
-using Octide.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Octide.ItemModel
 {

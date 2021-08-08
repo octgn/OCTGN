@@ -2,23 +2,10 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using GalaSoft.MvvmLight;
-using Octgn.DataNew.Entities;
 using Octgn.ProxyGenerator.Definitions;
-using Octide.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Font = Octgn.DataNew.Entities.Font;
-using FontFamily = System.Windows.Media.FontFamily;
-using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
-using System.Windows.Media;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Octide.ItemModel
 {

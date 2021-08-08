@@ -2,14 +2,11 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Octgn.ProxyGenerator;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ItemModel;
 using Octide.Messages;
 using Octide.ViewModel;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Octide.ProxyTab.ItemModel

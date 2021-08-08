@@ -4,15 +4,13 @@
 
 namespace Octide.Messages
 {
+    using CommonServiceLocator;
+    using GalaSoft.MvvmLight;
     using System;
+    using System.Collections.Specialized;
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Windows;
-    using System.Collections.Specialized;
-
-    using GalaSoft.MvvmLight;
-
-    using CommonServiceLocator;
 
     public class MouseWheelTableZoom
     {

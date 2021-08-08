@@ -4,13 +4,11 @@
 
 namespace Octide.Views
 {
-    using System;
-    using System.Windows;
-    using GalaSoft.MvvmLight.Command;
     using GalaSoft.MvvmLight.Messaging;
-
     using Octide.Messages;
     using Octide.ViewModel;
+    using System;
+    using System.Windows;
 
     /// <summary>
     /// Interaction logic for LoaderWindow.xaml

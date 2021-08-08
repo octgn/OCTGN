@@ -4,18 +4,14 @@
 
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Octgn.ProxyGenerator;
 using Octgn.ProxyGenerator.Definitions;
-using Octide;
 using Octide.ItemModel;
 using Octide.Messages;
 using Octide.ViewModel;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
-using System.Xml;
 
 namespace Octide.ProxyTab.ItemModel
 {

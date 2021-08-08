@@ -2,20 +2,12 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Security.Policy;
-using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using log4net.Repository.Hierarchy;
-using Newtonsoft.Json.Linq;
 using Octgn.Library;
-using Octide.Messages;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Octide.ViewModel
 {

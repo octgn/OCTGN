@@ -31,6 +31,13 @@
         <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
     </Style>
 
+    <Style x:Key="OctideBorderPanelStyle" TargetType="{x:Type Border}">
+        <Setter Property="Margin" Value="7 3 3 3" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Border.NonActive}" />
+    </Style>
+
     <Style x:Key="OctideInputTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MahApps.Styles.TextBox}" >
         <Setter Property="Focusable" Value="True"/>
         <Style.Triggers>
@@ -108,19 +115,9 @@
 
     <Style TargetType="{x:Type controls:KeyInputTextBox}" BasedOn="{StaticResource {x:Type TextBox}}"/>
 
-    <Style x:Key="GridSplitterPreviewStyle" >
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Rectangle Fill="#80000000"/>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style TargetType="{x:Type GridSplitter}">
         <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Transparent}"/>
-        <Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Style.Triggers>
@@ -177,31 +174,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="VirtualListBox" TargetType="{x:Type ToggleButton}">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border CornerRadius="4" Background="{TemplateBinding Background}">
-                        <Grid>
-                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Background" Value="#FF017BCD" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="SkyBlue" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
     <ContextMenu x:Key="ListBoxContextMenu">
         <MenuItem Header="Make Default" Command="{Binding MakeDefaultCommand}" >
             <MenuItem.Style>
@@ -250,6 +222,9 @@
     </ContextMenu>
 
 
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}" >
+        <Setter Property="Focusable" Value="False" />
+    </Style>
 
     <Style x:Key="OctideComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
         <Setter Property="ItemTemplate">
@@ -423,7 +398,6 @@
 
 
     <DropShadowBitmapEffect x:Key="PopupDropShadow" ShadowDepth="1.5" Softness="0.15" />
-    <SolidColorBrush x:Key="TextBrush" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="MenuItemHover" Color="DimGray"/>
     <SolidColorBrush x:Key="LightBrush" Color="#FF333333" />
 
@@ -447,7 +421,7 @@
             </Style>
             <Style TargetType="{x:Type MenuItem}">
                 <Setter Property="Background" Value="Transparent" />
-                <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type MenuItem}">
@@ -480,7 +454,7 @@
                                         <ContentPresenter Grid.Column="1" x:Name="HeaderHost" RecognizesAccessKey="True" ContentSource="Header" Margin="2,1,2,1"/>
                                     </Border>
                                     <Border Grid.Column="2" VerticalAlignment="Center">
-                                        <TextBlock x:Name="InputGestureText" Text="{TemplateBinding InputGestureText}" Foreground="{StaticResource TextBrush}" Opacity=".5"
+                                        <TextBlock x:Name="InputGestureText" Text="{TemplateBinding InputGestureText}" Foreground="{StaticResource MahApps.Brushes.Text}" Opacity=".5"
                                     Margin="5,2,0,2" DockPanel.Dock="Right" FontSize="9"/>
                                     </Border>
 

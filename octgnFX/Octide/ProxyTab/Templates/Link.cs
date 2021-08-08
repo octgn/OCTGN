@@ -3,17 +3,15 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
-using Octgn.ProxyGenerator.Definitions;
-using Octide.ViewModel;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using GongSolutions.Wpf.DragDrop;
-using Octide.ItemModel;
-using System.Collections.Specialized;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Octgn.ProxyGenerator.Definitions;
+using Octide.ItemModel;
 using Octide.Messages;
+using Octide.ViewModel;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace Octide.ProxyTab.ItemModel
 {

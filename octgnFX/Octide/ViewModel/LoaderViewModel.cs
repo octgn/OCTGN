@@ -6,22 +6,13 @@ using GalaSoft.MvvmLight;
 
 namespace Octide.ViewModel
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
     using GalaSoft.MvvmLight.Command;
     using GalaSoft.MvvmLight.Messaging;
     using Microsoft.Win32;
-    using Octgn.DataNew;
-    using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
-    using Octgn.Library;
-    using Octgn.ProxyGenerator;
     using Octide.Messages;
-    using Octide.Views;
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
 
     public class LoaderViewModel : ViewModelBase
     {

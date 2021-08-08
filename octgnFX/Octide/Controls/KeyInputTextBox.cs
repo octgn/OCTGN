@@ -1,9 +1,6 @@
-﻿using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Documents;
+﻿using System.Text;
+using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Data;
-using System.Text;
 
 namespace Octide.Controls
 {
