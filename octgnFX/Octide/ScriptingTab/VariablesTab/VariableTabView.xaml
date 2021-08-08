@@ -33,8 +33,8 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Name:" TextAlignment="Right"/>
-                                <TextBox Grid.Column="1">
+                                <TextBlock Text="ID Name: " TextAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Margin="0 0 0 2">
                                     <TextBox.Style>
                                         <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
                                             <Style.Triggers>
@@ -60,7 +60,7 @@
                                         </Binding>
                                     </TextBox.Text>
                                 </TextBox>
-                                <TextBlock Grid.Row="1" Text="Value:" TextAlignment="Right" />
+                                <TextBlock Grid.Row="1" Text="Default Value: " TextAlignment="Right" VerticalAlignment="Center"/>
                                 <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DefaultValue}" HorizontalAlignment="Stretch" />
                             </Grid>
                         </Border>
@@ -70,34 +70,42 @@
         </Style>
 
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="250" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBlock Text="Global Variables" Margin="5" Foreground="WhiteSmoke" HorizontalAlignment="Center" />
-        <Button Content="New Global Variable" Grid.Row="1" Command="{Binding AddGlobalVariableCommand}" />
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" Text="Variable Editor" />
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}"
+                   Text="OCTGN provides its own Variable storage as an alternative to Python's global variables.  OCTGN variables can be accessed via Python by all players, and do not get reset when the Python engine reloads (such as during a reconnect). OCTGN variables must be saved as strings." />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+            <DockPanel>
 
-        <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Grid.Row="2" Style="{StaticResource OctideListBoxStyle}"
-                         ItemsSource="{Binding GlobalVariables}" SelectedItem="{Binding GlobalVariables.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding GlobalVariables.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-        <TextBlock Grid.Column="2" Text="Player Variables" Margin="5" Foreground="WhiteSmoke" HorizontalAlignment="Center" />
-        <Button Content="New Player Variable" Grid.Row="1" Grid.Column="2" Command="{Binding AddPlayerVariableCommand}" />
+                <TextBlock Text="Shared Variables" Style="{StaticResource OctideDescriptionStyle}"
+                           Margin="5" DockPanel.Dock="Top" HorizontalAlignment="Center" />
+                <Button Margin="3" Content="New Shared Variable" DockPanel.Dock="Top" Command="{Binding AddGlobalVariableCommand}" />
 
-        <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Grid.Row="2" Grid.Column="2" Style="{StaticResource OctideListBoxStyle}" 
-                         ItemsSource="{Binding PlayerVariables}" SelectedItem="{Binding PlayerVariables.SelectedItem}" >
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding PlayerVariables.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-    </Grid>
+                <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Style="{StaticResource OctideListBoxStyle}"
+                         ItemsSource="{Binding GlobalVariables}" >
+                    <ListBox.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding GlobalVariables.SelectedItem.RemoveCommand}" />
+                    </ListBox.InputBindings>
+                </ListBox>
+            </DockPanel>
+            <DockPanel Grid.Column="2" >
+
+                <TextBlock Text="Player-Specific Variables" Style="{StaticResource OctideDescriptionStyle}"
+                           DockPanel.Dock="Top" Margin="5" HorizontalAlignment="Center" />
+                <Button Margin="3" Content="New Player Variable" DockPanel.Dock="Top" Command="{Binding AddPlayerVariableCommand}" />
+
+                <ListBox ItemContainerStyle="{StaticResource VariableItemStyle}" Style="{StaticResource OctideListBoxStyle}" 
+                         ItemsSource="{Binding PlayerVariables}" >
+                    <ListBox.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding PlayerVariables.SelectedItem.RemoveCommand}" />
+                    </ListBox.InputBindings>
+                </ListBox>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
 </UserControl>

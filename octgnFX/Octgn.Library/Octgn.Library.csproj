@@ -164,9 +164,10 @@
   <ItemGroup>
     <None Include="Resources\jargonlist.txt" />
     <None Include="Resources\nounlist.txt" />
-    <Content Include="Scripting\GameEvents.xml">
+    <EmbeddedResource Include="Scripting\GameEvents.xml">
       <SubType>Designer</SubType>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

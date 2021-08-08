@@ -45,17 +45,14 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="300" MinWidth="250" />
+            <ColumnDefinition MinWidth="140" Width="140"/>
+            <ColumnDefinition Width="*" MinWidth="400"/>
+            <ColumnDefinition MinWidth="250" Width="300" />
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
+                <RowDefinition Height="*" MinHeight="150" />
+                <RowDefinition Height="2*" MinHeight="150"/>
             </Grid.RowDefinitions>
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" Text="Templates" Style="{StaticResource OctideTitleStyle}"/>
@@ -68,8 +65,8 @@
                     </ListBox.InputBindings>
                 </ListBox>
             </DockPanel>
-            <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
-            <DockPanel Grid.Row="2">
+            <GridSplitter Grid.Row="1" ResizeDirection="Rows" ResizeBehavior="PreviousAndCurrent" VerticalAlignment="Top" />
+            <DockPanel Grid.Row="1" Margin="0 5 0 0">
                 <TextBlock DockPanel.Dock="Top" Text="Text Blocks" Style="{StaticResource OctideTitleStyle}"/>
                 <Button DockPanel.Dock="Top" Content="New Text Block" Command="{Binding AddTextBlockCommand}" />
                 <ListBox Style="{StaticResource OctideListBoxStyle}" Focusable="True"
@@ -84,20 +81,17 @@
             </DockPanel>
         </Grid>
 
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" />
 
-        <Grid Grid.Column="2">
+        <Grid Grid.Column="1" >
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="150" />
+                <RowDefinition Height="*" MinHeight="300" />
+                <RowDefinition Height="200" MinHeight="150" />
             </Grid.RowDefinitions>
-
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="*" MinWidth="300" />
+                    <ColumnDefinition Width="300" MinWidth="150" />
                 </Grid.ColumnDefinitions>
                 <ContentControl Content="{Binding Templates.SelectedItem}" Margin="3">
                     <ContentControl.Resources>
@@ -106,9 +100,9 @@
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>
-                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+                <GridSplitter Grid.Column="1" ResizeDirection="Columns" ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" />
 
-                <Viewbox Stretch="Uniform" Grid.Column="2" Margin="3" >
+                <Viewbox Stretch="Uniform" Grid.Column="1" Margin="5 0 0 0 " >
                     <Grid ClipToBounds="True" >
                         <Grid.Resources>
 
@@ -227,8 +221,8 @@
                 </Viewbox>
             </Grid>
 
-            <GridSplitter Grid.Row="1" ResizeDirection="Rows" />
-            <DockPanel Grid.Row="2">
+            <GridSplitter Grid.Row="1" ResizeDirection="Rows" ResizeBehavior="PreviousAndCurrent" VerticalAlignment="Top" Panel.ZIndex="1" />
+            <DockPanel Grid.Row="1">
 
                 <TextBlock DockPanel.Dock="Top" Text="Overlay Blocks" Style="{StaticResource OctideTitleStyle}" />
                 <Button DockPanel.Dock="Right" Style="{StaticResource NewItemButton}"
@@ -251,9 +245,9 @@
             </DockPanel>
         </Grid>
 
-        <GridSplitter Grid.Column="3" ResizeDirection="Columns" />
+        <GridSplitter Grid.Column="2" ResizeDirection="Columns" ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" />
 
-        <ContentControl Grid.Column="4">
+        <ContentControl Grid.Column="2" Margin="5 0 0 0">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type itemModel:OverlayBlockDefinitionItemModel}">
                     <controls:ItemPropertiesView Header="Overlay Block Editor" Description="Defines an overlay image layer which is used to build a proxy card template." >

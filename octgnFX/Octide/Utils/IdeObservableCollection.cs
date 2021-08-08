@@ -5,6 +5,7 @@
 using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -78,6 +79,16 @@ namespace Octide
                 OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem"));
             }
         }
+
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            base.OnCollectionChanged(e);
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                SelectedItem = (T)e.NewItems[e.NewItems.Count - 1];
+            }
+        }
+
         protected virtual void OnSelectedItemChanged(NotifySelectedItemChangedEventArgs e)
         {
             SelectedItemChanged?.Invoke(this, e);

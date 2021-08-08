@@ -2,15 +2,12 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System.Windows;
-using System.Windows.Media;
-using System.Drawing.Text;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-
 using Octgn.DataNew.Entities;
-using System.IO;
 using System.ComponentModel;
+using System.Drawing.Text;
+using System.IO;
+using System.Windows.Media;
 
 namespace Octide.ViewModel
 {

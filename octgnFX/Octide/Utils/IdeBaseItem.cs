@@ -77,7 +77,6 @@ namespace Octide
             var index = Source.IndexOf(this);
             var item = Clone() as IdeBaseItem;
             Source.Insert(index + 1, item);
-            Source.SelectedItem = item;
         }
 
         public void InsertItem()
@@ -87,7 +86,6 @@ namespace Octide
             var index = Source.IndexOf(this);
             var item = Create() as IdeBaseItem;
             Source.Insert(index, item);
-            Source.SelectedItem = item;
         }
 
         public void MakeDefault()

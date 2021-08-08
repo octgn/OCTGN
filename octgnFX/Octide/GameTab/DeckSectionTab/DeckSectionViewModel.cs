@@ -2,15 +2,14 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System.Linq;
-using System.Windows;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
 using Octide.ItemModel;
 using Octide.Messages;
+using System.Linq;
+using System.Windows;
 
 namespace Octide.ViewModel
 {

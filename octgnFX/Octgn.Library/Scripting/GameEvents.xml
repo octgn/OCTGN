@@ -1,385 +1,376 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <events xmlns="http://octgn.net/GameEvents.xsd" >
-  <eventversion version="3.1.0.0">
-    <!-- Happens when the table first loads, and never again -->
-    <event name="OnTableLoad"/>
-    <!-- Happens after OnTableLoad and after each game reset -->
-    <event name="OnGameStart"/>
-    <event name="OnLoadDeck">
-      <param name="player" type="Player"/>
-      <!-- Groups cards are loaded into -->
-      <param name="groups" type="Group[]"/>
-    </event>
-    <event name="OnChangeCounter">
-      <param name="player" type="Player"/>
-      <param name="counter" type="Counter"/>
-      <param name="oldValue" type="int"/>
-    </event>
-    <event name="OnEndTurn">
-      <!-- Player that ended their turn -->
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnTurn">
-      <!-- Player whos turn it is -->
-      <param name="player" type="Player"/>
-      <param name="turnNumber" type="int"/>
-    </event>
-    <event name="OnTargetCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <!-- If false, we untargeted, else we targeted -->
-      <param name="isTargeted" type="bool"/>
-    </event>
-    <event name="OnTargetCardArrow">
-      <param name="player" type="Player"/>
-      <param name="fromCard" type="Card"/>
-      <param name="toCard" type="Card"/>
-      <!-- If false, we untargeted, else we targeted -->
-      <param name="isTargeted" type="bool"/>
-    </event>
-    <event name="OnMoveCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <param name="fromGroup" type="Group"/>
-      <param name="toGroup" type="Group"/>
-      <!-- index within the group -->
-      <param name="oldIndex" type="int"/>
-      <param name="index" type="int"/>
-      <param name="oldX" type="int"/>
-      <param name="oldY" type="int"/>
-      <param name="x" type="int"/>
-      <param name="y" type="int"/>
-      <!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
-      <param name="isScriptMove" type="bool"/>
-      <!-- 
+	<eventversion version="3.1.0.0">
+		<!-- Happens when the table first loads, and never again -->
+		<event name="OnTableLoad"/>
+		<!-- Happens after OnTableLoad and after each game reset -->
+		<event name="OnGameStart"/>
+		<event name="OnLoadDeck">
+			<param name="player" type="Player"/>
+			<!-- Groups cards are loaded into -->
+			<param name="groups" type="Group[]"/>
+		</event>
+		<event name="OnChangeCounter">
+			<param name="player" type="Player"/>
+			<param name="counter" type="Counter"/>
+			<param name="oldValue" type="int"/>
+		</event>
+		<event name="OnEndTurn">
+			<!-- Player that ended their turn -->
+			<param name="player" type="Player"/>
+		</event>
+		<event name="OnTurn">
+			<!-- Player whos turn it is -->
+			<param name="player" type="Player"/>
+			<param name="turnNumber" type="int"/>
+		</event>
+		<event name="OnTargetCard">
+			<param name="player" type="Player"/>
+			<param name="card" type="Card"/>
+			<!-- If false, we untargeted, else we targeted -->
+			<param name="isTargeted" type="bool"/>
+		</event>
+		<event name="OnTargetCardArrow">
+			<param name="player" type="Player"/>
+			<param name="fromCard" type="Card"/>
+			<param name="toCard" type="Card"/>
+			<!-- If false, we untargeted, else we targeted -->
+			<param name="isTargeted" type="bool"/>
+		</event>
+		<event name="OnMoveCard">
+			<param name="player" type="Player"/>
+			<param name="card" type="Card"/>
+			<param name="fromGroup" type="Group"/>
+			<param name="toGroup" type="Group"/>
+			<!-- index within the group -->
+			<param name="oldIndex" type="int"/>
+			<param name="index" type="int"/>
+			<param name="oldX" type="int"/>
+			<param name="oldY" type="int"/>
+			<param name="x" type="int"/>
+			<param name="y" type="int"/>
+			<!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
+			<param name="isScriptMove" type="bool"/>
+			<!-- 
          <param name="highlight" type ="string"/>
          <param name="markers" type ="string"/>
      -->
-    </event>
-    <event name="OnMoveCards">
-      <param name="player" type="Player"/>
-      <param name="cards" type="Card[]"/>
-      <param name="fromGroup" type="Group[]"/>
-      <param name="toGroup" type="Group[]"/>
-      <!-- index within the group -->
-      <param name="oldIndexs" type="int[]"/>
-      <param name="indexs" type="int[]"/>
-      <param name="oldX" type="int[]"/>
-      <param name="oldY" type="int[]"/>
-      <param name="x" type="int[]"/>
-      <param name="y" type="int[]"/>
-      <param name="highlights" type ="string[]"/>
-      <param name="markers" type ="string[]"/>
-      <!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
-      <param name="isScriptMove" type="bool"/>
-    </event>
-    <event name="OnPlayerGlobalVariableChanged">
-      <param name="player" type="Player"/>
-      <param name="name" type="string"/>
-      <param name="oldValue" type="string"/>
-      <param name="Value" type="string"/>
-    </event>
-    <event name="OnGlobalVariableChanged">
-      <param name="name" type="string"/>
-      <param name="oldValue" type="string"/>
-      <param name="Value" type="string"/>
-    </event>
-    <event name="OnCardClick">
-      <param name="card" type="Card"/>
-      <param name="mouseButton" type="int"/>
-      <param name="keysDown" type="string[]"/>
-    </event>
-    <event name="OnCardDoubleClick">
-      <param name="card" type="Card"/>
-      <param name="mouseButton" type="int"/>
-      <param name="keysDown" type="string[]"/>
-    </event>
-    <event name="OnMarkerChanged">
-      <param name="card" type="Card"/>
-      <param name="markerName" type="string"/>
-      <param name="oldValue" type="int"/>
-      <param name="newValue" type="int"/>
-      <param name="isScriptChange" type="bool"/>
-    </event>
-  </eventversion>
-  <eventversion version="3.1.0.1">
-    <!-- Happens when the table first loads, and never again -->
-    <event name="OnTableLoad"/>
-    <!-- Happens after OnTableLoad and after each game reset -->
-    <event name="OnGameStart"/>
-    <event name="OnPlayerConnect">
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnPlayerLeaveGame">
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnLoadDeck">
-      <param name="player" type="Player"/>
-      <!-- Groups cards are loaded into -->
-      <param name="groups" type="Group[]"/>
-    </event>
-    <event name="OnChangeCounter">
-      <param name="player" type="Player"/>
-      <param name="counter" type="Counter"/>
-      <param name="oldValue" type="int"/>
-    </event>
-    <event name="OnEndTurn">
-      <!-- Player that ended their turn -->
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnTurn">
-      <!-- Player whos turn it is -->
-      <param name="player" type="Player"/>
-      <param name="turnNumber" type="int"/>
-    </event>
-    <event name="OnTargetCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <!-- If false, we untargeted, else we targeted -->
-      <param name="isTargeted" type="bool"/>
-    </event>
-    <event name="OnTargetCardArrow">
-      <param name="player" type="Player"/>
-      <param name="fromCard" type="Card"/>
-      <param name="toCard" type="Card"/>
-      <!-- If false, we untargeted, else we targeted -->
-      <param name="isTargeted" type="bool"/>
-    </event>
-    <event name="OnPlayerGlobalVariableChanged">
-      <param name="player" type="Player"/>
-      <param name="name" type="string"/>
-      <param name="oldValue" type="string"/>
-      <param name="Value" type="string"/>
-    </event>
-    <event name="OnGlobalVariableChanged">
-      <param name="name" type="string"/>
-      <param name="oldValue" type="string"/>
-      <param name="Value" type="string"/>
-    </event>
-    <event name="OnCardClick">
-      <param name="card" type="Card"/>
-      <param name="mouseButton" type="int"/>
-      <param name="keysDown" type="string[]"/>
-    </event>
-    <event name="OnCardDoubleClick">
-      <param name="card" type="Card"/>
-      <param name="mouseButton" type="int"/>
-      <param name="keysDown" type="string[]"/>
-    </event>
-    <event name="OnMarkerChanged">
-      <param name="card" type="Card"/>
-      <param name="markerName" type="string"/>
-      <param name="oldValue" type="int"/>
-      <param name="newValue" type="int"/>
-      <param name="isScriptChange" type="bool"/>
-    </event>
-    <event name="OnMoveCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <param name="fromGroup" type="Group"/>
-      <param name="toGroup" type="Group"/>
-      <!-- index within the group -->
-      <param name="oldIndex" type="int"/>
-      <param name="index" type="int"/>
-      <param name="oldX" type="int"/>
-      <param name="oldY" type="int"/>
-      <param name="x" type="int"/>
-      <param name="y" type="int"/>
-      <param name="faceup" type="bool"/>
-      <param name="highlight" type ="string"/>
-      <param name="markers" type ="string"/>
-    </event>
-    <event name="OnMoveCards">
-      <param name="player" type="Player"/>
-      <param name="cards" type="Card[]"/>
-      <param name="fromGroups" type="Group[]"/>
-      <param name="toGroups" type="Group[]"/>
-      <!-- index within the group -->
-      <param name="oldIndexs" type="int[]"/>
-      <param name="indexs" type="int[]"/>
-      <param name="oldX" type="int[]"/>
-      <param name="oldY" type="int[]"/>
-      <param name="x" type="int[]"/>
-      <param name="y" type="int[]"/>
-      <param name="highlights" type ="string[]"/>
-      <param name="markers" type ="string[]"/>
-      <param name="faceups" type="bool[]"/>
-    </event>    
-    <event name="OnScriptedMoveCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <param name="fromGroup" type="Group"/>
-      <param name="toGroup" type="Group"/>
-      <!-- index within the group -->
-      <param name="oldIndex" type="int"/>
-      <param name="index" type="int"/>
-      <param name="oldX" type="int"/>
-      <param name="oldY" type="int"/>
-      <param name="x" type="int"/>
-      <param name="y" type="int"/>
-      <param name="faceup" type="bool"/>
-      <param name="highlight" type ="string"/>
-      <param name="markers" type ="string"/>
-    </event>
-    <event name="OnScriptedMoveCards">
-      <param name="player" type="Player"/>
-      <param name="cards" type="Card[]"/>
-      <param name="fromGroups" type="Group[]"/>
-      <param name="toGroups" type="Group[]"/>
-      <!-- index within the group -->
-      <param name="oldIndexs" type="int[]"/>
-      <param name="indexs" type="int[]"/>
-      <param name="oldX" type="int[]"/>
-      <param name="oldY" type="int[]"/>
-      <param name="x" type="int[]"/>
-      <param name="y" type="int[]"/>
-      <param name="highlights" type ="string[]"/>
-      <param name="markers" type ="string[]"/>
-      <param name="faceups" type="bool[]"/>
-    </event>
-  </eventversion>
-  <eventversion version="3.1.0.2">
-    <!-- Happens when the table first loads, and never again -->
-    <event name="OnTableLoaded"/>
-    <!-- Happens after OnTableLoaded and after each game reset -->
-    <event name="OnGameStarted"/>
-    <event name="OnPlayerConnected">
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnPlayerQuit">
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnDeckLoaded">
-      <param name="player" type="Player"/>
-      <param name="isLimited" type="bool"/>
-      <!-- Groups cards are loaded into -->
-      <param name="groups" type="Group[]"/>
-    </event>
-    <event name="OnCounterChanged">
-      <param name="player" type="Player"/>
-      <param name="counter" type="Counter"/>
-      <param name="value" type="int"/>
-      <param name="scripted" type="bool"/>
-    </event>
-    <event name="OnTurnPaused">
-      <!-- Player who toggled the Pause Turn button -->
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnTurnPassed">
-      <!-- Triggers when the turn is passed to another player -->
-      <param name="player" type="Player"/>
-      <param name="turn" type="int"/>
-      <param name="force" type="bool"/>
-    </event>
-    <event name="OnCardTargeted">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <!-- If false, we untargeted, else we targeted -->
-      <param name="targeted" type="bool"/>
-      <param name="scripted" type="bool"/>
-    </event>
-    <event name="OnCardArrowTargeted">
-      <param name="player" type="Player"/>
-      <param name="fromCard" type="Card"/>
-      <param name="toCard" type="Card"/>
-      <!-- If false, we untargeted, else we targeted -->
-      <param name="targeted" type="bool"/>
-      <param name="scripted" type="bool"/>
-    </event>
-    <event name="OnPlayerGlobalVariableChanged">
-      <param name="player" type="Player"/>
-      <param name="name" type="string"/>
-      <param name="oldValue" type="string"/>
-      <param name="value" type="string"/>
-    </event>
-    <event name="OnGlobalVariableChanged">
-      <param name="name" type="string"/>
-      <param name="oldValue" type="string"/>
-      <param name="value" type="string"/>
-    </event>
-    <event name="OnCardClicked">
-      <param name="card" type="Card"/>
-      <param name="mouseButton" type="int"/>
-      <param name="keysDown" type="string[]"/>
-    </event>
-    <event name="OnCardDoubleClicked">
-      <param name="card" type="Card"/>
-      <param name="mouseButton" type="int"/>
-      <param name="keysDown" type="string[]"/>
-    </event>
-    <event name="OnMarkerChanged">
-      <param name="card" type="Card"/>
-      <param name="marker" type="string"/>
-      <param name="id" type="string"/>
-      <param name="value" type="int"/>
-      <param name="scripted" type="bool"/>
-    </event>
-    <event name="OnCardControllerChanged">
-      <param name="card" type="Card"/>
-      <param name="oldPlayer" type="Player"/>
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OnCardsMoved">
-      <param name="player" type="Player"/>
-      <param name="cards" type="Card[]"/>
-      <param name="fromGroups" type="Group[]"/>
-      <param name="toGroups" type="Group[]"/>
-      <!-- index within the group -->
-      <param name="indexs" type="int[]"/>
-      <param name="xs" type="int[]"/>
-      <param name="ys" type="int[]"/>
-      <param name="highlights" type ="string[]"/>
-      <param name="markers" type ="string[]"/>
-      <param name="faceups" type="bool[]"/>
-      <param name="filters" type ="string[]"/>
-      <param name="alternates" type ="string[]"/>
-    </event>
-    <event name="OnScriptedCardsMoved">
-      <param name="player" type="Player"/>
-      <param name="cards" type="Card[]"/>
-      <param name="fromGroups" type="Group[]"/>
-      <param name="toGroups" type="Group[]"/>
-      <!-- index within the group -->
-      <param name="indexs" type="int[]"/>
-      <param name="xs" type="int[]"/>
-      <param name="ys" type="int[]"/>
-      <param name="highlights" type ="string[]"/>
-      <param name="markers" type ="string[]"/>
-      <param name="faceups" type="bool[]"/>
-      <param name="filters" type ="string[]"/>
-      <param name="alternates" type ="string[]"/>
-    </event>
-    <event name="OnPhasePassed">
-      <param name="name" type="string"/>
-      <param name="id" type="int" />
-      <param name="force" type="bool" />
-    </event>
-    <event name="OnPhasePaused">
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OverrideCardsMoved">
-      <param name="cards" type="Card[]"/>
-      <param name="toGroups" type="Group[]"/>
-      <!-- index within the group -->
-      <param name="indexs" type="int[]"/>
-      <param name="xs" type="int[]"/>
-      <param name="ys" type="int[]"/>
-      <param name="faceups" type="bool[]"/>
-    </event>
-    <event name="OverrideTurnPassed">
-      <param name="player" type="Player"/>
-    </event>
-    <event name="OverrideGameReset" >
-    </event>
-    <event name="OverrideGameSoftReset" >
-    </event>
-    <event name="OverridePhasePassed">
-      <param name="name" type="string"/>
-      <param name="id" type="int" />
-    </event>
-    <event name="OverridePhaseClicked">
-      <param name="name" type="string"/>
-      <param name="id" type="int" />
-    </event>
-  </eventversion>
+		</event>
+		<event name="OnMoveCards">
+			<param name="player" type="Player"/>
+			<param name="cards" type="Card[]"/>
+			<param name="fromGroup" type="Group[]"/>
+			<param name="toGroup" type="Group[]"/>
+			<!-- index within the group -->
+			<param name="oldIndexs" type="int[]"/>
+			<param name="indexs" type="int[]"/>
+			<param name="oldX" type="int[]"/>
+			<param name="oldY" type="int[]"/>
+			<param name="x" type="int[]"/>
+			<param name="y" type="int[]"/>
+			<param name="highlights" type ="string[]"/>
+			<param name="markers" type ="string[]"/>
+			<!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
+			<param name="isScriptMove" type="bool"/>
+		</event>
+		<event name="OnPlayerGlobalVariableChanged">
+			<param name="player" type="Player"/>
+			<param name="name" type="string"/>
+			<param name="oldValue" type="string"/>
+			<param name="Value" type="string"/>
+		</event>
+		<event name="OnGlobalVariableChanged">
+			<param name="name" type="string"/>
+			<param name="oldValue" type="string"/>
+			<param name="Value" type="string"/>
+		</event>
+		<event name="OnCardClick">
+			<param name="card" type="Card"/>
+			<param name="mouseButton" type="int"/>
+			<param name="keysDown" type="string[]"/>
+		</event>
+		<event name="OnCardDoubleClick">
+			<param name="card" type="Card"/>
+			<param name="mouseButton" type="int"/>
+			<param name="keysDown" type="string[]"/>
+		</event>
+		<event name="OnMarkerChanged">
+			<param name="card" type="Card"/>
+			<param name="markerName" type="string"/>
+			<param name="oldValue" type="int"/>
+			<param name="newValue" type="int"/>
+			<param name="isScriptChange" type="bool"/>
+		</event>
+	</eventversion>
+	<eventversion version="3.1.0.1">
+		<!-- Happens when the table first loads, and never again -->
+		<event name="OnTableLoad"/>
+		<!-- Happens after OnTableLoad and after each game reset -->
+		<event name="OnGameStart"/>
+		<event name="OnPlayerConnect">
+			<param name="player" type="Player"/>
+		</event>
+		<event name="OnPlayerLeaveGame">
+			<param name="player" type="Player"/>
+		</event>
+		<event name="OnLoadDeck">
+			<param name="player" type="Player"/>
+			<!-- Groups cards are loaded into -->
+			<param name="groups" type="Group[]"/>
+		</event>
+		<event name="OnChangeCounter">
+			<param name="player" type="Player"/>
+			<param name="counter" type="Counter"/>
+			<param name="oldValue" type="int"/>
+		</event>
+		<event name="OnEndTurn">
+			<!-- Player that ended their turn -->
+			<param name="player" type="Player"/>
+		</event>
+		<event name="OnTurn">
+			<!-- Player whos turn it is -->
+			<param name="player" type="Player"/>
+			<param name="turnNumber" type="int"/>
+		</event>
+		<event name="OnTargetCard">
+			<param name="player" type="Player"/>
+			<param name="card" type="Card"/>
+			<!-- If false, we untargeted, else we targeted -->
+			<param name="isTargeted" type="bool"/>
+		</event>
+		<event name="OnTargetCardArrow">
+			<param name="player" type="Player"/>
+			<param name="fromCard" type="Card"/>
+			<param name="toCard" type="Card"/>
+			<!-- If false, we untargeted, else we targeted -->
+			<param name="isTargeted" type="bool"/>
+		</event>
+		<event name="OnPlayerGlobalVariableChanged">
+			<param name="player" type="Player"/>
+			<param name="name" type="string"/>
+			<param name="oldValue" type="string"/>
+			<param name="Value" type="string"/>
+		</event>
+		<event name="OnGlobalVariableChanged">
+			<param name="name" type="string"/>
+			<param name="oldValue" type="string"/>
+			<param name="Value" type="string"/>
+		</event>
+		<event name="OnCardClick">
+			<param name="card" type="Card"/>
+			<param name="mouseButton" type="int"/>
+			<param name="keysDown" type="string[]"/>
+		</event>
+		<event name="OnCardDoubleClick">
+			<param name="card" type="Card"/>
+			<param name="mouseButton" type="int"/>
+			<param name="keysDown" type="string[]"/>
+		</event>
+		<event name="OnMarkerChanged">
+			<param name="card" type="Card"/>
+			<param name="markerName" type="string"/>
+			<param name="oldValue" type="int"/>
+			<param name="newValue" type="int"/>
+			<param name="isScriptChange" type="bool"/>
+		</event>
+		<event name="OnMoveCard">
+			<param name="player" type="Player"/>
+			<param name="card" type="Card"/>
+			<param name="fromGroup" type="Group"/>
+			<param name="toGroup" type="Group"/>
+			<!-- index within the group -->
+			<param name="oldIndex" type="int"/>
+			<param name="index" type="int"/>
+			<param name="oldX" type="int"/>
+			<param name="oldY" type="int"/>
+			<param name="x" type="int"/>
+			<param name="y" type="int"/>
+			<param name="faceup" type="bool"/>
+			<param name="highlight" type ="string"/>
+			<param name="markers" type ="string"/>
+		</event>
+		<event name="OnMoveCards">
+			<param name="player" type="Player"/>
+			<param name="cards" type="Card[]"/>
+			<param name="fromGroups" type="Group[]"/>
+			<param name="toGroups" type="Group[]"/>
+			<!-- index within the group -->
+			<param name="oldIndexs" type="int[]"/>
+			<param name="indexs" type="int[]"/>
+			<param name="oldX" type="int[]"/>
+			<param name="oldY" type="int[]"/>
+			<param name="x" type="int[]"/>
+			<param name="y" type="int[]"/>
+			<param name="highlights" type ="string[]"/>
+			<param name="markers" type ="string[]"/>
+			<param name="faceups" type="bool[]"/>
+		</event>
+		<event name="OnScriptedMoveCard">
+			<param name="player" type="Player"/>
+			<param name="card" type="Card"/>
+			<param name="fromGroup" type="Group"/>
+			<param name="toGroup" type="Group"/>
+			<!-- index within the group -->
+			<param name="oldIndex" type="int"/>
+			<param name="index" type="int"/>
+			<param name="oldX" type="int"/>
+			<param name="oldY" type="int"/>
+			<param name="x" type="int"/>
+			<param name="y" type="int"/>
+			<param name="faceup" type="bool"/>
+			<param name="highlight" type ="string"/>
+			<param name="markers" type ="string"/>
+		</event>
+		<event name="OnScriptedMoveCards">
+			<param name="player" type="Player"/>
+			<param name="cards" type="Card[]"/>
+			<param name="fromGroups" type="Group[]"/>
+			<param name="toGroups" type="Group[]"/>
+			<!-- index within the group -->
+			<param name="oldIndexs" type="int[]"/>
+			<param name="indexs" type="int[]"/>
+			<param name="oldX" type="int[]"/>
+			<param name="oldY" type="int[]"/>
+			<param name="x" type="int[]"/>
+			<param name="y" type="int[]"/>
+			<param name="highlights" type ="string[]"/>
+			<param name="markers" type ="string[]"/>
+			<param name="faceups" type="bool[]"/>
+		</event>
+	</eventversion>
+	<eventversion version="3.1.0.2">
+		<event name="OnTableLoaded" hint="Triggers after the table first loads"/>
+		<event name="OnGameStarted" hint="Triggers at the start of a new game, such as when the table first loads or after a game reset"/>
+		<event name="OnPlayerConnected" hint="Triggers when a player reconnects to the game">
+			<param name="player" type="Player" hint="The player that reconnected to the game"/>
+		</event>
+		<event name="OnPlayerQuit" hint="Triggers when a player leaves the game">
+			<param name="player" type="Player" hint="The player that left the game"/>
+		</event>
+		<event name="OnDeckLoaded" hint="Triggers when a player loads a deck">
+			<param name="player" type="Player" hint="the player that loaded the deck"/>
+			<param name="isLimited" type="bool" hint="true if the deck was loaded via the Limited Deck Editor, false if a pre-built deck was loaded"/>
+			<param name="groups" type="Group[]" hint="the groups in which cards were loaded into"/>
+		</event>
+		<event name="OnCounterChanged" hint="Triggers when a player's counter changes values">
+			<param name="player" type="Player" hint="the player that owns the affected counter"/>
+			<param name="counter" type="Counter" hint="the affected counter"/>
+			<param name="value" type="int" hint="the original value of the counter"/>
+			<param name="scripted" type="bool" hint="true if the counter's value was changed via python script, false if it was manually changed through the UI"/>
+		</event>
+		<event name="OnTurnPaused" hint="Triggers when the passing of the turn is interrupted due to a stop set by another player">
+			<param name="player" type="Player" hint="the player that interruped the turn passing"/>
+		</event>
+		<event name="OnTurnPassed" hint="Triggers when the turn is passed to another player">
+			<param name="player" type="Player" hint="the original player passing the turn"/>
+			<param name="turn" type="int" hint="the turn number before the turn was passed"/>
+			<param name="force" type="bool" hint="true if turn stops were forced to skip via scripting"/>
+		</event>
+		<event name="OnCardTargeted" hint="Triggers when a target is added or removed from a card">
+			<param name="player" type="Player" hint="the player creating or removing the target"/>
+			<param name="card" type="Card" hint="the affected card object"/>
+			<param name="targeted" type="bool" hint="true if the target was created, false if the target was removed"/>
+			<param name="scripted" type="bool" hint="true if the target was created via python script, false if created through the UI"/>
+		</event>
+		<event name="OnCardArrowTargeted" hint="Triggers when a card arrow target is created or removed between two cards">
+			<param name="player" type="Player" hint="the player that changed the target arrow"/>
+			<param name="fromCard" type="Card" hint="the card at the base of the target arrow"/>
+			<param name="toCard" type="Card" hint="the card at the point of the target arrow"/>
+			<param name="targeted" type="bool" hint="true if the target arrow was created, false if the arrow was removed"/>
+			<param name="scripted" type="bool" hint="true if the target arrow was created via python script, false if created through the UI"/>
+		</event>
+		<event name="OnPlayerGlobalVariableChanged" hint="Triggers when the value of a player's global variable changes">
+			<param name="player" type="Player" hint="the player owner of the affected global variable"/>
+			<param name="name" type="string" hint="the affected global variable's name"/>
+			<param name="oldValue" type="string" hint="the original value for this variable"/>
+			<param name="value" type="string" hint="the new value for this variable"/>
+		</event>
+		<event name="OnGlobalVariableChanged" hint="Triggers when the value of a global variable changes">
+			<param name="name" type="string" hint="the affected global variable's name"/>
+			<param name="oldValue" type="string" hint="the original value for this variable"/>
+			<param name="value" type="string" hint="the new value for this variable"/>
+		</event>
+		<event name="OnCardClicked" hint="Triggers when a card is clicked.">
+			<param name="card" type="Card" hint="the affected card object"/>
+			<param name="mouseButton" type="int" hint="the integer associated with the mouse button being clicked.  0 for left, 1 for middle, 2 for right.  3 and 4 are additional mappable mouse buttons"/>
+			<param name="keysDown" type="string[]" hint="an array of keys which were also held while the click occurred"/>
+		</event>
+		<event name="OnCardDoubleClicked" hint="Triggers when a card is double-clicked.">
+			<param name="card" type="Card" hint="the affected card object"/>
+			<param name="mouseButton" type="int" hint="the integer associated with the mouse button being double-clicked.  0 for left, 1 for middle, 2 for right.  3 and 4 are additional mappable mouse buttons"/>
+			<param name="keysDown" type="string[]" hint="an array of keys which were also held while the double-click occurred"/>
+		</event>
+		<event name="OnMarkerChanged" hint="Triggers when a marker's quantity is changed on a card">
+			<param name="card" type="Card" hint="the affected card object"/>
+			<param name="marker" type="string" hint="the name of the marker being changed"/>
+			<param name="id" type="string" hint="the unique identifier of the marker being changed"/>
+			<param name="value" type="int" hint="the original quantity of the marker"/>
+			<param name="scripted" type="bool" hint="true if a script changed the marker, false if the player manually changed the marker through the UI"/>
+		</event>
+		<event name="OnCardControllerChanged" hint="Triggers when the controller of a card changes">
+			<param name="card" type="Card" hint="the affected card object"/>
+			<param name="oldPlayer" type="Player" hint="the original controller of the card"/>
+			<param name="player" type="Player" hint="the player taking control of the card"/>
+		</event>
+		<event name="OnCardsMoved" hint="Triggers when one or more cards are moved to a new location via drag-drop.">
+			<param name="player" type="Player" hint="the player executing the card move script"/>
+			<param name="cards" type="Card[]" hint="the array of card objects involved in the move"/>
+			<param name="fromGroups" type="Group[]" hint="the array of source groups"/>
+			<param name="toGroups" type="Group[]" hint="the array of destination groups"/>
+			<param name="indexs" type="int[]" hint="the array of original z-index positions within the source groups"/>
+			<param name="xs" type="int[]" hint="the array of original x-coordinate positions, if the source group is the table"/>
+			<param name="ys" type="int[]" hint="the array of original y-coordinate positions, if the source group is the table"/>
+			<param name="highlights" type ="string[]" hint="the array of original highlight color strings on the cards"/>
+			<param name="markers" type ="string[]" hint="the array of original markers placed on the cards.  Note that these are stored as strings and will need to be parsed back to a dictionary to be read in python."/>
+			<param name="faceups" type="bool[]" hint="the array of original faceup states on the cards"/>
+			<param name="filters" type ="string[]" hint="the array of original filter color strings on the cards"/>
+			<param name="alternates" type ="string[]" hint="the array of original alternate card states on the cards"/>
+
+		</event>
+		<event name="OnScriptedCardsMoved" hint="Triggers when a python script causes one or more cards to move to a new location.">
+			<param name="player" type="Player" hint="the player executing the card move script"/>
+			<param name="cards" type="Card[]" hint="the array of card objects involved in the move"/>
+			<param name="fromGroups" type="Group[]" hint="the array of source groups"/>
+			<param name="toGroups" type="Group[]" hint="the array of destination groups"/>
+			<param name="indexs" type="int[]" hint="the array of original z-index positions within the source groups"/>
+			<param name="xs" type="int[]" hint="the array of original x-coordinate positions, if the source group is the table"/>
+			<param name="ys" type="int[]" hint="the array of original y-coordinate positions, if the source group is the table"/>
+			<param name="highlights" type ="string[]" hint="the array of original highlight color strings on the cards"/>
+			<param name="markers" type ="string[]" hint="the array of original markers placed on the cards.  Note that these are stored as strings and will need to be parsed back to a dictionary to be read in python."/>
+			<param name="faceups" type="bool[]" hint="the array of original faceup states on the cards"/>
+			<param name="filters" type ="string[]" hint="the array of original filter color strings on the cards"/>
+			<param name="alternates" type ="string[]" hint="the array of original alternate card states on the cards"/>
+		</event>
+		<event name="OnPhasePassed" hint="Triggers when the active turn player changes the current phase">
+			<param name="name" type="string" hint="the name of the previous phase"/>
+			<param name="id" type="int" hint="the index of the previous phase in the list of phases"/>
+			<param name="force" type="bool" hint="true if stops set on a phase were forced to skip via scripting "/>
+		</event>
+		<event name="OnPhasePaused" hint="(unused)">
+			<param name="player" type="Player"/>
+		</event>
+		<event name="OverrideCardsMoved" hint="Overrides the default behavior when one or more cards are moved to another location via drag-drop.">
+			<param name="cards" type="Card[]" hint="the array of card objects involved in the move"/>
+			<param name="toGroups" type="Group[]" hint="the array of requested destination groups"/>
+			<param name="indexs" type="int[]" hint="the array of requested z-index positions within the destination group"/>
+			<param name="xs" type="int[]" hint="the array of requested x-coordinate positions, if the destination group is the table"/>
+			<param name="ys" type="int[]" hint="the array of requested y-coordinate positions, if the destination group is the table"/>
+			<param name="faceups" type="bool[]" hint="the array of boolean faceup states requested at the destination group"/>
+		</event>
+		<event name="OverrideTurnPassed" hint="Overrides the default behavior when clicking the green 'pass turn' button on the player tab">
+			<param name="player" type="Player" hint="the player the turn is being passed to"/>
+		</event>
+		<event name="OverrideGameReset" hint="Overrides the default behavior when a game reset command is requested">
+		</event>
+		<event name="OverrideGameSoftReset" hint="Overrides the default behavior when a soft-reset command is requested" >
+		</event>
+		<event name="OverridePhasePassed" hint="(unused) Overrides the default behavior when the active phase passes past a stopped phase">
+			<param name="name" type="string" hint="the name of the paused phase triggering the event"/>
+			<param name="id" type="int" hint="the index of the paused phase in the list of phases"/>
+		</event>
+		<event name="OverridePhaseClicked" hint="Overrides the default behavior for clicking on a phase button">
+			<param name="name" type="string" hint="the name of the phase clicked"/>
+			<param name="id" type="int" hint="the index of the phase in the list of phases" />
+		</event>
+	</eventversion>
 </events>

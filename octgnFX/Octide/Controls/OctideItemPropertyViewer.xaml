@@ -29,11 +29,10 @@
                 <Grid DockPanel.Dock="Bottom">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" MinWidth="200" />
-                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <DockPanel x:Name="ItemListPanel" LastChildFill="True">
-                        <ContentPresenter DockPanel.Dock="Top" Content="{Binding ElementName=me, Path=ListBoxButtons}" />
+                        <ContentPresenter DockPanel.Dock="Top" Content="{Binding ElementName=me, Path=ListBoxButtons}" Margin="3" />
                         <ListBox x:Name="ListBox" ItemsSource="{Binding ElementName=me, Path=ItemsSource}" VerticalAlignment="Stretch"
                                  SelectedValue="{Binding ElementName=me, Path=ItemsSource.SelectedItem}" Style="{StaticResource OctideListBoxStyle}" >
                             <ListBox.InputBindings>
@@ -41,8 +40,8 @@
                             </ListBox.InputBindings>
                         </ListBox>
                     </DockPanel>
-                    <GridSplitter x:Name="GridSplitter" Width="10" Grid.Column="1" ResizeDirection="Columns" />
-                    <Border Grid.Column="2" BorderThickness="1" Padding="5" BorderBrush="{StaticResource MahApps.Brushes.Border.NonActive}" >
+                    <GridSplitter x:Name="GridSplitter" Grid.Column="1" ResizeDirection="Columns" HorizontalAlignment="Left" ResizeBehavior="PreviousAndCurrent" />
+                    <Border Grid.Column="1" Style="{StaticResource OctideBorderPanelStyle}" >
                         <ScrollViewer VerticalScrollBarVisibility="{Binding ElementName=me, Path=VerticalScrollBarVisibility}">
                             <ContentPresenter Content="{Binding ElementName=me, Path=ItemsSource.SelectedItem}" />
                         </ScrollViewer>

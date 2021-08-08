@@ -3,12 +3,10 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Folding;
 using Octgn.DataNew.Entities;
 using Octide.ViewModel;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace Octide.ItemModel
 {
@@ -138,7 +136,6 @@ namespace Octide.ItemModel
                 Parameters.Add(param.Trim());
             }
         }
-
     }
 
 }

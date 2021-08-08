@@ -2,20 +2,13 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Input;
-using GalaSoft.MvvmLight.Messaging;
-using Octide.Messages;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Collections.ObjectModel;
-using System;
-using System.Drawing;
-using Point = System.Windows.Point;
 using Octide.ItemModel;
 using Octide.ViewModel;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Point = System.Windows.Point;
 
 namespace Octide.Views
 {

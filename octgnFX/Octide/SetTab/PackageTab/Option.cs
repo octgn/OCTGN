@@ -6,7 +6,6 @@ using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace Octide.SetTab.ItemModel
 {

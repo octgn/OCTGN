@@ -7,11 +7,8 @@ using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
 using Octgn.DataNew.Entities;
 using Octide.Messages;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Octide.ItemModel
 {

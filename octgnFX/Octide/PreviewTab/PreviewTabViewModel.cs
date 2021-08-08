@@ -6,27 +6,15 @@ using System.Collections.ObjectModel;
 
 namespace Octide.ViewModel
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-
     using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.Messaging;
-    using GalaSoft.MvvmLight.Threading;
-
-    using Octgn.DataNew.Entities;
-
-    using Octide.Messages;
-    using System.Windows.Controls;
-    using Views;
     using GalaSoft.MvvmLight.Command;
+    using GalaSoft.MvvmLight.Messaging;
     using GongSolutions.Wpf.DragDrop;
-    using System.Windows;
+    using Octgn.DataNew.Entities;
     using Octide.ItemModel;
-    using System.Collections.Specialized;
+    using Octide.Messages;
+    using System.Linq;
+    using System.Windows;
 
     public class PreviewTabViewModel : ViewModelBase
     {

@@ -3,7 +3,6 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using Octgn.ProxyGenerator.Definitions;
-using System.Collections.ObjectModel;
 
 namespace Octide.ProxyTab.ItemModel
 {

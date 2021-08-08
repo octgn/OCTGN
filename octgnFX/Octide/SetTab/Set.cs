@@ -4,15 +4,14 @@
 
 using GalaSoft.MvvmLight.Command;
 using Octgn.DataNew.Entities;
+using Octgn.Library;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Collections.Specialized;
-using Octide.Views;
-using System.ComponentModel;
-using Octgn.Library;
 
 namespace Octide.SetTab.ItemModel
 {
@@ -181,14 +180,12 @@ namespace Octide.SetTab.ItemModel
         {
             var ret = new PackageModel(PackageItems);
             PackageItems.Add(ret);
-            PackageItems.SelectedItem = ret;
         }
 
         public void AddCard()
         {
             var ret = new CardModel(CardItems);
             CardItems.Add(ret);
-            CardItems.SelectedItem = ret;
         }
 
         public void SelectDefaultAlt(NotifySelectedItemChangedEventArgs args)

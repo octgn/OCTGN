@@ -5,7 +5,6 @@
 using GongSolutions.Wpf.DragDrop;
 using Octide.ItemModel;
 using Octide.ProxyTab.ItemModel;
-using System.Collections.ObjectModel;
 
 namespace Octide.ProxyTab.Handlers
 {
