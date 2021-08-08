@@ -2,27 +2,21 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System;
-using System.Linq;
-using System.IO;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-
-using Octide.Messages;
-using Octgn.ProxyGenerator;
 using Octgn.DataNew;
-using System.Collections.ObjectModel;
+using Octgn.ProxyGenerator;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ItemModel;
-using System.Windows.Media.Imaging;
+using Octide.Messages;
 using Octide.ProxyTab.ItemModel;
+using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Xml;
-using Octgn.Library;
-using System.Windows.Forms;
-using Octide.Views;
+using System.IO;
+using System.Linq;
+using System.Windows.Media.Imaging;
 
 namespace Octide.ViewModel
 {
@@ -165,7 +159,7 @@ namespace Octide.ViewModel
         public void UpdateProxyTemplate(ProxyTemplateChangedMessage message)
         {
             if (Templates.SelectedItem == null) return;
-            var selectedTemplate = ((TemplateModel)Templates.SelectedItem);
+            var selectedTemplate = (TemplateModel)Templates.SelectedItem;
 
             var properties = StoredProxyProperties.Where(x => x.Name != null).ToDictionary(x => x.Name, x => x.Value);
 
@@ -245,7 +239,6 @@ namespace Octide.ViewModel
         {
             var ret = new TemplateModel(Templates);
             Templates.Add(ret);
-            Templates.SelectedItem = ret;
         }
 
         public void AddOverlay()

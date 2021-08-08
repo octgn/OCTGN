@@ -3,19 +3,11 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
-using Octide.Messages;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Octide.ItemModel
 {
@@ -27,7 +19,7 @@ namespace Octide.ItemModel
         {
             _gameEvent = new GameEvent()
             {
-                Name = "Event",
+                Name = "",
                 PythonFunction = ""
             };
         }
@@ -41,7 +33,7 @@ namespace Octide.ItemModel
         {
             _gameEvent = new GameEvent()
             {
-                Name = gameEvent.Name,
+                Name = gameEvent.Event.Name,
                 PythonFunction = gameEvent.PythonFunction.Name
             };
         }
@@ -55,17 +47,18 @@ namespace Octide.ItemModel
             return new GameEventItemModel(Source);
         }
 
-        public string Name
+
+        public GameEventDescriptionItemModel Event
         {
             get
             {
-                return _gameEvent.Name;
+                return RegisteredEvents.FirstOrDefault(x => x.Name == _gameEvent.Name);
             }
             set
             {
-                if (_gameEvent.Name == value) return;
-                _gameEvent.Name = value;
-                RaisePropertyChanged("Name");
+                if (_gameEvent.Name == value.Name) return;
+                _gameEvent.Name = value.Name;
+                RaisePropertyChanged(nameof(Event));
             }
         }
         public PythonFunctionDefItemModel PythonFunction
@@ -78,11 +71,31 @@ namespace Octide.ItemModel
             {
                 if (_gameEvent.PythonFunction == value.Name) return;
                 _gameEvent.PythonFunction = value.Name;
-                RaisePropertyChanged("PythonFunction");
+                RaisePropertyChanged(nameof(PythonFunction));
             }
         }
 
         public List<PythonFunctionDefItemModel> PythonFunctions => ViewModelLocator.PythonTabViewModel.PythonFunctions;
+        public GameEventDescriptionItemModel[] RegisteredEvents => ViewModelLocator.GameEventTabViewModel.RegisteredEvents;
 
+    }
+
+    public class GameEventDescriptionItemModel : ViewModelBase
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Version ApiVersion { get; set; }
+        public List<GameEventArgumentItemModel> Arguments { get; set; }
+        public GameEventDescriptionItemModel()
+        {
+            Arguments = new List<GameEventArgumentItemModel>();
+        }
+    }
+
+    public class GameEventArgumentItemModel : ViewModelBase
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
     }
 }

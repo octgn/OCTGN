@@ -4,16 +4,14 @@
 
 namespace Octide.ViewModel
 {
-    using System;
-    using System.Windows;
-
+    using CommonServiceLocator;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
-
     using Octide.Messages;
     using Octide.Views;
-    using CommonServiceLocator;
+    using System;
+    using System.Windows;
 
     public class WindowLocator
     {

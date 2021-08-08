@@ -14,77 +14,86 @@
              xmlns:model="clr-namespace:Octide.ItemModel"
              xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              mc:Ignorable="d" 
+             x:Name="me"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding GameEventTabViewModel, Source={StaticResource Locator}}">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Button Content="New Event Trigger" Command="{Binding AddEventCommand}" />
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" Text="Game Events Editor" />
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}"
+                   Text="Game Events allow custom Python code to execute after certain in-game actions have occurred.  Override events will block the default OCTGN behavior, allowing Python to perform custom actions instead." />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" MinWidth="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Button Content="New Event Trigger" Command="{Binding AddEventCommand}" Margin="3" />
 
-        <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
+            <ListBox Grid.Row="1" Style="{StaticResource OctideListBoxStyle}" 
                          ItemsSource="{Binding Events}" SelectedValue="{Binding Events.SelectedItem}" >
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ListBoxItem}" >
-                                <Border Background="{TemplateBinding Background}">
-                                    <Grid Margin="4">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Name:" TextAlignment="Right"/>
-                                        <TextBox Grid.Column="1">
-                                            <TextBox.Style>
-                                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="Validation.HasError" Value="true">
-                                                            <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBox.Style>
-                                            <TextBox.Resources>
-                                                <local:BindingProxy x:Key="proxy" Data="{Binding }" />
-                                            </TextBox.Resources>
-                                            <TextBox.Text>
-                                                <Binding Path="Name" >
-                                                    <Binding.ValidationRules>
-                                                        <local:StringRestrictionValidationRule />
-                                                        <local:UniqueValueValidationRule>
-                                                            <local:UniqueValueValidationRule.Wrapper>
-                                                                <local:UniqueValueValidationWrapper UniqueValues="{Binding Data.UniqueNames, Source={StaticResource proxy}}"/>
-                                                            </local:UniqueValueValidationRule.Wrapper>
-                                                        </local:UniqueValueValidationRule>
-                                                    </Binding.ValidationRules>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
-                                        <TextBlock Grid.Row="1" Text="Value:" TextAlignment="Right" />
-                                        <ComboBox Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding PythonFunction}" />
-                                    </Grid>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding Events.SelectedItem.RemoveCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
-
-    </Grid>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource OctideListBoxItemStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}" >
+                                    <Border Background="{TemplateBinding Background}">
+                                        <Grid Margin="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Name:" TextAlignment="Right"/>
+                                            <ComboBox Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding GameEventTabViewModel.RegisteredEvents, Source={StaticResource Locator}}" SelectedValue="{Binding Event}"  />
+                                            <TextBlock Grid.Row="1" Text="Value:" TextAlignment="Right" />
+                                            <ComboBox Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding PythonFunctions}" SelectedValue="{Binding PythonFunction}" />
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding Events.SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+            <GridSplitter Grid.Column="1" ResizeDirection="Columns" HorizontalAlignment="Left" ResizeBehavior="PreviousAndCurrent" Grid.RowSpan="2"  />
+            <Border Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource OctideBorderPanelStyle}">
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="Game Event Reference Guide" Style="{StaticResource OctideDescriptionStyle}" 
+                               FontSize="16" FontWeight="Bold" DockPanel.Dock="Top" TextDecorations="Underline" />
+                    <TreeView ItemsSource="{Binding RegisteredEvents}" Style="{StaticResource MahApps.Styles.TreeView}" Grid.IsSharedSizeScope="True">
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type model:GameEventDescriptionItemModel}" ItemsSource="{Binding Arguments}">
+                                <StackPanel Orientation="Vertical" Margin="0 0 0 6">
+                                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Description}"  />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                            <DataTemplate DataType="{x:Type model:GameEventArgumentItemModel}" >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="C"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Type, StringFormat=({0})}" Foreground="{StaticResource MahApps.Brushes.Gray}" Padding="10 0 10 0"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Description}" />
+                                </Grid>
+                            </DataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
 </UserControl>

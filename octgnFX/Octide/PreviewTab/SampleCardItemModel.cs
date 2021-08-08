@@ -5,7 +5,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
-using Octide.ItemModel;
 using Octide.Messages;
 using Octide.ViewModel;
 

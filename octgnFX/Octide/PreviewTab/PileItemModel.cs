@@ -5,7 +5,6 @@
 using MahApps.Metro.Controls;
 using Octgn.DataNew.Entities;
 using System.ComponentModel;
-using Octide;
 
 namespace Octide.ItemModel
 {

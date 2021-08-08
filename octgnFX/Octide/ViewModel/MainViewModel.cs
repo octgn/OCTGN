@@ -5,10 +5,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Octgn.Library;
 using Octide.Messages;
-using System.IO;
-using System.Linq.Expressions;
 using System.Windows;
 
 namespace Octide.ViewModel

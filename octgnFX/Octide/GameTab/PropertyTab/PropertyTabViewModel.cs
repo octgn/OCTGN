@@ -2,23 +2,13 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System;
-using System.Linq;
-using System.ComponentModel;
-using System.Windows;
-using System.IO;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-
-using Octide.Messages;
 using Octgn.DataNew.Entities;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using GongSolutions.Wpf.DragDrop;
-using System.Collections.Specialized;
 using Octide.ItemModel;
+using Octide.Messages;
+using System.Linq;
 
 namespace Octide.ViewModel
 {
@@ -59,7 +49,6 @@ namespace Octide.ViewModel
         {
             var ret = new PropertyItemModel(Items);
             Items.Add(ret);
-            Items.SelectedItem = ret;
         }
     }
 

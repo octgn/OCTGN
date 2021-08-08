@@ -2,13 +2,10 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System.Linq;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using System.Collections.ObjectModel;
 using Octide.ItemModel;
+using System.Linq;
 
 namespace Octide.ViewModel
 {
@@ -37,7 +34,6 @@ namespace Octide.ViewModel
         {
             var ret = new SymbolItemModel(Items);
             Items.Add(ret);
-            Items.SelectedItem = ret;
         }
     }
 }

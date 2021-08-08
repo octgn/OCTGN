@@ -3,13 +3,11 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight;
-using Octide.ViewModel;
-using Octide.ItemModel;
-using Octgn.DataNew.Entities;
-using System.Xml;
-using System.Xml.Linq;
 using Octgn.DataNew;
-using System.Linq;
+using Octgn.DataNew.Entities;
+using Octide.ItemModel;
+using Octide.ViewModel;
+using System.Xml.Linq;
 
 namespace Octide.SetTab.ItemModel
 {

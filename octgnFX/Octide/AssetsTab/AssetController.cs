@@ -4,16 +4,14 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GongSolutions.Wpf.DragDrop;
+using Microsoft.Win32;
 using Octide.ViewModel;
-using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using GongSolutions.Wpf.DragDrop;
-using Microsoft.Win32;
-using Octgn.Library;
 
 namespace Octide
 {

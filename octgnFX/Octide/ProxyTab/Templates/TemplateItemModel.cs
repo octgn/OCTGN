@@ -3,14 +3,11 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight.Command;
-using Microsoft.Web.XmlTransform;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ProxyTab.Handlers;
-using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 
 namespace Octide.ProxyTab.ItemModel
@@ -200,32 +197,27 @@ namespace Octide.ProxyTab.ItemModel
         {
             var ret = new MatchModel(Matches);
             Matches.Add(ret);
-            Matches.SelectedItem = ret;
         }
 
         public void AddOverlayConditional()
         {
             var ret = new ConditionalBlockModel(OverlayContainer.Items);
             OverlayContainer.Items.Add(ret);
-            OverlayContainer.Items.SelectedItem = ret;
         }
         public void AddOverlaySwitch()
         {
             var ret = new SwitchBlockModel(OverlayContainer.Items);
             OverlayContainer.Items.Add(ret);
-            OverlayContainer.Items.SelectedItem = ret;
         }
         public void AddTextConditional()
         {
             var ret = new ConditionalBlockModel(TextBlockContainer.Items);
             TextBlockContainer.Items.Add(ret);
-            TextBlockContainer.Items.SelectedItem = ret;
         }
         public void AddTextSwitch()
         {
             var ret = new SwitchBlockModel(TextBlockContainer.Items);
             TextBlockContainer.Items.Add(ret);
-            TextBlockContainer.Items.SelectedItem = ret;
         }
 
         public string Name

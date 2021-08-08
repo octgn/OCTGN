@@ -7,26 +7,24 @@ using System.Threading.Tasks;
 
 namespace Octide
 {
-    using System;
-    using System.Collections.Generic;
-
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Messaging;
-
+    using Microsoft.Win32;
+    using NuGet.Packaging;
+    using NuGet.Versioning;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
-    using NuGet.Packaging;
-    using NuGet.Versioning;
-    using System.IO.Compression;
-    using Octide.ViewModel;
-    using Octide.SetTab.ItemModel;
     using Octide.ItemModel;
-    using Microsoft.Win32;
+    using Octide.SetTab.ItemModel;
+    using Octide.ViewModel;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.IO.Compression;
     using System.Linq;
     using System.Windows;
-    using System.Diagnostics;
-    using System.ComponentModel;
 
     public class GameLoader : ViewModelBase
     {

@@ -4,17 +4,14 @@
 
 using System.ComponentModel;
 using System.Windows.Input;
-using Microsoft.Win32;
 
 namespace Octide.Views
 {
-    using System;
-    using System.Windows;
-
     using GalaSoft.MvvmLight.Messaging;
-
     using Octide.Messages;
     using Octide.ViewModel;
+    using System;
+    using System.Windows;
 
     public partial class MainWindow
     {

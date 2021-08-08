@@ -96,7 +96,6 @@ namespace Octide.SetTab.ItemModel
         {
             var ret = new AlternateModel(Items);
             Items.Add(ret);
-            Items.SelectedItem = ret;
         }
 
         public void BuildCardDef(NotifyCollectionChangedEventArgs args)
