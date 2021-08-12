@@ -25,14 +25,14 @@ namespace Octide.ProxyTab.ItemModel
                 NestedProperties = new List<Property>()
             };
             _wrapper = new LinkDefinition.LinkWrapper() { Link = _linkDefinition };
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
 
         public OverlayLinkModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _wrapper = lw;
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public OverlayLinkModel(OverlayLinkModel link, IdeCollection<IdeBaseItem> source) : base(source)  //copy
@@ -43,7 +43,7 @@ namespace Octide.ProxyTab.ItemModel
                 NestedProperties = new List<Property>()
             };
             _wrapper = new LinkDefinition.LinkWrapper() { Link = _linkDefinition };
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
         public OverlayBlockDefinitionItemModel LinkedBlock
@@ -98,7 +98,7 @@ namespace Octide.ProxyTab.ItemModel
                 BuildPropertyDefinition(b);
             };
             AddPropertyCommand = new RelayCommand(AddProperty);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public TextLinkModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
@@ -114,7 +114,7 @@ namespace Octide.ProxyTab.ItemModel
                 BuildPropertyDefinition(b);
             };
             AddPropertyCommand = new RelayCommand(AddProperty);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public TextLinkModel(TextLinkModel link, IdeCollection<IdeBaseItem> source) : base(source)  //copy
@@ -138,7 +138,7 @@ namespace Octide.ProxyTab.ItemModel
                 Items.Add(new TextLinkPropertyModel(property, Items));
             }
             AddPropertyCommand = new RelayCommand(AddProperty);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
         public void BuildPropertyDefinition(NotifyCollectionChangedEventArgs args)
         {
@@ -207,16 +207,16 @@ namespace Octide.ProxyTab.ItemModel
             {
                 Value = ""
             };
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             ActiveProperty = (PropertyItemModel)CustomProperties.First();
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
         public TextLinkPropertyModel(Property prop, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _property = prop;
             _activeProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _property.Name);
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
         public TextLinkPropertyModel(TextLinkPropertyModel lp, IdeCollection<IdeBaseItem> source) : base(source)  //copy
@@ -227,8 +227,8 @@ namespace Octide.ProxyTab.ItemModel
                 Format = lp._property.Format
             };
             _activeProperty = lp._activeProperty;
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
@@ -266,6 +266,12 @@ namespace Octide.ProxyTab.ItemModel
         public override object Create()
         {
             return new TextLinkPropertyModel(Source);
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
     }
 }

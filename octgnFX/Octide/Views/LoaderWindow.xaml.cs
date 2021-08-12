@@ -8,6 +8,7 @@ namespace Octide.Views
     using Octide.Messages;
     using Octide.ViewModel;
     using System;
+    using System.ComponentModel;
     using System.Windows;
 
     /// <summary>
@@ -44,5 +45,10 @@ namespace Octide.Views
                     break;
             }
         }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Messenger.Default.Unregister<WindowActionMessage<LoaderViewModel>>(this, HandleWindowMessage);
+        }
+
     }
 }

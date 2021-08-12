@@ -89,7 +89,7 @@ namespace Octide
                 int n = 1;
                 do
                 {
-                    fullPath = Path.Combine(path, String.Format("{0} ({1}){2}", filenameWOExt, (n++), ext));
+                    fullPath = Path.Combine(path, String.Format("{0} ({1}){2}", filenameWOExt, n++, ext));
                 }
                 while (File.Exists(fullPath));
             }

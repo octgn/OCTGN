@@ -18,7 +18,7 @@ namespace Octide.Controls
             e.Handled = true;
 
             // Fetch the actual shortcut key.
-            Key key = (e.Key == Key.System ? e.SystemKey : e.Key);
+            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
 
             // Ignore modifier keys.
             if (key == Key.LeftShift || key == Key.RightShift

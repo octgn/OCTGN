@@ -100,7 +100,7 @@ namespace Octide.SetTab.ItemModel
 
         public void BuildCardDef(NotifyCollectionChangedEventArgs args)
         {
-            Card.PropertySets = Items.Select(x => (AlternateModel)x).ToDictionary(x => (x.IsDefault) ? "" : x.Type, x => x._altDef);
+            Card.PropertySets = Items.Select(x => (AlternateModel)x).ToDictionary(x => x.IsDefault ? "" : x.Type, x => x._altDef);
         }
 
         public override object Clone()

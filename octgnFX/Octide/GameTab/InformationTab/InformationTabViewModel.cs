@@ -14,13 +14,19 @@ namespace Octide.ViewModel
     {
         public GameInformationTabViewModel()
         {
-            Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
-                x =>
-                {
-                    RaisePropertyChanged(string.Empty);
-                });
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, UpdateProperty);
         }
 
+        private void UpdateProperty(PropertyChangedMessage<Game> m)
+        {
+            RaisePropertyChanged(string.Empty);
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Messenger.Default.Unregister<PropertyChangedMessage<Game>>(this, UpdateProperty);
+        }
         public string Name
         {
             get

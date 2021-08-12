@@ -32,7 +32,7 @@ namespace Octide.SetTab.ItemModel
         {
             Def = new PickProperty();
             ActiveProperty = (PropertyItemModel)CustomProperties.First();
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
 
         public PackagePropertyModel(PickProperty p, IdeCollection<IdeBaseItem> src) : base(src) // loading item
@@ -51,7 +51,7 @@ namespace Octide.SetTab.ItemModel
                 Def = (PickProperty)p;
                 ActiveProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property == Def.Property);
             }
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
 
         public PackagePropertyModel(PackagePropertyModel p, IdeCollection<IdeBaseItem> src) : base(src) // copy item
@@ -59,7 +59,7 @@ namespace Octide.SetTab.ItemModel
             Def = new PickProperty();
             ActiveProperty = p.ActiveProperty;
             Def.Value = p.Def.Value;
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage args)
@@ -78,6 +78,13 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new PackagePropertyModel(Source);
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+
+            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
 
         public bool CanAccept(object item)

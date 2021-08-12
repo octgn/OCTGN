@@ -17,13 +17,13 @@ namespace Octide.ProxyTab.ItemModel
             {
             };
             _wrapper = new LinkDefinition.LinkWrapper() { CardArtCrop = _blockDefinition };
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public ArtOverlayBlockModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _wrapper = lw;
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public ArtOverlayBlockModel(ArtOverlayBlockModel artOverlay, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -32,7 +32,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 CardArtCrop = new BlockDefinition()
             };
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public override object Clone()
