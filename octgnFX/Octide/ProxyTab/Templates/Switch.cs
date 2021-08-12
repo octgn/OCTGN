@@ -42,10 +42,10 @@ namespace Octide.ProxyTab.ItemModel
                 BuildSwitchDefinitions(b);
             };
             Property = (PropertyItemModel)CustomProperties.First();
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             AddCaseCommand = new RelayCommand(AddCase);
             AddDefaultCommand = new RelayCommand(AddDefault);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public SwitchBlockModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
@@ -67,10 +67,10 @@ namespace Octide.ProxyTab.ItemModel
             if (lw.Conditional.elseNode != null)
                 Items.Add(new DefaultCaseModel(lw.Conditional.elseNode, Items));
 
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             AddCaseCommand = new RelayCommand(AddCase);
             AddDefaultCommand = new RelayCommand(AddDefault);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public SwitchBlockModel(SwitchBlockModel switchItem, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -94,10 +94,10 @@ namespace Octide.ProxyTab.ItemModel
                 if (caseItem is DefaultCaseModel defaultCase)
                     Items.Add(new DefaultCaseModel(defaultCase, Items));
             }
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             AddCaseCommand = new RelayCommand(AddCase);
             AddDefaultCommand = new RelayCommand(AddDefault);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public void BuildSwitchDefinitions(NotifyCollectionChangedEventArgs args)
@@ -147,6 +147,12 @@ namespace Octide.ProxyTab.ItemModel
             return new SwitchBlockModel(Source);
         }
 
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
+        }
+
         public bool CanAccept(object item)
         {
             if (item is SwitchCaseModel)
@@ -155,7 +161,7 @@ namespace Octide.ProxyTab.ItemModel
             }
             if (item is DefaultCaseModel)
             {
-                return (DefaultCase == null);
+                return DefaultCase == null;
             }
             return false;
         }
@@ -202,7 +208,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public SwitchCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
@@ -213,7 +219,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public SwitchCaseModel(SwitchCaseModel switchcase, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -231,7 +237,7 @@ namespace Octide.ProxyTab.ItemModel
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public override object Clone()
@@ -269,7 +275,7 @@ namespace Octide.ProxyTab.ItemModel
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public DefaultCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
@@ -281,7 +287,7 @@ namespace Octide.ProxyTab.ItemModel
                 _case.linkList = BlockContainer.BuildTemplateBlockDef(b);
             };
             CanDragDrop = false;
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public DefaultCaseModel(DefaultCaseModel switchcase, IdeCollection<IdeBaseItem> source) : base(source) //copy
@@ -300,7 +306,7 @@ namespace Octide.ProxyTab.ItemModel
             };
             _case.linkList = BlockContainer.BuildTemplateBlockDef(null);
             CanDragDrop = false;
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
 
         public override object Clone()

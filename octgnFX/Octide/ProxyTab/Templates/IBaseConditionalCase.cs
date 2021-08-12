@@ -59,11 +59,11 @@ namespace Octide.ProxyTab.ItemModel
         {
             get
             {
-                return (_case.value != null);
+                return _case.value != null;
             }
             set
             {
-                if ((_case.value != null) == value) return;
+                if (_case.value != null == value) return;
                 if (value == true) // becoming exact math
                 {
                     _case.value = _case.contains;

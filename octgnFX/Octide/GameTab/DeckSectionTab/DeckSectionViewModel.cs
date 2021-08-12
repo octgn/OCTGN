@@ -19,8 +19,8 @@ namespace Octide.ViewModel
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public IdeCollection<IdeBaseItem> GlobalItems { get; private set; }
 
-        public bool HasPiles => (ViewModelLocator.PreviewTabViewModel.Piles.Count > 0);
-        public bool HasGlobalPiles => (ViewModelLocator.PreviewTabViewModel.GlobalPiles.Count > 0);
+        public bool HasPiles => ViewModelLocator.PreviewTabViewModel.Piles.Count > 0;
+        public bool HasGlobalPiles => ViewModelLocator.PreviewTabViewModel.GlobalPiles.Count > 0;
 
         public RelayCommand AddCommand { get; private set; }
         public RelayCommand AddGlobalCommand { get; private set; }
@@ -51,12 +51,14 @@ namespace Octide.ViewModel
             };
 
 
-            Messenger.Default.Register<GroupChangedMessage>(this, x =>
-                {
-                    RaisePropertyChanged("HasPiles");
-                    RaisePropertyChanged("HasGlobalPiles");
-                });
+            Messenger.Default.Register<GroupChangedMessage>(this, UpdateGroups);
 
+        }
+
+        private void UpdateGroups(GroupChangedMessage m)
+        {
+            RaisePropertyChanged("HasPiles");
+            RaisePropertyChanged("HasGlobalPiles");
         }
 
         public void AddItem()
@@ -68,6 +70,12 @@ namespace Octide.ViewModel
         {
             var ret = new DeckSectionItemModel(GlobalItems);
             GlobalItems.Add(ret);
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Messenger.Default.Unregister<GroupChangedMessage>(this, UpdateGroups);
         }
     }
 

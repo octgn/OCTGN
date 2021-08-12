@@ -145,7 +145,7 @@ namespace Octide.ViewModel
             AddTemplateCommand = new RelayCommand(AddTemplate);
             AddOverlayCommand = new RelayCommand(AddOverlay);
             RaisePropertyChanged("StoredProxyProperties");
-            Messenger.Default.Register<ProxyTemplateChangedMessage>(this, action => UpdateProxyTemplate(action));
+            Messenger.Default.Register<ProxyTemplateChangedMessage>(this, UpdateProxyTemplate);
         }
 
         public void AssetUpdated(object sender, PropertyChangedEventArgs e)
@@ -205,6 +205,13 @@ namespace Octide.ViewModel
             RaisePropertyChanged("BaseWidth");
             RaisePropertyChanged("BaseHeight");
             RaisePropertyChanged("");
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Messenger.Default.Unregister<ProxyTemplateChangedMessage>(this, UpdateProxyTemplate);
+
         }
 
         public BitmapImage ProxyImage { get; private set; }

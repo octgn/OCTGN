@@ -56,6 +56,28 @@ namespace Octide.ViewModel
             ViewModelLocator.ViewModelKernel.Bind<PreviewTabViewModel>().To<PreviewTabViewModel>().InSingletonScope();
         }
 
+        public static void RebindViewModelLocator()
+        {
+            Cleanup();
+            ViewModelLocator.ViewModelKernel.Rebind<GameLoader>().To<GameLoader>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<AssetsTabViewModel>().To<AssetsTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<GameInformationTabViewModel>().To<GameInformationTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<DeckSectionTabViewModel>().To<DeckSectionTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<GameFontTabViewModel>().To<GameFontTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<SymbolTabViewModel>().To<SymbolTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<DocumentTabViewModel>().To<DocumentTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<MarkerTabViewModel>().To<MarkerTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<GameModeTabViewModel>().To<GameModeTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<SoundTabViewModel>().To<SoundTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<PythonTabViewModel>().To<PythonTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<VariableTabViewModel>().To<VariableTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<GameEventTabViewModel>().To<GameEventTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<ProxyTabViewModel>().To<ProxyTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Rebind<PreviewTabViewModel>().To<PreviewTabViewModel>().InSingletonScope();
+        }
+
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
         /// </summary>
