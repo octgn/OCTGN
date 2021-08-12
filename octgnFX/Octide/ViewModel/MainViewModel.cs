@@ -62,11 +62,11 @@ namespace Octide.ViewModel
             //TODO: Make this work -- app doesn't like showing previously-closed windows.
             if (CleanupCurrentGame())
             {
-                ViewModelLocator.Cleanup();
                 Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Create));
                 Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.Show));
                 Messenger.Default.Send(new WindowActionMessage<LoaderViewModel>(WindowActionType.SetMain));
                 Messenger.Default.Send(new WindowActionMessage<MainViewModel>(WindowActionType.Close));
+                ViewModelLocator.RebindViewModelLocator();
             }
         }
 

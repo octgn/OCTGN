@@ -44,7 +44,7 @@ namespace Octide.SetTab.ItemModel
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
             //     Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
+            Messenger.Default.Register<CardSizeChangedMesssage>(this, CardSizeChanged);
         }
 
         public AlternateModel(CardPropertySet altData, IdeCollection<IdeBaseItem> source) : base(source) //for loading an existing collection
@@ -58,7 +58,7 @@ namespace Octide.SetTab.ItemModel
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
             //   Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
+            Messenger.Default.Register<CardSizeChangedMesssage>(this, CardSizeChanged);
         }
 
         public AlternateModel(AlternateModel a, IdeCollection<IdeBaseItem> source) : base(source) //for copying the item
@@ -74,7 +74,7 @@ namespace Octide.SetTab.ItemModel
 
             DeleteImageCommand = new RelayCommand(DeleteImage);
             //  Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
+            Messenger.Default.Register<CardSizeChangedMesssage>(this, CardSizeChanged);
         }
 
         public void CustomPropertyChanged(CustomPropertyChangedMessage message)
@@ -98,6 +98,13 @@ namespace Octide.SetTab.ItemModel
         public void BuildAltDef(NotifyCollectionChangedEventArgs args)
         {
             //    _altDef.Properties = CachedProperties.ToDictionary(x => x.LinkedProperty._property, y => y.CachedValue);
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+
+            Messenger.Default.Unregister<CardSizeChangedMesssage>(this, CardSizeChanged);
         }
 
         public List<CardPropertyModel> GetProperties

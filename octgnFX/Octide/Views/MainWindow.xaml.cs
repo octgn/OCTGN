@@ -52,6 +52,7 @@ namespace Octide.Views
             if (!_realClose)
             {
                 e.Cancel = true;
+                Messenger.Default.Unregister<WindowActionMessage<MainViewModel>>(this, HandleWindowMessage);
                 CloseCommand(null, default);
             }
         }

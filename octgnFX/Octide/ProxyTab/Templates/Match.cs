@@ -27,8 +27,8 @@ namespace Octide.ProxyTab.ItemModel
 
             };
             Property = (PropertyItemModel)CustomProperties.First();
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
 
@@ -36,9 +36,8 @@ namespace Octide.ProxyTab.ItemModel
         {
             _match = property;
             _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _match.Name);
-
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
 
@@ -50,8 +49,8 @@ namespace Octide.ProxyTab.ItemModel
                 Format = property.Format
             };
             Property = property.Property;
-            Messenger.Default.Register<CustomPropertyChangedMessage>(this, action => CustomPropertyChanged(action));
-            PropertyChanged += ((a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage()));
+            Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
+            PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
         }
 
@@ -62,6 +61,12 @@ namespace Octide.ProxyTab.ItemModel
         public override object Create()
         {
             return new MatchModel(Source);
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
 
         public PropertyItemModel Property
