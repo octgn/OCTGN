@@ -29,10 +29,10 @@ namespace Octide.Controls
             get { return (object)GetValue(DescriptionProperty); }
             set { SetValue(DescriptionProperty, value); }
         }
-        public object ListBoxButtons
+        public object ListBoxHeader
         {
-            get { return (object)GetValue(ListBoxButtonsProperty); }
-            set { SetValue(ListBoxButtonsProperty, value); }
+            get { return (object)GetValue(ListBoxHeaderProperty); }
+            set { SetValue(ListBoxHeaderProperty, value); }
         }
         public IdeCollection<IdeBaseItem> ItemsSource
         {
@@ -58,8 +58,8 @@ namespace Octide.Controls
                                           typeof(OctideItemPropertyViewer),
                                           new UIPropertyMetadata(null));
 
-        public static readonly DependencyProperty ListBoxButtonsProperty
-            = DependencyProperty.Register(nameof(ListBoxButtons),
+        public static readonly DependencyProperty ListBoxHeaderProperty
+            = DependencyProperty.Register(nameof(ListBoxHeader),
                                           typeof(object),
                                           typeof(OctideItemPropertyViewer),
                                           new UIPropertyMetadata(null));

@@ -18,9 +18,9 @@
              DataContext="{Binding PythonTabViewModel, Source={StaticResource Locator}}">
 
     <controls:OctideItemPropertyViewer Title="Python Script Editor" ItemsSource="{Binding Scripts}">
-        <controls:OctideItemPropertyViewer.ListBoxButtons>
+        <controls:OctideItemPropertyViewer.ListBoxHeader>
             <Button Content="New Script File" Command="{Binding AddScriptCommand}" />
-        </controls:OctideItemPropertyViewer.ListBoxButtons>
+        </controls:OctideItemPropertyViewer.ListBoxHeader>
         <controls:OctideItemPropertyViewer.Resources>
             <DataTemplate DataType="{x:Type model:PythonItemModel}" >
                 <views:ScriptItemView />

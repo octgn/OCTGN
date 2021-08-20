@@ -82,12 +82,7 @@ namespace Octide.ViewModel
                     Height = 480
                 };
             }
-            Table = new TableItemModel(Game.Table, new IdeCollection<IdeBaseItem>(this))
-            {
-                CanRemove = false,
-                CanCopy = false,
-                CanInsert = false
-            };
+            Table = new TableItemModel(Game.Table, new IdeCollection<IdeBaseItem>(this));
 
             ClickTableCommand = new RelayCommand(ClickTable);
 
@@ -156,6 +151,7 @@ namespace Octide.ViewModel
             #endregion
             #region sizes
             CardSizes = new IdeCollection<IdeBaseItem>(this, typeof(SizeItemModel));
+
             foreach (var sizeDef in Game.CardSizes)
             {
                 var size = new SizeItemModel(sizeDef.Value, CardSizes);
@@ -165,6 +161,7 @@ namespace Octide.ViewModel
                     CardSizes.DefaultItem = size;
                 }
             }
+
             CardSizes.CollectionChanged += (sender, args) =>
             {
                 UpdateCardSizesDef();
@@ -174,6 +171,14 @@ namespace Octide.ViewModel
             {
                 UpdateCardSizesDef();
             };
+            if (CardSizes.DefaultItem == null)
+            {
+                var defaultSize = new SizeItemModel(CardSizes);
+                CardSizes.Add(defaultSize);
+                defaultSize.Name = "Default";
+                CardSizes.DefaultItem = defaultSize;
+            }
+
             AddSizeCommand = new RelayCommand(AddSize);
             #endregion
             #region phases

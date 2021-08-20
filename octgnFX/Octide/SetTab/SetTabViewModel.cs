@@ -31,7 +31,7 @@ namespace Octide.ViewModel
             {
                 asset.IsReserved = true;
                 asset.LockName = true;
-                var set = (Set)setSerializer.Deserialize(asset.TargetFilePath);
+                var set = (Set)setSerializer.Deserialize(asset.FileLocationPath);
                 var setModel = new SetModel(set, Items);
                 Items.Add(setModel);
             }

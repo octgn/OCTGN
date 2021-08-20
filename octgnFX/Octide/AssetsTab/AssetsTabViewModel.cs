@@ -3,9 +3,12 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.Library;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -16,7 +19,7 @@ namespace Octide.ViewModel
         public AsyncObservableCollection<Asset> Assets { get; set; }
         private bool _filterLinked;
         private AssetType _filterType;
-
+        public RelayCommand OpenFileLocationCommand {get; private set;}
 
         private DirectoryInfo _assetTempDirectory;
         public DirectoryInfo AssetTempDirectory
@@ -30,6 +33,36 @@ namespace Octide.ViewModel
                 return _assetTempDirectory;
             }
         }
+
+        public Asset DefaultBackgroundAsset;
+        public Asset DefaultCardBackAsset;
+        public Asset DefaultCardFrontAsset;
+        public Asset DefaultPileAsset;
+
+        private DirectoryInfo _workingDirectory;
+
+        public DirectoryInfo WorkingDirectory
+        {
+            get
+            {
+                return _workingDirectory;
+            }
+            set
+            {
+                if (_workingDirectory != null && _workingDirectory.FullName.Equals(value.FullName)) return;
+                _workingDirectory = value;
+                if (ViewModelLocator.GameLoader.Game != null)
+                    ViewModelLocator.GameLoader.Game.InstallPath = value.FullName;
+
+                Watcher.Path = value.FullName;
+                foreach (var asset in Assets)
+                {
+                    asset.UpdateLinkedAssetPaths();
+                }
+                RaisePropertyChanged(nameof(WorkingDirectory));
+            }
+        }
+
         public AssetsTabViewModel()
         {
             Assets = new AsyncObservableCollection<Asset>();
@@ -39,72 +72,134 @@ namespace Octide.ViewModel
                 RefreshAssetsList();
             };
 
+            //load in some sample assets
+
+            var _tempDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "OCTIDE"));
+
+            var resourcePath = Path.Combine(_tempDirectory.FullName, "TempAssets");
+
+            Directory.CreateDirectory(resourcePath);
+
+            var back = Path.Combine(resourcePath, "back.png");
+            Properties.Resources.back.Save(back);
+            DefaultCardBackAsset = LoadExternalAsset(new FileInfo(back), new string[] { "Assets" });
+
+            var front = Path.Combine(resourcePath, "front.png");
+            Properties.Resources.front.Save(front);
+            DefaultCardFrontAsset = LoadExternalAsset(new FileInfo(front), new string[] { "Assets" });
+
+            var background = Path.Combine(resourcePath, "background.jpg");
+            Properties.Resources.background.Save(background);
+            DefaultBackgroundAsset = LoadExternalAsset(new FileInfo(background), new string[] { "Assets" });
+
+            var hand = Path.Combine(resourcePath, "hand.png");
+            Properties.Resources.hand.Save(hand);
+            LoadExternalAsset(new FileInfo(hand), new string[] { "Assets" });
+
+            var deck = Path.Combine(resourcePath, "deck.png");
+            Properties.Resources.deck.Save(deck);
+            DefaultPileAsset = LoadExternalAsset(new FileInfo(deck), new string[] { "Assets" });
+
+            var score = Path.Combine(resourcePath, "score.png");
+            Properties.Resources.score.Save(score);
+            LoadExternalAsset(new FileInfo(score), new string[] { "Assets" });
+
+
+
             Watcher = new FileSystemWatcher();
             Watcher.IncludeSubdirectories = true;
             //      Watcher.Changed += FileChanged;
             //      Watcher.Created += FileCreated;
             //      Watcher.Renamed += FileRenamed;
             //      Watcher.Deleted += FileDeleted;
-            if (ViewModelLocator.GameLoader.WorkingDirectory != null)
+            if (WorkingDirectory != null)
             {
-                Watcher.Path = ViewModelLocator.GameLoader.WorkingDirectory.FullName;
+                Watcher.Path = WorkingDirectory.FullName;
                 Watcher.EnableRaisingEvents = true;
+            }
+            OpenFileLocationCommand = new RelayCommand(OpenFileLocation);
+        }
+
+        private void OpenFileLocation()
+        {
+            if (Directory.Exists(Watcher?.Path))
+            {
+                Process.Start("explorer.exe", Watcher.Path);
             }
         }
 
-        private string WorkingDirectory => ViewModelLocator.GameLoader.WorkingDirectory?.FullName;
-
-
-        public Asset LoadAsset(FileInfo file)
+        public Asset FindAsset(FileInfo file)
         {
-            if (WorkingDirectory != null && file.FullName.StartsWith(WorkingDirectory))
+            if (WorkingDirectory == null)
             {
-                // loads a file from within the working directory
-                var asset = Assets.FirstOrDefault(x => x.FullPath == file.FullName);
-                if (asset == null)
-                {
-                    asset = new Asset(file);
-                    if (file.Exists)
-                    {
-                        asset.TargetFile = file;
-                    }
-                    var hierarchyList = new List<string>();
-                    var directory = file.Directory;
-
-                    while (directory != null && directory.FullName != WorkingDirectory)
-                    {
-                        if (directory == null) break;
-                        hierarchyList.Insert(0, directory.Name);
-                        directory = directory.Parent;
-                    }
-                    asset.Hierarchy = hierarchyList.ToArray();
-                    asset.Name = Path.GetFileNameWithoutExtension(file.FullName);
-
-                    Assets.Add(asset);
-                }
-                return asset;
+                
+                return null;
             }
             else
             {
-                // loads a file from outside the working directory
-                var asset = new Asset(file);
-                asset.Hierarchy = new string[] { "Asset" };
-
-                asset.Name = GetUniqueFileName(asset.Hierarchy, Path.GetFileNameWithoutExtension(file.FullName), file.Extension);
-                Assets.Add(asset);
-                return asset;
+                return Assets.FirstOrDefault(x => x.FullPath == file.FullName);
             }
         }
 
-        public Asset NewAsset(string[] hierarchy, string name, string extension)
+        public Asset LoadAsset(FileInfo file)
         {
-            var asset = new Asset()
+            if (WorkingDirectory != null && file.FullName.StartsWith(WorkingDirectory.FullName))
             {
-                Hierarchy = hierarchy,
-                Name = GetUniqueFileName(hierarchy, name, extension),
-                Extension = extension
-            };
+                return LoadInternalAsset(file);
+            }
+            else
+            {
+                return LoadExternalAsset(file, new string[] { "Assets" });
+            }
+        }
 
+        public Asset LoadInternalAsset(FileInfo file)
+        {
+            // check to make sure the asset isn't already loaded
+            var asset = Assets.FirstOrDefault(x => x.FullPath == file.FullName);
+            if (asset == null)
+            {
+                asset = new Asset();
+                asset.Name = Path.GetFileNameWithoutExtension(file.FullName);
+                asset.Extension = file.Extension;
+                var safeFilePath = Path.Combine(AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
+                asset.SafeFile = file.CopyTo(safeFilePath);
+                asset.SafeFile.Attributes = FileAttributes.Temporary;
+                if (file.Exists)
+                {
+                    asset.FileLocationPath = file.FullName;
+                }
+                var hierarchyList = new List<string>();
+                var directory = file.Directory;
+
+                while (directory.FullName != WorkingDirectory.FullName)
+                {
+                    hierarchyList.Insert(0, directory.Name);
+                    directory = directory.Parent;
+                    if (directory == null)
+                    {
+                        hierarchyList.Clear();
+                        break;
+                    }
+                }
+                asset.Hierarchy = hierarchyList.ToArray();
+                Assets.Add(asset);
+            }
+            return asset;
+        }
+
+        public Asset LoadExternalAsset(FileInfo file, string[] hierarchy)
+        {
+            var asset = new Asset();
+            if (file.Exists)
+            {
+                var safeFilePath = Path.Combine(AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
+                asset.SafeFile = file.CopyTo(safeFilePath);
+                asset.SafeFile.Attributes = FileAttributes.Temporary;
+            }
+            asset.Extension = file.Extension;
+            asset.Hierarchy = hierarchy;
+            asset.Name = GetUniqueFileName(hierarchy, Path.GetFileNameWithoutExtension(file.FullName), file.Extension);
             Assets.Add(asset);
             return asset;
         }
@@ -121,6 +216,11 @@ namespace Octide.ViewModel
                 ret = string.Format("{0} ({1})", filename, n++);
             }
             return ret;
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
         }
 
         public AssetType FilterType
@@ -156,14 +256,6 @@ namespace Octide.ViewModel
 
         #region filewatcher
         public FileSystemWatcher Watcher { get; private set; }
-        public void UpdateWorkingDirectory(DirectoryInfo newPath)
-        {
-            Watcher.Path = newPath.FullName;
-            foreach (var asset in Assets)
-            {
-                asset.UpdateLinkedAssetPaths();
-            }
-        }
         private void FileChanged(object sender, FileSystemEventArgs args)
         {
             Messenger.Default.Send(new AssetManagerUpdatedMessage());
@@ -172,14 +264,14 @@ namespace Octide.ViewModel
         {
 
             var file = new FileInfo(args.FullPath);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
+            ViewModelLocator.AssetsTabViewModel.LoadInternalAsset(file);
         }
         private void FileRenamed(object sender, RenamedEventArgs args)
         {
-            var asset = Assets.FirstOrDefault(x => x.TargetFilePath == args.OldFullPath);
+            var asset = Assets.FirstOrDefault(x => x.FileLocationPath == args.OldFullPath);
             if (asset != null)
             {
-                asset.TargetFile = new FileInfo(args.FullPath);
+                asset.FileLocationPath = args.FullPath;
                 asset.UpdateLinkedAssetPaths();
             }
         }
@@ -188,6 +280,13 @@ namespace Octide.ViewModel
             Messenger.Default.Send(new AssetManagerUpdatedMessage());
         }
         #endregion
+
+        public bool DeleteAsset(Asset asset)
+        {
+            Assets.Remove(asset);
+            RefreshAssetsList();
+            return true;
+        }
 
         public void RefreshAssetsList()
         {

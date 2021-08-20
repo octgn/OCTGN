@@ -32,8 +32,8 @@
                 </controls:PropertyFieldControl>
             </StackPanel>
         </controls:OctideItemPropertyViewer.Description>
-        <controls:OctideItemPropertyViewer.ListBoxButtons>
+        <controls:OctideItemPropertyViewer.ListBoxHeader>
             <Button Content="New Marker" Command="{Binding AddCommand}" />
-        </controls:OctideItemPropertyViewer.ListBoxButtons>
+        </controls:OctideItemPropertyViewer.ListBoxHeader>
     </controls:OctideItemPropertyViewer>
 </UserControl>

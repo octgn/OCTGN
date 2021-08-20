@@ -25,7 +25,7 @@ namespace Octide.ViewModel
 
             foreach (var scriptPath in game.Scripts)
             {
-                var path = Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory.FullName, scriptPath);
+                var path = Path.Combine(ViewModelLocator.AssetsTabViewModel.WorkingDirectory.FullName, scriptPath);
                 var script = (GameScript)scriptSerializer.Deserialize(path);
                 var scriptModel = new PythonItemModel(script, Scripts);
                 Scripts.Add(scriptModel);

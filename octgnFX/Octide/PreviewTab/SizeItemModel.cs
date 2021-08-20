@@ -5,6 +5,7 @@
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.DataNew.Entities;
 using Octide.Messages;
+using Octide.ViewModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -29,12 +30,12 @@ namespace Octide.ItemModel
             };
             Name = "New Size";
             BackAsset = new AssetController(AssetType.Image);
-            _size.Back = BackAsset.FullPath;
             BackAsset.PropertyChanged += BackAssetUpdated;
+            BackAsset.SelectedAsset = ViewModelLocator.AssetsTabViewModel.DefaultCardBackAsset;
             RaisePropertyChanged("Back");
             FrontAsset = new AssetController(AssetType.Image);
-            _size.Front = FrontAsset.FullPath;
             FrontAsset.PropertyChanged += FrontAssetUpdated;
+            FrontAsset.SelectedAsset = ViewModelLocator.AssetsTabViewModel.DefaultCardFrontAsset;
             RaisePropertyChanged("Front");
         }
 
