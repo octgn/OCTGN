@@ -32,7 +32,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <DockPanel x:Name="ItemListPanel" LastChildFill="True">
-                        <ContentPresenter DockPanel.Dock="Top" Content="{Binding ElementName=me, Path=ListBoxButtons}" Margin="3" />
+                        <ContentPresenter DockPanel.Dock="Top" Content="{Binding ElementName=me, Path=ListBoxHeader}" Margin="3" />
                         <ListBox x:Name="ListBox" ItemsSource="{Binding ElementName=me, Path=ItemsSource}" VerticalAlignment="Stretch"
                                  SelectedValue="{Binding ElementName=me, Path=ItemsSource.SelectedItem}" Style="{StaticResource OctideListBoxStyle}" >
                             <ListBox.InputBindings>

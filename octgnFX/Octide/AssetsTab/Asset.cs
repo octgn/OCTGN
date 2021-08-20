@@ -3,9 +3,11 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Octide.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -18,7 +20,7 @@ namespace Octide
 
     public class Asset : ViewModelBase, IAsset, IEqualityComparer<Asset>, IEquatable<Asset>
     {
-        public string[] Hierarchy { get; set; }
+        public RelayCommand OpenFileLocationCommand { get; private set; }
 
         private string _name;
         public string Name
@@ -41,20 +43,22 @@ namespace Octide
 
         public bool IsDefault { get; set; } = false;
         public bool IsVisible { get; set; } = true;
+        public bool IsReserved { get; set; }
         public bool LockName { get; set; }
         public string Extension { get; set; }
+        public AssetType Type => GetAssetType(Extension);
+        public string[] Hierarchy { get; set; }
 
         public string FileName => Name + Extension;
         public string RelativePath => Path.Combine(Path.Combine(Hierarchy), FileName);
-        public string FullPath => Path.Combine(ViewModelLocator.GameLoader.WorkingDirectory?.FullName, RelativePath);
-        public bool IsReserved { get; set; }
+        public string FullPath => Path.Combine(
+            ViewModelLocator.AssetsTabViewModel.WorkingDirectory?.FullName ?? "",
+            RelativePath);
 
-
-        public FileInfo TargetFile { get; set; }
-        public string TargetFilePath => TargetFile?.FullName;
         public FileInfo SafeFile { get; set; }
         public string SafeFilePath => SafeFile?.FullName;
-        public AssetType Type => GetAssetType(Extension);
+        public string FileLocationPath { get; set; }
+
         public IEnumerable<string> UniqueNames => ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Hierarchy.SequenceEqual(Hierarchy)).Select(x => x.Name);
 
         internal List<AssetController> _linkedAssets;
@@ -62,6 +66,7 @@ namespace Octide
         public Asset()
         {
             _linkedAssets = new List<AssetController>();
+            OpenFileLocationCommand = new RelayCommand(OpenFileLocation);
         }
 
         //loads the asset from an existing location within the working directory
@@ -79,6 +84,7 @@ namespace Octide
             {
                 _linkedAssets.Remove(control);
                 RaisePropertyChanged("LinkedAssetsCount");
+                RaisePropertyChanged(nameof(IsLinked));
                 return true;
             }
             return false;
@@ -90,6 +96,7 @@ namespace Octide
                 return false;
             }
             _linkedAssets.Add(control);
+            RaisePropertyChanged(nameof(IsLinked));
             RaisePropertyChanged("LinkedAssetsCount");
             return true;
         }
@@ -105,6 +112,14 @@ namespace Octide
             }
         }
 
+        private void OpenFileLocation()
+        {
+            if (FileLocationPath == null) return;
+            if (new FileInfo(FileLocationPath).Exists)
+            {
+                Process.Start("explorer.exe", FileLocationPath);
+            }
+        }
 
         public bool Equals(Asset other)
         {
@@ -130,6 +145,7 @@ namespace Octide
             if (obj == null) return 0;
             return obj.RelativePath.GetHashCode();
         }
+
         public static AssetType GetAssetType(string extension)
         {
             switch (extension)

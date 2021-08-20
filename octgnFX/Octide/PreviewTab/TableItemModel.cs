@@ -3,6 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using Octgn.DataNew.Entities;
+using Octide.ViewModel;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -11,19 +12,27 @@ using System.Windows.Media.Imaging;
 
 namespace Octide.ItemModel
 {
-    public class TableItemModel : PileItemModel
+    public class TableItemModel : BaseGroupItemModel
     {
         private double _zoom;
         private Vector _offset;
         private ImageBrush _backgroundImage;
 
-        public AssetController Background { get; set; }
-
         public TableItemModel(Group group, IdeCollection<IdeBaseItem> src) : base(group, src)
         {
-            Background = new AssetController(AssetType.Image);
-            Background.Register(group.Background);
-            Background.PropertyChanged += BackgroundAssetUpdated;
+            CanRemove = false;
+            CanCopy = false;
+            CanInsert = false;
+            if (group.Background == null)
+            {
+                Asset.PropertyChanged += BackgroundAssetUpdated;
+                Asset.SelectedAsset = ViewModelLocator.AssetsTabViewModel.DefaultBackgroundAsset;
+            }
+            else
+            {
+                Asset.Register(group.Background);
+                Asset.PropertyChanged += BackgroundAssetUpdated;
+            }
             Zoom = 1;
             CenterView();
             SetBackground();
@@ -35,7 +44,7 @@ namespace Octide.ItemModel
             {
                 _group.Background = Asset.FullPath;
                 SetBackground();
-                RaisePropertyChanged("Background");
+                RaisePropertyChanged("Asset");
             }
         }
 
@@ -127,7 +136,7 @@ namespace Octide.ItemModel
 
         internal void SetBackground()
         {
-            if (Background.SafePath == null)
+            if (Asset.SafePath == null)
             {
                 BackgroundImage = null;
                 return;
@@ -135,7 +144,7 @@ namespace Octide.ItemModel
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = new Uri(Background.SafePath);
+            bim.UriSource = new Uri(Asset.SafePath);
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);

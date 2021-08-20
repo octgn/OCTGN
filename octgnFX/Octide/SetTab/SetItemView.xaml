@@ -66,9 +66,9 @@
                         <set:PackageItemView />
                     </DataTemplate>
                 </controls:OctideItemPropertyViewer.Resources>
-                <controls:OctideItemPropertyViewer.ListBoxButtons>
+                <controls:OctideItemPropertyViewer.ListBoxHeader>
                     <Button DockPanel.Dock="Bottom" Content="New Package" Command="{Binding AddPackageCommand}" />
-                </controls:OctideItemPropertyViewer.ListBoxButtons>
+                </controls:OctideItemPropertyViewer.ListBoxHeader>
             </controls:OctideItemPropertyViewer>
         </TabItem>
 
@@ -79,9 +79,9 @@
                         <set:CardItemView />
                     </DataTemplate>
                 </controls:OctideItemPropertyViewer.Resources>
-                <controls:OctideItemPropertyViewer.ListBoxButtons>
+                <controls:OctideItemPropertyViewer.ListBoxHeader>
                     <Button DockPanel.Dock="Bottom" Content="New Card" Command="{Binding AddCardCommand}" />
-                </controls:OctideItemPropertyViewer.ListBoxButtons>
+                </controls:OctideItemPropertyViewer.ListBoxHeader>
             </controls:OctideItemPropertyViewer>
         </TabItem>
     </TabControl>

@@ -27,7 +27,7 @@ namespace Octide
 
         public bool CanRemove { get; set; }
 
-        public string SafePath => SelectedAsset?.SafeFile.FullName;
+        public string SafePath => SelectedAsset?.SafeFilePath;
 
         public string FullPath
         {
@@ -62,7 +62,7 @@ namespace Octide
             if (path != null)
             {
                 var file = new FileInfo(path);
-                SelectedAsset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
+                SelectedAsset = ViewModelLocator.AssetsTabViewModel.FindAsset(file);
             }
             RaisePropertyChanged("AssetView");
         }

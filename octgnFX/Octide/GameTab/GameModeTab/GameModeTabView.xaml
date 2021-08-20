@@ -22,9 +22,9 @@
                 <views:GameModeItemView />
             </DataTemplate>
         </controls:OctideItemPropertyViewer.Resources>
-        <controls:OctideItemPropertyViewer.ListBoxButtons>
+        <controls:OctideItemPropertyViewer.ListBoxHeader>
             <Button Content="New Game Mode" Command="{Binding AddCommand}" />
-        </controls:OctideItemPropertyViewer.ListBoxButtons>
+        </controls:OctideItemPropertyViewer.ListBoxHeader>
     </controls:OctideItemPropertyViewer>
     
 </UserControl>

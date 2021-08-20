@@ -33,8 +33,6 @@ namespace Octide
 
         private bool needsSave;
 
-        private bool livesInTempDirectory;
-
         public AssetController Asset { get; set; }
 
         public Game Game
@@ -54,24 +52,6 @@ namespace Octide
             }
         }
 
-        private DirectoryInfo _workingDirectory;
-
-        public DirectoryInfo WorkingDirectory
-        {
-            get
-            {
-                return _workingDirectory;
-            }
-            set
-            {
-                if (_workingDirectory != null && _workingDirectory.FullName.Equals(value.FullName)) return;
-                _workingDirectory = value;
-                game.InstallPath = value.FullName;
-                game.Filename = Asset.FullPath;
-                ViewModelLocator.AssetsTabViewModel.UpdateWorkingDirectory(value);
-            }
-        }
-
 
         public IEnumerable<string> Events
         {
@@ -88,7 +68,6 @@ namespace Octide
 
             }
         }
-
 
         public bool ValidGame
         {
@@ -120,37 +99,11 @@ namespace Octide
 
         public void CreateGame()
         {
-            _workingDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "Game"));
+            var _tempDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "Game"));
 
-            var resourcePath = Path.Combine(_workingDirectory.FullName, "Assets");
+            var resourcePath = Path.Combine(_tempDirectory.FullName, "Assets");
 
             Directory.CreateDirectory(resourcePath);
-
-            //load in some sample assets
-
-            var back = Path.Combine(resourcePath, "back.png");
-            Properties.Resources.back.Save(back);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(back));
-
-            var front = Path.Combine(resourcePath, "front.png");
-            Properties.Resources.front.Save(front);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(front));
-
-            var hand = Path.Combine(resourcePath, "hand.png");
-            Properties.Resources.hand.Save(hand);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(hand));
-
-            var deck = Path.Combine(resourcePath, "deck.png");
-            Properties.Resources.deck.Save(deck);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(deck));
-
-            var score = Path.Combine(resourcePath, "score.png");
-            Properties.Resources.score.Save(score);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(score));
-
-            var background = Path.Combine(resourcePath, "background.jpg");
-            Properties.Resources.background.Save(background);
-            ViewModelLocator.AssetsTabViewModel.LoadAsset(new FileInfo(background));
 
             Game = new Game()
             {
@@ -162,43 +115,28 @@ namespace Octide
                 Authors = new List<string>() { "OCTIDE" },
                 Description = "A game created using OCTGN Game Development Studio",
                 NoteBackgroundColor = "#FFEBE8C5",
-                NoteForegroundColor = "#FF000000",
-                Filename = Path.Combine(WorkingDirectory.FullName, "definition.xml"),
-                InstallPath = WorkingDirectory.FullName
+                NoteForegroundColor = "#FF000000"
             };
-            Game.CardSizes.Add("", new CardSize
-            {
-                Name = "Default",
-                Height = 88,
-                BackHeight = 88,
-                Width = 63,
-                BackWidth = 63,
-                Back = back,
-                Front = front
-            });
             Game.Table = new Group()
             {
-                Background = background,
+             //   Background = background,
                 Name = "Table",
                 Width = 640,
                 Height = 480
             };
 
-            var gameAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { }, "definition", ".xml");
+            var gameAsset = ViewModelLocator.AssetsTabViewModel.LoadExternalAsset(new FileInfo("dummy/definition.xml"), new string[] { });
             gameAsset.LockName = true;
             gameAsset.IsReserved = true;
             Asset = new AssetController(AssetType.Xml);
             Asset.SelectedAsset = gameAsset;
             Asset.PropertyChanged += AssetUpdated;
-
-            livesInTempDirectory = true;
         }
 
 
         public void ImportGame(FileInfo package)
         {
             //TODO: Extracts into a temp folder, but then it needs to save to a proper location via prompt as well
-            livesInTempDirectory = true;
             var ExtractLocation = Config.Instance.Paths.GraveyardPath;
 
             ZipFile.ExtractToDirectory(package.FullName, ExtractLocation);
@@ -218,13 +156,12 @@ namespace Octide
         public void LoadGame(FileInfo path)
         {
             NeedsSave = false;
+            ViewModelLocator.AssetsTabViewModel.WorkingDirectory = path.Directory;
 
-            _workingDirectory = path.Directory;
-
-            var files = WorkingDirectory.GetFiles("*.*", SearchOption.AllDirectories);
+            var files = path.Directory.GetFiles("*.*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                var asset = ViewModelLocator.AssetsTabViewModel.LoadAsset(file);
+                var asset = ViewModelLocator.AssetsTabViewModel.LoadInternalAsset(file);
                 if (file.FullName == path.FullName)
                 {
                     // registers the game definition asset
@@ -236,8 +173,6 @@ namespace Octide
                     asset.IsReserved = true;
                     Asset.SelectedAsset = asset;
                     Asset.PropertyChanged += AssetUpdated;
-                    {
-                    };
                 }
             }
         }
@@ -265,17 +200,16 @@ namespace Octide
             }
             else
             {
-                System.IO.Directory.CreateDirectory(gameLocationDlg.FileName);
+                Directory.CreateDirectory(gameLocationDlg.FileName);
             }
-            WorkingDirectory = new DirectoryInfo(gameLocationDlg.FileName);
-            livesInTempDirectory = false;
+            ViewModelLocator.AssetsTabViewModel.WorkingDirectory = new DirectoryInfo(gameLocationDlg.FileName);
             return true;
         }
 
 
         public void SaveGame()
         {
-            if (livesInTempDirectory)
+            if (ViewModelLocator.AssetsTabViewModel.WorkingDirectory == null)
             {
                 if (ChooseSaveLocation() == false)
                     return;
@@ -307,18 +241,15 @@ namespace Octide
 
             foreach (var asset in ViewModelLocator.AssetsTabViewModel.Assets.Where(x => saveAllAssets || x.IsLinked))
             {
-                if (asset.TargetFile != null && asset.TargetFile.FullName != asset.FullPath)
+                if (asset.FileLocationPath != null && asset.FileLocationPath != asset.FullPath)
                 {
-                    asset.TargetFile.Refresh();
-                    if (asset.TargetFile.Exists)
-                    {
-                        asset.TargetFile.Delete();
-                    }
+                    var file = new FileInfo(asset.FileLocationPath);
+                    if (file.Exists)
+                        file.Delete();
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(asset.FullPath));
-                asset.TargetFile = asset.SafeFile.CopyTo(asset.FullPath, true);
+                asset.FileLocationPath = asset.SafeFile.CopyTo(asset.FullPath, true).FullName;
             }
-
 
             NeedsSave = false;
             ViewModelLocator.AssetsTabViewModel.Watcher.EnableRaisingEvents = true;
@@ -395,12 +326,12 @@ namespace Octide
                 builder.Files.Add(pf);
             }
 
-            var feedPath = Path.Combine(WorkingDirectory.FullName, Game.Name + '-' + Game.Version + ".nupkg");
+            var feedPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.WorkingDirectory.FullName, Game.Name + '-' + Game.Version + ".nupkg");
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
             filestream.Close();
-            Process.Start(WorkingDirectory.FullName);
+            Process.Start(ViewModelLocator.AssetsTabViewModel.WorkingDirectory.FullName);
 
         }
 

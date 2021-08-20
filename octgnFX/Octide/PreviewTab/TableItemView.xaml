@@ -25,7 +25,7 @@
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Background Image"  >
-            <controls:AssetControllerView DataContext="{Binding Background}" />
+            <controls:AssetControllerView DataContext="{Binding Asset}" />
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Background Image Style"  >

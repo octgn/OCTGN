@@ -18,8 +18,11 @@ namespace Octide.ItemModel
 
         public IdeCollection<IdeBaseItem> GroupActions { get; set; }
         public IdeCollection<IdeBaseItem> CardActions { get; set; }
+        public AssetController Asset { get; set; }
         public BaseGroupItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
+
+            Asset = new AssetController(AssetType.Image);
 
             NewActionCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewAction);
             NewSubmenuCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSubmenu);
@@ -41,6 +44,8 @@ namespace Octide.ItemModel
 
         public BaseGroupItemModel(Group g, IdeCollection<IdeBaseItem> source) : base(source) //load item
         {
+
+            Asset = new AssetController(AssetType.Image);
 
             NewActionCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewAction);
             NewSubmenuCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSubmenu);
@@ -76,6 +81,8 @@ namespace Octide.ItemModel
             };
             Name = g.Name;
 
+            Asset = new AssetController(AssetType.Image);
+
             NewActionCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewAction);
             NewSubmenuCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSubmenu);
             NewSeparatorCommand = new RelayCommand<IdeCollection<IdeBaseItem>>(NewSeparator);
@@ -96,6 +103,12 @@ namespace Octide.ItemModel
             };
             foreach (var item in g.CardActions)
                 CardActions.Add(IBaseAction.CopyActionItems(item, CardActions));
+        }
+
+        public override void Cleanup()
+        {
+            Asset.SelectedAsset = null;
+            base.Cleanup();
         }
 
         public IEnumerable<string> UniqueNames => Source.Select(x => ((PileItemModel)x).Name);
