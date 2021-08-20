@@ -4,26 +4,23 @@
 
 using MahApps.Metro.Controls;
 using Octgn.DataNew.Entities;
+using Octide.ViewModel;
 using System.ComponentModel;
 
 namespace Octide.ItemModel
 {
     public class PileItemModel : BaseGroupItemModel
     {
-        public AssetController Asset { get; set; }
 
         public PileItemModel(IdeCollection<IdeBaseItem> source) : base(source) //new item
         {
-            Asset = new AssetController(AssetType.Image);
-            _group.Icon = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
-            RaisePropertyChanged("Asset");
+            Asset.SelectedAsset = ViewModelLocator.AssetsTabViewModel.DefaultPileAsset;
             Name = "New Group";
         }
 
         public PileItemModel(Group g, IdeCollection<IdeBaseItem> source) : base(g, source) //load
         {
-            Asset = new AssetController(AssetType.Image);
             Asset.Register(g.Icon);
             Asset.PropertyChanged += AssetUpdated;
         }
@@ -36,8 +33,6 @@ namespace Octide.ItemModel
             _group.MoveTo = g.MoveTo;
             _group.ViewState = g.ViewState;
 
-
-            Asset = new AssetController(AssetType.Image);
             Asset.Register(g._group.Icon);
             _group.Icon = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
@@ -51,11 +46,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("Icon");
             }
-        }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
         }
 
         public override object Clone()

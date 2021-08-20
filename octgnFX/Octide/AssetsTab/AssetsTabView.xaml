@@ -20,7 +20,6 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <DockPanel >
@@ -60,7 +59,7 @@
                         </Setter>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsLinked}" Value="False">
-                                <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Control.Disabled}" />
+                                <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Gray}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -73,14 +72,41 @@
             </ListBox>
         </DockPanel>
 
-        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-        <controls:ItemPropertiesView Grid.Column="2" Content="{Binding SelectedAsset}" Header="File Asset Information"
-                                     Description="Provides details on all file assets used by this game. An asset is linked if it is being used at least once by an asset control in this game.">
-            <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type local:Asset}" >
-                    <views:AssetItemView />
-                </DataTemplate>
-            </ContentControl.Resources>
-        </controls:ItemPropertiesView>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" />
+        <DockPanel Margin="7 0 0 0" Grid.Column="1">
+            <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" Text="File Asset Information"/>
+            <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}" Text="Provides details on all file assets used by this game. An asset is linked if it is being used at least once by an asset control in this game" />
+
+            <controls:PropertyFieldControl Header="File Location" DockPanel.Dock="Top">
+                <DockPanel>
+                    <Button Content="Open in Explorer: " Margin="0 0 5 0" Command="{Binding OpenFileLocationCommand}" >
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Watcher.Path}" Value="{x:Null}">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <TextBox Text="{Binding WorkingDirectory.FullName, Mode=OneWay}" IsReadOnly="True" />
+                </DockPanel>
+            </controls:PropertyFieldControl>
+            <ContentPresenter Content="{Binding SelectedAsset}" >
+                <ContentPresenter.Resources>
+                    <DataTemplate DataType="{x:Type local:Asset}">
+                        <Border Style="{StaticResource OctideBorderPanelStyle}" Margin="0">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" >
+                                <views:AssetItemView />
+                            </ScrollViewer>
+                        </Border>
+                    </DataTemplate>
+                </ContentPresenter.Resources>
+
+
+            </ContentPresenter>
+        </DockPanel>
     </Grid>
 </UserControl>

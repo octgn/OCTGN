@@ -23,9 +23,9 @@
                 <views:SoundItemView />
             </DataTemplate>
         </controls:OctideItemPropertyViewer.Resources>
-        <controls:OctideItemPropertyViewer.ListBoxButtons>
+        <controls:OctideItemPropertyViewer.ListBoxHeader>
             <Button Content="New Sound" Command="{Binding AddCommand}" />
-        </controls:OctideItemPropertyViewer.ListBoxButtons>
+        </controls:OctideItemPropertyViewer.ListBoxHeader>
     </controls:OctideItemPropertyViewer>
     
 </UserControl>

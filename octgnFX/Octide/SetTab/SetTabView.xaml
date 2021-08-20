@@ -25,9 +25,9 @@
                 <set:SetItemView />
             </DataTemplate>
         </controls:OctideItemPropertyViewer.Resources>
-        <controls:OctideItemPropertyViewer.ListBoxButtons>
+        <controls:OctideItemPropertyViewer.ListBoxHeader>
             <Button Content="New Set" Command="{Binding AddSetCommand}" />
-        </controls:OctideItemPropertyViewer.ListBoxButtons>
+        </controls:OctideItemPropertyViewer.ListBoxHeader>
     </controls:OctideItemPropertyViewer>
     
     

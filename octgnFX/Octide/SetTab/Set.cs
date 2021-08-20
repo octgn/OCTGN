@@ -40,7 +40,7 @@ namespace Octide.SetTab.ItemModel
             };
             Name = "New Set";
 
-            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString() }, "set", ".xml");
+            var setAsset = ViewModelLocator.AssetsTabViewModel.LoadExternalAsset(new FileInfo("dummy/set.xml"), new string[] { "Sets", _set.Id.ToString() });
             setAsset.IsReserved = true;
             setAsset.LockName = true;
             Asset = new AssetController(AssetType.Xml);
@@ -128,7 +128,7 @@ namespace Octide.SetTab.ItemModel
                 ReleaseDate = s._set.ReleaseDate
             };
 
-            var setAsset = ViewModelLocator.AssetsTabViewModel.NewAsset(new string[] { "Sets", _set.Id.ToString() }, "set", ".xml");
+            var setAsset = ViewModelLocator.AssetsTabViewModel.LoadExternalAsset(new FileInfo("dummy/set.xml"), new string[] { "Sets", _set.Id.ToString() });
 
             _set.Filename = setAsset.FullPath;
             _set.ImagePackUri = Path.Combine(Config.Instance.ImageDirectoryFull, _set.GameId.ToString(), "Sets", _set.Id.ToString());
@@ -211,6 +211,12 @@ namespace Octide.SetTab.ItemModel
         public override object Create()
         {
             return new SetModel(Source);
+        }
+        public override void Cleanup()
+        {
+            ViewModelLocator.AssetsTabViewModel.DeleteAsset(Asset.SelectedAsset);
+            Asset.SelectedAsset = null;
+            base.Cleanup();
         }
 
         public Guid Id
