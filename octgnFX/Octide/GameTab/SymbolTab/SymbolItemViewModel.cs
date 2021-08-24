@@ -42,6 +42,11 @@ namespace Octide.ItemModel
             Name = s.Name;
             Id = s.Id;
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
@@ -52,12 +57,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Icon");
             }
         }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
-        }
-
         public override object Clone()
         {
             return new SymbolItemModel(this, Source);

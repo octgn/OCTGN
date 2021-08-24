@@ -71,12 +71,6 @@ namespace Octide.ViewModel
             var ret = new DeckSectionItemModel(GlobalItems);
             GlobalItems.Add(ret);
         }
-
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<GroupChangedMessage>(this, UpdateGroups);
-        }
     }
 
     public class DeckSectionDropHandler : IDropTarget

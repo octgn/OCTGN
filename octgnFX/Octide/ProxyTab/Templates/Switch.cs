@@ -147,12 +147,6 @@ namespace Octide.ProxyTab.ItemModel
             return new SwitchBlockModel(Source);
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
-        }
-
         public bool CanAccept(object item)
         {
             if (item is SwitchCaseModel)

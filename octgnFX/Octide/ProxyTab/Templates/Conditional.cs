@@ -224,11 +224,6 @@ namespace Octide.ProxyTab.ItemModel
         {
             return new IfCaseModel(Source);
         }
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
-        }
     }
 
 
@@ -291,11 +286,6 @@ namespace Octide.ProxyTab.ItemModel
             return new ElseIfCaseModel(Source);
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
-        }
     }
 
     public class ElseCaseModel : IBaseConditionalCase

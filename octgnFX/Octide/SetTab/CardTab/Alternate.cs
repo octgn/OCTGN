@@ -103,13 +103,6 @@ namespace Octide.SetTab.ItemModel
             //    _altDef.Properties = CachedProperties.ToDictionary(x => x.LinkedProperty._property, y => y.CachedValue);
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-
-            Messenger.Default.Unregister<CardSizeChangedMesssage>(this, CardSizeChanged);
-        }
-
         public List<CardPropertyModel> GetProperties
         {
             get

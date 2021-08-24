@@ -63,12 +63,6 @@ namespace Octide.ProxyTab.ItemModel
             return new MatchModel(Source);
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
-        }
-
         public PropertyItemModel Property
         {
             get
