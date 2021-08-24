@@ -168,7 +168,6 @@ namespace Octide.SetTab.ItemModel
 
             CanDragDrop = false;
         }
-
         public void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")
@@ -214,9 +213,9 @@ namespace Octide.SetTab.ItemModel
         }
         public override void Cleanup()
         {
-            ViewModelLocator.AssetsTabViewModel.DeleteAsset(Asset.SelectedAsset);
-            Asset.SelectedAsset = null;
+            Asset.Cleanup();
             base.Cleanup();
+            ViewModelLocator.AssetsTabViewModel.DeleteAsset(Asset.SelectedAsset);
         }
 
         public Guid Id

@@ -48,6 +48,11 @@ namespace Octide.ItemModel
             _script.Path = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")
@@ -56,11 +61,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("Name");
             }
-        }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
         }
 
         public override object Clone()

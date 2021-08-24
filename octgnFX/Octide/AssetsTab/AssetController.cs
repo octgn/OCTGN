@@ -4,8 +4,10 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
 using Microsoft.Win32;
+using Octide.Messages;
 using Octide.ViewModel;
 using System.ComponentModel;
 using System.IO;
@@ -51,10 +53,17 @@ namespace Octide
                 var asset = obj as Asset;
                 return asset.Type == TargetAssetType;
             };
-            RaisePropertyChanged("AssetView");
 
             SelectedAsset = ViewModelLocator.AssetsTabViewModel.Assets.FirstOrDefault(x => x.Type == type);
             RaisePropertyChanged("AssetView");
+            Messenger.Default.Register<CleanupMessage>(this, action => Cleanup());
+        }
+
+        public override void Cleanup()
+        {
+            _asset = null;
+            _asset?.UnlinkAsset(this);
+            base.Cleanup();
         }
 
         public void Register(string path)

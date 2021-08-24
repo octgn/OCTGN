@@ -48,6 +48,12 @@ namespace Octide.ItemModel
             IconAsset.PropertyChanged += IconAssetUpdated;
             Name = d.Name;
         }
+        public override void Cleanup()
+        {
+            DocumentAsset.Cleanup();
+            IconAsset.Cleanup();
+            base.Cleanup();
+        }
 
         private void DocumentAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
@@ -65,12 +71,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("IconAsset");
                 RaisePropertyChanged("Icon");
             }
-        }
-        public override void Cleanup()
-        {
-            DocumentAsset.SelectedAsset = null;
-            IconAsset.SelectedAsset = null;
-            base.Cleanup();
         }
 
         public string Name

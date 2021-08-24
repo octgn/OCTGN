@@ -66,6 +66,11 @@ namespace Octide.ItemModel
             IncreaseCommand = new RelayCommand(IncreaseValue);
             DecreaseCommand = new RelayCommand(DecreaseValue);
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
@@ -76,12 +81,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Icon");
             }
         }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
-        }
-
 
         public override object Clone()
         {

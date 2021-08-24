@@ -30,7 +30,6 @@ namespace Octide.ItemModel
             Asset = new AssetController(AssetType.Sound);
             Sound.Src = Asset.FullPath;
             Asset.PropertyChanged += AssetUpdated;
-
         }
 
         public SoundItemModel(GameSound s, IdeCollection<IdeBaseItem> source) : base(source) // load item
@@ -59,6 +58,11 @@ namespace Octide.ItemModel
             Asset.PropertyChanged += AssetUpdated;
             Name = s.Name;
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
@@ -68,12 +72,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Asset");
             }
         }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
-        }
-
         public override object Clone()
         {
             return new SoundItemModel(this, Source);

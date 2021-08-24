@@ -41,6 +41,11 @@ namespace Octide.ItemModel
             ShortDescription = g.ShortDescription;
             PlayerCount = g.PlayerCount;
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
@@ -50,11 +55,6 @@ namespace Octide.ItemModel
                 RaisePropertyChanged("Asset");
                 RaisePropertyChanged("Icon");
             }
-        }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
         }
 
         public override object Clone()

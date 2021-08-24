@@ -43,6 +43,7 @@ namespace Octide
 
         public bool IsDefault { get; set; } = false;
         public bool IsVisible { get; set; } = true;
+        public bool CanBeDefault { get; set; } = false;
         public bool IsReserved { get; set; }
         public bool LockName { get; set; }
         public string Extension { get; set; }

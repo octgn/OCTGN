@@ -96,6 +96,11 @@ namespace Octide
         public GameLoader()
         {
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
 
         public void CreateGame()
         {

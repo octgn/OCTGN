@@ -80,13 +80,6 @@ namespace Octide.SetTab.ItemModel
             return new PackagePropertyModel(Source);
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-
-            Messenger.Default.Unregister<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
-        }
-
         public bool CanAccept(object item)
         {
             return false;
