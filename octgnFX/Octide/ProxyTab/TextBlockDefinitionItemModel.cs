@@ -60,6 +60,11 @@ namespace Octide.ItemModel
             _def.text.font = Asset.SelectedAsset?.FullPath;
             Name = t.Name;
         }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")

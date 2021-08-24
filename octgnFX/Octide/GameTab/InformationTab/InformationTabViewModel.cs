@@ -22,11 +22,6 @@ namespace Octide.ViewModel
             RaisePropertyChanged(string.Empty);
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<PropertyChangedMessage<Game>>(this, UpdateProperty);
-        }
         public string Name
         {
             get

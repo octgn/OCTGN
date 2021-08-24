@@ -23,13 +23,6 @@ namespace Octide.ItemModel
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
         }
 
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<CardDetailsChangedMessage>(this, x => this.RefreshValues());
-            Messenger.Default.Unregister<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
-
-        }
 
         public void RefreshValues()
         {

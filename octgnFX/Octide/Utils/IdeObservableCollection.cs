@@ -2,7 +2,9 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
+using Octide.Messages;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -25,15 +27,18 @@ namespace Octide
         {
             Parent = null;
             RestrictedTypes = new Type[0];
+            Messenger.Default.Register<CleanupMessage>(this, Cleanup);
         }
         public IdeCollection(object parent) : base()
         {
             Parent = parent;
+            Messenger.Default.Register<CleanupMessage>(this, Cleanup);
         }
         public IdeCollection(object parent, params Type[] types) : base()
         {
             Parent = parent;
             RestrictedTypes = types;
+            Messenger.Default.Register<CleanupMessage>(this, Cleanup);
         }
 
         public virtual event NotifyDefaultChangedEventHandler DefaultItemChanged;
@@ -113,6 +118,18 @@ namespace Octide
 
         public void DragEnter(IDropInfo dropInfo) { }
         public void DragLeave(IDropInfo dropInfo) { }
+        
+        public void Cleanup(CleanupMessage args)
+        {
+            Messenger.Default.Unregister(this);
+            foreach (var item in Items)
+            {
+                if (item is IdeBaseItem baseItem)
+                {
+                    baseItem.Cleanup();
+                }
+            }
+        }
     }
 
 

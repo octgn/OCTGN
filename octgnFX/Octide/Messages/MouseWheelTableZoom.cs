@@ -36,19 +36,4 @@ namespace Octide.Messages
             prop.SetValue(vm, val, null);
         }
     }
-
-    public class CardDetailsChangedMessage
-    {
-
-    }
-
-    public class CardPropertiesChangedMessage
-    {
-        public NotifyCollectionChangedEventArgs Args { get; set; }
-
-        public CardPropertiesChangedMessage(NotifyCollectionChangedEventArgs args)
-        {
-            Args = args;
-        }
-    }
 }

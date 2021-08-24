@@ -104,13 +104,11 @@ namespace Octide.ItemModel
             foreach (var item in g.CardActions)
                 CardActions.Add(IBaseAction.CopyActionItems(item, CardActions));
         }
-
         public override void Cleanup()
         {
-            Asset.SelectedAsset = null;
+            Asset.Cleanup();
             base.Cleanup();
         }
-
         public IEnumerable<string> UniqueNames => Source.Select(x => ((PileItemModel)x).Name);
         public string Name
         {

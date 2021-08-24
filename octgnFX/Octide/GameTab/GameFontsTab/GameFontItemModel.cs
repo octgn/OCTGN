@@ -34,6 +34,12 @@ namespace Octide.ViewModel
             RaisePropertyChanged("Asset");
         }
 
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
+
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")

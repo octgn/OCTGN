@@ -148,6 +148,12 @@ namespace Octide.ViewModel
             Messenger.Default.Register<ProxyTemplateChangedMessage>(this, UpdateProxyTemplate);
         }
 
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
+        }
+
         public void AssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")
@@ -205,13 +211,6 @@ namespace Octide.ViewModel
             RaisePropertyChanged("BaseWidth");
             RaisePropertyChanged("BaseHeight");
             RaisePropertyChanged("");
-        }
-
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            Messenger.Default.Unregister<ProxyTemplateChangedMessage>(this, UpdateProxyTemplate);
-
         }
 
         public BitmapImage ProxyImage { get; private set; }

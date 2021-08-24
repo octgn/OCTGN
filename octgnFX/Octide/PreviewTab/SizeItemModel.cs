@@ -73,6 +73,12 @@ namespace Octide.ItemModel
             FrontAsset.PropertyChanged += FrontAssetUpdated;
             Name = s.Name;
         }
+        public override void Cleanup()
+        {
+            FrontAsset.Cleanup();
+            BackAsset.Cleanup();
+            base.Cleanup();
+        }
         private void BackAssetUpdated(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Path")
@@ -91,12 +97,6 @@ namespace Octide.ItemModel
                 Messenger.Default.Send(new CardDetailsChangedMessage());
                 RaisePropertyChanged("FrontAsset");
             }
-        }
-        public override void Cleanup()
-        {
-            FrontAsset.SelectedAsset = null;
-            BackAsset.SelectedAsset = null;
-            base.Cleanup();
         }
 
         public override object Clone()

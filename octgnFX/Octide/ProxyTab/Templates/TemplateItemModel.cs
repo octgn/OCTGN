@@ -160,7 +160,11 @@ namespace Octide.ProxyTab.ItemModel
             OverlayDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = true };
             TextDropHandler = new TemplateMainDropHandler() { IsOverlayHandler = false };
             DragHandler = new TemplateMainDragHandler();
-
+        }
+        public override void Cleanup()
+        {
+            Asset.Cleanup();
+            base.Cleanup();
         }
 
         private void AssetUpdated(object sender, PropertyChangedEventArgs e)
@@ -172,11 +176,6 @@ namespace Octide.ProxyTab.ItemModel
                 RaisePropertyChanged("Icon");
                 RaisePropertyChanged("Name");
             }
-        }
-        public override void Cleanup()
-        {
-            Asset.SelectedAsset = null;
-            base.Cleanup();
         }
 
         public override object Clone()

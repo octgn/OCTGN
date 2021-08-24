@@ -98,4 +98,30 @@ namespace Octide.Messages
 
         }
     }
+    public class CardDetailsChangedMessage
+    {
+
+    }
+
+    public class CardPropertiesChangedMessage
+    {
+        public NotifyCollectionChangedEventArgs Args { get; set; }
+
+        public CardPropertiesChangedMessage(NotifyCollectionChangedEventArgs args)
+        {
+            Args = args;
+        }
+    }
+
+    public class AssetManagerUpdatedMessage
+    {
+    }
+
+    public class WorkingDirectoryChangedMessage
+    {
+    }
+
+    public class CleanupMessage
+    {
+    }
 }
