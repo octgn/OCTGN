@@ -367,12 +367,12 @@ namespace Octgn.Scripting.Versions
 
         public string CardName(int id)
         {
-            return Card.Find(id).Name;
+            var c = Card.Find(id);
+            if (c == null) return null;
+            return c.RealName;
         }
 
         public string CardModel(int id)
-        //Why is this public? I would expect the model to be private - (V)_V
-        // Ur dumb that's why.
         {
             Card c = Card.Find(id);
             if (c.Type.Model == null) return null;
