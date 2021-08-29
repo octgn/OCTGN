@@ -1,1 +1,1 @@
-fixed python not being able to read names of face-down cards
+

@@ -1,3 +1,6 @@
+#3.4.362.0
++ fixed python not being able to read names of face-down cards
+
 #3.4.361.0
 + Removed the news feed to silence the SSL validation error
 
@@ -4010,6 +4013,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
