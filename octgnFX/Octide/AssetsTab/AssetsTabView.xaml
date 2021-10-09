@@ -14,7 +14,7 @@
              xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300" d:DesignWidth="600"
              DataContext="{Binding AssetsTabViewModel, Source={StaticResource Locator}}"
              >
     <Grid>
@@ -29,6 +29,18 @@
             </StackPanel>
             <CheckBox DockPanel.Dock="Top" Content="Only show unlinked assets" IsChecked="{Binding FilterLinked}"
                       Foreground="{StaticResource MahApps.Brushes.Accent}" FontSize="16" />
+
+            <Button Content="Refresh All Assets" DockPanel.Dock="Top" Command="{Binding RefreshAllAssetsCommand}">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}" >
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding WorkingDirectory}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <ListBox gong:DragDrop.IsDragSource="False" gong:DragDrop.IsDropTarget="False" 
                      Style="{StaticResource OctideListBoxStyle}" ItemsSource="{Binding AssetList}" 
                      SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="RelativePath">
@@ -77,7 +89,7 @@
             <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" Text="File Asset Information"/>
             <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}" Text="Provides details on all file assets used by this game. An asset is linked if it is being used at least once by an asset control in this game" />
 
-            <controls:PropertyFieldControl Header="File Location" DockPanel.Dock="Top">
+            <controls:PropertyFieldControl Header="Working Directory" DockPanel.Dock="Top">
                 <DockPanel>
                     <Button Content="Open in Explorer: " Margin="0 0 5 0" Command="{Binding OpenFileLocationCommand}" >
                         <Button.Style>
@@ -98,7 +110,7 @@
                 <ContentPresenter.Resources>
                     <DataTemplate DataType="{x:Type local:Asset}">
                         <Border Style="{StaticResource OctideBorderPanelStyle}" Margin="0">
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" >
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" >
                                 <views:AssetItemView />
                             </ScrollViewer>
                         </Border>

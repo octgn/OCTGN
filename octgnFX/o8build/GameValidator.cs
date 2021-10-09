@@ -111,7 +111,7 @@
             var fileName = Directory.GetFiles().First(x => x.Name == "definition.xml").FullName;
             XmlReaderSettings settings = GetXmlReaderSettings();
             settings.Schemas = schemas;
-            settings.ValidationEventHandler += new ValidationEventHandler(delegate(Object o, ValidationEventArgs e)
+            settings.ValidationEventHandler += new ValidationEventHandler(delegate (Object o, ValidationEventArgs e)
             {
                 if (e.Severity == XmlSeverityType.Error)
                 {
@@ -322,85 +322,90 @@
             }
 
             List<string> groups = new List<string>();    //setup for deck section target testing.
-            if (game.player != null)
+            if (game.player?.Items != null)
             {
-                foreach (var pile in game.player.Items.OfType<pile>())
+                foreach (var item in game.player.Items)
                 {
-                    if (pile is hand)
+                    if (item is pile pile)
                     {
-                        GenerateWarningMessage("The <player> element contains a <hand> child, which is no longer supported.\nExisting Hand groups should use the <group viewState=\"expanded\"> structure instead.");
+                        if (pile is hand)
+                        {
+                            GenerateWarningMessage("The <player> element contains a <hand> child, which is no longer supported.\nExisting Hand groups should use the <group viewState=\"expanded\"> structure instead.");
+                        }
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(pile.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Group", "icon", pile.name);
+                        }
+
+                        path = Path.Combine(Directory.FullName, pile.icon);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException(path, "Group", pile.name, "icon", pile.icon);
+                        }
+
+                        groups.Add(pile.name);
+
+                        //Test shortcuts
+                        this.TestShortcut(pile.shortcut);
+                        this.TestShortcut(pile.shuffle);
+                        this.TestGroupsShortcuts(pile.Items);
                     }
-                    // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(pile.icon))
+                    else if (item is counter counter)
                     {
-                        throw GenerateEmptyAttributeException("Group", "icon", pile.name);
-                    }
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(counter.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
+                        }
 
-                    path = Path.Combine(Directory.FullName, pile.icon);
+                        path = Path.Combine(Directory.FullName, counter.icon);
 
-                    if (!File.Exists(path))
-                    {
-                        throw GenerateFileDoesNotExistException(path, "Group", pile.name, "icon", pile.icon);
-                    }
-
-                    groups.Add(pile.name);
-
-                    //Test shortcuts
-                    this.TestShortcut(pile.shortcut);
-                    this.TestShortcut(pile.shuffle);
-                    this.TestGroupsShortcuts(pile.Items);
-                }
-
-                foreach (var counter in game.player.Items.OfType<counter>())
-                {
-                    // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(counter.icon))
-                    {
-                        throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
-                    }
-
-                    path = Path.Combine(Directory.FullName, counter.icon);
-
-                    if (!File.Exists(path))
-                    {
-                        throw GenerateFileDoesNotExistException(path, "Counter", counter.name, "icon", counter.icon);
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException(path, "Counter", counter.name, "icon", counter.icon);
+                        }
                     }
                 }
             }
 
             List<string> sharedGroups = new List<string>();    //setup for shared deck section target testing.
-            if (game.shared != null)
+            if (game.shared?.Items != null)
             {
-                foreach (var counter in game.shared.Items.OfType<counter>())
+                foreach (var item in game.shared.Items)
                 {
-                    // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(counter.icon))
+                    if (item is counter counter)
                     {
-                        throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(counter.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Global Counter", "icon", counter.name);
+                        }
+
+                        path = Path.Combine(Directory.FullName, counter.icon);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
+                        }
                     }
-
-                    path = Path.Combine(Directory.FullName, counter.icon);
-
-                    if (!File.Exists(path))
+                    else if (item is pile pile)
                     {
-                        throw GenerateFileDoesNotExistException(path, "Global Counter", counter.name, "icon", counter.icon);
-                    }
-                }
-                foreach (var pile in game.shared.Items.OfType<pile>())
-                {
-                    // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(pile.icon))
-                    {
-                        throw GenerateEmptyAttributeException("Global Group", "icon", pile.name);
-                    }
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(pile.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Global Group", "icon", pile.name);
+                        }
 
-                    path = Path.Combine(Directory.FullName, pile.icon);
+                        path = Path.Combine(Directory.FullName, pile.icon);
 
-                    if (!File.Exists(path))
-                    {
-                        throw GenerateFileDoesNotExistException(path, "Global Group", pile.name, "icon", pile.icon);
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException(path, "Global Group", pile.name, "icon", pile.icon);
+                        }
+                        sharedGroups.Add(pile.name);
                     }
-                    sharedGroups.Add(pile.name);
                 }
             }
 
@@ -574,6 +579,8 @@
             var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
+
+            if (game.scripts == null) return;
 
             var engine = Python.CreateEngine(AppDomain.CurrentDomain);
 
