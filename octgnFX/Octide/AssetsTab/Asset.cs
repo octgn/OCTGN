@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Windows;
 
 namespace Octide
 {
@@ -21,6 +23,7 @@ namespace Octide
     public class Asset : ViewModelBase, IAsset, IEqualityComparer<Asset>, IEquatable<Asset>
     {
         public RelayCommand OpenFileLocationCommand { get; private set; }
+        public RelayCommand RefreshAssetCommand { get; private set; }
 
         private string _name;
         public string Name
@@ -48,6 +51,7 @@ namespace Octide
         public bool LockName { get; set; }
         public string Extension { get; set; }
         public AssetType Type => GetAssetType(Extension);
+
         public string[] Hierarchy { get; set; }
 
         public string FileName => Name + Extension;
@@ -57,8 +61,49 @@ namespace Octide
             RelativePath);
 
         public FileInfo SafeFile { get; set; }
-        public string SafeFilePath => SafeFile?.FullName;
-        public string FileLocationPath { get; set; }
+        public string SafeFilePath { get; set; }
+
+        public FileInfo CreateSafeAsset(FileInfo file)
+        {
+            SafeFilePath = Path.Combine(GameLoader.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
+            while (true)
+            {
+                try
+                {
+                    using (var stream = file.OpenRead())
+                    {
+                        using (var filestream = new FileStream(SafeFilePath, FileMode.Create))
+                        {
+                            stream.CopyTo(filestream);
+                        }
+                    }
+                    SafeFile = new FileInfo(SafeFilePath);
+                    Debug.WriteLine("SafeFileCreated: " + SafeFilePath);
+                    SafeFile.Attributes = FileAttributes.Temporary | FileAttributes.Archive;
+                    RaisePropertyChanged(nameof(SafeFilePath));
+                    return SafeFile;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Could not create safe asset\n: " + e.Message);
+                }
+            }
+        }
+
+        public string _fileLocationPath;
+        public string FileLocationPath
+        {
+            get
+            {
+                return _fileLocationPath;
+            }
+            set
+            {
+                if (_fileLocationPath == value) return;
+                _fileLocationPath = value;
+                RaisePropertyChanged(nameof(FileLocationPath));
+            }
+        }
 
         public IEnumerable<string> UniqueNames => ViewModelLocator.AssetsTabViewModel.Assets.Where(x => x.Hierarchy.SequenceEqual(Hierarchy)).Select(x => x.Name);
 
@@ -68,15 +113,7 @@ namespace Octide
         {
             _linkedAssets = new List<AssetController>();
             OpenFileLocationCommand = new RelayCommand(OpenFileLocation);
-        }
-
-        //loads the asset from an existing location within the working directory
-        public Asset(FileInfo file) : this()
-        {
-            var safeFilePath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
-            SafeFile = file.CopyTo(safeFilePath);
-            Extension = SafeFile.Extension;
-            SafeFile.Attributes = FileAttributes.Temporary;
+            RefreshAssetCommand = new RelayCommand(RefreshAsset);
         }
 
         public bool UnlinkAsset(AssetController control)
@@ -113,12 +150,27 @@ namespace Octide
             }
         }
 
+        public void RefreshAsset()
+        {
+            if (FileLocationPath == null) return;
+            var targetFile = new FileInfo(FileLocationPath);
+            if (targetFile != null
+                && targetFile.Exists
+                && SafeFile.Exists
+                && SafeFile.LastWriteTime != targetFile.LastWriteTime
+                && SafeFile.Length != targetFile.Length)
+            {
+                CreateSafeAsset(targetFile);
+            }
+        }
+
         private void OpenFileLocation()
         {
             if (FileLocationPath == null) return;
-            if (new FileInfo(FileLocationPath).Exists)
+            var file = new FileInfo(FileLocationPath);
+            if (file.Exists)
             {
-                Process.Start("explorer.exe", FileLocationPath);
+                Process.Start("explorer.exe", file.DirectoryName);
             }
         }
 

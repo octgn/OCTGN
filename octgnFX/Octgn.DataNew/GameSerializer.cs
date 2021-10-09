@@ -808,9 +808,9 @@ namespace Octgn.DataNew
             save.version = game.Version.ToString();
             save.authors = string.Join(",", game.Authors);
             save.description = game.Description;
-            save.gameurl = game.GameUrl;
-            save.setsurl = game.SetsUrl;
-            save.iconurl = game.IconUrl;
+            save.gameurl = game.GameUrl ?? "";
+            save.setsurl = game.SetsUrl ?? "";
+            save.iconurl = game.IconUrl ?? "";
             save.tags = string.Join(" ", game.Tags);
             save.octgnVersion = game.OctgnVersion.ToString();
             save.markersize = game.MarkerSize.ToString();
@@ -1029,7 +1029,8 @@ namespace Octgn.DataNew
                     };
                     deckSectionList.Add(deckSection);
                 }
-                save.deck = deckSectionList.ToArray();
+                if (deckSectionList.Count > 0)
+                    save.deck = deckSectionList.ToArray();
             }
 
             if (game.SharedDeckSections != null)
@@ -1044,7 +1045,8 @@ namespace Octgn.DataNew
                     };
                     deckSectionList.Add(deckSection);
                 }
-                save.sharedDeck = deckSectionList.ToArray();
+                if (deckSectionList.Count > 0)
+                    save.sharedDeck = deckSectionList.ToArray();
             }
             #endregion deck
             #region markers

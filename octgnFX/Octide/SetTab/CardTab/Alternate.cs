@@ -246,9 +246,7 @@ namespace Octide.SetTab.ItemModel
             var images = GetImages();
             if (images?.Length > 0)
             {
-                var garbage = Config.Instance.Paths.GraveyardPath;
-                if (!Directory.Exists(garbage))
-                    Directory.CreateDirectory(garbage);
+                var garbage = Directory.CreateDirectory(Path.Combine(GameLoader.TempDirectory.FullName, "ImageGraveyard")).FullName;
                 // Delete all the old picture files
                 foreach (var image in images.Select(x => new FileInfo(x)))
                 {
