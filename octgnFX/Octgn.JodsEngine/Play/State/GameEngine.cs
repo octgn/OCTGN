@@ -242,11 +242,11 @@ namespace Octgn
                 this.Nickname = Prefs.Nickname;
                 if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Randomness.GrabRandomNounWord() + new Random().Next(30);
                 var retNick = this.Nickname;
-                Program.Dispatcher.Invoke(new Action(() =>
-                    {
-                        var i = new InputDlg("Choose a nickname", "Choose a nickname", this.Nickname);
-                        retNick = i.GetString();
-                    }));
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var i = new InputDlg("Choose a nickname", "Choose a nickname", Nickname);
+                    retNick = i.GetString();
+                });
                 this.Nickname = retNick;
             }
             // Init fields
@@ -661,7 +661,7 @@ namespace Octgn
             var allPlayers = Player.AllExceptGlobal.ToArray();
             var discord = Program.Discord;
 
-            if (allPlayers.Length <= 0) throw new InvalidOperationException($"All player count is {allPlayers.Length}");
+            if (Spectator == false && allPlayers.Length <= 0) throw new InvalidOperationException($"All player count is {allPlayers.Length}");
 
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;

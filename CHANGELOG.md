@@ -1,3 +1,33 @@
+#3.4.362.0
++ fixed python not being able to read names of face-down cards
+
+#3.4.361.0
++ Removed the news feed to silence the SSL validation error
+
+#3.4.360.0
++ fixed broken spectator mode
+
+#3.4.359.0
++ Fixed a bug with hosting passworded games online
+
+#3.4.358.0
++ fix replay loading
+
+#3.4.357.0
++ fixes a deck editor crash handling keypresses after loading a saved search
+
+#3.4.356.0
++ Fixed a crash for new users joining a game when they don't have a nickname set
+
+#3.4.355.0
++ Peeked cards now show the card name as the tooltip instead of 'Card'
+
+#3.4.354.0
++ fixed zombie OCTGN process running when launching the deck editor with -e
+
+#3.4.353.0
++ Ignore discord integration when discord is not installed.
+
 #3.4.352.0
 + fixed a startup crash when parsing dateTime values with an Arabic culture configuration
 
@@ -3983,6 +4013,16 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
+
+
+
+
 
 
 

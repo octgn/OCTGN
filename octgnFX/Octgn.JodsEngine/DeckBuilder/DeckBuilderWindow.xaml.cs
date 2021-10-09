@@ -1297,7 +1297,10 @@ namespace Octgn.DeckBuilder
                 }
                 else
                 {
-                    var ctrl = new SearchControl(Game, search) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
+                    var ctrl = new SearchControl(Game, search, this)
+                    {
+                        SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1,
+                    };
                     ctrl.CardAdded += AddResultCard;
                     ctrl.CardRemoved += RemoveResultCard;
                     ctrl.CardSelected += CardSelected;
