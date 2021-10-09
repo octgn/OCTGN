@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Octgn.Library;
+using Octide.Messages;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,24 +21,13 @@ namespace Octide.ViewModel
         private bool _filterLinked;
         private AssetType _filterType;
         public RelayCommand OpenFileLocationCommand {get; private set;}
-
-        private DirectoryInfo _assetTempDirectory;
-        public DirectoryInfo AssetTempDirectory
-        {
-            get
-            {
-                if (_assetTempDirectory == null)
-                {
-                    _assetTempDirectory = Directory.CreateDirectory(Config.Instance.Paths.GraveyardPath);
-                }
-                return _assetTempDirectory;
-            }
-        }
+        public RelayCommand RefreshAllAssetsCommand {get; private set;}
 
         public Asset DefaultBackgroundAsset;
         public Asset DefaultCardBackAsset;
         public Asset DefaultCardFrontAsset;
         public Asset DefaultPileAsset;
+
 
         private DirectoryInfo _workingDirectory;
 
@@ -54,7 +44,11 @@ namespace Octide.ViewModel
                 if (ViewModelLocator.GameLoader.Game != null)
                     ViewModelLocator.GameLoader.Game.InstallPath = value.FullName;
 
-                Watcher.Path = value.FullName;
+                if (value != null)
+                {
+                    Watcher.Path = value.FullName;
+                    Watcher.EnableRaisingEvents = true;
+                }
                 foreach (var asset in Assets)
                 {
                     asset.UpdateLinkedAssetPaths();
@@ -74,33 +68,29 @@ namespace Octide.ViewModel
 
             //load in some sample assets
 
-            var _tempDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "OCTIDE"));
+            var _tempDirectory = Directory.CreateDirectory(Path.Combine(GameLoader.TempDirectory.FullName, "TempAssets")).FullName;
 
-            var resourcePath = Path.Combine(_tempDirectory.FullName, "TempAssets");
-
-            Directory.CreateDirectory(resourcePath);
-
-            var back = Path.Combine(resourcePath, "back.png");
+            var back = Path.Combine(_tempDirectory, "back.png");
             Properties.Resources.back.Save(back);
             DefaultCardBackAsset = LoadExternalAsset(new FileInfo(back), new string[] { "Assets" });
 
-            var front = Path.Combine(resourcePath, "front.png");
+            var front = Path.Combine(_tempDirectory, "front.png");
             Properties.Resources.front.Save(front);
             DefaultCardFrontAsset = LoadExternalAsset(new FileInfo(front), new string[] { "Assets" });
 
-            var background = Path.Combine(resourcePath, "background.jpg");
+            var background = Path.Combine(_tempDirectory, "background.jpg");
             Properties.Resources.background.Save(background);
             DefaultBackgroundAsset = LoadExternalAsset(new FileInfo(background), new string[] { "Assets" });
 
-            var hand = Path.Combine(resourcePath, "hand.png");
+            var hand = Path.Combine(_tempDirectory, "hand.png");
             Properties.Resources.hand.Save(hand);
             LoadExternalAsset(new FileInfo(hand), new string[] { "Assets" });
 
-            var deck = Path.Combine(resourcePath, "deck.png");
+            var deck = Path.Combine(_tempDirectory, "deck.png");
             Properties.Resources.deck.Save(deck);
             DefaultPileAsset = LoadExternalAsset(new FileInfo(deck), new string[] { "Assets" });
 
-            var score = Path.Combine(resourcePath, "score.png");
+            var score = Path.Combine(_tempDirectory, "score.png");
             Properties.Resources.score.Save(score);
             LoadExternalAsset(new FileInfo(score), new string[] { "Assets" });
 
@@ -108,16 +98,14 @@ namespace Octide.ViewModel
 
             Watcher = new FileSystemWatcher();
             Watcher.IncludeSubdirectories = true;
-            //      Watcher.Changed += FileChanged;
-            //      Watcher.Created += FileCreated;
-            //      Watcher.Renamed += FileRenamed;
-            //      Watcher.Deleted += FileDeleted;
-            if (WorkingDirectory != null)
-            {
-                Watcher.Path = WorkingDirectory.FullName;
-                Watcher.EnableRaisingEvents = true;
-            }
+            //changed event is way too weird to handle properly
+        //    Watcher.Changed += FileChanged;
+            Watcher.Created += FileCreated;
+            Watcher.Renamed += FileRenamed;
+            Watcher.Deleted += FileDeleted;
             OpenFileLocationCommand = new RelayCommand(OpenFileLocation);
+            RefreshAllAssetsCommand = new RelayCommand(RefreshAssets);
+
         }
 
         private void OpenFileLocation()
@@ -162,9 +150,7 @@ namespace Octide.ViewModel
                 asset = new Asset();
                 asset.Name = Path.GetFileNameWithoutExtension(file.FullName);
                 asset.Extension = file.Extension;
-                var safeFilePath = Path.Combine(AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
-                asset.SafeFile = file.CopyTo(safeFilePath);
-                asset.SafeFile.Attributes = FileAttributes.Temporary;
+                asset.CreateSafeAsset(file);
                 if (file.Exists)
                 {
                     asset.FileLocationPath = file.FullName;
@@ -193,9 +179,7 @@ namespace Octide.ViewModel
             var asset = new Asset();
             if (file.Exists)
             {
-                var safeFilePath = Path.Combine(AssetTempDirectory.FullName, Guid.NewGuid().ToString() + file.Extension);
-                asset.SafeFile = file.CopyTo(safeFilePath);
-                asset.SafeFile.Attributes = FileAttributes.Temporary;
+                asset.CreateSafeAsset(file);
             }
             asset.Extension = file.Extension;
             asset.Hierarchy = hierarchy;
@@ -216,11 +200,6 @@ namespace Octide.ViewModel
                 ret = string.Format("{0} ({1})", filename, n++);
             }
             return ret;
-        }
-
-        public override void Cleanup()
-        {
-            base.Cleanup();
         }
 
         public AssetType FilterType
@@ -253,30 +232,122 @@ namespace Octide.ViewModel
             }
         }
 
+        public void RefreshAssets()
+        {
+            foreach (var asset in Assets)
+            {
+                asset.RefreshAsset();
+            }
+        }
 
         #region filewatcher
         public FileSystemWatcher Watcher { get; private set; }
         private void FileChanged(object sender, FileSystemEventArgs args)
         {
-            Messenger.Default.Send(new AssetManagerUpdatedMessage());
+            Debug.WriteLine("FileChanged: " + args.FullPath);
+            var file = new FileInfo(args.FullPath);
+            if (file.Attributes.HasFlag(FileAttributes.Hidden) || file.Extension.ToLower().Equals(".tmp"))
+            {
+
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Archive))
+            {
+                var asset = LoadInternalAsset(file);
+                if (asset.SafeFile.Exists && file.Exists
+                    && asset.SafeFile.LastWriteTime != file.LastWriteTime
+                    && asset.SafeFile.Length != file.Length)
+                {
+                    asset.CreateSafeAsset(file);
+                }
+                Messenger.Default.Send(new AssetManagerUpdatedMessage());
+            }
         }
         private void FileCreated(object sender, FileSystemEventArgs args)
         {
-
+            Debug.WriteLine("FileCreated: " + args.FullPath);
             var file = new FileInfo(args.FullPath);
-            ViewModelLocator.AssetsTabViewModel.LoadInternalAsset(file);
+            if (file.Attributes.HasFlag(FileAttributes.Hidden) || file.Extension.ToLower().Equals(".tmp"))
+            {
+
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Archive))
+            {
+                var asset = LoadInternalAsset(file);
+                asset.FileLocationPath = args.FullPath;
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                /// new folder is created
+            }
         }
         private void FileRenamed(object sender, RenamedEventArgs args)
         {
-            var asset = Assets.FirstOrDefault(x => x.FileLocationPath == args.OldFullPath);
-            if (asset != null)
+            Debug.WriteLine("FileRenamed: " + args.OldFullPath + " -> " + args.FullPath);
+            var file = new FileInfo(args.FullPath);
+            if (file.Attributes.HasFlag(FileAttributes.Hidden) || file.Extension.ToLower().Equals(".tmp"))
             {
-                asset.FileLocationPath = args.FullPath;
-                asset.UpdateLinkedAssetPaths();
+
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                var oldHierarchy = args.OldName.Split(Path.DirectorySeparatorChar);
+                var newHierarchy = args.Name.Split(Path.DirectorySeparatorChar);
+                // renaming a folder
+                foreach (var asset in Assets)
+                {
+                    if (asset.Hierarchy.Length < oldHierarchy.Length) continue;
+                    for (var i = 0; i < oldHierarchy.Length; i++)
+                    {
+                        if (asset.Hierarchy[i] != oldHierarchy[i])
+                        {
+                            break;
+                        }
+                        if (i == oldHierarchy.Length - 1)
+                        {
+                            asset.Hierarchy[i] = newHierarchy[i];
+                            asset.FileLocationPath = asset.FullPath;
+                            asset.RaisePropertyChanged("RelativePath");
+                        }
+                    }
+                }
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Archive))
+            {
+                var asset = Assets.FirstOrDefault(x => x.FileLocationPath == args.OldFullPath);
+                if (asset != null)
+                {
+                    asset.Name = Path.GetFileNameWithoutExtension(args.FullPath);
+                    asset.FileLocationPath = args.FullPath;
+                    asset.UpdateLinkedAssetPaths();
+                }
             }
         }
+
         private void FileDeleted(object sender, FileSystemEventArgs args)
         {
+            Debug.WriteLine("FileDeleted: " + args.FullPath);
+            var file = new FileInfo(args.FullPath);
+            if (file.Attributes.HasFlag(FileAttributes.Hidden) || file.Extension.ToLower().Equals(".tmp"))
+            {
+
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Directory))
+            {
+
+            }
+            else if (file.Attributes.HasFlag(FileAttributes.Archive))
+            {
+                var asset = LoadInternalAsset(file);
+                asset.FileLocationPath = null;
+                if (asset.LinkedAssetsCount == 0)
+                {
+                    Assets.Remove(asset);
+                }
+                else
+                {
+                    // todo: maybe a dialog asking to unlink the assets?
+                }
+            }
             Messenger.Default.Send(new AssetManagerUpdatedMessage());
         }
         #endregion
@@ -310,12 +381,5 @@ namespace Octide.ViewModel
                 RaisePropertyChanged("SelectedAsset");
             }
         }
-
-    }
-    public class AssetManagerUpdatedMessage
-    {
-    }
-    public class WorkingDirectoryChangedMessage
-    {
     }
 }

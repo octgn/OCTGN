@@ -42,16 +42,27 @@
         <controls:PropertyFieldControl Header="Relative Path">
             <TextBox Text="{Binding RelativePath, Mode=OneWay}" IsReadOnly="True" />
         </controls:PropertyFieldControl>
-        
-        <controls:PropertyFieldControl Header="File Location">
-            <DockPanel >
-                <Button Content="Open in Explorer: " Margin="0 0 5 0" Command="{Binding OpenFileLocationCommand}" />
-                <TextBox Text="{Binding FileLocationPath, Mode=OneWay}" IsReadOnly="True" />
-            </DockPanel>
-        </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Number of Links to this Asset">
             <TextBlock Text="{Binding LinkedAssetsCount}" Foreground="WhiteSmoke" />
+        </controls:PropertyFieldControl>
+
+        <controls:PropertyFieldControl Header="File Location">
+            <DockPanel >
+                <Button Content="Open in Explorer: " Command="{Binding OpenFileLocationCommand}" />
+                <Button Content="Refresh Asset" DockPanel.Dock="Right" Command="{Binding RefreshAssetCommand}" HorizontalAlignment="Left">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}" >
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FileLocationPath}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <TextBox HorizontalAlignment="Stretch" Text="{Binding FileLocationPath, Mode=OneWay}" Margin="5 0 5 0" IsReadOnly="True" />
+            </DockPanel>
         </controls:PropertyFieldControl>
 
         <controls:PropertyFieldControl Header="Preview" >

@@ -35,6 +35,21 @@ namespace Octide
 
         public AssetController Asset { get; set; }
 
+        private static DirectoryInfo _tempDirectory;
+        public static DirectoryInfo TempDirectory
+        {
+            get
+            {
+                if (_tempDirectory == null)
+                {
+                    _tempDirectory = Directory.CreateDirectory(Config.Instance.Paths.GraveyardPath);
+                }
+                return _tempDirectory;
+            }
+        }
+        public static DirectoryInfo AssetTempDirectory => Directory.CreateDirectory(Path.Combine(TempDirectory.FullName, "AssetCache"));
+
+
         public Game Game
         {
             get
@@ -104,12 +119,6 @@ namespace Octide
 
         public void CreateGame()
         {
-            var _tempDirectory = Directory.CreateDirectory(Path.Combine(Config.Instance.Paths.GraveyardPath, "Game"));
-
-            var resourcePath = Path.Combine(_tempDirectory.FullName, "Assets");
-
-            Directory.CreateDirectory(resourcePath);
-
             Game = new Game()
             {
                 Id = Guid.NewGuid(),
@@ -120,7 +129,9 @@ namespace Octide
                 Authors = new List<string>() { "OCTIDE" },
                 Description = "A game created using OCTGN Game Development Studio",
                 NoteBackgroundColor = "#FFEBE8C5",
-                NoteForegroundColor = "#FF000000"
+                NoteForegroundColor = "#FF000000",
+                InstallPath = "",
+                Filename = "definition.xml"
             };
             Game.Table = new Group()
             {
@@ -142,10 +153,10 @@ namespace Octide
         public void ImportGame(FileInfo package)
         {
             //TODO: Extracts into a temp folder, but then it needs to save to a proper location via prompt as well
-            var ExtractLocation = Config.Instance.Paths.GraveyardPath;
+            var ExtractLocation = Directory.CreateDirectory(Path.Combine(TempDirectory.FullName, Guid.NewGuid().ToString()));
 
-            ZipFile.ExtractToDirectory(package.FullName, ExtractLocation);
-            var definition = Path.Combine(ExtractLocation, "def", "definition.xml");
+            ZipFile.ExtractToDirectory(package.FullName, ExtractLocation.FullName);
+            var definition = Path.Combine(ExtractLocation.FullName, "def", "definition.xml");
 
             if (File.Exists(definition))
             {
@@ -262,22 +273,22 @@ namespace Octide
 
         public bool SerializeXmlAssets()
         {
+            var tempPath = Directory.CreateDirectory(Path.Combine(TempDirectory.FullName, "TempAssets")).FullName;
             try
             {
-                var gameTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
-
+                var gameTempPath = Path.Combine(tempPath, Guid.NewGuid().ToString() + ".xml");
                 var gameSerializer = new GameSerializer();
                 gameSerializer.OutputPath = gameTempPath;
                 gameSerializer.Serialize(Game);
-                Asset.SelectedAsset.SafeFile = new FileInfo(gameTempPath);
+                Asset.SelectedAsset.CreateSafeAsset(new FileInfo(gameTempPath));
 
                 var setSerializer = new SetSerializer() { Game = Game };
                 foreach (SetModel set in ViewModelLocator.SetTabViewModel.Items)
                 {
-                    var setTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
+                    var setTempPath = Path.Combine(tempPath, Guid.NewGuid().ToString() + ".xml");
                     setSerializer.OutputPath = setTempPath;
                     setSerializer.Serialize(set._set);
-                    set.Asset.SelectedAsset.SafeFile = new FileInfo(setTempPath);
+                    set.Asset.SelectedAsset.CreateSafeAsset(new FileInfo(setTempPath));
                 }
                 var scriptSerializer = new GameScriptSerializer(Game.Id) { Game = Game };
                 foreach (PythonItemModel script in ViewModelLocator.PythonTabViewModel.Scripts)
@@ -286,15 +297,15 @@ namespace Octide
                     scriptSerializer.Serialize(script._script);
                 }
 
-                var proxyTempPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.AssetTempDirectory.FullName, Guid.NewGuid().ToString() + ".xml");
+                var proxyTempPath = Path.Combine(tempPath, Guid.NewGuid().ToString() + ".xml");
 
                 var proxySerializer = new ProxyGeneratorSerializer(Game.Id) { Game = Game };
                 proxySerializer.OutputPath = proxyTempPath;
                 proxySerializer.Serialize(ViewModelLocator.ProxyTabViewModel._proxydef);
-                ViewModelLocator.ProxyTabViewModel.Asset.SelectedAsset.SafeFile = new FileInfo(proxyTempPath);
+                ViewModelLocator.ProxyTabViewModel.Asset.SelectedAsset.CreateSafeAsset(new FileInfo(proxyTempPath));
                 return true;
             }
-            catch
+            catch (Exception e)
             {
                 return false;
             }
@@ -302,7 +313,6 @@ namespace Octide
 
         public void ExportGame()
         {
-
             if (!SerializeXmlAssets())
             {
                 return;
@@ -331,12 +341,16 @@ namespace Octide
                 builder.Files.Add(pf);
             }
 
-            var feedPath = Path.Combine(ViewModelLocator.AssetsTabViewModel.WorkingDirectory.FullName, Game.Name + '-' + Game.Version + ".nupkg");
+            ViewModelLocator.AssetsTabViewModel.Watcher.EnableRaisingEvents = false;
+            var directory = ViewModelLocator.AssetsTabViewModel.WorkingDirectory?.FullName ?? Directory.CreateDirectory(Path.Combine(TempDirectory.FullName, "Packages")).FullName;
+            var feedPath = Path.Combine(directory, Game.Name + '-' + Game.Version + ".nupkg");
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
             filestream.Close();
-            Process.Start(ViewModelLocator.AssetsTabViewModel.WorkingDirectory.FullName);
+            Process.Start(directory);
+            if (ViewModelLocator.AssetsTabViewModel.WorkingDirectory != null)
+                ViewModelLocator.AssetsTabViewModel.Watcher.EnableRaisingEvents = true;
 
         }
 
