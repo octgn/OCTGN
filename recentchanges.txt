@@ -1,1 +1,2 @@
-
+Fixed discord game invites
+Added a toggle in the host controls to disable the discord invite link

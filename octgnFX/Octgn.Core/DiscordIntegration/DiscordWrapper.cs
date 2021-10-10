@@ -35,7 +35,25 @@ namespace Octgn.Core.DiscordIntegration
             _discord = new Discord.Discord(_clientId, (UInt64)CreateFlags.NoRequireDiscord);
             _activityManager = _discord.GetActivityManager() ?? throw new InvalidOperationException($"Discord ActivityManager null");
             _activityManager.OnActivityJoin += ActivityManagerInstance_OnActivityJoin;
+            _activityManager.OnActivityInvite += ActivityManagerInstance_OnActivityInvite;
+            _activityManager.OnActivitySpectate += ActivityManagerInstance_OnActivitySpectate;
+            _activityManager.OnActivityJoinRequest += ActivityManagerInstance_OnActivityJoinRequest;
             _updateTimer = new Timer(UpdateDiscord, this, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
+        }
+
+        private void ActivityManagerInstance_OnActivityJoinRequest(ref User user)
+        {
+            // deprecated code??
+        }
+
+        private void ActivityManagerInstance_OnActivitySpectate(string secret)
+        {
+            // deprecated code??
+        }
+
+        private void ActivityManagerInstance_OnActivityInvite(ActivityActionType type, ref User user, ref Activity activity)
+        {
+            // triggers when a game invite is shared on discord.  Probably don't want to use this for anything due to how spammy it can be
         }
 
         private void ActivityManagerInstance_OnActivityJoin(string secret) {
@@ -73,7 +91,7 @@ namespace Octgn.Core.DiscordIntegration
             _activity = activity;
         }
 
-        public void UpdateStatusInGame(HostedGame game, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount) {
+        public void UpdateStatusInGame(HostedGame game, bool isHost, bool isReplay, bool isSpectator, bool isPreGame, int playerCount, bool allowDiscordInvite) {
             var activity = new Activity();
             activity.Instance = true;
             activity.Details = game.GameName;
@@ -85,7 +103,8 @@ namespace Octgn.Core.DiscordIntegration
                 activity.Type = ActivityType.Watching;
             } else {
                 if (isPreGame) {
-                    activity.State = (isHost) ? "In Lobby (Host)" : "In Lobby";
+                    string text = (isHost) ? "Hosting \"{0}\"" : "In Lobby \"{0}\"";
+                    activity.State = string.Format(text, game.Name);
                     activity.Type = ActivityType.Playing;
                 }
                 else if (isSpectator) {
@@ -93,22 +112,25 @@ namespace Octgn.Core.DiscordIntegration
                     activity.Type = ActivityType.Watching;
                 }
                 else {
-                    activity.State = (isHost) ? "In Game (Host)" : "In Game";
+                    activity.State = string.Format("In Game \"{0}\"", game.Name);
                     activity.Type = ActivityType.Playing;
                 }
                 activity.Party.Size.CurrentSize = playerCount;
                 activity.Party.Size.MaxSize = 8;
-                activity.Secrets.Join = Convert.ToBase64String(game.Id.ToByteArray());
+                if (allowDiscordInvite)
+                    activity.Secrets.Join = Convert.ToBase64String(game.Id.ToByteArray());
                 activity.Timestamps.Start = (long)(game.DateCreated.UtcDateTime - _epoch).TotalSeconds;
             }
             _activity = activity;
+            UpdateActivity();
         }
 
         private void UpdateDiscord(object state) {
             try {
                 _discord.RunCallbacks();
                 IsRunning = true;
-                UpdateActivity();
+                if (DateTime.Now > _lastActivityUpdate.AddSeconds(30))
+                    UpdateActivity();
             } catch (ResultException ex) when (ex.Result == Result.NotRunning) {
                 // Discord not running
                 IsRunning = false;
@@ -123,10 +145,6 @@ namespace Octgn.Core.DiscordIntegration
             var activity = _activity;
 
             if (activity == null) return;
-
-            var nextUpdateActivity = _lastActivityUpdate.AddSeconds(30);
-
-            if (DateTime.Now < nextUpdateActivity) return;
 
             _lastActivityUpdate = DateTime.Now;
 

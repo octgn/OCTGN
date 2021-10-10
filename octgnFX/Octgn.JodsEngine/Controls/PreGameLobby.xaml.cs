@@ -190,7 +190,11 @@ namespace Octgn.Controls
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-            if (Program.IsHost)
+            if (e.PropertyName == nameof(Program.GameSettings.AllowDiscordGameInvite))
+            {
+                Program.Discord?.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, Program.GameEngine.IsReplay, Program.GameEngine.Spectator, Program.InPreGame, Player.AllExceptGlobal.Count(), Program.GameSettings.AllowDiscordGameInvite);
+            }
+            else if (Program.IsHost)
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators, Program.GameSettings.AllowCardList);
         }
 
