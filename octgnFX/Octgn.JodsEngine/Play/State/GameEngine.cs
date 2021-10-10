@@ -497,7 +497,7 @@ namespace Octgn
                 Program.CurrentHostedGame.DateStarted = DateTimeOffset.Now;
             }
 
-            Program.Discord?.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, IsReplay, Spectator, false, Player.AllExceptGlobal.Count());
+            Program.Discord?.UpdateStatusInGame(Program.CurrentHostedGame, Program.IsHost, IsReplay, Spectator, false, Player.AllExceptGlobal.Count(), Program.GameSettings.AllowDiscordGameInvite);
 
             if (IsReplay) {
                 return;
@@ -659,7 +659,6 @@ namespace Octgn
             var def = Definition ?? throw new InvalidOperationException($"{nameof(GameEngine)}.{nameof(GameEngine.Definition)} is null");
             var hostGame = Program.CurrentHostedGame ?? throw new InvalidOperationException($"{nameof(Program)}.{nameof(Program.CurrentHostedGame)} is null");
             var allPlayers = Player.AllExceptGlobal.ToArray();
-            var discord = Program.Discord;
 
             if (Spectator == false && allPlayers.Length <= 0) throw new InvalidOperationException($"All player count is {allPlayers.Length}");
 
@@ -677,7 +676,7 @@ namespace Octgn
                 replayEngine.Start();
             }
 
-            discord?.UpdateStatusInGame(hostGame, Program.IsHost, IsReplay, Spectator, true, allPlayers.Length);
+            Program.Discord?.UpdateStatusInGame(hostGame, Program.IsHost, IsReplay, Spectator, true, allPlayers.Length, Program.GameSettings.AllowDiscordGameInvite);
         }
 
         public event Action ResetTableViewAction;

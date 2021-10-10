@@ -98,6 +98,8 @@
 
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Show Discord Game Invite" Visibility="{Binding ElementName=self, Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}" 
+                          IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameSettings}, Path=AllowDiscordGameInvite}"/>
                 <MenuItem Header="Change Background">
                     <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
                     <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>

@@ -9,6 +9,7 @@ namespace Octgn.Data
         private bool _changeTwoSidedTable = true;
         private bool _hideBoard = false;
         private bool _allowSpectators = false;
+        private bool _allowDiscardGameInvite = false;
         private bool _allowCardList= false;
         private bool _muteSpectators = false;
 
@@ -39,6 +40,17 @@ namespace Octgn.Data
                 _changeTwoSidedTable = value;
                 if (_initialized)
                     OnPropertyChanged("ChangeTwoSidedTable");
+            }
+        }
+        public bool AllowDiscordGameInvite
+        {
+            get { return _allowDiscardGameInvite; }
+            set
+            {
+                if (value == _allowDiscardGameInvite) return;
+                _allowDiscardGameInvite = value;
+                if (_initialized)
+                    OnPropertyChanged("AllowDiscordGameInvite");
             }
         }
 
