@@ -18,7 +18,6 @@ namespace Octide.ProxyTab.ItemModel
     public class SwitchBlockModel : IBaseBlock, IDroppable
     {
         public PropertyItemModel _property;
-        public IdeCollection<IdeBaseItem> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
         public IdeCollection<IdeBaseItem> Items { get; private set; }
         public RelayCommand AddCaseCommand { get; set; }
         public RelayCommand AddDefaultCommand { get; set; }
@@ -41,7 +40,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 BuildSwitchDefinitions(b);
             };
-            Property = (PropertyItemModel)CustomProperties.First();
+            Property = PropertyTabViewModel.NameProperty;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             AddCaseCommand = new RelayCommand(AddCase);
             AddDefaultCommand = new RelayCommand(AddDefault);
@@ -51,7 +50,7 @@ namespace Octide.ProxyTab.ItemModel
         public SwitchBlockModel(LinkDefinition.LinkWrapper lw, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _wrapper = lw;
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _wrapper.Conditional.switchProperty);
+            _property = (PropertyItemModel)ViewModelLocator.PropertyTabViewModel.ProxyItems.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _wrapper.Conditional.switchProperty);
             Items = new IdeCollection<IdeBaseItem>(this, typeof(IBaseConditionalCase));
             if (lw.Conditional.switchNodeList != null)
             {
@@ -180,7 +179,7 @@ namespace Octide.ProxyTab.ItemModel
                 if (_property == value) return;
                 if (value == null)
                 {
-                    value = (PropertyItemModel)CustomProperties.First();
+                    value = PropertyTabViewModel.NameProperty;
                 }
                 _property = value;
                 _wrapper.Conditional.switchProperty = value.Name;

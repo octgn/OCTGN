@@ -18,20 +18,10 @@ namespace Octide.SetTab.ItemModel
         public PickProperty Def { get; set; }
         public PropertyItemModel _activeProperty;
 
-        public ObservableCollection<IdeBaseItem> CustomProperties
-        {
-            get
-            {
-                var ret = new ObservableCollection<IdeBaseItem>(ViewModelLocator.PropertyTabViewModel.Items);
-                ret.Insert(0, PropertyTabViewModel.NameProperty);
-                return ret;
-            }
-        }
-
         public PackagePropertyModel(IdeCollection<IdeBaseItem> src) : base(src) // new item
         {
             Def = new PickProperty();
-            ActiveProperty = (PropertyItemModel)CustomProperties.First();
+            ActiveProperty = PropertyTabViewModel.NameProperty;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
 
@@ -49,7 +39,7 @@ namespace Octide.SetTab.ItemModel
             else
             {
                 Def = (PickProperty)p;
-                ActiveProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property == Def.Property);
+                ActiveProperty = (PropertyItemModel)ViewModelLocator.PropertyTabViewModel.SetPackageItems.FirstOrDefault(x => ((PropertyItemModel)x).Property == Def.Property);
             }
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
         }
@@ -96,7 +86,7 @@ namespace Octide.SetTab.ItemModel
                 if (_activeProperty == value) return;
                 if (value == null)
                 {
-                    value = (PropertyItemModel)CustomProperties.First();
+                    value = PropertyTabViewModel.NameProperty;
                 }
                 _activeProperty = value;
                 Def.Property = value.Property;

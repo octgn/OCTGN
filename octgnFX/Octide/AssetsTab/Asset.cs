@@ -56,8 +56,10 @@ namespace Octide
 
         public string FileName => Name + Extension;
         public string RelativePath => Path.Combine(Path.Combine(Hierarchy), FileName);
-        public string FullPath => Path.Combine(
-            ViewModelLocator.AssetsTabViewModel.WorkingDirectory?.FullName ?? "",
+
+        public string FullPath => ViewModelLocator.AssetsTabViewModel.WorkingDirectory?.FullName == null
+            ? SafeFilePath 
+            : Path.Combine(ViewModelLocator.AssetsTabViewModel.WorkingDirectory.FullName,
             RelativePath);
 
         public FileInfo SafeFile { get; set; }

@@ -2145,7 +2145,8 @@ namespace Octgn.DataNew
                 }
                 blocks.Add(block);
             }
-            save.blocks = blocks.ToArray();
+            if (blocks.Count > 0)
+                save.blocks = blocks.ToArray();
             #endregion
 
             #region templates
@@ -2169,7 +2170,8 @@ namespace Octgn.DataNew
                     };
                     matches.Add(match);
                 }
-                template.matches = matches.ToArray();
+                if (matches.Count > 0)
+                    template.matches = matches.ToArray();
 
                 var overlayblocks = new List<object>();
                 foreach (LinkDefinition.LinkWrapper overlaydef in templatedef.OverlayBlocks)
@@ -2177,7 +2179,8 @@ namespace Octgn.DataNew
                     var item = SerializeLinkWrapper(overlaydef);
                     overlayblocks.Add(item);
                 };
-                template.overlayblocks = overlayblocks.ToArray();
+                if (overlayblocks.Count > 0)
+                    template.overlayblocks = overlayblocks.ToArray();
 
                 var textblocks = new List<object>();
                 foreach (LinkDefinition.LinkWrapper textdef in templatedef.TextBlocks)
@@ -2185,7 +2188,8 @@ namespace Octgn.DataNew
                     var item = SerializeLinkWrapper(textdef);
                     textblocks.Add(item);
                 };
-                template.textblocks = textblocks.ToArray();
+                if (textblocks.Count > 0)
+                    template.textblocks = textblocks.ToArray();
                 templates.Add(template);
             }
 

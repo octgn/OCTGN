@@ -33,13 +33,6 @@
                                 </Style>
                             </Image.Style>
                         </Image>
-                        <!--
-                        <TextBlock Margin="15 0 0 0" Foreground="Red" VerticalAlignment="Center" FontSize="14" FontWeight="Bold">
-                            <TextBlock.Text>
-                                <Binding Path="(Validation.Errors)[0].ErrorContent" StringFormat="Error: {0}"/>
-                            </TextBlock.Text>
-                        </TextBlock>
-                        -->
                     </StackPanel>
                     <ContentControl Margin="15,5,0,0" Content="{Binding Content, ElementName=me}">
                     </ContentControl>
@@ -48,8 +41,7 @@
         </ControlTemplate>
     </UserControl.Template>
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}">
-            <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}" />
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource OctideInputTextBox}" >
         </Style>
         <Style TargetType="{x:Type controls:AssetControllerView}">
             <Setter Property="MinWidth" Value="200"/>
