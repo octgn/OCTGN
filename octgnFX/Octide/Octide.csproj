@@ -392,9 +392,6 @@
     <Compile Include="ProxyTab\DragDropHandlers\TemplateDropHandler.cs" />
     <Compile Include="ScriptingTab\EventsTab\GameEventItemModel.cs" />
     <Compile Include="ScriptingTab\EventsTab\GameEventTabViewModel.cs" />
-    <Compile Include="ScriptingTab\PythonTab\ScriptItemView.xaml.cs">
-      <DependentUpon>ScriptItemView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ScriptingTab\PythonTab\ScriptItemModel.cs" />
     <Compile Include="ScriptingTab\EventsTab\GameEventTabView.xaml.cs">
       <DependentUpon>GameEventTabView.xaml</DependentUpon>
@@ -659,10 +656,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PreviewTab\PileItemView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ScriptingTab\PythonTab\ScriptItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

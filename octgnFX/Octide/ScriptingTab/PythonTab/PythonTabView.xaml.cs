@@ -2,6 +2,8 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Indentation;
 using System.Windows.Controls;
 
 namespace Octide.Views
@@ -14,6 +16,7 @@ namespace Octide.Views
         public PythonTabView()
         {
             InitializeComponent();
+            textEditor.TextArea.IndentationStrategy = new DefaultIndentationStrategy();
         }
     }
 }
