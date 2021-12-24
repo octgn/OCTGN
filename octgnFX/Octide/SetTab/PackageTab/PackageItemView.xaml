@@ -80,7 +80,7 @@
                 <StackPanel >
                     <TextBlock Text="PROPERTY" FontWeight="Bold" />
                     <TextBlock Text="name:" />
-                    <ComboBox ItemsSource="{Binding CustomProperties}" DisplayMemberPath="Name" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding PropertyTabViewModel.SetPackageItems,  Source={StaticResource Locator}}" DisplayMemberPath="Name" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
                     <TextBlock Text="value:" />
                     <TextBox Text="{Binding Value}" />
                 </StackPanel>

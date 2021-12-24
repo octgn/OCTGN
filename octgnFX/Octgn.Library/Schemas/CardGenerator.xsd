@@ -135,7 +135,7 @@
   <xs:element name="templates">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="blocks" minOccurs="1" maxOccurs="1">
+        <xs:element name="blocks" minOccurs="0" maxOccurs="1">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="block" minOccurs="1" maxOccurs="unbounded">
@@ -184,7 +184,7 @@
         <xs:element name="template" minOccurs="1" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="matches" minOccurs="1" maxOccurs="1">
+              <xs:element name="matches" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="match" minOccurs="1" maxOccurs="unbounded">

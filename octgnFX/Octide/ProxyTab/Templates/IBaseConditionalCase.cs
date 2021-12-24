@@ -6,6 +6,7 @@ using Octgn.ProxyGenerator.Definitions;
 using Octide.ItemModel;
 using Octide.Messages;
 using Octide.ViewModel;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Octide.ProxyTab.ItemModel
@@ -14,7 +15,6 @@ namespace Octide.ProxyTab.ItemModel
     {
         public CaseDefinition _case;
         public PropertyItemModel _property;
-        public IdeCollection<IdeBaseItem> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
         public BlockContainer BlockContainer { get; set; }
 
         public IBaseConditionalCase(IdeCollection<IdeBaseItem> source) : base(source)
@@ -39,7 +39,7 @@ namespace Octide.ProxyTab.ItemModel
                 if (_property == value) return;
                 if (value == null)
                 {
-                    value = (PropertyItemModel)CustomProperties.First();
+                    value = PropertyTabViewModel.NameProperty;
                 }
                 _property = value;
                 _case.property = value.Name;

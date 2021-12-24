@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Octgn.ProxyGenerator.Definitions;
 using Octide.ItemModel;
 using Octide.Messages;
+using Octide.ViewModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -167,7 +168,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 value = ""
             };
-            Property = (PropertyItemModel)CustomProperties.First();
+            Property = PropertyTabViewModel.NameProperty;
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
@@ -182,7 +183,7 @@ namespace Octide.ProxyTab.ItemModel
         public IfCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _case = caseItem;
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
+            _property = (PropertyItemModel)ViewModelLocator.PropertyTabViewModel.ProxyItems.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
 
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
@@ -235,7 +236,7 @@ namespace Octide.ProxyTab.ItemModel
             {
                 value = ""
             };
-            Property = (PropertyItemModel)CustomProperties.First();
+            Property = PropertyTabViewModel.NameProperty;
             BlockContainer = new BlockContainer();
             BlockContainer.OnContainerChanged += (a, b) =>
             {
@@ -248,7 +249,7 @@ namespace Octide.ProxyTab.ItemModel
         public ElseIfCaseModel(CaseDefinition caseItem, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _case = caseItem;
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
+            _property = (PropertyItemModel)ViewModelLocator.PropertyTabViewModel.ProxyItems.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _case.property);
             BlockContainer = new BlockContainer(caseItem.linkList);
             BlockContainer.OnContainerChanged += (a, b) =>
             {

@@ -96,7 +96,8 @@ namespace Octide.ViewModel
             };
             Templates.DefaultItemChanged += (sender, args) =>
             {
-                ((TemplateModel)args.OldItem)._def.defaultTemplate = false;
+                if (args.OldItem != null)
+                    ((TemplateModel)args.OldItem)._def.defaultTemplate = false;
                 ((TemplateModel)args.NewItem)._def.defaultTemplate = true;
             };
             Templates.SelectedItemChanged += (sender, args) =>
@@ -104,6 +105,15 @@ namespace Octide.ViewModel
                 Selection = null;
                 Messenger.Default.Send(new ProxyTemplateChangedMessage());
             };
+
+            if (Templates.Count == 0)
+            {
+                // Games require a default template.  This will add a default template in if there isn't any templates defined.  This will happen when a new blank game is created through the IDE.
+                var defTemplate = new TemplateModel(Templates);
+                Templates.Add(defTemplate);
+                Templates.DefaultItem = defTemplate;
+
+            }
 
             TextBlocks = new IdeCollection<IdeBaseItem>(this, typeof(TextBlockDefinitionItemModel));
             foreach (var textblock in _proxydef.BlockManager.GetBlocks().Where(x => x.type == "text"))

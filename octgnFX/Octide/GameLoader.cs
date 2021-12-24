@@ -110,7 +110,15 @@ namespace Octide
 
         public GameLoader()
         {
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, UpdateProperty);
         }
+        private void UpdateProperty(PropertyChangedMessage<Game> m)
+        {
+            RaisePropertyChanged("Game");
+            NeedsSave = true;
+        }
+
+
         public override void Cleanup()
         {
             Asset.Cleanup();
@@ -128,6 +136,8 @@ namespace Octide
                 OctgnVersion = typeof(Config).Assembly.GetName().Version,
                 Authors = new List<string>() { "OCTIDE" },
                 Description = "A game created using OCTGN Game Development Studio",
+                GameUrl = "https://octgn.net",
+                IconUrl = "https://octgn.net/Images/logo.png",
                 NoteBackgroundColor = "#FFEBE8C5",
                 NoteForegroundColor = "#FF000000",
                 InstallPath = "",

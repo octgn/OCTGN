@@ -43,12 +43,28 @@
                         <TextBox Text="{Binding Version, Mode=TwoWay}"/>
                     </controls:PropertyFieldControl>
 
-                    <controls:PropertyFieldControl Header="Game Information Website URL" >
-                        <TextBox Text="{Binding GameUrl, Mode=TwoWay}"/>
+                    <controls:PropertyFieldControl Header="Game Information Website URL" Description="A website URL that provides information for your game, visible on the Games Feed." >
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="GameUrl" >
+                                    <Binding.ValidationRules>
+                                        <local:StringRestrictionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </controls:PropertyFieldControl>
 
                     <controls:PropertyFieldControl Header="Game Icon Image Website URL" >
-                        <TextBox Text="{Binding IconUrl, Mode=TwoWay}"/>
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="IconUrl" >
+                                    <Binding.ValidationRules>
+                                        <local:StringRestrictionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </controls:PropertyFieldControl>
 
                     <controls:PropertyFieldControl Header="Authors" >

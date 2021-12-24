@@ -13,8 +13,6 @@ namespace Octide.ProxyTab.ItemModel
 {
     public class MatchModel : IdeBaseItem
     {
-        public IdeCollection<IdeBaseItem> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
-
 
         public PropertyItemModel _property;
 
@@ -26,7 +24,7 @@ namespace Octide.ProxyTab.ItemModel
             {
 
             };
-            Property = (PropertyItemModel)CustomProperties.First();
+            Property = PropertyTabViewModel.NameProperty;
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
@@ -35,7 +33,7 @@ namespace Octide.ProxyTab.ItemModel
         public MatchModel(Property property, IdeCollection<IdeBaseItem> source) : base(source)  //load match
         {
             _match = property;
-            _property = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _match.Name);
+            _property = (PropertyItemModel)ViewModelLocator.PropertyTabViewModel.ProxyItems.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _match.Name);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
@@ -74,7 +72,7 @@ namespace Octide.ProxyTab.ItemModel
                 if (_property == value) return;
                 if (value == null)
                 {
-                    value = (PropertyItemModel)CustomProperties.First();
+                    value = PropertyTabViewModel.NameProperty;
                 }
                 _property = value;
                 _match.Name = value.Name;

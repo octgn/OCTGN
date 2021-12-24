@@ -34,16 +34,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="ID Name: " TextAlignment="Right" VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Margin="0 0 0 2">
-                                    <TextBox.Style>
-                                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                                            <Style.Triggers>
-                                                <Trigger Property="Validation.HasError" Value="true">
-                                                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBox.Style>
+                                <TextBox Grid.Column="1" Margin="0 0 0 2" Style="{StaticResource OctideInputTextBox}" HorizontalContentAlignment="Stretch">
                                     <TextBox.Resources>
                                         <local:BindingProxy x:Key="proxy" Data="{Binding }" />
                                     </TextBox.Resources>

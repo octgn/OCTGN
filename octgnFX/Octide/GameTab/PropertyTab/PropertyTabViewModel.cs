@@ -16,6 +16,37 @@ namespace Octide.ViewModel
     {
         public IdeCollection<IdeBaseItem> Items { get; private set; }
 
+        public IdeCollection<IdeBaseItem> ProxyItems
+        {
+            get
+            {
+                var ret = new IdeCollection<IdeBaseItem>(this, typeof(PropertyItemModel));
+                ret.Add(NameProperty);
+                ret.Add(SetProperty);
+                ret.Add(SizeNameProperty);
+                ret.Add(SizeHeightProperty);
+                ret.Add(SizeWidthProperty);
+                foreach (var item in Items)
+                {
+                    ret.Add(item);
+                }
+                return ret;
+            }
+        }
+        public IdeCollection<IdeBaseItem> SetPackageItems
+        {
+            get
+            {
+                var ret = new IdeCollection<IdeBaseItem>(this, typeof(PropertyItemModel));
+                ret.Add(NameProperty);
+                foreach (var item in Items)
+                {
+                    ret.Add(item);
+                }
+                return ret;
+            }
+        }
+
         public static PropertyItemModel NameProperty = new PropertyItemModel(new PropertyDef() { Name = "Name" }, new IdeCollection<IdeBaseItem>());
         public static PropertyItemModel IdProperty = new PropertyItemModel(new PropertyDef() { Name = "Id" }, new IdeCollection<IdeBaseItem>());
         public static PropertyItemModel AlternateProperty = new PropertyItemModel(new PropertyDef() { Name = "Alternate" }, new IdeCollection<IdeBaseItem>());
@@ -40,6 +71,8 @@ namespace Octide.ViewModel
             {
                 ViewModelLocator.GameLoader.Game.CardProperties = Items.ToDictionary(x => ((PropertyItemModel)x).Name, y => ((PropertyItemModel)y).Property);
                 Messenger.Default.Send(new CustomPropertyChangedMessage(args));
+                RaisePropertyChanged("SetPackageItems");
+                RaisePropertyChanged("ProxyItems");
             };
             AddCommand = new RelayCommand(AddItem);
         }
