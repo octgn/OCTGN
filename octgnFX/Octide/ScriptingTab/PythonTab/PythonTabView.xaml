@@ -9,6 +9,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:controls="clr-namespace:Octide.Controls"
              xmlns:model="clr-namespace:Octide.ItemModel"
@@ -17,14 +19,56 @@
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding PythonTabViewModel, Source={StaticResource Locator}}">
 
-    <controls:OctideItemPropertyViewer Title="Python Script Editor" ItemsSource="{Binding Scripts}">
-        <controls:OctideItemPropertyViewer.ListBoxHeader>
-            <Button Content="New Script File" Command="{Binding AddScriptCommand}" />
-        </controls:OctideItemPropertyViewer.ListBoxHeader>
-        <controls:OctideItemPropertyViewer.Resources>
-            <DataTemplate DataType="{x:Type model:PythonItemModel}" >
-                <views:ScriptItemView />
-            </DataTemplate>
-        </controls:OctideItemPropertyViewer.Resources>
-    </controls:OctideItemPropertyViewer>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideTitleStyle}" Text="Python Script Editor" />
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource OctideDescriptionStyle}"
+                   Text="View or modify python scripts here." />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DockPanel>
+                <Button Margin="3" Content="New Python Script" DockPanel.Dock="Top" Command="{Binding AddScriptCommand}" IsEnabled="False" />
+
+                <ListBox Style="{StaticResource OctideListBoxStyle}"
+                         ItemsSource="{Binding Scripts}" SelectedValue="{Binding Scripts.SelectedItem}" >
+                </ListBox>
+            </DockPanel>
+            <GridSplitter x:Name="GridSplitter" Grid.Column="1" ResizeDirection="Columns" HorizontalAlignment="Left" ResizeBehavior="PreviousAndCurrent" />
+
+            <DockPanel Grid.Column="1">
+                <ToolBar DockPanel.Dock="Top">
+                    <Button Command="Cut" ToolTip="Cut (ctrl+X)">
+                        <icons:PackIconModern Kind="Scissor" Height="16"/>
+                    </Button>
+                    <Button Command="Copy" ToolTip="Copy (ctrl+C)">
+                        <icons:PackIconModern Kind="PageCopy" Height="16"/>
+                    </Button>
+                    <Button Command="Paste" ToolTip="Paste (ctrl+V)" >
+                        <icons:PackIconModern Kind="ClipboardPaste" Height="16"/>
+                    </Button>
+                    <Button Command="Delete" ToolTip="Delete (del)" >
+                        <icons:PackIconModern Kind="Delete" Height="16"/>
+                    </Button>
+                    <Separator/>
+                    <Button Command="Undo" ToolTip="Undo (ctrl+Z)" >
+                        <icons:PackIconModern Kind="Undo" Height="16"/>
+                    </Button>
+                    <Button Command="Redo" ToolTip="Redo" >
+                        <icons:PackIconModern Kind="Redo" Height="16"/>
+                    </Button>
+                    <Separator/>
+                    <CheckBox IsChecked="{Binding ElementName=textEditor,Path=WordWrap}" ToolTip="Wrap Text" >
+                        <icons:PackIconModern Kind="DebugStepOver"  Height="16"/>
+                    </CheckBox>
+                    <CheckBox IsChecked="{Binding ElementName=textEditor,Path=ShowLineNumbers}" ToolTip="Show Line Numbers" >
+                        <icons:PackIconModern Kind="SocialTwitterHashtag"  Height="16"/>
+                    </CheckBox>
+                </ToolBar>
+                <avalon:TextEditor Foreground="{StaticResource MahApps.Brushes.Text}" Name="textEditor" FontFamily="Consolas" FontSize="10pt" SyntaxHighlighting="Python" ShowLineNumbers="True" Document="{Binding Scripts.SelectedItem.ScriptDocument}">
+                </avalon:TextEditor>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
 </UserControl>
