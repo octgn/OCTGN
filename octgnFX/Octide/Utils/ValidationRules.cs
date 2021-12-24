@@ -52,8 +52,8 @@ namespace Octide
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             string text = value.ToString();
-            if (string.IsNullOrEmpty(text))
-                return new ValidationResult(false, "Value cannot be empty.");
+            if (string.IsNullOrWhiteSpace(text))
+                return new ValidationResult(false, "Value cannot be null, empty, or consist only of spaces.");
             if (Restriction != null && text.Equals(Restriction, StringComparison.InvariantCultureIgnoreCase))
                 return new ValidationResult(false, string.Format("Value cannot be '{0}'.", text));
             return ValidationResult.ValidResult;

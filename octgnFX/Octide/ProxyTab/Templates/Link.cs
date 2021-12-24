@@ -199,7 +199,6 @@ namespace Octide.ProxyTab.ItemModel
     {
         public Property _property;
         public PropertyItemModel _activeProperty;
-        public IdeCollection<IdeBaseItem> CustomProperties => ViewModelLocator.PropertyTabViewModel.Items;
 
         public TextLinkPropertyModel(IdeCollection<IdeBaseItem> source) : base(source) //new
         {
@@ -208,13 +207,13 @@ namespace Octide.ProxyTab.ItemModel
                 Value = ""
             };
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
-            ActiveProperty = (PropertyItemModel)CustomProperties.First();
+            ActiveProperty = PropertyTabViewModel.NameProperty;
             PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
         }
         public TextLinkPropertyModel(Property prop, IdeCollection<IdeBaseItem> source) : base(source) //load
         {
             _property = prop;
-            _activeProperty = (PropertyItemModel)CustomProperties.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _property.Name);
+            _activeProperty = (PropertyItemModel)ViewModelLocator.PropertyTabViewModel.ProxyItems.FirstOrDefault(x => ((PropertyItemModel)x).Property.Name == _property.Name);
             Messenger.Default.Register<CustomPropertyChangedMessage>(this, CustomPropertyChanged);
             PropertyChanged += (a, b) => Messenger.Default.Send(new ProxyTemplateChangedMessage());
 
@@ -250,7 +249,7 @@ namespace Octide.ProxyTab.ItemModel
                 if (_activeProperty == value) return;
                 if (value == null)
                 {
-                    value = (PropertyItemModel)CustomProperties.First();
+                    value = PropertyTabViewModel.NameProperty;
                 }
                 _activeProperty = value;
                 _property.Name = value.Name;

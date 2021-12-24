@@ -38,8 +38,18 @@
         <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Border.NonActive}" />
     </Style>
 
+    <ControlTemplate x:Key="validationTemplate">
+        <DockPanel >
+            <TextBlock Foreground="Red" FontSize="15" DockPanel.Dock="Top" TextAlignment="Right" Margin="5 0 5 0" Text="{Binding ElementName=ErrorAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"></TextBlock>
+            <Border BorderBrush="Red" BorderThickness="2">
+                <AdornedElementPlaceholder x:Name="ErrorAdorner" />
+            </Border>
+        </DockPanel>
+    </ControlTemplate>
+
     <Style x:Key="OctideInputTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MahApps.Styles.TextBox}" >
         <Setter Property="Focusable" Value="True"/>
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource validationTemplate}" />
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="true">
                 <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}" />
@@ -180,6 +190,9 @@
                 <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding CanBeDefault}" Value="False" >
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsDefault}" Value="True" >
                             <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                     </Style.Triggers>

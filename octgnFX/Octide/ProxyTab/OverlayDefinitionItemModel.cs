@@ -97,6 +97,7 @@ namespace Octide.ItemModel
             {
                 _def.src = Asset.SelectedAsset?.FullPath;
                 RaisePropertyChanged("Asset");
+                RaisePropertyChanged("Icon");
                 RaisePropertyChanged("Width");
                 RaisePropertyChanged("Height");
             }

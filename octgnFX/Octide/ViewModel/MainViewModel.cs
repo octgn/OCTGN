@@ -84,6 +84,7 @@ namespace Octide.ViewModel
                         ViewModelLocator.GameLoader.SaveGame();
                         break;
                     case MessageBoxResult.No:
+                        ViewModelLocator.GameLoader.NeedsSave = false;
                         break;
                 }
             }

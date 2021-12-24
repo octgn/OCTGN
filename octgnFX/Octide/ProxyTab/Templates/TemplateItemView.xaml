@@ -61,7 +61,7 @@
             <Border Background="{StaticResource BlendBrushYellow}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel>
                     <TextBlock Text="PROPERTY" FontWeight="Bold" />
-                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding PropertyTabViewModel.ProxyItems,  Source={StaticResource Locator}}" SelectedValue="{Binding ActiveProperty, Mode=TwoWay}" />
                 </StackPanel>
             </Border>
         </ControlTemplate>
@@ -78,7 +78,7 @@
             <Border Background="{StaticResource BlendBrushPink}" Style="{StaticResource OctideTreeViewItemStyle}" >
                 <StackPanel>
                     <TextBlock Text="IF" FontWeight="Bold" />
-                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding PropertyTabViewModel.ProxyItems,  Source={StaticResource Locator}}" SelectedValue="{Binding Property, Mode=TwoWay}" />
                     <TextBlock Text="value:" />
                     <TextBox Text="{Binding Value}" />
                     <TextBlock Text="exact:" />
@@ -90,7 +90,7 @@
             <Border Background="{StaticResource BlendBrushRed}" Style="{StaticResource OctideTreeViewItemStyle}">
                 <StackPanel>
                     <TextBlock Text="ELSE IF" FontWeight="Bold" />
-                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding PropertyTabViewModel.ProxyItems,  Source={StaticResource Locator}}" SelectedValue="{Binding Property, Mode=TwoWay}" />
                     <TextBlock Text="value:" />
                     <TextBox Text="{Binding Value}" />
                     <TextBlock Text="exact:" />
@@ -110,7 +110,7 @@
                 <StackPanel >
                     <TextBlock Text="SWITCH" FontWeight="Bold" />
                     <TextBlock Text="property:" />
-                    <ComboBox ItemsSource="{Binding CustomProperties}" SelectedValue="{Binding Property, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{Binding PropertyTabViewModel.ProxyItems,  Source={StaticResource Locator}}" SelectedValue="{Binding Property, Mode=TwoWay}" />
                     <Button Content="+Case" Background="{StaticResource BlendBrushGreen}" Command="{Binding AddCaseCommand}" />
                     <Button Content="+Default" Background="{StaticResource  BlendBrushBrown}" Visibility="{Binding CanAddDefault}" Command="{Binding AddDefaultCommand}" />
                 </StackPanel>
@@ -327,7 +327,7 @@
                                                 <TextBlock Text="MATCH" FontWeight="Bold" />
                                                 <TextBox Text="{Binding Value}" Width="100" />
                                                 <TextBlock Text="to" />
-                                                <ComboBox ItemsSource="{Binding CustomProperties}"
+                                                <ComboBox ItemsSource="{Binding PropertyTabViewModel.ProxyItems,  Source={StaticResource Locator}}"
                                                           DisplayMemberPath="Name" SelectedValue="{Binding Property}" />
                                             </StackPanel>
                                         </Border>
