@@ -323,6 +323,13 @@ namespace Octgn.Play
             OnCardsChanged();
         }
 
+        internal bool IsVisibleTo(Player player)
+        {
+            return Visibility == GroupVisibility.Everybody
+                || (Visibility == GroupVisibility.Undefined && this is Table)
+                || Viewers.Contains(player);
+        }
+
         internal void OnShuffled()
         {
             // Remove player looking at the cards, if any (doesn't remove the need to remove those from the dictionary!)

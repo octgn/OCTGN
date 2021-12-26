@@ -43,6 +43,8 @@ namespace Octgn.Play.Gui
 
         public double HandDensity { get; set; } = 0;
 
+        public Pile Pile { get; set; }
+
         #region Dependency properties
 
         private static readonly DependencyProperty XPositionProperty =
@@ -285,24 +287,32 @@ namespace Octgn.Play.Gui
 
                 child.Arrange(new Rect(new Point(xposition, 0), child.DesiredSize));
 
-                // Perform layout to layout animation                
-                double oldPos = GetXPosition(child);
-                if (!double.IsNaN(oldPos) && Math.Abs(xposition - oldPos) > 2)
+                if (Pile?.IsVisibleTo(Player.LocalPlayer) == true)
                 {
-                    var translate2 = (TranslateTransform) group.Children[2];
-                    TimeSpan delay = TimeSpan.FromSeconds(animationDelay);
-                    Animation.FillBehavior = FillBehavior.Stop;
-                    Animation.From = oldPos - xposition;
-                    Animation.To = 0;
-                    Animation.BeginTime = delay;
-                    StaticAnimation.To = StaticAnimation.From = Animation.From;
-                    StaticAnimation.Duration = delay;
-                    if (animationDelay > 0)
-                        translate2.BeginAnimation(TranslateTransform.XProperty, StaticAnimation);
-                    translate2.BeginAnimation(TranslateTransform.XProperty, Animation, HandoffBehavior.Compose);
-                    Animation.From = null;
-                    Animation.BeginTime = TimeSpan.Zero;
-                    animationDelay += perChildDelay;
+                    // We only perform the animation for the local player if we know they can see the pile.
+                    // This is to prevent players from noticing which card in a hidden pile was moved.
+                    // See https://github.com/octgn/OCTGN/issues/1875 for more details.
+                    // (While it shouldn't happen, it's technically possible that Pile is null – we treat it as if the player couldn't see it).
+
+                    // Perform layout to layout animation
+                    double oldPos = GetXPosition(child);
+                    if (!double.IsNaN(oldPos) && Math.Abs(xposition - oldPos) > 2)
+                    {
+                        var translate2 = (TranslateTransform) group.Children[2];
+                        TimeSpan delay = TimeSpan.FromSeconds(animationDelay);
+                        Animation.FillBehavior = FillBehavior.Stop;
+                        Animation.From = oldPos - xposition;
+                        Animation.To = 0;
+                        Animation.BeginTime = delay;
+                        StaticAnimation.To = StaticAnimation.From = Animation.From;
+                        StaticAnimation.Duration = delay;
+                        if (animationDelay > 0)
+                            translate2.BeginAnimation(TranslateTransform.XProperty, StaticAnimation);
+                        translate2.BeginAnimation(TranslateTransform.XProperty, Animation, HandoffBehavior.Compose);
+                        Animation.From = null;
+                        Animation.BeginTime = TimeSpan.Zero;
+                        animationDelay += perChildDelay;
+                    }
                 }
                 SetXPosition(child, xposition);
 

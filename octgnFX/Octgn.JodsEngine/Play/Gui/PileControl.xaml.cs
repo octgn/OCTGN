@@ -201,10 +201,12 @@ namespace Octgn.Play.Gui
             return list.ItemContainerGenerator;
         }
 
-        private void SaveFanPanel(object sender, RoutedEventArgs e)
+        private void FanPanelLoaded(object sender, RoutedEventArgs e)
         {
             _fanPanel = (FanPanel)sender;
-            if ((group as Pile).ViewState == GroupViewState.Expanded)
+            Pile pile = Group as Pile;
+            _fanPanel.Pile = pile;
+            if (pile.ViewState == GroupViewState.Expanded)
                 UpdateDensity();
             else
                 Collapse();
