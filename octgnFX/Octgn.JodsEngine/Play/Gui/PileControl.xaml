@@ -48,7 +48,7 @@
                 <ItemsControl x:Name="list" ItemsSource="{Binding Cards}" Grid.Row="0" Focusable="False">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <gui:FanPanel Loaded="SaveFanPanel" />
+                            <gui:FanPanel Loaded="FanPanelLoaded" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
