@@ -5,6 +5,7 @@
 using log4net;
 using Octgn.Communication;
 using Octgn.Core;
+using Octgn.Core.DataManagers;
 using Octgn.Library;
 using Octgn.Library.Exceptions;
 using Octgn.Online.Hosting;
@@ -50,8 +51,41 @@ namespace Octgn
             return LaunchJodsEngine(args);
         }
 
-        public void HostGame(int? hostPort, Guid? gameId) {
-            throw new UserMessageException("Haven't implemented Table mode yet.");
+        public Task<bool> HostGame(int? hostPort, Guid? gameId)
+        {
+            if (gameId == null)
+                throw new UserMessageException("Cannot launch jodsengine from command line: Game GUID is missing.");
+            var game = GameManager.Get().GetById((Guid)gameId);
+            if (game == null)
+                throw new UserMessageException("Cannot launch jodsengine from command line: Game {0} is not installed.");
+
+            var user = Program.LobbyClient?.User
+                ?? new User(Guid.NewGuid().ToString(), Prefs.Username);
+
+            var hostedGame = new HostedGame()
+            {
+                Id = Guid.NewGuid(),
+                Name = Prefs.LastRoomName ?? "",
+                Password = "",
+                HostUser = user,
+                GameName = game.Name,
+                GameId = game.Id,
+                GameVersion = game.Version.ToString(),
+                HostAddress = $"0.0.0.0:{Prefs.LastLocalHostedGamePort}",
+                OctgnVersion = typeof(Server.Server).Assembly.GetName().Version.ToString(),
+                Spectators = true,
+                DateCreated = DateTimeOffset.Now,
+                
+            };
+
+            var args = "-h ";
+            if (CommandLineHandler.Instance.DevMode)
+                args += "-x ";
+            new HostedGameProcess(hostedGame, X.Instance.Debug, true).Start();
+            args += $"-u \"{Prefs.Nickname}\" ";
+            args += "-k \"" + HostedGame.Serialize(hostedGame) + "\"";
+
+            return LaunchJodsEngine(args);
         }
 
         public Task<bool> LaunchDeckEditor(string deckPath = null) {
