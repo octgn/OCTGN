@@ -641,13 +641,13 @@ namespace Octgn.Play
             OnPropertyChanged("AutomationHelpText");
         }
 
-        public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
+        public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "", bool ignoreOverride = false)
         {
             if (_type.Model == null) return defaultReturn;
             if (name.Equals("Id", scompare)) return _type.Model.Id;
 
             //check if python has changed the default property value
-            if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(alternate))
+            if (!ignoreOverride && PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(alternate))
             {
                 return PropertyOverrides[name][alternate];
             }

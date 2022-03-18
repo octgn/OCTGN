@@ -297,7 +297,8 @@ class Card(object):
 		_api.CardSwitchTo(self._id,alt)
 	@property
 	def alternates(self): return _api.CardAlternates(self._id)
-	def alternateProperty(self,alt,prop): return _api.CardAlternateProperty(self._id,alt,prop)
+	def alternateProperty(self,alt,prop): return _api.CardProperty(self._id,alt,prop)
+	def defaultProperty(self, alt, prop): return _api.CardProperty(self._id,alt,prop,True)
 	@property
 	def model(self): return _api.CardModel(self._id)
 	@property
