@@ -1,1 +1,1 @@
-
+new API  card.defaultProperty(alt, property), returns the card's original defined property value (before it was overwritten by python)

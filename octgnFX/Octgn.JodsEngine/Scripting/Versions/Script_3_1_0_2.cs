@@ -551,12 +551,12 @@ namespace Octgn.Scripting.Versions
             return value != null;
         }
 
-        public object CardAlternateProperty(int id, string alt, string property)
+        public object CardProperty(int id, string alt, string property, bool ignoreOverride = false)
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
 
-            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
+            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt, ignoreOverride);
             if (value is RichTextPropertyValue richText) return richText.ToString();
             return value;
         }
