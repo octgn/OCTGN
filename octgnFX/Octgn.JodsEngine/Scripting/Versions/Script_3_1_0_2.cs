@@ -546,7 +546,6 @@ namespace Octgn.Scripting.Versions
             Card c = Card.Find(id);
             if (alt == null)
                 alt = c.Alternate();
-            property = property.ToLowerInvariant();
             var value = c.GetProperty(property, null, StringComparison.InvariantCultureIgnoreCase, alt);
             return value != null;
         }
@@ -554,11 +553,39 @@ namespace Octgn.Scripting.Versions
         public object CardProperty(int id, string alt, string property, bool ignoreOverride = false)
         {
             Card c = Card.Find(id);
-            property = property.ToLowerInvariant();
 
             var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt, ignoreOverride);
             if (value is RichTextPropertyValue richText) return richText.ToString();
             return value;
+        }
+
+        public void CardSetProperty(int cardId, string name, string val)
+        {
+            var card = Card.Find(cardId);
+            if (card == null)
+            {
+                Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
+                return;
+            }
+            QueueAction(() =>
+            {
+                card.SetProperty(name, val);
+            });
+        }
+
+        public void CardResetProperties(int cardId)
+        {
+            var card = Card.Find(cardId);
+            if (card == null)
+            {
+                Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
+                return;
+            }
+
+            QueueAction(() =>
+            {
+                card.ResetProperties();
+            });
         }
 
         public int CardOwner(int id)
@@ -930,35 +957,6 @@ namespace Octgn.Scripting.Versions
                 if (card == null)
                     return;
                 card.SetAnchored(false, anchored);
-            });
-        }
-
-        public void CardSetProperty(int cardId, string name, string val)
-        {
-            var card = Card.Find(cardId);
-            if (card == null)
-            {
-                Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
-                return;
-            }
-            QueueAction(() =>
-            {
-                card.SetProperty(name, val);
-            });
-        }
-
-        public void CardResetProperties(int cardId)
-        {
-            var card = Card.Find(cardId);
-            if (card == null)
-            {
-                Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
-                return;
-            }
-
-            QueueAction(() =>
-            {
-                card.ResetProperties();
             });
         }
 
