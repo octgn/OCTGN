@@ -643,6 +643,8 @@ namespace Octgn.Play
 
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "", bool ignoreOverride = false)
         {
+            name = name.ToLowerInvariant();
+
             if (_type.Model == null) return defaultReturn;
             if (name.Equals("Id", scompare)) return _type.Model.Id;
 
@@ -666,6 +668,8 @@ namespace Octgn.Play
 
         public void SetProperty(string name, string val, bool notifyServer = true)
         {
+            name = name.ToLowerInvariant();
+
             if(PropertyOverrides.ContainsKey(name) == false)
                 PropertyOverrides.Add(name, new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase));
             PropertyOverrides[name][Alternate()] = val;
