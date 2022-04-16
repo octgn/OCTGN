@@ -521,7 +521,7 @@ namespace Octgn.Play
             get
             {
                 var ret = new Dictionary<PropertyDef, object>();
-                if (FaceUp && _type.Model != null)
+                if (LocalPlayerCanSee && _type.Model != null)
                 {
                     foreach (var gameProperty in Program.GameEngine.Definition.CardProperties.Values)
                     {
