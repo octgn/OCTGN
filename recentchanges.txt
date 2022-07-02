@@ -1,3 +1,4 @@
 new API  card.defaultProperty(alt, property), returns the card's original defined property value (before it was overwritten by python)
 fixed bug where overwritten card properties are broken after a player disconnects
 extended tooltip data now shows for peeked facedown cards
+fixed error message when trying to log in for the first time
