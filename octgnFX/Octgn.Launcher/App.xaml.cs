@@ -81,7 +81,7 @@ namespace Octgn.Launcher
                     return;
                 }
 
-                if (!IsDotNet47OrLaterInstalled()) {
+                if (!IsDotNet48OrLaterInstalled()) {
                     Log.Warn(".net 4.8 is not installed.");
 
                     var result = MessageBox.Show($"OCTGN requires .net 4.8 to be installed.{Environment.NewLine}{Environment.NewLine}Press 'Yes' to download .net", ".Net Missing", MessageBoxButton.YesNo, MessageBoxImage.Stop);
@@ -165,7 +165,7 @@ namespace Octgn.Launcher
             }
         }
 
-        private static bool IsDotNet47OrLaterInstalled() {
+        private static bool IsDotNet48OrLaterInstalled() {
             Log.Info("Getting .net from registry");
 
             try {
