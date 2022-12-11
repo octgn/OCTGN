@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.10</ProductVersion>
-    <ProjectGuid>c692cecb-141b-402e-abb4-210510caaa21</ProjectGuid>
-    <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>Octgn.Online.GameService.InstallerLib</OutputName>
-    <OutputType>Library</OutputType>
-    <DefineConstants>HarvestPath=..\Octgn.Online.GameService\bin\$(Configuration)</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;HarvestPath=..\Octgn.Online.GameService\bin\$(Configuration)</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>HarvestPath=..\Octgn.Online.GameService\bin\$(Configuration)</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="EventSource.wxs" />
-    <Compile Include="HeatGeneratedFileList.wxs" />
-    <Compile Include="Product.wxs" />
-  </ItemGroup>
-  <ItemGroup>
-    <WixExtension Include="WixUtilExtension">
-      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
-      <Name>WixUtilExtension</Name>
-    </WixExtension>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="HeatGeneratedFileList.xslt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Octgn.Online.GameService\Octgn.Online.GameService.csproj">
-      <Name>Octgn.Online.GameService</Name>
-      <Project>{48f6c9e8-f8b7-4e51-9d0f-0b309252ed6d}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
-  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
-    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
-  </Target>
-  <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug'">
-    <HeatDirectory Directory="..\Octgn.Online.GameService\bin\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="OOGS__HeatGenerated" DirectoryRefId="Octgn.Online.GameService.InstallDirectory" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" Transforms="HeatGeneratedFileList.xslt" />
-  </Target>
-  <!--
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+		<ProductVersion>3.10</ProductVersion>
+		<ProjectGuid>c692cecb-141b-402e-abb4-210510caaa21</ProjectGuid>
+		<SchemaVersion>2.0</SchemaVersion>
+		<OutputName>Octgn.Online.GameService.InstallerLib</OutputName>
+		<OutputType>Library</OutputType>
+		<DefineConstants>HarvestPath=..\Octgn.Online.GameService\bin\$(Configuration)</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+		<DefineConstants>Debug;HarvestPath=..\Octgn.Online.GameService\bin\$(Configuration)</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+		<DefineConstants>HarvestPath=..\Octgn.Online.GameService\bin\$(Configuration)</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="EventSource.wxs" />
+		<Compile Include="HeatGeneratedFileList.wxs" />
+		<Compile Include="Product.wxs" />
+	</ItemGroup>
+	<ItemGroup>
+		<WixExtension Include="WixUtilExtension">
+			<HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+			<Name>WixUtilExtension</Name>
+		</WixExtension>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="HeatGeneratedFileList.xslt" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Octgn.Online.GameService\Octgn.Online.GameService.csproj">
+			<Name>Octgn.Online.GameService</Name>
+			<Project>{48f6c9e8-f8b7-4e51-9d0f-0b309252ed6d}</Project>
+			<Private>True</Private>
+			<DoNotHarvest>True</DoNotHarvest>
+			<RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+			<RefTargetDir>INSTALLFOLDER</RefTargetDir>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+	<Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+		<Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+	</Target>
+	<Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug'">
+		<HeatDirectory Directory="..\Octgn.Online.GameService\bin\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="OOGS__HeatGenerated" DirectoryRefId="Octgn.Online.GameService.InstallDirectory" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" Transforms="HeatGeneratedFileList.xslt" RunAsSeparateProcess="$(RunWixToolsOutOfProc)" />
+	</Target>
+	<!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.
 	<Target Name="BeforeBuild">
