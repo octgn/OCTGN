@@ -94,7 +94,8 @@
                 }
 
                 if (desktopContext) {
-                    DbContext.SetContext(new DesktopIntegration.DesktopDbContext());
+                    throw new UserMessageException("Desktop integration not currently implemented");
+                    //DbContext.SetContext(new DesktopIntegration.DesktopDbContext());
                 }
 
                 if (tableOnly) {
