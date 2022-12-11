@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using Exceptionless.Json;
 using log4net;
-using NuGet;
+using Newtonsoft.Json;
 
 namespace Octgn.Tabs.ChallengeBoards
 {

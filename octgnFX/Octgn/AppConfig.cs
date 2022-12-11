@@ -19,7 +19,6 @@ namespace Octgn
         public static readonly int GameFeedTimeoutSeconds;
         public static readonly bool UseGamePackageManagement;
         public static readonly string StaticWebsitePath;
-        public static readonly string NewsFeedPath;
 
         static AppConfig()
         {
@@ -48,8 +47,6 @@ namespace Octgn
                 UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
             else
                 UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
-
-            NewsFeedPath = ConfigurationManager.AppSettings["NewsFeedPath"];
 
             Log.Info("Set AppConfig");
         }
