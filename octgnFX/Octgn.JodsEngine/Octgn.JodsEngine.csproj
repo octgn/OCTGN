@@ -1159,10 +1159,6 @@
       <Project>{AB487BD2-9CF7-4C4E-A938-5B9FEE4C4E76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.Sdk\Octgn.Sdk.csproj">
-      <Project>{5c50b9df-b3a0-4746-a110-26b8e5b059c4}</Project>
-      <Name>Octgn.Sdk</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
       <Name>Octgn.Server</Name>
