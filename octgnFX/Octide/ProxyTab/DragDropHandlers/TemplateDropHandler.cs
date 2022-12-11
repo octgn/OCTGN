@@ -13,6 +13,8 @@ namespace Octide.ProxyTab.Handlers
     public class TemplateMainDropHandler : IDropTarget
     {
         public bool IsOverlayHandler { get; set; }
+        public void DragEnter(IDropInfo dropInfo) { }
+        public void DragLeave(IDropInfo dropInfo) { }
 
         public void DragOver(IDropInfo dropInfo)
         {

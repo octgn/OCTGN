@@ -348,6 +348,9 @@ namespace Octide.ViewModel
     
     public class CardsizeDropHandler : IDropTarget
     {
+        public void DragEnter(IDropInfo dropInfo) {}
+        public void DragLeave(IDropInfo dropInfo) {}
+
         public void DragOver(IDropInfo dropInfo)
         {
             dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
@@ -362,6 +365,9 @@ namespace Octide.ViewModel
 
     public class TableDropHandler : IDropTarget
     {
+        public void DragEnter(IDropInfo dropInfo) { }
+        public void DragLeave(IDropInfo dropInfo) { }
+
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
             if (dropInfo.Data is SizeItemModel)

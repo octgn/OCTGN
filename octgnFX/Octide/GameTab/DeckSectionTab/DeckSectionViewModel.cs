@@ -74,6 +74,14 @@ namespace Octide.ViewModel
 
     public class DeckSectionDropHandler : IDropTarget
     {
+        public void DragEnter(IDropInfo dropInfo) {
+            
+        }
+
+        public void DragLeave(IDropInfo dropInfo) {
+            
+        }
+
         public void DragOver(IDropInfo dropInfo)
         {
             if (dropInfo.DragInfo.VisualSource != dropInfo.VisualTarget)

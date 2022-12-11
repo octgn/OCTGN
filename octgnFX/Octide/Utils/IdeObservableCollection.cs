@@ -99,6 +99,9 @@ namespace Octide
         {
             DragDrop.DefaultDropHandler.Drop(dropInfo);
         }
+
+        public void DragEnter(IDropInfo dropInfo) { }
+        public void DragLeave(IDropInfo dropInfo) { }
     }
 
 

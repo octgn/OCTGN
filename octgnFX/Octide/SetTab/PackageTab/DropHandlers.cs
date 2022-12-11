@@ -46,5 +46,8 @@ namespace Octide.SetTab.ItemModel
         {
             DragDrop.DefaultDropHandler.Drop(dropInfo);
         }
+
+        public void DragEnter(IDropInfo dropInfo) { }
+        public void DragLeave(IDropInfo dropInfo) { }
     }
 }
