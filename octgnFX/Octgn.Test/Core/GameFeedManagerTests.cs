@@ -56,7 +56,7 @@ namespace Octgn.Test.Core
             GameFeedManager.SingletonContext = A.Fake<IGameFeedManager>( x => x.Wrapping( cur ) );
             A.CallTo( () => GameFeedManager.SingletonContext.ValidateFeedUrl( A<string>._, A<string>._, A<string>._ ) ).Returns( FeedValidationResult.Valid );
             GameFeedManager.Get().AddFeed( "asdfASDFasdfASDF", "asdf", null, null );
-            A.CallTo( () => GameFeedManager.SingletonContext.ValidateFeedUrl( A<string>._, A<string>._, A<string>._ ) ).MustHaveHappened( Repeated.Exactly.Once );
+            A.CallTo( () => GameFeedManager.SingletonContext.ValidateFeedUrl( A<string>._, A<string>._, A<string>._ ) ).MustHaveHappened( 1, Times.Exactly );
             GameFeedManager.SingletonContext = cur;
 
             FeedProvider.SingletonContext = curFakeFeedProvider;
@@ -140,7 +140,7 @@ namespace Octgn.Test.Core
                 fakeGf.AddFeed( "asdf", "asdf", null, null );
 
                 // Make sure that SimpleConfig.AddFeed was called once
-                A.CallTo( () => fakeFeedProvider.AddFeed( A<NamedUrl>._ ) ).MustHaveHappened( Repeated.Exactly.Once );
+                A.CallTo( () => fakeFeedProvider.AddFeed( A<NamedUrl>._ ) ).MustHaveHappened( 1, Times.Exactly );
                 Assert.Pass();
             } finally {
                 FeedProvider.SingletonContext = curFeedProvider;
@@ -160,7 +160,7 @@ namespace Octgn.Test.Core
 
                 var res = GameFeedManager.Get().GetFeeds();
                 Assert.IsNull( res );
-                A.CallTo( () => fake.AllFeeds ).MustHaveHappened( Repeated.Exactly.Once );
+                A.CallTo( () => fake.AllFeeds ).MustHaveHappened( 1, Times.Exactly );
             } finally {
                 FeedProvider.SingletonContext = curFeedProvider;
             }
@@ -177,7 +177,7 @@ namespace Octgn.Test.Core
 
                 GameFeedManager.Get().RemoveFeed( "asdf" );
 
-                A.CallTo( () => fake.RemoveFeed( A<NamedUrl>._ ) ).MustHaveHappened( Repeated.Exactly.Once );
+                A.CallTo( () => fake.RemoveFeed( A<NamedUrl>._ ) ).MustHaveHappened(1, Times.Exactly);
             } finally {
                 FeedProvider.SingletonContext = curFeedProvider;
             }
