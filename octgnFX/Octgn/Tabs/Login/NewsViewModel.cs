@@ -1,5 +1,5 @@
-﻿using Exceptionless.Json;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Net;

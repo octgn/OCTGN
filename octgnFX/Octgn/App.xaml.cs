@@ -2,26 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
 using System.Windows;
-using Exceptionless;
-using log4net.Repository.Hierarchy;
 using Octgn.Library;
 using System.Windows.Markup;
 using System.Windows.Threading;
-using Octgn.Core;
 using Octgn.Core.Util;
 using Octgn.Library.Exceptions;
 
 using log4net;
-using Octgn.Controls;
-using Octgn.Core.Plugin;
-using Octgn.Library.Plugin;
 using Octgn.Utils;
 using Octgn.Windows;
 using Octgn.Communication;
@@ -45,7 +37,6 @@ namespace Octgn
             Debug.WriteLine(bi);
             GlobalContext.Properties["version"] = Const.OctgnVersion;
             GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
-            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
 
             int i = 0;
             foreach (var a in e.Args)
@@ -99,122 +90,11 @@ namespace Octgn
                 Log.Warn("Error checking for test mode", ex);
             }
 
-            ExceptionlessClient.Default.Register(false);
-            ExceptionlessClient.Default.Configuration.IncludePrivateInformation = true;
-            ExceptionlessClient.Default.SubmittingEvent += (sender, args) =>
-            {
-                if (X.Instance.Debug)
-                {
-                    args.Cancel = true;
-                    return;
-                }
-                if (args.IsUnhandledError)
-                {
-                    var exception = args.PluginContextData.GetException();
-                    if (exception is InvalidOperationException)
-                    {
-                        bool gotit = exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)
-                            || exception.Message.StartsWith("El objeto Application se va a cerrar.", StringComparison.CurrentCultureIgnoreCase);
-                        gotit = gotit ||
-                                (exception.Message.ToLower().Contains("system.windows.controls.grid") &&
-                                 exception.Message.ToLower().Contains("row"));
-                        args.Cancel = gotit;
-                        return;
-                    }
-                    if (exception is BadImageFormatException)
-                    {
-                        if (exception.Message.Contains("Could not load file or assembly") && exception.Message.Contains("Microsoft.Dynamic"))
-                        {
-                            args.Cancel = true;
-                            TopMostMessageBox.Show("OCTGN is installed improperly and must close. Please try reinstalling OCTGN. If that doesn't work, you can find help at OCTGN.net", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-                    }
-                    var src = exception.Source;
-                    try
-                    {
-                        foreach (var plug in PluginManager.GetPlugins<IDeckBuilderPlugin>())
-                        {
-                            var pt = plug.GetType();
-                            var pn = pt.Assembly.GetName();
-                            if (src == pn.Name)
-                            {
-                                args.Cancel = true;
-                                return;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Check against plugins error", ex);
-                    }
-                }
-                X.Instance.Try(() =>
-                {
-                    args.Event.SetUserIdentity(Prefs.Username);
-                });
-                args.Event.AddObject(Config.Instance.Paths, "Registered Paths");
-                using (var cf = new ConfigFile(Config.Instance.Paths.ConfigDirectory))
-                {
-                    args.Event.AddObject(cf.ConfigData, "Config File");
-                }
-                args.Event.AddObject(e.Args, "Startup Arguments");
-
-                X.Instance.Try(() =>
-                {
-                    var hierarchy = LogManager.GetRepository() as Hierarchy;
-                    if (hierarchy != null)
-                    {
-                        var mappender = hierarchy.Root.GetAppender("LimitedMemoryAppender") as LimitedMemoryAppender;
-                        if (mappender != null)
-                        {
-                            var items = new List<string>();
-
-                            foreach (var ev in mappender.GetEvents())
-                            {
-                                using (var writer = new StringWriter())
-                                {
-                                    mappender.Layout.Format(writer, ev);
-                                    items.Add(writer.ToString());
-
-                                }
-                            }
-
-                            args.Event.AddObject(items, "Recent Log Entries");
-                        }
-
-                    }
-                });
-
-                if (Program.LobbyClient != null)
-                {
-                    var lc = Program.LobbyClient;
-                    var lobbyObject = new
-                    {
-                        Connected = lc.IsConnected,
-                        Me = lc.User
-                    };
-                }
-            };
-
             Signal.OnException += Signal_OnException;
-            if (X.Instance.Debug)
-            {
-                AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
-                ExceptionlessClient.Default.Configuration.DefaultTags.Add("DEBUG");
-            }
-            else
+            if (!X.Instance.Debug)
             {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                 Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
-                if (isTestRelease)
-                {
-                    ExceptionlessClient.Default.Configuration.DefaultTags.Add("TEST");
-                }
-                else
-                {
-                    ExceptionlessClient.Default.Configuration.DefaultTags.Add("LIVE");
-                }
             }
 
 
@@ -228,19 +108,6 @@ namespace Octgn
             Log.Debug("Base called.");
             Program.Start(e.Args, isTestRelease);
 
-        }
-
-        private void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
-        {
-            //Log.InfoFormat("LOADED ASSEMBLY: {0} - {1}", args.LoadedAssembly.FullName, args.LoadedAssembly.IsDynamic == false ? args.LoadedAssembly.Location : "NOLOCATIONDYNAMIC");
-        }
-
-        private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
-        {
-            //if (X.Instance.Debug)
-            //{
-            //    if (Program.GameMess != null && Program.GameEngine != null) Program.GameMess.Warning(e.Exception.Message + "\n" + e.Exception.StackTrace);
-            //}
         }
 
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -317,7 +184,6 @@ namespace Octgn
         protected override void OnExit(ExitEventArgs e)
         {
             //X.Instance.Try(PlayDispatcher.Instance.Dispose);
-            ExceptionlessClient.Default.Shutdown();
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)
