@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,16 +25,16 @@ namespace Octgn.Tabs.Login
             if (!this.IsInDesignMode())
             {
                 LoginVM = new LoginTabViewModel();
-         //       this.Loaded += RefreshNews_EventCallback;
+                Loaded += RefreshNews_EventCallback;
             }
             InitializeComponent();
 
             if (this.IsInDesignMode()) return;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath);
-            this.labelForgot.MouseLeftButtonUp +=
+            labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath);
+            labelForgot.MouseLeftButtonUp +=
                 (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath);
-            this.labelSubscribe.MouseLeftButtonUp += delegate
+            labelSubscribe.MouseLeftButtonUp += delegate
                 {
                     var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
                     if (url != null)
@@ -44,13 +43,13 @@ namespace Octgn.Tabs.Login
                     }
                 };
 
- //           var timer = new DispatcherTimer(TimeSpan.FromMinutes(2), DispatcherPriority.Normal, RefreshNews_EventCallback, Dispatcher);
- //           timer.Start();
+            var timer = new DispatcherTimer(TimeSpan.FromMinutes(2), DispatcherPriority.Normal, RefreshNews_EventCallback, Dispatcher);
+            timer.Start();
         }
 
- //       private async void RefreshNews_EventCallback(object sender, EventArgs e) {
- //           await LoginVM.News.Refresh();
- //       }
+        private async void RefreshNews_EventCallback(object sender, EventArgs e) {
+            await LoginVM.News.Refresh();
+        }
 
         #region UI Events
         private void Button1Click(object sender, RoutedEventArgs e) {
@@ -64,12 +63,6 @@ namespace Octgn.Tabs.Login
             }
         }
         #endregion
-
-        internal struct NewsFeedItem
-        {
-            public DateTime Time { get; set; }
-            public string Message { get; set; }
-        }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
             Program.LaunchUrl(e.Uri.ToString());

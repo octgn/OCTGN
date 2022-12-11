@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using log4net;
+﻿using log4net;
 using Octgn.Core;
 using Octgn.Extentions;
 using Octgn.Library.Localization;
@@ -85,7 +84,7 @@ namespace Octgn.Tabs.Login
             }
         }
 
-  //      public NewsViewModel News { get; } = new NewsViewModel();
+        public NewsViewModel News { get; } = new NewsViewModel();
 
         public LoginTabViewModel()
         {
