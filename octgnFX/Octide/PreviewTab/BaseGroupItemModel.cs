@@ -175,5 +175,13 @@ namespace Octide.ItemModel
             else
                 GongSolutions.Wpf.DragDrop.DragDrop.DefaultDropHandler.DragOver(dropInfo);
         }
+
+        public void DragEnter(IDropInfo dropInfo) {
+            
+        }
+
+        public void DragLeave(IDropInfo dropInfo) {
+            
+        }
     }
 }

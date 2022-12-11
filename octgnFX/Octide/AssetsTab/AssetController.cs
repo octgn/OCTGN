@@ -128,6 +128,15 @@ namespace Octide
     public class AssetButtonDropHandler : IDropTarget
     {
         public AssetController Controller { get; set; }
+
+        public void DragEnter(IDropInfo dropInfo) {
+            
+        }
+
+        public void DragLeave(IDropInfo dropInfo) {
+            
+        }
+
         public void DragOver(IDropInfo dropInfo)
         {
             try

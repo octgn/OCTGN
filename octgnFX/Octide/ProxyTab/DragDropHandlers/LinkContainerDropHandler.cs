@@ -13,6 +13,10 @@ namespace Octide.ProxyTab.Handlers
     public class TemplateLinkContainerDropHandler : IDropTarget
     {
         public OverlayLinkContainer Container { get; set; }
+
+        public void DragEnter(IDropInfo dropInfo) { }
+        public void DragLeave(IDropInfo dropInfo) { }
+
         public void DragOver(IDropInfo dropInfo)
         {
             if (!(dropInfo.Data is IdeBaseItem sourceItem))  // prevents foreign objects from dropping in

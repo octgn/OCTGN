@@ -78,6 +78,9 @@ namespace Octide.SetTab.ItemModel
             Messenger.Default.Register<CardSizeChangedMesssage>(this, action => CardSizeChanged(action));
         }
 
+        public void DragEnter(IDropInfo dropInfo) { }
+        public void DragLeave(IDropInfo dropInfo) { }
+
         public void CustomPropertyChanged(CustomPropertyChangedMessage message)
         {
             switch (message.Action)
