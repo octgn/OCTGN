@@ -1,19 +1,15 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Exceptionless.Json;
+using GalaSoft.MvvmLight;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel.Syndication;
+using System.Net;
 using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace Octgn.Tabs.Login
 {
-
-    public class NewsViewModel : ViewModelBase
+    public sealed class NewsViewModel : ViewModelBase
     {
         private static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
 
         public NewsItemViewModel[] Items {
             get => _items;
@@ -21,73 +17,53 @@ namespace Octgn.Tabs.Login
         }
         private NewsItemViewModel[] _items;
 
-        private readonly Uri _newsUrl;
-
         public NewsViewModel() {
-            var builder = new UriBuilder(AppConfig.StaticWebsitePath);
-            builder.Path = "news.xml";
-
-            _newsUrl = builder.Uri;
         }
 
         public async Task Refresh() {
             try {
-                Items = (await GetNewsItems()).ToArray();
-
+                Items = await GetNewsItems();
             } catch (Exception e) {
                 Log.Warn(nameof(Refresh), e);
             }
         }
 
-        private async Task<IEnumerable<NewsItemViewModel>> GetNewsItems() {
-            var feed = await Task.Run(() => {
-                try
-                {
-                    using (var reader = XmlReader.Create(AppConfig.NewsFeedPath))
-                    {
-                        return SyndicationFeed.Load(reader);
-                    }
-                }
-                catch (Exception e)
-                {
-                    return new SyndicationFeed();
-                }
-            });
+        private async Task<NewsItemViewModel[]> GetNewsItems() {
+            var client = new WebClient();
 
-            var orderedItems = feed.Items.OrderByDescending(item => item.PublishDate);
+            var raw_str = await client.DownloadStringTaskAsync("https://gist.githubusercontent.com/kellyelton/3ab99bcff9bddfcd62982e321c055fad/raw/");
+
+            var news_items = JsonConvert.DeserializeObject<NewsItem[]>(raw_str);
+                    
+            var orderedItems = news_items.OrderByDescending(item => item.Timestamp);
 
             var latest10Updates = orderedItems.Take(10);
 
             var result = latest10Updates
-                .Select(item => new NewsItemViewModel(item));
+                .Select(item => new NewsItemViewModel(item.Timestamp, item.Text))
+                .ToArray()
+            ;
 
             return result;
         }
-    }
 
-    public class NewsItemViewModel : ViewModelBase
-    {
-        public DateTimeOffset Time {
-            get { return _time; }
-            set { base.Set(ref _time, value); }
-        }
-        private DateTimeOffset _time;
+/**
+[
+  {
+    "Text": "We\u0027ve launched a new version of Octgn. If you have any issues, please let us know!",
+    "Timestamp": "2021-08-26T16:18:02Z"
+  },
+  {
+    "Text": "False alarm, our update will be tomorrow instead, Aug 26th at 10am CST.",
+    "Timestamp": "2021-08-25T14:09:01Z"
+  }
+]
+**/
+        private class NewsItem
+        {
+            public string Text { get; set; }
 
-        public string Message {
-            get { return _message; }
-            set { base.Set(ref _message, value); }
-        }
-        private string _message;
-
-        public NewsItemViewModel(SyndicationItem item) {
-            Message = item.Title.Text;
-            Time = item.PublishDate;
-        }
-
-        public NewsItemViewModel(XElement element) {
-            Message = (string)element;
-            var dateAttribute = element.Attribute("date");
-            Time = DateTimeOffset.Parse(dateAttribute.Value);
+            public DateTimeOffset Timestamp { get; set; }
         }
     }
 }

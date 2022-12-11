@@ -329,6 +329,7 @@
     <Compile Include="Controls\RichTextBlock.cs" />
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
     <Compile Include="JodsEngineIntegration.cs" />
+    <Compile Include="Tabs\Login\NewsItemViewModel.cs" />
     <Compile Include="Utils\Converters\RichTextConverter.cs" />
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
