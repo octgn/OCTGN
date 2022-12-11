@@ -1,3 +1,7 @@
+#3.4.369.0
++ Fixed discord game invites
++ Added a toggle in the host controls to disable the discord invite link
+
 #3.4.362.0
 + fixed python not being able to read names of face-down cards
 
@@ -4013,6 +4017,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
