@@ -230,8 +230,12 @@ namespace Octgn
             }
 
             Log.Info("Loading Discord Integration");
+            try {
             Discord = new DiscordWrapper();
             Discord.Error += Discord_Error;
+            } catch (Exception ex) {
+                Log.Warn("Unable to load Discord integration", ex);
+            }
 
             Log.Info("Getting Launcher");
             Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
