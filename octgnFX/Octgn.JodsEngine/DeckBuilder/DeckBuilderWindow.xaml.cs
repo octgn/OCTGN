@@ -95,7 +95,7 @@ namespace Octgn.DeckBuilder
             LoadPlugins();
             SetupAndLoadDeck(deck);
             DeckChanged += OnCardsChanged;
-            Program.Discord.UpdateStatusInDeckEditor();
+            Program.Discord?.UpdateStatusInDeckEditor();
         }
 
         private void SetupAndLoadDeck(IDeck deck)

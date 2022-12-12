@@ -88,7 +88,9 @@ namespace Octgn.Tabs.Play
             broadcastListener.StartListening();
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.Disconnected += LobbyClient_OnDisconnect;
+            if (Program.Discord != null) {
             Program.Discord.JoinGame += Discord_JoinGame;
+            }
 
             Spectate = Prefs.SpectateGames;
             LoadingGame = true;
@@ -354,7 +356,9 @@ namespace Octgn.Tabs.Play
             broadcastListener.StopListening();
             broadcastListener.Dispose();
             Program.LobbyClient.Disconnected -= LobbyClient_OnDisconnect;
+            if (Program.Discord != null) {
             Program.Discord.JoinGame -= Discord_JoinGame;
+            }
             _refreshGameListTimer.IsEnabled = false;
         }
 
