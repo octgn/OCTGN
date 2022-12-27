@@ -1,3 +1,8 @@
+#3.4.371.0
++ Changed some sassy error messages
++ Added some more startup messages
++ More descriptive error message when the computer's clock isn't synced to the server time.
+
 #3.4.370.0
 
 #3.4.369.0
@@ -4019,6 +4024,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
