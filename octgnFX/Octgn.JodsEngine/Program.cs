@@ -281,8 +281,8 @@ namespace Octgn
 
         public static void DoCrazyException(Exception e, string action)
         {
-            var res = TopMostMessageBox.Show(action + Environment.NewLine + Environment.NewLine + "Are you going to be ok?", "Oh No!",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var res = TopMostMessageBox.Show(action, "Oh No!",
+                    MessageBoxButton.OK, MessageBoxImage.Stop);
         }
     }
 }
