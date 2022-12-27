@@ -160,9 +160,9 @@
             var minCreatedDate = DateTimeOffset.UtcNow.AddHours(-6);
             var maxCreatedDate = DateTimeOffset.UtcNow.AddMinutes(1);
             if (hostedGame.DateCreated.UtcDateTime <= minCreatedDate)
-                throw new UserMessageException($"Invalid game CreatedDate is too ancient {hostedGame.DateCreated}");
+                throw new UserMessageException($"Invalid game CreatedDate is too ancient {hostedGame.DateCreated}. Synchronize your clock in the Date/Time windows settings to fix this.");
             if (hostedGame.DateCreated.UtcDateTime >= maxCreatedDate)
-                throw new UserMessageException($"Invalid game CreatedDate is in the future {hostedGame.DateCreated}");
+                throw new UserMessageException($"Invalid game CreatedDate is in the future {hostedGame.DateCreated}. Synchronize your clock in the Date/Time windows settings to fix this.");
 
             if (hostedGame.Id == Guid.Empty)
                 throw new UserMessageException($"Game Id Empty");

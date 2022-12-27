@@ -1,1 +1,3 @@
-
+Changed some sassy error messages
+Added some more startup messages
+More descriptive error message when the computer's clock isn't synced to the server time.
