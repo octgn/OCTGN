@@ -13,8 +13,6 @@ namespace Octgn.Library
             _locker.EnterWriteLock();
             try
             {
-                if (!File.Exists(path))
-                    File.Create(path);
                 File.WriteAllText(path, pass);
             }
             finally
