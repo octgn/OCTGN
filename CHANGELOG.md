@@ -1,3 +1,9 @@
+#3.4.377.0
++ new API  card.defaultProperty(alt, property), returns the card's original defined property value (before it was overwritten by python)
++ fixed bug where overwritten card properties are broken after a player disconnects
++ extended tooltip data now shows for peeked facedown cards
++ fixed error message when trying to log in for the first time
+
 #3.4.371.0
 + Changed some sassy error messages
 + Added some more startup messages
@@ -4024,6 +4030,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
