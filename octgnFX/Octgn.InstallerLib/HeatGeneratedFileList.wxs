@@ -18,996 +18,1124 @@
                 <RemoveFolder Id="dir71F51BB8FFD7417900F6A6C18D636546" Directory="dir71F51BB8FFD7417900F6A6C18D636546" On="uninstall" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE5004356FE7CC543DB30277EBA335A30" Guid="{727AD899-208B-4529-BC07-F766C29AE7D0}">
+            <Component Id="cmpE5004356FE7CC543DB30277EBA335A30" Guid="{00D5640D-7835-4830-B801-ED47D6644FEE}">
                 <File Id="fil5159DCE9D857F88BB103745E425061C9" Source="$(var.HarvestPath)\CommonServiceLocator.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpAA976D0FC5F51A5E72C45F0626C92246" Guid="{9CCA50EA-A8A1-4C1E-842B-9FCB74381A7C}">
+            <Component Id="cmp669D7BFE3F77F8D3E757F78FE36D1217" Guid="{2270E3E8-0077-4578-BF6D-2193A7C00CCC}">
+                <File Id="fil01FD9A438453A336BFC7E1C098C52A86" Source="$(var.HarvestPath)\ControlzEx.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpAA976D0FC5F51A5E72C45F0626C92246" Guid="{4808074D-49EE-4C81-8F86-3F153412EEC9}">
                 <File Id="filA0EA556533910ED0C8B57AF781D4344D" Source="$(var.HarvestPath)\DotNetZip.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp2A914A3C20E06AF0AE43A1CC3CB157DC" Guid="{90F4A5E6-BDF5-4B82-8CCD-41CED5A64CA8}">
-                <File Id="fil6C868D4770F5D98656587D57E72499B1" Source="$(var.HarvestPath)\Elysium.dll" KeyPath="no" />
-                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
-            </Component>
-            <Component Id="cmp488D27FD7F12CC5B0CA2DA2EA3B41D0D" Guid="{5A462FBD-6895-4D62-8DBA-4A2701D2BE78}">
+            <Component Id="cmp488D27FD7F12CC5B0CA2DA2EA3B41D0D" Guid="{87C6B536-6B1D-4D91-B1AF-88B8C7B71C12}">
                 <File Id="fil185ABF006E89BA8A4D51B571C8563487" Source="$(var.HarvestPath)\GalaSoft.MvvmLight.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7DB90804D3EED1D9CFD3C64FFB5E4115" Guid="{E9945F52-3E0A-4813-A388-361675F0E7B3}">
+            <Component Id="cmp7DB90804D3EED1D9CFD3C64FFB5E4115" Guid="{9A758782-37E9-4891-A469-5893A0E02A2B}">
                 <File Id="fil767D16365A57A31EFB10B16A311C4A96" Source="$(var.HarvestPath)\GalaSoft.MvvmLight.Extras.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5B1CB9670A427F5E3F2553830607FC0D" Guid="{C4C932FA-4D4D-4960-9A4E-1FAAFBA54930}">
+            <Component Id="cmp5B1CB9670A427F5E3F2553830607FC0D" Guid="{F08B68B7-99E1-4CD0-ACB0-86D4C3E59701}">
                 <File Id="fil3D52221AD70477F85AC254E167A7BD0B" Source="$(var.HarvestPath)\GalaSoft.MvvmLight.Platform.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3E2C89676240A14A7164CA0B257A401F" Guid="{17E01A84-76AF-421C-B850-9155D4005570}">
+            <Component Id="cmp3E2C89676240A14A7164CA0B257A401F" Guid="{B5CD77F9-FB33-4B36-94D1-8CFF4C3A6EFD}">
                 <File Id="fil3DE3BA5197F12E35F960885AF9394DB6" Source="$(var.HarvestPath)\GongSolutions.WPF.DragDrop.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp0E16CB47C3F6B22E2FFDD2CC515AD1C8" Guid="{22775238-DD97-4FC5-B1B4-C940ACF48668}">
+            <Component Id="cmp0E16CB47C3F6B22E2FFDD2CC515AD1C8" Guid="{92C1BFC8-C1F1-4662-89DE-64BFE260A0D4}">
                 <File Id="fil6D3D5546417727749907FC9E19D97FF8" Source="$(var.HarvestPath)\ICSharpCode.AvalonEdit.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpD6D0ACC34D73AA09627602A91169D2DB" Guid="{BB78D629-34B6-4FB8-B9BA-317BE59F2689}">
+            <Component Id="cmpD6D0ACC34D73AA09627602A91169D2DB" Guid="{B93EDE10-2305-43CB-BEA3-5015A9B06C81}">
                 <File Id="fil2806E2EABDDD9EB65DA3C51FFB074B1D" Source="$(var.HarvestPath)\IronPython.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp39527D5EC1B0688C7C9D63712D499341" Guid="{81682F35-DED6-4A56-B84C-98A569369E94}">
+            <Component Id="cmp39527D5EC1B0688C7C9D63712D499341" Guid="{3B58E426-6A93-4FDA-83E1-6236DBDF1247}">
                 <File Id="filF01A5A4471C5C531E7F4BDEC9D26323B" Source="$(var.HarvestPath)\IronPython.Modules.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp78D15F6F5231CF1E19D525ABEE99FCA6" Guid="{232665EF-2F44-461A-8B4E-2E4D4889A32B}">
+            <Component Id="cmp78D15F6F5231CF1E19D525ABEE99FCA6" Guid="{DC555861-7591-48B3-BB41-28147C00013F}">
                 <File Id="fil83AC47640800262DC0ACAB230E1CC60B" Source="$(var.HarvestPath)\IronPython.SQLite.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp253E049275FEE4BD1697BDA6EA4C9417" Guid="{93FE1F9F-213C-4E82-B8EB-BD03E94F405C}">
+            <Component Id="cmp253E049275FEE4BD1697BDA6EA4C9417" Guid="{39C663E7-268B-4AF6-BE50-A7571F205097}">
                 <File Id="filB29DAEF7CB7926EF25FF78193684E66C" Source="$(var.HarvestPath)\IronPython.Wpf.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp13D6573EA8CF3F99F44BAE837E2771F0" Guid="{5713531A-7F90-4401-A919-7886F2893A6A}">
+            <Component Id="cmp13D6573EA8CF3F99F44BAE837E2771F0" Guid="{311624AC-C22A-4161-B427-702F341FB535}">
                 <File Id="fil2991F53D601CDF7142D0A9E1B42E116E" Source="$(var.HarvestPath)\log4net.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE395334EA0B9B925C1A69130E5678AF0" Guid="{F43561DC-86FB-4A63-9F61-C6A44158168D}">
+            <Component Id="cmpE395334EA0B9B925C1A69130E5678AF0" Guid="{A5C25909-BFE0-4F13-926C-D6E1E9CF29CC}">
                 <File Id="filA3AA19892B63F96ED05F28829FC89F94" Source="$(var.HarvestPath)\logging.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7254E72FE73F320AEB41601E41FB205C" Guid="{B9ED3F9B-20F3-4F6B-91D3-6771C1D781B2}">
+            <Component Id="cmp2AC41B9A3E9E58C9FAC717C515DD6534" Guid="{1687BB2B-2915-4365-905E-693741D4D3E2}">
+                <File Id="filC48A97D03FAF26C6CB0B00A73EBC747A" Source="$(var.HarvestPath)\MahApps.Metro.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp6ECE5161C032390B6D41F4669C9B2FBA" Guid="{D92C8A3B-97D8-40F3-BE88-37D202EB119B}">
+                <File Id="fil12A79ACDDBCCB205B2316C211EFDB9C5" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.BootstrapIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpB828F2E0E3908AEB84554538E14583D2" Guid="{438882DD-3F58-41A5-A88B-F87F9EC328C3}">
+                <File Id="fil4A85852AFF564A727068558456B40A96" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.BoxIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp0B410F6F5DE5B5ECFF29B60BFB274F0F" Guid="{5E976E09-9CA4-43EF-B257-FA8F0EE62AB3}">
+                <File Id="filDA9835F7AF9DFA7028A598514D8FD4E8" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Codicons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpAA3D78E9B3AE6821E2C081A41FD040FD" Guid="{5ADF71E3-8F94-48A3-A800-FC9CF5137242}">
+                <File Id="fil41A7C42F7C04E764DDE088620AF23D8E" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Core.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp286A3BDB1EC430B908FD322B1322D746" Guid="{4164D758-D189-4A95-A6B6-A2F0F709A876}">
+                <File Id="fil3D712A15730F07F094E6844258950361" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp219E02EF943746676A4668B48FBE1820" Guid="{5CD10439-F3E9-4ED2-BF81-F62F98DE4ECB}">
+                <File Id="filD24A8005F1224750204A4571D045A568" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Entypo.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp7F9ECE136F3D1474CBD79D0EDC835364" Guid="{4B13B951-2897-4B24-AA44-D8AD76A19148}">
+                <File Id="fil36943521145537089B063D681E2FE2EB" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.EvaIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp48E1E5C93860F49EF00841C60B81D2E9" Guid="{9E165AC3-9980-4E98-9EA6-BDCE0268B1FD}">
+                <File Id="filDECE322D4CF04F3C3CE84BD2C78CFE73" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.FeatherIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp5A3B0FEEF305F52451B314C57A61717B" Guid="{44376FB5-70A0-4096-AF65-EC5054335ADD}">
+                <File Id="filC0E8B93A1F48A011740009B168DB698B" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.FileIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp04FD776539E2628403B1D84D7E4D2BF3" Guid="{67BB4D09-8EC7-47E8-86EB-9BF93E3366D5}">
+                <File Id="filD75DE729566832C3DDAE2FB2BCBDF9E6" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Fontaudio.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp558FC5B3CC2B23E0A8DE37F92B4255E0" Guid="{4CCD0472-DAB8-4778-B5DF-0ECF0472AB49}">
+                <File Id="filB47F5825E05B63D1F79D61A45D9978E5" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.FontAwesome.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpEE5095AF5D6CA4E21BB31324DCA12A9D" Guid="{1CD8589D-CEAC-4796-90D1-B948C5A641B6}">
+                <File Id="fil8E692CA1019718C99A7B2DF09D2682DC" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.ForkAwesome.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp90BBBFEF1982BB90418B4644CF2F7828" Guid="{894FFC64-5764-4540-B33D-9C624BF31C34}">
+                <File Id="fil6BAC0A24DAC7F39A1620E95997185B5F" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Ionicons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpFEB20DDD1566488925514934FC1DD9D5" Guid="{769A17A7-2CA0-40F1-993B-4B81202BDF5F}">
+                <File Id="fil96729ABD08F7D5011F4AD8C30E7FCBB0" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.JamIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp93AF99501BD43251496EBFA1881A64EF" Guid="{270382D7-DB7B-4634-BBE0-CEFBA591A70F}">
+                <File Id="filAFBAE20130F99F271F54C2951B2BAD34" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Material.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp6E690104F2F1BB697CC4758AD1E26E58" Guid="{B220658B-DD99-44EB-A4CF-2B265F7D6DB6}">
+                <File Id="filCC531ED0434ABA77DD529A9B508AE0F0" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.MaterialDesign.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp1B3BA240BD1C077BF83416736D48186D" Guid="{C7C66587-3414-41C2-8746-734937C221B3}">
+                <File Id="fil6BE9ACE2E766B800E6FF54F4E697D460" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.MaterialLight.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp4305F7BD8AC4EC7C4D0AA718D88266C2" Guid="{2B901B26-3C1B-4260-84E1-99069DD85B9D}">
+                <File Id="fil1353F3D65C99A57CE7FEE3E813A915C5" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Microns.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp351597C63B1AC6EEBF7FC5A22A89959E" Guid="{07C78CC6-EF14-4406-90DB-60138FAFF409}">
+                <File Id="fil370BD642BFD820178252FA7494C0652F" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Modern.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp90A934A8431ACC8512A4EA7F53BC937E" Guid="{ADA8CC6C-A105-4DF4-A138-6FA2418A50B8}">
+                <File Id="filDAECF68FD05D1A7565D1F23F70456832" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Octicons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp9799763CBFF3E472309F980CF7998B39" Guid="{2E9FAAF3-1622-4421-9256-D62080C23DA9}">
+                <File Id="fil1C9F04DF88B43F1AD9753E1160ACC824" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.PicolIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpF3639C930704BB7395EC1FA447E3381B" Guid="{A4DCD6F6-D76B-4D10-BB6F-656D86EC58F0}">
+                <File Id="filF0152A8A540DAC9CB21C2DFC3C6CF225" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.PixelartIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpCB2E6D7505E8F9992D331D3A906C43F4" Guid="{72D3AB83-37B7-4ED8-B4EE-36B1E01EFFBD}">
+                <File Id="fil089D5E6B326A0FF9C2DA536B5A0F00B1" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.RadixIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpA06D8E3E1D88DC98CDABEDC2E5C06BB4" Guid="{8B2A5C50-0157-4CA8-BAAE-F0C5C7852E33}">
+                <File Id="fil84795354B6D4F23CC639F91FBA101F9C" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.RemixIcon.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpE3CF238EBFAA39F9B8A792C87C154D23" Guid="{DB502018-F32C-466E-84CF-BDFA69E9541F}">
+                <File Id="fil73FB4D9BCCE8C4486C1322A5C9783B52" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.RPGAwesome.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp1D298ECB70462F6B6B9C736D46C3703A" Guid="{E0EA939D-2E65-47DA-9BE3-6CA3D6DB138F}">
+                <File Id="fil7536289E16969FC23A4B8C686710CC3E" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.SimpleIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp1343B58142FF8A721A61A226461A348A" Guid="{B0B710B5-BCF1-41CD-981D-5D1797269009}">
+                <File Id="filF966C280AC0005F57F91968D0EE1B645" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Typicons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpA2394AB6E80CFE6873404D7E45067744" Guid="{C0E2884D-D2FB-44BB-A3F6-F3BB82CAD911}">
+                <File Id="fil723C34647F418233D488A22D0103A8F1" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Unicons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpC7DD7DCD8E4083B4375CEC2B790F42C4" Guid="{07F768BD-9693-45F8-8BE5-FACA2E8EFB07}">
+                <File Id="fil25607EF9627D38D21F76141459FAF6BF" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.VaadinIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpE45996FE404705547B851665885248CF" Guid="{CB1CAED2-6E25-4DDB-B079-500F29FAD271}">
+                <File Id="fil48F04595EE37A65779B1C74F49CCDEE2" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.WeatherIcons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp06B5FF1D134B60C8550290639423F91D" Guid="{8474EBC6-1B88-416E-B311-1BF2604B23DC}">
+                <File Id="fil206A0BAC6AC49BDE329150BF3348CDBC" Source="$(var.HarvestPath)\MahApps.Metro.IconPacks.Zondicons.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmp7254E72FE73F320AEB41601E41FB205C" Guid="{B093B454-BE87-4B7B-A338-C16AA7A21AC9}">
                 <File Id="fil13415A8D8C4BF2A65643689519A0020A" Source="$(var.HarvestPath)\Microsoft.Dynamic.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp044B95FD4C9D23DB2929872B48F7668B" Guid="{9D3F7C47-A40B-477B-8F56-871C7A501CC2}">
-                <File Id="fil578D83AE389E5FC79856CDB8F7F9FA13" Source="$(var.HarvestPath)\Microsoft.Expression.Drawing.dll" KeyPath="no" />
-                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
-            </Component>
-            <Component Id="cmp3BEA937DC04A8694133FFFE7D2D9DD04" Guid="{79136AD6-5FB3-46B2-9B7D-6D5604897FC3}">
+            <Component Id="cmp3BEA937DC04A8694133FFFE7D2D9DD04" Guid="{45CAC863-B840-4DB5-A640-6596BE78A8BB}">
                 <File Id="filFBE32D4AF66E9BC3F6EF09887D4DC489" Source="$(var.HarvestPath)\Microsoft.Scripting.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7DC125062D4B14D8FC6C510683E68764" Guid="{6B8C9111-8C23-48A2-98F7-6CC0DC186C75}">
+            <Component Id="cmp7DC125062D4B14D8FC6C510683E68764" Guid="{8F4DB877-4D9F-452A-B7DC-402EED632E69}">
                 <File Id="fil69C17A90B7EBC90FF29B44ABCB1E8B50" Source="$(var.HarvestPath)\Microsoft.Scripting.Metadata.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4370A5F473BC7C578FA8C4A674514135" Guid="{9272D88F-B028-4FA9-9528-4F87AA83EA82}">
+            <Component Id="cmp4370A5F473BC7C578FA8C4A674514135" Guid="{03AD1372-D108-48B4-98A8-216341A7D43C}">
                 <File Id="fil44FD26BE5AA3BE512E4A18D3072087AE" Source="$(var.HarvestPath)\Microsoft.Threading.Tasks.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpBF316BAA97EE8CE76D0E2E7D86CB70F5" Guid="{E317C5F7-7155-4824-A647-7480FFB924E2}">
+            <Component Id="cmpBF316BAA97EE8CE76D0E2E7D86CB70F5" Guid="{8F749602-6A7B-4CAE-B1A5-D93FF4A97B6E}">
                 <File Id="fil3F3FAF9A5D44A074B2AB8FC3101C1A92" Source="$(var.HarvestPath)\Microsoft.Threading.Tasks.Extensions.Desktop.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp82951EB65984B52CAC92DE74F90EEE71" Guid="{F4EAAC88-3D8D-4633-89FA-47BCD2EA41FE}">
+            <Component Id="cmp82951EB65984B52CAC92DE74F90EEE71" Guid="{DBF9A150-2FF2-44F2-9A27-21E5FE6A3C60}">
                 <File Id="fil4A3914E8BA2E4BD8BB82F62B0967AAFB" Source="$(var.HarvestPath)\Microsoft.Threading.Tasks.Extensions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpD6E0355A434255FE85D95233B0AEB24C" Guid="{7109B7CB-1AD6-41CD-BD3A-73A25979EC09}">
+            <Component Id="cmpD6E0355A434255FE85D95233B0AEB24C" Guid="{5CAE3FB0-4A09-411A-ADD4-47FAFA8E5516}">
                 <File Id="fil68B8557306E79D976A11D85295D37CCB" Source="$(var.HarvestPath)\Microsoft.Web.XmlTransform.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpFC2072AC6AB749CFD7255D8127B1D945" Guid="{F367A247-027B-4AD7-A43A-B108E9D684A7}">
+            <Component Id="cmpFC2072AC6AB749CFD7255D8127B1D945" Guid="{F9C1A851-CEC7-4260-9CDD-091C0B22F833}">
                 <File Id="fil9394A47DDAD5C82DE43D4227296DDBFB" Source="$(var.HarvestPath)\Microsoft.Win32.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp0CF5B14E86747BCFC1DDFCDF28AE4A82" Guid="{2F9FC710-6C29-46C3-ACA1-6B416323E1A4}">
+            <Component Id="cmp0CF5B14E86747BCFC1DDFCDF28AE4A82" Guid="{188FAEAB-508C-4304-8B18-B874FE24D9BE}">
                 <File Id="fil20B8F60F955E06C42916655EC36B7FF6" Source="$(var.HarvestPath)\Microsoft.Win32.Registry.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp9ECFE97C3E16F0F19742C25CE41E91CC" Guid="{34664E73-D5EF-44BA-AA23-E0FAA5B237A4}">
+            <Component Id="cmp9ECFE97C3E16F0F19742C25CE41E91CC" Guid="{E749EFB8-B79E-4F86-A881-889F17142993}">
                 <File Id="fil6FBF3F6F8C26D2CD1CD858B08DE0A938" Source="$(var.HarvestPath)\Microsoft.WindowsAzure.Configuration.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE5B545219A4761BDD755E5F33A229024" Guid="{61FC8856-DE57-49FB-A102-44FCB6AD6522}">
+            <Component Id="cmp6107C12C2A55CB8E7E97FF2C9A33F385" Guid="{6ED5335D-879C-4DFD-9A2D-FF858187D1D7}">
+                <File Id="fil135F9AEEB4A74E1EE438100986E97C41" Source="$(var.HarvestPath)\Microsoft.Xaml.Behaviors.dll" KeyPath="no" />
+                <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="cmpE5B545219A4761BDD755E5F33A229024" Guid="{CEAD36AA-E44F-4860-9ECF-0F5A33C2D31F}">
                 <File Id="filF85B362BB09126F71319D8C4C09F7A00" Source="$(var.HarvestPath)\Mono.Options.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7762CAE69A07BF558B2EDF1798F02FA8" Guid="{A2D4A4A2-EB0A-41E0-A137-86E53A2AA21B}">
+            <Component Id="cmp7762CAE69A07BF558B2EDF1798F02FA8" Guid="{F85E4E2E-B9D4-44C4-BE59-0306F7889E64}">
                 <File Id="fil422AD37AD210EABF4A29945700C514C9" Source="$(var.HarvestPath)\NAudio.Asio.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp07814B6C8393BF87D48FD742866B4421" Guid="{5C947CF6-2C41-4C3E-B8C1-CAF4EAA37000}">
+            <Component Id="cmp07814B6C8393BF87D48FD742866B4421" Guid="{E4E60987-B53F-4DA2-B6EF-4001DC633F26}">
                 <File Id="fil2DFD8B340CAF47C2A37E6FB0AEF11FDD" Source="$(var.HarvestPath)\NAudio.Core.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpCBAD1189E4A95476F45730EA6D8A3E03" Guid="{4E4BD808-12AE-4644-9223-1C543EE5B568}">
+            <Component Id="cmpCBAD1189E4A95476F45730EA6D8A3E03" Guid="{E48E295E-677C-429E-B1BE-A0DFCF216BEE}">
                 <File Id="filB5CE7890FC801E39F6B9B8C9FF5E4D0D" Source="$(var.HarvestPath)\NAudio.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpAE19781133491B2193381E0614D1D3D9" Guid="{E2F0ED86-7753-4EC1-A36A-D4D60A893D5C}">
+            <Component Id="cmpAE19781133491B2193381E0614D1D3D9" Guid="{66D71928-BD29-4EA2-A1C1-4692A2414F12}">
                 <File Id="fil6ECEDDF70D62C4F861EEFDD84439EED5" Source="$(var.HarvestPath)\NAudio.Midi.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp76294603D17E356B01EC46623A3970CE" Guid="{86510EBF-C4AB-46A3-84DD-7D6458B65EDB}">
+            <Component Id="cmp76294603D17E356B01EC46623A3970CE" Guid="{728AC111-BCAC-4618-96E9-544174C69B5C}">
                 <File Id="filB67CC63B9C4671EA549F17299B5F53C0" Source="$(var.HarvestPath)\NAudio.Wasapi.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpB84206E7872F2865ED1F54C864FA6F34" Guid="{284068E1-F1CB-49AA-B079-C974130F7F42}">
+            <Component Id="cmpB84206E7872F2865ED1F54C864FA6F34" Guid="{7929DDFB-0BE8-4B27-A184-AEAB726863F2}">
                 <File Id="fil875692AF07DA73A676DC839BE3843D28" Source="$(var.HarvestPath)\NAudio.WinForms.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpA29803D2B7B90F564254224D67C6AFD4" Guid="{A3226C42-FBBB-4A4B-8E06-68C405F65579}">
+            <Component Id="cmpA29803D2B7B90F564254224D67C6AFD4" Guid="{6BEA2B94-FDBC-451E-949B-FEF3F5BD8C2F}">
                 <File Id="fil39F2D5E0248524222CADBE8693A5AA54" Source="$(var.HarvestPath)\NAudio.WinMM.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpACFF2DEC99E6BC166A0253634ED41A4F" Guid="{7B99F5BC-56DE-41DB-A67B-83725B35BADA}">
+            <Component Id="cmpACFF2DEC99E6BC166A0253634ED41A4F" Guid="{020E16C6-7499-4A55-B291-B1C25D5D8826}">
                 <File Id="fil21E384679BF7C5ECBD525841F6692B51" Source="$(var.HarvestPath)\netstandard.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp1874AB219070404EED322213C6A1A49E" Guid="{90B14E44-F160-4413-9DF8-21C8927A6260}">
+            <Component Id="cmp1874AB219070404EED322213C6A1A49E" Guid="{436172E4-2485-4ED6-9655-88FC198CFBFB}">
                 <File Id="fil05FF769999D602AD4FA6A489C44ED290" Source="$(var.HarvestPath)\Newtonsoft.Json.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6C6E3A4782B29A777EAFACCECDE25A75" Guid="{7101C7F8-DD65-4CC4-B634-6DAC7398072F}">
+            <Component Id="cmp6C6E3A4782B29A777EAFACCECDE25A75" Guid="{4F70B4C1-2801-44A5-BD9B-6514345012AD}">
                 <File Id="fil61E2178807DDF4CB67E717F57A0B45E1" Source="$(var.HarvestPath)\Ninject.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpB66FADA902303B620146AF05EF8B205C" Guid="{10FFB30D-D556-415B-B94D-CC358998BA4A}">
+            <Component Id="cmpB66FADA902303B620146AF05EF8B205C" Guid="{5E26F4C9-BD0D-426E-8DA0-87551ECE79DC}">
                 <File Id="fil9C4309AE2C59075802B06539F1944B44" Source="$(var.HarvestPath)\Nito.AsyncEx.Context.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp8DFFC5DEB197ECE614FFE3F5C7E04DE4" Guid="{4CD3C12C-DA77-4C9E-95DD-C16D6EC7FE4F}">
+            <Component Id="cmp8DFFC5DEB197ECE614FFE3F5C7E04DE4" Guid="{13B4E517-DEC6-48D6-B824-F03668D68E84}">
                 <File Id="filF20CF67215C2139C8693496EC24E5D08" Source="$(var.HarvestPath)\Nito.AsyncEx.Coordination.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpAEDF2B3BA3696FBDD725B364F3E86ECE" Guid="{7E072091-251B-421A-84D5-7D5CB6C88019}">
+            <Component Id="cmpAEDF2B3BA3696FBDD725B364F3E86ECE" Guid="{A9E0CD9E-FF0C-4C7F-B24F-217198B92651}">
                 <File Id="fil7C1F3919999C7AD7A00A53673BBF482F" Source="$(var.HarvestPath)\Nito.AsyncEx.Interop.WaitHandles.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp72CF3E6159C32478210203D321CFE41F" Guid="{0893062B-4969-4369-9D7B-23E159812A5E}">
+            <Component Id="cmp72CF3E6159C32478210203D321CFE41F" Guid="{A3F18358-BB4C-4A06-BDA8-2C39BBD7E55D}">
                 <File Id="fil13B8DC0EDCDD02F838AC62535FFD0417" Source="$(var.HarvestPath)\Nito.AsyncEx.Oop.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF44C29B10AEFDB62AD0AF98A017AA917" Guid="{7075EFB0-94C7-4C99-84A2-15DF381B4881}">
+            <Component Id="cmpF44C29B10AEFDB62AD0AF98A017AA917" Guid="{B7960E22-41F6-47F6-A8EC-5DCD7980ABD5}">
                 <File Id="filB1FCE5EF20B18AB8634E9D0BFFE17CC1" Source="$(var.HarvestPath)\Nito.AsyncEx.Tasks.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp260D7C50CBDB73562628EC85FC92D384" Guid="{AD3260CE-F940-4D68-B809-37F6FEC86E0D}">
+            <Component Id="cmp260D7C50CBDB73562628EC85FC92D384" Guid="{11CCE81F-76F2-4D56-8317-0CCD97213089}">
                 <File Id="fil737FB645C88EF94C8F7DFEC3AC1C3E2A" Source="$(var.HarvestPath)\Nito.Cancellation.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp66F3E11ECD62C2F3F07FE833435629AE" Guid="{76F09688-E141-4B89-A531-A6E00F7C0114}">
+            <Component Id="cmp66F3E11ECD62C2F3F07FE833435629AE" Guid="{83E892CC-E7D7-494E-88BD-029547719CF7}">
                 <File Id="fil46B56D09508058011C2F519DF3616F4F" Source="$(var.HarvestPath)\Nito.Collections.Deque.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp2C5E7C277E5AA44B5685A4B212F12806" Guid="{D473CA4F-A1CC-4B3D-9635-990F000C5957}">
+            <Component Id="cmp2C5E7C277E5AA44B5685A4B212F12806" Guid="{986E4C95-BA79-489C-8811-3BC9D3A57C6D}">
                 <File Id="fil16DB30711CC35B87FEACE31771C83B32" Source="$(var.HarvestPath)\Nito.Disposables.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7573EC2390E2B47667BC392F0AB1294C" Guid="{A9E475F3-2152-4103-A8D4-D47C2C456BAC}">
+            <Component Id="cmp7573EC2390E2B47667BC392F0AB1294C" Guid="{67976641-FCC7-4410-A2CE-206195FAD76E}">
                 <File Id="fil793549DAC9BBACE3FE0A2C6207439558" Source="$(var.HarvestPath)\NuGet.Common.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5D12C26270BD09CA3D45919FA8719AE2" Guid="{A827930D-B733-4037-8991-1CFC2F093444}">
+            <Component Id="cmp5D12C26270BD09CA3D45919FA8719AE2" Guid="{645DCF5F-9205-43EF-923F-16938C0CA23F}">
                 <File Id="fil1914470A96C406BB700EBFE4DFAB0CEF" Source="$(var.HarvestPath)\NuGet.Configuration.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5B6706A46F3A714C8F8DBBC8D99570F8" Guid="{6DFF94B7-EE1E-4B67-860F-6ED9D355B3C8}">
+            <Component Id="cmp5B6706A46F3A714C8F8DBBC8D99570F8" Guid="{B7825AC4-3746-4ABB-BA81-2E2DD65B370F}">
                 <File Id="filA10C8BC6EBB3877E81710607DA5F8E3A" Source="$(var.HarvestPath)\NuGet.Core.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5B4B4955C58608067B41D6BE02863260" Guid="{543FE06D-CD85-44F5-8B6C-318206C35D5C}">
+            <Component Id="cmp5B4B4955C58608067B41D6BE02863260" Guid="{7C19AB65-3BF3-4433-9737-18F8E04733D2}">
                 <File Id="filC77BFD5C891086AC3DFE76BB004671EB" Source="$(var.HarvestPath)\NuGet.Frameworks.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4D072D5842DFB1E9399C435C746D295F" Guid="{2D06C470-32D5-411A-94B6-D1D513076C9E}">
+            <Component Id="cmp4D072D5842DFB1E9399C435C746D295F" Guid="{7D922B2D-5D50-4E9E-9BFE-5BC87A560879}">
                 <File Id="filA46D093A333210FF3DF479B37CE2796C" Source="$(var.HarvestPath)\NuGet.Packaging.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpEEB4733FD782D8FCC77902F908470D17" Guid="{992C69D4-8C0C-4695-A014-B3210933F727}">
+            <Component Id="cmpEEB4733FD782D8FCC77902F908470D17" Guid="{87A5240C-69DD-423E-83F4-7D05B4F7C056}">
                 <File Id="filFAE94905D72D8368BA8CE7A78C6DEA45" Source="$(var.HarvestPath)\NuGet.Versioning.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp14EC87DA50B81B5E6A67429F9F656722" Guid="{FEE002B4-5543-4FAB-9B49-B39E0C51DF71}">
+            <Component Id="cmp14EC87DA50B81B5E6A67429F9F656722" Guid="{60480F4D-0D51-42BE-AAA3-B6704A5A5CF3}">
                 <File Id="fil115F8AF38B90879DB02D672AAD89C8F2" Source="$(var.HarvestPath)\o8build.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpECB62EFCC36DED701B049645322D5EA4" Guid="{882702AB-63A9-49AF-91C3-47B9033C9E8B}">
+            <Component Id="cmpECB62EFCC36DED701B049645322D5EA4" Guid="{72047D82-6759-44B0-B63B-5E379EF53435}">
                 <File Id="filD6E3595BC3A12F1178BADDB8B0C651DB" Source="$(var.HarvestPath)\o8build.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpDB3F27CA75DD8B428D656610D824F43E" Guid="{17CF7BA4-56DD-468C-9C50-237516A5D994}">
+            <Component Id="cmpDB3F27CA75DD8B428D656610D824F43E" Guid="{DC9E280B-D7EC-4B65-9276-D73E07D875BB}">
                 <File Id="fil1867AEB40FE12C433049BEB9C91F1DB5" Source="$(var.HarvestPath)\O8buildgui.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp8F4B94EF0828B6BB61CFB54CF020D91D" Guid="{24655E5B-3A97-4A31-A147-4122E4D03011}">
+            <Component Id="cmp8F4B94EF0828B6BB61CFB54CF020D91D" Guid="{6AA178AE-3277-4F68-9292-D83C820DEF69}">
                 <File Id="fil12556778E1378D4E227933C7673EDE13" Source="$(var.HarvestPath)\O8buildgui.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp78D420543530ED3C4E9AF59E5E43A46A" Guid="{4764051C-CFEA-4037-A2FB-5E6406467FEC}">
+            <Component Id="cmp78D420543530ED3C4E9AF59E5E43A46A" Guid="{8168FA1D-8947-486C-BFD9-6F4E3C72174D}">
                 <File Id="fil5DD75D83A77AB95ED421DEEF0BF2B01A" Source="$(var.HarvestPath)\Octgn.Communication.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp13DB3273CD8E9EFBC311065EC87BC2ED" Guid="{A950EFA2-0D55-4530-B796-3F2DA1CEFEE9}">
+            <Component Id="cmp13DB3273CD8E9EFBC311065EC87BC2ED" Guid="{5C1E791A-1EEC-4670-9E40-DB4EFB01A839}">
                 <File Id="fil77B8C56BFD301B24319AB3307D9BA392" Source="$(var.HarvestPath)\Octgn.Core.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp01B928B4ECBFCD61A6907C15B51FD576" Guid="{06C39DB3-3BA5-42AC-A20D-ADA240CEA973}">
+            <Component Id="cmp01B928B4ECBFCD61A6907C15B51FD576" Guid="{ECAF76C2-9E65-4D2A-84B7-9BFDB649C900}">
                 <File Id="filA077434039560EE768241001F37074B3" Source="$(var.HarvestPath)\Octgn.Core.dll.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4AC56D024FE3EBC0C5D484FD32C6AD39" Guid="{EA7CD33C-506B-4F7D-9E7C-AD8460066A70}">
+            <Component Id="cmp4AC56D024FE3EBC0C5D484FD32C6AD39" Guid="{4A607FDD-C79B-4351-AE59-996AA64C515C}">
                 <File Id="fil778540729DB4A65ADFBE96E16513FDDD" Source="$(var.HarvestPath)\Octgn.DataNew.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE198BBD5DE02A49C4928C1C0050A8D2C" Guid="{72F4125F-E6A2-4521-BEE6-EF96ECA90368}">
+            <Component Id="cmpE198BBD5DE02A49C4928C1C0050A8D2C" Guid="{D6B41A68-2F81-4581-96D5-6E895E978EAA}">
                 <File Id="fil1BF4E8D8B821B657E6BD6C4D5D17E01F" Source="$(var.HarvestPath)\Octgn.DataNew.dll.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp816741CB75C2802164361F1A72B563A8" Guid="{783F19C3-4294-4126-9AA4-749EE441F22A}">
+            <Component Id="cmp816741CB75C2802164361F1A72B563A8" Guid="{0C96C47A-2EA1-4D64-A24C-96873EA12EB4}">
                 <File Id="filDD92BED66D8CCAE233C37576A2AB17A7" Source="$(var.HarvestPath)\OCTGN.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpC5DE7EC60F5EA8A9A5B95B7D4B9C5BC5" Guid="{F13C0815-08F6-4F95-A664-F9FA149FB8EE}">
+            <Component Id="cmpC5DE7EC60F5EA8A9A5B95B7D4B9C5BC5" Guid="{47616B50-AACA-4F22-A947-E89AFDAC95A1}">
                 <File Id="fil69ABE435B2D8C724C37AFE643B9377A4" Source="$(var.HarvestPath)\OCTGN.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4A176DBA1ADB8645F1FA42676F3A6B86" Guid="{AF7A9BA9-3263-4F5D-9BB5-2816521F5304}">
+            <Component Id="cmp4A176DBA1ADB8645F1FA42676F3A6B86" Guid="{DFD11FCD-FFD1-4896-AA99-56B6BCC325FC}">
                 <File Id="fil5DDB7773FA15E3A2816CA9EFEB1C60C9" Source="$(var.HarvestPath)\Octgn.GameWizard.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4625614E297B1252FE7F922014CC80F1" Guid="{1876ECCF-DABF-494B-9AD5-A8CD4601EF14}">
+            <Component Id="cmp4625614E297B1252FE7F922014CC80F1" Guid="{0D6C75EE-CB9E-436E-BA5D-3A8C8B3596F9}">
                 <File Id="fil847FADADF6B5C12004BF4BD633CAC112" Source="$(var.HarvestPath)\Octgn.GameWizard.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4DB7CFE68CF05E3AD59E02028E042BB9" Guid="{95F0597C-7FEF-4824-A3A1-55E0DEACA79E}">
+            <Component Id="cmp4DB7CFE68CF05E3AD59E02028E042BB9" Guid="{B52A7967-1E9F-4CAE-9D91-87D78797897D}">
                 <File Id="fil8674A56D73676920122A40678BF74ABE" Source="$(var.HarvestPath)\Octgn.JodsEngine.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp63DE213263DED6C2550F304BEE2CFE7A" Guid="{01E260ED-8446-4261-8A2C-F57824CE5ED4}">
+            <Component Id="cmp63DE213263DED6C2550F304BEE2CFE7A" Guid="{68DAC34D-4006-4D69-9564-FE4EB92DD78A}">
                 <File Id="fil1EB4834F0D954D20AB8C86314FC306E6" Source="$(var.HarvestPath)\Octgn.JodsEngine.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7F4884BAFC25CC83145B44C41BD9E715" Guid="{884041E6-7B86-4D71-9CCB-2EC108A02CF8}">
+            <Component Id="cmp7F4884BAFC25CC83145B44C41BD9E715" Guid="{7D588F48-4748-4D44-8181-E09AFA7708C0}">
                 <File Id="fil59E2C7E4B79381DF45FA80A2BB35088F" Source="$(var.HarvestPath)\Octgn.Launcher.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5F98DC92A09C93FA41A8E8735029D622" Guid="{6AA75926-DF78-41D9-AE64-3AA7E4653D66}">
+            <Component Id="cmp5F98DC92A09C93FA41A8E8735029D622" Guid="{868C49DA-C15C-4B78-A8FB-D948C59E5981}">
                 <File Id="fil16956E54BC419F5003B36A82D564A1B5" Source="$(var.HarvestPath)\Octgn.Launcher.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp94F2EBC9267AA03E64C0B4C125B6E0ED" Guid="{57031FDE-FE89-466E-ADEB-BABD416FCF50}">
+            <Component Id="cmp94F2EBC9267AA03E64C0B4C125B6E0ED" Guid="{C55012DC-E05F-4CE5-AB7E-3B692B00A351}">
                 <File Id="fil9B7905D43CACE41185C88AC56FE48C94" Source="$(var.HarvestPath)\Octgn.Library.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp258FD747182EA4C603508266DBC1755E" Guid="{EE15D014-FDC0-40AD-948D-70752C32B333}">
+            <Component Id="cmp258FD747182EA4C603508266DBC1755E" Guid="{4832F544-557F-47DB-AAF0-09C80C5BD135}">
                 <File Id="fil8D5F737CD62562E564C183DBA36FC396" Source="$(var.HarvestPath)\Octgn.Library.dll.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp46AC8D28D9CA83259E3ED6310534D2DB" Guid="{5610C30A-2D55-4049-A566-42A6DBF13099}">
+            <Component Id="cmp46AC8D28D9CA83259E3ED6310534D2DB" Guid="{C0C07739-413C-4007-8DA2-A7E0F1CB9D48}">
                 <File Id="filADC02EADCCD3A41A1292298778B013E3" Source="$(var.HarvestPath)\Octgn.LogExporter.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6660405BF614CDE8F11AAA818351849C" Guid="{FF88ECE2-4DFD-467A-99FE-020986E66729}">
+            <Component Id="cmp6660405BF614CDE8F11AAA818351849C" Guid="{38EB2D1B-4BBE-437E-B6B7-0244AE18E914}">
                 <File Id="fil8156F89096B49D16DDF97A5953C85065" Source="$(var.HarvestPath)\Octgn.LogExporter.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpAED5FD47C57C7237045FCBCFE4808351" Guid="{25782460-C7A9-4E05-BBFD-96EF66EB96D9}">
+            <Component Id="cmpAED5FD47C57C7237045FCBCFE4808351" Guid="{D58E3990-3AAC-4820-A844-A9538B649373}">
                 <File Id="filC86A2DA50F892AA8D72DE35DA43F483C" Source="$(var.HarvestPath)\Octgn.Online.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp2708F486C57CA602B063BE9697C5C4FF" Guid="{6F94CE58-1F6D-42FB-B323-4CCD752B12FC}">
+            <Component Id="cmp2708F486C57CA602B063BE9697C5C4FF" Guid="{C81298B3-0412-4CA8-A821-682E19E63C2F}">
                 <File Id="fil98B7F9E20F8EA19A2CAB20633523D7EC" Source="$(var.HarvestPath)\Octgn.Online.StandAloneServer.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp52CC0A0B26C40F9923BF174EBA67CAE4" Guid="{306480AF-6E4F-4895-A507-7C02C8BECDFA}">
+            <Component Id="cmp52CC0A0B26C40F9923BF174EBA67CAE4" Guid="{96637126-A6AB-4514-925A-F4DA4EF8DC24}">
                 <File Id="fil436F3908350FE867344545552CA452A4" Source="$(var.HarvestPath)\Octgn.Online.StandAloneServer.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp9B0BCDBA40A5A291A237F6B435F5FF75" Guid="{4B34007B-95B8-46E4-ABE1-05B4F7537EC6}">
+            <Component Id="cmp9B0BCDBA40A5A291A237F6B435F5FF75" Guid="{DF2E76EF-95EA-4B0C-9AE1-61C465F34105}">
                 <File Id="filF5CD34D43BBDA9E63E39FF788CB30E51" Source="$(var.HarvestPath)\Octgn.ProxyGenerator.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp178679DA6076A0B4B6DF75E8E4258E14" Guid="{A26180B9-0154-494D-8FE0-E37DEDB84FEF}">
+            <Component Id="cmp178679DA6076A0B4B6DF75E8E4258E14" Guid="{686B5AB7-C8B7-447F-9E05-BDD650D14A9E}">
                 <File Id="fil4482CF52B147A902654489F837D6D87D" Source="$(var.HarvestPath)\Octgn.ProxyGenerator.dll.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp92EE4200C4A0C8862AD9CF28B1628DF1" Guid="{1D3EB08D-328B-4489-960A-D355B388DF4D}">
+            <Component Id="cmp92EE4200C4A0C8862AD9CF28B1628DF1" Guid="{5CEBCE63-214C-48BA-8722-025B0A7084AA}">
                 <File Id="fil17614427FBA65EB6F62FDFC105DDCB90" Source="$(var.HarvestPath)\Octgn.Server.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp85D8CC8E2390ACE57897B8F9779150CD" Guid="{F653841A-EB96-49F1-9E71-A6B5C6CE6A74}">
+            <Component Id="cmp85D8CC8E2390ACE57897B8F9779150CD" Guid="{CA4A93DB-66AD-4EFF-B995-EA80632256C4}">
                 <File Id="fil653B712CE97114CE7A0FB028C47C2EE4" Source="$(var.HarvestPath)\Octgn.Server.dll.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpBB3FBFA8930E710EA15D7C39668E6B92" Guid="{5DF771E7-FC00-4611-B19C-C01645CD0A4D}">
+            <Component Id="cmpBB3FBFA8930E710EA15D7C39668E6B92" Guid="{054F8514-EB0C-48B7-8C08-D106F7EEEDB0}">
                 <File Id="fil5974997ECA52452C12CBBAC4AA8EE638" Source="$(var.HarvestPath)\Octgn.WindowsDesktopUtilities.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3E631296B6A9F7DE8958713A82C16A85" Guid="{73243489-1675-4BC8-9912-6ECA7865E454}">
+            <Component Id="cmp3E631296B6A9F7DE8958713A82C16A85" Guid="{899DD8B0-3D2B-4B86-99A4-1CB56C73507E}">
                 <File Id="filE085A10E86DAA2724A3EAB33BFC235AE" Source="$(var.HarvestPath)\Octide.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpEC029F3A7060E84C5B2D271A9EDDB2A8" Guid="{04048D6E-C1F5-4DB8-98E7-C1DA6405CBAE}">
+            <Component Id="cmpEC029F3A7060E84C5B2D271A9EDDB2A8" Guid="{48051189-16CB-468C-98A4-B001976B36A2}">
                 <File Id="fil4FC94796D8AF5704272B67CBA4B3EEF4" Source="$(var.HarvestPath)\Octide.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpAF0E057F905629B87D150B5E4CBA6ECF" Guid="{639B34E2-0BAC-40A4-AB53-D627588EC0AC}">
+            <Component Id="cmpAF0E057F905629B87D150B5E4CBA6ECF" Guid="{00F37CC5-5032-4C4B-B59A-5E4F9EDBB8F9}">
                 <File Id="filCC840F8C439A6275BFDCC523E5E0EB75" Source="$(var.HarvestPath)\Polenter.SharpSerializer.PCL.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5482D5772865980D333DA18D1F255E64" Guid="{DCC4E239-6293-49A4-9CAB-93A527CF4301}">
+            <Component Id="cmp5482D5772865980D333DA18D1F255E64" Guid="{65FB04D4-C5C2-45FF-8566-6333D91EE30B}">
                 <File Id="fil8B16167CC7454A1CA2703D872FD59E90" Source="$(var.HarvestPath)\ProxygenTest.exe" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp1C38F2C71379D97BF0854CDDD948F94D" Guid="{3FFAB365-BF39-45D5-AAAF-F66CDA85DF46}">
+            <Component Id="cmp1C38F2C71379D97BF0854CDDD948F94D" Guid="{9DC17777-CB2D-4E2F-806D-E15E3F580F41}">
                 <File Id="filDA0AAE19DBC236E0F91C98D399C0CC2E" Source="$(var.HarvestPath)\ProxygenTest.exe.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp2DF0B2895DFC3CB720B48A6D9BFD37EF" Guid="{F86C109C-BECF-41FE-A28E-A8C39F467099}">
+            <Component Id="cmp2DF0B2895DFC3CB720B48A6D9BFD37EF" Guid="{48233DA5-8C4F-429A-BFAE-6DE9D8A2BB86}">
                 <File Id="fil759547BBD39D067958C66E9281A84E0E" Source="$(var.HarvestPath)\System.AppContext.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp73085246C202ABD1D96D2E5DEFB2A801" Guid="{C27502BA-B3B0-4407-A0E1-8FACB19F5589}">
+            <Component Id="cmp73085246C202ABD1D96D2E5DEFB2A801" Guid="{766D6101-DBEA-4340-B956-9C54BE16F8CB}">
                 <File Id="filEDD81E77BF6933BF90C42AE0EFAA681B" Source="$(var.HarvestPath)\System.Buffers.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpFCAB0086ACF92637C85CEFB939B694E1" Guid="{B2096369-4B32-4186-A636-EFDD6D2CDCBD}">
+            <Component Id="cmpFCAB0086ACF92637C85CEFB939B694E1" Guid="{6542E0F1-B7AD-4962-B890-2DCE89E97076}">
                 <File Id="filAD99C15B3296CE6AABBE5BB40D132051" Source="$(var.HarvestPath)\System.Collections.Concurrent.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE4B4F7691D3ACD4A72AE99FFE470CE17" Guid="{9F704205-11AE-4698-8667-53C90E21C809}">
+            <Component Id="cmpE4B4F7691D3ACD4A72AE99FFE470CE17" Guid="{718BF71D-7B6E-41AF-B06A-A2CA6DFD7F05}">
                 <File Id="filF5B5D111739157EBBB5E22D86DF5780A" Source="$(var.HarvestPath)\System.Collections.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp33FDA478CB86F083519801379B2D2D8B" Guid="{8BE543AD-5101-4C0E-8F4D-85DA2BFC5D86}">
+            <Component Id="cmp33FDA478CB86F083519801379B2D2D8B" Guid="{A77988DE-B1B4-4EB9-B2C3-A3E2938C2C76}">
                 <File Id="fil5D4575804C3CE3ACC76FF53290806177" Source="$(var.HarvestPath)\System.Collections.Immutable.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp75515765AA531707944115B02998F998" Guid="{858CB61A-0FAB-4FA0-8237-9B11F6446D9B}">
+            <Component Id="cmp75515765AA531707944115B02998F998" Guid="{8EE8EDCD-086C-4DA4-8EC0-21B6DDC62CE7}">
                 <File Id="fil6D02755830088A3C5A117FEE2B465D5D" Source="$(var.HarvestPath)\System.Collections.NonGeneric.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp22D219EF6A7035FFC0254F6BE572FF77" Guid="{62DDF72D-85BF-49B4-90D1-24F7423A667D}">
+            <Component Id="cmp22D219EF6A7035FFC0254F6BE572FF77" Guid="{D85F00AB-8149-4F7D-81C5-3BD01FA826CE}">
                 <File Id="filCD75540AD97745722ED0A7EAABF287E1" Source="$(var.HarvestPath)\System.Collections.Specialized.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp22AEF5790256905123AF78698CD859DD" Guid="{A4FDA6F0-26AD-47F3-835A-8CAB162BD83F}">
+            <Component Id="cmp22AEF5790256905123AF78698CD859DD" Guid="{ADA8A427-4B9D-4D44-B6E3-330F63AA3D7E}">
                 <File Id="fil09C18C7CA467795F6FA97EEB9E2387EB" Source="$(var.HarvestPath)\System.ComponentModel.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5349EC5703EBCAA1E6C7DA272802BE58" Guid="{A4CE08A3-EDAA-48A3-A311-C978797B061D}">
+            <Component Id="cmp5349EC5703EBCAA1E6C7DA272802BE58" Guid="{E23A89F6-8B65-49E4-8A53-D4F079D035E8}">
                 <File Id="fil399C00E90F93D6D53C7EB4198B8E6425" Source="$(var.HarvestPath)\System.ComponentModel.EventBasedAsync.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7B3236183FA982DA508702B357E3D75E" Guid="{23C409BF-AC31-451D-A01C-2B7AF957773C}">
+            <Component Id="cmp7B3236183FA982DA508702B357E3D75E" Guid="{93555C23-9086-4F5A-BE1F-4D5319F21F6A}">
                 <File Id="fil832F201A04CF05CFC4CF092D70DAB4D9" Source="$(var.HarvestPath)\System.ComponentModel.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp58C198180EDB7D42EDD28920E1B2E513" Guid="{C5639E68-0DCE-4E9A-9AE9-0145EFD5DFD5}">
+            <Component Id="cmp58C198180EDB7D42EDD28920E1B2E513" Guid="{33248E79-547E-400C-81CD-296C60108626}">
                 <File Id="filF9ABD40F11D5C42FF00EF312FB605BA8" Source="$(var.HarvestPath)\System.ComponentModel.TypeConverter.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp03737AA3B5F539D51D9418A6ED0E4F6C" Guid="{3BD625D1-DB7E-4CD9-9457-D74E79B0D595}">
+            <Component Id="cmp03737AA3B5F539D51D9418A6ED0E4F6C" Guid="{EDC3AED6-5C61-4F3C-8649-5AF3F71E08DC}">
                 <File Id="fil5272CFE8A4472345C08FD356C568CCDB" Source="$(var.HarvestPath)\System.Console.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpB25E057E8242CD01A509E8CBCAB104DA" Guid="{B17EFA43-8BE6-45C7-9DD5-BF31FE19541D}">
+            <Component Id="cmpB25E057E8242CD01A509E8CBCAB104DA" Guid="{90FEEF71-E817-4C87-B374-0CDDF171B64C}">
                 <File Id="filEE34C54941CD776131B74466DF35363A" Source="$(var.HarvestPath)\System.Data.Common.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp44C51162C2752731AF9E2E31BB09713C" Guid="{59B738D6-27CA-4515-A62A-9135C3763C9B}">
+            <Component Id="cmp44C51162C2752731AF9E2E31BB09713C" Guid="{C4328E7F-9160-44E1-A5D3-C8D0BC0E3555}">
                 <File Id="filB040E785B28D49D2AB7820EA35D4E70F" Source="$(var.HarvestPath)\System.Diagnostics.Contracts.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpB0C2F11F7CA680BF7E48B8A4268E9C98" Guid="{5BB466E9-3B6B-46B8-B938-A0230D52B304}">
+            <Component Id="cmpB0C2F11F7CA680BF7E48B8A4268E9C98" Guid="{DA65D61A-8F31-43F5-A8D4-A13D9E0352EC}">
                 <File Id="fil3C470A1D30CD627DFFBF6DD8881B668D" Source="$(var.HarvestPath)\System.Diagnostics.Debug.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpA59732DC764B94E5F1FB4BDE22083814" Guid="{913F2709-A680-4E50-A239-C2E72E356E52}">
+            <Component Id="cmpA59732DC764B94E5F1FB4BDE22083814" Guid="{3AD075B0-95A3-42BC-80B6-748CE5D171AB}">
                 <File Id="fil2F1CF172154C6293C5A6ACB1E151C0A9" Source="$(var.HarvestPath)\System.Diagnostics.FileVersionInfo.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF6FEF9FF36C695681C6A77FAD09A51DA" Guid="{A6E9FC64-F3BC-41B8-9022-2CF708ADA592}">
+            <Component Id="cmpF6FEF9FF36C695681C6A77FAD09A51DA" Guid="{B8C17A76-2E91-4619-A865-0C5AA55C736D}">
                 <File Id="fil51269EFEE8943C4F9AB6A03955BB33AD" Source="$(var.HarvestPath)\System.Diagnostics.Process.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpFE82493E4455C953D8F01BA5365F9C1A" Guid="{16511070-E2EA-4D56-96FE-148853C62B85}">
+            <Component Id="cmpFE82493E4455C953D8F01BA5365F9C1A" Guid="{7FF02301-BB2B-4F52-9106-AB056907C170}">
                 <File Id="fil0F5FC5A056E90A15787004331E6B2B8F" Source="$(var.HarvestPath)\System.Diagnostics.StackTrace.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp0E83A6F1E468052C63DFCFE168BE9F86" Guid="{49528F45-34CD-4C15-A2F1-843BDDF9E025}">
+            <Component Id="cmp0E83A6F1E468052C63DFCFE168BE9F86" Guid="{3D053763-CF2E-49D7-B071-039057994258}">
                 <File Id="filF010877744275880482B24613609AB8D" Source="$(var.HarvestPath)\System.Diagnostics.TextWriterTraceListener.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp50A76DD8AF0E25149A565F185A1F29A3" Guid="{F6FAE2C6-1472-4E18-94CE-034C0B5488F1}">
+            <Component Id="cmp50A76DD8AF0E25149A565F185A1F29A3" Guid="{3059CAAD-8998-4740-8F18-2348D8B1990F}">
                 <File Id="fil89402E5A5EF55D5D1DC9EB807D0163CD" Source="$(var.HarvestPath)\System.Diagnostics.Tools.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpDBAE7236105C33C9758DD48E8B6DCCB2" Guid="{A831769A-71AC-48DB-9EEE-728FA9EC6F9D}">
+            <Component Id="cmpDBAE7236105C33C9758DD48E8B6DCCB2" Guid="{30D45B62-6FD8-4BCA-A473-39630D46CCF1}">
                 <File Id="fil57119B89E434A6BBC42AE8C1D26609BF" Source="$(var.HarvestPath)\System.Diagnostics.TraceSource.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5686A5DCF2A08C618B3500928277C12C" Guid="{1A5156B2-CB7F-4E03-8596-C224412E2BA8}">
+            <Component Id="cmp5686A5DCF2A08C618B3500928277C12C" Guid="{B91626FC-F10E-4CAD-A801-FD8562D30E35}">
                 <File Id="fil70BB899DCE8D657F32B0FAC4DFF6638E" Source="$(var.HarvestPath)\System.Diagnostics.Tracing.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp8D6B0D0D5B997AF1B9BB2F2784692E03" Guid="{24F2FA75-F287-49C6-A3E1-CC338D6A9F76}">
+            <Component Id="cmp8D6B0D0D5B997AF1B9BB2F2784692E03" Guid="{F4547C46-1454-43DE-A9E8-72C6411495DA}">
                 <File Id="filB19BBDDEF37FA03C3CE38BCFF05583EC" Source="$(var.HarvestPath)\System.Drawing.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp15CD896C1257803F1EAAF21F13643142" Guid="{EE475BB6-2734-4619-9DDB-A631EE23E3C6}">
+            <Component Id="cmp15CD896C1257803F1EAAF21F13643142" Guid="{6425D452-702A-4FAE-811C-BC37A264955F}">
                 <File Id="filC982A846E7172EA04317E0E51B86A4E6" Source="$(var.HarvestPath)\System.Dynamic.Runtime.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp29422AE271D6B2356E2AF332D256B1DE" Guid="{AE8A3EB5-0438-4716-BCB8-7A127EA55995}">
+            <Component Id="cmp29422AE271D6B2356E2AF332D256B1DE" Guid="{D167E69A-F954-4A34-8213-050056F3CEF3}">
                 <File Id="filB54F98D44891971453C10FBE1B05B1AB" Source="$(var.HarvestPath)\System.Globalization.Calendars.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpAA087E95574A085C5201D270F443E62E" Guid="{C8AE69BD-D4D2-4D2D-97C3-5F53AE1AB258}">
+            <Component Id="cmpAA087E95574A085C5201D270F443E62E" Guid="{F12AA9C8-9316-4D31-9CAA-2352B9E29E00}">
                 <File Id="filAE617BAD3153A0952E9F3AC5EEF74A91" Source="$(var.HarvestPath)\System.Globalization.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp2AE6AC0EBDF241F5A2F3268BA1ACA754" Guid="{E8DA1095-E2B9-4F40-B41E-3609EAB0A49B}">
+            <Component Id="cmp2AE6AC0EBDF241F5A2F3268BA1ACA754" Guid="{A814BEE2-939F-43A6-A86B-C632E7A2E95C}">
                 <File Id="filE95A7394964F5DE38E1D4BF952444394" Source="$(var.HarvestPath)\System.Globalization.Extensions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp129F5F5267671C7AB542077C2BDD8D72" Guid="{F0E2FDC5-77EB-416A-92AF-FBA6FBA788FF}">
+            <Component Id="cmp129F5F5267671C7AB542077C2BDD8D72" Guid="{F6EBC428-A28D-4BDE-A709-D25A6D94CAC5}">
                 <File Id="fil9EAB17C18CD3A8D30FCF1017E3F9B1E6" Source="$(var.HarvestPath)\System.IO.Compression.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp23F7C2354109EC7F3034457C47235AA0" Guid="{E6E3D777-F9B6-4378-98C5-8DDCE0DC4C32}">
+            <Component Id="cmp23F7C2354109EC7F3034457C47235AA0" Guid="{CF30B231-8E6D-456D-9F0F-6F7749B966E4}">
                 <File Id="filA88EB5E9549A3F482ECCF70642AE8E9F" Source="$(var.HarvestPath)\System.IO.Compression.ZipFile.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp1AB2F694FBE065FEC98E27EC233540D7" Guid="{BFA51116-72B0-4F3A-A8E3-F79B2851911F}">
+            <Component Id="cmp1AB2F694FBE065FEC98E27EC233540D7" Guid="{C6E8201E-1D49-43C9-A841-A034C773504C}">
                 <File Id="filF97298386D9CA5BBFEF3BA1266204948" Source="$(var.HarvestPath)\System.IO.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4F71FF3179249F40AA83CC5D26424EFE" Guid="{E63E0A4F-3BCD-405E-839F-76BD66B5B7F7}">
+            <Component Id="cmp4F71FF3179249F40AA83CC5D26424EFE" Guid="{0053347E-6893-46FD-9752-4C6371A8D92A}">
                 <File Id="filC6DDCD354E20866B99A7A52238AAF325" Source="$(var.HarvestPath)\System.IO.FileSystem.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpCE934969B52A8BF6C3B94FA9636916F6" Guid="{1A9DEAC1-FB50-4C5F-9011-1C62DC015FA7}">
+            <Component Id="cmpCE934969B52A8BF6C3B94FA9636916F6" Guid="{DAB6D808-88F1-4C36-9D9A-80EEA115AE6F}">
                 <File Id="fil0E00B68474AC0129918FF360842A9CBF" Source="$(var.HarvestPath)\System.IO.FileSystem.DriveInfo.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpC99C1FCF2F2B5727FFA9240232755632" Guid="{F40A56D7-06AF-449B-8D3F-E937644B4760}">
+            <Component Id="cmpC99C1FCF2F2B5727FFA9240232755632" Guid="{F251C10C-10B3-447B-AA61-3BB67A92698C}">
                 <File Id="filC3D4C9C1D8A5E81CA2C9F12AA05C8E2F" Source="$(var.HarvestPath)\System.IO.FileSystem.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp39DE53A6E602C76462F0260E369F2792" Guid="{ABC23C72-E047-4D0B-802F-9DFB6B1D1DA9}">
+            <Component Id="cmp39DE53A6E602C76462F0260E369F2792" Guid="{4DE7BFA5-BF60-4EA5-9D7E-35E223FA0830}">
                 <File Id="fil576190832420D0AA668E4332EFFB4CBF" Source="$(var.HarvestPath)\System.IO.FileSystem.Watcher.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4A7BCFB5DA46BC95D2E49236FC59D8A5" Guid="{33D66D63-1B36-4E2F-96DE-DEF73AAF068E}">
+            <Component Id="cmp4A7BCFB5DA46BC95D2E49236FC59D8A5" Guid="{F7FD679E-B5C0-42BF-BB58-9AB9AE6B86A3}">
                 <File Id="filC8B845031D596C89E35A64614B930E36" Source="$(var.HarvestPath)\System.IO.IsolatedStorage.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3C994A927E01FC3CC7E0AE001AF0CD4C" Guid="{FFD632EC-2F1F-4048-A6B8-2A51A733EFEE}">
+            <Component Id="cmp3C994A927E01FC3CC7E0AE001AF0CD4C" Guid="{089853A9-1562-45BB-A771-034636208016}">
                 <File Id="filA22B487AC8691FA22B43B5D947EB4791" Source="$(var.HarvestPath)\System.IO.MemoryMappedFiles.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp461F4A455CD0EB1AD2E4E35B51C09850" Guid="{F76A393F-9D3A-48BE-8697-C77C7027675E}">
+            <Component Id="cmp461F4A455CD0EB1AD2E4E35B51C09850" Guid="{B6365BE9-1D4B-4B83-BD87-2159D32520A2}">
                 <File Id="fil0B2EFCDE9779CC5CD0E6EB630A00C291" Source="$(var.HarvestPath)\System.IO.Pipes.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6042D98678A0BF1EE1EB0EC4AF5E5C52" Guid="{C96DC857-655E-4DDC-87F6-86C20388F036}">
+            <Component Id="cmp6042D98678A0BF1EE1EB0EC4AF5E5C52" Guid="{01B40012-BA18-45AC-84C9-0BB7EFAB4B15}">
                 <File Id="fil770B68ECB2EAAA73F75AE90EC59CDF4E" Source="$(var.HarvestPath)\System.IO.UnmanagedMemoryStream.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpEE5BBE99E2C22FC8023A8976953D2181" Guid="{56A0E7F6-217F-41F6-A5FD-B1F474F2D135}">
+            <Component Id="cmpEE5BBE99E2C22FC8023A8976953D2181" Guid="{AD40122F-684D-4E4A-B31F-FA9FC825FB42}">
                 <File Id="fil9624BD0666E81BA5E2C9A90C8EE12DF1" Source="$(var.HarvestPath)\System.Linq.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3B693E836B896CF886DF7174A12D37F7" Guid="{E8311614-F56C-48CB-A644-56EE36D97A51}">
+            <Component Id="cmp3B693E836B896CF886DF7174A12D37F7" Guid="{8492CF31-725A-42EE-9F87-556FDBF535F6}">
                 <File Id="filC4914ECA26BAF54E9A2DD6F052DA9C90" Source="$(var.HarvestPath)\System.Linq.Expressions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp8EB6B1FB2B50FFBB0CA48841D0C7E01B" Guid="{A1584568-275D-4C24-9EDD-4BFE826381C4}">
+            <Component Id="cmp8EB6B1FB2B50FFBB0CA48841D0C7E01B" Guid="{D6A454CA-7F38-4AE0-85B5-6E17B0542A62}">
                 <File Id="filE34040F3256391C32697BF02C1A69D6C" Source="$(var.HarvestPath)\System.Linq.Parallel.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpDB259A99945F85FEC221D6F75ACCB8EF" Guid="{D3459E02-E7C9-4BBE-93F7-AEAED7E10B12}">
+            <Component Id="cmpDB259A99945F85FEC221D6F75ACCB8EF" Guid="{ECE2625F-0EB9-4028-8F66-7F3706EAAEEC}">
                 <File Id="fil3B519832BFCC96F2B9F9A9E556AD7266" Source="$(var.HarvestPath)\System.Linq.Queryable.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4CFC7C3721FFD91FA4E9798A516D5E97" Guid="{135203AE-5FF5-45BA-AB3E-6EF3E5240053}">
+            <Component Id="cmp4CFC7C3721FFD91FA4E9798A516D5E97" Guid="{470E40CE-1B78-4541-BB28-50CF3FA0B7C5}">
                 <File Id="fil1E24D2F3B531B1D76E1631314436BD58" Source="$(var.HarvestPath)\System.Memory.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7C8ACFEA497AD75401FFD01A9AEB31D4" Guid="{F9072F01-BD4B-4246-9C8B-C2B94DBEB632}">
+            <Component Id="cmp7C8ACFEA497AD75401FFD01A9AEB31D4" Guid="{15DA9888-7B52-436F-8FFD-05979C9B7F4B}">
                 <File Id="filE0C3E4A153D639D49A90C05560AF1912" Source="$(var.HarvestPath)\System.Net.Http.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpD577135453C63C124E24214ACA6ED9B4" Guid="{2E368715-EE0D-4050-9DE5-A8807C8D5103}">
+            <Component Id="cmpD577135453C63C124E24214ACA6ED9B4" Guid="{D867604B-B585-4EED-8D67-F2CB90084638}">
                 <File Id="filE386BE0BA9453CEB70C0D0A4F87AFE13" Source="$(var.HarvestPath)\System.Net.NameResolution.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5CF9D73D8F28A4EF0D37B0136ED71006" Guid="{E221076E-AA2C-4CF3-B6AC-949F9EBC70A9}">
+            <Component Id="cmp5CF9D73D8F28A4EF0D37B0136ED71006" Guid="{C3958B2F-1904-49D2-877F-EC08CA454F89}">
                 <File Id="filBE42196B38AEB33D0CDF75251FE2D7B1" Source="$(var.HarvestPath)\System.Net.NetworkInformation.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE95A3A7DB0E5B6B057A2BEF1A9ACCBA6" Guid="{51942CCD-CAB2-4BCE-B82F-B9009A47F940}">
+            <Component Id="cmpE95A3A7DB0E5B6B057A2BEF1A9ACCBA6" Guid="{1432E749-1EFD-4111-82E4-A7273BDCADC7}">
                 <File Id="filE8CE2C8F8D88989206070BB80BED53C7" Source="$(var.HarvestPath)\System.Net.Ping.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp57ED19A38749352B4A6312602AF32EEA" Guid="{EE21803A-2654-4DDB-8B6E-33744236D65B}">
+            <Component Id="cmp57ED19A38749352B4A6312602AF32EEA" Guid="{6507A811-4634-40EC-900F-C6A906AAB10C}">
                 <File Id="fil73A9A1A5553BBD979A6AE05955A0BFC3" Source="$(var.HarvestPath)\System.Net.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3BED5AB46AF442FB282395C20F099F24" Guid="{75ED2E53-3A78-4270-8FAD-B42C5B348130}">
+            <Component Id="cmp3BED5AB46AF442FB282395C20F099F24" Guid="{12F11FDD-9141-4386-BAE1-0B6122736158}">
                 <File Id="filBF1F0395A4430CE4FD07957B53031C4A" Source="$(var.HarvestPath)\System.Net.Requests.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4629EBAC56A143487ECF260AF98BF78D" Guid="{96F15680-CD3E-4501-A458-2867A926D1A1}">
+            <Component Id="cmp4629EBAC56A143487ECF260AF98BF78D" Guid="{EC9F5C32-37C1-40A1-9A16-6D91C74C9EB9}">
                 <File Id="fil591D46E363F8E823067D9B8BEF2F7B81" Source="$(var.HarvestPath)\System.Net.Security.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6A4CEF696231A141C3BD0E963AF7FC9A" Guid="{924C275B-804B-4AA7-BD47-39DF4D2BCBA3}">
+            <Component Id="cmp6A4CEF696231A141C3BD0E963AF7FC9A" Guid="{BC7E79B6-4550-46A3-B649-B7C0D060A223}">
                 <File Id="filDEE378E4FB4D3F4448BC26AA15C9E83D" Source="$(var.HarvestPath)\System.Net.Sockets.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpC11D8B4CADC383AE71657D4082C7C44C" Guid="{A59B163E-0476-42BB-A22A-ABC69FF078B4}">
+            <Component Id="cmpC11D8B4CADC383AE71657D4082C7C44C" Guid="{08028486-AAE3-4EE8-9768-F9CEF75CF2F4}">
                 <File Id="filC9BBDB35B270BFF7BFB6C819013763B8" Source="$(var.HarvestPath)\System.Net.WebHeaderCollection.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7CDF555F26EC27374503C4D251C0ADD7" Guid="{67C947E6-0552-4951-A221-24B3EBBF9317}">
+            <Component Id="cmp7CDF555F26EC27374503C4D251C0ADD7" Guid="{4317648E-FAE5-45F9-9F21-9AED142F0173}">
                 <File Id="fil7E89DC70B56E449D3B0FBFB3811872C9" Source="$(var.HarvestPath)\System.Net.WebSockets.Client.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7FDA86390D774733F2019204F3EF9348" Guid="{AA0A90F6-5C0E-43CC-AA72-0ADF07C034AD}">
+            <Component Id="cmp7FDA86390D774733F2019204F3EF9348" Guid="{46412D7B-B209-4F33-A36D-173FEF5E96AF}">
                 <File Id="filFF4A0F663A05BAEEDC1EF2CA53FB8D4F" Source="$(var.HarvestPath)\System.Net.WebSockets.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpA780BD9CC7EF10DE58A9E17B691B0205" Guid="{211513C6-D4A3-41D0-BE0C-1C11EE4D0171}">
+            <Component Id="cmpA780BD9CC7EF10DE58A9E17B691B0205" Guid="{C6B18AC7-4D2F-4CCB-9430-62D687FE8463}">
                 <File Id="fil41D7AC86F0924A477EE48B3AF9E39249" Source="$(var.HarvestPath)\System.Numerics.Vectors.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp0ECCBE7E7A91EA3F9AC4E08C42060A74" Guid="{4FBC3045-D1B3-40DE-AF60-6207D77EF357}">
+            <Component Id="cmp0ECCBE7E7A91EA3F9AC4E08C42060A74" Guid="{97A9FAAC-39D8-4DEE-A54B-8635FBE56345}">
                 <File Id="filCD330848999366093EF4945E95052719" Source="$(var.HarvestPath)\System.ObjectModel.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7320660D409A823430EC1ADFF0D83564" Guid="{F6A53863-BE17-4B35-85C3-C199C58B8763}">
+            <Component Id="cmp7320660D409A823430EC1ADFF0D83564" Guid="{492F2E8F-2689-4637-A927-80E89736673B}">
                 <File Id="fil0F1435C9F703FD077AC5E77B34B69CC8" Source="$(var.HarvestPath)\System.Reflection.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp68097EB457BBDE8DE960E7CC72000139" Guid="{A968E91F-3ADC-4692-A967-70F20095816E}">
+            <Component Id="cmp68097EB457BBDE8DE960E7CC72000139" Guid="{653D90BF-F2AD-42F5-8604-A1D655F1A248}">
                 <File Id="filFFC887013D8E0165D1A96DFCECBB62D6" Source="$(var.HarvestPath)\System.Reflection.Extensions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpC2109B9173A8B91CBDD411618A20588C" Guid="{2253D4FF-F58B-4A30-8851-56A111AE22EB}">
+            <Component Id="cmpC2109B9173A8B91CBDD411618A20588C" Guid="{7CC3B269-657E-42FA-A910-BB1A335E1E1A}">
                 <File Id="fil2A581D7BEB9E3BA198BA51891387E525" Source="$(var.HarvestPath)\System.Reflection.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp48A7934AD38EE63A44A9478E1C31E3BB" Guid="{244617EC-59D3-483B-A364-2D5FF9E15933}">
+            <Component Id="cmp48A7934AD38EE63A44A9478E1C31E3BB" Guid="{AC4FA943-C58C-4B88-A3EB-EC57FCADBF1B}">
                 <File Id="fil3BB10164D9FC561AC346D63A8AB66A9E" Source="$(var.HarvestPath)\System.Resources.Reader.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp92E77A73B8159FC7BF51704F06BB1689" Guid="{DB2EC841-E2BF-4853-8B73-EF4264C2F7DF}">
+            <Component Id="cmp92E77A73B8159FC7BF51704F06BB1689" Guid="{1AA7DFCC-660D-43B9-BF9C-2A84B0C861DB}">
                 <File Id="fil7656E2B5556FCB519B0B66F7B480FE7B" Source="$(var.HarvestPath)\System.Resources.ResourceManager.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp82CD5F539E128C7A8CC025CBA927B9F3" Guid="{C584D61B-36EC-429F-8FB0-4C0E82E6FA06}">
+            <Component Id="cmp82CD5F539E128C7A8CC025CBA927B9F3" Guid="{B083A813-DA95-42AE-B4ED-BD79EF819D62}">
                 <File Id="fil3BCC5DD79CA7001CCCDB0DE845D707D3" Source="$(var.HarvestPath)\System.Resources.Writer.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp04E7760BC247B05C847A4A6D5D8C7091" Guid="{BF2A10A7-D45D-43AF-8213-C901DE1260FF}">
+            <Component Id="cmp04E7760BC247B05C847A4A6D5D8C7091" Guid="{422E6E29-15D9-4D7F-911D-A8FE8FF34238}">
                 <File Id="fil8974B12282083EB6B4CB7BAC26546374" Source="$(var.HarvestPath)\System.Runtime.CompilerServices.Unsafe.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp336F82620F5FFCA06611B8FD22F7066F" Guid="{ED7CA499-FEEE-4863-AF78-E8D870D2023B}">
+            <Component Id="cmp336F82620F5FFCA06611B8FD22F7066F" Guid="{008BFB9F-050D-4AEF-9BFD-4721B95BCACA}">
                 <File Id="fil3B157F8B05D7C8C49D0B2E4879F2135C" Source="$(var.HarvestPath)\System.Runtime.CompilerServices.VisualC.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF68CE304EDD0D14A7BFF18236F51BC48" Guid="{3E8C412F-F191-4A3A-9962-E77276E6C718}">
+            <Component Id="cmpF68CE304EDD0D14A7BFF18236F51BC48" Guid="{087F9CAE-87E5-47F9-97CC-C8C49D37D5E4}">
                 <File Id="fil1DF46A3A328CA5A1B3C9E619D2E6B80A" Source="$(var.HarvestPath)\System.Runtime.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp975FB1B5D4A3126E0525915FB4C90ECF" Guid="{FBA94C0A-3AF7-401A-80E9-569D45186E7D}">
+            <Component Id="cmp975FB1B5D4A3126E0525915FB4C90ECF" Guid="{339CACFD-5003-4C3B-BB56-2170BEC4A037}">
                 <File Id="filA4A42760CA9FD5DD6B18B4E51A05E900" Source="$(var.HarvestPath)\System.Runtime.Extensions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE55D5ABD5E06B7AC82A1A464F710DC2E" Guid="{0090FA15-78AE-4AF8-BBA2-3E5CAE3B0F57}">
+            <Component Id="cmpE55D5ABD5E06B7AC82A1A464F710DC2E" Guid="{EEA5BF8E-F232-49F4-83C8-65A39ADA4482}">
                 <File Id="fil1B530BA53CDCE15C6F6170DBC8B8D72B" Source="$(var.HarvestPath)\System.Runtime.Handles.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF8D128DB049817F164973BCC38DE4935" Guid="{2DBC45D6-BA72-4C57-872D-1403AAE88FB2}">
+            <Component Id="cmpF8D128DB049817F164973BCC38DE4935" Guid="{B25AB208-4D5C-43C5-8062-A2EE342D03E7}">
                 <File Id="filFD0221B77EC7449E1F90EA01B453DEC9" Source="$(var.HarvestPath)\System.Runtime.InteropServices.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpEF0EA4DA72195CE89ADEBCDFBBB1A537" Guid="{4F8880E8-3AE7-475E-9AB7-673178A558AA}">
+            <Component Id="cmpEF0EA4DA72195CE89ADEBCDFBBB1A537" Guid="{793E83C6-8D2A-4194-AB02-DB28CB6716DD}">
                 <File Id="fil3469E12317CB8788F95F8E393705340B" Source="$(var.HarvestPath)\System.Runtime.InteropServices.RuntimeInformation.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp058B1E2892E76D2F98E9569E383E5B83" Guid="{E79A50F5-D0C4-4CD8-84D0-8A8B1723E5D5}">
+            <Component Id="cmp058B1E2892E76D2F98E9569E383E5B83" Guid="{5C0F804E-6081-4613-8F9C-3F4593C84C88}">
                 <File Id="fil57772530FF83DF69270D8AA86333BE83" Source="$(var.HarvestPath)\System.Runtime.Numerics.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp8383C67527BDAFE41A3001900C896480" Guid="{D9837173-B868-444E-A9BA-51E0CA7575D5}">
+            <Component Id="cmp8383C67527BDAFE41A3001900C896480" Guid="{AD0283E7-F20B-4B01-98A4-A4C5DD99B340}">
                 <File Id="fil508F4D8A219CB235A6A05A06440BAD9A" Source="$(var.HarvestPath)\System.Runtime.Serialization.Formatters.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp1D49D64F849E58598D108BA2293DAD87" Guid="{1FF7B370-03D2-4FE8-AB40-CBFD1D3C9A07}">
+            <Component Id="cmp1D49D64F849E58598D108BA2293DAD87" Guid="{032E9EC0-813F-45BF-BD44-6FE2D539BF09}">
                 <File Id="fil996377CBD20957AB61D1F7794647229A" Source="$(var.HarvestPath)\System.Runtime.Serialization.Json.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpFFD9C90842D9C8A5251533EE3764882E" Guid="{E5242407-0FC9-40BD-964B-7DCF24B618B4}">
+            <Component Id="cmpFFD9C90842D9C8A5251533EE3764882E" Guid="{8F512CEC-CD3E-4560-A0BF-27C61BED2572}">
                 <File Id="fil78BB41794127DCA0098197C99B85DEC0" Source="$(var.HarvestPath)\System.Runtime.Serialization.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp852AADF38F8E567003DDA62F8B2655B6" Guid="{F449BB03-08FF-4927-B51E-07824BF5D6C3}">
+            <Component Id="cmp852AADF38F8E567003DDA62F8B2655B6" Guid="{D685C429-4172-4F2C-9098-B59120F49B7D}">
                 <File Id="filFBE1D5D50943EABD41BF7FBDDE38558D" Source="$(var.HarvestPath)\System.Runtime.Serialization.Xml.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp43A33CE3413979CC718E796B1C1E3E5B" Guid="{17D7F6C6-0DB8-42EE-8B6D-05D7B1694761}">
+            <Component Id="cmp43A33CE3413979CC718E796B1C1E3E5B" Guid="{AE2DE14D-AD23-424D-8D5D-6F554C2A2F08}">
                 <File Id="fil6E218B321475AAF07492F4993D21A018" Source="$(var.HarvestPath)\System.Security.AccessControl.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp74104254FD237403FE1336A0257C4330" Guid="{42871966-CCED-4FA1-8C71-80FDD10E6093}">
+            <Component Id="cmp74104254FD237403FE1336A0257C4330" Guid="{4138C70A-793F-42C5-A99F-923941F502CA}">
                 <File Id="fil4B059CBA3EE02B33F172310663FA47A2" Source="$(var.HarvestPath)\System.Security.Claims.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp92D5F6B984CFD9B211394CCCEE1F04A5" Guid="{9D2203C3-52B1-46FB-9DF5-5473A237C3A8}">
+            <Component Id="cmp92D5F6B984CFD9B211394CCCEE1F04A5" Guid="{6CE6B71C-8E00-486A-8386-B1289F880D82}">
                 <File Id="filEBF3D292F27598D7663F2D486D689D1E" Source="$(var.HarvestPath)\System.Security.Cryptography.Algorithms.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7B9CC5FD009F8DDFD5BF9EA0D105C4CA" Guid="{522C148D-D237-467B-A1CD-69CA2F085391}">
+            <Component Id="cmp7B9CC5FD009F8DDFD5BF9EA0D105C4CA" Guid="{8756AEE9-1E6C-433F-9075-877C407FEDD6}">
                 <File Id="fil50D322D8544CA61F46C2ADE1B6D20EAB" Source="$(var.HarvestPath)\System.Security.Cryptography.Cng.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpDFB191D893C4B975B51D3352B7B82109" Guid="{38F0C243-794B-486B-98B2-E04C02E4965B}">
+            <Component Id="cmpDFB191D893C4B975B51D3352B7B82109" Guid="{A6EC3567-BFB3-4E76-A38F-82AE471E21D4}">
                 <File Id="fil5903FB61F7250A24E1C6485BA5781F06" Source="$(var.HarvestPath)\System.Security.Cryptography.Csp.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp626E0E80197224B4DF0D25BD513CFE42" Guid="{CDF6F81D-CE9C-488D-A780-A6F369E16400}">
+            <Component Id="cmp626E0E80197224B4DF0D25BD513CFE42" Guid="{2F64FE31-D69F-443B-9F57-1416D9E09DEA}">
                 <File Id="fil1992BB2EBFE606350BB0C0A3EB90AE08" Source="$(var.HarvestPath)\System.Security.Cryptography.Encoding.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp11C8DA598E403582C9E9F65C927CA880" Guid="{CCF6541A-1F2D-43CF-BBB0-2E2B9294292A}">
+            <Component Id="cmp11C8DA598E403582C9E9F65C927CA880" Guid="{58BB6A71-D130-4AAA-8128-00E5E0A26B6C}">
                 <File Id="filFDF5ED320EBDD3488A9A83071319B9FD" Source="$(var.HarvestPath)\System.Security.Cryptography.Pkcs.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp9AFF12285630BC013517118B5EEA5D3C" Guid="{F57CC333-D6B8-43C1-80CD-C30467752CCE}">
+            <Component Id="cmp9AFF12285630BC013517118B5EEA5D3C" Guid="{DE7F563E-7C52-4D55-9525-85D033DE8CF0}">
                 <File Id="fil5CF1A17519FD312AFF94811EE6B36214" Source="$(var.HarvestPath)\System.Security.Cryptography.Primitives.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF504650A7859834E56B465827ADA1936" Guid="{F04DE239-A51C-46C1-957A-E8569DAD8849}">
+            <Component Id="cmpF504650A7859834E56B465827ADA1936" Guid="{20833CDC-6790-4CBC-9F36-86601135C7BD}">
                 <File Id="filF3505C51B6D770D84F54BDDB6F4AE5C2" Source="$(var.HarvestPath)\System.Security.Cryptography.ProtectedData.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6951ADE3434FC5DEA7A943576EAFC9C9" Guid="{2A87A19D-38CD-41A6-825E-6FFB9E300570}">
+            <Component Id="cmp6951ADE3434FC5DEA7A943576EAFC9C9" Guid="{C6CC1C80-A3EF-4CE4-BC31-D0E421F70E14}">
                 <File Id="fil19629832AA6A1448CA14FB1052541870" Source="$(var.HarvestPath)\System.Security.Cryptography.X509Certificates.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpA0BE31D5F64E6C8E4232B1246C6E6EBA" Guid="{ECC8BBDF-B307-4C75-8D7B-85A3FE7DDE1D}">
+            <Component Id="cmpA0BE31D5F64E6C8E4232B1246C6E6EBA" Guid="{7877FEEC-2EC1-47BF-9A87-9FAE9FE31925}">
                 <File Id="filB839AACE9B1FA27047CB38A105A51A43" Source="$(var.HarvestPath)\System.Security.Principal.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6AEFC17E20EAA1A80B51320D84CB4117" Guid="{EAF8C45C-2A93-4ABC-A5F6-B5A3715E3B4D}">
+            <Component Id="cmp6AEFC17E20EAA1A80B51320D84CB4117" Guid="{9283D3CB-5D07-423A-AEB0-15AFB31B631E}">
                 <File Id="fil79E5070652584CDC0B95879F06EF0079" Source="$(var.HarvestPath)\System.Security.Principal.Windows.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE7D2AE44E717D315763AA4408AAB16FB" Guid="{883291E6-67DC-451D-A2FA-3D512B978A06}">
+            <Component Id="cmpE7D2AE44E717D315763AA4408AAB16FB" Guid="{CB2A614F-F314-4C1E-8454-5B0FACC97490}">
                 <File Id="fil2DEEED95EC66E42E5135E15E0D4BDEAC" Source="$(var.HarvestPath)\System.Security.SecureString.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp75DAC5FDC2337ECAD4CD4B6633997292" Guid="{AEA265FA-3F1E-4060-9AFC-1033AE22D74F}">
+            <Component Id="cmp75DAC5FDC2337ECAD4CD4B6633997292" Guid="{5D34DA08-518E-451B-8D1E-DE365681EE13}">
                 <File Id="fil882D2FAAA08CD42BDE8C89122E0451FC" Source="$(var.HarvestPath)\System.Text.Encoding.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp69B094884B9A8B61C779794ADEBBC1A9" Guid="{EA54BCED-E648-4A2D-B30C-96FA05EF9144}">
+            <Component Id="cmp69B094884B9A8B61C779794ADEBBC1A9" Guid="{E1D98AED-9B35-4EF0-94B6-9B95F13476A9}">
                 <File Id="filF2A6B49561E51548D949049A3979C98E" Source="$(var.HarvestPath)\System.Text.Encoding.Extensions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpC5D9D0B15AFBC0CF5AFAE1D408F93B74" Guid="{3E8DFFED-5046-4679-B673-2A89C3F559D9}">
+            <Component Id="cmpC5D9D0B15AFBC0CF5AFAE1D408F93B74" Guid="{0F3E6F50-055A-4097-95AA-18EB502F3BFF}">
                 <File Id="filFE0C8F47D86E044043A5140C2900BC86" Source="$(var.HarvestPath)\System.Text.RegularExpressions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF574B7D15C8F67E99CE93D4A59FC6585" Guid="{E2BDC620-0F66-4C31-8F54-61FF9BE73B76}">
+            <Component Id="cmpF574B7D15C8F67E99CE93D4A59FC6585" Guid="{BD281535-92DA-499C-BDD4-A96D0457E377}">
                 <File Id="fil6382A5666A4DE7DD4AB95697F7D2C79F" Source="$(var.HarvestPath)\System.Threading.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpEA99956125140C149444D0EA2A2FBD11" Guid="{21D79214-5EF4-4F85-8F99-1E348B7C2D19}">
+            <Component Id="cmpEA99956125140C149444D0EA2A2FBD11" Guid="{16320B73-8FE2-47BD-9AB4-41E2127CBE7A}">
                 <File Id="filFAEBEC1A0D6D5ECFF6E97BBAE0CA0AE3" Source="$(var.HarvestPath)\System.Threading.Overlapped.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3B63C4A8BD59792FD308ADD749073AE3" Guid="{D87E9F7F-641F-4582-8028-9E49409EB961}">
+            <Component Id="cmp3B63C4A8BD59792FD308ADD749073AE3" Guid="{DB735E5D-83A3-4593-8978-0B7A2483627D}">
                 <File Id="filAFB2C8AB9328AAA60E4F1F016E024155" Source="$(var.HarvestPath)\System.Threading.Tasks.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp632B6E4876B3D900A85D26C65E49B166" Guid="{0E3C2E69-9A5C-4B7E-85F1-A3F79B987E8C}">
+            <Component Id="cmp632B6E4876B3D900A85D26C65E49B166" Guid="{5CCB53AF-4B52-4D68-BC3A-E29470B4F8AF}">
                 <File Id="filDD4E8354C14401F7691CA8D69B4AB49D" Source="$(var.HarvestPath)\System.Threading.Tasks.Parallel.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6B712402D454F08D96D36C530166919B" Guid="{A8C5A959-7B6D-4B78-A2FB-3795F792E569}">
+            <Component Id="cmp6B712402D454F08D96D36C530166919B" Guid="{9DD462A5-364A-46DC-83D7-0C396E010CDA}">
                 <File Id="filFF87888E479CA922120322C6DD2CA43C" Source="$(var.HarvestPath)\System.Threading.Thread.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp8AEEDC24B08C41AED47ACF763BF574A1" Guid="{93E2A190-7FE5-4BAC-AEFF-EAF655F9C567}">
+            <Component Id="cmp8AEEDC24B08C41AED47ACF763BF574A1" Guid="{A1BB797B-623C-4DAA-A79F-A4912BB99BB4}">
                 <File Id="filAA0C516BEAE2F97B5992ADB07A7F7275" Source="$(var.HarvestPath)\System.Threading.ThreadPool.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpBAD65A0DD84D5EC853BB247DBE86F887" Guid="{81B7F24A-ADE2-437E-8D4B-F49B589AC5CD}">
+            <Component Id="cmpBAD65A0DD84D5EC853BB247DBE86F887" Guid="{92D74335-0E9D-4D8B-BD89-91CEDD505CAF}">
                 <File Id="filC3DA66B6AA09D95F39F5A2E562CCEA8B" Source="$(var.HarvestPath)\System.Threading.Timer.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpCB5E5E4C7D798FA2732BABDEB0BE886D" Guid="{3B931B49-9CF2-4BD8-BC63-AE49C0EE8CFC}">
+            <Component Id="cmpCB5E5E4C7D798FA2732BABDEB0BE886D" Guid="{BE902B86-9F8C-49E1-9DD8-3F9A37D1250B}">
                 <File Id="fil2D8127F560A04E97657BE7D1D9CB7525" Source="$(var.HarvestPath)\System.ValueTuple.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp4FE4E61EC9791201921745B40643CBB8" Guid="{60C21F12-6084-45CC-A8A7-AA78487B8CB9}">
+            <Component Id="cmp4FE4E61EC9791201921745B40643CBB8" Guid="{03D9D630-1DEE-4081-947B-ABB5E5E5E917}">
                 <File Id="fil6F11DE09547B0AE8405683CDB88F7FC4" Source="$(var.HarvestPath)\System.Windows.Interactivity.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpB29480D26980660C0E9ADE25F14B43AD" Guid="{39474974-FDBE-44DD-B321-BBB07EA4E2DB}">
+            <Component Id="cmpB29480D26980660C0E9ADE25F14B43AD" Guid="{47D88DAA-A696-41D1-AEB6-988F9F9F46FA}">
                 <File Id="filA4CB8C3F6118005605F8F71AB7E4A572" Source="$(var.HarvestPath)\System.Xml.ReaderWriter.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE59C0BD28DF5A4DF51B1078ACE43A415" Guid="{5CEC423A-C27E-45D0-AEC7-8335E4B6FBB7}">
+            <Component Id="cmpE59C0BD28DF5A4DF51B1078ACE43A415" Guid="{023B707B-74BD-456E-9601-CC8C175D13A7}">
                 <File Id="fil6CC059A8F8B87D96BDD3CBBDDC6744CC" Source="$(var.HarvestPath)\System.Xml.XDocument.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp3123E1EB1C5D225391FC1D6617D55C3F" Guid="{7E965251-C91A-4DBC-A13E-78637CA354FD}">
+            <Component Id="cmp3123E1EB1C5D225391FC1D6617D55C3F" Guid="{A58E1CD6-D90D-4B98-808B-82CE308FB412}">
                 <File Id="filAF8592E2C3BEA2ADA7883648F5BD3E2B" Source="$(var.HarvestPath)\System.Xml.XmlDocument.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp31F020064DD03E3B81CC5C22BABF3806" Guid="{91A09812-62D7-4FE9-BA59-9D25232B4ED6}">
+            <Component Id="cmp31F020064DD03E3B81CC5C22BABF3806" Guid="{ABD2CD0D-E934-436B-AFDC-3549158C2F84}">
                 <File Id="fil6551700C172C6669B5CFDCBAC0B650DD" Source="$(var.HarvestPath)\System.Xml.XmlSerializer.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7F8869CF8631075DAAB292885B3366B9" Guid="{FCA94228-30EC-4D62-B2C7-524462073781}">
+            <Component Id="cmp7F8869CF8631075DAAB292885B3366B9" Guid="{01C7CE69-4ACA-45FF-A113-AD15B9A68C73}">
                 <File Id="filBA372692826B579213FAF4D36C948A0B" Source="$(var.HarvestPath)\System.Xml.XPath.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp808A78AA924556012D14BE1271FD1203" Guid="{6934FD8E-0F0A-4DD2-87DB-1DBC3830EDF7}">
+            <Component Id="cmp808A78AA924556012D14BE1271FD1203" Guid="{D108F193-D2A5-4EA0-9F7C-BD2774BDF0E9}">
                 <File Id="filD68A3D67F917418E29DB132D939A3029" Source="$(var.HarvestPath)\System.Xml.XPath.XDocument.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpF8D234C94A74E417EF588934DCFF97BD" Guid="{2818DC6F-75DC-462C-B186-8139FBA8FC4C}">
+            <Component Id="cmpF8D234C94A74E417EF588934DCFF97BD" Guid="{F52E4CFE-330D-48E7-B2AF-43E6FFE3236C}">
                 <File Id="fil07765C69E2C4D71D1FC1CD8CA672FEA2" Source="$(var.HarvestPath)\TestableIO.System.IO.Abstractions.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpD00056C26CE3E92AF69A9586119ED38D" Guid="{841DD8B6-8B57-4AD0-8E2D-383AE5F9F91B}">
+            <Component Id="cmpD00056C26CE3E92AF69A9586119ED38D" Guid="{D33EB733-314E-4C28-BFC5-A63B3C8365E4}">
                 <File Id="fil692327FD8941FA6A0FE25A6511E5C400" Source="$(var.HarvestPath)\TestableIO.System.IO.Abstractions.Wrappers.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp5DEA586D2ED0D6139C9215BE23D7EF3E" Guid="{6CE886DB-E9B9-4DA2-AD0D-8AEB951EDD86}">
+            <Component Id="cmp5DEA586D2ED0D6139C9215BE23D7EF3E" Guid="{05D502D7-1E4A-4E77-8E32-A528E39B4445}">
                 <File Id="fil492F2C28F3962CA93730F18422E5479B" Source="$(var.HarvestPath)\ToggleSwitch.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpD3FCA1DCFD6F1C58BCEAF979F86ABDE5" Guid="{C3A97374-839B-439B-BDB4-D82580EDE199}">
+            <Component Id="cmpD3FCA1DCFD6F1C58BCEAF979F86ABDE5" Guid="{6592AE35-6BFD-4B59-AAF4-7093369664C5}">
                 <File Id="fil89D560951B37A5D6C19ADE0A5C1AF890" Source="$(var.HarvestPath)\WpfCircularProgressBar.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp331A8D1EB324EFA20DDAC123A3CCBC20" Guid="{6C3AED2F-E74D-4433-8A57-4402061749D8}">
+            <Component Id="cmp331A8D1EB324EFA20DDAC123A3CCBC20" Guid="{55F6E27C-17DF-47A1-ADC6-38566251AC7A}">
                 <File Id="fil7877B30D7CCBC9A1D241D01A032E7702" Source="$(var.HarvestPath)\WpfCircularProgressBar.dll.config" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp7165B8BA93A80A0EA1B7728AD04D6E72" Guid="{F425D8DB-9894-4E40-99FE-86D4CAF088C5}">
+            <Component Id="cmp7165B8BA93A80A0EA1B7728AD04D6E72" Guid="{2F6E4992-E070-44D5-94B8-9AA7C309EC1B}">
                 <File Id="fil0F135695E925EFFCE422A78CD28F4C92" Source="$(var.HarvestPath)\Xceed.Wpf.AvalonDock.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmpE2468C9865F90573476173F547848D40" Guid="{F3BB4004-613D-4B6F-BDB9-0668778C9C5B}">
+            <Component Id="cmpE2468C9865F90573476173F547848D40" Guid="{812C9085-CD3E-44CC-9239-AAC274D34C07}">
                 <File Id="fil283C54AA0CCA5A82032AD6F88F3D5D84" Source="$(var.HarvestPath)\Xceed.Wpf.AvalonDock.Themes.Aero.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp25B7CDE65FC6F7EDFBADDCA69300789E" Guid="{2B7CE7EC-7E20-4CCC-9F66-5ADD00A7416F}">
+            <Component Id="cmp25B7CDE65FC6F7EDFBADDCA69300789E" Guid="{43B32BE8-65D8-4ADF-B4B3-50609795782F}">
                 <File Id="filB6214F7016ABD85F0A90650A1F105B9C" Source="$(var.HarvestPath)\Xceed.Wpf.AvalonDock.Themes.Metro.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp9A0FBE0E3FB55EEBB37903AC9A080A23" Guid="{0BD7B584-9056-4A76-9BF1-CC366317639D}">
+            <Component Id="cmp9A0FBE0E3FB55EEBB37903AC9A080A23" Guid="{C7641C18-F173-498B-A748-4B9DCB9541E0}">
                 <File Id="filBB96100CC38385FF7DB0DBFE799C5F23" Source="$(var.HarvestPath)\Xceed.Wpf.AvalonDock.Themes.VS2010.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
-            <Component Id="cmp6DF273F8C8C1322EE403E364E1D04A16" Guid="{F4871BD7-8F78-4BC1-8D4F-417FE2296AFB}">
+            <Component Id="cmp6DF273F8C8C1322EE403E364E1D04A16" Guid="{7E145365-A726-42F0-88EC-6826C6D20932}">
                 <File Id="fil4F8E845B9B0CB9B26B9D7BA0D7737124" Source="$(var.HarvestPath)\Xceed.Wpf.Toolkit.dll" KeyPath="no" />
                 <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
             <Directory Id="dir82972532CA27BEF6B972C3A142E19BC1" Name="cs-CZ">
-                <Component Id="cmpCAB95CA222FD066C2C7497309ED3B42D" Guid="{675D4898-4C0F-4106-8C9F-EC805AB4305E}">
+                <Component Id="cmpCAB95CA222FD066C2C7497309ED3B42D" Guid="{6393B87D-2378-4C7A-A3DD-F43E23EF6BE2}">
                     <File Id="filCA42D07B4FBD03D93F55D109D4CAC8DD" Source="$(var.HarvestPath)\cs-CZ\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
             <Directory Id="dirAF6DD7A53CA77B3027ADFBAEC049BD01" Name="DiscordIntegration">
                 <Directory Id="dir811F417A61360E81212787DAAAEA6D18" Name="DiscordGameSdk">
-                    <Component Id="cmpC0276994A573A078D26013C7FDACBC9F" Guid="{9E42B34F-657C-437A-B726-2A47B2AB013A}">
+                    <Component Id="cmpC0276994A573A078D26013C7FDACBC9F" Guid="{2A4F9850-A3D2-4BC9-8A7D-8859F0509CA4}">
                         <File Id="fil60282A969E4ADB939D147700568C1FA4" Source="$(var.HarvestPath)\DiscordIntegration\DiscordGameSdk\discord_game_sdk.bundle" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmpE52BB7FC3DC29679069503B4DF297C59" Guid="{9D240520-D66A-45C6-B85B-47694E38F095}">
+                    <Component Id="cmpE52BB7FC3DC29679069503B4DF297C59" Guid="{CC5C2432-8FEF-4369-82FF-BE5920B01D18}">
                         <File Id="fil4FE9C5992E55E086DEB5F14F17040536" Source="$(var.HarvestPath)\DiscordIntegration\DiscordGameSdk\discord_game_sdk.dll" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmpAD718F30AB48C261D251811A652C1A94" Guid="{EDF8D166-F2FD-4CCC-9F8D-F474290CE1D4}">
+                    <Component Id="cmpAD718F30AB48C261D251811A652C1A94" Guid="{14B35A20-9E63-40D2-B39C-F4872C52C833}">
                         <File Id="filB561F9823DCBCAFE44A9058BFB1907CC" Source="$(var.HarvestPath)\DiscordIntegration\DiscordGameSdk\discord_game_sdk.dylib" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp25256AE2947632219BC83B85B9C41CC9" Guid="{F35C5681-07F6-4739-BB06-4192CA1CAF52}">
+                    <Component Id="cmp25256AE2947632219BC83B85B9C41CC9" Guid="{8727ADC8-536D-470A-AA1F-EFE4F9AE1E48}">
                         <File Id="fil15A92A4DBB5617EB41BF5F1589376F7D" Source="$(var.HarvestPath)\DiscordIntegration\DiscordGameSdk\discord_game_sdk.so" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
                 </Directory>
             </Directory>
             <Directory Id="dir236726D31B8846E56F94A60B4BDA0D5D" Name="ja-JP">
-                <Component Id="cmp3D9D9347147FF3133AFC17C7F9A998A4" Guid="{DA40C37B-622B-42C7-88B5-B76EC320AF6A}">
+                <Component Id="cmp3D9D9347147FF3133AFC17C7F9A998A4" Guid="{16CDE058-522C-48B6-9068-90AEDA4B549D}">
                     <File Id="fil760D80DF8AD4E443D2C0E378EAF5D02B" Source="$(var.HarvestPath)\ja-JP\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
             <Directory Id="dirF5C503B5843C4B671B9659DAD472C99B" Name="nl-BE">
-                <Component Id="cmp7DADD6ADD2F165DAFF4A877D9CE92226" Guid="{1B0C6D90-8D2C-4787-B47F-3C1238940965}">
+                <Component Id="cmp7DADD6ADD2F165DAFF4A877D9CE92226" Guid="{4107334E-C909-4100-BCF4-AD2F0AA93F81}">
                     <File Id="fil3AC2CD3D341C21CA07A55027F15A368F" Source="$(var.HarvestPath)\nl-BE\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
             <Directory Id="dir61B122782F2749F187324C134F6498C1" Name="Resources">
-                <Component Id="cmp2FC36AEE2CF320C880B44E1AA37C3621" Guid="{3A31D409-FCA6-4995-8420-BD073B71D88F}">
+                <Component Id="cmp2FC36AEE2CF320C880B44E1AA37C3621" Guid="{DCD7E31E-5679-4979-885D-6BDDDB1C6281}">
                     <File Id="fil12236043116FD118BA8377F978BFCF29" Source="$(var.HarvestPath)\Resources\Icon.ico" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
                 <Directory Id="dir239481E6A388B3487D44CE1316E7F18D" Name="FileIcons">
-                    <Component Id="cmp5309461917AF261F7AA012868E31B24D" Guid="{51838D46-CF44-463B-8906-BBFD041CC24C}">
+                    <Component Id="cmp5309461917AF261F7AA012868E31B24D" Guid="{9786E28B-735F-46C7-B52F-8CD13CF2D2F2}">
                         <File Id="filCFF5B796DD323F2CD1F94F9BB1D19852" Source="$(var.HarvestPath)\Resources\FileIcons\Deck.ico" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp15CBF72A1B5100D015A36ED54D768755" Guid="{9577B43E-B393-4902-A878-5E1D9B09BFA1}">
+                    <Component Id="cmp15CBF72A1B5100D015A36ED54D768755" Guid="{D09CE629-F6AA-4719-A806-5D1E33E6BE5A}">
                         <File Id="filEC9744E3D94AA0DF3F4D57C841ABA097" Source="$(var.HarvestPath)\Resources\FileIcons\Game.ico" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp66EA0083CE16F42885E9A45C8423F861" Guid="{CF8DFF96-5375-475C-A0EF-B59AD4648FE3}">
+                    <Component Id="cmp66EA0083CE16F42885E9A45C8423F861" Guid="{4DDA8100-0966-4E3C-BC1D-6045621955DE}">
                         <File Id="fil6D03A9A21CDF9D68DE2C9BD237901984" Source="$(var.HarvestPath)\Resources\FileIcons\Patch.ico" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp7C5531A9CFC5BBD59347B4FE096D00AA" Guid="{242F5630-5601-4937-A39C-1659DF1B3472}">
+                    <Component Id="cmp7C5531A9CFC5BBD59347B4FE096D00AA" Guid="{23CCFC7E-AF3A-4008-845E-F3D548E62FAF}">
                         <File Id="fil856A84B94078810C5F3E2627A9083523" Source="$(var.HarvestPath)\Resources\FileIcons\Set.ico" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
                 </Directory>
                 <Directory Id="dirC9449A876BE1D543C4BEF0F2A70550D0" Name="LoadingWindowAds">
-                    <Component Id="cmp365D3C9E067374AF45EF43A234B8A344" Guid="{FB6A81E6-D303-4FA5-BFD3-9AC02FA7E54A}">
+                    <Component Id="cmp365D3C9E067374AF45EF43A234B8A344" Guid="{8EFAF5A3-5D72-4844-AB87-DE79936147E6}">
                         <File Id="fil7D8171D3B9A84D453F45F1F4BEAD1C40" Source="$(var.HarvestPath)\Resources\LoadingWindowAds\0.jpg" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
                 </Directory>
             </Directory>
             <Directory Id="dir54B0732D1EC7055747BB11A9069B5872" Name="Schemas">
-                <Component Id="cmpF0C980121A5E61260C111F3B30F232B7" Guid="{BA47F81D-AFDE-4BFF-8A3D-5F7144910156}">
+                <Component Id="cmpF0C980121A5E61260C111F3B30F232B7" Guid="{A7794814-EF57-41D8-8B67-186BD1EC842D}">
                     <File Id="fil06729F2D22F76C1C14C4E5CCFECD7113" Source="$(var.HarvestPath)\Schemas\CardGenerator.cs" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp0A14E0A89CCA0C7068384033422CD7AB" Guid="{3AA46140-40F0-4FF0-A99B-702E114B671D}">
+                <Component Id="cmp0A14E0A89CCA0C7068384033422CD7AB" Guid="{1A0CED72-31F1-401A-999C-B2C1238C18F4}">
                     <File Id="fil1F00E8F3533087C519DA9886F47F4BA3" Source="$(var.HarvestPath)\Schemas\CardGenerator.xsd" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp99F64E4ABB9D6E632DDB60A9C9B7966D" Guid="{FAAF2BA7-4E42-4663-8072-DFBB41102617}">
+                <Component Id="cmp99F64E4ABB9D6E632DDB60A9C9B7966D" Guid="{95B810B8-3D9A-4245-AF05-075DF5FCAF48}">
                     <File Id="fil292F5D9F5EB7C3E21016F041725CC72B" Source="$(var.HarvestPath)\Schemas\CardSet.cs" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp6CFF27CB489486958633E8131F5E4D96" Guid="{F85FD2B8-4AFD-4561-BFF0-5CA0FFB516ED}">
+                <Component Id="cmp6CFF27CB489486958633E8131F5E4D96" Guid="{0AF80283-03A3-43DA-A456-6406EBC06CB5}">
                     <File Id="fil887442C9CD7F584C63B462A90CCA26A8" Source="$(var.HarvestPath)\Schemas\CardSet.xsd" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp72BBB1DEFF5AA8D14FFE7F59F6DF3CD4" Guid="{4F522E69-0DCD-456C-8AF4-84F46BDCF2B3}">
+                <Component Id="cmp72BBB1DEFF5AA8D14FFE7F59F6DF3CD4" Guid="{A5BAA583-3720-475B-95C5-D5505B492CFB}">
                     <File Id="fil50E5CC3FA9E1647BD267C83949B4CFC2" Source="$(var.HarvestPath)\Schemas\CardSet.xsx" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp50DEB045C2F6D94CF8F4EE13A02F2E29" Guid="{08C430E3-8539-45A8-8F70-3744DFFC25DD}">
+                <Component Id="cmp50DEB045C2F6D94CF8F4EE13A02F2E29" Guid="{8E1C7CF8-8FF6-4B0B-83CB-4371A06BA484}">
                     <File Id="fil6F6409B748DE1C1F03D9A4D261A0CC34" Source="$(var.HarvestPath)\Schemas\Game.cs" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp2BD3867353E7AAE34423CE42D2161179" Guid="{2F2E790E-9096-486A-B671-DED0BB51A617}">
+                <Component Id="cmp2BD3867353E7AAE34423CE42D2161179" Guid="{4B602B1D-E00A-4F36-A874-48631E948BA9}">
                     <File Id="fil877781121FC71C521AB357B0EA510EB8" Source="$(var.HarvestPath)\Schemas\Game.xsd" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
             <Directory Id="dirEE481B3D48A90B5CC7FF22BC03F5F006" Name="Scripting">
                 <Directory Id="dir9A922803B4F75A03E6F353457F8EA5A3" Name="Lib">
-                    <Component Id="cmp5891E87842F703FAAD0E25A183FCAFB4" Guid="{A2A282CE-AE0C-4D14-B1AA-F3225174344E}">
+                    <Component Id="cmp5891E87842F703FAAD0E25A183FCAFB4" Guid="{08DFC11C-7C88-4CF8-BE2D-932D02BB2806}">
                         <File Id="filF74F3F46C3FAF66790BE2A322E6C041E" Source="$(var.HarvestPath)\Scripting\Lib\abc.py" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmpA1F9E1D023828076838FEAF99357F1C8" Guid="{969BBCE7-6902-4B09-85EB-52D7767459BB}">
+                    <Component Id="cmpA1F9E1D023828076838FEAF99357F1C8" Guid="{58D2A410-44F3-4FD6-A22C-9B0196A46005}">
                         <File Id="filA944E6A3C541E96E07B20E67F9238C39" Source="$(var.HarvestPath)\Scripting\Lib\bisect.py" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp82ABC1C65A89C8B85616CDB19B418F0A" Guid="{AE7C40E2-34F7-448D-ACB1-F58D4534FF36}">
+                    <Component Id="cmp82ABC1C65A89C8B85616CDB19B418F0A" Guid="{08D87A39-4020-46F8-8633-8D7BA295A8D4}">
                         <File Id="filE566A2EF10CB0BBC2FEACEF2E8C7D619" Source="$(var.HarvestPath)\Scripting\Lib\collections.py" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp4224008DC8B545EE045E5C1D4F07B8A4" Guid="{7178AA61-61CC-4C8D-B065-70510A8E0728}">
+                    <Component Id="cmp4224008DC8B545EE045E5C1D4F07B8A4" Guid="{3A9B4230-B415-471D-8BCA-C59E460B0E7A}">
                         <File Id="fil81BFE11B785618DA3DB5A17566D83C68" Source="$(var.HarvestPath)\Scripting\Lib\heapq.py" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmpF7B23DD6C32500246DFE17B18912EEA7" Guid="{B1C6BDFB-1B0C-4A08-8CD7-95FF29BE9A89}">
+                    <Component Id="cmpF7B23DD6C32500246DFE17B18912EEA7" Guid="{9EF5F64A-FDE4-4CCB-AB54-CBD5CBCF9CB4}">
                         <File Id="filE90141BD7A0FA78089564C66FD2EECBE" Source="$(var.HarvestPath)\Scripting\Lib\keyword.py" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
-                    <Component Id="cmp224C9CBD6D60697EF584DDD66966547B" Guid="{FA22DF92-7873-4AF7-ABFB-3BC2DFDE3703}">
+                    <Component Id="cmp224C9CBD6D60697EF584DDD66966547B" Guid="{DF5A0C65-0EBA-4DEF-AAC6-0415BD2D258F}">
                         <File Id="filF114FBC343C5F1E1638FCBE963F0B047" Source="$(var.HarvestPath)\Scripting\Lib\_abcoll.py" KeyPath="no" />
                         <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
                 </Directory>
             </Directory>
             <Directory Id="dirA1E22504AD8FC7CFED287202DA6698C6" Name="Sleeves">
-                <Component Id="cmp250FF729C8BD9E2DCC0A29FF3A42538B" Guid="{52C53A8E-B854-47F1-86E8-7A210B0D737D}">
+                <Component Id="cmp250FF729C8BD9E2DCC0A29FF3A42538B" Guid="{D38A340F-9D59-4B6A-86D2-E1A912871E82}">
                     <File Id="fil0C4964D6D7A9F476E33F19B23A08B05D" Source="$(var.HarvestPath)\Sleeves\Air-Travel.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp851CF2A12D28A04576ED178EBC3EC14D" Guid="{D1CC17FE-C9B1-458E-9D91-DABF7F3AB554}">
+                <Component Id="cmp851CF2A12D28A04576ED178EBC3EC14D" Guid="{DF84FED2-C329-4A44-B69C-BD986E05D4D9}">
                     <File Id="filD7620265864475FB3EEC08D09DFFF8DB" Source="$(var.HarvestPath)\Sleeves\Canival.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmpBD11FE282EF2D6805D8CAF0C92545FC6" Guid="{46A7E03E-F652-473B-949F-A12DEB70E10A}">
+                <Component Id="cmpBD11FE282EF2D6805D8CAF0C92545FC6" Guid="{2D027153-2C87-40C6-9772-99011B2562C0}">
                     <File Id="fil581B5B6F35B918A5DA83D8FBE0792CFD" Source="$(var.HarvestPath)\Sleeves\cb1.png" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp79D5CC1F35DDD4676DDE2FF3572F57A6" Guid="{7EB1423B-7BA5-49BE-AB3D-54D35203853C}">
+                <Component Id="cmp79D5CC1F35DDD4676DDE2FF3572F57A6" Guid="{25BE6DAD-ED58-40ED-B5B7-9F47212976CD}">
                     <File Id="filC391F0296D6AC22C661C6042EE0783F5" Source="$(var.HarvestPath)\Sleeves\cb2.png" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp192CC8EA92A74866C878D594EA47AB46" Guid="{3C2414F1-9C8D-42AF-821E-97110246EF2F}">
+                <Component Id="cmp192CC8EA92A74866C878D594EA47AB46" Guid="{D8C17AFF-ABF6-4C92-9908-FB3DD175B54B}">
                     <File Id="fil212585BA14DB604B7B6C8EC2435209B6" Source="$(var.HarvestPath)\Sleeves\Dragon-Strategy.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp5E0622C834B75698A044409D256FADC6" Guid="{7F5957B5-C353-4195-9902-E8B9C3661CF3}">
+                <Component Id="cmp5E0622C834B75698A044409D256FADC6" Guid="{B54BAD85-8C27-4E6C-8E62-71632224127B}">
                     <File Id="filB3F095641B257D2EC37F995DEFB6D783" Source="$(var.HarvestPath)\Sleeves\Face-In-The-Crowd.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp94D11D053AB4429B17BB1608BBF07CC6" Guid="{1D7A5468-E7A3-4674-9E10-C1180C679AC8}">
+                <Component Id="cmp94D11D053AB4429B17BB1608BBF07CC6" Guid="{C6B007D1-200D-4742-A89B-99822920DFCF}">
                     <File Id="fil82E6E391CC2B8CBCE76ACE3457ED581B" Source="$(var.HarvestPath)\Sleeves\GGG.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp560C08D6E294663FC928D9126A053846" Guid="{9B24F7A6-D27A-4EB4-95A9-83EBAF2B18D4}">
+                <Component Id="cmp560C08D6E294663FC928D9126A053846" Guid="{B3B6A4C3-3706-4924-A520-213734EC3B11}">
                     <File Id="fil320A638E2A30AAA5A92264B3EEE11129" Source="$(var.HarvestPath)\Sleeves\Homewrecker.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp9033A5A91CE68C70E9E5ADAC500381C9" Guid="{6FA78D71-D0FD-41C4-980D-96EF8498D675}">
+                <Component Id="cmp9033A5A91CE68C70E9E5ADAC500381C9" Guid="{9817AB49-5406-4485-81A9-C0FE8B56B9D4}">
                     <File Id="fil0D758772E4249CAC52B1C872AFB55487" Source="$(var.HarvestPath)\Sleeves\Invent.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp9A12F2C14A49C01E49B1D3F62169973E" Guid="{9BDEB5E2-28C9-4B41-BBB7-3CFC81B61351}">
+                <Component Id="cmp9A12F2C14A49C01E49B1D3F62169973E" Guid="{6EBBCB37-FFE2-4399-BC86-F7DD580EB283}">
                     <File Id="fil912EE67B44627F17F582BDE8CEAEB4D7" Source="$(var.HarvestPath)\Sleeves\Master-Ritualist.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp2E2A69436DE79A0A6BA0F2F81AE392F5" Guid="{1328D910-71B4-4532-8E22-0202A1761857}">
+                <Component Id="cmp2E2A69436DE79A0A6BA0F2F81AE392F5" Guid="{ACA79ACA-A02F-4F39-BFEB-7E8750691D32}">
                     <File Id="filBADC6F7D71DFF3BB30C3CACA7A14F4F8" Source="$(var.HarvestPath)\Sleeves\Monstrous-Lassitude.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp6AD9909523DFE5DF92AF0684CBEB1DA3" Guid="{5E6A3963-2773-4A1E-AB49-E78E9A0C0F94}">
+                <Component Id="cmp6AD9909523DFE5DF92AF0684CBEB1DA3" Guid="{D04F9B3E-A099-4FD5-9756-11D79E367157}">
                     <File Id="fil39391AC12009D64F70040623FEB908CD" Source="$(var.HarvestPath)\Sleeves\P-Warrior.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp223CC4B60E550995D6D9E5C8339B3CC5" Guid="{9FE5873D-97B1-4AE0-B455-7AD3172503B3}">
+                <Component Id="cmp223CC4B60E550995D6D9E5C8339B3CC5" Guid="{5C4AA763-5C89-4EF6-B232-BABE5A3E7BD2}">
                     <File Id="filEB3F10289D9191546E78C466597F36D7" Source="$(var.HarvestPath)\Sleeves\Rudo-Shade.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmpCE90934757713436DECA2402F52E8757" Guid="{E82B5DA6-8CC3-417C-A669-607FA9CD1735}">
+                <Component Id="cmpCE90934757713436DECA2402F52E8757" Guid="{95D8E936-1B9C-44B4-865D-AE2C1324DEEE}">
                     <File Id="fil668672504F49F717118693173798DC91" Source="$(var.HarvestPath)\Sleeves\Straw-Man.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmpEB3AFAB0420906A35F7DC855CC84A3AC" Guid="{65DB8F6A-E47A-4DEF-A48F-7157AB3AC78F}">
+                <Component Id="cmpEB3AFAB0420906A35F7DC855CC84A3AC" Guid="{6001862F-06C2-477E-8848-A8F6DF97AB89}">
                     <File Id="fil257C2F949BEC9DC7609B8527C19C4E09" Source="$(var.HarvestPath)\Sleeves\Thabbashite-Assailant.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
-                <Component Id="cmp83A66EE5FA3672E5E11057D6309018B7" Guid="{633F0411-3D6F-4AFB-B7EC-340720A07BC3}">
+                <Component Id="cmp83A66EE5FA3672E5E11057D6309018B7" Guid="{1FA3C660-B82D-4F43-BB23-F985CE2CA9B9}">
                     <File Id="filB6A49476269249BC9B2FC4BB75F6C7D6" Source="$(var.HarvestPath)\Sleeves\The-Spoils.jpg" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
             <Directory Id="dir71F51BB8FFD7417900F6A6C18D636546" Name="SyntaxHighlighting">
-                <Component Id="cmp78FEACFB17F978B10A3C8CAE9BD4C26E" Guid="{BCE56DDC-B7FE-4139-9A8E-0410366E402D}">
+                <Component Id="cmp78FEACFB17F978B10A3C8CAE9BD4C26E" Guid="{027E580C-93E6-4BBB-ADAE-5045EA719F3E}">
                     <File Id="fil001E169FAF5F2F06989BD552A8EACD3C" Source="$(var.HarvestPath)\SyntaxHighlighting\Python.xshd" KeyPath="no" />
                     <RegistryValue Root="HKCU" Key="Software\Octgn" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
@@ -1017,8 +1145,8 @@
     <Fragment>
         <ComponentGroup Id="O__HeatGenerated">
             <ComponentRef Id="cmpE5004356FE7CC543DB30277EBA335A30" />
+            <ComponentRef Id="cmp669D7BFE3F77F8D3E757F78FE36D1217" />
             <ComponentRef Id="cmpAA976D0FC5F51A5E72C45F0626C92246" />
-            <ComponentRef Id="cmp2A914A3C20E06AF0AE43A1CC3CB157DC" />
             <ComponentRef Id="cmp488D27FD7F12CC5B0CA2DA2EA3B41D0D" />
             <ComponentRef Id="cmp7DB90804D3EED1D9CFD3C64FFB5E4115" />
             <ComponentRef Id="cmp5B1CB9670A427F5E3F2553830607FC0D" />
@@ -1030,8 +1158,39 @@
             <ComponentRef Id="cmp253E049275FEE4BD1697BDA6EA4C9417" />
             <ComponentRef Id="cmp13D6573EA8CF3F99F44BAE837E2771F0" />
             <ComponentRef Id="cmpE395334EA0B9B925C1A69130E5678AF0" />
+            <ComponentRef Id="cmp2AC41B9A3E9E58C9FAC717C515DD6534" />
+            <ComponentRef Id="cmp6ECE5161C032390B6D41F4669C9B2FBA" />
+            <ComponentRef Id="cmpB828F2E0E3908AEB84554538E14583D2" />
+            <ComponentRef Id="cmp0B410F6F5DE5B5ECFF29B60BFB274F0F" />
+            <ComponentRef Id="cmpAA3D78E9B3AE6821E2C081A41FD040FD" />
+            <ComponentRef Id="cmp286A3BDB1EC430B908FD322B1322D746" />
+            <ComponentRef Id="cmp219E02EF943746676A4668B48FBE1820" />
+            <ComponentRef Id="cmp7F9ECE136F3D1474CBD79D0EDC835364" />
+            <ComponentRef Id="cmp48E1E5C93860F49EF00841C60B81D2E9" />
+            <ComponentRef Id="cmp5A3B0FEEF305F52451B314C57A61717B" />
+            <ComponentRef Id="cmp04FD776539E2628403B1D84D7E4D2BF3" />
+            <ComponentRef Id="cmp558FC5B3CC2B23E0A8DE37F92B4255E0" />
+            <ComponentRef Id="cmpEE5095AF5D6CA4E21BB31324DCA12A9D" />
+            <ComponentRef Id="cmp90BBBFEF1982BB90418B4644CF2F7828" />
+            <ComponentRef Id="cmpFEB20DDD1566488925514934FC1DD9D5" />
+            <ComponentRef Id="cmp93AF99501BD43251496EBFA1881A64EF" />
+            <ComponentRef Id="cmp6E690104F2F1BB697CC4758AD1E26E58" />
+            <ComponentRef Id="cmp1B3BA240BD1C077BF83416736D48186D" />
+            <ComponentRef Id="cmp4305F7BD8AC4EC7C4D0AA718D88266C2" />
+            <ComponentRef Id="cmp351597C63B1AC6EEBF7FC5A22A89959E" />
+            <ComponentRef Id="cmp90A934A8431ACC8512A4EA7F53BC937E" />
+            <ComponentRef Id="cmp9799763CBFF3E472309F980CF7998B39" />
+            <ComponentRef Id="cmpF3639C930704BB7395EC1FA447E3381B" />
+            <ComponentRef Id="cmpCB2E6D7505E8F9992D331D3A906C43F4" />
+            <ComponentRef Id="cmpA06D8E3E1D88DC98CDABEDC2E5C06BB4" />
+            <ComponentRef Id="cmpE3CF238EBFAA39F9B8A792C87C154D23" />
+            <ComponentRef Id="cmp1D298ECB70462F6B6B9C736D46C3703A" />
+            <ComponentRef Id="cmp1343B58142FF8A721A61A226461A348A" />
+            <ComponentRef Id="cmpA2394AB6E80CFE6873404D7E45067744" />
+            <ComponentRef Id="cmpC7DD7DCD8E4083B4375CEC2B790F42C4" />
+            <ComponentRef Id="cmpE45996FE404705547B851665885248CF" />
+            <ComponentRef Id="cmp06B5FF1D134B60C8550290639423F91D" />
             <ComponentRef Id="cmp7254E72FE73F320AEB41601E41FB205C" />
-            <ComponentRef Id="cmp044B95FD4C9D23DB2929872B48F7668B" />
             <ComponentRef Id="cmp3BEA937DC04A8694133FFFE7D2D9DD04" />
             <ComponentRef Id="cmp7DC125062D4B14D8FC6C510683E68764" />
             <ComponentRef Id="cmp4370A5F473BC7C578FA8C4A674514135" />
@@ -1041,6 +1200,7 @@
             <ComponentRef Id="cmpFC2072AC6AB749CFD7255D8127B1D945" />
             <ComponentRef Id="cmp0CF5B14E86747BCFC1DDFCDF28AE4A82" />
             <ComponentRef Id="cmp9ECFE97C3E16F0F19742C25CE41E91CC" />
+            <ComponentRef Id="cmp6107C12C2A55CB8E7E97FF2C9A33F385" />
             <ComponentRef Id="cmpE5B545219A4761BDD755E5F33A229024" />
             <ComponentRef Id="cmp7762CAE69A07BF558B2EDF1798F02FA8" />
             <ComponentRef Id="cmp07814B6C8393BF87D48FD742866B4421" />
