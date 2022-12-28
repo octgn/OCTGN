@@ -481,6 +481,11 @@
                     <File Id="fil46B75FEA831E55CB6CABB88BF3C863A2" KeyPath="yes" Source="$(var.HarvestPath)\Schemas\Game.xsd" />
                 </Component>
             </Directory>
+            <Directory Id="dir7759A8F1261FA619E8A1669AE0989E9D" Name="Scripting">
+                <Component Id="cmp035592743080B86AFF831BC3959BC8C5" Guid="*">
+                    <File Id="fil3FB62412DDDF67468CA503C7B5C5634F" KeyPath="yes" Source="$(var.HarvestPath)\Scripting\GameEvents.xml" />
+                </Component>
+            </Directory>
         </DirectoryRef>
     </Fragment>
     <Fragment>
@@ -644,6 +649,7 @@
             <ComponentRef Id="cmp525370DC49A1DFC5E4FF42DA20D104AB" />
             <ComponentRef Id="cmp2C61E685F03D6B125FBC0DFEF8C563CD" />
             <ComponentRef Id="cmpF009CAE4A22883572E14EF019724F65E" />
+            <ComponentRef Id="cmp035592743080B86AFF831BC3959BC8C5" />
         </ComponentGroup>
     </Fragment>
 </Wix>
