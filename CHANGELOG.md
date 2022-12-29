@@ -1,3 +1,5 @@
+#3.4.378.0
+
 #3.4.377.0
 + new API  card.defaultProperty(alt, property), returns the card's original defined property value (before it was overwritten by python)
 + fixed bug where overwritten card properties are broken after a player disconnects
@@ -4030,6 +4032,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
