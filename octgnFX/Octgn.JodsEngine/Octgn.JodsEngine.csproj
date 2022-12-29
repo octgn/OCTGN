@@ -307,11 +307,6 @@
     <Compile Include="DeckBuilder\SleeveManagerView.xaml.cs">
       <DependentUpon>SleeveManagerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DesktopIntegration\DesktopDbContext.cs" />
-    <Compile Include="DesktopIntegration\JodsGameFormat.cs" />
-    <Compile Include="DesktopIntegration\JodsGameMenu.cs" />
-    <Compile Include="DesktopIntegration\JodsGamePlugin.cs" />
-    <Compile Include="DesktopIntegration\SinglePlayerMenuItem.cs" />
     <Compile Include="Effects\GridLengthAnimation.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
     <Compile Include="Extentions\ControlExtensions.cs" />
