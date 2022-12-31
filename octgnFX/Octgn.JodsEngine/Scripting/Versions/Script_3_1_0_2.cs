@@ -1140,26 +1140,23 @@ namespace Octgn.Scripting.Versions
                     var tempCardList = new List<DataNew.Entities.Card>();
                     foreach (var propertyValue in property.Value)
                     {
-                        if (property.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                        if (match)
                         {
-                            if (match)
-                                tempCardList.AddRange(query
-                                    .Where(x => x.GetName().Equals(propertyValue, StringComparison.InvariantCultureIgnoreCase)));
-                            else
-                                tempCardList.AddRange(query
-                                    .Where(x => x.GetName().ToLower().Contains(propertyValue.ToLower()))); 
+                            tempCardList.AddRange(query.Where(x => x.MatchesPropertyValue(property.Key, propertyValue)));
                         }
                         else
                         {
-                            if (match)
+                            if (property.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                            {
                                 tempCardList.AddRange(query
-                                    .Where(x => x.GetCardProperties()
-                                    .Any(y => y.Key.Name.ToLower() == property.Key.ToLower() && y.Value.ToString().ToLower() == propertyValue.ToLower())).ToList());
+                                    .Where(x => x.GetName().ToLower().Contains(propertyValue.ToLower())));
+                            }
                             else
+                            {
                                 tempCardList.AddRange(query
                                     .Where(x => x.GetCardProperties()
                                     .Any(y => y.Key.Name.ToLower() == property.Key.ToLower() && y.Value.ToString().ToLower().Contains(propertyValue.ToLower()))).ToList());
-
+                            }
                         }
                     }
                     query = tempCardList;

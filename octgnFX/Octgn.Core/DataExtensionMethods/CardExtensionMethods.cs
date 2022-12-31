@@ -274,7 +274,7 @@ namespace Octgn.Core.DataExtensionMethods
             {
                 if (string.IsNullOrWhiteSpace(cardProperties[prop]?.ToString()) && string.IsNullOrWhiteSpace(value?.ToString()))
                     return true;
-                return cardProperties[prop].ToString().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
+                return cardProperties[prop].ToString().Equals(value?.ToString(), StringComparison.InvariantCultureIgnoreCase);
             }
             else
             {
@@ -296,16 +296,23 @@ namespace Octgn.Core.DataExtensionMethods
             {
                 return card.GetName().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
             }
+            else if (prop.Equals("model", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (Guid.TryParse(value?.ToString(), out Guid guid))
+                    return card.Id.Equals(guid);
+                else
+                    return false;
+            }
             var matchedProperty = cardProperties.Keys.FirstOrDefault(x => x.Name.Equals(prop, StringComparison.InvariantCultureIgnoreCase));
             if (matchedProperty == null)
             {
                 // if the property is missing then its treated as null for match requests
-                return string.IsNullOrWhiteSpace(value.ToString());
+                return string.IsNullOrWhiteSpace(value?.ToString());
             }
 
             if (string.IsNullOrWhiteSpace(cardProperties[matchedProperty]?.ToString()) && string.IsNullOrWhiteSpace(value?.ToString()))
                 return true;
-            return cardProperties[matchedProperty].ToString().Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            return cardProperties[matchedProperty].ToString().Equals(value?.ToString(), StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <summary>
