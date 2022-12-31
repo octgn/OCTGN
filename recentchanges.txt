@@ -1,1 +1,2 @@
-
+AskCard and QueryCard python API can now filter for null property values (in line with the limited pack generator logic)
+Card.MatchesPropertyValue extension method can now match card GUID values
