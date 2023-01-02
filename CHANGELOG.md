@@ -1,3 +1,7 @@
+#3.4.379.0
++ AskCard and QueryCard python API can now filter for null property values (in line with the limited pack generator logic)
++ Card.MatchesPropertyValue extension method can now match card GUID values
+
 #3.4.378.0
 
 #3.4.377.0
@@ -4032,6 +4036,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
