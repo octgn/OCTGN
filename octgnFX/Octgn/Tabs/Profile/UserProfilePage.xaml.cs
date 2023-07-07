@@ -171,7 +171,7 @@ namespace Octgn.Tabs.Profile
                     var client = new Octgn.Site.Api.ApiClient();
                     var res = client.SetUserIcon(
                         Prefs.Username,
-                        Prefs.Password.Decrypt(),
+                        Program.SessionKey,
                         "png",
                         imgStream);
 
