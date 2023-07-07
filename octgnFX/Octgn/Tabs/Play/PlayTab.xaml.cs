@@ -295,7 +295,7 @@ namespace Octgn.Tabs.Play
             if (hostedGame.GameSource == "Online") {
                 var client = new ApiClient();
                 try {
-                    if (!await client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt())) {
+                    if (!await client.IsGameServerRunning(Prefs.Username, Program.SessionKey)) {
                         throw new UserMessageException("The game server is currently down. Please try again later.");
                     }
                 } catch (Exception ex) {

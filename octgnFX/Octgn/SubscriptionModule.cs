@@ -95,7 +95,7 @@ namespace Octgn
                 if (Program.LobbyClient.IsConnected)
                 {
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
+                    var res = client.IsSubbed(Prefs.Username, Program.SessionKey);
                     switch (res)
                     {
                         case IsSubbedResult.Ok:
@@ -110,11 +110,11 @@ namespace Octgn
                 }
                 else
                 {
-                    if (string.IsNullOrWhiteSpace(Prefs.Password.Decrypt())) ret = false;
+                    if (string.IsNullOrWhiteSpace(Program.SessionKey)) ret = false;
                     else
                     {
                         var client = new ApiClient();
-                        var res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
+                        var res = client.IsSubbed(Prefs.Username, Program.SessionKey);
                         switch (res)
                         {
                             case IsSubbedResult.Ok:
