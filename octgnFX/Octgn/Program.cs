@@ -59,8 +59,8 @@ namespace Octgn
         /// </summary>
         public static bool IsReleaseTest { get; set; }
 
-        public static string SessionKey { get; set; }
-        public static string UserId { get; set; }
+        public static string SessionKey => Prefs.SessionKey;
+
         public static HostedGame CurrentHostedGame { get; internal set; }
 
         public static DiscordWrapper Discord { get; private set; }

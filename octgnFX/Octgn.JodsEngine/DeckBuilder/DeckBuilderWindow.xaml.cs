@@ -1258,7 +1258,8 @@ namespace Octgn.DeckBuilder
 
         private void LoadSearchClick(object sender, RoutedEventArgs e)
         {
-            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            var submodule = SubscriptionModule.Get();
+            if ((submodule.IsSubscribed ?? false) == false)
             {
                 var res =
                     TopMostMessageBox.Show(
