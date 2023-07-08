@@ -92,43 +92,31 @@ namespace Octgn
             bool? ret = null;
             try
             {
-                if (Program.LobbyClient.IsConnected)
-                {
+                var username = Prefs.Username;
+                var sessionKey = Prefs.SessionKey;
+                var password = Prefs.Password.Decrypt();
+
+                if (string.IsNullOrEmpty(username)) ret = false;
+                else if (string.IsNullOrWhiteSpace(sessionKey)) ret = false;
+                else {
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Prefs.Username, Program.SessionKey);
-                    switch (res)
-                    {
+                    var res = client.IsSubbed(username, sessionKey);
+
+                    switch (res) {
                         case IsSubbedResult.Ok:
                             ret = true;
                             break;
-						case IsSubbedResult.AuthenticationError:
-						case IsSubbedResult.NoSubscription:
-						case IsSubbedResult.SubscriptionExpired:
+                        case IsSubbedResult.AuthenticationError:
+                            // This means we need to refresh our session
+                            // keep the sub active for now
+                            ret = null;
+                            break;
+                        case IsSubbedResult.NoSubscription:
+                        case IsSubbedResult.SubscriptionExpired:
                             ret = false;
                             break;
                     }
                 }
-                else
-                {
-                    if (string.IsNullOrWhiteSpace(Program.SessionKey)) ret = false;
-                    else
-                    {
-                        var client = new ApiClient();
-                        var res = client.IsSubbed(Prefs.Username, Program.SessionKey);
-                        switch (res)
-                        {
-                            case IsSubbedResult.Ok:
-                                ret = true;
-                                break;
-						case IsSubbedResult.AuthenticationError:
-						case IsSubbedResult.NoSubscription:
-						case IsSubbedResult.SubscriptionExpired:
-                            ret = false;
-                            break;
-                        }
-                    }
-                }
-
             }
             catch (Exception e)
             {
@@ -142,7 +130,6 @@ namespace Octgn
             if (ret != prev)
             {
                 this.OnIsSubbedChanged((bool)ret);
-                //Program.LobbyClient.SetSub((bool)ret);
             }
         }
 

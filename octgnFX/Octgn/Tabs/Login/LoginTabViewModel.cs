@@ -5,7 +5,6 @@ using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Login
@@ -108,21 +107,30 @@ namespace Octgn.Tabs.Login
                 }
                 ErrorString = "";
 
-                if (!await LoginWithWebsite())
+                var webLoginResult = await LoginWithWebsite();
+                if (!webLoginResult.success)
                     return;
 
-                Program.LobbyClient.ConfigureSession(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
+                //The rest of the application and the api uses Username as a key. To avoid changing the rest of the application,
+                //     I use this to get the username back from the server instead of using the one the user typed in.
+                //     This is just in case we logged in using the users email instead of their username.
+                Username = webLoginResult.username;
 
-                await Program.LobbyClient.Connect(default(CancellationToken)); //TODO: Cancellation for login timeouts, but only if it's not already built into the com library
+                Program.LobbyClient.ConfigureSession(webLoginResult.sessionKey, new Communication.User(webLoginResult.userId, webLoginResult.username), Prefs.DeviceId);
+
+                Prefs.Username = webLoginResult.username;
+                Prefs.Nickname = webLoginResult.username;
+                Prefs.Password = Password.Encrypt();
+                Prefs.SessionKey = webLoginResult.sessionKey;
+
+                await Program.LobbyClient.Connect(default); //TODO: Cancellation for login timeouts, but only if it's not already built into the com library
 
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {
                     // Logging in with a new username, so clear admin flag
                     Prefs.IsAdmin = false;
                 }
-                Prefs.Username = Username;
-                Prefs.Nickname = Username;
-                Prefs.Password = Password.Encrypt();
+
                 LoggedIn = true;
             }
             catch (Exception e)
@@ -136,7 +144,7 @@ namespace Octgn.Tabs.Login
             }
         }
 
-        private async Task<bool> LoginWithWebsite() {
+        private async Task<(bool success, string sessionKey, string username, string userId)> LoginWithWebsite() {
             Log.Debug(nameof(LoginWithWebsite));
 
             var client = new ApiClient();
@@ -146,18 +154,10 @@ namespace Octgn.Tabs.Login
 
             if (!HandleLoginResultType(result.Result.Type.ToString())) {
                 Log.Warn($"{nameof(LoginWithWebsite)}: Login failed: {result.Result.Type}");
-                return false;
+                return (false, null, null, null);
             }
 
-            //The rest of the application and the api uses Username as a key. To avoid changing the rest of the application,
-            //     I use this to get the username back from the server instead of using the one the user typed in.
-            //     This is just in case we logged in using the users email instead of their username.
-            Username = result.Result.Username;
-
-            Program.SessionKey = result.SessionKey;
-            Program.UserId = result.UserId;
-
-            return true;
+            return (true, result.SessionKey, result.Result.Username, result.UserId);
         }
 
         private bool HandleLoginResultType(string resultTypeString) {

@@ -48,14 +48,19 @@ namespace Octgn.Core
 
         public static string Password
         {
-            get 
-            { 
-                return SavedPasswordManager.GetPassword(); 
+            get
+            {
+                return SavedPasswordManager.GetPassword();
             }
             set
             {
                 SavedPasswordManager.SavePassword(value);
             }
+        }
+
+        public static string SessionKey {
+            get => Config.Instance.ReadValue("SessionKey", "");
+            set => Config.Instance.WriteValue("SessionKey", value);
         }
 
         public static string Username
