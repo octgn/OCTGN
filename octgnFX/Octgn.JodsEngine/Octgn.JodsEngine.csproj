@@ -512,16 +512,6 @@
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_2.cs" />
     <Compile Include="SubscriptionModule.cs" />
-    <Compile Include="Tabs\ChallengeBoards\ChallengeBoards.xaml.cs">
-      <DependentUpon>ChallengeBoards.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\GameHistory\GameHistoryTab.xaml.cs">
-      <DependentUpon>GameHistoryTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\GameHistory\GameHistoryViewModel.cs" />
-    <Compile Include="Tabs\Watch\WatchList.xaml.cs">
-      <DependentUpon>WatchList.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UiMessages\NotifyPropertyChanged.cs" />
     <Compile Include="Utils\BrushCache.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
@@ -565,9 +555,6 @@
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\GameHistoryWindow.xaml.cs">
-      <DependentUpon>GameHistoryWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\GameLog.xaml.cs">
       <DependentUpon>GameLog.xaml</DependentUpon>
     </Compile>
@@ -576,9 +563,6 @@
     </Compile>
     <Compile Include="Windows\LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Main.xaml.cs">
-      <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
@@ -877,18 +861,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\ChallengeBoards\ChallengeBoards.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\GameHistory\GameHistoryTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Watch\WatchList.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Utils\YouTube\YouTubeViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -909,10 +881,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\GameHistoryWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Windows\GameLog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -922,10 +890,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\LoadingWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
