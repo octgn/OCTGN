@@ -405,7 +405,7 @@ namespace Octgn.Play.Dialogs
                                                                    let all = this.GetCardPropertyValue(c, prop)
                                                                    where all != null
                                                                    from token in
-                                                                       all.Split(new[] { ' ' },
+                                                                       all.Split(new[] { prop.Delimiter ?? " " },
                                                                                  StringSplitOptions.RemoveEmptyEntries)
                                                                    group c by token
                                                                        into g
@@ -595,14 +595,13 @@ namespace Octgn.Play.Dialogs
         {
             private Regex _regex;
             private string _value;
-
             public string Value
             {
                 get { return _value; }
                 set
                 {
                     _value = value;
-                    _regex = new Regex(@"(^|\s)" + value + @"($|\s)", RegexOptions.Compiled);
+                    _regex = new Regex(@"(^|" + (Property.Delimiter ?? @"\s") + ")" + value + @"($|" + (Property.Delimiter ?? @"\s") + ")", RegexOptions.Compiled);
                 }
             }
 

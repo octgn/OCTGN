@@ -25,6 +25,7 @@
         public bool IgnoreText { get; set; }
         public bool Hidden { get; set; }
         public PropertyTextKind TextKind { get; set; }
+        public string Delimiter { get; set; }
 
         public override string ToString()
         {
@@ -39,6 +40,7 @@
                 Type = this.Type,
                 TextKind = this.TextKind,
                 IgnoreText = this.IgnoreText,
+                Delimiter = this.Delimiter.Clone() as string,
             };
             return newprop;
         }
