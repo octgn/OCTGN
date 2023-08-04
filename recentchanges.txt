@@ -1,1 +1,3 @@
-
+limited deck editor can now filter richtext properties (reads them as strings)
+limited deck editor now recognizes integer properties as enum strings
+Fixed a richtext bug -- RichColor.toString() method was missing

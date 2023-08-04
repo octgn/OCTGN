@@ -320,7 +320,7 @@ namespace Octgn.Play.Dialogs
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.GetCardProperties().ContainsKey(prop) ? card.GetCardProperties()[prop] : null
+                    let value = GetCardPropertyValue(card, prop)
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
@@ -357,49 +357,72 @@ namespace Octgn.Play.Dialogs
             {
                 PropertyDef prop = filter.Property;
                 filter.Values.Clear();
-                if (prop.Type == PropertyType.String || prop.Type == PropertyType.Integer)
-                    switch (prop.TextKind)
-                    {
-                        case PropertyTextKind.Enumeration:
-                            Filter filter2 = filter;
-                            IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
-                                                             let all = this.GetCardPropertyValue(c, prop)
-                                                             where all != null
-                                                             group c by all
-                                                                 into g
+                switch (prop.Type)
+                {
+                    case PropertyType.Integer:
+                        Filter filter3 = filter;
+                        IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
+                                                         let all = this.GetCardPropertyValue(c, prop)
+                                                         where all != null
+                                                         group c by all
+                                                             into g
+                                                         orderby g.Key
+                                                         select
+                                                             new EnumFilterValue
+                                                             {
+                                                                 Property = filter3.Property,
+                                                                 Value = g.Key,
+                                                                 Count = g.Count()
+                                                             };
+                        foreach (EnumFilterValue filterValue in q)
+                            filter.Values.Add(filterValue);
+                        break;
+                    case PropertyType.String:
+                    case PropertyType.RichText:
+                        switch (prop.TextKind)
+                        {
+                            case PropertyTextKind.Enumeration:
+                                Filter filter2 = filter;
+                                IEnumerable<EnumFilterValue> q3 = from ObservableMultiCard c in CardPoolView
+                                                                 let all = this.GetCardPropertyValue(c, prop)
+                                                                 where all != null
+                                                                 group c by all
+                                                                     into g
                                                                  orderby g.Key
                                                                  select
                                                                      new EnumFilterValue
-                                                                         {
-                                                                             Property = filter2.Property,
-                                                                             Value = g.Key,
-                                                                             Count = g.Count()
-                                                                         };
-                            foreach (EnumFilterValue filterValue in q)
-                                filter.Values.Add(filterValue);
-                            break;
-                        case PropertyTextKind.Tokens:
-                            Filter filter1 = filter;
-                            IEnumerable<TokenFilterValue> q2 = from ObservableMultiCard c in CardPoolView
-                                                               let all = this.GetCardPropertyValue(c, prop)
-                                                               where all != null
-                                                               from token in
-                                                                   all.Split(new[] { ' ' },
-                                                                             StringSplitOptions.RemoveEmptyEntries)
-                                                               group c by token
-                                                                   into g
+                                                                     {
+                                                                         Property = filter2.Property,
+                                                                         Value = g.Key.ToString(),
+                                                                         Count = g.Count()
+                                                                     };
+                                foreach (EnumFilterValue filterValue in q3)
+                                    filter.Values.Add(filterValue);
+                                break;
+                            case PropertyTextKind.Tokens:
+                                Filter filter1 = filter;
+                                IEnumerable<TokenFilterValue> q2 = from ObservableMultiCard c in CardPoolView
+                                                                   let all = this.GetCardPropertyValue(c, prop)
+                                                                   where all != null
+                                                                   from token in
+                                                                       all.Split(new[] { ' ' },
+                                                                                 StringSplitOptions.RemoveEmptyEntries)
+                                                                   group c by token
+                                                                       into g
                                                                    orderby g.Key
                                                                    select
                                                                        new TokenFilterValue
-                                                                           {
-                                                                               Property = filter1.Property,
-                                                                               Value = g.Key,
-                                                                               Count = g.Count()
-                                                                           };
-                            foreach (TokenFilterValue filterValue in q2)
-                                filter.Values.Add(filterValue);
-                            break;
-                    }
+                                                                       {
+                                                                           Property = filter1.Property,
+                                                                           Value = g.Key,
+                                                                           Count = g.Count()
+                                                                       };
+                                foreach (TokenFilterValue filterValue in q2)
+                                    filter.Values.Add(filterValue);
+                                break;
+                        }
+                        break;
+                }
             }
             if (Filters.Count > 0)
                 FilterListBox.Visibility = Visibility.Visible;
@@ -625,6 +648,9 @@ namespace Octgn.Play.Dialogs
             switch (filter.Property.Type)
             {
                 case PropertyType.String:
+                    if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
+                    break;
+                case PropertyType.RichText:
                     if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
                     break;
                 case PropertyType.Integer:
