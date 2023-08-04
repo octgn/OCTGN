@@ -838,6 +838,13 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="delimiter" use="optional" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the string used as a delimiter to split Token type card properties.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="hidden" use="optional" type="boolean" default="False">
       <xs:annotation>
         <xs:documentation>
