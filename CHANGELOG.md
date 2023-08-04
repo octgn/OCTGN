@@ -1,3 +1,9 @@
+#3.4.386.0
++ limited deck editor can now filter richtext properties (reads them as strings)
++ limited deck editor now recognizes integer properties as enum strings
++ Fixed a richtext bug -- RichColor.toString() method was missing
++ Added 'delimiter' card property attribute to change the delimiting string for limited deck editor
+
 #3.4.385.0
 
 #3.4.384.0
@@ -4046,6 +4052,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
