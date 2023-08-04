@@ -135,6 +135,10 @@ namespace Octgn.DataNew.Entities
         {
             Items = new List<IRichText>();
         }
+        public override string ToString()
+        {
+            return string.Join("", Items.Select(x => x.ToString()));
+        }
         public string ToLiteralString()
         {
             return "<c value=\"" + Attribute + "\">" + string.Join("", Items.Select(x => x.ToLiteralString())) + "</c>";
