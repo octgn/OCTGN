@@ -1,1 +1,1 @@
-
+Fixed a bug causing OCTGN to hang if trying to join a game with invalid characters in the lobby name
