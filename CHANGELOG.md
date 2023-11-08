@@ -1,3 +1,6 @@
+#3.4.389.0
++ Fixed a bug causing OCTGN to hang if trying to join a game with invalid characters in the lobby name
+
 #3.4.386.0
 + limited deck editor can now filter richtext properties (reads them as strings)
 + limited deck editor now recognizes integer properties as enum strings
@@ -4052,6 +4055,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
