@@ -1,1 +1,1 @@
-
+o8build will give a more useful error if you use richtext symbols in a set but don't have a symbols element in the game XML.
