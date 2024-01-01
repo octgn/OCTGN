@@ -857,7 +857,7 @@
                     if (childNode.NodeType == XmlNodeType.Text) continue;
                     if (childNode.Name.ToUpper() == "S" || childNode.Name.ToUpper() == "SYMBOL")
                     {
-                        if (!symbols.Any(x => x.id == childNode.Attributes["value"].Value))
+                        if (symbols == null || !symbols.Any(x => x.id == childNode.Attributes["value"].Value))
                         {
                             return "Undefined Symbol '" + childNode.Attributes["value"].Value + "'";
                         }
