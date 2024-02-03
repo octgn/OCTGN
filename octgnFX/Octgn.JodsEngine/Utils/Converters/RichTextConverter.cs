@@ -20,11 +20,11 @@ namespace Octgn.Utils.Converters
     public class RichTextConverter : IValueConverter
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal static Game Game;
+        internal static Font Font;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Game = parameter as Game;
+            Font = parameter as Font;
             var propval = value as RichTextPropertyValue;
             if (propval == null) return null;
             if (!(propval.Value is IRichText)) throw new InvalidOperationException($"{nameof(RichTextPropertyValue)}.{nameof(value)} is the wrong type");
@@ -34,9 +34,9 @@ namespace Octgn.Utils.Converters
             return span.Inlines.ToList();
         }
 
-        public static Span ConvertToSpan(RichTextPropertyValue value, Game game)
+        public static Span ConvertToSpan(RichTextPropertyValue value, Font font)
         {
-            Game = game;
+            Font = font;
             Span span = new Span();
             InternalProcess(span, value.Value);
             return span;
@@ -90,7 +90,7 @@ namespace Octgn.Utils.Converters
                     var image = new Image
                     {
                         Margin = new Thickness(0, 0, 0, -2),
-                        Height = span.FontSize + 2,
+                        Height = Font.Size + 2,
                         Stretch = Stretch.Uniform,
                         Source = new BitmapImage(new Uri(symbol.Source)),
                         ToolTip = symbol.Name

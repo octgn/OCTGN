@@ -350,7 +350,7 @@ namespace Octgn.Play.Gui
             // detaches and then re-attaches the control, e.g. when we change Z-order
             // by calling Move on an ObservableCollection.
             /*	if (_card == null)
-              {
+            {
                 _card = DataContext as Card;
                 if (_card != null) _card.PropertyChanged += PropertyChangeHandler;
               }*/
@@ -1205,7 +1205,7 @@ namespace Octgn.Play.Gui
                         tooltipTextBlock.Inlines.Add(new Run(property.Key.Name + ": ") { FontWeight = FontWeights.Bold });
                         if (property.Key.Type == PropertyType.RichText && property.Value is RichTextPropertyValue richText)
                         {
-                            tooltipTextBlock.Inlines.Add(RichTextConverter.ConvertToSpan(richText, Program.GameEngine.Definition));
+                            tooltipTextBlock.Inlines.Add(RichTextConverter.ConvertToSpan(richText, Program.GameEngine.Definition.NoteFont));
                         }
                         else
                         {
