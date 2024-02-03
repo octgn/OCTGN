@@ -380,7 +380,7 @@ namespace Octgn.DeckBuilder
                         Path = new PropertyPath(prop.Name),
                         Mode = BindingMode.OneTime,
                         Converter = new RichTextConverter(),
-                        ConverterParameter = game
+                        ConverterParameter = game.DeckEditorFont
                     };
 
                     var factory = new FrameworkElementFactory(typeof(RichTextBlock));
