@@ -235,20 +235,25 @@
     <Reference Include="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Ninject.3.3.6\lib\net45\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Common, Version=6.6.1.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NuGet.Common.6.6.1\lib\netstandard2.0\NuGet.Common.dll</HintPath>
+    <Reference Include="NuGet.Common, Version=6.9.1.3, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\..\packages\NuGet.Common.6.9.1\lib\netstandard2.0\NuGet.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="NuGet.Configuration, Version=6.6.1.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NuGet.Configuration.6.6.1\lib\netstandard2.0\NuGet.Configuration.dll</HintPath>
+    <Reference Include="NuGet.Configuration, Version=6.9.1.3, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\..\packages\NuGet.Configuration.6.9.1\lib\netstandard2.0\NuGet.Configuration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="NuGet.Frameworks, Version=6.6.1.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NuGet.Frameworks.6.6.1\lib\netstandard2.0\NuGet.Frameworks.dll</HintPath>
+    <Reference Include="NuGet.Frameworks, Version=6.9.1.3, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\..\packages\NuGet.Frameworks.6.9.1\lib\netstandard2.0\NuGet.Frameworks.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="NuGet.Packaging, Version=6.6.1.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NuGet.Packaging.6.6.1\lib\netstandard2.0\NuGet.Packaging.dll</HintPath>
+    <Reference Include="NuGet.Packaging, Version=6.6.2.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\..\packages\NuGet.Packaging.6.6.2\lib\netstandard2.0\NuGet.Packaging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="NuGet.Versioning, Version=6.6.1.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NuGet.Versioning.6.6.1\lib\netstandard2.0\NuGet.Versioning.dll</HintPath>
+    <Reference Include="NuGet.Versioning, Version=6.9.1.3, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\..\packages\NuGet.Versioning.6.9.1\lib\netstandard2.0\NuGet.Versioning.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
