@@ -348,7 +348,7 @@ namespace Octgn.Controls
 
             try
             {
-                var mainWindow = WindowManager.Main ?? Application.Current.MainWindow;
+                var mainWindow = Application.Current.MainWindow;
                 if (mainWindow != null && mainWindow.Owner == null && !Equals(mainWindow, this) && mainWindow.IsVisible)
                 {
                     WindowStartupLocation = WindowStartupLocation.Manual;

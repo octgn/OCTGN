@@ -503,7 +503,7 @@ namespace Octgn
                 return;
             }
 
-            Program.GameEngine.History.Name = _gameName;
+            Program.GameEngine.History.Name = string.Concat(_gameName.Split(Path.GetInvalidFileNameChars()));
 
             if (_historyPath == null) {
                 var dir = new DirectoryInfo(Config.Instance.Paths.GameHistoryPath);

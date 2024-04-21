@@ -307,7 +307,7 @@ namespace Octgn.Controls
         async Task<bool> StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
             var client = new Octgn.Site.Api.ApiClient();
-            if (!await client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
+            if (!await client.IsGameServerRunning(Prefs.Username, Program.SessionKey))
             {
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }

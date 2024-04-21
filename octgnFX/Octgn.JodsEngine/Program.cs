@@ -68,7 +68,6 @@ namespace Octgn
         /// </summary>
         public static bool IsReleaseTest { get; internal set; }
 
-        public static string SessionKey { get; set; }
         public static string UserId { get; set; }
         public static HostedGame CurrentHostedGame { get; internal set; }
         public static SSLValidationHelper SSLHelper { get; internal set; }
@@ -88,7 +87,7 @@ namespace Octgn
         {
             //X.Instance.Try(ChatLog.ClearEvents);
             Program.GameMess?.Clear();
-			X.Instance.Try(()=>Program.Client?.Rpc?.Leave(Player.LocalPlayer));
+            X.Instance.Try(()=>Program.Client?.Rpc?.Leave(Player.LocalPlayer));
             if (Client != null)
             {
                 Client.Shutdown();

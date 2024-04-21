@@ -1,3 +1,28 @@
+#3.4.389.0
++ Fixed a bug causing OCTGN to hang if trying to join a game with invalid characters in the lobby name
+
+#3.4.386.0
++ limited deck editor can now filter richtext properties (reads them as strings)
++ limited deck editor now recognizes integer properties as enum strings
++ Fixed a richtext bug -- RichColor.toString() method was missing
++ Added 'delimiter' card property attribute to change the delimiting string for limited deck editor
+
+#3.4.385.0
+
+#3.4.384.0
+
+#3.4.383.0
+
+#3.4.382.0
+
+#3.4.380.0
+
+#3.4.379.0
++ AskCard and QueryCard python API can now filter for null property values (in line with the limited pack generator logic)
++ Card.MatchesPropertyValue extension method can now match card GUID values
+
+#3.4.378.0
+
 #3.4.377.0
 + new API  card.defaultProperty(alt, property), returns the card's original defined property value (before it was overwritten by python)
 + fixed bug where overwritten card properties are broken after a player disconnects
@@ -4030,6 +4055,15 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
+
+
+
 
 
 

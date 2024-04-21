@@ -374,7 +374,8 @@ namespace Octgn.DataNew
                             Name = p.name,
                             Type = (PropertyType)Enum.Parse(typeof(PropertyType), p.type.ToString()),
                             IgnoreText = bool.Parse(p.ignoreText.ToString()),
-                            Hidden = bool.Parse(p.hidden.ToString())
+                            Hidden = bool.Parse(p.hidden.ToString()),
+                            Delimiter = p.delimiter
                         };
                         switch (p.textKind)
                         {
@@ -1076,7 +1077,8 @@ namespace Octgn.DataNew
                         name = p.Name,
                         hidden = p.Hidden ? boolean.True : boolean.False,
                         type = (propertyDefType)Enum.Parse(typeof(propertyDefType), p.Type.ToString()),
-                        ignoreText = p.IgnoreText ? boolean.True : boolean.False
+                        ignoreText = p.IgnoreText ? boolean.True : boolean.False,
+                        delimiter = p.Delimiter
                     };
                     switch (p.TextKind)
                     {

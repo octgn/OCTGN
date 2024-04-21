@@ -17,7 +17,6 @@ namespace Octgn
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public static DWindow DebugWindow { get; set; }
-        public static Main Main { get; set; }
         public static DeckBuilderWindow DeckEditor { get; set; }
         public static PlayWindow PlayWindow { get; set; }
 
