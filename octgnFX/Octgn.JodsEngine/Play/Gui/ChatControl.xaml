@@ -27,6 +27,9 @@
 
             <RichTextBox x:Name="output" AutomationProperties.Name="Chat/Game Log" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
                    BorderThickness="0" Background="Transparent" Grid.Row="1" FontSize="{Binding ElementName=Me, Path=ChatFontSize}">
+                <RichTextBox.Effect>
+                    <DropShadowEffect ShadowDepth="1" Direction="315" Color="Black" Opacity="0.5" BlurRadius="1"/>
+                </RichTextBox.Effect>
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type Paragraph}">
                         <Setter Property="Margin" Value="0"/>
