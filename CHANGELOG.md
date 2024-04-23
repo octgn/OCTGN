@@ -1,3 +1,12 @@
+#3.4.391.0
++ Redesigned the play/spectate tab to provide more useful user-feedback
++ Changed some of the wording in the pre-game lobby controls
++ A slightly less condescending notification when a player intentionally leaves the game
++ o8build will give a more useful error if you use richtext symbols in a set but don't have a symbols element in the game XML.
++ richtext symbol sizes will properly scale with the font size they are placed in
++ changed 'hide alternates' to 'show alternates' in deck editor for clarity
++ the 'show alternates' deck editor toggle state is now saved in config
+
 #3.4.389.0
 + Fixed a bug causing OCTGN to hang if trying to join a game with invalid characters in the lobby name
 
@@ -4055,6 +4064,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
