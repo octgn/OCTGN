@@ -1,3 +1,5 @@
+#3.4.392.0
+
 #3.4.391.0
 + Redesigned the play/spectate tab to provide more useful user-feedback
 + Changed some of the wording in the pre-game lobby controls
@@ -4064,6 +4066,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
