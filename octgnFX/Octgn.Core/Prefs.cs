@@ -587,12 +587,6 @@ namespace Octgn.Core
             set { Config.Instance.WriteValue("ContextFontSize", value); }
         }
 
-        public static bool SpectateGames
-        {
-            get { return Config.Instance.ReadValue("SpectateGames", false); }
-            set { Config.Instance.WriteValue("SpectateGames", value); }
-        }
-
         public static bool UnderstandsChat
         {
             get { return Config.Instance.ReadValue("UnderstandsChat", false); }

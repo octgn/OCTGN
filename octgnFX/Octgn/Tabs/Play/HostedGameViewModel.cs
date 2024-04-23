@@ -18,40 +18,27 @@ namespace Octgn.Tabs.Play
         private static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private Guid gameId;
-
         private string gameName;
-
         private Version gameVersion;
-
         private string name;
-
         private string userName;
-
         private int port;
-
         private HostedGameStatus status;
-
         private DateTime startTime;
-
         private bool canPlay;
-
         private bool _spectator;
-
         private bool hasPassword;
         private IPAddress _ipAddress;
         private string _gameSource;
         private ImageSource _userImage;
-
         private Guid id;
 
         public Guid GameId
         {
-            get
-            {
-                return this.gameId;
-            }
+            get { return this.gameId; }
             private set
             {
+                if (value.Equals(this.gameId)) return;
                 this.gameId = value;
                 this.OnPropertyChanged("GameId");
             }
@@ -59,16 +46,9 @@ namespace Octgn.Tabs.Play
 
         public string GameName
         {
-            get
-            {
-                return this.gameName;
-            }
-            private set
-            {
-                if (value == this.gameName)
-                {
-                    return;
-                }
+            get { return this.gameName; }
+            private set {
+                if (value.Equals(this.gameName)) return;
                 this.gameName = value;
                 this.OnPropertyChanged("GameName");
             }
@@ -76,16 +56,9 @@ namespace Octgn.Tabs.Play
 
         public Version GameVersion
         {
-            get
-            {
-                return this.gameVersion;
-            }
-            private set
-            {
-                if (Equals(value, this.gameVersion))
-                {
-                    return;
-                }
+            get { return this.gameVersion; }
+            private set {
+                if (Equals(value, this.gameVersion)) return;
                 this.gameVersion = value;
                 this.OnPropertyChanged("GameVersion");
             }
@@ -93,16 +66,9 @@ namespace Octgn.Tabs.Play
 
         public string Name
         {
-            get
-            {
-                return this.name;
-            }
-            private set
-            {
-                if (value == this.name)
-                {
-                    return;
-                }
+            get { return this.name; }
+            private set {
+                if (Equals(value, this.name)) return;
                 this.name = value;
                 this.OnPropertyChanged("Name");
             }
@@ -110,26 +76,19 @@ namespace Octgn.Tabs.Play
 
         public string UserName
         {
-            get
-            {
-                return this.userName;
-            }
-            private set
-            {
-                if (Equals(value, this.userName))
-                {
-                    return;
-                }
+            get { return this.userName; }
+            private set {
+                if (Equals(value, this.userName)) return;
                 this.userName = value;
                 this.OnPropertyChanged(nameof(UserName));
             }
         }
 
         public string UserId {
-            get => userId;
+            get { return this.userId; }
             set {
-                if (userId == value) return;
-                userId = value;
+                if (value.Equals(this.userId)) return;
+                this.userId = value;
                 OnPropertyChanged(nameof(UserId));
             }
         }
@@ -138,16 +97,9 @@ namespace Octgn.Tabs.Play
 
         public int Port
         {
-            get
-            {
-                return this.port;
-            }
-            private set
-            {
-                if (value == this.port)
-                {
-                    return;
-                }
+            get { return this.port; }
+            private set {
+                if (value.Equals(this.port)) return;
                 this.port = value;
                 this.OnPropertyChanged("Port");
             }
@@ -155,16 +107,9 @@ namespace Octgn.Tabs.Play
 
         public HostedGameStatus Status
         {
-            get
-            {
-                return this.status;
-            }
-            private set
-            {
-                if (value == this.status)
-                {
-                    return;
-                }
+            get { return this.status; }
+            private set {
+                if (Equals(value, this.status)) return;
                 this.status = value;
                 this.OnPropertyChanged("Status");
             }
@@ -172,16 +117,9 @@ namespace Octgn.Tabs.Play
 
         public DateTime StartTime
         {
-            get
-            {
-                return this.startTime;
-            }
-            private set
-            {
-                if (value.Equals(this.startTime))
-                {
-                    return;
-                }
+            get { return this.startTime; }
+            private set {
+                if (Equals(value, this.startTime)) return;
                 this.startTime = value;
                 this.OnPropertyChanged("StartTime");
             }
@@ -189,16 +127,10 @@ namespace Octgn.Tabs.Play
 
         public string RunTime
         {
-            get
-            {
-                return this.runTime;
-            }
+            get { return this.runTime; }
             set
             {
-                if (value.Equals(this.runTime))
-                {
-                    return;
-                }
+                if (Equals(value, this.runTime)) return;
                 this.runTime = value;
                 this.OnPropertyChanged("RunTime");
             }
@@ -206,16 +138,10 @@ namespace Octgn.Tabs.Play
 
         public bool CanPlay
         {
-            get
-            {
-                return this.canPlay;
-            }
+            get { return this.canPlay; }
             private set
             {
-                if (value.Equals(this.canPlay))
-                {
-                    return;
-                }
+                if (Equals(value, this.canPlay)) return;
                 this.canPlay = value;
                 this.OnPropertyChanged("CanPlay");
             }
@@ -223,16 +149,10 @@ namespace Octgn.Tabs.Play
 
         public bool HasPassword
         {
-            get
-            {
-                return this.hasPassword;
-            }
+            get { return this.hasPassword; }
             set
             {
-                if (value.Equals(this.hasPassword))
-                {
-                    return;
-                }
+                if (Equals(value, this.hasPassword)) return;
                 this.hasPassword = value;
                 this.OnPropertyChanged("HasPassword");
             }
@@ -241,10 +161,8 @@ namespace Octgn.Tabs.Play
         public IPAddress IPAddress
         {
             get { return _ipAddress; }
-            set
-            {
-                if (value.Equals(_ipAddress))
-                    return;
+            set {
+                if (value.Equals(_ipAddress)) return;
                 _ipAddress = value;
                 this.OnPropertyChanged("IPAddress");
             }
@@ -253,8 +171,7 @@ namespace Octgn.Tabs.Play
         public string GameSource
         {
             get { return _gameSource; }
-            set
-            {
+            set {
                 if (value.Equals(_gameSource)) return;
                 _gameSource = value;
                 this.OnPropertyChanged("GameSource");
@@ -264,10 +181,8 @@ namespace Octgn.Tabs.Play
         public ImageSource UserImage
         {
             get { return _userImage; }
-            set
-            {
-                if (value.Equals(_userImage))
-                    return;
+            set {
+                if (value.Equals(_userImage)) return;
                 _userImage = value;
                 OnPropertyChanged("UserImage");
             }
@@ -275,36 +190,20 @@ namespace Octgn.Tabs.Play
 
         public Guid Id
         {
-            get
-            {
-                return this.id;
-            }
-            set
-            {
-                if (value == this.Id) return;
+            get { return this.id; }
+            set {
+                if (Equals(value, this.id)) return;
                 this.id = value;
                 OnPropertyChanged("Id");
-            }
-        }
-
-        public bool Visible
-        {
-            get { return _visible; }
-            set
-            {
-                if (value == this._visible) return;
-                _visible = value;
-                OnPropertyChanged("Visible");
             }
         }
 
         public bool Spectator
         {
             get { return _spectator; }
-            set
-            {
-                if (value == this._spectator) return;
-                _spectator = value;
+            set {
+                if (Equals(value, this._spectator)) return;
+                this._spectator = value;
                 OnPropertyChanged("Spectator");
             }
         }
@@ -330,9 +229,7 @@ namespace Octgn.Tabs.Play
             this.StartTime = game.DateCreated.LocalDateTime;
             this.GameName = game.GameName;
             this.HasPassword = game.HasPassword;
-            this.Visible = true;
             this.Spectator = game.Spectators;
-            UpdateVisibility();
             switch (game.Source)
             {
                 case HostedGameSource.Online:
@@ -347,7 +244,7 @@ namespace Octgn.Tabs.Play
             this.GameName = gameManagerGame.Name;
 
             try {
-                if(IPAddress.TryParse(game.Host, out IPAddress address)) {
+                if (IPAddress.TryParse(game.Host, out IPAddress address)) {
                     IPAddress = address;
                 } else {
                     this.IPAddress = Dns.GetHostAddresses(game.Host)
@@ -365,49 +262,6 @@ namespace Octgn.Tabs.Play
         private string previousIconUrl = "";
 
         private string runTime;
-        private bool _visible;
-
-        public void UpdateVisibility()
-        {
-            if (Prefs.HideUninstalledGamesInList)
-            {
-                if (this.CanPlay == false)
-                {
-                    Visible = false;
-                    return;
-                }
-            }
-            if (Prefs.SpectateGames)
-            {
-                if (this.Status == HostedGameStatus.StartedHosting)
-                {
-                    Visible = false;
-                    return;
-                }
-                if (this.Spectator)
-                {
-                    Visible = true;
-                    return;
-                }
-                Visible = false;
-                return;
-            }
-            else
-            {
-                if (this.Status == HostedGameStatus.StartedHosting)
-                {
-                    Visible = true;
-                    return;
-                }
-                if (this.Status == HostedGameStatus.GameInProgress)
-                {
-                    Visible = false;
-                    return;
-                }
-                Visible = false;
-                return;
-            }
-        }
 
         public void Update(HostedGameViewModel newer, Game[] games)
         {
@@ -437,13 +291,7 @@ namespace Octgn.Tabs.Play
             {
                 Status = newer.Status;
             }
-            UpdateVisibility();
-            if (game == null)
-            {
-                this.CanPlay = false;
-                return;
-            }
-            this.CanPlay = true;
+            this.CanPlay = game != null;
 
         }
 

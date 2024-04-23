@@ -109,12 +109,12 @@
                         <CheckBox.Template>
                             <ControlTemplate TargetType="CheckBox">
                                 <Border Padding="2" SnapsToDevicePixels="True" BorderBrush="#eee" BorderThickness="1" Background="Transparent">
-                                    <TextBlock x:Name="spectateLabel" Text="Play" TextAlignment="Center" Foreground="#eee" FontWeight="Bold" Width="54" />
+                                    <TextBlock x:Name="spectateLabel" Text="Player" TextAlignment="Center" Foreground="#eee" FontWeight="Bold" Width="58" />
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsChecked" Value="True">
                                         <Trigger.Setters>
-                                            <Setter Property="Text" TargetName="spectateLabel" Value="Spectate" />
+                                            <Setter Property="Text" TargetName="spectateLabel" Value="Spectator" />
                                         </Trigger.Setters>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
@@ -184,19 +184,25 @@
                             <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" Visibility="{Binding ChangeTwoSidedTable, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                                    <TextBlock Text="Two Sided Table" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Two-Sided Table" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="One Sided Table" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="One-Sided Table" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                                <toggleSwitch:HorizontalToggleSwitch.UncheckedBackground>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF3EB3EC"/>
+                                        <GradientStop Color="#FF349BE6" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </toggleSwitch:HorizontalToggleSwitch.UncheckedBackground>
                             </toggleSwitch:HorizontalToggleSwitch>
-                            <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowSpectators, Mode=TwoWay}" Margin="10,0,0,0"
+                            <toggleSwitch:HorizontalToggleSwitch Width="190" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowSpectators, Mode=TwoWay}" Margin="10,0,0,0"
                                 IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Allow Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="No Spectators" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Disable Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowCardList, Mode=TwoWay}" Margin="10,0,0,0"
@@ -205,7 +211,7 @@
                                     <TextBlock Text="Allow Card List" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="Hidden Card List" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Disable Card List" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <toggleSwitch:HorizontalToggleSwitch Width="190" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowDiscordGameInvite, Mode=TwoWay}" Margin="10,0,0,0"
