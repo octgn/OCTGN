@@ -642,5 +642,10 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue(nameof(DeviceId), Guid.NewGuid().ToString()); }
             set { Config.Instance.WriteValue(nameof(DeviceId), value); }
         }
+        public static bool ShowAltsInDeckEditor
+        {
+            get { return Config.Instance.ReadValue("ShowAltsInDeckEditor", false); }
+            set { Config.Instance.WriteValue("ShowAltsInDeckEditor", value); }
+        }
     }
 }

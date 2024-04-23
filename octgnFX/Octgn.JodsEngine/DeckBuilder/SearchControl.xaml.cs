@@ -53,6 +53,23 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public bool ShowAlternates
+        {
+            get
+            {
+                return Prefs.ShowAltsInDeckEditor;
+            }
+            set
+            {
+                if (value != Prefs.ShowAltsInDeckEditor)
+                {
+                    Prefs.ShowAltsInDeckEditor = value;
+                    OnPropertyChanged("ShowAlternates");
+                    RefreshSearch(null, null);
+                }
+            }
+        }
+
         public SearchControl(DataNew.Entities.Game game, DeckBuilderWindow deckWindow)
         {
             _deckWindow = deckWindow;
@@ -68,6 +85,17 @@ namespace Octgn.DeckBuilder
             filtersList.ItemsSource = source;
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
+
+
+            RoutedEventHandler loadedEvent = null;
+
+            loadedEvent = (sender, args) => {
+                this.Loaded -= loadedEvent;
+                this.RefreshSearch(SearchButton, null);
+            };
+
+            this.Loaded += loadedEvent;
+
             UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
             FileName = "";
             UpdateCount();
@@ -95,7 +123,7 @@ namespace Octgn.DeckBuilder
             filtersList.ItemsSource =
                 Enumerable.Repeat<object>("First", 1)
                     .Union(Enumerable.Repeat<object>(new NamePropertyDef(), 1))
-                    .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1))
+                     .Union(Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1))
                     .Union(game.CardProperties.Values.Where(p => !p.Hidden));
             this.GenerateColumns(game);
             FileName = "";
@@ -380,7 +408,7 @@ namespace Octgn.DeckBuilder
                         Path = new PropertyPath(prop.Name),
                         Mode = BindingMode.OneTime,
                         Converter = new RichTextConverter(),
-                        ConverterParameter = game
+                        ConverterParameter = game.DeckEditorFont
                     };
 
                     var factory = new FrameworkElementFactory(typeof(RichTextBlock));
@@ -481,8 +509,7 @@ namespace Octgn.DeckBuilder
                 if (orconditions.Count > 0) filterString += " and ";
                 filterString += String.Format("({0})", String.Join(" and ", conditions));
             }
-
-            if (HideAltToggleButton.IsChecked == true)
+            if (ShowAlternates == false)
             {
                 if (filterString != "") filterString += " and ";
                 filterString += "[Alternates] = ''";

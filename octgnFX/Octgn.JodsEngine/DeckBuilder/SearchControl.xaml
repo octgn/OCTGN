@@ -73,8 +73,8 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Hide Filters" FontSize="14" Width="100" Margin="1,10,10,1" Style="{StaticResource FlatDarkButtonStyle}" 
                             Click="ToggleFilterVisibility" IsDefault="False" x:Name="ShowFilterToggleButton" Grid.Column="0" />
-                    <CheckBox Content="Hide Alternates" Margin="1,10,10,1" Foreground="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontWeight="Bold"
-                            Click="RefreshSearch" IsChecked="False" x:Name="HideAltToggleButton" Grid.Column="1" />
+                    <CheckBox Content="Show Alternates" Margin="1,10,10,1" Foreground="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontWeight="Bold"
+                              IsChecked="{Binding ElementName=self,Path=ShowAlternates}" x:Name="ShowAltToggleButton" Grid.Column="1" />
                     <TextBlock x:Name="ResultCount" TextAlignment="Right" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontWeight="Bold" Foreground="Black" 
                                Grid.Column="2" TextWrapping="WrapWithOverflow" Text="0 Results" />
                     <Button Content="Search" FontSize="14" Width="80" Margin="10,10,1,1" Style="{StaticResource FlatDarkGreenButtonStyle}" 
