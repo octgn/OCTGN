@@ -136,7 +136,7 @@
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Notes">
-                    <TextBox AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" Text="{Binding ElementName=self,Path=Deck.Notes,Mode=TwoWay}" TextChanged="NotesTextChanged"/>
+                    <TextBox AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" Text="{Binding ElementName=self,Path=Deck.Notes,Mode=TwoWay}" TextChanged="NotesTextChanged"/>
                 </TabItem>
                 <TabItem Header="Sleeve">
                     <Grid>

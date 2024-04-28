@@ -1,1 +1,1 @@
-
+the saved notes box in the deck editor now has wordwrap
