@@ -98,7 +98,7 @@
 
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Show Discord Game Invite" Visibility="{Binding ElementName=self, Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}" 
+                <MenuItem Header="Show Discord Game Invite" Visibility="{Binding ElementName=self, Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}"
                           IsCheckable="True" IsChecked="{Binding Source={x:Static octgn:Program.GameSettings}, Path=AllowDiscordGameInvite}"/>
                 <MenuItem Header="Change Background">
                     <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
@@ -108,7 +108,8 @@
                 <MenuItem Header="Extended Tooltips" IsCheckable="True" IsChecked="{Binding ShowExtendedTooltips, BindsDirectlyToSource=True, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type play:PlayWindow}}}" />
                 <MenuItem Header="Card List" IsCheckable="True" IsEnabled="{Binding Source={x:Static octgn:Program.GameSettings}, Path=AllowCardList}" IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}"></MenuItem>
                 <MenuItem x:Name="CardPreviewToggleChecked" Header="Undock Card Preview" Click="ToggleCardPreviewWindow" IsCheckable="True"></MenuItem>
-                <MenuItem x:Name="ChatToggleChecked" Header="Undock Chat" Click="ToggleChatDockPanel" IsCheckable="True"></MenuItem>
+                <MenuItem x:Name="ChatToggleChecked" Header="Undock Chat" Click="ToggleChatDockPanel" IsCheckable="True"></MenuItem> EnableChatTextShadows
+                <MenuItem x:Name="MenuItem_ChatShadows" Header="Chat Text Shadows" IsCheckable="True" IsChecked="{Binding EnableChatTextShadows, BindsDirectlyToSource=True, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type play:PlayWindow}}}" />
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
             </MenuItem>
         </Menu>

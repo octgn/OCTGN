@@ -647,5 +647,10 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("ShowAltsInDeckEditor", false); }
             set { Config.Instance.WriteValue("ShowAltsInDeckEditor", value); }
         }
+
+        public static bool InGameChatTextShadows {
+            get { return Config.Instance.ReadValue("InGameChatTextShadows", false); }
+            set { Config.Instance.WriteValue("InGameChatTextShadows", value); }
+        }
     }
 }

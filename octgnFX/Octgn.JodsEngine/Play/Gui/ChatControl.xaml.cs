@@ -25,6 +25,8 @@ using Octgn.Core.Play;
 using Octgn.Extentions;
 using Octgn.Library;
 using Octgn.Utils;
+using Octgn.Core;
+using System.Windows.Media.Effects;
 
 namespace Octgn.Play.Gui
 {
@@ -75,7 +77,7 @@ namespace Octgn.Play.Gui
                 this.OnPropertyChanged("DevMode");
             }
         }
-        
+
         public bool HideErrors
         {
             get
@@ -157,6 +159,9 @@ namespace Octgn.Play.Gui
                 chatTimer2 = new System.Timers.Timer(100);
                 chatTimer2.Enabled = true;
                 chatTimer2.Elapsed += this.TickMessage;
+
+                UpdateVisualsFromPreferences();
+
             };
             Unloaded += delegate
             {
@@ -177,6 +182,22 @@ namespace Octgn.Play.Gui
                 ShowInput = Program.GameSettings.MuteSpectators == false;
             } else {
                 ShowInput = Program.GameEngine.IsReplay == false;
+            }
+        }
+
+        public void UpdateVisualsFromPreferences() {
+            var inGameChatTextShadows = Prefs.InGameChatTextShadows;
+
+            if (inGameChatTextShadows) {
+                var shadow = new DropShadowEffect();
+                shadow.Color = Colors.Black;
+                shadow.Direction = 315;
+                shadow.BlurRadius = 1;
+                shadow.Opacity = 0.5;
+                shadow.ShadowDepth = 1;
+                output.Effect = shadow;
+            } else {
+                output.Effect = null;
             }
         }
 
@@ -299,7 +320,7 @@ namespace Octgn.Play.Gui
                 var b = new GameMessageBlock(m);
                 b.TextAlignment = TextAlignment.Center;
                 b.Margin = new Thickness(2);
-                
+
                 var chatRun = new Run(string.Format(m.Message, m.Arguments));
                 chatRun.Foreground = brush;
                 chatRun.FontWeight = FontWeights.Bold;
@@ -312,7 +333,7 @@ namespace Octgn.Play.Gui
                 p.Inlines.Add(prun);
 
                 b.Blocks.Add(p);
-                
+
                 return b;
             }
             else if (m is TurnMessage)
@@ -361,7 +382,7 @@ namespace Octgn.Play.Gui
 
                 b.Blocks.Add(p);
 
-                //if (((Paragraph)output.Document.Blocks.LastBlock).Inlines.Count == 0) 
+                //if (((Paragraph)output.Document.Blocks.LastBlock).Inlines.Count == 0)
                 //    output.Document.Blocks.Remove(output.Document.Blocks.LastBlock);
 
                 return b;

@@ -138,69 +138,84 @@
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
                             </Grid.RowDefinitions>
                             <StackPanel>
-                                <Grid Height="8"/>
-                                <CheckBox x:Name="CheckBoxLightChat" IsEnabled="False">
-                                    <TextBlock Foreground="White">Use Light Color Chat Theme</TextBlock>
-                                </CheckBox>
+                                <GroupBox Header="In Game Chat">
+                                    <StackPanel>
+                                        <Grid Height="8"/>
+                                        <CheckBox x:Name="CheckBox_InGameChat_TextShadows">
+                                            <TextBlock Foreground="White">Apply shadows to chat text.</TextBlock>
+                                        </CheckBox>
 
+                                        <Grid Height="6"/>
+                                    </StackPanel>
+                                </GroupBox>
                                 <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxUseWindowsForChat" IsEnabled="False">
-                                    <TextBlock Foreground="White">Use Windows Instead of Docked Chats</TextBlock>
-                                </CheckBox>
+                                <GroupBox Header="Octgn Chat" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <Grid Height="8"/>
+                                        <CheckBox x:Name="CheckBoxLightChat" IsEnabled="False">
+                                            <TextBlock Foreground="White">Use Light Color Chat Theme</TextBlock>
+                                        </CheckBox>
 
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableChatImages" IsEnabled="False" >
-                                    <TextBlock Foreground="White">Enable Images in Chat
-                                        <Bold Foreground="#FFFFCC00">$</Bold>
-                                    </TextBlock>
-                                </CheckBox>
+                                        <Grid Height="6"/>
+                                        <CheckBox x:Name="CheckBoxUseWindowsForChat" IsEnabled="False">
+                                            <TextBlock Foreground="White">Use Windows Instead of Docked Chats</TextBlock>
+                                        </CheckBox>
 
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableWhisperSound" IsEnabled="False">
-                                    <TextBlock>Enable Alert Sound When Whispered in Chat</TextBlock>
-                                </CheckBox>
+                                        <Grid Height="6"/>
+                                        <CheckBox x:Name="CheckBoxEnableChatImages" IsEnabled="False" >
+                                            <TextBlock Foreground="White">Enable Images in Chat
+                                            <Bold Foreground="#FFFFCC00">$</Bold>
+                                            </TextBlock>
+                                        </CheckBox>
 
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" IsEnabled="False" >
-                                    <TextBlock Height="30">Enable Alert Sound When Someone @username's You</TextBlock>
-                                </CheckBox>
+                                        <Grid Height="6"/>
+                                        <CheckBox x:Name="CheckBoxEnableWhisperSound" IsEnabled="False">
+                                            <TextBlock>Enable Alert Sound When Whispered in Chat</TextBlock>
+                                        </CheckBox>
 
-                                <Grid Height="6"/>
-                                <Grid IsEnabled="False">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="225"/>
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Foreground="#FFFFFF"><Run Text="Maximum # Chat History Lines"/></TextBlock>
-                                    <xctk:IntegerUpDown x:Name="MaxChatHistory"
-                				Background="#FF555555"
-                				Foreground="White"
-                				BorderBrush="Blue"
-                				Increment="1"
-                				Minimum="1"
-                				Grid.Column="1"
-                				ShowButtonSpinner="True"
-                				Height="25"
-                				AllowSpin="True" Margin="0,0,90,0"/>
-                                </Grid>
-                                <Grid Height="6"/>
-                                <Grid Margin="0,4,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="225"/>
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Foreground="#FFFFFF"><Run Text="Chat Font Size"/></TextBlock>
-                                    <xctk:IntegerUpDown x:Name="ChatFontSize"
-                				Background="#FF555555"
-                				Foreground="White"
-                				BorderBrush="Blue"
-                				Increment="1"
-                				Minimum="4"
-                				Grid.Column="1"
-                				ShowButtonSpinner="True"
-                				Height="25"
-                				AllowSpin="True" Margin="0,0,90,0"/>
-                                </Grid>
+                                        <Grid Height="6"/>
+                                        <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" IsEnabled="False" >
+                                            <TextBlock Height="30">Enable Alert Sound When Someone @username's You</TextBlock>
+                                        </CheckBox>
+
+                                        <Grid Height="6"/>
+                                        <Grid IsEnabled="False">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="225"/>
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Foreground="#FFFFFF"><Run Text="Maximum # Chat History Lines"/></TextBlock>
+                                            <xctk:IntegerUpDown x:Name="MaxChatHistory"
+                                                Background="#FF555555"
+                                                Foreground="White"
+                                                BorderBrush="Blue"
+                                                Increment="1"
+                                                Minimum="1"
+                                                Grid.Column="1"
+                                                ShowButtonSpinner="True"
+                                                Height="25"
+                                                AllowSpin="True" Margin="0,0,90,0"/>
+                                        </Grid>
+                                        <Grid Height="6"/>
+                                        <Grid Margin="0,4,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="225"/>
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Foreground="#FFFFFF"><Run Text="Chat Font Size"/></TextBlock>
+                                            <xctk:IntegerUpDown x:Name="ChatFontSize"
+                                                Background="#FF555555"
+                                                Foreground="White"
+                                                BorderBrush="Blue"
+                                                Increment="1"
+                                                Minimum="4"
+                                                Grid.Column="1"
+                                                ShowButtonSpinner="True"
+                                                Height="25"
+                                                AllowSpin="True" Margin="0,0,90,0"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
                             </StackPanel>
                         </Grid>
                     </TabItem>
