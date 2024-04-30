@@ -138,6 +138,14 @@ namespace Octgn.Play
             set { Prefs.ExtendedTooltips = value; }
         }
 
+        public bool EnableChatTextShadows {
+            get { return Prefs.InGameChatTextShadows; }
+            set {
+                Prefs.InGameChatTextShadows = value;
+                chat.UpdateVisualsFromPreferences();
+            }
+        }
+
         public GameSettings GameSettings { get; set; }
 
         public ReplayEngine ReplayEngine { get; }

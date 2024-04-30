@@ -48,6 +48,8 @@ namespace Octgn.Windows
             CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             HandDensitySlider.Value = Prefs.HandDensity;
 
+            CheckBox_InGameChat_TextShadows.IsChecked = Prefs.InGameChatTextShadows;
+
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
 
@@ -94,6 +96,7 @@ namespace Octgn.Windows
             var zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             var soundOption = (Prefs.SoundType)ComboBoxJoinSound.SelectedIndex;
             var animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
+            var inGameChatTextShadow = CheckBox_InGameChat_TextShadows.IsChecked ?? false;
 
             try {
                 // ---- Validate settings
@@ -144,6 +147,7 @@ namespace Octgn.Windows
                     Prefs.EnableLanGames = showLanMode;
                     Prefs.UseGameFonts = useGameFonts;
                     Prefs.HandDensity = handDensity;
+                    Prefs.InGameChatTextShadows = inGameChatTextShadow;
                     if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
                         File.Create(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
                     else if (!useTestReleases && File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
