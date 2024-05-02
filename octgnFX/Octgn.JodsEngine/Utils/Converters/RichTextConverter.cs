@@ -90,7 +90,7 @@ namespace Octgn.Utils.Converters
                     var image = new Image
                     {
                         Margin = new Thickness(0, 0, 0, -2),
-                        Height = Font.Size + 2,
+                        Height = (Font?.Size ?? span.FontSize) + 2,
                         Stretch = Stretch.Uniform,
                         Source = new BitmapImage(new Uri(symbol.Source)),
                         ToolTip = symbol.Name
