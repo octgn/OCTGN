@@ -1,3 +1,7 @@
+#3.4.394.0
++ the saved notes box in the deck editor now has wordwrap
++ fixed bug with scaling richtext symbols when the deck editor font isn't actually defined
+
 #3.4.393.0
 
 #3.4.392.0
@@ -4068,6 +4072,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
