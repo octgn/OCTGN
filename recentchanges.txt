@@ -1,1 +1,1 @@
-
+choiceDlg and inputDlg API now pop up next to the mouse cursor (instead of in the middle of the screen)

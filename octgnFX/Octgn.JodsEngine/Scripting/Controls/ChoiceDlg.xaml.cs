@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Octgn.Scripting.Controls
 {
@@ -17,6 +18,9 @@ namespace Octgn.Scripting.Controls
             InitializeComponent();
             //fix MAINWINDOW bug
             Owner = WindowManager.PlayWindow;
+            Left = Owner.PointToScreen(Mouse.GetPosition(Owner)).X;
+            Top = Owner.PointToScreen(Mouse.GetPosition(Owner)).Y;
+
             Title = title;
             promptLbl.Text = prompt;
             int count = 0;

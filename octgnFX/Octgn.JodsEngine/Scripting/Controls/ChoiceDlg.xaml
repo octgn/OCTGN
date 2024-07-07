@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Octgn.Controls"
         Style="{StaticResource Window}" MinWidth="330" CanResize="False"
-        SizeToContent="WidthAndHeight"  ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        SizeToContent="WidthAndHeight"  ResizeMode="NoResize" ShowInTaskbar="False">
 
     <StackPanel Orientation="Vertical" x:Name="choiceWindow">
         <Border Style="{StaticResource DarkPanel}" Margin="8">
