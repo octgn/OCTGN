@@ -1,3 +1,11 @@
+#3.4.395.0
++ choiceDlg and inputDlg API now pop up next to the mouse cursor (instead of in the middle of the screen)
++ Card Focus feature added, which darkens all cards on the table except for a specified list of cards
++ Hovering over a card in the python API SelectCards or SelectMultiCards dialogs will Focus that card in play
++ New Python API - focus([list of cards]) will Focus those cards
++ New Python API - clearFocus() will clear the Focus state
++ New Python API - getFocus() will return a list of Focused cards
+
 #3.4.394.0
 + the saved notes box in the deck editor now has wordwrap
 + fixed bug with scaling richtext symbols when the deck editor font isn't actually defined
@@ -4072,6 +4080,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
