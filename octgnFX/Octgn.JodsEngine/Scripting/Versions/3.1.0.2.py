@@ -66,7 +66,7 @@ def getActivePlayer():
 
 def setActivePlayer(player = None):
 	if player == None:
-		 _api.SetActivePlayer()
+		_api.SetActivePlayer()
 	else:
 		_api.SetActivePlayer(player._id)
 
@@ -176,6 +176,20 @@ def queryCard(properties = {}, exact = False):
 	apiResult = _api.QueryCard(realDict,exact)
 	if apiResult == None: return []
 	return [x for x in apiResult]
+
+def focus(cards = None):
+	if (cards == None):
+		_api.ClearFocus()
+	else:
+		_api.Focus(List[int](c._id for c in cards))
+
+def clearFocus():
+	_api.ClearFocus()
+
+def getFocus():
+	ret = _api.GetFocusedCards()
+	if ret == None: return None
+	return [Card(x) for x in _api.GetFocusedCards()]
 
 def getGlobalVariable(gname):
 	return _api.GetGlobalVariable(gname)

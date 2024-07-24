@@ -135,5 +135,29 @@ namespace Octgn.Scripting.Controls
             var panel = sender as VirtualizingWrapPanel;
             if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.DefaultSize().Width / Program.GameEngine.Definition.DefaultSize().Height;
         }
+
+        private object hoveredCard;
+        private void ItemMouseEnter(object sender, MouseEventArgs e)
+        {
+            var img = sender as Image;
+            if (img == null) return;
+            var card = (img.DataContext as Card);
+            if (hoveredCard == null)
+            {
+                hoveredCard = card;
+                Program.GameEngine.EnableCardFocus(new Card[] { card });
+            }
+
+        }
+
+        private void ItemMouseLeave(object sender, MouseEventArgs e)
+        {
+
+            if (hoveredCard != null)
+            {
+                hoveredCard = null;
+                Program.GameEngine.ClearCardFocus();
+            }
+        }
     }
 }

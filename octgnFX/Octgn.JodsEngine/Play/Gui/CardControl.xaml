@@ -109,6 +109,13 @@
                         </MultiBinding>
                     </Rectangle.Fill>
                 </Rectangle>
+                
+                <Rectangle Visibility="{Binding HasFocus, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" 
+                           Fill="{StaticResource TransControlBackgroundBrush}" MouseLeftButtonDown="LeftButtonDownOverImage">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{Binding ElementName=img}" Stretch="None" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
 
                 <StackPanel Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <Border x:Name="peekEye" Background="#80000000" CornerRadius="5,0,0,5" Visibility="{Binding PeekingPlayers.Count, Converter={StaticResource CountConverter}}">

@@ -791,6 +791,22 @@ namespace Octgn
         }
 
 
+        public event EventHandler CardFocusEvent;
+
+        public IEnumerable<Card> FocusedCards = Enumerable.Empty<Card>();
+        public void EnableCardFocus(IEnumerable<Card> cards)
+        {
+            if (FocusedCards.SequenceEqual(cards)) return;
+            FocusedCards = cards;
+            CardFocusEvent?.Invoke(this, null);
+        }
+
+        public void ClearCardFocus()
+        {
+            if (FocusedCards.Count() == 0) return;
+            FocusedCards = Enumerable.Empty<Card>();
+            CardFocusEvent?.Invoke(this, null);
+        }
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 

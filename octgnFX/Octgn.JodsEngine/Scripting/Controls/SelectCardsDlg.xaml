@@ -5,7 +5,7 @@
 
   <Window.Resources>
     <DataTemplate x:Key="CardTemplate">
-      <Image HorizontalAlignment="Center" Loaded="SetPicture" />
+      <Image HorizontalAlignment="Center" Loaded="SetPicture" MouseEnter="ItemMouseEnter" MouseLeave="ItemMouseLeave" />
     </DataTemplate>
 
     <Style x:Key="WrapListBox" TargetType="{x:Type ListBox}" BasedOn="{StaticResource PanelListBox}">
@@ -49,7 +49,7 @@
                  TextChanged="FilterChanged" Keyboard.PreviewKeyDown="PreviewFilterKeyDown" />
         <ListBox x:Name="allList" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
                  Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" SelectionChanged="CardSelected"
-                 MouseDoubleClick="SelectClicked">
+                 MouseDoubleClick="SelectClicked" >
           <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
               <ctrl:VirtualizingWrapPanel ChildHeight="250" Loaded="ComputeChildWidth" />
