@@ -672,6 +672,25 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.HighlightColor = value);
         }
 
+        public void Focus(List<int> idList)
+        {
+            var cards = idList.Select(x => Card.Find(x));
+
+            QueueAction(() => Program.GameEngine.EnableCardFocus(cards));
+        }
+
+        public void ClearFocus()
+        {
+            QueueAction(() => Program.GameEngine.ClearCardFocus());
+        }
+
+        public List<int> GetFocusedCards()
+        {
+            var list = Program.GameEngine.FocusedCards.Select(x => x.Id).ToList();
+
+            return list;
+        }
+
         public string CardGetFilter(int id)
         {
             Color? colorOrNull = Card.Find(id).FilterColor;

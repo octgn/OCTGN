@@ -242,6 +242,29 @@ namespace Octgn.Scripting.Controls
             SliderHeight = slider.Value;
             SliderWidth = slider.Value * Program.GameEngine.Definition.DefaultSize().Width / Program.GameEngine.Definition.DefaultSize().Height;
         }
+        
+        private object hoveredCard;
+        private void ItemMouseEnter(object sender, MouseEventArgs e)
+        {
+            var img = sender as Image;
+            if (img == null) return;
+            var card = Card.Find((int)img.DataContext);
+            if (hoveredCard == null)
+            {
+                hoveredCard = card;
+                Program.GameEngine.EnableCardFocus(new Card[] { card });
+            }
+
+        }
+        private void ItemMouseLeave(object sender, MouseEventArgs e)
+        {
+
+            if (hoveredCard != null)
+            {
+                hoveredCard = null;
+                Program.GameEngine.ClearCardFocus();
+            }
+        }
 
         #region dragDrop Stuff
 

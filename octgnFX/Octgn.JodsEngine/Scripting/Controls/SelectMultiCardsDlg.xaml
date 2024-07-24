@@ -5,7 +5,7 @@
 
     <Window.Resources>
         <DataTemplate x:Key="CardTemplate">
-            <Image HorizontalAlignment="Center" Loaded="SetPicture" />
+            <Image HorizontalAlignment="Center" Loaded="SetPicture" MouseEnter="ItemMouseEnter" MouseLeave="ItemMouseLeave" />
         </DataTemplate>
 
         <Style x:Key="CardListBox" TargetType="ListBoxItem">

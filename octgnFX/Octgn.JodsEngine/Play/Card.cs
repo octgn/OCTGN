@@ -244,6 +244,7 @@ namespace Octgn.Play
                 Size = Program.GameEngine.Definition.CardSizes[cardsize];
             else
                 Size = Program.GameEngine.Definition.DefaultSize();
+            Program.GameEngine.CardFocusEvent += new EventHandler(CheckCardFocus);
         }
 
         internal override int Id
@@ -500,6 +501,7 @@ namespace Octgn.Play
                 Program.Client.Rpc.Filter(this, value);
             }
         }
+
         public string FilterColorString
         {
             get
@@ -516,6 +518,20 @@ namespace Octgn.Play
             get { return _filter != null; }
         }
 
+        private void CheckCardFocus(object sender, EventArgs e)
+        {
+            OnPropertyChanged("HasFocus");
+        }
+
+        public bool HasFocus
+        {
+            get
+            {
+                if (Program.GameEngine.FocusedCards.Count() == 0)
+                    return true;
+                return Program.GameEngine.FocusedCards.Contains(this);
+            }
+        }
         public Dictionary<PropertyDef, object> CurrentCardProperties
         {
             get
