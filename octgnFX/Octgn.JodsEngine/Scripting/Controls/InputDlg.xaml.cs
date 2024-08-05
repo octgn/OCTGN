@@ -17,8 +17,8 @@ namespace Octgn.Scripting.Controls
             InitializeComponent();
             //fix MAINWINDOW bug
             Owner = WindowManager.PlayWindow;
-            Left = Owner.PointToScreen(Mouse.GetPosition(Owner)).X;
-            Top = Owner.PointToScreen(Mouse.GetPosition(Owner)).Y;
+            Left = Owner.Left + Mouse.GetPosition(Owner).X;
+            Top = Owner.Top + Mouse.GetPosition(Owner).Y;
             Title = title;
             promptLbl.Text = prompt;
             inputBox.Text = defaultValue;
