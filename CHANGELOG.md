@@ -1,3 +1,6 @@
+#3.4.396.0
++ fixed bug from previous commit where the popup windows load off-screen
+
 #3.4.395.0
 + choiceDlg and inputDlg API now pop up next to the mouse cursor (instead of in the middle of the screen)
 + Card Focus feature added, which darkens all cards on the table except for a specified list of cards
@@ -4080,6 +4083,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
