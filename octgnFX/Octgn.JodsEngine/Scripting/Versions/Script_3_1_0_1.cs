@@ -1101,13 +1101,13 @@ namespace Octgn.Scripting.Versions
                 permission.AddPermission(NetworkAccess.Connect, url);
                 permission.Assert();
 
-	            result = "Failed Constructing WebRequest";
-				var request = WebRequest.Create(url);
-				request.Timeout = (timeout == 0) ? request.Timeout : timeout;
-				request.Headers["UserAgent"] = "OCTGN_" + Const.OctgnVersion.ToString() + "/" + Program.GameEngine.Definition.Name + "_" + Program.GameEngine.Definition.Version.ToString();
-				request.Method = data == null ? "GET" : "POST";
+                result = "Failed Constructing WebRequest";
+                var request = (HttpWebRequest)WebRequest.Create(url);
+                request.Timeout = (timeout == 0) ? request.Timeout : timeout;
+                request.UserAgent = "OCTGN_" + Const.OctgnVersion.ToString() + "/" + Program.GameEngine.Definition.Name + "_" + Program.GameEngine.Definition.Version.ToString();
+                request.Method = data == null ? "GET" : "POST";
 
-	            if (data != null) {
+                if (data != null) {
 					var byteArray = Encoding.UTF8.GetBytes(data);
 					request.ContentType = "application/x-www-form-urlencoded";
 					request.ContentLength = byteArray.Length;

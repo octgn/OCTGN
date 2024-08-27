@@ -1,1 +1,1 @@
-
+webRead API properly sets the User-Agent header property.
