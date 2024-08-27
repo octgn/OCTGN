@@ -1077,9 +1077,9 @@ namespace Octgn.Scripting.Versions
                 permission.Assert();
 
 	            result = "Failed Constructing WebRequest";
-				var request = WebRequest.Create(url);
+				var request = (HttpWebRequest)WebRequest.Create(url);
 				request.Timeout = (timeout == 0) ? request.Timeout : timeout;
-				request.Headers["UserAgent"] = "OCTGN_" + Const.OctgnVersion.ToString() + "/" + Program.GameEngine.Definition.Name + "_" + Program.GameEngine.Definition.Version.ToString();
+				request.UserAgent = "OCTGN_" + Const.OctgnVersion.ToString() + "/" + Program.GameEngine.Definition.Name + "_" + Program.GameEngine.Definition.Version.ToString();
 				request.Method = data == null ? "GET" : "POST";
 
 	            if (data != null) {
