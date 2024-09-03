@@ -1,3 +1,6 @@
+#3.4.397.0
++ webRead API properly sets the User-Agent header property.
+
 #3.4.396.0
 + fixed bug from previous commit where the popup windows load off-screen
 
@@ -4083,6 +4086,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
