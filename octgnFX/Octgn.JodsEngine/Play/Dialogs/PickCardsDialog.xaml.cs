@@ -18,7 +18,7 @@ using Octgn.Utils;
 namespace Octgn.Play.Dialogs
 {
     using System.Threading.Tasks;
-
+    using Microsoft.Scripting.Utils;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
@@ -40,7 +40,7 @@ namespace Octgn.Play.Dialogs
             InitializeComponent();
         }
 
-        public ListCollectionView CardPoolView { get; private set; }
+        public ListCollectionView CardPoolView { get; set; }
         public List<object> SortProperties { get; private set; }
         public ObservableCollection<ObservableMultiCard> CardPool { get; private set; }
         public ListCollectionView UnlimitedPoolView { get; private set; }
@@ -49,10 +49,19 @@ namespace Octgn.Play.Dialogs
         public ObservableCollection<Filter> Filters { get; private set; }
         public bool FiltersVisible { get; set; }
 
+        private IComparer<String> KeyComparer = new KeyComparer();
         private void SortChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sortBox.SelectedItem == null) return;
-            CardPoolView.CustomSort = new CardPropertyComparer(((PropertyDef)sortBox.SelectedItem));
+            if (sortBox.SelectionBoxItem is String)
+            {
+                CardPoolView.CustomSort = new CompoundComparer(new CardPropertyComparer((PropertyDef)sortBox.SelectedItem), new CardPropertyComparer(new NamePropertyDef()));
+            }
+            else
+            {
+                CardPoolView.CustomSort = new CompoundComparer(new CardPropertyComparer((PropertyDef)sortBox.SelectedItem), new CompoundComparer(new CardPropertyComparer((PropertyDef)sortBox.SelectionBoxItem), new CardPropertyComparer(new NamePropertyDef())));
+            }
+            
         }
 
         public void OpenPacks(IEnumerable<Guid> packs)
@@ -361,7 +370,7 @@ namespace Octgn.Play.Dialogs
                 {
                     case PropertyType.Integer:
                         Filter filter3 = filter;
-                        IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
+                        IEnumerable<EnumFilterValue> q = (from ObservableMultiCard c in CardPoolView
                                                          let all = this.GetCardPropertyValue(c, prop)
                                                          where all != null
                                                          group c by all
@@ -373,7 +382,7 @@ namespace Octgn.Play.Dialogs
                                                                  Property = filter3.Property,
                                                                  Value = g.Key,
                                                                  Count = g.Count()
-                                                             };
+                                                             }).OrderBy(x => x.Value, KeyComparer); ;
                         foreach (EnumFilterValue filterValue in q)
                             filter.Values.Add(filterValue);
                         break;
@@ -383,7 +392,7 @@ namespace Octgn.Play.Dialogs
                         {
                             case PropertyTextKind.Enumeration:
                                 Filter filter2 = filter;
-                                IEnumerable<EnumFilterValue> q3 = from ObservableMultiCard c in CardPoolView
+                                IEnumerable<EnumFilterValue> q3 = (from ObservableMultiCard c in CardPoolView
                                                                  let all = this.GetCardPropertyValue(c, prop)
                                                                  where all != null
                                                                  group c by all
@@ -395,13 +404,13 @@ namespace Octgn.Play.Dialogs
                                                                          Property = filter2.Property,
                                                                          Value = g.Key.ToString(),
                                                                          Count = g.Count()
-                                                                     };
+                                                                     }).OrderBy(x => x.Value, KeyComparer);
                                 foreach (EnumFilterValue filterValue in q3)
                                     filter.Values.Add(filterValue);
                                 break;
                             case PropertyTextKind.Tokens:
                                 Filter filter1 = filter;
-                                IEnumerable<TokenFilterValue> q2 = from ObservableMultiCard c in CardPoolView
+                                IEnumerable<TokenFilterValue> q2 = (from ObservableMultiCard c in CardPoolView
                                                                    let all = this.GetCardPropertyValue(c, prop)
                                                                    where all != null
                                                                    from token in
@@ -416,7 +425,7 @@ namespace Octgn.Play.Dialogs
                                                                            Property = filter1.Property,
                                                                            Value = g.Key,
                                                                            Count = g.Count()
-                                                                       };
+                                                                       }).OrderBy(x => x.Value, KeyComparer); ;
                                 foreach (TokenFilterValue filterValue in q2)
                                     filter.Values.Add(filterValue);
                                 break;
@@ -617,15 +626,17 @@ namespace Octgn.Play.Dialogs
 
         private void ButtonMoveClick(object sender, RoutedEventArgs e)
         {
+            var list = new ListCollectionView(CardPool.ToArray());
+            list.Filter = CardPoolView.Filter;
+            list.CustomSort = CardPoolView.CustomSort;
             if (ComboBoxDeckSection.SelectedIndex < 0) return;
-            var list = CardPool.ToArray();
             var cbSection = (KeyValuePair<string, DeckSection>)ComboBoxDeckSection.SelectedItem;
             var section =
                 deckTabs.Items.OfType<ObservableSection>()
                     .FirstOrDefault(
                         x => x.Name.Equals(cbSection.Value.Name, StringComparison.InvariantCultureIgnoreCase));
             if (section == null) return;
-            foreach (var c in list)
+            foreach (ObservableMultiCard c in list)
             {
                 CardPool.Remove(c);
                 var element = section.Cards.FirstOrDefault(x => x.Id == c.Id); //.AsObservable();
@@ -633,6 +644,22 @@ namespace Octgn.Play.Dialogs
                 else section.Cards.AddCard(c);
             }
 
+        }
+
+        private void ButtonReturnClick(object sender, RoutedEventArgs e)
+        {
+            var section = deckTabs.SelectedItem as ObservableSection;
+
+            for (int i = 0; i < section.Cards.Count();)
+            {
+                var card = section.Cards.ElementAt(i);
+                for (var c = card.Quantity - 1; c >= 0; c--)
+                {
+                    card.Quantity = 1;
+                    CardPool.Add(card.AsObservable());
+                }
+                section.Cards.RemoveCard(card);
+            }
         }
     }
 
@@ -661,4 +688,82 @@ namespace Octgn.Play.Dialogs
             throw new InvalidOperationException("Unexpected property type: " + filter.Property.Type);
         }
     }
+
+    public class KeyComparer : IComparer<string>
+    {
+        public int Compare(string x, string y)
+        {
+            int indexX = 0;
+            int indexY = 0;
+            while (true)
+            {
+                // Handle the case when one string has ended.
+                if (indexX == x.Length)
+                {
+                    return indexY == y.Length ? 0 : -1;
+                }
+                if (indexY == y.Length)
+                {
+                    return 1;
+                }
+
+                char charX = x[indexX];
+                char charY = y[indexY];
+                if (char.IsDigit(charX) && char.IsDigit(charY))
+                {
+                    // Skip leading zeroes in numbers.
+                    while (indexX < x.Length && x[indexX] == '0')
+                    {
+                        indexX++;
+                    }
+                    while (indexY < y.Length && y[indexY] == '0')
+                    {
+                        indexY++;
+                    }
+
+                    // Find the end of numbers
+                    int endNumberX = indexX;
+                    int endNumberY = indexY;
+                    while (endNumberX < x.Length && char.IsDigit(x[endNumberX]))
+                    {
+                        endNumberX++;
+                    }
+                    while (endNumberY < y.Length && char.IsDigit(y[endNumberY]))
+                    {
+                        endNumberY++;
+                    }
+
+                    int digitsLengthX = endNumberX - indexX;
+                    int digitsLengthY = endNumberY - indexY;
+
+                    // If the lengths are different, then the longer number is bigger
+                    if (digitsLengthX != digitsLengthY)
+                    {
+                        return digitsLengthX - digitsLengthY;
+                    }
+                    // Compare numbers digit by digit
+                    while (indexX < endNumberX)
+                    {
+                        if (x[indexX] != y[indexY])
+                            return x[indexX] - y[indexY];
+                        indexX++;
+                        indexY++;
+                    }
+                }
+                else
+                {
+                    // Plain characters comparison
+                    int compareResult = char.ToUpperInvariant(charX).CompareTo(char.ToUpperInvariant(charY));
+                    if (compareResult != 0)
+                    {
+                        return compareResult;
+                    }
+                    indexX++;
+                    indexY++;
+                }
+            }
+        }
+
+    }
+
 }

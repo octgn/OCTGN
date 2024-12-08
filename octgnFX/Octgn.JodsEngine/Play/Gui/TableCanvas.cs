@@ -146,16 +146,20 @@ namespace Octgn.Play.Gui
             CardControl card = (from ContentPresenter child in Children
                                 where child.DataContext == targetAction.FromCard
                                 select VisualTreeHelper.GetChild(child, 0) as CardControl).FirstOrDefault();
-            if (card == null) return; // Opponent moved the card out of the table concurently
-
-            AdornerLayer layer = AdornerLayer.GetAdornerLayer(card);
-            Adorner[] adorners = layer.GetAdorners(card);
-            if (adorners == null) return; // Opponent removed the target card out of the table concurently
-            foreach (ArrowAdorner arrow in adorners.OfType<ArrowAdorner>())
+            if (card != null)
             {
-                layer.Remove(arrow);
-            }
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(card);
+                Adorner[] adorners = layer.GetAdorners(card);
+                // Opponent removed the target card out of the table concurently
+                if (adorners != null)
+                {
+                    foreach (ArrowAdorner arrow in adorners.OfType<ArrowAdorner>())
+                    {
+                        layer.Remove(arrow);
+                    }
+                }
 
+            }
             targetAction.FromCard.TargetsOtherCards = false;
         }
     }
