@@ -41,7 +41,10 @@ namespace Octgn.Play.Dialogs
             // WPF ListBox doesn't like having multiple copies of the same 
             // instance and messes up selection
             var pack = (DataNew.Entities.Pack) packsCombo.SelectedItem;
-            Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.GetFullName()});
+            for (int i = 0; i < packsAmount.Value; i++)
+            {
+                Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.GetFullName()});
+            }
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)

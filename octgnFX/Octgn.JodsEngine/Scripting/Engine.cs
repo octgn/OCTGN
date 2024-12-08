@@ -460,7 +460,7 @@ namespace Octgn.Scripting
 
         private void ProcessExecutionQueue()
         {
-            do
+            while (_executionQueue.Count > 0)
             {
                 ScriptJobBase job = _executionQueue.Peek();
                 var scriptjob = job as ScriptJob;
@@ -495,14 +495,14 @@ namespace Octgn.Scripting
                 {
                     Program.GameMess.Warning("{0}", job.Result.Error.Trim());
                 }
-                if (job.Suspended) return;
+                if (job.Suspended) continue;
                 job.DispatcherSignal.Dispose();
                 job.WorkerSignal.Dispose();
                 _executionQueue.Dequeue();
 
                 if (job.Continuation != null)
                     job.Continuation(job.Result);
-            } while (_executionQueue.Count > 0);
+            };
         }
 
         private void Execute(Object state)
