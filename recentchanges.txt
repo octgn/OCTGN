@@ -1,2 +1,1 @@
-Fixed games not being spectatable unless the option gets toggled
-Removed extra menu option for chat text shadows
+
