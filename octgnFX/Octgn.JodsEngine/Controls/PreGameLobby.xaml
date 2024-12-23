@@ -6,7 +6,7 @@
              xmlns:o="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play"
              xmlns:toggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="500"
+             d:DesignHeight="500" d:DesignWidth="800"
              MinHeight="500" x:Name="me">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -187,14 +187,8 @@
                                     <TextBlock Text="Two-Sided Table" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="One-Sided Table" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Two-Sided Table" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                <toggleSwitch:HorizontalToggleSwitch.UncheckedBackground>
-                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="#FF3EB3EC"/>
-                                        <GradientStop Color="#FF349BE6" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </toggleSwitch:HorizontalToggleSwitch.UncheckedBackground>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <toggleSwitch:HorizontalToggleSwitch Width="190" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowSpectators, Mode=TwoWay}" Margin="10,0,0,0"
                                 IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
@@ -202,7 +196,7 @@
                                     <TextBlock Text="Allow Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="Disable Spectators" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Allow Spectators" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowCardList, Mode=TwoWay}" Margin="10,0,0,0"
@@ -211,16 +205,16 @@
                                     <TextBlock Text="Allow Card List" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="Disable Card List" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Allow Card List" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
-                            <toggleSwitch:HorizontalToggleSwitch Width="190" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowDiscordGameInvite, Mode=TwoWay}" Margin="10,0,0,0"
+                            <toggleSwitch:HorizontalToggleSwitch Width="210" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding AllowDiscordGameInvite, Mode=TwoWay}" Margin="10,0,0,0"
                                 IsEnabled="{Binding ElementName=me,Path=CanChangeSettings}">
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Allow Discord Invites" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="Hide Discord Invites" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="Allow Discord Invites" TextWrapping="Wrap"></TextBlock>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                         </StackPanel>
