@@ -94,6 +94,7 @@ namespace Octgn.Controls
             Loaded -= OnLoaded;
             Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
             Program.GameSettings.ChangeTwoSidedTable = Program.GameEngine.Definition.ChangeTwoSidedTable;
+            Program.GameSettings.AllowSpectators = true;
 
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
