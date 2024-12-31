@@ -33,7 +33,6 @@
             return value is FontWeight && (FontWeight)value == FontWeights.Bold;
         }
     }
-
     public class InvertedBooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -46,6 +45,24 @@
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is Visibility && (Visibility)value == Visibility.Collapsed;
+        }
+    }
+    public class InvertedBooleanToOpacityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var boolean = false;
+            if (value is bool) boolean = (bool)value;
+            return boolean ? 0 : 1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null){
+                return true;
+            }
+            
+            return value is double && (double)value == 0.0;
         }
     }
 }

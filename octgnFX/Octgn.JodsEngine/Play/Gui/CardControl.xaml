@@ -109,9 +109,36 @@
                         </MultiBinding>
                     </Rectangle.Fill>
                 </Rectangle>
-                
-                <Rectangle Visibility="{Binding HasFocus, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" 
-                           Fill="{StaticResource TransControlBackgroundBrush}" MouseLeftButtonDown="LeftButtonDownOverImage">
+
+                <Rectangle Fill="{StaticResource TransControlBackgroundBrush}" MouseLeftButtonDown="LeftButtonDownOverImage">
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Resources>
+                                <Storyboard x:Key="FadeOut">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                        <LinearDoubleKeyFrame KeyTime="0:0:0.35" Value="0"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                                <Storyboard x:Key="FadeIn">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                        <LinearDoubleKeyFrame KeyTime="0:0:0.35" Value="1"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </Style.Resources>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasFocus}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource FadeOut}"/>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard Storyboard="{StaticResource FadeIn}"/>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                            <Setter Property="Opacity" Value="{Binding HasFocus, Converter={StaticResource InvertedBooleanToOpacityConverter}}"/>
+                        </Style>
+                    </Rectangle.Style>
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{Binding ElementName=img}" Stretch="None" />
                     </Rectangle.OpacityMask>
@@ -184,3 +211,4 @@
         </ContentControl>
     </Border>
 </UserControl>
+    
