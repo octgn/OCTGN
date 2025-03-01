@@ -35,6 +35,7 @@
             x.PropertySets[x.Alternate].Properties.TryGetValue(_property, out object px);
             y.PropertySets[y.Alternate].Properties.TryGetValue(_property, out object py);
             if (px == null) return py == null ? 0 : -1;
+            if (py == null) return 1;
             return px.ToString().CompareTo(py.ToString());
         }
 

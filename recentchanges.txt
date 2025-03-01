@@ -1,1 +1,1 @@
-
+Fixed a crash when you try to sort a limited card pool by a property that can have null values
