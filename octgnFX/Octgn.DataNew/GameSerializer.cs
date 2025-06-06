@@ -607,6 +607,24 @@ namespace Octgn.DataNew
                         throw new ArgumentOutOfRangeException();
                 }
             }
+            
+            // Map protection state
+            switch (grp.protectionState)
+            {
+                case pileProtectionState.@false:
+                    ret.ProtectionState = GroupProtectionState.False;
+                    break;
+                case pileProtectionState.@true:
+                    ret.ProtectionState = GroupProtectionState.True;
+                    break;
+                case pileProtectionState.ask:
+                    ret.ProtectionState = GroupProtectionState.Ask;
+                    break;
+                default:
+                    ret.ProtectionState = GroupProtectionState.False;
+                    break;
+            }
+            
             return ret;
         }
 
@@ -1301,6 +1319,20 @@ namespace Octgn.DataNew
                     ret.viewState = pileViewState.expanded;
                     break;
             }
+            
+            switch (pile.ProtectionState)
+            {
+                case GroupProtectionState.False:
+                    ret.protectionState = pileProtectionState.@false;
+                    break;
+                case GroupProtectionState.True:
+                    ret.protectionState = pileProtectionState.@true;
+                    break;
+                case GroupProtectionState.Ask:
+                    ret.protectionState = pileProtectionState.ask;
+                    break;
+            }
+            
             return ret;
         }
 
