@@ -29,7 +29,7 @@ namespace Octgn.Test.Server
                 try
                 {
                     // This should not throw SocketException: Address already in use
-                    server = new Server(config, hostedGame, 21234);
+                    server = new Server(config, hostedGame, 21234, true); // Enable local_server mode
                     await server.Start();
                     
                     // Verify server is actually bound to the expected port
@@ -70,14 +70,14 @@ namespace Octgn.Test.Server
             try
             {
                 // Act - Create first server on preferred port
-                server1 = new Server(config, hostedGame1, 21234);
+                server1 = new Server(config, hostedGame1, 21234, true); // Enable local_server mode
                 await server1.Start();
                 
                 // Verify first server uses preferred port
                 Assert.AreEqual(preferredPort, hostedGame1.Port);
 
                 // Create second server - should find alternative port
-                server2 = new Server(config, hostedGame2, 21234);
+                server2 = new Server(config, hostedGame2, 21234, true); // Enable local_server mode
                 await server2.Start();
 
                 // Assert - Second server should use a different port
@@ -107,7 +107,23 @@ namespace Octgn.Test.Server
             };
 
             // Should not throw for a valid port
-            Assert.DoesNotThrow(() => new Server(config, hostedGame, 21234));
+            Assert.DoesNotThrow(() => new Server(config, hostedGame, 21234, true)); // Enable local_server mode
+        }
+
+        [Test]
+        public void Server_DefaultBehavior_UsesOriginalTcpListener()
+        {
+            // Test that the default behavior (local_server = false) uses original TcpListener
+            var config = new Config { IsLocal = false };
+            var hostedGame = new HostedGame
+            {
+                Id = Guid.NewGuid(),
+                HostAddress = "0.0.0.0:12348",
+                Status = HostedGameStatus.StartedHosting
+            };
+
+            // Should create server with default behavior (no socket reuse)
+            Assert.DoesNotThrow(() => new Server(config, hostedGame, 21234)); // Default: local_server = false
         }
     }
 }
