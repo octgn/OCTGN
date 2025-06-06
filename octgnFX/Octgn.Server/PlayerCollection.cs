@@ -155,7 +155,7 @@ namespace Octgn.Server
 
             var timeSinceAllDisconnected = DateTime.Now - players._allPlayersDisconnectedTime.Value;
             var timeToWait = players._context.Config.IsLocal
-                ? TimeSpan.FromSeconds(15)
+                ? TimeSpan.FromSeconds(5)
                 : TimeSpan.FromMinutes(2);
 
             if(timeSinceAllDisconnected < timeToWait) {
