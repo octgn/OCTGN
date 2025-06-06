@@ -844,6 +844,52 @@
                     }
                 }
             }
+
+            // Validate pack includes and their properties
+            foreach (XmlNode packNode in doc.GetElementsByTagName("pack"))
+            {
+                string packName = packNode.Attributes["name"]?.Value ?? "Unknown Pack";
+                foreach (XmlNode includeNode in packNode.ChildNodes)
+                {
+                    if (includeNode.Name == "include")
+                    {
+                        string includeId = includeNode.Attributes["id"]?.Value ?? "Unknown Include";
+                        foreach (XmlNode propNode in includeNode.ChildNodes)
+                        {
+                            if (propNode.Name == "property")
+                            {
+                                string propName = propNode.Attributes["name"]?.Value;
+                                if (string.IsNullOrEmpty(propName))
+                                {
+                                    throw new UserMessageException("Property defined on pack '{0}' include '{1}' has no name attribute in set file '{2}'", packName, includeId, fileName);
+                                }
+                                
+                                var gameProp = game.card.property.FirstOrDefault(x => x.name == propName);
+                                if (gameProp == null)
+                                {
+                                    throw new UserMessageException("Property '{2}' defined on pack '{0}' include '{1}' is not defined in definition.xml in set file '{3}'", packName, includeId, propName, fileName);
+                                }
+                                
+                                var valueString = propNode.Attributes["value"];
+                                var textString = propNode.ChildNodes;
+                                if (textString.Count > 0 && valueString != null)
+                                {
+                                    throw new UserMessageException("Property '{0}' defined on pack '{1}' include '{2}' cannot contain both a value attribute and inner text in set file '{3}'", propName, packName, includeId, fileName);
+                                }
+                                if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
+                                {
+                                    var error = CheckPropertyChildren(propNode, game.symbols);
+                                    if (error != null)
+                                    {
+                                        throw new UserMessageException("{0} found in pack '{1}' include '{2}' property '{3}' in set file '{4}'", error, packName, includeId, propName, fileName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
             doc.RemoveAll();
             doc = null;
         }
