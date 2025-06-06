@@ -33,6 +33,32 @@ def rnd(min, max):
 
 It calls Random with a min and max value that is located in [ScriptApi.cs](https://github.com/octgn/OCTGN/blob/master/octgnFX/Octgn/Scripting/ScriptAPI.cs).
 
+## Pile Protection API
+The pile protection system allows controlling who can view pile contents. Available functions:
+
+### PileGetProtectionState(id)
+Gets the current protection state of a pile.
+- **Parameters:** `id` (int) - The pile ID
+- **Returns:** String - `"false"`, `"true"`, or `"ask"`
+
+### PileSetProtectionState(id, state)
+Sets the protection state of a pile.
+- **Parameters:** 
+  - `id` (int) - The pile ID
+  - `state` (string) - `"false"` (allow), `"true"` (block), or `"ask"` (request permission)
+
+**Example usage:**
+```python
+# Protect player deck from viewing
+myt.PileSetProtectionState(me.piles['Deck'].Id, "true")
+
+# Set hand to require permission
+myt.PileSetProtectionState(me.piles['Hand'].Id, "ask")
+
+# Check current protection state
+state = myt.PileGetProtectionState(me.piles['Hand'].Id)
+```
+
 # octgnFX/Octgn.Data
 Octgn.Data is the access to the database (mostly). This project provides access to that data in meaningful formats. Most of the items in this project are relatively self-explanatory, but keep in mind that many of them are only the data counterparts of octgnFX/Octgn classes.
 
