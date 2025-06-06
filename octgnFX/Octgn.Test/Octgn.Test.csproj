@@ -164,6 +164,10 @@
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
+      <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
+      <n>Octgn.Server</n>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
