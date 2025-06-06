@@ -232,7 +232,12 @@ namespace Octgn.Scripting.Versions
             if (g.Controller != Player.LocalPlayer)
             {
                 Program.GameMess.Warning(String.Format("{0} can't look at {1} because they don't control it.", Player.LocalPlayer.Name, g.Name));
+                return;
             }
+            
+            // Check pile protection
+            if (!CanViewPileInScript(g))
+                return;
             PlayWindow playWindow = WindowManager.PlayWindow;
             if (playWindow == null) return;
             Octgn.Controls.ChildWindowManager manager = playWindow.wndManager;
@@ -1375,6 +1380,32 @@ namespace Octgn.Scripting.Versions
                 form.ShowDialog();
                 return;
             });
+        }
+
+        private bool CanViewPileInScript(Pile pile)
+        {
+            // If the player owns the pile, they can always view it
+            if (pile.Owner == Player.LocalPlayer)
+                return true;
+                
+            switch (pile.ProtectionState)
+            {
+                case GroupProtectionState.False:
+                    return true;
+                    
+                case GroupProtectionState.True:
+                    Program.GameMess.Warning($"Cannot view {pile.FullName} - it is protected.");
+                    return false;
+                    
+                case GroupProtectionState.Ask:
+                    // Post a message asking for permission
+                    Program.GameMess.PlayerEvent(Player.LocalPlayer, $"requests permission to view {pile.FullName}");
+                    Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
+                    return false;
+                    
+                default:
+                    return true;
+            }
         }
     }
 }
