@@ -792,25 +792,7 @@
                             }
                             altProps.Add(altPropName);
 
-                            var gameProp = game.card.property.FirstOrDefault(x => x.name == altPropName);
-                            if (gameProp == null)
-                            {
-                                throw new UserMessageException("Property '{2}' defined on card '{0}' alternate '{1}' is not defined in definition.xml in set file '{3}'", cardName, altName, altPropName, fileName);
-                            }
-                            var valueString = altPropNode.Attributes["value"];
-                            var textString = altPropNode.ChildNodes;
-                            if (textString.Count > 0 && valueString != null)
-                            {
-                                throw new UserMessageException("Property '{0}' defined on card '{1}' alternate '{2}' cannot contain both a value attribute and inner text in set file '{3}'", altPropName, cardName, altName, fileName);
-                            }
-                            if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
-                            {
-                                var altError = CheckPropertyChildren(altPropNode, game.symbols);
-                                if (altError != null)
-                                {
-                                    throw new UserMessageException("{0} found in card '{1}' alternate `{2}' richText property '{3}' in set file '{4}'", altError, cardName, altName, altPropName, fileName);
-                                }
-                            }
+                            ValidatePropertyNode(altPropNode, altPropName, game, fileName, $"defined on card '{cardName}' alternate '{altName}' that");
                         }
                     }
                     else
@@ -822,25 +804,7 @@
                         }
                         cardProps.Add(propName);
 
-                        var gameProp = game.card.property.FirstOrDefault(x => x.name == propName);
-                        if (gameProp == null)
-                        {
-                            throw new UserMessageException("Property '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, propName, fileName);
-                        }
-                        var valueString = propNode.Attributes["value"];
-                        var textString = propNode.ChildNodes;
-                        if (textString.Count > 0 && valueString != null)
-                        {
-                            throw new UserMessageException("Property '{0}' defined on card '{1}' cannot contain both a value attribute and inner text in set file '{2}'", propName, cardName, fileName);
-                        }
-                        if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
-                        {
-                            var error = CheckPropertyChildren(propNode, game.symbols);
-                            if (error != null)
-                            {
-                                throw new UserMessageException("{0} found in card '{1}' property '{2}' in set file '{3}'", error, cardName, propName, fileName);
-                            }
-                        }
+                        ValidatePropertyNode(propNode, propName, game, fileName, $"defined on card '{cardName}' that");
                     }
                 }
             }
@@ -864,26 +828,7 @@
                                     throw new UserMessageException("Property defined on pack '{0}' include '{1}' has no name attribute in set file '{2}'", packName, includeId, fileName);
                                 }
                                 
-                                var gameProp = game.card.property.FirstOrDefault(x => x.name == propName);
-                                if (gameProp == null)
-                                {
-                                    throw new UserMessageException("Property '{2}' defined on pack '{0}' include '{1}' is not defined in definition.xml in set file '{3}'", packName, includeId, propName, fileName);
-                                }
-                                
-                                var valueString = propNode.Attributes["value"];
-                                var textString = propNode.ChildNodes;
-                                if (textString.Count > 0 && valueString != null)
-                                {
-                                    throw new UserMessageException("Property '{0}' defined on pack '{1}' include '{2}' cannot contain both a value attribute and inner text in set file '{3}'", propName, packName, includeId, fileName);
-                                }
-                                if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
-                                {
-                                    var error = CheckPropertyChildren(propNode, game.symbols);
-                                    if (error != null)
-                                    {
-                                        throw new UserMessageException("{0} found in pack '{1}' include '{2}' property '{3}' in set file '{4}'", error, packName, includeId, propName, fileName);
-                                    }
-                                }
+                                ValidatePropertyNode(propNode, propName, game, fileName, $"defined on pack '{packName}' include '{includeId}' that");
                             }
                         }
                     }
@@ -926,6 +871,30 @@
                 }
             }
             return null;
+        }
+
+        private void ValidatePropertyNode(XmlNode propNode, string propName, game game, string fileName, string context)
+        {
+            var gameProp = game.card.property.FirstOrDefault(x => x.name == propName);
+            if (gameProp == null)
+            {
+                throw new UserMessageException("Property '{0}' {1} is not defined in definition.xml in set file '{2}'", propName, context, fileName);
+            }
+
+            var valueString = propNode.Attributes["value"];
+            var textString = propNode.ChildNodes;
+            if (textString.Count > 0 && valueString != null)
+            {
+                throw new UserMessageException("Property '{0}' {1} cannot contain both a value attribute and inner text in set file '{2}'", propName, context, fileName);
+            }
+            if (gameProp.type == propertyDefType.RichText && textString.Count > 0)
+            {
+                var error = CheckPropertyChildren(propNode, game.symbols);
+                if (error != null)
+                {
+                    throw new UserMessageException("{0} found in {1} property '{2}' in set file '{3}'", error, context, propName, fileName);
+                }
+            }
         }
 
 
