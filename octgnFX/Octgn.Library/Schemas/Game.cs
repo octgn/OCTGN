@@ -1054,11 +1054,14 @@ public partial class pile : group {
     
     private pileViewState viewStateField;
     
+    private pileProtectionState protectionStateField;
+    
     public pile() {
         this.orderedField = boolean.True;
         this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
         this.viewStateField = pileViewState.pile;
+        this.protectionStateField = pileProtectionState.@false;
     }
     
     /// <remarks/>
@@ -1141,6 +1144,34 @@ public partial class pile : group {
             this.viewStateField = value;
         }
     }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(pileProtectionState.@false)]
+    public pileProtectionState protectionState {
+        get {
+            return this.protectionStateField;
+        }
+        set {
+            this.protectionStateField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3062.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum pileProtectionState {
+    
+    /// <remarks/>
+    @false,
+    
+    /// <remarks/>
+    @true,
+    
+    /// <remarks/>
+    ask,
 }
 
 /// <remarks/>

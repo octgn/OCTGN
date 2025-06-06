@@ -17,8 +17,9 @@
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Ordered { get; set; }
+        public GroupProtectionState ProtectionState { get; set; }
         public IEnumerable<IGroupAction> CardActions { get; set; }
-        public IEnumerable<IGroupAction> GroupActions { get; set; } 
+        public IEnumerable<IGroupAction> GroupActions { get; set; }
 
         public Group()
         {

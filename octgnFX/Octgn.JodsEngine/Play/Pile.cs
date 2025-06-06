@@ -13,11 +13,13 @@ namespace Octgn.Play
         #region Public interface
 
         private GroupViewState _viewState;
+        private GroupProtectionState _protectionState;
 
         internal Pile(Player owner, DataNew.Entities.Group def)
             : base(owner, def)
         {
             _viewState = def.ViewState;
+            _protectionState = def.ProtectionState;
         }
 
         public GroupViewState ViewState
@@ -28,6 +30,17 @@ namespace Octgn.Play
                 if (value == _viewState) return;
                 _viewState = value;
                 OnPropertyChanged("ViewState");
+            }
+        }
+
+        public GroupProtectionState ProtectionState
+        {
+            get { return _protectionState; }
+            set
+            {
+                if (value == _protectionState) return;
+                _protectionState = value;
+                OnPropertyChanged("ProtectionState");
             }
         }
 
