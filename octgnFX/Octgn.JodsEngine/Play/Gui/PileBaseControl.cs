@@ -93,8 +93,9 @@ namespace Octgn.Play.Gui
                     return false;
                     
                 case GroupProtectionState.Ask:
-                    // TODO: Implement ask dialog system
-                    Program.GameMess.Warning($"Cannot view {pile.FullName} - 'Ask' permission not yet implemented.");
+                    // Post a message asking for permission
+                    Program.GameMess.PlayerEvent(Player.LocalPlayer, $"requests permission to view {pile.FullName}");
+                    Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
                     return false;
                     
                 default:

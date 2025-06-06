@@ -341,6 +341,51 @@ namespace Octgn.Scripting.Versions
                 });
         }
 
+        public string PileGetProtectionState(int id)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return null;
+            Pile pile = (Pile)group;
+            GroupProtectionState state = pile.ProtectionState;
+            switch (state)
+            {
+                case GroupProtectionState.False:
+                    return "false";
+                case GroupProtectionState.True:
+                    return "true";
+                case GroupProtectionState.Ask:
+                    return "ask";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void PileSetProtectionState(int id, string state)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return;
+            Pile pile = (Pile)group;
+            QueueAction(
+                () =>
+                {
+                    switch (state.ToLower())
+                    {
+                        case "false":
+                            pile.ProtectionState = GroupProtectionState.False;
+                            break;
+                        case "true":
+                            pile.ProtectionState = GroupProtectionState.True;
+                            break;
+                        case "ask":
+                            pile.ProtectionState = GroupProtectionState.Ask;
+                            break;
+                        default:
+                            Program.GameMess.Warning("Invalid protection state type '{0}'. Valid values are: false, true, ask", state);
+                            break;
+                    }
+                });
+        }
+
         public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
