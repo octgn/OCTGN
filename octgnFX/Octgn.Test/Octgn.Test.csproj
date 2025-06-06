@@ -132,7 +132,8 @@
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />
     <Compile Include="PlayGround.cs" />
-    <Compile Include="Server\PlayerCollectionTimeoutTests.cs" />
+    <Compile Include="Server\GameStatusResetTests.cs" />
+
     <Compile Include="Utils\HttpEcho.cs" />
     <Compile Include="VersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
