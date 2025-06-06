@@ -792,7 +792,7 @@
                             }
                             altProps.Add(altPropName);
 
-                            ValidatePropertyNode(altPropNode, altPropName, game, fileName, $"defined on card '{cardName}' alternate '{altName}' that");
+                            ValidatePropertyNode(altPropNode, altPropName, game, fileName, $"defined on card '{cardName}' alternate '{altName}'");
                         }
                     }
                     else
@@ -804,7 +804,7 @@
                         }
                         cardProps.Add(propName);
 
-                        ValidatePropertyNode(propNode, propName, game, fileName, $"defined on card '{cardName}' that");
+                        ValidatePropertyNode(propNode, propName, game, fileName, $"defined on card '{cardName}'");
                     }
                 }
             }
@@ -828,7 +828,7 @@
                                     throw new UserMessageException("Property defined on pack '{0}' include '{1}' has no name attribute in set file '{2}'", packName, includeId, fileName);
                                 }
                                 
-                                ValidatePropertyNode(propNode, propName, game, fileName, $"defined on pack '{packName}' include '{includeId}' that");
+                                ValidatePropertyNode(propNode, propName, game, fileName, $"defined on pack '{packName}' include '{includeId}'");
                             }
                         }
                     }
