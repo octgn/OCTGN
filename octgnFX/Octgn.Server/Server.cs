@@ -67,7 +67,7 @@ namespace Octgn.Server
             throw new InvalidOperationException($"Could not find an available port after trying {maxPortAttempts} ports starting from {preferredPort}");
         }
 
-        public Server(Config config, HostedGame game, int broadcastPort) {
+        public Server(Config config, HostedGame game, int broadcastPort, bool local_server = false) {
             Context = new GameContext(game, config);
 
             Context.State.Players.PlayerDisconnected += Players_PlayerDisconnected;
@@ -75,7 +75,12 @@ namespace Octgn.Server
 
             Log.InfoFormat("Creating server {0}", Context.Game.HostAddress);
 
-            _tcp = CreateTcpListenerWithPortReuse(Context.Game);
+            if (local_server) {
+                _tcp = CreateTcpListenerWithPortReuse(Context.Game);
+            } else {
+                // Use original TcpListener creation for online servers
+                _tcp = new TcpListener(IPAddress.Any, Context.Game.Port);
+            }
             _broadcaster = new GameBroadcaster(Context.Game, broadcastPort);
         }
 
