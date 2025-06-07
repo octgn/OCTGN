@@ -1,3 +1,5 @@
+#3.4.402.0
+
 #3.4.398.0
 + Fixed games not being spectatable unless the option gets toggled
 + Removed extra menu option for chat text shadows
@@ -4090,6 +4092,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
