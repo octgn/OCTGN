@@ -1212,7 +1212,7 @@ namespace Octgn.Networking
 
         private void ShowPileViewPermissionDialog(Group pile, Player requester)
         {
-            App.Current.Dispatcher.BeginInvoke(new Action(() =>
+            Program.Dispatcher.BeginInvoke(new Action(() =>
             {
                 // Create a custom dialog with the four options
                 var dialog = new PileViewPermissionDialog(pile, requester);
