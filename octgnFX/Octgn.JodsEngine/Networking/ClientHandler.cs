@@ -17,6 +17,7 @@ using Octgn.Core.DataExtensionMethods;
 using System.Windows.Media;
 using Octgn.Core.Play;
 using Octgn.Play.State;
+using Octgn.Controls;
 using Card = Octgn.Play.Card;
 using Counter = Octgn.Play.Counter;
 using Group = Octgn.Play.Group;
@@ -868,6 +869,13 @@ namespace Octgn.Networking
                 }
                 group.LookedAt.Remove(uid);
                 Program.GameMess.PlayerEvent(player, "stops looking at {0}.", group);
+                
+                // Remove temporary view permission when player stops looking
+                var pile = group as Pile;
+                if (pile != null && pile.TemporaryViewPermissions.Contains(player))
+                {
+                    pile.TemporaryViewPermissions.Remove(player);
+                }
             }
         }
 
@@ -892,6 +900,13 @@ namespace Octgn.Networking
                     c.PlayersLooking.Remove(player);
                 Program.GameMess.PlayerEvent(player, "stops looking at {0} top {1} cards.", group, count);
                 group.LookedAt.Remove(uid);
+                
+                // Remove temporary view permission when player stops looking
+                var pile = group as Pile;
+                if (pile != null && pile.TemporaryViewPermissions.Contains(player))
+                {
+                    pile.TemporaryViewPermissions.Remove(player);
+                }
             }
         }
 
@@ -918,6 +933,13 @@ namespace Octgn.Networking
                     c.PlayersLooking.Remove(player);
                 Program.GameMess.PlayerEvent(player, "stops looking at {0} bottom {1} cards.", group, count);
                 group.LookedAt.Remove(uid);
+                
+                // Remove temporary view permission when player stops looking
+                var pile = group as Pile;
+                if (pile != null && pile.TemporaryViewPermissions.Contains(player))
+                {
+                    pile.TemporaryViewPermissions.Remove(player);
+                }
             }
         }
 
@@ -1151,6 +1173,84 @@ namespace Octgn.Networking
             WriteReplayAction(player.Id);
             player.SetPlayerColor(colorHex);
 	    }
+
+        public void RequestPileViewPermission(Group pile, Player requester)
+        {
+            WriteReplayAction(requester.Id);
+            if (IsLocalPlayer(requester)) return;
+            
+            // Only show the dialog to the pile owner
+            if (pile.Owner == Player.LocalPlayer)
+            {
+                ShowPileViewPermissionDialog(pile, requester);
+            }
+        }
+
+        public void GrantPileViewPermission(Group pile, Player requester, bool granted, bool permanent)
+        {
+            WriteReplayAction(pile.Owner.Id);
+            if (IsLocalPlayer(requester)) return; // Only process responses for other players
+            
+            var pileControl = pile as Pile;
+            if (pileControl != null)
+            {
+                if (permanent)
+                {
+                    // Set protection to permanent state
+                    pileControl.ProtectionState = granted ? DataNew.Entities.GroupProtectionState.False : DataNew.Entities.GroupProtectionState.True;
+                }
+                else if (granted)
+                {
+                    // Add temporary permission for this requester
+                    if (!pileControl.TemporaryViewPermissions.Contains(requester))
+                        pileControl.TemporaryViewPermissions.Add(requester);
+                }
+            }
+            
+            Program.GameMess.PlayerEvent(pile.Owner, granted ? "grants" : "denies", $" permission for {requester.Name} to view {pile.FullName}");
+        }
+
+        private void ShowPileViewPermissionDialog(Group pile, Player requester)
+        {
+            App.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // Create a custom dialog with the four options
+                var dialog = new PileViewPermissionDialog(pile, requester);
+                var result = dialog.ShowDialog();
+                
+                if (result.HasValue && result.Value)
+                {
+                    bool granted = dialog.IsGranted;
+                    bool permanent = dialog.IsPermanent;
+                    
+                    if (permanent)
+                    {
+                        // Update local pile protection state
+                        var pileControl = pile as Pile;
+                        if (pileControl != null)
+                        {
+                            pileControl.ProtectionState = granted ? DataNew.Entities.GroupProtectionState.False : DataNew.Entities.GroupProtectionState.True;
+                        }
+                    }
+                    else if (granted)
+                    {
+                        // Add temporary permission locally
+                        var pileControl = pile as Pile;
+                        if (pileControl != null && !pileControl.TemporaryViewPermissions.Contains(requester))
+                        {
+                            pileControl.TemporaryViewPermissions.Add(requester);
+                        }
+                    }
+                    
+                    Program.Client.Rpc.GrantPileViewPermission(pile, requester, granted, permanent);
+                }
+                else
+                {
+                    // Dialog was cancelled - treat as "No"
+                    Program.Client.Rpc.GrantPileViewPermission(pile, requester, false, false);
+                }
+            }));
+        }
 
         public static bool IsLocalPlayer(Player player) {
             if (Player.LocalPlayer == player && Program.GameEngine.IsReplay) return false;

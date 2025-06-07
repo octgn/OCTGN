@@ -80,5 +80,7 @@ namespace Octgn.Networking
 		void SetBoard(Player player, string name);
 		void RemoveBoard(Player player);
 		void SetPlayerColor(Player player, string color);
+		void RequestPileViewPermission(Group pile, Player requester);
+		void GrantPileViewPermission(Group pile, Player requester, bool granted, bool permanent);
 	}
 }

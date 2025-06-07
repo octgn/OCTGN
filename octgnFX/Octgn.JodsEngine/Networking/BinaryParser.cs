@@ -921,6 +921,32 @@ namespace Octgn.Networking
 					handler.SetPlayerColor(arg0, arg1);
 					break;
 				}
+				case 106:
+				{
+					var arg0 = Group.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[RequestPileViewPermission] Group not found."); return; }
+					var arg1 = Player.Find(reader.ReadByte());
+					if (arg1 == null)
+					{ Debug.WriteLine("[RequestPileViewPermission] Player not found."); return; }
+					Log.Debug($"OCTGN IN: RequestPileViewPermission");
+					handler.RequestPileViewPermission(arg0, arg1);
+					break;
+				}
+				case 107:
+				{
+					var arg0 = Group.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[GrantPileViewPermission] Group not found."); return; }
+					var arg1 = Player.Find(reader.ReadByte());
+					if (arg1 == null)
+					{ Debug.WriteLine("[GrantPileViewPermission] Player not found."); return; }
+					var arg2 = reader.ReadBoolean();
+					var arg3 = reader.ReadBoolean();
+					Log.Debug($"OCTGN IN: GrantPileViewPermission");
+					handler.GrantPileViewPermission(arg0, arg1, arg2, arg3);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

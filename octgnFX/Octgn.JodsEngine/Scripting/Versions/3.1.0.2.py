@@ -505,6 +505,10 @@ class Pile(Group):
 	def viewState(self): return _api.PileGetViewState(self._id)
 	@viewState.setter
 	def viewState(self, value): _api.PileSetViewState(self._id, value)
+	@property
+	def protectionState(self): return _api.PileGetProtectionState(self._id)
+	@protectionState.setter
+	def protectionState(self, value): _api.PileSetProtectionState(self._id, value)
 	def lookAt(self, value, istop = True): _api.GroupLookAt(self._id, value, istop)
 
 class Counter(NamedObject):
