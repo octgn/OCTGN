@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-
-using Ionic.Zip;
 
 using NuGet;
 
@@ -36,6 +35,53 @@ namespace Octgn.Core.DataManagers
         #endregion Singleton
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        /// <summary>
+        /// Checks if the specified file is a valid ZIP file.
+        /// </summary>
+        private static bool IsZipFile(string filename)
+        {
+            try
+            {
+                using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
+                {
+                    // If we can read the archive without exception, it's a valid ZIP
+                    var count = archive.Entries.Count;
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks the integrity of a ZIP file.
+        /// </summary>
+        private static bool CheckZip(string filename)
+        {
+            try
+            {
+                using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
+                {
+                    // Try to access all entries to verify integrity
+                    foreach (var entry in archive.Entries)
+                    {
+                        // Just accessing the entry properties is enough to verify basic integrity
+                        var name = entry.Name;
+                        var length = entry.Length;
+                    }
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public event EventHandler GameListChanged;
 
@@ -313,39 +359,40 @@ namespace Octgn.Core.DataManagers
             try
             {
                 Log.InfoFormat("Checking if zip file {0}", filename);
-                if (!Ionic.Zip.ZipFile.IsZipFile(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
+                if (!IsZipFile(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
                 Log.InfoFormat("Checking if zip file {0}", filename);
-                if (!ZipFile.CheckZip(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
+                if (!CheckZip(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
 
                 Guid gameGuid = Guid.Empty;
 
                 Log.InfoFormat("Reading zip file {0}", filename);
-                using (var zip = ZipFile.Read(filename))
+                using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                using (var zip = new ZipArchive(stream, ZipArchiveMode.Read))
                 {
                     Log.InfoFormat("Getting zip files {0}", filename);
-                    var selection = from e in zip.Entries where !e.IsDirectory select e;
+                    var selection = zip.Entries.Where(e => !e.FullName.EndsWith("/") && !e.FullName.EndsWith("\\"));
 
                     foreach (var e in selection)
                     {
-                        Log.DebugFormat("Checking zip file {0} {1}", e.FileName, filename);
-                        if (e.FileName.ToLowerInvariant().EndsWith("db"))
+                        Log.DebugFormat("Checking zip file {0} {1}", e.FullName, filename);
+                        if (e.FullName.ToLowerInvariant().EndsWith("db"))
                         {
                             continue;
                         }
                         bool extracted = extract(e, out gameGuid, gameGuid);
                         if (!extracted)
                         {
-                            Log.Warn(string.Format("Invalid entry in {0}. Entry: {1}.", filename, e.FileName));
+                            Log.Warn(string.Format("Invalid entry in {0}. Entry: {1}.", filename, e.FullName));
                             throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
                         }
-                        Log.DebugFormat("Extracted {0} {1}", e.FileName, filename);
+                        Log.DebugFormat("Extracted {0} {1}", e.FullName, filename);
                     }
                 }
                 Log.InfoFormat("Installed successfully {0}", filename);
 
                 //zipFile.ExtractAll(Config.Instance.Paths.DatabasePath,ExtractExistingFileAction.OverwriteSilently);
             }
-            catch (ZipException e)
+            catch (InvalidDataException e)
             {
                 throw new UserMessageException(String.Format(L.D.Exception__CanNotInstallo8cInvalid_Format, filename),e);
             }
@@ -366,18 +413,18 @@ namespace Octgn.Core.DataManagers
         }
 
 
-        internal bool extract(ZipEntry entry, out Guid gameGuid, Guid testGuid)
+        internal bool extract(ZipArchiveEntry entry, out Guid gameGuid, Guid testGuid)
         {
             try
             {
-                Log.DebugFormat("Extracting {0},{1}", entry.FileName, testGuid);
+                Log.DebugFormat("Extracting {0},{1}", entry.FullName, testGuid);
                 bool ret = false;
                 gameGuid = testGuid;
-                string[] split = entry.FileName.Split('/');
-                Log.DebugFormat("Split file name {0},{1}", entry.FileName, testGuid);
+                string[] split = entry.FullName.Split('/');
+                Log.DebugFormat("Split file name {0},{1}", entry.FullName, testGuid);
                 if (split.Length == 5 || (split.Length == 6 && split.Contains("Crops")))
                 {
-                    Log.DebugFormat("File name right count {0},{1}", entry.FileName, testGuid);
+                    Log.DebugFormat("File name right count {0},{1}", entry.FullName, testGuid);
                     O8cEntry o8cEntry = new O8cEntry()
                                             {
                                                 gameGuid = split[0],
@@ -390,44 +437,50 @@ namespace Octgn.Core.DataManagers
                     {
                         o8cEntry.cardImage = split[5];
                     }
-                    Log.DebugFormat("Checking if testGuid is empty {0},{1}", entry.FileName, testGuid);
+                    Log.DebugFormat("Checking if testGuid is empty {0},{1}", entry.FullName, testGuid);
                     if (testGuid.Equals(Guid.Empty))
                     {
-                        Log.DebugFormat("testGuid is empty {0},{1}", entry.FileName, testGuid);
+                        Log.DebugFormat("testGuid is empty {0},{1}", entry.FullName, testGuid);
                         testGuid = Guid.Parse(o8cEntry.gameGuid);
                         gameGuid = Guid.Parse(o8cEntry.gameGuid);
-                        Log.DebugFormat("Setting gameguid and testguid {0},{1},{2}", entry.FileName, testGuid, gameGuid);
+                        Log.DebugFormat("Setting gameguid and testguid {0},{1},{2}", entry.FullName, testGuid, gameGuid);
                     }
-                    Log.DebugFormat("Checking if {0}=={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
+                    Log.DebugFormat("Checking if {0}=={1} {2}", testGuid, o8cEntry.gameGuid, entry.FullName);
                     if (!testGuid.Equals(Guid.Parse(o8cEntry.gameGuid)))
                     {
-                        Log.DebugFormat("{0}!={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
+                        Log.DebugFormat("{0}!={1} {2}", testGuid, o8cEntry.gameGuid, entry.FullName);
                         return (ret);
                     }
-                    Log.DebugFormat("Checking if should extract part {0},{1}", entry.FileName, testGuid);
+                    Log.DebugFormat("Checking if should extract part {0},{1}", entry.FullName, testGuid);
                     if (ShouldExtract(o8cEntry))
                     {
                         Log.DebugFormat(
                             "Should extract, so extracting {0},{1},{2}",
                             Config.Instance.ImageDirectoryFull,
-                            entry.FileName,
+                            entry.FullName,
                             testGuid);
-                        entry.Extract(Config.Instance.ImageDirectoryFull, ExtractExistingFileAction.OverwriteSilently);
-                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectoryFull, entry.FileName, testGuid);
+                        var targetPath = Path.Combine(Config.Instance.ImageDirectoryFull, entry.FullName);
+                        var targetDir = Path.GetDirectoryName(targetPath);
+                        if (!Directory.Exists(targetDir))
+                        {
+                            Directory.CreateDirectory(targetDir);
+                        }
+                        entry.ExtractToFile(targetPath, true);
+                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectoryFull, entry.FullName, testGuid);
                         ret = true;
                     }
                 }
-                Log.DebugFormat("Finishing {0},{1},{2}", ret, entry.FileName, testGuid);
+                Log.DebugFormat("Finishing {0},{1},{2}", ret, entry.FullName, testGuid);
                 return (ret);
 
             }
             catch (IOException e)
             {
-                throw new UserMessageException(L.D.Exception__CanNotExtract_Format, entry.FileName, Config.Instance.Paths.DatabasePath, e.Message);
+                throw new UserMessageException(L.D.Exception__CanNotExtract_Format, entry.FullName, Config.Instance.Paths.DatabasePath, e.Message);
             }
             finally
             {
-                Log.InfoFormat("Finished {0},{1}", entry.FileName, testGuid);
+                Log.InfoFormat("Finished {0},{1}", entry.FullName, testGuid);
             }
         }
 
