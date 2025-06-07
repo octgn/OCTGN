@@ -99,9 +99,16 @@ namespace Octgn.Play.Gui
                         return true;
                     }
                     
-                    // Send network request for permission
-                    Program.Client.Rpc.RequestPileViewPermission(pile, Player.LocalPlayer);
-                    Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
+                    // Send network request for permission if client is available
+                    if (Program.Client?.Rpc != null)
+                    {
+                        Program.Client.Rpc.RequestPileViewPermission(pile, Player.LocalPlayer);
+                        Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
+                    }
+                    else
+                    {
+                        Program.GameMess.Warning($"Cannot request permission to view {pile.FullName} - not connected to game.");
+                    }
                     return false;
                     
                 default:
