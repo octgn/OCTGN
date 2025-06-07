@@ -21,6 +21,7 @@
     using Octgn.ProxyGenerator;
     using System.Xml;
     using System.Text.RegularExpressions;
+    using System.IO.Packaging;
 
     public class GameValidator
     {
@@ -442,7 +443,7 @@
                     {
                         throw GenerateEmptyAttributeException("Card Size", "back");
                     }
-                    
+
                     path = Path.Combine(Directory.FullName, sizeDef.back);
 
                     if (!File.Exists(path))
@@ -454,7 +455,7 @@
                     {
                         throw GenerateEmptyAttributeException("Card Size", "front");
                     }
-        
+
                     path = Path.Combine(Directory.FullName, sizeDef.front);
 
                     if (!File.Exists(path))
@@ -532,7 +533,7 @@
                 }
             }
         }
-        
+
         private void TestGroupsShortcuts(IEnumerable<baseAction> items)
         {
             if (items == null) return;
@@ -642,7 +643,7 @@
 
             XmlReaderSettings settings = GetXmlReaderSettings();
             settings.Schemas = schemas;
-            settings.ValidationEventHandler += new ValidationEventHandler(delegate(Object o, ValidationEventArgs e)
+            settings.ValidationEventHandler += new ValidationEventHandler(delegate (Object o, ValidationEventArgs e)
             {
                 if (e.Severity == XmlSeverityType.Error)
                 {
@@ -698,10 +699,10 @@
             if (cardDir != null)
             {
                 var subDirs = cardDir.GetDirectories("*", SearchOption.TopDirectoryOnly);
-                if(subDirs.Any(x => x.Name != "Crops"))
+                if (subDirs.Any(x => x.Name != "Crops"))
                     throw new UserMessageException("You can only have a Crops folder inside the Cards Folder {0}", cardDir.FullName);
                 //if (cardDir.GetDirectories("*", SearchOption.AllDirectories))
-                    //throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}", cardDir.FullName);
+                //throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}", cardDir.FullName);
                 foreach (var f in cardDir.GetFiles("*", SearchOption.TopDirectoryOnly))
                 {
                     var test = Guid.Empty;
@@ -731,7 +732,7 @@
             fs.Close();
             XmlDocument doc = new XmlDocument();
             doc.Load(fileName);
-            
+
             var setGameId = doc.GetElementsByTagName("set").Item(0).Attributes["gameId"].Value?.ToLower();
             var setName = doc.GetElementsByTagName("set").Item(0).Attributes["name"].Value;
             if (!game.id.Equals(setGameId, StringComparison.OrdinalIgnoreCase))
@@ -743,7 +744,7 @@
             {
                 GenerateWarningMessage("The set '{0}' from '{1}'\ncontains markers, which are no longer supported.\nMarkers should now be listed in the game definition.xml\nsee wiki.octgn.net for more info.", setName, fileName);
             }
-            
+
             foreach (XmlNode cardNode in doc.GetElementsByTagName("card"))
             {
                 string cardName = cardNode.Attributes["name"].Value;
@@ -813,30 +814,31 @@
             foreach (XmlNode packNode in doc.GetElementsByTagName("pack"))
             {
                 string packName = packNode.Attributes["name"]?.Value ?? "Unknown Pack";
-                foreach (XmlNode includeNode in packNode.ChildNodes)
-                {
-                    if (includeNode.Name == "include")
-                    {
-                        string includeId = includeNode.Attributes["id"]?.Value ?? "Unknown Include";
-                        foreach (XmlNode propNode in includeNode.ChildNodes)
-                        {
-                            if (propNode.Name == "property")
-                            {
-                                string propName = propNode.Attributes["name"]?.Value;
-                                if (string.IsNullOrEmpty(propName))
-                                {
-                                    throw new UserMessageException("Property defined on pack '{0}' include '{1}' has no name attribute in set file '{2}'", packName, includeId, fileName);
-                                }
-                                
-                                ValidatePropertyNode(propNode, propName, game, fileName, $"defined on pack '{packName}' include '{includeId}'");
-                            }
-                        }
-                    }
-                }
+                // there is potential for nested nodes here so it has to be done recursively 
+                CheckPackChildren(packNode, packName, game, fileName);
+
             }
-            
+
             doc.RemoveAll();
             doc = null;
+        }
+
+        public void CheckPackChildren(XmlNode packNode, string packName, game game, string fileName, bool isInclude = false)
+        {
+            if (packNode.Name == "property")
+                {
+                    string propName = isInclude ? packNode.Attributes["name"]?.Value : packNode.Attributes["key"]?.Value;
+                    if (string.IsNullOrEmpty(propName))
+                    {
+                        throw new UserMessageException("Property defined on pack '{0}' {1} has no name attribute in set file '{2}'", packName, isInclude ? "include" : "", fileName);
+                    }
+
+                    ValidatePropertyNode(packNode, propName, game, fileName, $"defined on pack '{packName}'");
+            }
+            foreach (XmlNode childNode in packNode.ChildNodes)
+            {
+                CheckPackChildren(childNode, packName, game, fileName, packNode.Name == "include");
+            }
         }
 
         public string CheckPropertyChildren(XmlNode propValueNode, gameSymbol[] symbols)
