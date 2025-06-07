@@ -1378,6 +1378,44 @@ namespace Octgn.Networking
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+		public void RequestPileViewPermission(Group pile, Player requester)
+		{
+			Log.Debug($"OCTGN OUT: {nameof(RequestPileViewPermission)}");
+		    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+			writer.Write(Program.Client.Muted);
+			writer.Write((byte)106);
+			writer.Write(pile.Id);
+			writer.Write(requester.Id);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void GrantPileViewPermission(Group pile, Player requester, bool granted, bool permanent)
+		{
+			Log.Debug($"OCTGN OUT: {nameof(GrantPileViewPermission)}");
+		    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+			writer.Write(Program.Client.Muted);
+			writer.Write((byte)107);
+			writer.Write(pile.Id);
+			writer.Write(requester.Id);
+			writer.Write(granted);
+			writer.Write(permanent);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 
 	public class BinarySenderStub : BaseBinaryStub

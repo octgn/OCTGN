@@ -93,8 +93,14 @@ namespace Octgn.Play.Gui
                     return false;
                     
                 case GroupProtectionState.Ask:
-                    // Post a message asking for permission
-                    Program.GameMess.PlayerEvent(Player.LocalPlayer, $"requests permission to view {pile.FullName}");
+                    // Check if we have temporary permission
+                    if (pile.TemporaryViewPermissions.Contains(Player.LocalPlayer))
+                    {
+                        return true;
+                    }
+                    
+                    // Send network request for permission
+                    Program.Client.Rpc.RequestPileViewPermission(pile, Player.LocalPlayer);
                     Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
                     return false;
                     

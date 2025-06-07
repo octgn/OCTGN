@@ -14,12 +14,14 @@ namespace Octgn.Play
 
         private GroupViewState _viewState;
         private GroupProtectionState _protectionState;
+        private List<Player> _temporaryViewPermissions;
 
         internal Pile(Player owner, DataNew.Entities.Group def)
             : base(owner, def)
         {
             _viewState = def.ViewState;
             _protectionState = def.ProtectionState;
+            _temporaryViewPermissions = new List<Player>();
         }
 
         public GroupViewState ViewState
@@ -42,6 +44,11 @@ namespace Octgn.Play
                 _protectionState = value;
                 OnPropertyChanged("ProtectionState");
             }
+        }
+
+        public List<Player> TemporaryViewPermissions
+        {
+            get { return _temporaryViewPermissions; }
         }
 
         public double FanDensity { get; set; } = Octgn.Core.Prefs.HandDensity;
