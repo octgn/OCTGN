@@ -1,3 +1,6 @@
+#3.4.403.0
++ Fixed a crash when you try to sort a limited card pool by a property that can have null values
+
 #3.4.402.0
 
 #3.4.398.0
@@ -4092,6 +4095,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
