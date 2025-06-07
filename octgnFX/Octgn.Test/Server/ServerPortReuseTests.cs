@@ -25,11 +25,11 @@ namespace Octgn.Test.Server
             // Act & Assert - Create and dispose server multiple times rapidly
             for (int i = 0; i < 3; i++)
             {
-                Server server = null;
+                Octgn.Server.Server server = null;
                 try
                 {
                     // This should not throw SocketException: Address already in use
-                    server = new Server(config, hostedGame, 21234, true); // Enable local_server mode
+                    server = new Octgn.Server.Server(config, hostedGame, 21234, true); // Enable local_server mode
                     await server.Start();
                     
                     // Verify server is actually bound to the expected port
@@ -64,20 +64,20 @@ namespace Octgn.Test.Server
                 Status = HostedGameStatus.StartedHosting
             };
 
-            Server server1 = null;
-            Server server2 = null;
+            Octgn.Server.Server server1 = null;
+            Octgn.Server.Server server2 = null;
 
             try
             {
                 // Act - Create first server on preferred port
-                server1 = new Server(config, hostedGame1, 21234, true); // Enable local_server mode
+                server1 = new Octgn.Server.Server(config, hostedGame1, 21234, true); // Enable local_server mode
                 await server1.Start();
                 
                 // Verify first server uses preferred port
                 Assert.AreEqual(preferredPort, hostedGame1.Port);
 
                 // Create second server - should find alternative port
-                server2 = new Server(config, hostedGame2, 21234, true); // Enable local_server mode
+                server2 = new Octgn.Server.Server(config, hostedGame2, 21234, true); // Enable local_server mode
                 await server2.Start();
 
                 // Assert - Second server should use a different port
@@ -107,7 +107,7 @@ namespace Octgn.Test.Server
             };
 
             // Should not throw for a valid port
-            Assert.DoesNotThrow(() => new Server(config, hostedGame, 21234, true)); // Enable local_server mode
+            Assert.DoesNotThrow(() => new Octgn.Server.Server(config, hostedGame, 21234, true)); // Enable local_server mode
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace Octgn.Test.Server
             };
 
             // Should create server with default behavior (no socket reuse)
-            Assert.DoesNotThrow(() => new Server(config, hostedGame, 21234)); // Default: local_server = false
+            Assert.DoesNotThrow(() => new Octgn.Server.Server(config, hostedGame, 21234)); // Default: local_server = false
         }
     }
 }
