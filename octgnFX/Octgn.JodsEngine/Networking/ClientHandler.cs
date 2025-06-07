@@ -1177,7 +1177,7 @@ namespace Octgn.Networking
         public void RequestPileViewPermission(Group pile, Player requester)
         {
             WriteReplayAction(requester.Id);
-            if (IsLocalPlayer(requester)) return;
+            if (IsLocalPlayer(requester) || pile == null || requester == null) return;
             
             // Only show the dialog to the pile owner
             if (pile.Owner == Player.LocalPlayer)
@@ -1189,7 +1189,7 @@ namespace Octgn.Networking
         public void GrantPileViewPermission(Group pile, Player requester, bool granted, bool permanent)
         {
             WriteReplayAction(pile.Owner.Id);
-            if (IsLocalPlayer(requester)) return; // Only process responses for other players
+            if (IsLocalPlayer(requester) || pile == null || requester == null) return; // Only process responses for other players
             
             var pileControl = pile as Pile;
             if (pileControl != null)
@@ -1207,7 +1207,7 @@ namespace Octgn.Networking
                 }
             }
             
-            Program.GameMess.PlayerEvent(pile.Owner, granted ? "grants" : "denies", $" permission for {requester.Name} to view {pile.FullName}");
+            Program.GameMess.PlayerEvent(pile.Owner, granted ? $"grants permission for {requester.Name} to view {pile.FullName}" : $"denies permission for {requester.Name} to view {pile.FullName}");
         }
 
         private void ShowPileViewPermissionDialog(Group pile, Player requester)
