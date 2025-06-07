@@ -17,9 +17,8 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             //fix MAINWINDOW bug
-            Owner = WindowManager.PlayWindow;
-            Left = Owner.Left + Mouse.GetPosition(Owner).X;
-            Top = Owner.Top + Mouse.GetPosition(Owner).Y;
+            this.Owner = WindowManager.PlayWindow;
+            this.SizeChanged += (sender, args) => CenterWindowInsideOwner();
 
             Title = title;
             promptLbl.Text = prompt;
@@ -62,6 +61,34 @@ namespace Octgn.Scripting.Controls
                 button.Uid = buttonName;
                 button.Click += Button_Click;
                 buttonField.Children.Add(button);
+            }
+        }
+
+        private void CenterWindowInsideOwner()
+        {
+            if (Owner != null)
+            {
+                double windowWidth = this.ActualWidth;
+                double windowHeight = this.ActualHeight;
+                var ownerPosition = new System.Drawing.Point((int)Owner.Left, (int)Owner.Top);
+                var ownerScreen = System.Windows.Forms.Screen.FromPoint(ownerPosition);
+                var screenBounds = ownerScreen.Bounds;
+
+                if (Owner.WindowState == WindowState.Maximized)
+                {
+                    this.Left = screenBounds.X + (screenBounds.Width - windowWidth) / 2;
+                    this.Top = screenBounds.Y + (screenBounds.Height - windowHeight) / 2;
+                }
+                else
+                {
+                    double ownerLeft = Owner.Left;
+                    double ownerTop = Owner.Top;
+                    double ownerWidth = Owner.ActualWidth;
+                    double ownerHeight = Owner.ActualHeight;
+
+                    this.Left = ownerLeft + (ownerWidth - windowWidth) / 2;
+                    this.Top = ownerTop + (ownerHeight - windowHeight) / 2;
+                }
             }
         }
 

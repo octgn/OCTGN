@@ -1,67 +1,90 @@
-﻿<Window x:Class="Octgn.Play.Dialogs.LimitedDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="This" Title="Start a limited game" Width="541"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:Octgn.Controls" x:Class="Octgn.Play.Dialogs.LimitedDialog" x:Name="This" Title="Start a limited game" Width="541"
         Style="{StaticResource Window}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" SizeToContent="Height">
-  <Border Style="{StaticResource Panel}" Margin="4">
-    <Grid Margin="8">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" MinWidth="100" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
-      <TextBlock Text="Kind of game:" Margin="2" />
-      <TextBlock Grid.Column="1" Margin="2">
-        <Bold>Sealed</Bold>
-        <Italic>
-          (sorry, no other option in this release)
-        </Italic>
-      </TextBlock>
-      <TextBlock Text="Packs:" Grid.Row="1" Margin="2" />
-      <StackPanel Grid.Row="1" Grid.Column="1" Margin="2">
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-          </Grid.ColumnDefinitions>
-          <ComboBox x:Name="setsCombo" ItemsSource="{Binding Sets, ElementName=This, Mode=OneTime}"
+    <Border Style="{StaticResource Panel}" Margin="4" RenderTransformOrigin="0.5,0.5">
+        <Border.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform ScaleY="1"/>
+                <SkewTransform/>
+                <RotateTransform/>
+                <TranslateTransform/>
+            </TransformGroup>
+        </Border.RenderTransform>
+        <Grid Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="100" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Kind of game:" Margin="2" />
+            <TextBlock Grid.Column="1" Margin="2"><Bold><Run Text="Sealed"/></Bold><Run Text=" "/><Italic><Run Text="(sorry, no other option in this release)"/></Italic></TextBlock>
+            <TextBlock Text="Packs:" Grid.Row="1" Margin="2" />
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox x:Name="setsCombo" ItemsSource="{Binding Sets, ElementName=This, Mode=OneTime}"
                     DisplayMemberPath="Name" VerticalContentAlignment="Center" />
-          <ComboBox x:Name="packsCombo" Grid.Column="1" Margin="2,0"
-                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}"  DisplayMemberPath="Name" VerticalContentAlignment="Center" />
-          <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" Style="{StaticResource FlatDarkButtonStyle}"/>
-        </Grid>
-        <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300">
-          <ListBox.ItemTemplate>
-            <DataTemplate>
-              <StackPanel Orientation="Horizontal" Background="Transparent">
-                <Button VerticalAlignment="Center" Margin="2,0,5,0" Cursor="Hand" Click="RemoveClicked">
-                  <Button.Template>
-                    <ControlTemplate>
-                      <Border Background="Transparent">
-                        <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
-                      </Border>
-                    </ControlTemplate>
-                  </Button.Template>
-                </Button>
-                <TextBlock Text="{Binding FullName, Mode=OneTime}" />
-              </StackPanel>
-            </DataTemplate>
-          </ListBox.ItemTemplate>
-        </ListBox>
-      </StackPanel>
-      <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right"
+                    <ComboBox x:Name="packsCombo" Grid.Column="1" Margin="2,0"
+                    ItemsSource="{Binding SelectedItem.Packs, ElementName=setsCombo}"  DisplayMemberPath="Name" VerticalContentAlignment="Center" />
+                    <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" Style="{StaticResource FlatDarkButtonStyle}"/>
+                    <Controls:NumericUpDown x:Name="packsAmount"  FontSize="14" Grid.Column="3" Minimum="1" Margin="4,3,0,3" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Maximum="120" RenderTransformOrigin="0.5,0.5" >
+                        <Controls:NumericUpDown.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Controls:NumericUpDown.LayoutTransform>
+                        <Controls:NumericUpDown.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1.1" ScaleY="1.3"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform X="0" Y="0"/>
+                            </TransformGroup>
+                        </Controls:NumericUpDown.RenderTransform>
+                    </Controls:NumericUpDown>
+
+                </Grid>
+                <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Background="Transparent">
+                                <Button VerticalAlignment="Center" Margin="2,0,5,0" Cursor="Hand" Click="RemoveClicked">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <Border Background="Transparent">
+                                                <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <TextBlock Text="{Binding FullName, Mode=OneTime}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right"
                   VerticalAlignment="Top" Margin="0,16,0,4">
-        <ComboBox x:Name="addCards" VerticalContentAlignment="Center" Margin="0,0,8,0" Width="Auto" SelectedIndex="0" Visibility="Hidden">
-                    <ComboBoxItem>Add packs to my Limited Pool</ComboBoxItem>
-                    <ComboBoxItem>Add packs to everyone's Limited Pool</ComboBoxItem>
+                <ComboBox x:Name="addCards" VerticalContentAlignment="Center" Margin="0,0,8,0" Width="Auto" SelectedIndex="0" Visibility="Hidden">
+                    <ComboBoxItem Content="Add packs to my Limited Pool"/>
+                    <ComboBoxItem Content="Add packs to everyone's Limited Pool"/>
                 </ComboBox>
-        <Button Content="OK" FontSize="14" Click="StartClicked" Margin="0,0,8,0" Width="100" Style="{StaticResource FlatDarkGreenButtonStyle}" />
-        <Button Content="Cancel" FontSize="14" Click="CancelClicked" Width="100" Style="{StaticResource FlatDarkButtonStyle}"/>
-      </StackPanel>
-    </Grid>
-  </Border>
+                <Button Content="OK" FontSize="14" Click="StartClicked" Margin="0,0,8,0" Width="100" Style="{StaticResource FlatDarkGreenButtonStyle}" />
+                <Button Content="Cancel" FontSize="14" Click="CancelClicked" Width="100" Style="{StaticResource FlatDarkButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>
