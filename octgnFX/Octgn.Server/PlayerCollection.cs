@@ -147,6 +147,15 @@ namespace Octgn.Server
 
             if(players._allPlayersDisconnectedTime == null) {
                 players._allPlayersDisconnectedTime = DateTime.Now;
+                
+                // Reset game status to allow new players to join
+                // This fixes the issue where users get "game already started" errors
+                // when trying to create a new LAN game shortly after closing one
+                if (players._context.Game.Status == Online.Hosting.HostedGameStatus.GameInProgress) {
+                    Log.Info("All players disconnected, resetting game status to allow new connections");
+                    players._context.Game.Status = Online.Hosting.HostedGameStatus.StartedHosting;
+                }
+                
                 return;
             }
 

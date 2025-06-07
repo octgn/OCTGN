@@ -1109,6 +1109,20 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="protectionState" use="optional" default="false">
+          <xs:annotation>
+            <xs:documentation>
+              Indicates the protection level for viewing this pile. "false" allows viewing, "true" blocks viewing, "ask" requests permission.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="false" />
+              <xs:enumeration value="true" />
+              <xs:enumeration value="ask" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

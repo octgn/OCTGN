@@ -132,6 +132,9 @@
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />
     <Compile Include="PlayGround.cs" />
+    <Compile Include="Server\GameStatusResetTests.cs" />
+    <Compile Include="Server\ServerPortReuseTests.cs" />
+
     <Compile Include="Utils\HttpEcho.cs" />
     <Compile Include="VersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -160,6 +163,10 @@
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
+      <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
+      <n>Octgn.Server</n>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -66,7 +66,7 @@ namespace Octgn.Online.StandAloneServer
 
         private Server.Server _server;
         protected override async Task OnStart(string[] args) {
-            _server = new Octgn.Server.Server(_config, HostedGame, BroadcastPort);
+            _server = new Octgn.Server.Server(_config, HostedGame, BroadcastPort, Local);
             _server.OnStop += Server_OnStop;
 
             await _server.Start();

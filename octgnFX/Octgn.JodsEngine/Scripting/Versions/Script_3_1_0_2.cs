@@ -341,13 +341,64 @@ namespace Octgn.Scripting.Versions
                 });
         }
 
+        public string PileGetProtectionState(int id)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return null;
+            Pile pile = (Pile)group;
+            GroupProtectionState state = pile.ProtectionState;
+            switch (state)
+            {
+                case GroupProtectionState.False:
+                    return "false";
+                case GroupProtectionState.True:
+                    return "true";
+                case GroupProtectionState.Ask:
+                    return "ask";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void PileSetProtectionState(int id, string state)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return;
+            Pile pile = (Pile)group;
+            QueueAction(
+                () =>
+                {
+                    switch (state.ToLower())
+                    {
+                        case "false":
+                            pile.ProtectionState = GroupProtectionState.False;
+                            break;
+                        case "true":
+                            pile.ProtectionState = GroupProtectionState.True;
+                            break;
+                        case "ask":
+                            pile.ProtectionState = GroupProtectionState.Ask;
+                            break;
+                        default:
+                            Program.GameMess.Warning("Invalid protection state type '{0}'. Valid values are: false, true, ask", state);
+                            break;
+                    }
+                });
+        }
+
         public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
             if (g.Controller != Player.LocalPlayer)
             {
                 Program.GameMess.Warning(String.Format("{0} can't look at {1} because they don't control it.", Player.LocalPlayer.Name, g.Name));
+                return;
             }
+            
+            // Check pile protection
+            if (!CanViewPileInScript(g))
+                return;
+                
             PlayWindow playWindow = WindowManager.PlayWindow;
             if (playWindow == null) return;
             Octgn.Controls.ChildWindowManager manager = playWindow.wndManager;
@@ -372,6 +423,32 @@ namespace Octgn.Scripting.Versions
                 }
             }
             else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.All, 0)));
+        }
+
+        private bool CanViewPileInScript(Pile pile)
+        {
+            // If the player owns the pile, they can always view it
+            if (pile.Owner == Player.LocalPlayer)
+                return true;
+                
+            switch (pile.ProtectionState)
+            {
+                case GroupProtectionState.False:
+                    return true;
+                    
+                case GroupProtectionState.True:
+                    Program.GameMess.Warning($"Cannot view {pile.FullName} - it is protected.");
+                    return false;
+                    
+                case GroupProtectionState.Ask:
+                    // Post a message asking for permission
+                    Program.GameMess.PlayerEvent(Player.LocalPlayer, $"requests permission to view {pile.FullName}");
+                    Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
+                    return false;
+                    
+                default:
+                    return true;
+            }
         }
         public int[] GroupViewers(int id)
         {

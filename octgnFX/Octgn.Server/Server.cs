@@ -24,7 +24,50 @@ namespace Octgn.Server
 
         private readonly TcpListener _tcp; // Underlying windows socket
 
-        public Server(Config config, HostedGame game, int broadcastPort) {
+        /// <summary>
+        /// Creates a TcpListener with SO_REUSEADDR option and fallback port selection
+        /// to handle port binding conflicts when quickly restarting LAN games.
+        /// </summary>
+        private TcpListener CreateTcpListenerWithPortReuse(HostedGame game) {
+            int preferredPort = game.Port;
+            int currentPort = preferredPort;
+            const int maxPortAttempts = 10;
+            
+            for (int attempt = 0; attempt < maxPortAttempts; attempt++) {
+                try {
+                    var endpoint = new IPEndPoint(IPAddress.Any, currentPort);
+                    var listener = new TcpListener(endpoint);
+                    
+                    // Enable SO_REUSEADDR to allow immediate port reuse
+                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    
+                    // Test if we can bind to this port
+                    listener.Start();
+                    listener.Stop();
+                    
+                    // Update the game's host address if we had to use a different port
+                    if (currentPort != preferredPort) {
+                        var originalHost = game.Host;
+                        game.HostAddress = $"{originalHost}:{currentPort}";
+                        Log.InfoFormat("Port {0} was busy, using port {1} instead", preferredPort, currentPort);
+                    }
+                    
+                    Log.InfoFormat("Successfully bound to port {0}", currentPort);
+                    return listener;
+                    
+                } catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse) {
+                    Log.InfoFormat("Port {0} is busy (attempt {1}/{2}), trying next port...", currentPort, attempt + 1, maxPortAttempts);
+                    currentPort++;
+                } catch (SocketException ex) {
+                    Log.ErrorFormat("Failed to bind to port {0}: {1}", currentPort, ex.Message);
+                    throw;
+                }
+            }
+            
+            throw new InvalidOperationException($"Could not find an available port after trying {maxPortAttempts} ports starting from {preferredPort}");
+        }
+
+        public Server(Config config, HostedGame game, int broadcastPort, bool local_server = false) {
             Context = new GameContext(game, config);
 
             Context.State.Players.PlayerDisconnected += Players_PlayerDisconnected;
@@ -32,7 +75,12 @@ namespace Octgn.Server
 
             Log.InfoFormat("Creating server {0}", Context.Game.HostAddress);
 
-            _tcp = new TcpListener(IPAddress.Any, Context.Game.Port);
+            if (local_server) {
+                _tcp = CreateTcpListenerWithPortReuse(Context.Game);
+            } else {
+                // Use original TcpListener creation for online servers
+                _tcp = new TcpListener(IPAddress.Any, Context.Game.Port);
+            }
             _broadcaster = new GameBroadcaster(Context.Game, broadcastPort);
         }
 
