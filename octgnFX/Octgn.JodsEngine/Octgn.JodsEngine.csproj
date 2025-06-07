@@ -261,6 +261,9 @@
     </Compile>
     <Compile Include="Controls\NumericUpDown.cs" />
     <Compile Include="Controls\OpaqueClickableImage.cs" />
+    <Compile Include="Controls\PileViewPermissionDialog.xaml.cs">
+      <DependentUpon>PileViewPermissionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
@@ -602,6 +605,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MissedMessagesBreak.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PileViewPermissionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
