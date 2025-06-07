@@ -94,6 +94,7 @@
     <Compile Include="Entities\GameSound.cs" />
     <Compile Include="Entities\GlobalVariable.cs" />
     <Compile Include="Entities\Group.cs" />
+    <Compile Include="Entities\GroupProtectionState.cs" />
     <Compile Include="Entities\GroupVisibility.cs" />
     <Compile Include="Entities\MultiCard.cs" />
     <Compile Include="Entities\PickProperty.cs" />
