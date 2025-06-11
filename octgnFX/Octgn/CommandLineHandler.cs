@@ -41,6 +41,10 @@ namespace Octgn
         #endregion Singleton
 
         public bool DevMode { get; private set; }
+        
+        public bool SkipUpdate { get; private set; }
+
+        public bool ShowHelp { get; private set; }
 
 		public bool ShutdownProgram { get; private set; }
 
@@ -64,11 +68,13 @@ namespace Octgn
                 string deckPath = null;
                 var os = new Mono.Options.OptionSet()
                 {
-                    {"t|table", x => tableOnly = true},
-                    {"g|game=", x => gameid = Guid.Parse(x)},
-                    {"d|deck=", x => deckPath = x},
-                    {"x|devmode", x => DevMode = true},
-                    {"e|editor", x => editorOnly = true}
+                    {"t|table", "Launch table only mode", x => tableOnly = true},
+                    {"g|game=", "Specify game GUID", x => gameid = Guid.Parse(x)},
+                    {"d|deck=", "Specify deck path", x => deckPath = x},
+                    {"x|devmode", "Enable developer mode", x => DevMode = true},
+                    {"n|no-update|skip-update", "Skip automatic update check", x => SkipUpdate = true},
+                    {"e|editor", "Launch deck editor only", x => editorOnly = true},
+                    {"h|help", "Show this help message", x => ShowHelp = true}
                 };
                 try
                 {
@@ -77,6 +83,14 @@ namespace Octgn
                 catch (Exception e)
                 {
                     Log.Warn("Parse args exception: " + String.Join(",", Environment.GetCommandLineArgs()), e);
+                }
+
+                if (ShowHelp)
+                {
+                    Log.Info("Command line help requested");
+                    ShowCommandLineHelp(os);
+                    ShutdownProgram = true;
+                    return new MainLauncher();
                 }
                 if (tableOnly)
                 {
@@ -105,6 +119,23 @@ namespace Octgn
                 if (args != null) Log.Error(string.Join(Environment.NewLine, args));
             }
 			return new MainLauncher();
+        }
+
+        private void ShowCommandLineHelp(Mono.Options.OptionSet options)
+        {
+            System.Console.WriteLine("OCTGN - Online Card and Tabletop Gaming Network");
+            System.Console.WriteLine("Usage: OCTGN.exe [options] [file]");
+            System.Console.WriteLine();
+            System.Console.WriteLine("Options:");
+            options.WriteOptionDescriptions(System.Console.Out);
+            System.Console.WriteLine();
+            System.Console.WriteLine("Examples:");
+            System.Console.WriteLine("  OCTGN.exe --skip-update          Skip the automatic update check");
+            System.Console.WriteLine("  OCTGN.exe -n                     Skip the automatic update check (short form)");
+            System.Console.WriteLine("  OCTGN.exe --devmode              Enable developer mode");
+            System.Console.WriteLine("  OCTGN.exe --editor               Launch the deck editor only");
+            System.Console.WriteLine("  OCTGN.exe mydeck.o8d              Open a deck file");
+            System.Console.WriteLine();
         }
 
         internal ILauncher HandleProtocol(Uri url)

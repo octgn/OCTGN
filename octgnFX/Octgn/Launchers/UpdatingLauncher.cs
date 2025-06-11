@@ -20,7 +20,18 @@ namespace Octgn.Launchers
             await this.BeforeUpdate();
             if (this.Shutdown == false)
             {
-                bool isUpdate = this.RunUpdateChecker();
+                bool isUpdate = false;
+                
+                // Check if we should skip update check
+                if (CommandLineHandler.Instance.SkipUpdate)
+                {
+                    this.Log.Info("Skipping update check due to --no-update flag");
+                }
+                else
+                {
+                    isUpdate = this.RunUpdateChecker();
+                }
+                
                 if (isUpdate)
                 {
                     InterProcess.Instance.KillOtherOctgn(true);
