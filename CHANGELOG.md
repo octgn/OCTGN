@@ -1,3 +1,11 @@
+#3.4.411.0
++ * Added command line argument support for skipping updates (--skip-update, --no-update, -n)
++ * Added command line help functionality (--help, -h) with detailed usage information
++ * Enhanced command line argument descriptions and examples
++ * Updated README.md with comprehensive command line documentation
++ * Added VS Code workspace configuration for improved development experience
++ * Improved command line option parsing with better error handling
+
 #3.4.410.0
 
 #3.4.403.0
@@ -4097,6 +4105,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
