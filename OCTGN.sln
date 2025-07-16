@@ -105,9 +105,9 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Installer", "octgnFX\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.LogExporter", "octgnFX\Octgn.LogExporter\Octgn.LogExporter.csproj", "{A526EDFF-6F70-4B90-904E-1A44CA85E7E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.LoadTester", "octgnFx\Octgn.LoadTester\Octgn.LoadTester.csproj", "{9D562814-A825-4E22-A20C-2F7EA33D6902}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.LoadTester", "octgnFX\Octgn.LoadTester\Octgn.LoadTester.csproj", "{9D562814-A825-4E22-A20C-2F7EA33D6902}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.GameService.ServerLauncher", "octgnFx\Octgn.Online.GameService.ServerLauncher\Octgn.Online.GameService.ServerLauncher.csproj", "{C465DC76-AC29-446F-BB85-7E4287FD29CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.GameService.ServerLauncher", "octgnFX\Octgn.Online.GameService.ServerLauncher\Octgn.Online.GameService.ServerLauncher.csproj", "{C465DC76-AC29-446F-BB85-7E4287FD29CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.JodsEngine", "octgnFX\Octgn.JodsEngine\Octgn.JodsEngine.csproj", "{74009662-AA58-4A94-97B6-1AD019ECA302}"
 EndProject
