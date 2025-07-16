@@ -75,17 +75,3 @@ jobs:
 
       - name: Build solution (this will also process any T4 templates)
         run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m:4 -v:minimal
-
-      - name: Display environment info
-        run: |
-          # Refresh PATH environment variable to pick up global tools
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
-          Write-Host "=== OCTGN Development Environment Setup Complete ==="
-          Write-Host "MSBuild version:"
-          msbuild -version
-          Write-Host "`n.NET SDK version:"
-          dotnet --version
-          Write-Host "`nPowerShell version:"
-          $PSVersionTable.PSVersion
-          Write-Host "`nEnvironment ready for OCTGN development!"
-        shell: pwsh
