@@ -56,7 +56,7 @@ jobs:
         run: nuget restore OCTGN.sln
 
       - name: Build solution (this will also process any T4 templates)
-        run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m
+        run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m -v:minimal
 
       - name: Verify Protocol.xml exists (critical for networking)
         run: |
