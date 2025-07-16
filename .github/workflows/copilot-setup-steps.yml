@@ -70,8 +70,11 @@ jobs:
         run: .\Run-RegenerateNetworkingFiles.ps1
         shell: pwsh
 
+      - name: Restore NuGet packages
+        run: nuget restore OCTGN.sln
+
       - name: Build solution (this will also process any T4 templates)
-        run: msbuild OCTGN.sln /restore /p:Configuration=Debug /p:Platform="Any CPU" /m:4 -v:minimal -r
+        run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m:4 -v:minimal
 
       - name: Display environment info
         run: |
