@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+            submodules: recursive
 
       - name: Setup .NET Framework and MSBuild
         uses: microsoft/setup-msbuild@v2
