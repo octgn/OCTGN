@@ -7,7 +7,7 @@ Write-Host "=========================================" -ForegroundColor Cyan
 # Check if dotnet t4 tool is installed
 Write-Host "Checking for dotnet t4 tool..." -ForegroundColor Yellow
 try {
-    $t4Version = & dotnet t4 --version 2>&1
+    $t4Version = & t4 --version 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet t4 tool not found"
     }
@@ -85,7 +85,7 @@ foreach ($templateGroup in $networkingTemplates) {
             Write-Host "  Generating $outputFile from $templateFile..." -NoNewline
             
             try {
-                $result = & dotnet t4 -o $outputFile $templateFile 2>&1
+                $result = & t4 -o $outputFile $templateFile 2>&1
                 if ($LASTEXITCODE -eq 0) {
                     Write-Host " ✓" -ForegroundColor Green
                     $totalProcessed++

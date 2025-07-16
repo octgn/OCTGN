@@ -42,7 +42,7 @@ jobs:
           # Refresh PATH environment variable to pick up global tools
           $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
           # Verify installation
-          dotnet t4 --version
+          t4 --version
         shell: powershell
 
       - name: Setup NuGet
@@ -92,7 +92,7 @@ jobs:
           Write-Host "`n.NET SDK version:"
           dotnet --version
           Write-Host "`ndotnet t4 tool version:"
-          dotnet t4 --version
+          t4 --version
           Write-Host "`nPowerShell version:"
           $PSVersionTable.PSVersion
           Write-Host "`nEnvironment ready for OCTGN development!"
