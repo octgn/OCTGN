@@ -47,6 +47,25 @@ jobs:
           Get-Command t4 -ErrorAction Stop
         shell: powershell
 
+      - name: Download Visual Studio 2019 Build Tools bootstrapper
+        run: |
+          Invoke-WebRequest -Uri "https://aka.ms/vs/16/release/vs_buildtools.exe" -OutFile "$env:TEMP\vs_buildtools.exe" -UseBasicParsing
+        shell: pwsh
+
+      - name: Install .NET 4.5 Targeting Pack
+        run: |
+          Start-Process -FilePath "$env:TEMP\vs_buildtools.exe" `
+            -ArgumentList @(
+              "--quiet",
+              "--wait",
+              "--norestart",
+              "--nocache",
+              "--add", "Microsoft.Net.Component.4.5.TargetingPack"
+            ) `
+            -NoNewWindow `
+            -Wait
+        shell: pwsh
+
       - name: Build solution (this will also process any T4 templates)
         run: msbuild OCTGN.sln /restore /p:Configuration=Debug /p:Platform="Any CPU" /m -v:minimal
 
