@@ -146,6 +146,20 @@ namespace Octgn.Play
             }
         }
 
+        private bool _switchTabsOnShake = true;
+        public bool SwitchTabsOnShake 
+        { 
+            get { return _switchTabsOnShake; }
+            set 
+            { 
+                if (_switchTabsOnShake != value)
+                {
+                    _switchTabsOnShake = value;
+                    OnPropertyChanged(nameof(SwitchTabsOnShake));
+                }
+            }
+        }
+
         public GameSettings GameSettings { get; set; }
 
         public ReplayEngine ReplayEngine { get; }

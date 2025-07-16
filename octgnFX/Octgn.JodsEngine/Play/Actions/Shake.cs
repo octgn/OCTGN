@@ -46,6 +46,9 @@ namespace Octgn.Play.Actions
                 var windowManager = WindowManager.PlayWindow;
                 if (windowManager == null) return false;
                 
+                // Check if the "Switch Tabs on Shake" setting is enabled
+                if (!windowManager.SwitchTabsOnShake) return false;
+                
                 // Use reflection to access the private playerTabs field
                 var playerTabsField = windowManager.GetType().GetField("playerTabs", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (playerTabsField?.GetValue(windowManager) is TabControl playerTabs)
