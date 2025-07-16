@@ -45,7 +45,7 @@ jobs:
           $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
           # Verify installation
           Get-Command t4 -ErrorAction Stop
-        shell: powershell
+        shell: pwsh
 
       - name: Download Visual Studio 2019 Build Tools bootstrapper
         run: |
@@ -68,7 +68,7 @@ jobs:
 
       - name: Pre-generate networking T4 templates
         run: .\Run-RegenerateNetworkingFiles.ps1
-        shell: powershell
+        shell: pwsh
 
       - name: Build solution (this will also process any T4 templates)
         run: msbuild OCTGN.sln /restore /p:Configuration=Debug /p:Platform="Any CPU" /m:4 -v:minimal -r
@@ -85,4 +85,4 @@ jobs:
           Write-Host "`nPowerShell version:"
           $PSVersionTable.PSVersion
           Write-Host "`nEnvironment ready for OCTGN development!"
-        shell: powershell
+        shell: pwsh
