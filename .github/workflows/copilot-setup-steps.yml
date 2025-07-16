@@ -67,10 +67,7 @@ jobs:
         shell: pwsh
 
       - name: Pre-generate networking T4 templates
-        run: |
-          # Refresh PATH environment variable to pick up global tools
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
-          .\Run-RegenerateNetworkingFiles.ps1
+        run: .\Run-RegenerateNetworkingFiles.ps1
         shell: powershell
 
       - name: Build solution (this will also process any T4 templates)
