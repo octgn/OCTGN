@@ -66,9 +66,9 @@ jobs:
             -Wait
         shell: pwsh
 
-      - name: Pre-generate networking T4 templates
-        run: .\Run-RegenerateNetworkingFiles.ps1
-        shell: pwsh
+      # - name: Pre-generate networking T4 templates
+      #   run: .\Run-RegenerateNetworkingFiles.ps1
+      #   shell: pwsh
 
       - name: Restore NuGet packages
         run: nuget restore OCTGN.sln
