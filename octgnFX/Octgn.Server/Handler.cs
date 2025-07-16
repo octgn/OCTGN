@@ -454,10 +454,6 @@ namespace Octgn.Server
             _context.Broadcaster.Rotate(_player.Id, card, rot);
         }
 
-        public void ShakeReq(int card) {
-            _context.Broadcaster.Shake(_player.Id, card);
-        }
-
         public void Shuffled(byte player, int group, int[] card, short[] pos) {
             _context.Broadcaster.Shuffled(player, group, card, pos);
         }
@@ -615,6 +611,10 @@ namespace Octgn.Server
 
         public void GrantPileViewPermission(byte owner, int gId, byte requester, bool granted, bool permanent, string viewType, int cardCount) {
             _context.Broadcaster.GrantPileViewPermission(owner, gId, requester, granted, permanent, viewType, cardCount);
+        }
+
+        public void Shake(byte player, int card) {
+            _context.Broadcaster.Shake(player, card);
         }
     }
 }

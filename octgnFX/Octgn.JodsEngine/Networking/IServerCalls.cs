@@ -42,7 +42,6 @@ namespace Octgn.Networking
 		void Highlight(Card card, Color? color);
 		void TurnReq(Card card, bool up);
 		void RotateReq(Card card, CardOrientation rot);
-		void ShakeReq(Card card);
 		void ShuffleDeprecated(Group group, int[] card);
 		void Shuffled(Player player, Group group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(Group group);
@@ -84,5 +83,6 @@ namespace Octgn.Networking
 		void SetPlayerColor(Player player, string color);
 		void RequestPileViewPermission(Player requester, Group group, Player targetPlayer, string viewType, int cardCount);
 		void GrantPileViewPermission(Player owner, Group group, Player requester, bool granted, bool permanent, string viewType, int cardCount);
+		void Shake(Player player, Card card);
 	}
 }

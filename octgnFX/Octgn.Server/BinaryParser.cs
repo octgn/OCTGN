@@ -376,13 +376,6 @@ namespace Octgn.Server
 					_socket.Handler.RotateReq(arg0, arg1);
 					break;
 				}
-				case 49:
-				{
-					int arg0 = reader.ReadInt32();
-					Log.Debug($"SERVER IN:  ShakeReq");
-					_socket.Handler.ShakeReq(arg0);
-					break;
-				}
 				case 51:
 				{
 					int arg0 = reader.ReadInt32();
@@ -757,6 +750,14 @@ namespace Octgn.Server
 					int arg6 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  GrantPileViewPermission");
 					_socket.Handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+					break;
+				}
+				case 111:
+				{
+					byte arg0 = reader.ReadByte();
+					int arg1 = reader.ReadInt32();
+					Log.Debug($"SERVER IN:  Shake");
+					_socket.Handler.Shake(arg0, arg1);
 					break;
 				}
 				default:

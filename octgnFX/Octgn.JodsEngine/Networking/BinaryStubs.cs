@@ -662,22 +662,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void ShakeReq(Card card)
-		{
-			Log.Debug($"OCTGN OUT: {nameof(ShakeReq)}");
-		    if(Program.Client == null)return;
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
 
-			writer.Write(Program.Client.Muted);
-			writer.Write((byte)49);
-			writer.Write(card.Id);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
 
 		public void ShuffleDeprecated(Group group, int[] card)
 		{
@@ -1452,6 +1437,24 @@ namespace Octgn.Networking
 			writer.Write(permanent);
 			writer.Write(viewType);
 			writer.Write(cardCount);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void Shake(Player player, Card card)
+		{
+			Log.Debug($"OCTGN OUT: {nameof(Shake)}");
+		    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+			writer.Write(Program.Client.Muted);
+			writer.Write((byte)111);
+			writer.Write(player.Id);
+			writer.Write(card.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

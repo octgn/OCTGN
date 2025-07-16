@@ -414,9 +414,9 @@ namespace Octgn.Play
 
         public void Shake(bool network = true)
         {
-            if (network)
-                Program.Client.Rpc.ShakeReq(this);
             new Shake(Player.LocalPlayer, this).Do();
+            if (network)
+                Program.Client.Rpc.Shake(Player.LocalPlayer, this);
         }
 
         internal void DoShake()

@@ -655,7 +655,7 @@ namespace Octgn.Server
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(_socket?.Server.Context.State.IsMuted ?? 0);
-				writer.Write((byte)50);
+				writer.Write((byte)111);
 				writer.Write(player);
 				writer.Write(card);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);

@@ -435,18 +435,6 @@ namespace Octgn.Networking
 					handler.Rotate(arg0, arg1, arg2);
 					break;
 				}
-				case 50:
-				{
-					var arg0 = Player.Find(reader.ReadByte());
-					if (arg0 == null)
-					{ Debug.WriteLine("[Shake] Player not found."); return; }
-					var arg1 = Card.Find(reader.ReadInt32());
-					if (arg1 == null)
-					{ Debug.WriteLine("[Shake] Card not found."); return; }
-					Log.Debug($"OCTGN IN: Shake");
-					handler.Shake(arg0, arg1);
-					break;
-				}
 				case 52:
 				{
 					var arg0 = Group.Find(reader.ReadInt32());
@@ -980,6 +968,18 @@ namespace Octgn.Networking
 					var arg6 = reader.ReadInt32();
 					Log.Debug($"OCTGN IN: GrantPileViewPermission");
 					handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+					break;
+				}
+				case 111:
+				{
+					var arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[Shake] Player not found."); return; }
+					var arg1 = Card.Find(reader.ReadInt32());
+					if (arg1 == null)
+					{ Debug.WriteLine("[Shake] Card not found."); return; }
+					Log.Debug($"OCTGN IN: Shake");
+					handler.Shake(arg0, arg1);
 					break;
 				}
 		  default:
