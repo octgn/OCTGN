@@ -24,6 +24,7 @@ namespace Octgn.Library.Networking
 
         public HostedGame[] Games {
             get {
+                if (GameCache == null) return new HostedGame[0];
                 lock (GameCache) {
                     return GameCache.Select(x => x.Value).OfType<HostedGame>().ToArray();
                 }
@@ -44,37 +45,52 @@ namespace Octgn.Library.Networking
 
             IsListening = true;
 
-            Client = new UdpClient();
+            try {
+                Client = new UdpClient();
 
-            // We want an exception if someone else is bound, otherwise we won't get any packets.
-            Client.ExclusiveAddressUse = false;
-            Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            Client.ExclusiveAddressUse = false;
+                // We want an exception if someone else is bound, otherwise we won't get any packets.
+                Client.ExclusiveAddressUse = false;
+                Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                Client.ExclusiveAddressUse = false;
 
-            Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
+                Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
 
-            Client.JoinMulticastGroup(GameBroadcaster.MulticastAddress);
+                Client.JoinMulticastGroup(GameBroadcaster.MulticastAddress);
 
-            Client.Client.ReceiveTimeout = 1000;
+                Client.Client.ReceiveTimeout = 1000;
 
-            Receive();
+                Receive();
+            } catch (SocketException ex) {
+                Log.Warn($"Failed to start multicast listener: {ex.Message}. LAN game discovery will be disabled.", ex);
+                IsListening = false;
+                if (Client != null) {
+                    try {
+                        Client.Close();
+                    } catch (Exception closeEx) {
+                        Log.Warn("Error closing UDP client after failed multicast join", closeEx);
+                    }
+                    Client = null;
+                }
+            }
         }
 
         public void StopListening() {
             if (!IsListening) return;
             IsListening = false;
 
-            try {
-                Client.Close();
-            } catch (Exception ex) {
-                Log.Error($"{nameof(StopListening)}: Error closing client.", ex);
-            }
+            if (Client != null) {
+                try {
+                    Client.Close();
+                } catch (Exception ex) {
+                    Log.Error($"{nameof(StopListening)}: Error closing client.", ex);
+                }
 
-            Client = null;
+                Client = null;
+            }
         }
 
         private void Receive() {
-            if (!IsListening) return;
+            if (!IsListening || Client == null) return;
 
             var bundle = new SocketReceiveBundle(this.Client);
 
