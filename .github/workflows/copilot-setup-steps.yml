@@ -66,15 +66,6 @@ jobs:
             -Wait
         shell: pwsh
 
-      - name: Verify Protocol.xml exists (critical for networking)
-        run: |
-          if (!(Test-Path "octgnFX\Octgn.Server\Protocol.xml")) {
-            Write-Error "Protocol.xml not found - required for networking T4 templates"
-            exit 1
-          }
-          Write-Host "✓ Protocol.xml found"
-        shell: powershell
-
       - name: Pre-generate networking T4 templates
         run: |
           # Refresh PATH environment variable to pick up global tools
