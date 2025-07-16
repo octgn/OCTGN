@@ -49,7 +49,7 @@
 	<Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
 		<Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
 	</Target>
-	<Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug'">
+	<Target Name="HarvestReferencedOutputs" AfterTargets="ResolveReferences" BeforeTargets="Compile" Condition="'$(Configuration)' == 'Debug'">
 		<HeatDirectory Directory="..\Octgn.Online.GameService\bin\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="OOGS__HeatGenerated" DirectoryRefId="Octgn.Online.GameService.InstallDirectory" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" Transforms="HeatGeneratedFileList.xslt" RunAsSeparateProcess="$(RunWixToolsOutOfProc)" />
 	</Target>
 	<!--

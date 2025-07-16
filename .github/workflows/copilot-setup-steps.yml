@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+            submodules: recursive
 
       - name: Setup .NET Framework and MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -42,58 +44,34 @@ jobs:
           # Refresh PATH environment variable to pick up global tools
           $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
           # Verify installation
-          dotnet t4 --version
-        shell: powershell
+          Get-Command t4 -ErrorAction Stop
+        shell: pwsh
 
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v2
-        with:
-          nuget-version: 'latest'
+      - name: Download Visual Studio 2019 Build Tools bootstrapper
+        run: |
+          Invoke-WebRequest -Uri "https://aka.ms/vs/16/release/vs_buildtools.exe" -OutFile "$env:TEMP\vs_buildtools.exe" -UseBasicParsing
+        shell: pwsh
+
+      - name: Install .NET 4.5 Targeting Pack
+        run: |
+          Start-Process -FilePath "$env:TEMP\vs_buildtools.exe" `
+            -ArgumentList @(
+              "--quiet",
+              "--wait",
+              "--norestart",
+              "--nocache",
+              "--add", "Microsoft.Net.Component.4.5.TargetingPack"
+            ) `
+            -NoNewWindow `
+            -Wait
+        shell: pwsh
+
+      # - name: Pre-generate networking T4 templates
+      #   run: .\Run-RegenerateNetworkingFiles.ps1
+      #   shell: pwsh
 
       - name: Restore NuGet packages
         run: nuget restore OCTGN.sln
 
       - name: Build solution (this will also process any T4 templates)
-        run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m
-
-      - name: Verify Protocol.xml exists (critical for networking)
-        run: |
-          if (!(Test-Path "octgnFX\Octgn.Server\Protocol.xml")) {
-            Write-Error "Protocol.xml not found - required for networking T4 templates"
-            exit 1
-          }
-          Write-Host "✓ Protocol.xml found"
-        shell: powershell
-
-      - name: Pre-generate networking T4 templates
-        run: |
-          # Refresh PATH environment variable to pick up global tools
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
-          .\Run-RegenerateNetworkingFiles.ps1
-        shell: powershell
-
-      - name: Install NUnit Console Runner (for testing)
-        run: |
-          $nunitPath = "packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe"
-          if (!(Test-Path $nunitPath)) {
-            Write-Host "NUnit Console Runner not found at expected path, but build completed successfully"
-          } else {
-            Write-Host "✓ NUnit Console Runner available at $nunitPath"
-          }
-        shell: powershell
-
-      - name: Display environment info
-        run: |
-          # Refresh PATH environment variable to pick up global tools
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
-          Write-Host "=== OCTGN Development Environment Setup Complete ==="
-          Write-Host "MSBuild version:"
-          msbuild -version
-          Write-Host "`n.NET SDK version:"
-          dotnet --version
-          Write-Host "`ndotnet t4 tool version:"
-          dotnet t4 --version
-          Write-Host "`nPowerShell version:"
-          $PSVersionTable.PSVersion
-          Write-Host "`nEnvironment ready for OCTGN development!"
-        shell: powershell
+        run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m:4 -v:minimal

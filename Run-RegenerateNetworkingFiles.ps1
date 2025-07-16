@@ -4,14 +4,45 @@
 Write-Host "OCTGN Networking Files Regeneration Script" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
 
+# Function to get BOM bytes if present
+function Get-FileBOMBytes {
+    param(
+        [string]$Path
+    )
+    if (-not (Test-Path $Path)) {
+        return @()
+    }
+    [byte[]]$all = [System.IO.File]::ReadAllBytes($Path)
+    if ($all.Length -ge 3 -and $all[0] -eq 0xEF -and $all[1] -eq 0xBB -and $all[2] -eq 0xBF) {
+        return 0xEF,0xBB,0xBF
+    }
+    return @()
+}
+
+# Function to prepend BOM if it was present before
+function Prepend-BOMIfMissing {
+    param(
+        [string]$Path,
+        [byte[]]$BOM
+    )
+    if (-not (Test-Path $Path) -or $BOM.Count -eq 0) {
+        return
+    }
+    [byte[]]$newBytes = [System.IO.File]::ReadAllBytes($Path)
+    if ($newBytes.Length -ge 3 -and $newBytes[0] -eq $BOM[0] -and $newBytes[1] -eq $BOM[1] -and $newBytes[2] -eq $BOM[2]) {
+        return
+    }
+    [byte[]]$combined = New-Object byte[] ($BOM.Length + $newBytes.Length)
+    [Array]::Copy($BOM, 0, $combined, 0, $BOM.Length)
+    [Array]::Copy($newBytes, 0, $combined, $BOM.Length, $newBytes.Length)
+    [System.IO.File]::WriteAllBytes($Path, $combined)
+}
+
 # Check if dotnet t4 tool is installed
 Write-Host "Checking for dotnet t4 tool..." -ForegroundColor Yellow
 try {
-    $t4Version = & dotnet t4 --version 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw "dotnet t4 tool not found"
-    }
-    Write-Host "✓ dotnet t4 tool found: $t4Version" -ForegroundColor Green
+    $t4Command = Get-Command t4 -ErrorAction Stop
+    Write-Host "✓ dotnet t4 tool found at: $($t4Command.Source)" -ForegroundColor Green
 } catch {
     Write-Host "✗ dotnet t4 tool not found!" -ForegroundColor Red
     Write-Host ""
@@ -61,34 +92,43 @@ $totalErrors = 0
 # Process each template group
 foreach ($templateGroup in $networkingTemplates) {
     $dir = $templateGroup.Directory
-    
+
     Write-Host "Processing networking templates in: $dir" -ForegroundColor Cyan
-    
+
     if (-not (Test-Path $dir)) {
         Write-Host "  ✗ Directory not found: $dir" -ForegroundColor Red
         $totalErrors++
         continue
     }
-    
+
     Push-Location $dir
     try {
         foreach ($template in $templateGroup.Templates) {
             $templateFile = $template.Template
             $outputFile = $template.Output
-            
+
             if (-not (Test-Path $templateFile)) {
                 Write-Host "  ✗ Template not found: $templateFile" -ForegroundColor Red
                 $totalErrors++
                 continue
             }
-            
+
+            # Build full path to output file
+            $fullOutputPath = Join-Path -Path (Get-Location) -ChildPath $outputFile
+
+            # Capture existing BOM
+            $bom = Get-FileBOMBytes -Path $fullOutputPath
+
             Write-Host "  Generating $outputFile from $templateFile..." -NoNewline
-            
+
             try {
-                $result = & dotnet t4 -o $outputFile $templateFile 2>&1
+                $result = & t4 -o $outputFile $templateFile 2>&1
                 if ($LASTEXITCODE -eq 0) {
                     Write-Host " ✓" -ForegroundColor Green
                     $totalProcessed++
+
+                    # Re-add BOM if needed
+                    Prepend-BOMIfMissing -Path $fullOutputPath -BOM $bom
                 } else {
                     Write-Host " ✗" -ForegroundColor Red
                     Write-Host "    Error: $result" -ForegroundColor Red
