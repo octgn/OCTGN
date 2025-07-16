@@ -1,3 +1,5 @@
+#3.4.416.0
+
 #3.4.414.0
 + Add shaking feature
 
@@ -4111,6 +4113,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
