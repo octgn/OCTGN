@@ -517,15 +517,15 @@ namespace Octgn.Play.Gui
             var item = new MenuItem { Header = "Protection" };
             
             var allowItem = new MenuItem { Header = "Allow viewing", IsCheckable = true };
-            allowItem.Click += delegate { pile.ProtectionState = GroupProtectionState.False; };
+            allowItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.False, true); };
             item.Items.Add(allowItem);
             
             var blockItem = new MenuItem { Header = "Block viewing", IsCheckable = true };
-            blockItem.Click += delegate { pile.ProtectionState = GroupProtectionState.True; };
+            blockItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.True, true); };
             item.Items.Add(blockItem);
             
             var askItem = new MenuItem { Header = "Ask permission", IsCheckable = true };
-            askItem.Click += delegate { pile.ProtectionState = GroupProtectionState.Ask; };
+            askItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.Ask, true); };
             item.Items.Add(askItem);
             
             item.SubmenuOpened += delegate

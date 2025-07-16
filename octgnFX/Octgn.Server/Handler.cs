@@ -486,6 +486,10 @@ namespace Octgn.Server
             _context.Broadcaster.GroupVisRemove(_player.Id, gId, pId);
         }
 
+        public void GroupProtectionReq(int gId, string state) {
+            _context.Broadcaster.GroupProtection(_player.Id, gId, state);
+        }
+
         public void LookAtReq(int uid, int gId, bool look) {
             _context.Broadcaster.LookAt(_player.Id, uid, gId, look);
         }
@@ -596,10 +600,17 @@ namespace Octgn.Server
         }
         public void RemoveBoard(byte player) {
             _context.Broadcaster.RemoveBoard(player);
-        }
-
+        }        
         public void SetPlayerColor(byte player, string colorHex) {
             _context.Broadcaster.SetPlayerColor(player, colorHex);
+        }
+
+        public void RequestPileViewPermission(byte requester, int gId, byte targetPlayer) {
+            _context.Broadcaster.RequestPileViewPermission(requester, gId, targetPlayer);
+        }
+
+        public void GrantPileViewPermission(byte owner, int gId, byte requester, bool granted, bool permanent) {
+            _context.Broadcaster.GrantPileViewPermission(owner, gId, requester, granted, permanent);
         }
     }
 }

@@ -396,6 +396,16 @@
     <param name="who" type="PlayerOrSpectator" />
   </msg>
 
+  <msg name="GroupProtectionReq" server="true">
+    <param name="group" type="Group" />
+    <param name="state" type="string" />
+  </msg>
+  <msg name="GroupProtection" client="true">
+    <param name="player" type="Player" />
+    <param name="group" type="Group" />
+    <param name="state" type="string" />
+  </msg>
+
   <msg name="LookAtReq" server="true">
     <param name="uid" type="int" />
     <param name="group" type="Group" />
@@ -531,10 +541,22 @@
     <param name="name" type="string" />
   </msg>
   <msg name="RemoveBoard" client="true" server="true">
-    <param name="player" type="Player" />
+    <param name="player" type="Player" />  
   </msg>
-	<msg name="SetPlayerColor" client="true" server="true">
-		<param name="player" type="Player"/>
-		<param name="color" type="string"/>
-	</msg>
+  <msg name="SetPlayerColor" client="true" server="true">
+    <param name="player" type="Player"/>
+	<param name="color" type="string"/>
+  </msg>
+  <msg name="RequestPileViewPermission" client="true" server="true">
+	<param name="requester" type="Player"/>
+	<param name="group" type="Group"/>
+	<param name="targetPlayer" type="Player"/>
+  </msg>
+  <msg name="GrantPileViewPermission" client="true" server="true">
+	<param name="owner" type="Player"/>
+	<param name="group" type="Group"/>
+	<param name="requester" type="Player"/>
+	<param name="granted" type="bool"/>
+	<param name="permanent" type="bool"/>
+  </msg>
 </protocol>

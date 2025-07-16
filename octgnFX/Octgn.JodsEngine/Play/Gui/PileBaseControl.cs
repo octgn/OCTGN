@@ -3,12 +3,59 @@ using System.Windows.Controls;
 using Octgn.Controls;
 using Octgn.DataNew.Entities;
 using Octgn.Scripting.Controls;
+using Octgn.Networking;
 
 namespace Octgn.Play.Gui
 {
     public class PileBaseControl : GroupControl
     {
         private MenuItem _lookAtCardsMenuItem;
+
+        static PileBaseControl()
+        {
+            // Subscribe to the permission granted event
+            Handler.PileViewPermissionGranted += OnPileViewPermissionGranted;
+        }
+
+        private static void OnPileViewPermissionGranted(Group pile)
+        {
+            // When permission is granted, automatically show the pile view
+            Program.Dispatcher.BeginInvoke(new System.Action(() =>
+            {
+                try
+                {
+                    var playWindow = WindowManager.PlayWindow;
+                    if (playWindow != null)
+                    {
+                        // Find the window manager and show the group window
+                        var manager = playWindow.GetValue(System.Windows.FrameworkElement.TagProperty) as ChildWindowManager;
+                        if (manager == null)
+                        {
+                            // Try to find the window manager through other means
+                            if (System.Windows.Application.Current?.MainWindow is PlayWindow mainWindow)
+                            {
+                                // Use reflection to access the wndManager field
+                                var field = typeof(PlayWindow).GetField("wndManager", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                if (field != null)
+                                {
+                                    manager = field.GetValue(mainWindow) as ChildWindowManager;
+                                }
+                            }
+                        }
+                        
+                        if (manager != null)
+                        {
+                            manager.Show(new GroupWindow(pile, PilePosition.All, 0));
+                        }
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    // Log error but don't show to user
+                    System.Diagnostics.Debug.WriteLine($"Error showing pile view: {ex.Message}");
+                }
+            }));
+        }
 
         private void BuildLookAtCardsMenuItem()
         {
@@ -98,11 +145,10 @@ namespace Octgn.Play.Gui
                     {
                         return true;
                     }
-                    
-                    // Send network request for permission if client is available
+                      // Send network request for permission if client is available
                     if (Program.Client?.Rpc != null)
                     {
-                        Program.Client.Rpc.RequestPileViewPermission(pile, Player.LocalPlayer);
+                        Program.Client.Rpc.RequestPileViewPermission(Player.LocalPlayer, pile, pile.Owner);
                         Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
                     }
                     else

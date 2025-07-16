@@ -371,13 +371,13 @@ namespace Octgn.Scripting.Versions
                     switch (state.ToLower())
                     {
                         case "false":
-                            pile.ProtectionState = GroupProtectionState.False;
+                            pile.SetProtectionState(GroupProtectionState.False, true);
                             break;
                         case "true":
-                            pile.ProtectionState = GroupProtectionState.True;
+                            pile.SetProtectionState(GroupProtectionState.True, true);
                             break;
                         case "ask":
-                            pile.ProtectionState = GroupProtectionState.Ask;
+                            pile.SetProtectionState(GroupProtectionState.Ask, true);
                             break;
                         default:
                             Program.GameMess.Warning("Invalid protection state type '{0}'. Valid values are: false, true, ask", state);

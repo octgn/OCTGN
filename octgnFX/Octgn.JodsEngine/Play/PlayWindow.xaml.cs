@@ -68,8 +68,8 @@ namespace Octgn.Play
         {
             get { return (bool)GetValue(ShowSubscribeMessageProperty); }
             set { SetValue(ShowSubscribeMessageProperty, value); }
-        }
-
+        }        
+        
         public static readonly DependencyProperty ShowSubscribeMessageProperty =
             DependencyProperty.Register("ShowSubscribeMessage", typeof(bool), typeof(PlayWindow),
                                         new UIPropertyMetadata(false));
@@ -958,25 +958,28 @@ namespace Octgn.Play
                 var wnd = new DeveloperWindow() { Owner = this };
                 wnd.Show();
             }
-        }
-
+        }        
+        
         internal void ShowBackstage(UIElement ui)
         {
             Dispatcher.Invoke(new Action(() =>
                 {
                     this.table.Visibility = Visibility.Collapsed;
-                    this.wndManager.Visibility = Visibility.Collapsed
-                        ;
+                    this.wndManager.Visibility = Visibility.Collapsed;
                     this.backstage.Child = ui;
 					this.PhaseControl.Visibility = Visibility.Collapsed;
 					this.DeckStats.Visibility = Visibility.Collapsed;
+                    this.playerTabs.Visibility = Visibility.Collapsed;
+                    this.PlayerListBorder.Visibility = Visibility.Collapsed;
+                    this.ShowPlayersIcon.Visibility = Visibility.Collapsed;
+                    this.LimitedBackstageButtons.Visibility = Visibility.Collapsed;
                     this.LimitedBackstage.Visibility = Visibility.Visible;
                     backstage.Visibility = Visibility.Visible;
                     this.Menu.IsEnabled = false;
                     this.Menu.Visibility = Visibility.Collapsed;
                 }));
-        }
-
+        }        
+        
         internal void HideBackstage()
         {
 
@@ -986,6 +989,10 @@ namespace Octgn.Play
             backstage.Visibility = Visibility.Collapsed;
 			this.PhaseControl.Visibility = Visibility.Visible;
 			this.DeckStats.Visibility = Visibility.Visible;
+            this.playerTabs.Visibility = Visibility.Visible;
+            this.PlayerListBorder.Visibility = Visibility.Visible;
+            this.ShowPlayersIcon.Visibility = Visibility.Visible;
+            this.LimitedBackstageButtons.Visibility = Visibility.Visible;
 			this.Menu.IsEnabled = true;
             this.Menu.Visibility = Visibility.Visible;
             backstage.Child = null;

@@ -46,6 +46,21 @@ namespace Octgn.Play
             }
         }
 
+        internal void SetProtectionState(GroupProtectionState state, bool notifyServer)
+        {
+            if (notifyServer)
+            {
+                string stateString = state.ToString().ToLower();
+                if (stateString == "false") stateString = "false";
+                else if (stateString == "true") stateString = "true";
+                else if (stateString == "ask") stateString = "ask";
+                
+                Program.Client.Rpc.GroupProtectionReq(this, stateString);
+            }
+            
+            ProtectionState = state;
+        }
+
         public List<Player> TemporaryViewPermissions
         {
             get { return _temporaryViewPermissions; }
