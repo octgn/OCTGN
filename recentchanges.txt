@@ -1,1 +1,2 @@
 
+Fixed crash on startup when multicast networking is not available
