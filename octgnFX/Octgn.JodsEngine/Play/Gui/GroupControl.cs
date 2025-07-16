@@ -308,8 +308,6 @@ namespace Octgn.Play.Gui
                     items.Add(CreateGroupPassToItem());
                 if (group.Visibility != GroupVisibility.Undefined)
                     items.Add(CreateVisibilityItem());
-                if (group is Pile)
-                    items.Add(CreateProtectionItem());
                 MenuItem item = CreateLookAtCardsMenuItem();
                 if (item != null)
                     items.Add(item);
@@ -506,35 +504,6 @@ namespace Octgn.Play.Gui
                                           if (spectatorMenu.Items.Count > 0)
                                               item.Items.Add(spectatorMenu);
                                       };
-            return item;
-        }
-
-        private MenuItem CreateProtectionItem()
-        {
-            var pile = group as Pile;
-            if (pile == null) return null;
-            
-            var item = new MenuItem { Header = "Protection" };
-            
-            var allowItem = new MenuItem { Header = "Allow viewing", IsCheckable = true };
-            allowItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.False, true); };
-            item.Items.Add(allowItem);
-            
-            var blockItem = new MenuItem { Header = "Block viewing", IsCheckable = true };
-            blockItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.True, true); };
-            item.Items.Add(blockItem);
-            
-            var askItem = new MenuItem { Header = "Ask permission", IsCheckable = true };
-            askItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.Ask, true); };
-            item.Items.Add(askItem);
-            
-            item.SubmenuOpened += delegate
-            {
-                allowItem.IsChecked = pile.ProtectionState == GroupProtectionState.False;
-                blockItem.IsChecked = pile.ProtectionState == GroupProtectionState.True;
-                askItem.IsChecked = pile.ProtectionState == GroupProtectionState.Ask;
-            };
-            
             return item;
         }
 

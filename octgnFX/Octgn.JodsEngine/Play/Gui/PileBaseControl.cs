@@ -4,6 +4,7 @@ using Octgn.Controls;
 using Octgn.DataNew.Entities;
 using Octgn.Scripting.Controls;
 using Octgn.Networking;
+using System.Collections.Generic;
 
 namespace Octgn.Play.Gui
 {
@@ -78,6 +79,63 @@ namespace Octgn.Play.Gui
         {
             if (_lookAtCardsMenuItem == null) BuildLookAtCardsMenuItem();
             return _lookAtCardsMenuItem;
+        }
+
+        protected override List<Control> CreateGroupMenuItems(DataNew.Entities.Group def)
+        {
+            var items = base.CreateGroupMenuItems(def);
+            
+            // Add protection menu item for piles
+            if (group is Pile && group.CanManipulate())
+            {
+                var protectionItem = CreateProtectionItem();
+                if (protectionItem != null)
+                {
+                    // Find the position to insert the protection item
+                    // We want it after the visibility item but before the look at cards item
+                    var insertIndex = items.Count;
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        if (items[i] is MenuItem menuItem && menuItem.Header?.ToString() == "Look at")
+                        {
+                            insertIndex = i;
+                            break;
+                        }
+                    }
+                    items.Insert(insertIndex, protectionItem);
+                }
+            }
+            
+            return items;
+        }
+
+        private MenuItem CreateProtectionItem()
+        {
+            var pile = group as Pile;
+            if (pile == null) return null;
+            
+            var item = new MenuItem { Header = "Protection" };
+            
+            var allowItem = new MenuItem { Header = "Allow viewing", IsCheckable = true };
+            allowItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.False, true); };
+            item.Items.Add(allowItem);
+            
+            var blockItem = new MenuItem { Header = "Block viewing", IsCheckable = true };
+            blockItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.True, true); };
+            item.Items.Add(blockItem);
+            
+            var askItem = new MenuItem { Header = "Ask permission", IsCheckable = true };
+            askItem.Click += delegate { pile.SetProtectionState(GroupProtectionState.Ask, true); };
+            item.Items.Add(askItem);
+            
+            item.SubmenuOpened += delegate
+            {
+                allowItem.IsChecked = pile.ProtectionState == GroupProtectionState.False;
+                blockItem.IsChecked = pile.ProtectionState == GroupProtectionState.True;
+                askItem.IsChecked = pile.ProtectionState == GroupProtectionState.Ask;
+            };
+            
+            return item;
         }
 
         protected void ViewAllCards(object sender, RoutedEventArgs e)
