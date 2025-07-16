@@ -909,6 +909,15 @@ namespace Octgn.Scripting.Versions
             });
         }
 
+        public void CardShake(int id)
+        {
+            Card c = Card.Find(id);
+            QueueAction(() =>
+            {
+                c.Shake();
+            });
+        }
+
         public void CardPeek(int id)
         {
             Card c = Card.Find(id);

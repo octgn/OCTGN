@@ -412,6 +412,19 @@ namespace Octgn.Play
             }
         }
 
+        public void Shake(bool network = true)
+        {
+            if (network)
+                Program.Client.Rpc.ShakeReq(this);
+            new Shake(Player.LocalPlayer, this).Do();
+        }
+
+        internal void DoShake()
+        {
+            // Fire a property change event to trigger the shake animation
+            OnPropertyChanged("IsShaking");
+        }
+
         public bool Anchored
         {
             get { return _anchored; }

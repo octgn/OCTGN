@@ -454,6 +454,10 @@ namespace Octgn.Server
             _context.Broadcaster.Rotate(_player.Id, card, rot);
         }
 
+        public void ShakeReq(int card) {
+            _context.Broadcaster.Shake(_player.Id, card);
+        }
+
         public void Shuffled(byte player, int group, int[] card, short[] pos) {
             _context.Broadcaster.Shuffled(player, group, card, pos);
         }

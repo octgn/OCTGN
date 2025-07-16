@@ -39,6 +39,7 @@ namespace Octgn.Server
 		void Highlight(int card, string color);
 		void Turn(byte player, int card, bool up);
 		void Rotate(byte player, int card, CardOrientation rot);
+		void Shake(byte player, int card);
 		void ShuffleDeprecated(int group, int[] card);
 		void Shuffled(byte player, int group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(int group);

@@ -42,6 +42,7 @@ namespace Octgn.Networking
 		void Highlight(Card card, Color? color);
 		void TurnReq(Card card, bool up);
 		void RotateReq(Card card, CardOrientation rot);
+		void ShakeReq(Card card);
 		void ShuffleDeprecated(Group group, int[] card);
 		void Shuffled(Player player, Group group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(Group group);

@@ -377,6 +377,9 @@ namespace Octgn.Play.Gui
                 case "Anchored":
                     this.IsAnchored = Card.Anchored;
                     break;
+                case "IsShaking":
+                    DoShakeAnimation();
+                    break;
             }
         }
 
@@ -443,6 +446,59 @@ namespace Octgn.Play.Gui
             var anim = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
             turn.BeginAnimation(ScaleTransform.ScaleYProperty, animY);
             turn.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+        }
+
+        public void DoShakeAnimation()
+        {
+            // Scale up the card slightly
+            var scaleUpAnim = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.HoldEnd);
+            
+            // Create a shake animation for left-right movement
+            var shakeAnim = new DoubleAnimationUsingKeyFrames();
+            shakeAnim.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(50)));
+            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(150)));
+            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(250)));
+            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(350)));
+            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(400)));
+            shakeAnim.FillBehavior = FillBehavior.Stop;
+            
+            // Scale back down after the shake
+            var scaleDownAnim = new DoubleAnimation(1.0, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.Stop);
+            scaleDownAnim.BeginTime = TimeSpan.FromMilliseconds(400);
+            
+            // Create a transform for the shake if it doesn't exist
+            if (!(this.RenderTransform is TransformGroup))
+            {
+                var transformGroup = new TransformGroup();
+                transformGroup.Children.Add(new TranslateTransform());
+                transformGroup.Children.Add(new ScaleTransform());
+                this.RenderTransform = transformGroup;
+            }
+            
+            var transforms = (TransformGroup)this.RenderTransform;
+            var translateTransform = transforms.Children.OfType<TranslateTransform>().FirstOrDefault();
+            var scaleTransform = transforms.Children.OfType<ScaleTransform>().FirstOrDefault();
+            
+            if (translateTransform == null)
+            {
+                translateTransform = new TranslateTransform();
+                transforms.Children.Add(translateTransform);
+            }
+            
+            if (scaleTransform == null)
+            {
+                scaleTransform = new ScaleTransform();
+                transforms.Children.Add(scaleTransform);
+            }
+            
+            // Apply the animations
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleUpAnim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleUpAnim);
+            translateTransform.BeginAnimation(TranslateTransform.XProperty, shakeAnim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleDownAnim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleDownAnim);
         }
 
         #endregion

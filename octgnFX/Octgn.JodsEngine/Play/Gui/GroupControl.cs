@@ -382,6 +382,12 @@ namespace Octgn.Play.Gui
                 peekItem.Click += delegate { ContextCard.Peek(); };
                 items.Add(peekItem);
             }
+            
+            // Add Shake menu item
+            var shakeItem = new MenuItem { Header = "Shake" };
+            shakeItem.Click += delegate { ContextCard.Shake(); };
+            items.Add(shakeItem);
+            
             return items;
         }
 

@@ -265,6 +265,14 @@
     <param name="rot" type="CardOrientation" />
   </msg>
 
+  <msg name="ShakeReq" server="true">
+    <param name="card" type="Card" />
+  </msg>
+  <msg name="Shake" client="true">
+    <param name="player" type="Player" />
+    <param name="card" type="Card" />
+  </msg>
+
   <msg name="ShuffleDeprecated" client="true" server="true">
     <param name="group" type="Group" />
     <param name="card" type="int[]" />
