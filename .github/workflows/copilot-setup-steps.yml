@@ -1,0 +1,86 @@
+name: "Copilot Setup Steps"
+
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    # Use Windows runner since OCTGN is a .NET Framework 4.8 Windows application
+    runs-on: windows-latest
+
+    # Set the permissions to the lowest permissions possible needed for your steps.
+    # Copilot will be given its own token for its operations.
+    permissions:
+      # Clone the repository to install dependencies and set up the environment
+      contents: read
+
+    # You can define any steps you want, and they will run before the agent starts.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Framework and MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install dotnet t4 tool (required for networking T4 template generation)
+        run: dotnet tool install -g dotnet-t4
+
+      - name: Verify dotnet t4 tool installation
+        run: dotnet t4 --version
+
+      - name: Restore NuGet packages
+        run: nuget restore OCTGN.sln
+
+      - name: Build solution (this will also process any T4 templates)
+        run: msbuild OCTGN.sln /p:Configuration=Debug /p:Platform="Any CPU" /m
+
+      - name: Verify Protocol.xml exists (critical for networking)
+        run: |
+          if (!(Test-Path "octgnFX\Octgn.Server\Protocol.xml")) {
+            Write-Error "Protocol.xml not found - required for networking T4 templates"
+            exit 1
+          }
+          Write-Host "✓ Protocol.xml found"
+        shell: powershell
+
+      - name: Pre-generate networking T4 templates
+        run: .\Run-RegenerateNetworkingFiles.ps1
+        shell: powershell
+
+      - name: Install NUnit Console Runner (for testing)
+        run: |
+          $nunitPath = "packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe"
+          if (!(Test-Path $nunitPath)) {
+            Write-Host "NUnit Console Runner not found at expected path, but build completed successfully"
+          } else {
+            Write-Host "✓ NUnit Console Runner available at $nunitPath"
+          }
+        shell: powershell
+
+      - name: Display environment info
+        run: |
+          Write-Host "=== OCTGN Development Environment Setup Complete ==="
+          Write-Host "MSBuild version:"
+          msbuild -version
+          Write-Host "`n.NET SDK version:"
+          dotnet --version
+          Write-Host "`ndotnet t4 tool version:"
+          dotnet t4 --version
+          Write-Host "`nPowerShell version:"
+          $PSVersionTable.PSVersion
+          Write-Host "`nEnvironment ready for OCTGN development!"
+        shell: powershell
