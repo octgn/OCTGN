@@ -464,13 +464,13 @@ namespace Octgn.Play.Gui
                 
                 // Create a shake animation for left-right movement
                 var shakeAnim = new DoubleAnimationUsingKeyFrames();
-                shakeAnim.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                shakeAnim.Duration = new Duration(TimeSpan.FromMilliseconds(1500));
                 shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
-                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(50)));
-                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(150)));
-                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(250)));
-                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(350)));
-                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(400)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(188)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(563)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(938)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(1313)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(1500)));
                 shakeAnim.FillBehavior = FillBehavior.Stop;
                 
                 // Create scale animations using a temporary ScaleTransform
@@ -479,7 +479,7 @@ namespace Octgn.Play.Gui
                 
                 var scaleUpAnim = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.HoldEnd);
                 var scaleDownAnim = new DoubleAnimation(1.0, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.Stop);
-                scaleDownAnim.BeginTime = TimeSpan.FromMilliseconds(400);
+                scaleDownAnim.BeginTime = TimeSpan.FromMilliseconds(1500);
                 
                 // Remove the temporary scale transform after animation
                 scaleDownAnim.Completed += (s, e) => transforms.Children.Remove(tempScale);
