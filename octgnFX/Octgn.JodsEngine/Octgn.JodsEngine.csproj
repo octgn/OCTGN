@@ -358,6 +358,7 @@
     <Compile Include="Play\Actions\Create.cs" />
     <Compile Include="Play\Actions\Move.cs" />
     <Compile Include="Play\Actions\Rotate.cs" />
+    <Compile Include="Play\Actions\Shake.cs" />
     <Compile Include="Play\Actions\Target.cs" />
     <Compile Include="Play\Actions\Turn.cs" />
     <Compile Include="Play\Card.cs" />
