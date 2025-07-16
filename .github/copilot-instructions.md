@@ -7,8 +7,8 @@ It is written in .net 4.8 and uses C# as the primary programming language.
 - Ensure code compiles without errors
 - Run unit tests and ensure they pass
 
-### Development Flow
-- Build: `msbuild /t:Rebuild`
+### Development Flow (windows)
+- Build: `msbuild /t:Rebuild`s
 - Test: `packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe --result=Octgn.Online.Test.TestResults.xml octgnFX\Octgn.Online.Test\bin\Debug\Octgn.Online.Test.dll`
 - Test: `packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe --result=Octgn.Test.TestResults.xml octgnFX\Octgn.Test\bin\Debug\Octgn.Test.dll`
 
