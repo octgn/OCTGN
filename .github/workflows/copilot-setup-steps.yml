@@ -66,9 +66,6 @@ jobs:
             -Wait
         shell: pwsh
 
-      - name: Build solution (this will also process any T4 templates)
-        run: msbuild OCTGN.sln /restore /p:Configuration=Debug /p:Platform="Any CPU" /m -v:minimal
-
       - name: Verify Protocol.xml exists (critical for networking)
         run: |
           if (!(Test-Path "octgnFX\Octgn.Server\Protocol.xml")) {
@@ -85,15 +82,8 @@ jobs:
           .\Run-RegenerateNetworkingFiles.ps1
         shell: powershell
 
-      - name: Install NUnit Console Runner (for testing)
-        run: |
-          $nunitPath = "packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe"
-          if (!(Test-Path $nunitPath)) {
-            Write-Host "NUnit Console Runner not found at expected path, but build completed successfully"
-          } else {
-            Write-Host "✓ NUnit Console Runner available at $nunitPath"
-          }
-        shell: powershell
+      - name: Build solution (this will also process any T4 templates)
+        run: msbuild OCTGN.sln /restore /p:Configuration=Debug /p:Platform="Any CPU" /m:4 -v:minimal -r
 
       - name: Display environment info
         run: |
@@ -104,8 +94,6 @@ jobs:
           msbuild -version
           Write-Host "`n.NET SDK version:"
           dotnet --version
-          Write-Host "`ndotnet t4 tool version:"
-          t4 --version
           Write-Host "`nPowerShell version:"
           $PSVersionTable.PSVersion
           Write-Host "`nEnvironment ready for OCTGN development!"
