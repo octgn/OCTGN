@@ -450,55 +450,47 @@ namespace Octgn.Play.Gui
 
         public void DoShakeAnimation()
         {
-            // Scale up the card slightly
-            var scaleUpAnim = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.HoldEnd);
-            
-            // Create a shake animation for left-right movement
-            var shakeAnim = new DoubleAnimationUsingKeyFrames();
-            shakeAnim.Duration = new Duration(TimeSpan.FromMilliseconds(400));
-            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
-            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(50)));
-            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(150)));
-            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(250)));
-            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(350)));
-            shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(400)));
-            shakeAnim.FillBehavior = FillBehavior.Stop;
-            
-            // Scale back down after the shake
-            var scaleDownAnim = new DoubleAnimation(1.0, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.Stop);
-            scaleDownAnim.BeginTime = TimeSpan.FromMilliseconds(400);
-            
-            // Create a transform for the shake if it doesn't exist
-            if (!(this.RenderTransform is TransformGroup))
+            // Use the existing transform group from the XAML
+            var contentCtrl = FindName("contentCtrl") as ContentControl;
+            if (contentCtrl?.RenderTransform is TransformGroup transforms)
             {
-                var transformGroup = new TransformGroup();
-                transformGroup.Children.Add(new TranslateTransform());
-                transformGroup.Children.Add(new ScaleTransform());
-                this.RenderTransform = transformGroup;
+                // Find or create a TranslateTransform for the shake
+                var translateTransform = transforms.Children.OfType<TranslateTransform>().FirstOrDefault();
+                if (translateTransform == null)
+                {
+                    translateTransform = new TranslateTransform();
+                    transforms.Children.Add(translateTransform);
+                }
+                
+                // Create a shake animation for left-right movement
+                var shakeAnim = new DoubleAnimationUsingKeyFrames();
+                shakeAnim.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(50)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(150)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(5, TimeSpan.FromMilliseconds(250)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-5, TimeSpan.FromMilliseconds(350)));
+                shakeAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(400)));
+                shakeAnim.FillBehavior = FillBehavior.Stop;
+                
+                // Create scale animations using a temporary ScaleTransform
+                var tempScale = new ScaleTransform();
+                transforms.Children.Add(tempScale);
+                
+                var scaleUpAnim = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.HoldEnd);
+                var scaleDownAnim = new DoubleAnimation(1.0, new Duration(TimeSpan.FromMilliseconds(100)), FillBehavior.Stop);
+                scaleDownAnim.BeginTime = TimeSpan.FromMilliseconds(400);
+                
+                // Remove the temporary scale transform after animation
+                scaleDownAnim.Completed += (s, e) => transforms.Children.Remove(tempScale);
+                
+                // Apply the animations
+                tempScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleUpAnim);
+                tempScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleUpAnim);
+                translateTransform.BeginAnimation(TranslateTransform.XProperty, shakeAnim);
+                tempScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleDownAnim);
+                tempScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleDownAnim);
             }
-            
-            var transforms = (TransformGroup)this.RenderTransform;
-            var translateTransform = transforms.Children.OfType<TranslateTransform>().FirstOrDefault();
-            var scaleTransform = transforms.Children.OfType<ScaleTransform>().FirstOrDefault();
-            
-            if (translateTransform == null)
-            {
-                translateTransform = new TranslateTransform();
-                transforms.Children.Add(translateTransform);
-            }
-            
-            if (scaleTransform == null)
-            {
-                scaleTransform = new ScaleTransform();
-                transforms.Children.Add(scaleTransform);
-            }
-            
-            // Apply the animations
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleUpAnim);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleUpAnim);
-            translateTransform.BeginAnimation(TranslateTransform.XProperty, shakeAnim);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleDownAnim);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleDownAnim);
         }
 
         #endregion
