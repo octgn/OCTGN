@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.Play.Actions
 {
@@ -36,7 +37,9 @@ namespace Octgn.Play.Actions
                 });
             }
 
-            Program.GameMess.PlayerEvent(_who, "shakes '{0}'", _card);
+            // Generate appropriate message based on card visibility and group type
+            var (message, args) = GetShakeMessage();
+            Program.GameMess.PlayerEvent(_who, message, args);
         }
         
         private bool FocusPlayerTab(Player player)
@@ -73,6 +76,46 @@ namespace Octgn.Play.Actions
             }
 
             return false;
+        }
+
+        private (string message, object[] args) GetShakeMessage()
+        {
+            // If card is on the table, use the standard message regardless of visibility
+            if (_card.Group == null || _card.Group == Program.GameEngine.Table)
+            {
+                return ("shakes '{0}'", new object[] { _card });
+            }
+
+            var groupOwnerName = _card.Group.Owner?.Name ?? "Unknown";
+            var groupName = _card.Group.Name;
+            
+            // Card is not on the table, always specify the group
+            // If card is visible, show the card name in the group
+            if (_card.Name != "Card")
+            {
+                return ("shakes '{0}' in {1}'s {2}", new object[] { _card.Name, groupOwnerName, groupName });
+            }
+
+            // Card is not visible, determine appropriate message based on group type
+            // Check if the group is a pile
+            if (_card.Group is Pile pile)
+            {
+                // Check if it's collapsed (PileCollapsedControl)
+                if (pile.ViewState == GroupViewState.Collapsed)
+                {
+                    return ("shook {0}'s {1}", new object[] { groupOwnerName, groupName });
+                }
+                
+                // Check if it's a pile without fanning (PileControl without fanning)
+                // For GroupViewState.Pile, we assume it's not fanned
+                if (pile.ViewState == GroupViewState.Pile)
+                {
+                    return ("shook {0}'s {1}", new object[] { groupOwnerName, groupName });
+                }
+            }
+
+            // For other cases (expanded piles, hands, etc.), use "in <groupname>" format
+            return ("shook a card in {0}'s {1}", new object[] { groupOwnerName, groupName });
         }
     }
 }
