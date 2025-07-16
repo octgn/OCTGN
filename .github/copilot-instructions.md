@@ -3,11 +3,16 @@ It is written in .net 4.8 and uses C# as the primary programming language.
 
 ## Code Standards
 
-### Required Before Each Commit
+### Platform Requirements
+- **WINDOWS ONLY**: This project requires Windows for building and testing
+- Building, testing, and T4 template regeneration can only be performed on Windows
+- Linux/Ubuntu environments cannot build or test this .NET Framework 4.8 solution
+
+### Required Before Each Commit (Windows Only)
 - Ensure code compiles without errors
 - Run unit tests and ensure they pass
 
-### Development Flow (windows)
+### Development Flow (Windows Only)
 - Build: `msbuild /t:Rebuild`s
 - Test: `packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe --result=Octgn.Online.Test.TestResults.xml octgnFX\Octgn.Online.Test\bin\Debug\Octgn.Online.Test.dll`
 - Test: `packages\NUnit.ConsoleRunner.3.20.1\tools\nunit3-console.exe --result=Octgn.Test.TestResults.xml octgnFX\Octgn.Test\bin\Debug\Octgn.Test.dll`
@@ -15,6 +20,10 @@ It is written in .net 4.8 and uses C# as the primary programming language.
 ### T4 Template Regeneration (REQUIRED after Protocol.xml changes)
 - Regenerate networking files: `.\Run-RegenerateNetworkingFiles.ps1`
 - **CRITICAL**: Must be run whenever `octgnFX/Octgn.Server/Protocol.xml` is modified
+- **Ubuntu/Linux**: Requires PowerShell Core and `dotnet-t4` tool installation
+  - Install PowerShell Core if not available
+  - Install dotnet-t4: `dotnet tool install -g dotnet-t4`
+  - Run with: `pwsh .\Run-RegenerateNetworkingFiles.ps1`
 
 ## Repository Structure
 - `octgnFX/`: Main source code directory containing all projects
@@ -41,7 +50,7 @@ It is written in .net 4.8 and uses C# as the primary programming language.
 3. Use dependency injection patterns where appropriate
 4. Write unit tests for new functionality using NUnit - focus on logical methods only, avoid testing WPF behavior
 5. Document public APIs and complex logic
-6. Update recentchanges.txt with one line per change for pull requests
+6. **recentchanges.txt**: Due to file editing limitations, use terminal commands to update this file (e.g., `echo "Your change description" >> recentchanges.txt`) or skip updating it entirely - the file is typically empty and cannot be edited through normal file replacement tools
 7. Ensure all projects use shared Version.cs for consistent versioning
 
 ## Networking Architecture
