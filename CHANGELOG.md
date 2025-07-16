@@ -1,3 +1,6 @@
+#3.4.419.0
++ Fixed crash on startup when multicast networking is not available
+
 #3.4.416.0
 
 #3.4.414.0
@@ -4113,6 +4116,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
