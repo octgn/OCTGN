@@ -42,7 +42,7 @@ jobs:
           # Refresh PATH environment variable to pick up global tools
           $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
           # Verify installation
-          t4 --version
+          t4
         shell: powershell
 
       - name: Setup NuGet
