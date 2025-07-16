@@ -1,3 +1,6 @@
+#3.4.413.0
++ * Got pile protection working
+
 #3.4.411.0
 + * Added command line argument support for skipping updates (--skip-update, --no-update, -n)
 + * Added command line help functionality (--help, -h) with detailed usage information
@@ -4105,6 +4108,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
