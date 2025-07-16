@@ -1474,6 +1474,24 @@ namespace Octgn.Server
 			}
 		}
 	}
+
+    public void Shake(byte player, int card)
+    {
+		Log.Debug($"SERVER OUT: {nameof(Shake)}");
+		using(var stream = new MemoryStream(512)) {
+			stream.Seek(4, SeekOrigin.Begin);
+			using(var writer = new BinaryWriter(stream)) {
+				writer.Write(_socket?.Server.Context.State.IsMuted ?? 0);
+				writer.Write((byte)110);
+				writer.Write(player);
+				writer.Write(card);
+				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+				writer.Write((int)stream.Length);
+				writer.Close();
+				Send(stream.ToArray());
+			}
+		}
+	}
 	}
 
 	class BinarySenderStub : BaseBinaryStub

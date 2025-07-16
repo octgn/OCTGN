@@ -377,6 +377,9 @@ namespace Octgn.Play.Gui
                 case "Anchored":
                     this.IsAnchored = Card.Anchored;
                     break;
+                case "IsShaking":
+                    DoShakeAnimation();
+                    break;
             }
         }
 
@@ -443,6 +446,67 @@ namespace Octgn.Play.Gui
             var anim = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
             turn.BeginAnimation(ScaleTransform.ScaleYProperty, animY);
             turn.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+        }
+
+        public void DoShakeAnimation()
+        {
+            // Use the existing transform group from the XAML
+            var contentCtrl = FindName("contentCtrl") as ContentControl;
+            if (contentCtrl?.RenderTransform is TransformGroup transforms)
+            {
+                // Find or create a TranslateTransform for the shake
+                var translateTransform = transforms.Children.OfType<TranslateTransform>().FirstOrDefault();
+                if (translateTransform == null)
+                {
+                    translateTransform = new TranslateTransform();
+                    transforms.Children.Add(translateTransform);
+                }
+                
+                // Create a vigorous shake animation for left-right movement with bounce effect
+                var shakeAnim = new DoubleAnimationUsingKeyFrames();
+                shakeAnim.Duration = new Duration(TimeSpan.FromMilliseconds(500)); // Faster individual cycle
+                shakeAnim.RepeatBehavior = new RepeatBehavior(3); // Repeat 3 times for more vigorous shaking
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(12, TimeSpan.FromMilliseconds(75)) { EasingFunction = new BounceEase() { Bounces = 2, Bounciness = 3 } });
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(-12, TimeSpan.FromMilliseconds(150)) { EasingFunction = new BounceEase() { Bounces = 2, Bounciness = 3 } });
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(10, TimeSpan.FromMilliseconds(225)) { EasingFunction = new BounceEase() { Bounces = 2, Bounciness = 3 } });
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(-10, TimeSpan.FromMilliseconds(300)) { EasingFunction = new BounceEase() { Bounces = 2, Bounciness = 3 } });
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(8, TimeSpan.FromMilliseconds(375)) { EasingFunction = new BounceEase() { Bounces = 1, Bounciness = 2 } });
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(-8, TimeSpan.FromMilliseconds(425)) { EasingFunction = new BounceEase() { Bounces = 1, Bounciness = 2 } });
+                shakeAnim.KeyFrames.Add(new EasingDoubleKeyFrame(0, TimeSpan.FromMilliseconds(500)) { EasingFunction = new BounceEase() { Bounces = 3, Bounciness = 4 } });
+                shakeAnim.FillBehavior = FillBehavior.Stop;
+                
+                // Create scale animations using a temporary ScaleTransform
+                var tempScale = transforms.Children.OfType<ScaleTransform>().FirstOrDefault();
+                if (tempScale == null)
+                {
+                    tempScale = new ScaleTransform();
+                    transforms.Children.Add(tempScale);
+                }
+
+                // Set the center point for scaling to the center of the card (absolute pixel values)
+                tempScale.CenterX = contentCtrl.ActualWidth / 2;
+                tempScale.CenterY = contentCtrl.ActualHeight / 2;
+
+                // Create a combined scale animation that goes up then down
+                var scaleAnimX = new DoubleAnimationUsingKeyFrames();
+                scaleAnimX.Duration = new Duration(TimeSpan.FromMilliseconds(1500));
+                scaleAnimX.KeyFrames.Add(new EasingDoubleKeyFrame(1.0, TimeSpan.FromMilliseconds(0)));
+                scaleAnimX.KeyFrames.Add(new EasingDoubleKeyFrame(1.6, TimeSpan.FromMilliseconds(100)) { EasingFunction = new BackEase() { Amplitude = 0.3 } });
+                scaleAnimX.KeyFrames.Add(new EasingDoubleKeyFrame(1.6, TimeSpan.FromMilliseconds(1400)));
+                scaleAnimX.KeyFrames.Add(new EasingDoubleKeyFrame(1.0, TimeSpan.FromMilliseconds(1500)) { EasingFunction = new BackEase() { Amplitude = 0.3 } });
+                scaleAnimX.FillBehavior = FillBehavior.Stop;
+                
+                var scaleAnimY = scaleAnimX.Clone();
+                
+                // Remove the temporary scale transform after animation
+                scaleAnimX.Completed += (s, e) => transforms.Children.Remove(tempScale);
+                
+                // Apply the animations
+                tempScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimX);
+                tempScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnimY);
+                translateTransform.BeginAnimation(TranslateTransform.XProperty, shakeAnim);
+            }
         }
 
         #endregion

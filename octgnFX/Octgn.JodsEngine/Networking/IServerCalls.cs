@@ -83,5 +83,6 @@ namespace Octgn.Networking
 		void SetPlayerColor(Player player, string color);
 		void RequestPileViewPermission(Player requester, Group group, Player targetPlayer, string viewType, int cardCount);
 		void GrantPileViewPermission(Player owner, Group group, Player requester, bool granted, bool permanent, string viewType, int cardCount);
+		void Shake(Player player, Card card);
 	}
 }

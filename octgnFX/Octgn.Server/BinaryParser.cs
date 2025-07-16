@@ -752,6 +752,14 @@ namespace Octgn.Server
 					_socket.Handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
+				case 110:
+				{
+					byte arg0 = reader.ReadByte();
+					int arg1 = reader.ReadInt32();
+					Log.Debug($"SERVER IN:  Shake");
+					_socket.Handler.Shake(arg0, arg1);
+					break;
+				}
 				default:
 					Debug.WriteLine(L.D.ServerMessage__UnknownBinaryMessage + method);
 					break;

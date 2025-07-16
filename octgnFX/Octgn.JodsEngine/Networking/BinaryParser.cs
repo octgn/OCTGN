@@ -970,6 +970,18 @@ namespace Octgn.Networking
 					handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
+				case 110:
+				{
+					var arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[Shake] Player not found."); return; }
+					var arg1 = Card.Find(reader.ReadInt32());
+					if (arg1 == null)
+					{ Debug.WriteLine("[Shake] Card not found."); return; }
+					Log.Debug($"OCTGN IN: Shake");
+					handler.Shake(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

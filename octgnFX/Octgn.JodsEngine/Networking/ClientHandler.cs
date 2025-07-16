@@ -786,6 +786,15 @@ namespace Octgn.Networking
             new Rotate(player, card, rot).Do();
         }
 
+        public void Shake(Player player, Card card)
+        {
+            WriteReplayAction(player.Id);
+            // Ignore the moves we made ourselves
+            if (IsLocalPlayer(player))
+                return;
+            new Shake(player, card).Do();
+        }
+
         public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
             WriteReplayAction(player.Id);

@@ -684,5 +684,14 @@ namespace Octgn.Server
 			}
 		}
 	}
+
+	public void Shake(byte player, int card)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.Shake(player, card);
+			}
+		}
+	}
 	}
 }

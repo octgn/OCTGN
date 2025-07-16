@@ -346,6 +346,12 @@ namespace Octgn.Play.Gui
                 item = new MenuItem { Header = "Take control" };
                 item.Click += delegate { card.TakeControl(); };
                 items.Add(item);
+                
+                // Add Shake menu item for cards you can't manipulate
+                var shakeMenuItem = new MenuItem { Header = "Shake" };
+                shakeMenuItem.Click += delegate { ContextCard.Shake(); };
+                items.Add(shakeMenuItem);
+                
                 return items;
             }
             else
@@ -382,6 +388,12 @@ namespace Octgn.Play.Gui
                 peekItem.Click += delegate { ContextCard.Peek(); };
                 items.Add(peekItem);
             }
+            
+            // Add Shake menu item
+            var shakeItem = new MenuItem { Header = "Shake" };
+            shakeItem.Click += delegate { ContextCard.Shake(); };
+            items.Add(shakeItem);
+            
             return items;
         }
 

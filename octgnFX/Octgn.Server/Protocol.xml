@@ -265,6 +265,8 @@
     <param name="rot" type="CardOrientation" />
   </msg>
 
+
+
   <msg name="ShuffleDeprecated" client="true" server="true">
     <param name="group" type="Group" />
     <param name="card" type="int[]" />
@@ -562,5 +564,9 @@
 	<param name="permanent" type="bool"/>
 	<param name="viewType" type="string"/>
 	<param name="cardCount" type="int"/>
+  </msg>
+  <msg name="Shake" client="true" server="true">
+    <param name="player" type="Player" />
+    <param name="card" type="Card" />
   </msg>
 </protocol>

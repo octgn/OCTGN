@@ -82,5 +82,6 @@ namespace Octgn.Server
 		void SetPlayerColor(byte player, string color);
 		void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount);
 		void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount);
+		void Shake(byte player, int card);
 	}
 }

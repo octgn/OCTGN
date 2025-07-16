@@ -612,5 +612,9 @@ namespace Octgn.Server
         public void GrantPileViewPermission(byte owner, int gId, byte requester, bool granted, bool permanent, string viewType, int cardCount) {
             _context.Broadcaster.GrantPileViewPermission(owner, gId, requester, granted, permanent, viewType, cardCount);
         }
+
+        public void Shake(byte player, int card) {
+            _context.Broadcaster.Shake(player, card);
+        }
     }
 }
