@@ -45,6 +45,11 @@ jobs:
           dotnet t4 --version
         shell: powershell
 
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+        with:
+          nuget-version: 'latest'
+
       - name: Restore NuGet packages
         run: nuget restore OCTGN.sln
 
