@@ -7,11 +7,8 @@ Write-Host "=========================================" -ForegroundColor Cyan
 # Check if dotnet t4 tool is installed
 Write-Host "Checking for dotnet t4 tool..." -ForegroundColor Yellow
 try {
-    $t4Version = & t4 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw "dotnet t4 tool not found"
-    }
-    Write-Host "✓ dotnet t4 tool found: $t4Version" -ForegroundColor Green
+    $t4Command = Get-Command t4 -ErrorAction Stop
+    Write-Host "✓ dotnet t4 tool found at: $($t4Command.Source)" -ForegroundColor Green
 } catch {
     Write-Host "✗ dotnet t4 tool not found!" -ForegroundColor Red
     Write-Host ""
