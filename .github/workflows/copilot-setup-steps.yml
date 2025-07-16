@@ -36,11 +36,14 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Install dotnet t4 tool (required for networking T4 template generation)
-        run: dotnet tool install -g dotnet-t4
-
-      - name: Verify dotnet t4 tool installation
-        run: dotnet t4 --version
+      - name: Install and verify dotnet t4 tool (required for networking T4 template generation)
+        run: |
+          dotnet tool install -g dotnet-t4
+          # Refresh PATH environment variable to pick up global tools
+          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
+          # Verify installation
+          dotnet t4 --version
+        shell: powershell
 
       - name: Restore NuGet packages
         run: nuget restore OCTGN.sln
@@ -58,7 +61,10 @@ jobs:
         shell: powershell
 
       - name: Pre-generate networking T4 templates
-        run: .\Run-RegenerateNetworkingFiles.ps1
+        run: |
+          # Refresh PATH environment variable to pick up global tools
+          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
+          .\Run-RegenerateNetworkingFiles.ps1
         shell: powershell
 
       - name: Install NUnit Console Runner (for testing)
@@ -73,6 +79,8 @@ jobs:
 
       - name: Display environment info
         run: |
+          # Refresh PATH environment variable to pick up global tools
+          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
           Write-Host "=== OCTGN Development Environment Setup Complete ==="
           Write-Host "MSBuild version:"
           msbuild -version
