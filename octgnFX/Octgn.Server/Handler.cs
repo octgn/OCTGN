@@ -605,12 +605,12 @@ namespace Octgn.Server
             _context.Broadcaster.SetPlayerColor(player, colorHex);
         }
 
-        public void RequestPileViewPermission(byte requester, int gId, byte targetPlayer) {
-            _context.Broadcaster.RequestPileViewPermission(requester, gId, targetPlayer);
+        public void RequestPileViewPermission(byte requester, int gId, byte targetPlayer, string viewType, int cardCount) {
+            _context.Broadcaster.RequestPileViewPermission(requester, gId, targetPlayer, viewType, cardCount);
         }
 
-        public void GrantPileViewPermission(byte owner, int gId, byte requester, bool granted, bool permanent) {
-            _context.Broadcaster.GrantPileViewPermission(owner, gId, requester, granted, permanent);
+        public void GrantPileViewPermission(byte owner, int gId, byte requester, bool granted, bool permanent, string viewType, int cardCount) {
+            _context.Broadcaster.GrantPileViewPermission(owner, gId, requester, granted, permanent, viewType, cardCount);
         }
     }
 }

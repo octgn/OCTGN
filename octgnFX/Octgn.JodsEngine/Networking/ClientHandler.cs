@@ -1226,7 +1226,7 @@ namespace Octgn.Networking
             player.SetPlayerColor(colorHex);
 	    }        
         
-        public void RequestPileViewPermission(Player requester, Group pile, Player targetPlayer)
+        public void RequestPileViewPermission(Player requester, Group pile, Player targetPlayer, string viewType, int cardCount)
         {
             WriteReplayAction(requester.Id);
             
@@ -1235,11 +1235,11 @@ namespace Octgn.Networking
             // Only show the dialog to the pile owner (the person being asked for permission)
             if (pile.Owner == Player.LocalPlayer)
             {
-                ShowPileViewPermissionDialog(pile, requester);
+                ShowPileViewPermissionDialog(pile, requester, viewType, cardCount);
             }
         }        
         
-        public void GrantPileViewPermission(Player owner, Group pile, Player requester, bool granted, bool permanent)
+        public void GrantPileViewPermission(Player owner, Group pile, Player requester, bool granted, bool permanent, string viewType, int cardCount)
         {
             WriteReplayAction(pile.Owner.Id);
             if (pile == null || requester == null) return;
@@ -1261,9 +1261,28 @@ namespace Octgn.Networking
                 }
             }
             
-            Program.GameMess.PlayerEvent(pile.Owner, granted ? $"grants permission for {requester.Name} to view {pile.FullName}" : $"denies permission for {requester.Name} to view {pile.FullName}");
+            // Create a user-friendly message based on view type
+            string viewDescription;
+            switch (viewType)
+            {
+                case "all":
+                    viewDescription = "all cards";
+                    break;
+                case "top":
+                    viewDescription = $"top {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                    break;
+                case "bottom":
+                    viewDescription = $"bottom {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                    break;
+                default:
+                    viewDescription = "cards";
+                    break;
+            }
             
-            // If permission was granted and the requester is the local player, trigger the pile view
+            string action = granted ? "grants" : "denies";
+            Program.GameMess.PlayerEvent(pile.Owner, $"{action} permission for {requester.Name} to view {viewDescription} in {pile.FullName}");
+            
+            // If permission was granted and the requester is the local player, trigger the pile view with specific parameters
             if (granted && IsLocalPlayer(requester))
             {
                 // Use the WPF Dispatcher to show the pile view on the UI thread
@@ -1282,7 +1301,22 @@ namespace Octgn.Networking
                                 var manager = wndManagerField.GetValue(playWindow) as Octgn.Controls.ChildWindowManager;
                                 if (manager != null)
                                 {
-                                    var groupWindow = new GroupWindow(pile, PilePosition.All, 0);
+                                    // Show the specific view that was requested
+                                    PilePosition position;
+                                    switch (viewType)
+                                    {
+                                        case "top":
+                                            position = PilePosition.Top;
+                                            break;
+                                        case "bottom":
+                                            position = PilePosition.Bottom;
+                                            break;
+                                        default:
+                                            position = PilePosition.All;
+                                            break;
+                                    }
+                                    
+                                    var groupWindow = new GroupWindow(pile, position, cardCount);
                                     manager.Show(groupWindow);
                                 }
                             }
@@ -1297,14 +1331,32 @@ namespace Octgn.Networking
             }
         }
         
-        private void ShowPileViewPermissionDialog(Group pile, Player requester)
+        private void ShowPileViewPermissionDialog(Group pile, Player requester, string viewType, int cardCount)
         {
             Program.Dispatcher.BeginInvoke(new Action(() =>
             {
                 try
                 {
+                    // Create a user-friendly message based on view type
+                    string viewDescription;
+                    switch (viewType)
+                    {
+                        case "all":
+                            viewDescription = "all cards";
+                            break;
+                        case "top":
+                            viewDescription = $"top {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                            break;
+                        case "bottom":
+                            viewDescription = $"bottom {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                            break;
+                        default:
+                            viewDescription = "cards";
+                            break;
+                    }
+                    
                     // Create the dialog UserControl
-                    var dialog = new PileViewPermissionDialog(pile, requester);
+                    var dialog = new PileViewPermissionDialog(pile, requester, viewDescription);
                     
                     // Set up callback to handle the result
                     dialog.OnResult = (granted, permanent, dialogResult) =>
@@ -1337,7 +1389,7 @@ namespace Octgn.Networking
                             permanent = false;
                         }
                         
-                        Program.Client.Rpc.GrantPileViewPermission(Player.LocalPlayer, pile, requester, granted, permanent);
+                        Program.Client.Rpc.GrantPileViewPermission(Player.LocalPlayer, pile, requester, granted, permanent, viewType, cardCount);
                     };
                     
                     // Show it in the backstage like PickCardsDialog
@@ -1347,7 +1399,7 @@ namespace Octgn.Networking
                 {
                     Log.Error($"Exception in pile view permission dialog: {ex.Message}");
                     // If there's an exception, deny permission
-                    Program.Client.Rpc.GrantPileViewPermission(Player.LocalPlayer, pile, requester, false, false);
+                    Program.Client.Rpc.GrantPileViewPermission(Player.LocalPlayer, pile, requester, false, false, viewType, cardCount);
                 }
             }));
         }

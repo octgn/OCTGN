@@ -1397,7 +1397,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void RequestPileViewPermission(Player requester, Group group, Player targetPlayer)
+		public void RequestPileViewPermission(Player requester, Group group, Player targetPlayer, string viewType, int cardCount)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(RequestPileViewPermission)}");
 		    if(Program.Client == null)return;
@@ -1410,13 +1410,15 @@ namespace Octgn.Networking
 			writer.Write(requester.Id);
 			writer.Write(group.Id);
 			writer.Write(targetPlayer.Id);
+			writer.Write(viewType);
+			writer.Write(cardCount);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-		public void GrantPileViewPermission(Player owner, Group group, Player requester, bool granted, bool permanent)
+		public void GrantPileViewPermission(Player owner, Group group, Player requester, bool granted, bool permanent, string viewType, int cardCount)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(GrantPileViewPermission)}");
 		    if(Program.Client == null)return;
@@ -1431,6 +1433,8 @@ namespace Octgn.Networking
 			writer.Write(requester.Id);
 			writer.Write(granted);
 			writer.Write(permanent);
+			writer.Write(viewType);
+			writer.Write(cardCount);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

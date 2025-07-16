@@ -667,20 +667,20 @@ namespace Octgn.Server
 		}
 	}
 
-	public void RequestPileViewPermission(byte requester, int group, byte targetPlayer)
+	public void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
-				ply.Rpc.RequestPileViewPermission(requester, group, targetPlayer);
+				ply.Rpc.RequestPileViewPermission(requester, group, targetPlayer, viewType, cardCount);
 			}
 		}
 	}
 
-	public void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent)
+	public void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount)
 	{
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
-				ply.Rpc.GrantPileViewPermission(owner, group, requester, granted, permanent);
+				ply.Rpc.GrantPileViewPermission(owner, group, requester, granted, permanent, viewType, cardCount);
 			}
 		}
 	}

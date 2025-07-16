@@ -80,7 +80,7 @@ namespace Octgn.Server
 		void SetBoard(byte player, string name);
 		void RemoveBoard(byte player);
 		void SetPlayerColor(byte player, string color);
-		void RequestPileViewPermission(byte requester, int group, byte targetPlayer);
-		void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent);
+		void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount);
+		void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount);
 	}
 }

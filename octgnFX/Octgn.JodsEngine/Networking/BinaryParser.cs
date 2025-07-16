@@ -945,8 +945,10 @@ namespace Octgn.Networking
 					var arg2 = Player.Find(reader.ReadByte());
 					if (arg2 == null)
 					{ Debug.WriteLine("[RequestPileViewPermission] Player not found."); return; }
+					var arg3 = reader.ReadString();
+					var arg4 = reader.ReadInt32();
 					Log.Debug($"OCTGN IN: RequestPileViewPermission");
-					handler.RequestPileViewPermission(arg0, arg1, arg2);
+					handler.RequestPileViewPermission(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
 				case 109:
@@ -962,8 +964,10 @@ namespace Octgn.Networking
 					{ Debug.WriteLine("[GrantPileViewPermission] Player not found."); return; }
 					var arg3 = reader.ReadBoolean();
 					var arg4 = reader.ReadBoolean();
+					var arg5 = reader.ReadString();
+					var arg6 = reader.ReadInt32();
 					Log.Debug($"OCTGN IN: GrantPileViewPermission");
-					handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4);
+					handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
 		  default:

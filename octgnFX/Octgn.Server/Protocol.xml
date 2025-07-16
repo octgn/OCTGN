@@ -551,6 +551,8 @@
 	<param name="requester" type="Player"/>
 	<param name="group" type="Group"/>
 	<param name="targetPlayer" type="Player"/>
+	<param name="viewType" type="string"/>
+	<param name="cardCount" type="int"/>
   </msg>
   <msg name="GrantPileViewPermission" client="true" server="true">
 	<param name="owner" type="Player"/>
@@ -558,5 +560,7 @@
 	<param name="requester" type="Player"/>
 	<param name="granted" type="bool"/>
 	<param name="permanent" type="bool"/>
+	<param name="viewType" type="string"/>
+	<param name="cardCount" type="int"/>
   </msg>
 </protocol>

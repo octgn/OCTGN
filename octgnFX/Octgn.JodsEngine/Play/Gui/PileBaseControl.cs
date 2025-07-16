@@ -12,52 +12,6 @@ namespace Octgn.Play.Gui
     {
         private MenuItem _lookAtCardsMenuItem;
 
-        static PileBaseControl()
-        {
-            // Subscribe to the permission granted event
-            Handler.PileViewPermissionGranted += OnPileViewPermissionGranted;
-        }
-
-        private static void OnPileViewPermissionGranted(Group pile)
-        {
-            // When permission is granted, automatically show the pile view
-            Program.Dispatcher.BeginInvoke(new System.Action(() =>
-            {
-                try
-                {
-                    var playWindow = WindowManager.PlayWindow;
-                    if (playWindow != null)
-                    {
-                        // Find the window manager and show the group window
-                        var manager = playWindow.GetValue(System.Windows.FrameworkElement.TagProperty) as ChildWindowManager;
-                        if (manager == null)
-                        {
-                            // Try to find the window manager through other means
-                            if (System.Windows.Application.Current?.MainWindow is PlayWindow mainWindow)
-                            {
-                                // Use reflection to access the wndManager field
-                                var field = typeof(PlayWindow).GetField("wndManager", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                                if (field != null)
-                                {
-                                    manager = field.GetValue(mainWindow) as ChildWindowManager;
-                                }
-                            }
-                        }
-                        
-                        if (manager != null)
-                        {
-                            manager.Show(new GroupWindow(pile, PilePosition.All, 0));
-                        }
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    // Log error but don't show to user
-                    System.Diagnostics.Debug.WriteLine($"Error showing pile view: {ex.Message}");
-                }
-            }));
-        }
-
         private void BuildLookAtCardsMenuItem()
         {
             _lookAtCardsMenuItem = new MenuItem {Header = "Look at"};
@@ -143,7 +97,7 @@ namespace Octgn.Play.Gui
             e.Handled = true;
             
             var pile = @group as Pile;
-            if (pile != null && !CanViewPile(pile))
+            if (pile != null && !CanViewPile(pile, "all", 0))
                 return;
                 
             var playWindow = (PlayWindow) Window.GetWindow(this);
@@ -156,11 +110,13 @@ namespace Octgn.Play.Gui
         {
             e.Handled = true;
             
-            var pile = @group as Pile;
-            if (pile != null && !CanViewPile(pile))
-                return;
-                
             int count = Dialog.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
+            if (count <= 0) return; // User cancelled or entered invalid input
+            
+            var pile = @group as Pile;
+            if (pile != null && !CanViewPile(pile, "top", count))
+                return;
+            
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
             ChildWindowManager manager = playWindow.wndManager;
@@ -171,18 +127,20 @@ namespace Octgn.Play.Gui
         {
             e.Handled = true;
             
-            var pile = @group as Pile;
-            if (pile != null && !CanViewPile(pile))
-                return;
-                
             int count = Dialog.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
+            if (count <= 0) return; // User cancelled or entered invalid input
+            
+            var pile = @group as Pile;
+            if (pile != null && !CanViewPile(pile, "bottom", count))
+                return;
+            
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
             ChildWindowManager manager = playWindow.wndManager;
             manager.Show(new GroupWindow(@group, PilePosition.Bottom, count));
         }
 
-        private bool CanViewPile(Pile pile)
+        private bool CanViewPile(Pile pile, string viewType, int cardCount)
         {
             // If the player owns the pile, they can always view it
             if (pile.Owner == Player.LocalPlayer)
@@ -203,11 +161,31 @@ namespace Octgn.Play.Gui
                     {
                         return true;
                     }
-                      // Send network request for permission if client is available
+                    
+                    // Send network request for permission with view details
                     if (Program.Client?.Rpc != null)
                     {
-                        Program.Client.Rpc.RequestPileViewPermission(Player.LocalPlayer, pile, pile.Owner);
-                        Program.GameMess.Warning($"Permission requested to view {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
+                        Program.Client.Rpc.RequestPileViewPermission(Player.LocalPlayer, pile, pile.Owner, viewType, cardCount);
+                        
+                        // Create a user-friendly message based on view type
+                        string viewDescription;
+                        switch (viewType)
+                        {
+                            case "all":
+                                viewDescription = "all cards";
+                                break;
+                            case "top":
+                                viewDescription = $"top {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                                break;
+                            case "bottom":
+                                viewDescription = $"bottom {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                                break;
+                            default:
+                                viewDescription = "cards";
+                                break;
+                        }
+                        
+                        Program.GameMess.Warning($"Permission requested to view {viewDescription} in {pile.FullName}. Waiting for {pile.Owner.Name} to grant access.");
                     }
                     else
                     {

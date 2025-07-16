@@ -1431,7 +1431,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void RequestPileViewPermission(byte requester, int group, byte targetPlayer)
+    public void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount)
     {
 		Log.Debug($"SERVER OUT: {nameof(RequestPileViewPermission)}");
 		using(var stream = new MemoryStream(512)) {
@@ -1442,6 +1442,8 @@ namespace Octgn.Server
 				writer.Write(requester);
 				writer.Write(group);
 				writer.Write(targetPlayer);
+				writer.Write(viewType);
+				writer.Write(cardCount);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
 				writer.Close();
@@ -1450,7 +1452,7 @@ namespace Octgn.Server
 		}
 	}
 
-    public void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent)
+    public void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount)
     {
 		Log.Debug($"SERVER OUT: {nameof(GrantPileViewPermission)}");
 		using(var stream = new MemoryStream(512)) {
@@ -1463,6 +1465,8 @@ namespace Octgn.Server
 				writer.Write(requester);
 				writer.Write(granted);
 				writer.Write(permanent);
+				writer.Write(viewType);
+				writer.Write(cardCount);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
 				writer.Close();

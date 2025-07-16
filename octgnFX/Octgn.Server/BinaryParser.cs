@@ -733,8 +733,10 @@ namespace Octgn.Server
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
 					byte arg2 = reader.ReadByte();
+					string arg3 = reader.ReadString();
+					int arg4 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  RequestPileViewPermission");
-					_socket.Handler.RequestPileViewPermission(arg0, arg1, arg2);
+					_socket.Handler.RequestPileViewPermission(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
 				case 109:
@@ -744,8 +746,10 @@ namespace Octgn.Server
 					byte arg2 = reader.ReadByte();
 					bool arg3 = reader.ReadBoolean();
 					bool arg4 = reader.ReadBoolean();
+					string arg5 = reader.ReadString();
+					int arg6 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  GrantPileViewPermission");
-					_socket.Handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4);
+					_socket.Handler.GrantPileViewPermission(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
 				default:

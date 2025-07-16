@@ -12,12 +12,19 @@ namespace Octgn.Controls
         public bool DialogResult { get; private set; }
         public Action<bool, bool, bool> OnResult { get; set; } // granted, permanent, dialogResult
 
-        public PileViewPermissionDialog(Group pile, Player requester)
+        public PileViewPermissionDialog(Group pile, Player requester, string viewDescription = null)
         {
             InitializeComponent();
             
-            // Set the message with player name included
-            RequestMessageText.Text = $"{requester.Name} is requesting to view your {pile.Name}";
+            // Set the message with player name and specific view details
+            if (!string.IsNullOrEmpty(viewDescription))
+            {
+                RequestMessageText.Text = $"{requester.Name} is requesting to view {viewDescription} in your {pile.Name}";
+            }
+            else
+            {
+                RequestMessageText.Text = $"{requester.Name} is requesting to view your {pile.Name}";
+            }
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
