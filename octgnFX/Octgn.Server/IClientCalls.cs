@@ -39,7 +39,6 @@ namespace Octgn.Server
 		void Highlight(int card, string color);
 		void Turn(byte player, int card, bool up);
 		void Rotate(byte player, int card, CardOrientation rot);
-		void Shake(byte player, int card);
 		void ShuffleDeprecated(int group, int[] card);
 		void Shuffled(byte player, int group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(int group);
@@ -83,5 +82,6 @@ namespace Octgn.Server
 		void SetPlayerColor(byte player, string color);
 		void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount);
 		void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount);
+		void Shake(byte player, int card);
 	}
 }

@@ -662,8 +662,6 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-
-
 		public void ShuffleDeprecated(Group group, int[] card)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(ShuffleDeprecated)}");
@@ -1452,7 +1450,7 @@ namespace Octgn.Networking
 			BinaryWriter writer = new BinaryWriter(stream);
 
 			writer.Write(Program.Client.Muted);
-			writer.Write((byte)111);
+			writer.Write((byte)110);
 			writer.Write(player.Id);
 			writer.Write(card.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);

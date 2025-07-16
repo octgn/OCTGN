@@ -298,15 +298,6 @@ namespace Octgn.Server
 		}
 	}
 
-	public void Shake(byte player, int card)
-	{
-		foreach(var ply in _players.Players){
-			if(ply.Connected){
-				ply.Rpc.Shake(player, card);
-			}
-		}
-	}
-
 	public void ShuffleDeprecated(int group, int[] card)
 	{
 		foreach(var ply in _players.Players){
@@ -690,6 +681,15 @@ namespace Octgn.Server
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
 				ply.Rpc.GrantPileViewPermission(owner, group, requester, granted, permanent, viewType, cardCount);
+			}
+		}
+	}
+
+	public void Shake(byte player, int card)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.Shake(player, card);
 			}
 		}
 	}
