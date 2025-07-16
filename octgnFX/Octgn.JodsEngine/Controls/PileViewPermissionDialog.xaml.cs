@@ -1,20 +1,30 @@
+using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Octgn.Play;
 
 namespace Octgn.Controls
-{
-    public partial class PileViewPermissionDialog : Window
+{    public partial class PileViewPermissionDialog : UserControl
     {
         public bool IsGranted { get; private set; }
         public bool IsPermanent { get; private set; }
-        public string Message { get; private set; }
+        public bool DialogResult { get; private set; }
+        public Action<bool, bool, bool> OnResult { get; set; } // granted, permanent, dialogResult
 
-        public PileViewPermissionDialog(Group pile, Player requester)
+        public PileViewPermissionDialog(Group pile, Player requester, string viewDescription = null)
         {
             InitializeComponent();
             
-            Message = $"{requester.Name} requests permission to view {pile.FullName}.";
-            DataContext = this;
+            // Set the message with player name and specific view details
+            if (!string.IsNullOrEmpty(viewDescription))
+            {
+                RequestMessageText.Text = $"{requester.Name} is requesting to view {viewDescription} in your {pile.Name}";
+            }
+            else
+            {
+                RequestMessageText.Text = $"{requester.Name} is requesting to view your {pile.Name}";
+            }
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -41,6 +51,8 @@ namespace Octgn.Controls
             }
             
             DialogResult = true;
+            OnResult?.Invoke(IsGranted, IsPermanent, DialogResult);
+            CloseDialog();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -48,6 +60,17 @@ namespace Octgn.Controls
             IsGranted = false;
             IsPermanent = false;
             DialogResult = false;
+            OnResult?.Invoke(IsGranted, IsPermanent, DialogResult);
+            CloseDialog();
+        }
+
+        private void CloseDialog()
+        {
+            // Close the backstage dialog
+            if (WindowManager.PlayWindow != null)
+            {
+                WindowManager.PlayWindow.HideBackstage();
+            }
         }
     }
 }

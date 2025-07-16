@@ -424,6 +424,15 @@ namespace Octgn.Server
 		}
 	}
 
+	public void GroupProtection(byte player, int group, string state)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.GroupProtection(player, group, state);
+			}
+		}
+	}
+
 	public void LookAt(byte player, int uid, int group, bool look)
 	{
 		foreach(var ply in _players.Players){
@@ -654,6 +663,24 @@ namespace Octgn.Server
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
 				ply.Rpc.SetPlayerColor(player, color);
+			}
+		}
+	}
+
+	public void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.RequestPileViewPermission(requester, group, targetPlayer, viewType, cardCount);
+			}
+		}
+	}
+
+	public void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.GrantPileViewPermission(owner, group, requester, granted, permanent, viewType, cardCount);
 			}
 		}
 	}

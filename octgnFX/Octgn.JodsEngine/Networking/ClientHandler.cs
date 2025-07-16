@@ -18,6 +18,8 @@ using System.Windows.Media;
 using Octgn.Core.Play;
 using Octgn.Play.State;
 using Octgn.Controls;
+using Octgn.Play.Gui;
+using Octgn.DataNew.Entities;
 using Card = Octgn.Play.Card;
 using Counter = Octgn.Play.Counter;
 using Group = Octgn.Play.Group;
@@ -26,10 +28,12 @@ using Phase = Octgn.Play.Phase;
 using Octgn.DataNew;
 
 namespace Octgn.Networking
-{
-    public sealed class Handler
+{    public sealed class Handler
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        // Event to notify when pile view permission is granted
+        public static event Action<Group> PileViewPermissionGranted;
 
 
         private readonly BinaryParser _binParser;
@@ -845,6 +849,54 @@ namespace Octgn.Networking
             Program.GameMess.PlayerEvent(player, "hides {0} from {1}.", group, whom);
         }
 
+        public void GroupProtection(Player player, Group group, string state)
+        {
+            WriteReplayAction(player.Id);
+            // Ignore messages sent by myself
+            if (!IsLocalPlayer(player))
+            {
+                var pile = group as Pile;
+                if (pile != null)
+                {
+                    GroupProtectionState protectionState;
+                    switch (state.ToLower())
+                    {
+                        case "false":
+                            protectionState = GroupProtectionState.False;
+                            break;
+                        case "true":
+                            protectionState = GroupProtectionState.True;
+                            break;
+                        case "ask":
+                            protectionState = GroupProtectionState.Ask;
+                            break;
+                        default:
+                            Program.GameMess.Warning("Invalid protection state '{0}' received from {1}.", state, player.Name);
+                            return;
+                    }
+                    pile.SetProtectionState(protectionState, false);
+                }
+            }
+            
+            // Replace the switch expression with a standard switch statement for C# 7.3 compatibility
+            string stateDescription;
+            switch (state.ToLower()) {
+                case "false":
+                    stateDescription = "allows viewing of";
+                    break;
+                case "true":
+                    stateDescription = "blocks viewing of";
+                    break;
+                case "ask":
+                    stateDescription = "requires permission to view";
+                    break;
+                default:
+                    stateDescription = "changes protection state of";
+                    break;
+            }
+            Program.GameMess.PlayerEvent(player, "{0} {1}.", stateDescription, group);
+        }
+
         public void LookAt(Player player, int uid, Group group, bool look)
         {
             WriteReplayAction(player.Id);
@@ -1172,25 +1224,27 @@ namespace Octgn.Networking
 	    {
             WriteReplayAction(player.Id);
             player.SetPlayerColor(colorHex);
-	    }
-
-        public void RequestPileViewPermission(Group pile, Player requester)
+	    }        
+        
+        public void RequestPileViewPermission(Player requester, Group pile, Player targetPlayer, string viewType, int cardCount)
         {
             WriteReplayAction(requester.Id);
-            if (IsLocalPlayer(requester) || pile == null || requester == null) return;
             
-            // Only show the dialog to the pile owner
+            if (pile == null || requester == null) return;
+            
+            // Only show the dialog to the pile owner (the person being asked for permission)
             if (pile.Owner == Player.LocalPlayer)
             {
-                ShowPileViewPermissionDialog(pile, requester);
+                ShowPileViewPermissionDialog(pile, requester, viewType, cardCount);
             }
-        }
-
-        public void GrantPileViewPermission(Group pile, Player requester, bool granted, bool permanent)
+        }        
+        
+        public void GrantPileViewPermission(Player owner, Group pile, Player requester, bool granted, bool permanent, string viewType, int cardCount)
         {
             WriteReplayAction(pile.Owner.Id);
-            if (IsLocalPlayer(requester) || pile == null || requester == null) return; // Only process responses for other players
+            if (pile == null || requester == null) return;
             
+            // Process the permission response
             var pileControl = pile as Pile;
             if (pileControl != null)
             {
@@ -1207,47 +1261,145 @@ namespace Octgn.Networking
                 }
             }
             
-            Program.GameMess.PlayerEvent(pile.Owner, granted ? $"grants permission for {requester.Name} to view {pile.FullName}" : $"denies permission for {requester.Name} to view {pile.FullName}");
+            // Create a user-friendly message based on view type
+            string viewDescription;
+            switch (viewType)
+            {
+                case "all":
+                    viewDescription = "all cards";
+                    break;
+                case "top":
+                    viewDescription = $"top {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                    break;
+                case "bottom":
+                    viewDescription = $"bottom {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                    break;
+                default:
+                    viewDescription = "cards";
+                    break;
+            }
+            
+            string action = granted ? "grants" : "denies";
+            Program.GameMess.PlayerEvent(pile.Owner, $"{action} permission for {requester.Name} to view {viewDescription} in {pile.FullName}");
+            
+            // If permission was granted and the requester is the local player, trigger the pile view with specific parameters
+            if (granted && IsLocalPlayer(requester))
+            {
+                // Use the WPF Dispatcher to show the pile view on the UI thread
+                Program.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        var playWindow = WindowManager.PlayWindow;
+                        if (playWindow != null)
+                        {
+                            // Use reflection to access the wndManager field since it's not publicly accessible
+                            var wndManagerField = playWindow.GetType().GetField("wndManager", 
+                                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            if (wndManagerField != null)
+                            {
+                                var manager = wndManagerField.GetValue(playWindow) as Octgn.Controls.ChildWindowManager;
+                                if (manager != null)
+                                {
+                                    // Show the specific view that was requested
+                                    PilePosition position;
+                                    switch (viewType)
+                                    {
+                                        case "top":
+                                            position = PilePosition.Top;
+                                            break;
+                                        case "bottom":
+                                            position = PilePosition.Bottom;
+                                            break;
+                                        default:
+                                            position = PilePosition.All;
+                                            break;
+                                    }
+                                    
+                                    var groupWindow = new GroupWindow(pile, position, cardCount);
+                                    manager.Show(groupWindow);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error but don't show to user
+                        Log.Error($"Error showing pile view: {ex.Message}");
+                    }
+                }));
+            }
         }
-
-        private void ShowPileViewPermissionDialog(Group pile, Player requester)
+        
+        private void ShowPileViewPermissionDialog(Group pile, Player requester, string viewType, int cardCount)
         {
             Program.Dispatcher.BeginInvoke(new Action(() =>
             {
-                // Create a custom dialog with the four options
-                var dialog = new PileViewPermissionDialog(pile, requester);
-                var result = dialog.ShowDialog();
-                
-                if (result.HasValue && result.Value)
+                try
                 {
-                    bool granted = dialog.IsGranted;
-                    bool permanent = dialog.IsPermanent;
-                    
-                    if (permanent)
+                    // Create a user-friendly message based on view type
+                    string viewDescription;
+                    switch (viewType)
                     {
-                        // Update local pile protection state
-                        var pileControl = pile as Pile;
-                        if (pileControl != null)
-                        {
-                            pileControl.ProtectionState = granted ? DataNew.Entities.GroupProtectionState.False : DataNew.Entities.GroupProtectionState.True;
-                        }
-                    }
-                    else if (granted)
-                    {
-                        // Add temporary permission locally
-                        var pileControl = pile as Pile;
-                        if (pileControl != null && !pileControl.TemporaryViewPermissions.Contains(requester))
-                        {
-                            pileControl.TemporaryViewPermissions.Add(requester);
-                        }
+                        case "all":
+                            viewDescription = "all cards";
+                            break;
+                        case "top":
+                            viewDescription = $"top {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                            break;
+                        case "bottom":
+                            viewDescription = $"bottom {cardCount} card{(cardCount != 1 ? "s" : "")}";
+                            break;
+                        default:
+                            viewDescription = "cards";
+                            break;
                     }
                     
-                    Program.Client.Rpc.GrantPileViewPermission(pile, requester, granted, permanent);
+                    // Create the dialog UserControl
+                    var dialog = new PileViewPermissionDialog(pile, requester, viewDescription);
+                    
+                    // Set up callback to handle the result
+                    dialog.OnResult = (granted, permanent, dialogResult) =>
+                    {
+                        if (dialogResult)
+                        {
+                            if (permanent)
+                            {
+                                // Update local pile protection state
+                                var pileControl = pile as Pile;
+                                if (pileControl != null)
+                                {
+                                    pileControl.ProtectionState = granted ? DataNew.Entities.GroupProtectionState.False : DataNew.Entities.GroupProtectionState.True;
+                                }
+                            }
+                            else if (granted)
+                            {
+                                // Add temporary permission locally
+                                var pileControl = pile as Pile;
+                                if (pileControl != null && !pileControl.TemporaryViewPermissions.Contains(requester))
+                                {
+                                    pileControl.TemporaryViewPermissions.Add(requester);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Dialog was cancelled - treat as "No"
+                            granted = false;
+                            permanent = false;
+                        }
+                        
+                        Program.Client.Rpc.GrantPileViewPermission(Player.LocalPlayer, pile, requester, granted, permanent, viewType, cardCount);
+                    };
+                    
+                    // Show it in the backstage like PickCardsDialog
+                    WindowManager.PlayWindow.ShowBackstage(dialog);
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Dialog was cancelled - treat as "No"
-                    Program.Client.Rpc.GrantPileViewPermission(pile, requester, false, false);
+                    Log.Error($"Exception in pile view permission dialog: {ex.Message}");
+                    // If there's an exception, deny permission
+                    Program.Client.Rpc.GrantPileViewPermission(Player.LocalPlayer, pile, requester, false, false, viewType, cardCount);
                 }
             }));
         }
