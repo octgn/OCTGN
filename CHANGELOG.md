@@ -1,3 +1,6 @@
+#3.4.414.0
++ Add shaking feature
+
 #3.4.413.0
 + * Got pile protection working
 
@@ -4108,6 +4111,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
