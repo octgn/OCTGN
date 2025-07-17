@@ -32,12 +32,18 @@
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ServiceProcess" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj" />
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj" />
+    <ProjectReference Include="..\Octgn.Online.CommunicationService\Octgn.Online.CommunicationService.csproj" />
     <ProjectReference Include="..\Octgn.WindowsDesktopUtilities\Octgn.WindowsDesktopUtilities.csproj" />
   </ItemGroup>
 

@@ -11,9 +11,11 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj" />
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj" />
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj" />
   </ItemGroup>

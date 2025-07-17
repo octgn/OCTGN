@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj" />
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj" />
   </ItemGroup>

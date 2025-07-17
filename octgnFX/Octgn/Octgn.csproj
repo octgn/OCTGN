@@ -8,9 +8,16 @@
     <RootNamespace>Octgn</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
-    <StartupObject>Octgn.App</StartupObject>
+    <StartupObject>Octgn.OctgnApp</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Management" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
@@ -43,11 +50,11 @@
     <PackageReference Include="Nito.Collections.Deque" Version="1.1.1" />
     <PackageReference Include="Nito.Disposables" Version="2.3.0" />
     <PackageReference Include="NuGet.Core" Version="2.14.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-    <PackageReference Include="Wpf.Emoji" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +73,10 @@
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Extentions\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

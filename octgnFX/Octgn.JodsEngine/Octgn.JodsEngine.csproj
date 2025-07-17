@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>Octgn.JodsEngine</AssemblyName>
     <RootNamespace>Octgn</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,11 +36,13 @@
     <PackageReference Include="NAudio.WinMM" Version="2.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="NuGet.Core" Version="2.14.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-    <PackageReference Include="Wpf.Emoji" Version="1.0.2" />
+    <PackageReference Include="ToggleSwitch" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +53,7 @@
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj" />
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj" />
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj" />
+    <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj" />
   </ItemGroup>
 
   <ItemGroup>

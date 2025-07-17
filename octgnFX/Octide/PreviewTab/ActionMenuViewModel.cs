@@ -20,6 +20,7 @@ using System.Windows;
 using DragDrop = GongSolutions.Wpf.DragDrop.DragDrop;
 using System.Windows.Controls;
 using Octide.ItemModel;
+using Octide.SetTab.ItemModel;
 
 namespace Octide.ViewModel
 {
@@ -29,8 +30,8 @@ namespace Octide.ViewModel
         public RelayCommand NewSubmenuCommand { get; private set; }
         public RelayCommand NewSeparatorCommand { get; private set; }
 
-        public GroupItemViewModel Group { get; set; }
-        public CardViewModel Card { get; set; }
+        public BaseGroupItemModel Group { get; set; }
+        public CardModel Card { get; set; }
 
         public string GroupHeader
         {
@@ -55,7 +56,7 @@ namespace Octide.ViewModel
             get
             {
                 if (Card == null) return "Card";
-                return Card.Size.Name;
+                return "Card"; // Card doesn't have a Size property in this context
             }
         }
 
@@ -88,23 +89,31 @@ namespace Octide.ViewModel
         public void Drop(IDropInfo dropInfo)
         {
             DragDrop.DefaultDropHandler.Drop(dropInfo);
-            (dropInfo.Data as IBaseAction).Action.IsGroup = ((dropInfo.VisualTarget as TreeView).Name == "GroupActions") ? true : false;
+            (dropInfo.Data as IBaseAction)._action.IsGroup = ((dropInfo.VisualTarget as TreeView).Name == "GroupActions") ? true : false;
         }
 
 
         private void NewAction()
         {
-            Group.GroupActions.Add(new ActionItemModel() { Parent = Group.GroupActions });
+            Group.GroupActions.Add(new ActionItemModel(Group.GroupActions));
         }
 
         private void NewSubmenu()
         {
-            Group.GroupActions.Add(new ActionSubmenuItemModel() { Parent = Group.GroupActions });
+            Group.GroupActions.Add(new ActionSubmenuItemModel(Group.GroupActions));
         }
 
         private void NewSeparator()
         {
-            Group.GroupActions.Add(new ActionSeparatorItemModel() { Parent = Group.GroupActions });
+            Group.GroupActions.Add(new ActionSeparatorItemModel(Group.GroupActions));
+        }
+
+        public void DragEnter(IDropInfo dropInfo) {
+            
+        }
+
+        public void DragLeave(IDropInfo dropInfo) {
+            
         }
     }
 }

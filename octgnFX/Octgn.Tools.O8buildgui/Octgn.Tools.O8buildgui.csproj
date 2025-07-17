@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>O8buildgui</AssemblyName>
     <RootNamespace>Octgn.Tools.O8buildgui</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

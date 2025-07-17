@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj" />
+    <ProjectReference Include="..\Octgn.Online.CommunicationService\Octgn.Online.CommunicationService.csproj" />
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj" />
     <ProjectReference Include="..\Octgn.WindowsDesktopUtilities\Octgn.WindowsDesktopUtilities.csproj" />
   </ItemGroup>
