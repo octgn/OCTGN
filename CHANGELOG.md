@@ -1,3 +1,6 @@
+#3.4.421.0
++ Fixed the missing button ribbon in the limited deck editor
+
 #3.4.419.0
 + Fixed crash on startup when multicast networking is not available
 
@@ -4116,6 +4119,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
