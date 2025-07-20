@@ -986,7 +986,7 @@ namespace Octgn.Play
                     this.playerTabs.Visibility = Visibility.Collapsed;
                     this.PlayerListBorder.Visibility = Visibility.Collapsed;
                     this.ShowPlayersIcon.Visibility = Visibility.Collapsed;
-                    this.LimitedBackstageButtons.Visibility = Visibility.Collapsed;
+                    this.LimitedBackstageButtons.Visibility = Visibility.Visible;
                     this.LimitedBackstage.Visibility = Visibility.Visible;
                     backstage.Visibility = Visibility.Visible;
                     this.Menu.IsEnabled = false;
@@ -999,14 +999,14 @@ namespace Octgn.Play
 
             table.Visibility = Visibility.Visible;
             wndManager.Visibility = Visibility.Visible;
-            LimitedBackstage.Visibility = Visibility.Collapsed;
+            this.LimitedBackstage.Visibility = Visibility.Collapsed;
+            this.LimitedBackstageButtons.Visibility = Visibility.Collapsed;
             backstage.Visibility = Visibility.Collapsed;
 			this.PhaseControl.Visibility = Visibility.Visible;
 			this.DeckStats.Visibility = Visibility.Visible;
             this.playerTabs.Visibility = Visibility.Visible;
             this.PlayerListBorder.Visibility = Visibility.Visible;
             this.ShowPlayersIcon.Visibility = Visibility.Visible;
-            this.LimitedBackstageButtons.Visibility = Visibility.Visible;
 			this.Menu.IsEnabled = true;
             this.Menu.Visibility = Visibility.Visible;
             backstage.Child = null;
