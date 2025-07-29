@@ -1,3 +1,6 @@
+#3.4.422.0
++ Fixed some networking id issues - kellye
+
 #3.4.421.0
 + Fixed the missing button ribbon in the limited deck editor
 
@@ -4119,6 +4122,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
