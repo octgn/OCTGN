@@ -53,7 +53,6 @@ namespace Octgn.Server
 		void GroupVis(byte player, int group, bool defined, bool visible);
 		void GroupVisAdd(byte player, int group, byte who);
 		void GroupVisRemove(byte player, int group, byte who);
-		void GroupProtection(byte player, int group, string state);
 		void LookAt(byte player, int uid, int group, bool look);
 		void LookAtTop(byte player, int uid, int group, int count, bool look);
 		void LookAtBottom(byte player, int uid, int group, int count, bool look);
@@ -83,5 +82,6 @@ namespace Octgn.Server
 		void RequestPileViewPermission(byte requester, int group, byte targetPlayer, string viewType, int cardCount);
 		void GrantPileViewPermission(byte owner, int group, byte requester, bool granted, bool permanent, string viewType, int cardCount);
 		void Shake(byte player, int card);
+		void GroupProtection(byte player, int group, string state);
 	}
 }
