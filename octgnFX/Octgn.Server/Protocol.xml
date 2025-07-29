@@ -398,16 +398,6 @@
     <param name="who" type="PlayerOrSpectator" />
   </msg>
 
-  <msg name="GroupProtectionReq" server="true">
-    <param name="group" type="Group" />
-    <param name="state" type="string" />
-  </msg>
-  <msg name="GroupProtection" client="true">
-    <param name="player" type="Player" />
-    <param name="group" type="Group" />
-    <param name="state" type="string" />
-  </msg>
-
   <msg name="LookAtReq" server="true">
     <param name="uid" type="int" />
     <param name="group" type="Group" />
@@ -568,5 +558,14 @@
   <msg name="Shake" client="true" server="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
+  </msg>
+  <msg name="GroupProtectionReq" server="true">
+	<param name="group" type="Group" />
+	<param name="state" type="string" />
+  </msg>
+  <msg name="GroupProtection" client="true">
+	<param name="player" type="Player" />
+	<param name="group" type="Group" />
+	<param name="state" type="string" />
   </msg>
 </protocol>

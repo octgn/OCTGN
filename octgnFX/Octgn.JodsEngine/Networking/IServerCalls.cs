@@ -56,7 +56,6 @@ namespace Octgn.Networking
 		void GroupVisReq(Group group, bool defined, bool visible);
 		void GroupVisAddReq(Group group, Player who);
 		void GroupVisRemoveReq(Group group, Player who);
-		void GroupProtectionReq(Group group, string state);
 		void LookAtReq(int uid, Group group, bool look);
 		void LookAtTopReq(int uid, Group group, int count, bool look);
 		void LookAtBottomReq(int uid, Group group, int count, bool look);
@@ -84,5 +83,6 @@ namespace Octgn.Networking
 		void RequestPileViewPermission(Player requester, Group group, Player targetPlayer, string viewType, int cardCount);
 		void GrantPileViewPermission(Player owner, Group group, Player requester, bool granted, bool permanent, string viewType, int cardCount);
 		void Shake(Player player, Card card);
+		void GroupProtectionReq(Group group, string state);
 	}
 }

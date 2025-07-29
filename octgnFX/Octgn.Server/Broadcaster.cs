@@ -424,15 +424,6 @@ namespace Octgn.Server
 		}
 	}
 
-	public void GroupProtection(byte player, int group, string state)
-	{
-		foreach(var ply in _players.Players){
-			if(ply.Connected){
-				ply.Rpc.GroupProtection(player, group, state);
-			}
-		}
-	}
-
 	public void LookAt(byte player, int uid, int group, bool look)
 	{
 		foreach(var ply in _players.Players){
@@ -690,6 +681,15 @@ namespace Octgn.Server
 		foreach(var ply in _players.Players){
 			if(ply.Connected){
 				ply.Rpc.Shake(player, card);
+			}
+		}
+	}
+
+	public void GroupProtection(byte player, int group, string state)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.GroupProtection(player, group, state);
 			}
 		}
 	}
