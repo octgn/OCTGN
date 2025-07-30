@@ -5,6 +5,7 @@ namespace Octgn.DeckBuilderPluginExample
     using System.Linq;
     using System.Reflection;
     using System.Windows;
+    using System.Windows.Forms;
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;

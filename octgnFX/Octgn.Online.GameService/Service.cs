@@ -3,10 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Reflection;
-using Octgn.Utils;
+using Octgn.WindowsDesktopUtilities;
 using Octgn.Communication;
 using Octgn.Site.Api;
-using Octgn.WindowsDesktopUtilities;
 using Octgn.Communication.Tcp;
 
 namespace Octgn.Online.GameService

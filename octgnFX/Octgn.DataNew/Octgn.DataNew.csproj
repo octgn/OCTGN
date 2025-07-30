@@ -1,173 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{59759960-0A48-45EC-ABB9-B4FAAD6D43EE}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Octgn.DataNew</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Octgn.DataNew</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <RootNamespace>Octgn.DataNew</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug x86|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug x86\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug x86|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug x86\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\Debug\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="CardPropertyComparer.cs" />
-    <Compile Include="DbContext.cs" />
-    <Compile Include="Def.cs" />
-    <Compile Include="Entities\Card.cs" />
-    <Compile Include="Entities\CardSize.cs" />
-    <Compile Include="Entities\GroupViewState.cs" />
-    <Compile Include="Entities\BackgroundStyle.cs" />
-    <Compile Include="Entities\ISleeve.cs" />
-    <Compile Include="Entities\GameMarker.cs" />
-    <Compile Include="Entities\Sleeve.cs" />
-    <Compile Include="Entities\SleeveSource.cs" />
-    <Compile Include="Entities\Symbol.cs" />
-    <Compile Include="Entities\GamePhase.cs" />
-    <Compile Include="Entities\Include.cs" />
-    <Compile Include="Entities\Counter.cs" />
-    <Compile Include="Entities\DataRectangle.cs" />
-    <Compile Include="Entities\Deck.cs" />
-    <Compile Include="Entities\DeckSection.cs" />
-    <Compile Include="Entities\GameBoard.cs" />
-    <Compile Include="Entities\Document.cs" />
-    <Compile Include="Entities\Font.cs" />
-    <Compile Include="Entities\Game.cs" />
-    <Compile Include="Entities\GameEvent.cs" />
-    <Compile Include="Entities\GameMode.cs" />
-    <Compile Include="Entities\GameScript.cs" />
-    <Compile Include="Entities\GameSound.cs" />
-    <Compile Include="Entities\GlobalVariable.cs" />
-    <Compile Include="Entities\Group.cs" />
-    <Compile Include="Entities\GroupProtectionState.cs" />
-    <Compile Include="Entities\GroupVisibility.cs" />
-    <Compile Include="Entities\MultiCard.cs" />
-    <Compile Include="Entities\PickProperty.cs" />
-    <Compile Include="Entities\Option.cs" />
-    <Compile Include="Entities\OptionsList.cs" />
-    <Compile Include="Entities\Pack.cs" />
-    <Compile Include="Entities\PackContent.cs" />
-    <Compile Include="Entities\Pick.cs" />
-    <Compile Include="Entities\Player.cs" />
-    <Compile Include="Entities\PropertyDef.cs" />
-    <Compile Include="Entities\Section.cs" />
-    <Compile Include="Entities\Set.cs" />
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="FileDB\CollectionDefinition.cs" />
-    <Compile Include="FileDB\CollectionQuery.cs" />
-    <Compile Include="FileDB\FileDb.cs" />
-    <Compile Include="FileDB\FileDbConfiguration.cs" />
-    <Compile Include="FileDB\FullCacheProvider.cs" />
-    <Compile Include="FileDB\ICacheProvider.cs" />
-    <Compile Include="FileDB\IFileDbSerializer.cs" />
-    <Compile Include="FileDB\IPart.cs" />
-    <Compile Include="FileDB\Part.cs" />
-    <Compile Include="FileDB\PartType.cs" />
-    <Compile Include="GameSerializer.cs" />
-    <Compile Include="IDbContext.cs" />
-    <Compile Include="IDbContextCaching.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\RichTextPropertyValue.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <PackageReference Include="log4net" Version="2.0.15" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
-      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
-      <Name>Octgn.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
-      <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
-      <Name>Octgn.ProxyGenerator</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj" />
+    <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
