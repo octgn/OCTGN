@@ -1096,9 +1096,33 @@ namespace Octgn
                 ScriptEngine.ExecuteFunctionNoFormat(func, args);
 
             }
-            catch (Exception)
+            catch (Scripting.ScriptSecurityException secEx)
             {
+                // Log the security violation with detailed information
+                var playerName = fromPlayer?.Name ?? "Unknown Player";
+                var securityMessage = $"SECURITY VIOLATION: Player '{playerName}' attempted to execute potentially malicious code.\n" +
+                                    $"Function: '{secEx.FunctionName}'\n" +
+                                    $"Arguments: '{secEx.Arguments}'\n" +
+                                    $"Reason: {secEx.SecurityReason}";
+                
+                if (!string.IsNullOrEmpty(secEx.GeneratedCode))
+                {
+                    securityMessage += $"\nGenerated Code: '{secEx.GeneratedCode}'";
+                }
 
+                // Log to game log for administrators/debugging
+                Program.GameMess.Warning(securityMessage);
+                
+                // Also log to regular log for persistent tracking
+                Log.WarnFormat("Remote script execution blocked - Player: {0}, Function: {1}, Args: {2}, Reason: {3}", 
+                    playerName, secEx.FunctionName, secEx.Arguments, secEx.SecurityReason);
+            }
+            catch (Exception ex)
+            {
+                // Log other execution errors
+                var playerName = fromPlayer?.Name ?? "Unknown Player";
+                Log.ErrorFormat("Error executing remote script call from player {0} - Function: {1}, Args: {2}, Error: {3}", 
+                    playerName, func, args, ex.Message);
             }
         }
 
