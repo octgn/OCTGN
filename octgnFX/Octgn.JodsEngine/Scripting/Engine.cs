@@ -304,53 +304,54 @@ namespace Octgn.Scripting
 
         public void ExecuteFunctionNoFormat(string function, string args)
         {
-            //            const string Template = @"if '{0}' in dir():
-            //  {0}({1})";
+            // 1. Validate function name - must be a valid Python identifier
+            if (!IsValidPythonIdentifier(function))
+            {
+                Log.WarnFormat("Security violation: Invalid function name '{0}'. Function names must be valid Python identifiers.", function);
+                throw new ScriptSecurityException(function, args, "Invalid function name - must be valid Python identifier");
+            }
 
+            // 2. Check for dangerous function names
+            if (IsDangerousFunction(function))
+            {
+                Log.WarnFormat("Security violation: Function '{0}' is not allowed for security reasons.", function);
+                throw new ScriptSecurityException(function, args, "Dangerous function name not allowed");
+            }
+
+            // 3. Check if the function exists in the scope before executing it
+            if (!ActionsScope.TryGetVariable(function, out var functionObject))
+            {
+                Log.WarnFormat("Security violation: Function '{0}' does not exist in the current scope.", function);
+                throw new ScriptSecurityException(function, args, "Function does not exist in current scope");
+            }
+
+            // 4. Additional check to ensure it's actually callable
+            if (functionObject == null)
+            {
+                Log.WarnFormat("Security violation: Function '{0}' exists but is null.", function);
+                throw new ScriptSecurityException(function, args, "Function exists but is null");
+            }
+
+            // 5. Validate arguments for potential code injection
+            if (ContainsPotentialInjection(args))
+            {
+                Log.WarnFormat("Security violation: Arguments contain potentially dangerous content for function '{0}'. Args: '{1}'", function, args);
+                throw new ScriptSecurityException(function, args, "Arguments contain potentially dangerous content");
+            }
+
+            // 6. Use explicit SourceCodeKind.SingleStatement for maximum security
             const string Template = @"{0}({1})";
-
             var stringSource = string.Format(Template, function, args);
 
-            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.Statements);
-            StartExecution(src, ActionsScope, null);
-        }
+            // 7. Additional validation of the final generated code
+            if (ContainsPotentialInjection(stringSource))
+            {
+                Log.WarnFormat("Security violation: Generated script contains potentially dangerous content for function '{0}'. Generated code: '{1}'", function, stringSource);
+                throw new ScriptSecurityException(function, args, stringSource, "Generated script contains potentially dangerous content");
+            }
 
-        public object ConvertArgs(object arg)
-        {
-            if (arg is Player)
-            {
-                var ptype = ActionsScope.GetVariable("Player");
-                var na = _engine.Operations.CreateInstance(ptype, (arg as Player).Id);
-                return na;
-            }
-            else if (arg is Table)
-            {
-                var ptype = ActionsScope.GetVariable("table");
-                return ptype;
-            }
-            else if (arg is Group)
-            {
-                var cur = arg as Group;
-                var type = ActionsScope.GetVariable("Pile");
-                var na = _engine.Operations.CreateInstance(type, cur.Id, cur.Name, ConvertArgs(cur.Owner));
-                return na;
-            }
-            else if (arg is Card)
-            {
-                var cur = arg as Card;
-                var type = ActionsScope.GetVariable("Card");
-                var na = _engine.Operations.CreateInstance(type, cur.Id);
-                return na;
-            }
-            else if (arg is Counter)
-            {
-                var cur = arg as Counter;
-                var type = ActionsScope.GetVariable("Counter");
-                var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Id == cur.Id));
-                var na = _engine.Operations.CreateInstance(type, cur.Id, cur.Name, ConvertArgs(player));
-                return na;
-            }
-            return arg;
+            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.SingleStatement);
+            StartExecution(src, ActionsScope, null);
         }
 
         public string FormatObject(object o)
@@ -372,7 +373,6 @@ namespace Octgn.Scripting
             {
                 var h = o as Group;
                 return PythonConverter.GroupCtor(h);
-                //return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
             }
             if (o is Card)
             {
@@ -390,6 +390,142 @@ namespace Octgn.Scripting
                 return string.Format("\"{0}\"", o);
             }
             return o.ToString();
+        }
+
+        /// <summary>
+        /// Validates that a string is a valid Python identifier
+        /// </summary>
+        private static bool IsValidPythonIdentifier(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                return false;
+
+            // Must start with letter or underscore
+            if (!char.IsLetter(identifier[0]) && identifier[0] != '_')
+                return false;
+
+            // Rest must be letters, digits, or underscores
+            for (int i = 1; i < identifier.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(identifier[i]) && identifier[i] != '_')
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if a function name is potentially dangerous
+        /// </summary>
+        private static bool IsDangerousFunction(string function)
+        {
+            var dangerousFunctions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "exec", "eval", "compile", "__import__", "open", "file", "input", "raw_input",
+                "reload", "execfile", "apply", "getattr", "setattr", "delattr", "hasattr",
+                "globals", "locals", "vars", "dir", "exit", "quit"
+            };
+
+            return dangerousFunctions.Contains(function);
+        }
+
+        /// <summary>
+        /// Checks for potential code injection in arguments or generated code
+        /// </summary>
+        private static bool ContainsPotentialInjection(string content)
+        {
+            if (string.IsNullOrEmpty(content))
+                return false;
+
+            // Check for dangerous keywords and patterns
+            var dangerousPatterns = new[]
+            {
+                "import ",
+                "from ",
+                "exec(",
+                "eval(",
+                "compile(",
+                "__import__",
+                "globals(",
+                "locals(",
+                "open(",
+                "file(",
+                "\n",           // Newlines can break out of function calls
+                "\r",           // Carriage returns
+                ";",            // Statement separators
+                "\\",           // Escape sequences
+                "'''",          // Triple quotes
+                "\"\"\"",       // Triple quotes
+                "#",            // Comments (could hide injection)
+                "lambda",       // Lambda functions
+                "class ",       // Class definitions
+                "def ",         // Function definitions
+                "raise ",       // Exception raising
+                "assert ",      // Assertions
+                "yield ",       // Generators
+                "return ",      // Return statements
+                "break",        // Control flow
+                "continue",     // Control flow
+                "pass",         // Pass statements
+                "del ",         // Deletions
+                "global ",      // Global declarations
+                "nonlocal ",    // Nonlocal declarations
+            };
+
+            // Convert to lowercase for case-insensitive checking
+            var lowerContent = content.ToLowerInvariant();
+
+            foreach (var pattern in dangerousPatterns)
+            {
+                if (lowerContent.Contains(pattern.ToLowerInvariant()))
+                {
+                    return true;
+                }
+            }
+
+            // Check for unbalanced quotes that could allow escaping
+            int singleQuotes = 0;
+            int doubleQuotes = 0;
+            bool inSingleQuote = false;
+            bool inDoubleQuote = false;
+
+            for (int i = 0; i < content.Length; i++)
+            {
+                char c = content[i];
+                
+                if (c == '\'' && !inDoubleQuote)
+                {
+                    if (!inSingleQuote)
+                    {
+                        inSingleQuote = true;
+                        singleQuotes++;
+                    }
+                    else
+                    {
+                        inSingleQuote = false;
+                    }
+                }
+                else if (c == '"' && !inSingleQuote)
+                {
+                    if (!inDoubleQuote)
+                    {
+                        inDoubleQuote = true;
+                        doubleQuotes++;
+                    }
+                    else
+                    {
+                        inDoubleQuote = false;
+                    }
+                }
+            }
+
+            // If quotes are unbalanced, it might be an injection attempt
+            if (inSingleQuote || inDoubleQuote)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public void ExecuteOnGroup(string function, Group group, Action<ExecutionResult> continuation = null)

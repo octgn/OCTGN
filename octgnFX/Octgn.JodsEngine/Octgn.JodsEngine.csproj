@@ -512,6 +512,7 @@
     <Compile Include="Scripting\ScriptApi.cs" />
     <Compile Include="Scripting\ScriptApiOld.cs" />
     <Compile Include="Scripting\ScriptJob.cs" />
+    <Compile Include="Scripting\ScriptSecurityException.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_2.cs" />
