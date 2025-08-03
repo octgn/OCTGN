@@ -1110,7 +1110,20 @@ namespace Octgn
                     securityMessage += $"\nGenerated Code: '{secEx.GeneratedCode}'";
                 }
 
-                // Log to game log for administrators/debugging
+                // Broadcast security warning to all players in the game
+                if (Program.Client?.Rpc != null)
+                {
+                    try
+                    {
+                        Program.Client.Rpc.Error($"⚠️ SECURITY ALERT: {playerName} attempted malicious script execution. Reason: {secEx.SecurityReason}");
+                    }
+                    catch (Exception broadcastEx)
+                    {
+                        Log.ErrorFormat("Failed to broadcast security violation: {0}", broadcastEx.Message);
+                    }
+                }
+
+                // Log to game log for administrators/debugging (local display)
                 Program.GameMess.Warning(securityMessage);
                 
                 // Also log to regular log for persistent tracking
