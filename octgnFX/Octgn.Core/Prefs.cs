@@ -652,5 +652,11 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("InGameChatTextShadows", false); }
             set { Config.Instance.WriteValue("InGameChatTextShadows", value); }
         }
+
+        public static bool EnableGameSandboxing
+        {
+            get { return Config.Instance.ReadValue("EnableGameSandboxing", true); }
+            set { Config.Instance.WriteValue("EnableGameSandboxing", value); }
+        }
     }
 }
