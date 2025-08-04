@@ -1093,7 +1093,7 @@ namespace Octgn
             try
             {
                 //var argo = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(args);
-                ScriptEngine.ExecuteFunctionNoFormat(func, args);
+                ScriptEngine.ExecuteFunctionSecureNoFormat(func, args);
 
             }
             catch (Scripting.ScriptSecurityException secEx)
