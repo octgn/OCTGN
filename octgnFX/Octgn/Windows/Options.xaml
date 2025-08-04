@@ -226,6 +226,10 @@
                             </Grid.RowDefinitions>
                             <StackPanel>
                                 <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxEnableGameSandboxing">
+                                    <TextBlock Foreground="White">Enable Game Sandboxing (Recommended for Security)</TextBlock>
+                                </CheckBox>
+                                <Grid Height="6"/>
                                 <CheckBox x:Name="CheckBoxUseTestReleases">
                                     <TextBlock Foreground="White">Opt-In to OCTGN Development Testing Version
                                         <Bold Foreground="#FFFF0000">*</Bold>

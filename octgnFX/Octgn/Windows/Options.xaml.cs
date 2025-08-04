@@ -45,6 +45,7 @@ namespace Octgn.Windows
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
             CheckBoxShowLanMode.IsChecked = Prefs.EnableLanGames;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
+            CheckBoxEnableGameSandboxing.IsChecked = Prefs.EnableGameSandboxing;
             CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             HandDensitySlider.Value = Prefs.HandDensity;
 
@@ -93,6 +94,7 @@ namespace Octgn.Windows
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
             var handDensity = HandDensitySlider.Value;
             var useTestReleases = CheckBoxUseTestReleases.IsChecked ?? false;
+            var enableGameSandboxing = CheckBoxEnableGameSandboxing.IsChecked ?? true;
             var zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             var soundOption = (Prefs.SoundType)ComboBoxJoinSound.SelectedIndex;
             var animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
@@ -147,6 +149,7 @@ namespace Octgn.Windows
                     Prefs.EnableLanGames = showLanMode;
                     Prefs.UseGameFonts = useGameFonts;
                     Prefs.HandDensity = handDensity;
+                    Prefs.EnableGameSandboxing = enableGameSandboxing;
                     Prefs.InGameChatTextShadows = inGameChatTextShadow;
                     if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
                         File.Create(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
