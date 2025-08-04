@@ -304,6 +304,14 @@ namespace Octgn.Scripting
 
         public void ExecuteFunctionNoFormat(string function, string args)
         {
+            const string Template = @"{0}({1})";
+            var stringSource = string.Format(Template, function, args);
+            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.Statements);
+            StartExecution(src, ActionsScope, null);
+        }
+
+        public void ExecuteFunctionSecureNoFormat(string function, string args)
+        {
             // 1. Validate function name - must be a valid Python identifier
             if (!IsValidPythonIdentifier(function))
             {
@@ -339,7 +347,7 @@ namespace Octgn.Scripting
                 throw new ScriptSecurityException(function, args, "Arguments contain potentially dangerous content");
             }
 
-            // 6. Use explicit SourceCodeKind.SingleStatement for maximum security
+            // 6. Generate the code and validate it
             const string Template = @"{0}({1})";
             var stringSource = string.Format(Template, function, args);
 
@@ -350,8 +358,8 @@ namespace Octgn.Scripting
                 throw new ScriptSecurityException(function, args, stringSource, "Generated script contains potentially dangerous content");
             }
 
-            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.SingleStatement);
-            StartExecution(src, ActionsScope, null);
+            // 8. All security checks passed - delegate to the standard execution method
+            ExecuteFunctionNoFormat(function, args);
         }
 
         public string FormatObject(object o)
