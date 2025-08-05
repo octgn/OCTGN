@@ -558,6 +558,7 @@ namespace Octgn.Scripting
             var inDoubleQuote = false;
             var bracketDepth = 0;
             var parenDepth = 0;
+            var braceDepth = 0;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -595,7 +596,17 @@ namespace Octgn.Scripting
                         parenDepth--;
                         current.Append(c);
                     }
-                    else if (c == ',' && bracketDepth == 0 && parenDepth == 0)
+                    else if (c == '{')
+                    {
+                        braceDepth++;
+                        current.Append(c);
+                    }
+                    else if (c == '}')
+                    {
+                        braceDepth--;
+                        current.Append(c);
+                    }
+                    else if (c == ',' && bracketDepth == 0 && parenDepth == 0 && braceDepth == 0)
                     {
                         // This is a top-level comma separator
                         arguments.Add(current.ToString());
@@ -619,6 +630,161 @@ namespace Octgn.Scripting
             }
 
             return arguments;
+        }
+
+        /// <summary>
+        /// Parses dictionary pairs from dictionary content, respecting nesting
+        /// </summary>
+        private List<string> ParseDictionaryPairs(string content)
+        {
+            var pairs = new List<string>();
+            var current = new StringBuilder();
+            var inSingleQuote = false;
+            var inDoubleQuote = false;
+            var bracketDepth = 0;
+            var parenDepth = 0;
+            var braceDepth = 0;
+
+            for (int i = 0; i < content.Length; i++)
+            {
+                char c = content[i];
+
+                if (c == '\'' && !inDoubleQuote)
+                {
+                    inSingleQuote = !inSingleQuote;
+                    current.Append(c);
+                }
+                else if (c == '"' && !inSingleQuote)
+                {
+                    inDoubleQuote = !inDoubleQuote;
+                    current.Append(c);
+                }
+                else if (!inSingleQuote && !inDoubleQuote)
+                {
+                    if (c == '[')
+                    {
+                        bracketDepth++;
+                        current.Append(c);
+                    }
+                    else if (c == ']')
+                    {
+                        bracketDepth--;
+                        current.Append(c);
+                    }
+                    else if (c == '(')
+                    {
+                        parenDepth++;
+                        current.Append(c);
+                    }
+                    else if (c == ')')
+                    {
+                        parenDepth--;
+                        current.Append(c);
+                    }
+                    else if (c == '{')
+                    {
+                        braceDepth++;
+                        current.Append(c);
+                    }
+                    else if (c == '}')
+                    {
+                        braceDepth--;
+                        current.Append(c);
+                    }
+                    else if (c == ',' && bracketDepth == 0 && parenDepth == 0 && braceDepth == 0)
+                    {
+                        // This is a top-level comma separator for dictionary pairs
+                        pairs.Add(current.ToString());
+                        current.Clear();
+                    }
+                    else
+                    {
+                        current.Append(c);
+                    }
+                }
+                else
+                {
+                    current.Append(c);
+                }
+            }
+
+            // Add the last pair
+            if (current.Length > 0)
+            {
+                pairs.Add(current.ToString());
+            }
+
+            return pairs;
+        }
+
+        /// <summary>
+        /// Parses a single key-value pair from dictionary content
+        /// </summary>
+        private Tuple<string, string> ParseKeyValuePair(string pair)
+        {
+            var inSingleQuote = false;
+            var inDoubleQuote = false;
+            var bracketDepth = 0;
+            var parenDepth = 0;
+            var braceDepth = 0;
+            var colonIndex = -1;
+
+            // Find the colon separator that's not inside quotes or nested structures
+            for (int i = 0; i < pair.Length; i++)
+            {
+                char c = pair[i];
+
+                if (c == '\'' && !inDoubleQuote)
+                {
+                    inSingleQuote = !inSingleQuote;
+                }
+                else if (c == '"' && !inSingleQuote)
+                {
+                    inDoubleQuote = !inDoubleQuote;
+                }
+                else if (!inSingleQuote && !inDoubleQuote)
+                {
+                    if (c == '[')
+                    {
+                        bracketDepth++;
+                    }
+                    else if (c == ']')
+                    {
+                        bracketDepth--;
+                    }
+                    else if (c == '(')
+                    {
+                        parenDepth++;
+                    }
+                    else if (c == ')')
+                    {
+                        parenDepth--;
+                    }
+                    else if (c == '{')
+                    {
+                        braceDepth++;
+                    }
+                    else if (c == '}')
+                    {
+                        braceDepth--;
+                    }
+                    else if (c == ':' && bracketDepth == 0 && parenDepth == 0 && braceDepth == 0)
+                    {
+                        colonIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (colonIndex == -1)
+            {
+                return null; // No valid colon separator found
+            }
+
+            var key = pair.Substring(0, colonIndex).Trim();
+            var value = pair.Substring(colonIndex + 1).Trim();
+
+            return new Tuple<string, string>(key, value);
         }
 
         /// <summary>
@@ -689,6 +855,12 @@ namespace Octgn.Scripting
                 return IsValidList(arg);
             }
 
+            // Allow dictionaries of valid arguments
+            if (arg.StartsWith("{") && arg.EndsWith("}"))
+            {
+                return IsValidDictionary(arg);
+            }
+
             // Reject everything else
             Log.WarnFormat("Rejecting unsafe argument: '{0}'", arg);
             return false;
@@ -699,9 +871,10 @@ namespace Octgn.Scripting
         /// </summary>
         private bool ContainsExpressionIndicators(string arg)
         {
-            // Skip this check for arguments that start and end with brackets (lists) or quotes (strings)
+            // Skip this check for arguments that start and end with brackets (lists), braces (dictionaries), or quotes (strings)
             // as they have their own validation
             if ((arg.StartsWith("[") && arg.EndsWith("]")) ||
+                (arg.StartsWith("{") && arg.EndsWith("}")) ||
                 (arg.StartsWith("\"") && arg.EndsWith("\"")) ||
                 (arg.StartsWith("'") && arg.EndsWith("'")))
             {
@@ -794,6 +967,23 @@ namespace Octgn.Scripting
                 return false;
                 
             char first = value[0];
+            
+            // Check for Python number formats
+            if (first == '-' && value.Length > 1)
+            {
+                // Could be negative Python number format
+                if (value.Length > 3 && value[1] == '0' && (value[2] == 'b' || value[2] == 'B' || value[2] == 'x' || value[2] == 'X' || value[2] == 'o' || value[2] == 'O'))
+                    return true;
+            }
+            
+            if (first == '0' && value.Length > 2)
+            {
+                char second = char.ToLowerInvariant(value[1]);
+                // Python binary, hex, or octal
+                if (second == 'b' || second == 'x' || second == 'o')
+                    return true;
+            }
+            
             if (!char.IsDigit(first) && first != '+' && first != '-' && first != '.')
                 return false;
                 
@@ -816,13 +1006,16 @@ namespace Octgn.Scripting
         private bool IsNumber(string value)
         {
             // Must be a single number literal, not an expression
-            // Check that it contains only valid number characters
             if (string.IsNullOrWhiteSpace(value))
                 return false;
                 
             value = value.Trim();
             
-            // Reject if it contains any non-numeric characters that could indicate expressions
+            // Check for Python-style number formats first
+            if (IsPythonNumberFormat(value))
+                return true;
+            
+            // Check standard decimal numbers
             // Allow: digits, decimal point, minus sign (at start or after e/E), plus sign (at start or after e/E), 'e'/'E' for scientific notation
             bool hasDecimal = false;
             bool hasExponent = false;
@@ -868,6 +1061,85 @@ namespace Octgn.Scripting
         }
 
         /// <summary>
+        /// Checks if a string is a valid Python number format (binary, hex, octal)
+        /// </summary>
+        private bool IsPythonNumberFormat(string value)
+        {
+            if (value.Length < 3) // Minimum for 0x1, 0b1, 0o1
+                return false;
+
+            // Handle negative numbers
+            bool isNegative = value.StartsWith("-");
+            if (isNegative)
+            {
+                value = value.Substring(1);
+                if (value.Length < 3)
+                    return false;
+            }
+
+            if (!value.StartsWith("0"))
+                return false;
+
+            char prefix = value.Length > 1 ? char.ToLowerInvariant(value[1]) : '\0';
+            
+            switch (prefix)
+            {
+                case 'b': // Binary: 0b1010
+                    return IsBinaryNumber(value);
+                case 'x': // Hexadecimal: 0xFF
+                    return IsHexNumber(value);
+                case 'o': // Octal: 0o755
+                    return IsOctalNumber(value);
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsBinaryNumber(string value)
+        {
+            if (!value.StartsWith("0b") && !value.StartsWith("0B"))
+                return false;
+
+            for (int i = 2; i < value.Length; i++)
+            {
+                if (value[i] != '0' && value[i] != '1')
+                    return false;
+            }
+            
+            return value.Length > 2; // Must have at least one binary digit
+        }
+
+        private bool IsHexNumber(string value)
+        {
+            if (!value.StartsWith("0x") && !value.StartsWith("0X"))
+                return false;
+
+            for (int i = 2; i < value.Length; i++)
+            {
+                char c = char.ToLowerInvariant(value[i]);
+                if (!char.IsDigit(c) && (c < 'a' || c > 'f'))
+                    return false;
+            }
+            
+            return value.Length > 2; // Must have at least one hex digit
+        }
+
+        private bool IsOctalNumber(string value)
+        {
+            if (!value.StartsWith("0o") && !value.StartsWith("0O"))
+                return false;
+
+            for (int i = 2; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (c < '0' || c > '7')
+                    return false;
+            }
+            
+            return value.Length > 2; // Must have at least one octal digit
+        }
+
+        /// <summary>
         /// Checks if a string is properly quoted and contains only a single string literal
         /// </summary>
         private bool IsQuotedString(string value)
@@ -895,10 +1167,25 @@ namespace Octgn.Scripting
         /// </summary>
         private bool IsSingleStringLiteral(string value, char quoteChar)
         {
-            // Check if this looks like a string concatenation or other expression
-            // by looking for quote characters that would indicate multiple strings
+            // Block hex and unicode escape sequences for security
+            // These could be used to encode dangerous strings to bypass filtering
+            if (value.Contains("\\x") || value.Contains("\\u"))
+            {
+                Log.WarnFormat("Rejecting string with hex/unicode escape sequences for security: '{0}'", value);
+                return false;
+            }
+            
+            // Block triple quotes for security (can be used for quote injection)
+            if (value.Contains("'''") || value.Contains("\"\"\""))
+            {
+                Log.WarnFormat("Rejecting string with triple quotes for security: '{0}'", value);
+                return false;
+            }
+            
+            // Find the closing quote and validate there's nothing after it except whitespace
             int quoteCount = 0;
             bool inEscape = false;
+            int closingQuoteIndex = -1;
             
             for (int i = 0; i < value.Length; i++)
             {
@@ -919,11 +1206,31 @@ namespace Octgn.Scripting
                 if (c == quoteChar)
                 {
                     quoteCount++;
+                    if (quoteCount == 2) // This is the closing quote
+                    {
+                        closingQuoteIndex = i;
+                        break;
+                    }
                 }
             }
             
             // Should have exactly 2 quotes (start and end) for a single string literal
-            return quoteCount == 2;
+            if (quoteCount != 2 || closingQuoteIndex == -1)
+            {
+                return false;
+            }
+            
+            // Check that everything after the closing quote is just whitespace
+            for (int i = closingQuoteIndex + 1; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i]))
+                {
+                    Log.WarnFormat("Rejecting string with content after closing quote: '{0}'", value);
+                    return false;
+                }
+            }
+            
+            return true;
         }
 
         /// <summary>
@@ -946,6 +1253,42 @@ namespace Octgn.Scripting
             {
                 if (!IsValidArgument(element.Trim()))
                 {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Validates a dictionary argument
+        /// </summary>
+        private bool IsValidDictionary(string dictArg)
+        {
+            // Remove the outer braces
+            var content = dictArg.Substring(1, dictArg.Length - 2).Trim();
+            
+            if (string.IsNullOrEmpty(content))
+            {
+                return true; // Empty dictionary is valid
+            }
+
+            // Parse the dictionary key-value pairs
+            var pairs = ParseDictionaryPairs(content);
+
+            foreach (var pair in pairs)
+            {
+                var keyValue = ParseKeyValuePair(pair.Trim());
+                if (keyValue == null)
+                {
+                    Log.WarnFormat("Failed to parse dictionary key-value pair: '{0}'", pair);
+                    return false;
+                }
+
+                // Validate both key and value
+                if (!IsValidArgument(keyValue.Item1.Trim()) || !IsValidArgument(keyValue.Item2.Trim()))
+                {
+                    Log.WarnFormat("Invalid dictionary key or value: key='{0}', value='{1}'", keyValue.Item1, keyValue.Item2);
                     return false;
                 }
             }

