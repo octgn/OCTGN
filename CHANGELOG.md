@@ -1,3 +1,6 @@
+#3.4.424.0
++ More function security - kellye
+
 #3.4.423.0
 + Check function names - Kelly
 
@@ -4125,6 +4128,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
