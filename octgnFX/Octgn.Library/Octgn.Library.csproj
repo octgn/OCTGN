@@ -107,6 +107,7 @@
     <Compile Include="Networking\SocketBase.cs" />
     <Compile Include="Networking\SocketMessageProcessorBase.cs" />
     <Compile Include="Networking\SocketReceiveBundle.cs" />
+    <Compile Include="Scripting\ScriptingInterfaces.cs" />
     <Compile Include="SavedPasswordManager.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

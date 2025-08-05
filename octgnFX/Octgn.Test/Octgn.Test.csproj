@@ -115,6 +115,10 @@
     <Reference Include="nunit.framework, Version=3.13.3.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="NUnit3.TestAdapter, Version=5.0.0.0, Culture=neutral, PublicKeyToken=4cb40d35494691ac, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit3TestAdapter.5.0.0\lib\net462\NUnit3.TestAdapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Net" />
@@ -130,11 +134,12 @@
     <Compile Include="Library\Networking\GameBroadcastingTests.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
+    <Compile Include="OctgnApp\Scripting\RemoteCallValidUseCasesTests.cs" />
+    <Compile Include="OctgnApp\Scripting\SecurityTests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />
     <Compile Include="PlayGround.cs" />
     <Compile Include="Server\GameStatusResetTests.cs" />
     <Compile Include="Server\ServerPortReuseTests.cs" />
-
     <Compile Include="Utils\HttpEcho.cs" />
     <Compile Include="VersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,6 +172,10 @@
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
       <n>Octgn.Server</n>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.JodsEngine\Octgn.JodsEngine.csproj">
+      <Project>{74009662-AA58-4A94-97B6-1AD019ECA302}</Project>
+      <n>Octgn.JodsEngine</n>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

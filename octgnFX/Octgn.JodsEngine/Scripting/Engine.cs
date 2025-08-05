@@ -24,13 +24,14 @@ using Octgn.Core;
 using Octgn.Core.DataExtensionMethods;
 
 using log4net;
+using Octgn.Library.Scripting;
 using Octgn.Library;
 
 namespace Octgn.Scripting
 {
 
     [Export]
-    public class Engine : IDisposable
+    public class Engine : IScriptingEngine, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public ScriptScope ActionsScope;
@@ -38,6 +39,12 @@ namespace Octgn.Scripting
         private readonly Queue<ScriptJobBase> _executionQueue = new Queue<ScriptJobBase>(4);
         private readonly MemoryStream _outputStream = new MemoryStream();
         private StreamWriter _outputWriter;
+        private readonly bool _isForTesting;
+        
+        // Dependency injection for testing
+        private IFunctionValidator _functionValidator;
+        private ICodeExecutor _codeExecutor;
+        
         // This is a hack. The sponsor object is used to keep the remote side of the Dialog API alive.
         // I would like to make this cleaner but it really seems to be an impass at the moment.
         // Combining Scripting + Remoting + Lifetime management + Garbage Collection + Partial trust
@@ -50,9 +57,27 @@ namespace Octgn.Scripting
         }
 
         public Engine(bool forTesting)
+            : this(forTesting, null, null)
         {
-            Program.GameEngine.ScriptEngine = this;
-            Program.GameEngine.EventProxy = new GameEventProxy(this, Program.GameEngine);
+        }
+
+        public Engine(bool forTesting, IFunctionValidator functionValidator, ICodeExecutor codeExecutor)
+        {
+            _isForTesting = forTesting;
+            _functionValidator = functionValidator;
+            _codeExecutor = codeExecutor;
+            
+            if (!forTesting && Program.GameEngine != null)
+            {
+                Program.GameEngine.ScriptEngine = this;
+                Program.GameEngine.EventProxy = new GameEventProxy(this, Program.GameEngine);
+            }
+            
+            // If not in testing mode and no dependencies injected, set up defaults after scope is ready
+            if (!forTesting && _functionValidator == null && _codeExecutor == null)
+            {
+                // Note: Default implementations will be set up in LoadScript when ActionsScope is available
+            }
         }
 
         public void SetupEngine(bool testing)
@@ -81,7 +106,25 @@ namespace Octgn.Scripting
             }
 
             ActionsScope = CreateScope(workingDirectory);
+            
+            // Set up default implementations if in production mode and none were injected
+            if (!_isForTesting && _functionValidator == null && _codeExecutor == null)
+            {
+                _functionValidator = new DefaultFunctionValidator(functionName => 
+                    ActionsScope.TryGetVariable(functionName, out var functionObject) && functionObject != null);
+                _codeExecutor = new DefaultCodeExecutor(ExecuteFunctionNoFormat);
+            }
+            
             if (Program.GameEngine == null || testing) return;
+            
+            // Show sandboxing warning if disabled
+            if (!Core.Prefs.EnableGameSandboxing && !testing)
+            {
+                Log.WarnFormat("Game sandboxing is DISABLED - remote script calls will not be validated");
+                Program.GameMess.Warning("⚠️ SECURITY WARNING: Game sandboxing is disabled. Remote script calls from other players will not be validated. Continue at your own risk.");
+                Program.GameMess.Warning("You can enable sandboxing in OCTGN Options > Advanced tab for improved security.");
+            }
+            
             Log.Debug("Loading Scripts...");
             foreach (var script in Program.GameEngine.Definition.GetScripts().ToArray())
             {
@@ -312,6 +355,16 @@ namespace Octgn.Scripting
 
         public void ExecuteFunctionSecureNoFormat(string function, string args)
         {
+            // Check if sandboxing is enabled - if not, skip all security checks
+            if (!Core.Prefs.EnableGameSandboxing)
+            {
+                Log.DebugFormat("Game sandboxing disabled - executing function '{0}' without security checks", function);
+                ExecuteFunctionNoFormat(function, args);
+                return;
+            }
+
+            Log.DebugFormat("Executing secure remote function call: {0}({1})", function, args);
+
             // 1. Validate function name - must be a valid Python identifier
             if (!IsValidPythonIdentifier(function))
             {
@@ -327,39 +380,62 @@ namespace Octgn.Scripting
             }
 
             // 3. Check if the function exists in the scope before executing it
-            if (!ActionsScope.TryGetVariable(function, out var functionObject))
+            if (_functionValidator != null)
             {
-                Log.WarnFormat("Security violation: Function '{0}' does not exist in the current scope.", function);
-                throw new ScriptSecurityException(function, args, "Function does not exist in current scope");
+                // Use dependency-injected validator for testing
+                if (!_functionValidator.IsFunctionAvailable(function))
+                {
+                    Log.WarnFormat("Security violation: Function '{0}' does not exist in the current scope.", function);
+                    throw new ScriptSecurityException(function, args, "Function does not exist in current scope");
+                }
+            }
+            else
+            {
+                // Use actual scope checking for production
+                if (!ActionsScope.TryGetVariable(function, out var functionObject))
+                {
+                    Log.WarnFormat("Security violation: Function '{0}' does not exist in the current scope.", function);
+                    throw new ScriptSecurityException(function, args, "Function does not exist in current scope");
+                }
+
+                // 4. Additional check to ensure it's actually callable
+                if (functionObject == null)
+                {
+                    Log.WarnFormat("Security violation: Function '{0}' exists but is null.", function);
+                    throw new ScriptSecurityException(function, args, "Function exists but is null");
+                }
             }
 
-            // 4. Additional check to ensure it's actually callable
-            if (functionObject == null)
+            // 5. Parse and validate arguments
+            try
             {
-                Log.WarnFormat("Security violation: Function '{0}' exists but is null.", function);
-                throw new ScriptSecurityException(function, args, "Function exists but is null");
+                ValidateArguments(args);
+                Log.DebugFormat("Arguments validation passed for function '{0}': {1}", function, args);
+            }
+            catch (ScriptSecurityException)
+            {
+                // Re-throw security exceptions as-is
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Log.WarnFormat("Security violation: Failed to validate arguments for function '{0}'. Args: '{1}', Error: {2}", function, args, ex.Message);
+                throw new ScriptSecurityException(function, args, $"Failed to validate arguments: {ex.Message}");
             }
 
-            // 5. Validate arguments for potential code injection
-            if (ContainsPotentialInjection(args))
+            // 6. All security checks passed - execute with original arguments
+            Log.DebugFormat("Security checks passed, executing: {0}({1})", function, args);
+            
+            if (_codeExecutor != null)
             {
-                Log.WarnFormat("Security violation: Arguments contain potentially dangerous content for function '{0}'. Args: '{1}'", function, args);
-                throw new ScriptSecurityException(function, args, "Arguments contain potentially dangerous content");
+                // Use dependency-injected executor for testing
+                _codeExecutor.ExecuteFunction(function, args);
             }
-
-            // 6. Generate the code and validate it
-            const string Template = @"{0}({1})";
-            var stringSource = string.Format(Template, function, args);
-
-            // 7. Additional validation of the final generated code
-            if (ContainsPotentialInjection(stringSource))
+            else
             {
-                Log.WarnFormat("Security violation: Generated script contains potentially dangerous content for function '{0}'. Generated code: '{1}'", function, stringSource);
-                throw new ScriptSecurityException(function, args, stringSource, "Generated script contains potentially dangerous content");
+                // Use actual execution for production
+                ExecuteFunctionNoFormat(function, args);
             }
-
-            // 8. All security checks passed - delegate to the standard execution method
-            ExecuteFunctionNoFormat(function, args);
         }
 
         public string FormatObject(object o)
@@ -438,101 +514,659 @@ namespace Octgn.Scripting
         }
 
         /// <summary>
-        /// Checks for potential code injection in arguments or generated code
+        /// Validates arguments by parsing them and ensuring each one is a safe type
         /// </summary>
-        private static bool ContainsPotentialInjection(string content)
+        private void ValidateArguments(string args)
         {
-            if (string.IsNullOrEmpty(content))
-                return false;
+            if (string.IsNullOrWhiteSpace(args))
+                return;
 
-            // Check for dangerous keywords and patterns
-            var dangerousPatterns = new[]
+            try
             {
-                "import ",
-                "from ",
-                "exec(",
-                "eval(",
-                "compile(",
-                "__import__",
-                "globals(",
-                "locals(",
-                "open(",
-                "file(",
-                "\n",           // Newlines can break out of function calls
-                "\r",           // Carriage returns
-                ";",            // Statement separators
-                "\\",           // Escape sequences
-                "'''",          // Triple quotes
-                "\"\"\"",       // Triple quotes
-                "#",            // Comments (could hide injection)
-                "lambda",       // Lambda functions
-                "class ",       // Class definitions
-                "def ",         // Function definitions
-                "raise ",       // Exception raising
-                "assert ",      // Assertions
-                "yield ",       // Generators
-                "return ",      // Return statements
-                "break",        // Control flow
-                "continue",     // Control flow
-                "pass",         // Pass statements
-                "del ",         // Deletions
-                "global ",      // Global declarations
-                "nonlocal ",    // Nonlocal declarations
-            };
+                // Parse the arguments string as individual arguments
+                var parsedArgs = ParseArgumentList(args);
 
-            // Convert to lowercase for case-insensitive checking
-            var lowerContent = content.ToLowerInvariant();
-
-            foreach (var pattern in dangerousPatterns)
-            {
-                if (lowerContent.Contains(pattern.ToLowerInvariant()))
+                foreach (var arg in parsedArgs)
                 {
-                    return true;
+                    if (!IsValidArgument(arg.Trim()))
+                    {
+                        Log.WarnFormat("Security violation: Invalid argument detected: '{0}'", arg);
+                        throw new ScriptSecurityException("ExecuteFunctionSecureNoFormat", args, $"Invalid argument detected: {arg}");
+                    }
                 }
             }
-
-            // Check for unbalanced quotes that could allow escaping
-            int singleQuotes = 0;
-            int doubleQuotes = 0;
-            bool inSingleQuote = false;
-            bool inDoubleQuote = false;
-
-            for (int i = 0; i < content.Length; i++)
+            catch (ScriptSecurityException)
             {
-                char c = content[i];
-                
+                // Re-throw security exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorFormat("Failed to validate arguments '{0}': {1}", args, ex.Message);
+                throw new ScriptSecurityException("ExecuteFunctionSecureNoFormat", args, $"Failed to validate arguments: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Parses a comma-separated argument list, respecting quoted strings and nested brackets
+        /// </summary>
+        private List<string> ParseArgumentList(string args)
+        {
+            var arguments = new List<string>();
+            var current = new StringBuilder();
+            var inSingleQuote = false;
+            var inDoubleQuote = false;
+            var bracketDepth = 0;
+            var parenDepth = 0;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                char c = args[i];
+
                 if (c == '\'' && !inDoubleQuote)
                 {
-                    if (!inSingleQuote)
-                    {
-                        inSingleQuote = true;
-                        singleQuotes++;
-                    }
-                    else
-                    {
-                        inSingleQuote = false;
-                    }
+                    inSingleQuote = !inSingleQuote;
+                    current.Append(c);
                 }
                 else if (c == '"' && !inSingleQuote)
                 {
-                    if (!inDoubleQuote)
+                    inDoubleQuote = !inDoubleQuote;
+                    current.Append(c);
+                }
+                else if (!inSingleQuote && !inDoubleQuote)
+                {
+                    if (c == '[')
                     {
-                        inDoubleQuote = true;
-                        doubleQuotes++;
+                        bracketDepth++;
+                        current.Append(c);
+                    }
+                    else if (c == ']')
+                    {
+                        bracketDepth--;
+                        current.Append(c);
+                    }
+                    else if (c == '(')
+                    {
+                        parenDepth++;
+                        current.Append(c);
+                    }
+                    else if (c == ')')
+                    {
+                        parenDepth--;
+                        current.Append(c);
+                    }
+                    else if (c == ',' && bracketDepth == 0 && parenDepth == 0)
+                    {
+                        // This is a top-level comma separator
+                        arguments.Add(current.ToString());
+                        current.Clear();
                     }
                     else
                     {
-                        inDoubleQuote = false;
+                        current.Append(c);
                     }
+                }
+                else
+                {
+                    current.Append(c);
                 }
             }
 
-            // If quotes are unbalanced, it might be an injection attempt
-            if (inSingleQuote || inDoubleQuote)
+            // Add the last argument
+            if (current.Length > 0)
+            {
+                arguments.Add(current.ToString());
+            }
+
+            return arguments;
+        }
+
+        /// <summary>
+        /// Validates a single argument, returning true if it's safe to use
+        /// </summary>
+        private bool IsValidArgument(string arg)
+        {
+            if (string.IsNullOrWhiteSpace(arg))
+                return true;
+
+            arg = arg.Trim();
+
+            // First check if it contains any obvious expression indicators
+            if (ContainsExpressionIndicators(arg))
+            {
+                Log.WarnFormat("Rejecting argument with expression indicators: '{0}'", arg);
+                return false;
+            }
+
+            // Block Python dunder variables (double underscore variables) for security
+            if (IsPythonDunderVariable(arg))
+            {
+                Log.WarnFormat("Rejecting Python dunder variable for security: '{0}'", arg);
+                return false;
+            }
+
+            // Allow None/null
+            if (arg.Equals("None", StringComparison.OrdinalIgnoreCase) || 
+                arg.Equals("null", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
+            // Allow numbers (integers and floats)
+            if (IsNumber(arg))
+            {
+                return true;
+            }
+
+            // Allow boolean values - only exact Python boolean literals
+            if (arg.Equals("True", StringComparison.Ordinal) || 
+                arg.Equals("False", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            // Allow quoted strings
+            if (IsQuotedString(arg))
+            {
+                // Additional check for quote escape exploits
+                if (ContainsQuoteBreakoutExploit(arg))
+                {
+                    Log.WarnFormat("Rejecting argument with quote breakout exploit: '{0}'", arg);
+                    return false;
+                }
+                return true;
+            }
+
+            // Allow OCTGN object constructors
+            if (IsValidOctgnObjectConstructor(arg))
+            {
+                return true;
+            }
+
+            // Allow lists of valid arguments
+            if (arg.StartsWith("[") && arg.EndsWith("]"))
+            {
+                return IsValidList(arg);
+            }
+
+            // Reject everything else
+            Log.WarnFormat("Rejecting unsafe argument: '{0}'", arg);
+            return false;
+        }
+        
+        /// <summary>
+        /// Checks if an argument contains indicators that it's an expression rather than a simple value
+        /// </summary>
+        private bool ContainsExpressionIndicators(string arg)
+        {
+            // Skip this check for arguments that start and end with brackets (lists) or quotes (strings)
+            // as they have their own validation
+            if ((arg.StartsWith("[") && arg.EndsWith("]")) ||
+                (arg.StartsWith("\"") && arg.EndsWith("\"")) ||
+                (arg.StartsWith("'") && arg.EndsWith("'")))
+            {
+                return false;
+            }
+            
+            // If it could be a number (including negative), let the IsNumber method handle it
+            if (CouldBeNumber(arg))
+            {
+                return false;
+            }
+            
+            // Look for characters that typically indicate expressions or operations
+            // outside of quoted strings and constructors
+            var suspiciousChars = new[] { '+', '-', '*', '/', '%', '&', '|', '^', '~', '<', '>', '=' };
+            
+            bool inQuotes = false;
+            char quoteChar = '\0';
+            bool inEscape = false;
+            int parenDepth = 0;
+            
+            for (int i = 0; i < arg.Length; i++)
+            {
+                char c = arg[i];
+                
+                if (inEscape)
+                {
+                    inEscape = false;
+                    continue;
+                }
+                
+                if (c == '\\')
+                {
+                    inEscape = true;
+                    continue;
+                }
+                
+                if (!inQuotes && (c == '"' || c == '\''))
+                {
+                    inQuotes = true;
+                    quoteChar = c;
+                    continue;
+                }
+                
+                if (inQuotes && c == quoteChar)
+                {
+                    inQuotes = false;
+                    quoteChar = '\0';
+                    continue;
+                }
+                
+                if (!inQuotes)
+                {
+                    if (c == '(')
+                    {
+                        parenDepth++;
+                    }
+                    else if (c == ')')
+                    {
+                        parenDepth--;
+                    }
+                    else if (parenDepth == 0)
+                    {
+                        // Outside of any constructor parentheses and quotes, check for suspicious characters
+                        if (Array.IndexOf(suspiciousChars, c) >= 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        }
+        
+        /// <summary>
+        /// Quick check to see if a string could potentially be a number (including negative numbers)
+        /// This is used to avoid false positives in expression detection
+        /// </summary>
+        private bool CouldBeNumber(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+                
+            value = value.Trim();
+            
+            // Quick heuristic: if it starts with a digit, +, or -, and contains only number-like characters,
+            // it's probably a number and should be validated by IsNumber instead
+            if (value.Length == 0)
+                return false;
+                
+            char first = value[0];
+            if (!char.IsDigit(first) && first != '+' && first != '-' && first != '.')
+                return false;
+                
+            // Check if it contains only characters that could be in a number
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (!char.IsDigit(c) && c != '.' && c != '+' && c != '-' && c != 'e' && c != 'E')
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if a string represents a single valid number (not an expression)
+        /// </summary>
+        private bool IsNumber(string value)
+        {
+            // Must be a single number literal, not an expression
+            // Check that it contains only valid number characters
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+                
+            value = value.Trim();
+            
+            // Reject if it contains any non-numeric characters that could indicate expressions
+            // Allow: digits, decimal point, minus sign (at start or after e/E), plus sign (at start or after e/E), 'e'/'E' for scientific notation
+            bool hasDecimal = false;
+            bool hasExponent = false;
+            
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                
+                if (char.IsDigit(c))
+                    continue;
+                    
+                if (c == '.' && !hasDecimal && !hasExponent)
+                {
+                    hasDecimal = true;
+                    continue;
+                }
+                
+                if ((c == 'e' || c == 'E') && !hasExponent && i > 0)
+                {
+                    hasExponent = true;
+                    continue;
+                }
+                
+                // Allow + or - at the start of the number or immediately after e/E for scientific notation
+                if (c == '+' || c == '-')
+                {
+                    if (i == 0) // At the start of the number (negative/positive numbers)
+                    {
+                        continue;
+                    }
+                    if (hasExponent && i > 0 && (value[i-1] == 'e' || value[i-1] == 'E')) // After e/E in scientific notation
+                    {
+                        continue;
+                    }
+                }
+                
+                // Any other character makes this not a simple number
+                return false;
+            }
+            
+            // Now verify it actually parses as a number
+            return double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+        }
+
+        /// <summary>
+        /// Checks if a string is properly quoted and contains only a single string literal
+        /// </summary>
+        private bool IsQuotedString(string value)
+        {
+            // Must be a single quoted string, not an expression
+            if (value.StartsWith("\"") && value.EndsWith("\"") && value.Length >= 2)
+            {
+                // Ensure it's a single string literal - no unescaped quotes inside
+                // and no expressions that could combine strings
+                return IsSingleStringLiteral(value, '"');
+            }
+            
+            if (value.StartsWith("'") && value.EndsWith("'") && value.Length >= 2)
+            {
+                // Ensure it's a single string literal - no unescaped quotes inside
+                // and no expressions that could combine strings
+                return IsSingleStringLiteral(value, '\'');
+            }
+            
+            return false;
+        }
+        
+        /// <summary>
+        /// Validates that a value is a single string literal without expressions
+        /// </summary>
+        private bool IsSingleStringLiteral(string value, char quoteChar)
+        {
+            // Check if this looks like a string concatenation or other expression
+            // by looking for quote characters that would indicate multiple strings
+            int quoteCount = 0;
+            bool inEscape = false;
+            
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                
+                if (inEscape)
+                {
+                    inEscape = false;
+                    continue;
+                }
+                
+                if (c == '\\')
+                {
+                    inEscape = true;
+                    continue;
+                }
+                
+                if (c == quoteChar)
+                {
+                    quoteCount++;
+                }
+            }
+            
+            // Should have exactly 2 quotes (start and end) for a single string literal
+            return quoteCount == 2;
+        }
+
+        /// <summary>
+        /// Validates a list argument
+        /// </summary>
+        private bool IsValidList(string listArg)
+        {
+            // Remove the outer brackets
+            var content = listArg.Substring(1, listArg.Length - 2).Trim();
+            
+            if (string.IsNullOrEmpty(content))
+            {
+                return true; // Empty list is valid
+            }
+
+            // Parse the list elements
+            var elements = ParseArgumentList(content);
+
+            foreach (var element in elements)
+            {
+                if (!IsValidArgument(element.Trim()))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if an argument is a valid OCTGN object constructor
+        /// </summary>
+        private bool IsValidOctgnObjectConstructor(string arg)
+        {
+            // Match patterns like Player(123), Card(456), etc.
+            // Note: [a-zA-Z_][a-zA-Z0-9_]* matches valid Python identifiers (variables)
+            var validConstructors = new[]
+            {
+                @"^Player\(\d+\)$",
+                @"^Card\(\d+\)$", 
+                @"^Counter\(\d+\s*,\s*""[^""]*""\s*,\s*(Player\(\d+\)|[a-zA-Z_][a-zA-Z0-9_]*)\)$",
+                @"^Counter\(\d+\s*,\s*'[^']*'\s*,\s*(Player\(\d+\)|[a-zA-Z_][a-zA-Z0-9_]*)\)$",
+                @"^Pile\(\d+\s*,\s*""[^""]*""\s*,\s*(Player\(\d+\)|[a-zA-Z_][a-zA-Z0-9_]*)\)$",
+                @"^Pile\(\d+\s*,\s*'[^']*'\s*,\s*(Player\(\d+\)|[a-zA-Z_][a-zA-Z0-9_]*)\)$",
+                @"^table$"
+            };
+
+            foreach (var pattern in validConstructors)
+            {
+                if (System.Text.RegularExpressions.Regex.IsMatch(arg, pattern))
+                {
+                    return true;
+                }
+            }
+            
+            // Check if it's a simple Python identifier (variable name)
+            if (IsSimplePythonIdentifier(arg))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        
+        /// <summary>
+        /// Validates that a string is a simple Python identifier without expressions
+        /// </summary>
+        private bool IsSimplePythonIdentifier(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                return false;
+
+            identifier = identifier.Trim();
+
+            // Must start with letter or underscore
+            if (!char.IsLetter(identifier[0]) && identifier[0] != '_')
+                return false;
+
+            // Rest must be letters, digits, or underscores only
+            // No spaces, operators, parentheses, brackets, or other characters
+            for (int i = 1; i < identifier.Length; i++)
+            {
+                char c = identifier[i];
+                if (!char.IsLetterOrDigit(c) && c != '_')
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if a string is a Python dunder variable (starts and ends with double underscores)
+        /// These are blocked for security as they can provide access to dangerous functionality
+        /// </summary>
+        private bool IsPythonDunderVariable(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                return false;
+
+            identifier = identifier.Trim();
+
+            // Must be at least 4 characters to have __ at both ends
+            if (identifier.Length < 4)
+                return false;
+
+            // Check if it starts and ends with double underscores
+            return identifier.StartsWith("__") && identifier.EndsWith("__");
+        }
+
+        /// <summary>
+        /// Detects attempts to break out of string context using quote escapes or multiple string segments
+        /// </summary>
+        private bool ContainsQuoteBreakoutExploit(string arg)
+        {
+            // Look for patterns that indicate attempts to break out of string context
+            
+            // Check for semicolons outside of properly quoted strings (statement separators)
+            if (ContainsUnquotedCharacter(arg, ';'))
+                return true;
+                
+            // Check for multiple string segments (indicates concatenation or breakout)
+            if (ContainsMultipleStringSegments(arg))
+                return true;
+                
+            // Check for hex/unicode escapes that could create quotes
+            if (ContainsEscapeSequencesToQuotes(arg))
+                return true;
+                
+            // Check for newlines/carriage returns that could be used for statement separation
+            if (ContainsUnquotedCharacter(arg, '\n') || ContainsUnquotedCharacter(arg, '\r'))
+                return true;
+                
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a character appears outside of properly quoted strings
+        /// </summary>
+        private bool ContainsUnquotedCharacter(string arg, char targetChar)
+        {
+            bool inQuotes = false;
+            char quoteChar = '\0';
+            bool inEscape = false;
+            
+            for (int i = 0; i < arg.Length; i++)
+            {
+                char c = arg[i];
+                
+                if (inEscape)
+                {
+                    inEscape = false;
+                    continue;
+                }
+                
+                if (c == '\\')
+                {
+                    inEscape = true;
+                    continue;
+                }
+                
+                if (!inQuotes && (c == '"' || c == '\''))
+                {
+                    inQuotes = true;
+                    quoteChar = c;
+                    continue;
+                }
+                
+                if (inQuotes && c == quoteChar)
+                {
+                    inQuotes = false;
+                    quoteChar = '\0';
+                    continue;
+                }
+                
+                // If we find the target character outside of quotes, it's suspicious
+                if (!inQuotes && c == targetChar)
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// Detects multiple string segments that could indicate string concatenation or breakout
+        /// </summary>
+        private bool ContainsMultipleStringSegments(string arg)
+        {
+            int stringCount = 0;
+            bool inQuotes = false;
+            char quoteChar = '\0';
+            bool inEscape = false;
+            
+            for (int i = 0; i < arg.Length; i++)
+            {
+                char c = arg[i];
+                
+                if (inEscape)
+                {
+                    inEscape = false;
+                    continue;
+                }
+                
+                if (c == '\\')
+                {
+                    inEscape = true;
+                    continue;
+                }
+                
+                if (!inQuotes && (c == '"' || c == '\''))
+                {
+                    inQuotes = true;
+                    quoteChar = c;
+                    stringCount++;
+                    continue;
+                }
+                
+                if (inQuotes && c == quoteChar)
+                {
+                    inQuotes = false;
+                    quoteChar = '\0';
+                    continue;
+                }
+            }
+            
+            // More than one string segment is suspicious
+            return stringCount > 1;
+        }
+
+        /// <summary>
+        /// Checks for hex or unicode escape sequences that could be used to create quote characters
+        /// </summary>
+        private bool ContainsEscapeSequencesToQuotes(string arg)
+        {
+            // Look for hex escapes that create quotes: \x22 ("), \x27 (')
+            if (arg.Contains("\\x22") || arg.Contains("\\x27"))
+                return true;
+                
+            // Look for unicode escapes that create quotes: \u0022 ("), \u0027 (')
+            if (arg.Contains("\\u0022") || arg.Contains("\\u0027"))
+                return true;
+                
             return false;
         }
 
@@ -722,6 +1356,17 @@ namespace Octgn.Scripting
 
         private void InjectOctgnIntoScope(ScriptScope scope, string workingDirectory)
         {
+            // Skip injection during testing
+            if (_isForTesting)
+            {
+                // For testing, only set the working directory
+                scope.SetVariable("_wd", workingDirectory);
+                
+                // Skip CaseInsensitiveDict during testing as it requires collections module
+                // which may not be available in the test environment
+                return;
+            }
+            
             scope.SetVariable("_api", Program.GameEngine.ScriptApi);
             scope.SetVariable("_wd", workingDirectory);
 
@@ -810,7 +1455,7 @@ namespace Octgn.Scripting
 
         #region IDisposable
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             //if (_sponsor == null) return;
             // See comment on sponsor declaration

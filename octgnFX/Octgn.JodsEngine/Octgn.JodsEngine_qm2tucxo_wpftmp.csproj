@@ -1,0 +1,808 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{74009662-AA58-4A94-97B6-1AD019ECA302}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Octgn</RootNamespace>
+    <AssemblyName>Octgn.JodsEngine</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Octgn.OctgnApp</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
+    <Compile Include="Annotations.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="CommandLineHandler.cs" />
+    <Compile Include="Const.cs" />
+    <Compile Include="Controls\AnimatedWrapPanel.cs" />
+    <Compile Include="Controls\ChildWindow.cs" />
+    <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\DecorableWindow.cs" />
+    <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
+      <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NumericUpDown.cs" />
+    <Compile Include="Controls\OpaqueClickableImage.cs" />
+    <Compile Include="Controls\PileViewPermissionDialog.xaml.cs">
+      <DependentUpon>PileViewPermissionDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PopupWindowMessage.xaml.cs">
+      <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreGameLobby.xaml.cs">
+      <DependentUpon>PreGameLobby.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RichTextBlock.cs" />
+    <Compile Include="Controls\SubscribeMessageLargeMessage.xaml.cs">
+      <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TabCommands.cs" />
+    <Compile Include="Controls\TextOrIcon.cs" />
+    <Compile Include="Controls\Tooltip.cs" />
+    <Compile Include="Controls\TopMostMessageBox.cs" />
+    <Compile Include="Controls\VirtualizingWrapPanel.cs" />
+    <Compile Include="Controls\WaitingDialog.xaml.cs">
+      <DependentUpon>WaitingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\WindowDecorator.cs" />
+    <Compile Include="Controls\WindowDecorators\NativeDecorator.cs" />
+    <Compile Include="Controls\WindowDecorators\OctgnDecorator.cs" />
+    <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
+      <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\DeckCardsViewer.xaml.cs">
+      <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
+      <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\DeckManager.xaml.cs">
+      <DependentUpon>DeckManager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\FilterControl.xaml.cs">
+      <DependentUpon>FilterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\MetaDeck.cs" />
+    <Compile Include="DeckBuilder\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\SearchFilterItem.cs" />
+    <Compile Include="DeckBuilder\SearchSave.cs" />
+    <Compile Include="DeckBuilder\SetPropertyDef.cs" />
+    <Compile Include="DeckBuilder\SleeveManagerView.xaml.cs">
+      <DependentUpon>SleeveManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Effects\GridLengthAnimation.cs" />
+    <Compile Include="Extentions\BitmapImageExtensions.cs" />
+    <Compile Include="Extentions\ControlExtensions.cs" />
+    <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\ExtensionMethods.cs" />
+    <Compile Include="Extentions\LinqExtensions.cs" />
+    <Compile Include="Extentions\String.cs" />
+    <Compile Include="Extentions\WindowExtensionMethods.cs" />
+    <Compile Include="Launchers\DeckEditorLauncher.cs" />
+    <Compile Include="Launchers\GameTableLauncher.cs" />
+    <Compile Include="Launchers\ILauncher.cs" />
+    <Compile Include="Launchers\JoinGameLauncher.cs" />
+    <Compile Include="Launchers\LauncherBase.cs" />
+    <Compile Include="Launchers\ReplayLauncher.cs" />
+    <Compile Include="Launchers\TableLauncher.cs" />
+    <Compile Include="LibraryCommunicationClientConfig.cs" />
+    <Compile Include="Loaders\ConfigLoader.cs" />
+    <Compile Include="Loaders\DiscordLoader.cs" />
+    <Compile Include="Loaders\EnvironmentLoader.cs" />
+    <Compile Include="Loaders\GameMessageLoader.cs" />
+    <Compile Include="Loaders\GraphicsLoader.cs" />
+    <Compile Include="Loaders\ILoader.cs" />
+    <Compile Include="Loaders\Loader.cs" />
+    <Compile Include="Loaders\NetworkLoader.cs" />
+    <Compile Include="Loaders\VersionedLoader.cs" />
+    <Compile Include="Networking\BinaryParser.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BinaryParser.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\BinaryStubs.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BinaryStubs.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\ClientHandler.cs" />
+    <Compile Include="Networking\ClientSocket.cs" />
+    <Compile Include="Networking\IServerCalls.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IServerCalls.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\Mute.cs" />
+    <Compile Include="Networking\ServerErrorEventArgs.cs" />
+    <Compile Include="Play\Actions\Action.cs" />
+    <Compile Include="Play\Actions\Create.cs" />
+    <Compile Include="Play\Actions\Move.cs" />
+    <Compile Include="Play\Actions\Rotate.cs" />
+    <Compile Include="Play\Actions\Shake.cs" />
+    <Compile Include="Play\Actions\Target.cs" />
+    <Compile Include="Play\Actions\Turn.cs" />
+    <Compile Include="Play\Card.cs" />
+    <Compile Include="Play\CardIdentity.cs" />
+    <Compile Include="Play\ControllableObject.cs" />
+    <Compile Include="Play\Counter.cs" />
+    <Compile Include="Play\DefaultMarkerModel.cs" />
+    <Compile Include="Play\DeveloperConsole\InteractiveConsole.xaml.cs">
+      <DependentUpon>InteractiveConsole.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\DeveloperWindow.xaml.cs">
+      <DependentUpon>DeveloperWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\LimitedDialog.xaml.cs">
+      <DependentUpon>LimitedDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\PickCardsDialog.xaml.cs">
+      <DependentUpon>PickCardsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\PreviewCardWindow.xaml.cs">
+      <DependentUpon>PreviewCardWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\RulesWindow.xaml.cs">
+      <DependentUpon>RulesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\DragAdorner.cs" />
+    <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Group.cs" />
+    <Compile Include="Play\Gui\AdhocPileControl.xaml.cs">
+      <DependentUpon>AdhocPileControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\Adorners\ArrowAdorner.cs" />
+    <Compile Include="Play\Gui\Adorners\CardDragAdorner.cs" />
+    <Compile Include="Play\Gui\Adorners\DragAdorner.cs" />
+    <Compile Include="Play\Gui\Adorners\InsertAdorner.cs" />
+    <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
+    <Compile Include="Play\Gui\Adorners\SelectAdorner.cs" />
+    <Compile Include="Play\Gui\ArrowControl.cs" />
+    <Compile Include="Play\Gui\CardControl.xaml.cs">
+      <DependentUpon>CardControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\CardEvents.cs" />
+    <Compile Include="Play\Gui\CardListControl.xaml.cs">
+      <DependentUpon>CardListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\CardScroller.cs" />
+    <Compile Include="Play\Gui\ChatControl.xaml.cs">
+      <DependentUpon>ChatControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\Commands.cs" />
+    <Compile Include="Play\Gui\DeckStats.xaml.cs">
+      <DependentUpon>DeckStats.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\DragOperations\DragOperation.cs" />
+    <Compile Include="Play\Gui\FanPanel.cs" />
+    <Compile Include="Play\Gui\GroupControl.cs" />
+    <Compile Include="Play\Gui\GroupWindow.xaml.cs">
+      <DependentUpon>GroupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\HslColor.cs" />
+    <Compile Include="Play\Gui\MarkerControl.xaml.cs">
+      <DependentUpon>MarkerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\NoteControl.xaml.cs">
+      <DependentUpon>NoteControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\PileBaseControl.cs" />
+    <Compile Include="Play\Gui\PileCollapsedControl.xaml.cs">
+      <DependentUpon>PileCollapsedControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\PileControl.xaml.cs">
+      <DependentUpon>PileControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\PilePanel.cs" />
+    <Compile Include="Play\Gui\PlayerControl.xaml.cs">
+      <DependentUpon>PlayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\Selection.cs" />
+    <Compile Include="Play\Gui\TableCanvas.cs" />
+    <Compile Include="Play\Gui\TableControl.xaml.cs">
+      <DependentUpon>TableControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\VirtualizingTilePanel.cs" />
+    <Compile Include="Play\Gui\WrapPanel.cs" />
+    <Compile Include="Play\Marker.cs" />
+    <Compile Include="Play\Phase.cs" />
+    <Compile Include="Play\Pile.cs" />
+    <Compile Include="Play\PlayDispatcher.cs" />
+    <Compile Include="Play\PlayDispatcherAction.cs" />
+    <Compile Include="Play\Player.cs" />
+    <Compile Include="Play\PlayWindow.xaml.cs">
+      <DependentUpon>PlayWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Save\JodsEngineHistory.cs" />
+    <Compile Include="Play\Save\Replay.cs" />
+    <Compile Include="Play\Save\ReplayClient.cs" />
+    <Compile Include="Play\Save\ReplayEngine.cs" />
+    <Compile Include="Play\Save\ReplayEvent.cs" />
+    <Compile Include="Play\Save\ReplayEventType.cs" />
+    <Compile Include="Play\Save\ReplayReader.cs" />
+    <Compile Include="Play\Save\ReplayWriter.cs" />
+    <Compile Include="Play\State\CardSaveState.cs" />
+    <Compile Include="Play\State\CounterSaveState.cs" />
+    <Compile Include="Play\State\GameEngine.cs" />
+    <Compile Include="Play\State\GroupSaveState.cs" />
+    <Compile Include="Play\State\JodsEngineGameSaveState.cs" />
+    <Compile Include="Play\State\JodsEnginePlayerSaveState.cs" />
+    <Compile Include="Play\State\MarkerSaveState.cs" />
+    <Compile Include="Play\State\SaveState.cs" />
+    <Compile Include="Play\Table.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="Scripting\Controls\CardDlg.xaml.cs">
+      <DependentUpon>CardDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
+      <DependentUpon>ChoiceDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\Dialogs.cs" />
+    <Compile Include="Scripting\Controls\InputDlg.xaml.cs">
+      <DependentUpon>InputDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\MarkerDlg.xaml.cs">
+      <DependentUpon>MarkerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\PackDlg.xaml.cs">
+      <DependentUpon>PackDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\SelectCardsDlg.xaml.cs">
+      <DependentUpon>SelectCardsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\SelectMultiCardsDlg.xaml.cs">
+      <DependentUpon>SelectMultiCardsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Engine.cs" />
+    <Compile Include="Scripting\ExecutionResult.cs" />
+    <Compile Include="Scripting\GameEvents.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GameEvents.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\OCounter.cs" />
+    <Compile Include="Scripting\OPlayer.cs" />
+    <Compile Include="Scripting\PythonConverter.cs" />
+    <Compile Include="Scripting\ScriptApi.cs" />
+    <Compile Include="Scripting\ScriptApiOld.cs" />
+    <Compile Include="Scripting\ScriptJob.cs" />
+    <Compile Include="Scripting\ScriptSecurityException.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_1.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_2.cs" />
+    <Compile Include="SubscriptionModule.cs" />
+    <Compile Include="UiMessages\NotifyPropertyChanged.cs" />
+    <Compile Include="Utils\BrushCache.cs" />
+    <Compile Include="Utils\CacheTraceListener.cs" />
+    <Compile Include="Utils\CompoundCall.cs" />
+    <Compile Include="Utils\Converters\BooleanInverterConverter.cs" />
+    <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
+    <Compile Include="Utils\Converters\UriToSafeImageConverter.cs" />
+    <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
+    <Compile Include="Utils\Converters\RichTextConverter.cs" />
+    <Compile Include="Utils\CryptoRandom.cs" />
+    <Compile Include="Utils\FileIcon.cs" />
+    <Compile Include="Utils\GridViewSort.cs" />
+    <Compile Include="Utils\ImageUtils.cs" />
+    <Compile Include="Utils\ImportFile.cs" />
+    <Compile Include="Utils\Log4NetLogger.cs" />
+    <Compile Include="Utils\MouseClickHandler.cs" />
+    <Compile Include="Utils\PasswordBoxAssistant.cs" />
+    <Compile Include="Utils\ShellLink.cs" />
+    <Compile Include="Utils\Sounds.cs" />
+    <Compile Include="Utils\SSLValidationHelper.cs" />
+    <Compile Include="Utils\TextBlockExtension.cs" />
+    <Compile Include="Utils\UacHelper.cs" />
+    <Compile Include="Utils\Win32.cs" />
+    <Compile Include="Utils\XmlInstaller.cs" />
+    <Compile Include="Utils\XmlSetParser.cs" />
+    <Compile Include="Utils\YouTube\YouTubeProvider.cs" />
+    <Compile Include="Utils\YouTube\YouTubeViewer.xaml.cs">
+      <DependentUpon>YouTubeViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\DataGameViewModel.cs" />
+    <Compile Include="WindowManager.cs" />
+    <Compile Include="Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\BrowserWindow.xaml.cs">
+      <DependentUpon>BrowserWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\DWindow.xaml.cs">
+      <DependentUpon>DWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\GameLog.xaml.cs">
+      <DependentUpon>GameLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ImportImages.xaml.cs">
+      <DependentUpon>ImportImages.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\LoadingWindow.xaml.cs">
+      <DependentUpon>LoadingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Options.xaml.cs">
+      <DependentUpon>Options.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PickCardFromList.xaml.cs">
+      <DependentUpon>PickCardFromList.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.Debug x86.config" />
+    <None Include="app.Debug.config" />
+    <None Include="app.manifest" />
+    <None Include="logging.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DoVersionStuff.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
+    </Content>
+    <Content Include="Networking\BinaryParser.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryParser.cs</LastGenOutput>
+    </Content>
+    <Content Include="Networking\BinaryStubs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryStubs.cs</LastGenOutput>
+    </Content>
+    <Content Include="Networking\IServerCalls.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IServerCalls.cs</LastGenOutput>
+    </Content>
+    <Content Include="Resources\doorclose.wav" />
+    <Content Include="Resources\gamemessage.wav" />
+    <Content Include="Resources\knockknock.wav" />
+    <Content Include="Resources\messagenotify.wav" />
+    <Content Include="Resources\userjoinsroom.wav" />
+    <Content Include="Scripting\ApiVersions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\CaseInsensitiveDict.py" />
+    <Content Include="Scripting\GameEvents.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GameEvents.cs</LastGenOutput>
+    </Content>
+    <Content Include="Scripting\Lib\abc.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\bisect.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\collections.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\heapq.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\keyword.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\_abcoll.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Air-Travel.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Canival.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\cb2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Dragon-Strategy.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Face-In-The-Crowd.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\GGG.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Homewrecker.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Invent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Master-Ritualist.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Monstrous-Lassitude.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\P-Warrior.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Rudo-Shade.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Straw-Man.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\Thabbashite-Assailant.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sleeves\The-Spoils.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj">
+      <Project>{F145C512-7B6E-4DE3-9D7C-CD64151A829D}</Project>
+      <Name>Octgn.Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
+      <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
+      <Name>Octgn.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
+      <Project>{59759960-0A48-45EC-ABB9-B4FAAD6D43EE}</Project>
+      <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
+      <Name>Octgn.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8BED43B1-B215-49BF-9DB7-5C72171E1CAD}</Project>
+      <Name>Octgn.Online</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
+      <Project>{AB487BD2-9CF7-4C4E-A938-5B9FEE4C4E76}</Project>
+      <Name>Octgn.ProxyGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
+      <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
+      <Name>Octgn.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj">
+      <Project>{5c5d57af-736e-4a20-91bf-253459f5e746}</Project>
+      <Name>WpfCircularProgressBar</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /SDY "$(TargetDir)*.*" "$(ProjectDir)..\Octgn\bin\$(ConfigurationName)\"</PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <ReferencePath Include="F:\Source\OCTGN\packages\CommonServiceLocator.2.0.6\lib\net48\CommonServiceLocator.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\IronPython.2.7.12\lib\net45\IronPython.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\IronPython.2.7.12\lib\net45\IronPython.Modules.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\IronPython.2.7.12\lib\net45\IronPython.SQLite.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\IronPython.2.7.12\lib\net45\IronPython.Wpf.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\log4net.2.0.15\lib\net45\log4net.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Microsoft.CSharp.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\DynamicLanguageRuntime.1.3.3\lib\net452\Microsoft.Dynamic.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\DynamicLanguageRuntime.1.3.3\lib\net452\Microsoft.Scripting.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\DynamicLanguageRuntime.1.3.3\lib\net452\Microsoft.Scripting.Metadata.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Microsoft.Web.Xdt.3.1.0\lib\net40\Microsoft.Web.XmlTransform.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Microsoft.Win32.Registry.5.0.0\lib\net461\Microsoft.Win32.Registry.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Mono.Options.6.12.0.148\lib\net40\Mono.Options.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\mscorlib.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.Asio.2.1.0\lib\netstandard2.0\NAudio.Asio.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.Core.2.1.0\lib\netstandard2.0\NAudio.Core.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.2.1.0\lib\net472\NAudio.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.Midi.2.1.0\lib\netstandard2.0\NAudio.Midi.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.Wasapi.2.1.0\lib\netstandard2.0\NAudio.Wasapi.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.WinForms.2.1.0\lib\net472\NAudio.WinForms.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NAudio.WinMM.2.1.0\lib\netstandard2.0\NAudio.WinMM.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.AsyncEx.Context.5.1.2\lib\net461\Nito.AsyncEx.Context.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.AsyncEx.Coordination.5.1.2\lib\net461\Nito.AsyncEx.Coordination.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.AsyncEx.Interop.WaitHandles.5.1.2\lib\net461\Nito.AsyncEx.Interop.WaitHandles.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.AsyncEx.Oop.5.1.2\lib\net461\Nito.AsyncEx.Oop.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.AsyncEx.Tasks.5.1.2\lib\net461\Nito.AsyncEx.Tasks.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.Cancellation.1.1.2\lib\net461\Nito.Cancellation.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.Collections.Deque.1.1.1\lib\net461\Nito.Collections.Deque.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Nito.Disposables.2.3.0\lib\net461\Nito.Disposables.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\NuGet.Core.2.14.0\lib\net40-Client\NuGet.Core.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.Communication\Octgn.Communication\bin\Debug\netstandard2.0\Octgn.Communication.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.Core\bin\Debug\Octgn.Core.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.DataNew\bin\Debug\Octgn.DataNew.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.Library\bin\Debug\Octgn.Library.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.Online\bin\Debug\netstandard2.0\Octgn.Online.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.ProxyGenerator\bin\Debug\Octgn.ProxyGenerator.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\Octgn.Server\bin\Debug\Octgn.Server.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationFramework.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Collections.Immutable.7.0.0\lib\net462\System.Collections.Immutable.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.ComponentModel.Composition.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Configuration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Drawing.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Numerics.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Security.AccessControl.6.0.0\lib\net461\System.Security.AccessControl.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Web.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Windows.Forms.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xml.Linq.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\ToggleSwitch.1.2.0\lib\net46\ToggleSwitch.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\UIAutomationProvider.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\UIAutomationTypes.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\WindowsBase.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\octgnFX\WpfCircularProgressBar\bin\Debug\WpfCircularProgressBar.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll" />
+    <ReferencePath Include="F:\Source\OCTGN\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.Toolkit.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\Microsoft.Win32.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\netstandard.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.AppContext.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Collections.Concurrent.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Collections.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Collections.NonGeneric.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Collections.Specialized.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ComponentModel.Annotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ComponentModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ComponentModel.EventBasedAsync.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ComponentModel.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ComponentModel.TypeConverter.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Console.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Data.Common.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.Contracts.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.Debug.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.FileVersionInfo.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.Process.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.StackTrace.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.TextWriterTraceListener.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.Tools.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Diagnostics.TraceSource.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Drawing.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Dynamic.Runtime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Globalization.Calendars.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Globalization.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Globalization.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.Compression.ZipFile.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.FileSystem.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.FileSystem.DriveInfo.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.FileSystem.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.FileSystem.Watcher.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.IsolatedStorage.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.MemoryMappedFiles.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.Pipes.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.IO.UnmanagedMemoryStream.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Linq.Expressions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Linq.Parallel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Linq.Queryable.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.Http.Rtc.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.NameResolution.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.NetworkInformation.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.Ping.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.Requests.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.Sockets.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.WebHeaderCollection.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.WebSockets.Client.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Net.WebSockets.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ObjectModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Reflection.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Reflection.Emit.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Reflection.Emit.ILGeneration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Reflection.Emit.Lightweight.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Reflection.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Reflection.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Resources.Reader.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Resources.ResourceManager.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Resources.Writer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.CompilerServices.VisualC.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Handles.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.InteropServices.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.InteropServices.WindowsRuntime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Numerics.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Serialization.Formatters.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Serialization.Json.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Serialization.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.Serialization.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Claims.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Cryptography.Algorithms.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Cryptography.Csp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Cryptography.Encoding.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Cryptography.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Cryptography.X509Certificates.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.Principal.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Security.SecureString.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ServiceModel.Duplex.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ServiceModel.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ServiceModel.NetTcp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ServiceModel.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ServiceModel.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Text.Encoding.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Text.Encoding.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Text.RegularExpressions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.Overlapped.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.Tasks.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.Tasks.Parallel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.Thread.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.ThreadPool.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Threading.Timer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.ValueTuple.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Xml.ReaderWriter.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Xml.XDocument.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Xml.XmlDocument.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Xml.XmlSerializer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Xml.XPath.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Xml.XPath.XDocument.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Controls\MissedMessagesBreak.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Controls\PileViewPermissionDialog.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Controls\PopupWindowMessage.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Controls\PreGameLobby.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Controls\SubscribeMessageLargeMessage.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Controls\WaitingDialog.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\DeckBuilderWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\DeckCardsViewer.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\DeckEditorPreviewControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\DeckManager.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\FilterControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\SearchControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\DeckBuilder\SleeveManagerView.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\DeveloperConsole\InteractiveConsole.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\DeveloperWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Dialogs\ChatWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Dialogs\LimitedDialog.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Dialogs\PickCardsDialog.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Dialogs\PreviewCardWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Dialogs\RulesWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\AdhocPileControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\CardControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\CardListControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\ChatControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\DeckStats.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\GroupWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\MarkerControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\NoteControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\PileCollapsedControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\PileControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\PlayerControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\Gui\TableControl.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Play\PlayWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Resources\Themes\BlueGlass\NumericUpDown.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\CardDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\ChoiceDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\InputDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\MarkerDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\PackDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\SelectCardsDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Scripting\Controls\SelectMultiCardsDlg.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Utils\YouTube\YouTubeViewer.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\AboutWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\BrowserWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\DWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\ErrorWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\GameLog.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\ImportImages.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\LoadingWindow.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\Options.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Windows\PickCardFromList.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\App.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\Octgn.JodsEngine_Content.g.cs" />
+    <Compile Include="F:\Source\OCTGN\octgnFX\Octgn.JodsEngine\obj\Debug\GeneratedInternalTypeHelper.g.cs" />
+  </ItemGroup>
+</Project>
