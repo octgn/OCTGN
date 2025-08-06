@@ -1372,14 +1372,11 @@ namespace Octgn.Test.OctgnApp.Scripting
         [Test]
         public void ExecuteFunctionSecureNoFormat_WebFunctions_AreBlockedFromRemoteCall()
         {
-            // This test verifies that web functions are properly blocked when called via remoteCall mechanism
+            // This test verifies that the actual web functions are properly blocked when called via remoteCall mechanism
             var webFunctions = new[]
             {
                 "webPost",
-                "webGet",
-                "webRead",
-                "website",
-                "webApi"
+                "webRead"
             };
 
             foreach (var webFunction in webFunctions)
@@ -1411,6 +1408,29 @@ namespace Octgn.Test.OctgnApp.Scripting
                 Assert.DoesNotThrow(() =>
                     _engine.ExecuteFunctionSecureNoFormat(function, "Player(1)"),
                     $"Legitimate function '{function}' should not be blocked");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebPrefixedNonWebFunctions_AreAllowedFromRemoteCall()
+        {
+            // This test verifies that functions starting with "web" but not actual web functions are allowed
+            // This ensures we're not being overly broad in our blocking
+            var webPrefixedFunctions = new[]
+            {
+                "website",
+                "webGet", 
+                "webApi",
+                "webSocket",
+                "webCustomFunction"
+            };
+
+            foreach (var function in webPrefixedFunctions)
+            {
+                // Act & Assert - non-web functions starting with "web" should NOT throw
+                Assert.DoesNotThrow(() =>
+                    _engine.ExecuteFunctionSecureNoFormat(function, "\"test\""),
+                    $"Function '{function}' starting with 'web' but not actual web function should not be blocked");
             }
         }
 

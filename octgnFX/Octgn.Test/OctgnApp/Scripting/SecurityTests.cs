@@ -2088,15 +2088,15 @@ namespace Octgn.Test.OctgnApp.Scripting
         [Test]
         public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWebGet()
         {
+            // Note: webGet is not an actual OCTGN web function, but we test it to show it's NOT blocked
             // Arrange
             var function = "webGet";
             var args = "\"http://evil.com\"";
 
-            // Act & Assert
-            var ex = Assert.Throws<ScriptSecurityException>(() => 
-                _engine.ExecuteFunctionSecureNoFormat(function, args));
-            
-            Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"));
+            // Act & Assert - This should NOT be blocked since webGet is not a real web function
+            Assert.DoesNotThrow(() => 
+                _engine.ExecuteFunctionSecureNoFormat(function, args),
+                "webGet is not a real OCTGN web function so should not be blocked");
         }
 
         [Test]
@@ -2114,37 +2114,21 @@ namespace Octgn.Test.OctgnApp.Scripting
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksAnyWebFunction()
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksActualWebFunctions()
         {
-            // Test that any function starting with "web" is blocked
-            var webFunctions = new[]
+            // Test that only the actual OCTGN web functions are blocked
+            var actualWebFunctions = new[]
             {
                 "webPost",
-                "webGet", 
-                "webRead",
-                "webRequest",
-                "webDownload",
-                "webUpload",
-                "webCall",
-                "website",
-                "webApi",
-                "webSocket",
-                "webService",
-                "webPage",
-                "webQuery",
-                "webSubmit",
-                "webFetch",
-                "WebPost", // Test case sensitivity
-                "WEBGET",  // Test case sensitivity
-                "WebRead"  // Test case sensitivity
+                "webRead"
             };
 
-            foreach (var webFunction in webFunctions)
+            foreach (var webFunction in actualWebFunctions)
             {
-                // Act & Assert
+                // Act & Assert - These should be blocked
                 var ex = Assert.Throws<ScriptSecurityException>(() => 
                     _engine.ExecuteFunctionSecureNoFormat(webFunction, "\"http://example.com\""),
-                    $"Web function '{webFunction}' should be blocked");
+                    $"Actual web function '{webFunction}' should be blocked");
                 
                 Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"),
                     $"Security exception for '{webFunction}' should mention dangerous function");
@@ -2152,17 +2136,37 @@ namespace Octgn.Test.OctgnApp.Scripting
         }
 
         [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_AllowsNonWebFunctions()
+        {
+            // Test that functions starting with "web" but not actual web functions are allowed
+            var nonWebFunctions = new[]
+            {
+                "webGet",      // Not a real OCTGN function
+                "website",     // Not a real OCTGN function  
+                "webApi",      // Not a real OCTGN function
+                "webSocket",   // Not a real OCTGN function
+                "webService",  // Not a real OCTGN function
+                "WebPost",     // Case variation - not exact match
+                "WEBREAD"      // Case variation - not exact match
+            };
+
+            foreach (var nonWebFunction in nonWebFunctions)
+            {
+                // Act & Assert - These should NOT be blocked
+                Assert.DoesNotThrow(() => 
+                    _engine.ExecuteFunctionSecureNoFormat(nonWebFunction, "\"http://example.com\""),
+                    $"Non-web function '{nonWebFunction}' should not be blocked");
+            }
+        }
+
+        [Test]
         public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWithVariousArguments()
         {
-            // Test various argument combinations that should all be blocked
+            // Test various argument combinations for actual web functions that should all be blocked
             var testCases = new[]
             {
                 new { Function = "webPost", Args = "\"http://evil.com\", \"data=malicious\"" },
-                new { Function = "webGet", Args = "\"http://evil.com/steal_data\"" },
-                new { Function = "webRead", Args = "\"http://evil.com\", 5000" },
-                new { Function = "website", Args = "Player(1), \"http://phishing.com\"" },
-                new { Function = "webApi", Args = "[\"http://evil1.com\", \"http://evil2.com\"]" },
-                new { Function = "webCall", Args = "{\"url\": \"http://evil.com\", \"method\": \"POST\"}" }
+                new { Function = "webRead", Args = "\"http://evil.com\", 5000" }
             };
 
             foreach (var testCase in testCases)

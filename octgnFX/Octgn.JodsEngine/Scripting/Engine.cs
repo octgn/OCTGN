@@ -507,19 +507,11 @@ namespace Octgn.Scripting
             {
                 "exec", "eval", "compile", "__import__", "open", "file", "input", "raw_input",
                 "reload", "execfile", "apply", "getattr", "setattr", "delattr", "hasattr",
-                "globals", "locals", "vars", "dir", "exit", "quit"
+                "globals", "locals", "vars", "dir", "exit", "quit",
+                "webRead", "webPost"
             };
 
-            return dangerousFunctions.Contains(function) || IsWebFunction(function);
-        }
-
-        /// <summary>
-        /// Checks if a function name is a web-related function that should not be allowed via remoteCall
-        /// </summary>
-        private static bool IsWebFunction(string function)
-        {
-            // Block all web-related functions to prevent remote users from making arbitrary web requests
-            return function.StartsWith("web", StringComparison.OrdinalIgnoreCase);
+            return dangerousFunctions.Contains(function);
         }
 
         /// <summary>
