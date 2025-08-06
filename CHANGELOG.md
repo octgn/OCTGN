@@ -1,3 +1,6 @@
+#3.4.426.0
++ block web calls from remoteCall - copilot
+
 #3.4.425.0
 + remoteCall dict support - kellye
 
@@ -4131,6 +4134,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
