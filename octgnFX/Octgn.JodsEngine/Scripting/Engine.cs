@@ -510,7 +510,16 @@ namespace Octgn.Scripting
                 "globals", "locals", "vars", "dir", "exit", "quit"
             };
 
-            return dangerousFunctions.Contains(function);
+            return dangerousFunctions.Contains(function) || IsWebFunction(function);
+        }
+
+        /// <summary>
+        /// Checks if a function name is a web-related function that should not be allowed via remoteCall
+        /// </summary>
+        private static bool IsWebFunction(string function)
+        {
+            // Block all web-related functions to prevent remote users from making arbitrary web requests
+            return function.StartsWith("web", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

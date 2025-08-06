@@ -1,1 +1,2 @@
 
+block web calls from remoteCall - copilot

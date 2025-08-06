@@ -1366,5 +1366,54 @@ namespace Octgn.Test.OctgnApp.Scripting
         }
 
         #endregion
+
+        #region Security Validation Tests
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_AreBlockedFromRemoteCall()
+        {
+            // This test verifies that web functions are properly blocked when called via remoteCall mechanism
+            var webFunctions = new[]
+            {
+                "webPost",
+                "webGet",
+                "webRead",
+                "website",
+                "webApi"
+            };
+
+            foreach (var webFunction in webFunctions)
+            {
+                // Act & Assert - web functions should be blocked
+                Assert.Throws<ScriptSecurityException>(() =>
+                    _engine.ExecuteFunctionSecureNoFormat(webFunction, "\"http://example.com\""),
+                    $"Web function '{webFunction}' should be blocked from remote execution");
+            }
+        }
+
+        [Test]
+        public void ExecuteFunctionSecureNoFormat_NonWebFunctions_AreAllowedFromRemoteCall()
+        {
+            // This test verifies that legitimate non-web functions still work
+            var legitimateFunctions = new[]
+            {
+                "whisper",
+                "notify", 
+                "playSound",
+                "drawCard",
+                "setActivePlayer",
+                "customGameFunction"
+            };
+
+            foreach (var function in legitimateFunctions)
+            {
+                // Act & Assert - legitimate functions should NOT throw
+                Assert.DoesNotThrow(() =>
+                    _engine.ExecuteFunctionSecureNoFormat(function, "Player(1)"),
+                    $"Legitimate function '{function}' should not be blocked");
+            }
+        }
+
+        #endregion
     }
 }
