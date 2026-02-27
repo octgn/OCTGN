@@ -141,24 +141,24 @@ describe('CardComponent — Rotation Animation', () => {
     expect(inner.style.transform).not.toContain('rotate(');
   });
 
-  it('should apply 90deg rotation for rotation=1', () => {
-    const card = makeCard({ rotation: 1 });
+  it('should apply 90deg rotation for rotation=90', () => {
+    const card = makeCard({ rotation: 90 });
     const { container } = render(<CardComponent card={card} />);
 
     const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
     expect(inner.style.transform).toContain('rotate(90deg)');
   });
 
-  it('should apply 180deg rotation for rotation=2', () => {
-    const card = makeCard({ rotation: 2 });
+  it('should apply 180deg rotation for rotation=180', () => {
+    const card = makeCard({ rotation: 180 });
     const { container } = render(<CardComponent card={card} />);
 
     const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
     expect(inner.style.transform).toContain('rotate(180deg)');
   });
 
-  it('should apply -90deg rotation for rotation=3 (shortest path from 0)', () => {
-    const card = makeCard({ rotation: 3 });
+  it('should apply -90deg rotation for rotation=270 (shortest path from 0)', () => {
+    const card = makeCard({ rotation: 270 });
     const { container } = render(<CardComponent card={card} />);
 
     const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
@@ -167,7 +167,7 @@ describe('CardComponent — Rotation Animation', () => {
   });
 
   it('should combine rotation with flip transform when face down', () => {
-    const card = makeCard({ rotation: 1, faceUp: false });
+    const card = makeCard({ rotation: 90, faceUp: false });
     const { container } = render(<CardComponent card={card} />);
 
     const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
@@ -230,6 +230,48 @@ describe('GameBoard — Card position animation', () => {
     // CardComponent wrapper should exist
     const wrapper = container.querySelector('.octgn-card-wrapper');
     expect(wrapper).toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CardComponent — Inverted Zone (two-sided table)
+// ---------------------------------------------------------------------------
+
+describe('CardComponent — Inverted Zone', () => {
+  afterEach(() => cleanup());
+
+  it('should apply scale(-1, -1) when invertedZone is true', () => {
+    const card = makeCard({ faceUp: true });
+    const { container } = render(<CardComponent card={card} invertedZone={true} />);
+
+    const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
+    expect(inner.style.transform).toContain('scale(-1, -1)');
+  });
+
+  it('should NOT apply scale(-1, -1) when invertedZone is false', () => {
+    const card = makeCard({ faceUp: true });
+    const { container } = render(<CardComponent card={card} invertedZone={false} />);
+
+    const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
+    expect(inner.style.transform).not.toContain('scale(-1, -1)');
+  });
+
+  it('should NOT apply scale(-1, -1) when invertedZone is not provided', () => {
+    const card = makeCard({ faceUp: true });
+    const { container } = render(<CardComponent card={card} />);
+
+    const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
+    expect(inner.style.transform).not.toContain('scale(-1, -1)');
+  });
+
+  it('should combine invertedZone with rotation and flip transforms', () => {
+    const card = makeCard({ rotation: 90, faceUp: false });
+    const { container } = render(<CardComponent card={card} invertedZone={true} />);
+
+    const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
+    expect(inner.style.transform).toContain('scale(-1, -1)');
+    expect(inner.style.transform).toContain('rotate(90deg)');
+    expect(inner.style.transform).toContain('rotateY(180deg)');
   });
 });
 

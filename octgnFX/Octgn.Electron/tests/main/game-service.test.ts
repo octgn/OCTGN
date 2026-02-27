@@ -407,6 +407,28 @@ describe('GameService', () => {
           isSpectator: false,
         });
       });
+
+      it('stores tableSide as invertedTable on the player', async () => {
+        const service = await serviceWithState();
+        mockSend.mockClear();
+
+        const handler = getHandler('NewPlayer');
+        handler(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false, tableSide: true }));
+
+        const state = lastState();
+        expect(state.players[0].invertedTable).toBe(true);
+      });
+
+      it('defaults invertedTable to false when tableSide not provided', async () => {
+        const service = await serviceWithState();
+        mockSend.mockClear();
+
+        const handler = getHandler('NewPlayer');
+        handler(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+
+        const state = lastState();
+        expect(state.players[0].invertedTable).toBe(false);
+      });
     });
 
     describe('PlayerSettings', () => {
@@ -421,6 +443,19 @@ describe('GameService', () => {
 
         const state = lastState();
         expect(state.players[0].isSpectator).toBe(true);
+      });
+
+      it('stores invertedTable on the player', async () => {
+        const service = await serviceWithState();
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+        mockSend.mockClear();
+
+        const handler = getHandler('PlayerSettings');
+        handler(msg(MessageType.PlayerSettings, { playerId: 10, invertedTable: true, spectator: false }));
+
+        const state = lastState();
+        expect(state.players[0].invertedTable).toBe(true);
       });
     });
 
@@ -475,6 +510,30 @@ describe('GameService', () => {
           message: 'Game reset',
           isSystem: true,
         });
+      });
+    });
+
+    describe('Settings', () => {
+      it('stores twoSidedTable in gameState', async () => {
+        const service = await serviceWithState();
+        mockSend.mockClear();
+
+        const handler = getHandler('Settings');
+        handler(msg(MessageType.Settings, { twoSidedTable: true, allowSpectators: true, muteSpectators: false }));
+
+        const state = lastState();
+        expect(state.useTwoSidedTable).toBe(true);
+      });
+
+      it('stores false when twoSidedTable is false', async () => {
+        const service = await serviceWithState();
+        mockSend.mockClear();
+
+        const handler = getHandler('Settings');
+        handler(msg(MessageType.Settings, { twoSidedTable: false, allowSpectators: true, muteSpectators: false }));
+
+        const state = lastState();
+        expect(state.useTwoSidedTable).toBe(false);
       });
     });
 

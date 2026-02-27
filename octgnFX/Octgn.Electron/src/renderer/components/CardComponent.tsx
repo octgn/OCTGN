@@ -54,6 +54,7 @@ export interface CardComponentProps {
   cardBackUrl?: string;
   selected?: boolean;
   interactive?: boolean;
+  invertedZone?: boolean;
   className?: string;
   style?: React.CSSProperties;
   onClick?: (card: CardType) => void;
@@ -68,6 +69,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
   cardBackUrl,
   selected = false,
   interactive = true,
+  invertedZone = false,
   className,
   style,
   onClick,
@@ -84,7 +86,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
 
   // Track previous rotation to compute shortest path
   const prevRotationRef = useRef(0);
-  const targetDeg = (card.rotation ?? 0) * 90; // 0,1,2,3 -> 0,90,180,270
+  const targetDeg = card.rotation ?? 0; // already in degrees (0, 90, 180, 270)
   const rotationDeg = shortestRotationDeg(prevRotationRef.current, targetDeg);
   // Update ref for next render
   prevRotationRef.current = rotationDeg;
@@ -133,6 +135,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
   // - Y-axis rotation (flip: 0 or 180)
   // - Hover scale
   const innerTransformParts: string[] = [];
+  if (invertedZone) innerTransformParts.push('scale(-1, -1)');
   if (rotationDeg) innerTransformParts.push(`rotate(${rotationDeg}deg)`);
   if (!isFlippedUp) innerTransformParts.push('rotateY(180deg)');
   if (isHovered && interactive) innerTransformParts.push('scale(1.06)');

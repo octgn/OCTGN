@@ -180,6 +180,7 @@ export interface Player {
   color: string;
   isHost: boolean;
   isSpectator: boolean;
+  invertedTable?: boolean;
   groups: Group[];
   counters: Counter[];
   globalVariables: Record<string, string>;
@@ -227,6 +228,7 @@ export interface GameState {
   phase: number;
   chatMessages: ChatMessage[];
   isStarted: boolean;
+  useTwoSidedTable?: boolean;
   connectionStatus?: 'connected' | 'disconnected' | 'reconnecting';
   globalVariables?: Record<string, string>;
   /** Default card size from game definition (in mm) */

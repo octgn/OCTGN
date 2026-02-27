@@ -402,6 +402,7 @@ export class GameService {
         color: '#3b82f6',
         isHost: false,
         isSpectator: (params.spectator as boolean) ?? false,
+        invertedTable: (params.tableSide as boolean) ?? false,
         groups: [],
         counters: [],
         globalVariables: {},
@@ -419,6 +420,7 @@ export class GameService {
       );
       if (player) {
         player.isSpectator = (params.spectator as boolean) ?? player.isSpectator;
+        player.invertedTable = (params.invertedTable as boolean) ?? player.invertedTable;
       }
       this.broadcastState();
     });
@@ -477,6 +479,7 @@ export class GameService {
         this.initializeGameState('', '');
       }
       log('GAME', `Settings: twoSided=${params.twoSidedTable} spectators=${params.allowSpectators} mute=${params.muteSpectators}`);
+      this.gameState!.useTwoSidedTable = params.twoSidedTable as boolean;
       this.broadcastState();
     });
 
@@ -1016,6 +1019,7 @@ export class GameService {
         color: p.Color ?? '#3b82f6',
         isHost: false,
         isSpectator: false,
+        invertedTable: false,
         groups,
         counters,
         globalVariables: p.GlobalVariables ?? {},
