@@ -65,3 +65,26 @@ E2E tests use the Vite dev server with `window.octgn` mocked via `page.addInitSc
 - `src/shared/` — Shared types and constants
 - `tests/` — Vitest unit/integration tests
 - `e2e/` — Playwright e2e tests
+
+## Gotchas & Lessons Learned
+
+### Electron IPC drops `undefined` arguments
+When calling `ipcRenderer.invoke(channel, arg1, undefined, arg3)`, Electron serializes `undefined` in a way that can shift positional arguments. Always use explicit defaults before sending: `password ?? ''`, `spectator ?? false`. This caused a bug where the spectator flag was silently lost.
+
+### OCTGN API game status can be stale
+The OCTGN lobby API sometimes reports `status: 1` (GameReady) for games that are actually in progress. The server then kicks you with "This game is already started". Don't assume the API status is always correct — show spectate options for any game with `spectators: true`, not just InProgress games.
+
+### Preload changes require `npm run build:main`
+The preload script is bundled by esbuild, NOT by Vite. Changes to `src/main/preload.ts` won't take effect until you run `npm run build:main` (or relaunch via `launch-cdp.ps1` which rebuilds). Renderer changes hot-reload via Vite, but main process and preload do not.
+
+### Mocking `fs/promises` in Vitest is unreliable
+`vi.mock('fs/promises')` often fails to apply to source modules that import from it — the mock applies to the test file's import but not to the module under test. **Use dependency injection instead**: pass an IO interface to the constructor (see `CardResolver` and `CardResolverIO` for the pattern). This is more reliable and avoids async factory / `importOriginal` headaches.
+
+### JSDoc comments with `*/` in glob paths break esbuild
+A comment like `/** Scans Sets/*/set.xml */` will be parsed as closing the JSDoc comment at `*/`. Rephrase to avoid literal `*/` in comments: `/** Scans set.xml files from each set directory */`.
+
+### OCTGN GameDatabase paths
+The legacy OCTGN install uses `%LOCALAPPDATA%\Octgn\GameDatabase`. Newer installs use `%LOCALAPPDATA%\Programs\OCTGN\Data\GameDatabase`. Always check both paths (see `game-store.ts`).
+
+### Game protocol group ID encoding
+OCTGN group IDs encode the group index in the low byte (1-based). To get the group array index: `(groupId & 0xFF) - 1`. The high bytes encode the player. The `definition.xml` `<player>` element lists groups in order matching these indices.
