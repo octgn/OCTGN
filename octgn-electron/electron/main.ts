@@ -55,6 +55,10 @@ function createWindow() {
   const iconPath = path.join(__dirname, 'assets', 'icon.png');
   const iconExists = fs.existsSync(iconPath);
 
+  console.log('[Main] Creating window...');
+  console.log('[Main] Icon path:', iconPath, 'exists:', iconExists);
+  console.log('[Main] isDev:', isDev);
+
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -63,6 +67,7 @@ function createWindow() {
     title: 'OCTGN',
     ...(iconExists ? { icon: iconPath } : {}),
     backgroundColor: '#171717',
+    show: true, // Force show immediately
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -70,15 +75,21 @@ function createWindow() {
     },
   });
 
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:5173');
-    mainWindow.webContents.openDevTools();
-  } else {
-    mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
-  }
+  console.log('[Main] Window created, loading URL...');
 
+  // Handle window close
   mainWindow.on('closed', () => {
+    console.log('[Main] Window closed');
     mainWindow = null;
+  });
+
+  // Log when ready
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('[Main] Page finished loading');
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.focus();
+    }
   });
 
   // Handle external links
@@ -97,15 +108,46 @@ function createWindow() {
           ...details.responseHeaders,
           'Content-Security-Policy': [
             "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173; " +
-            "style-src 'self' 'unsafe-inline' http://localhost:5173; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:*; " +
+            "style-src 'self' 'unsafe-inline' http://localhost:* https://fonts.googleapis.com; " +
+            "font-src 'self' data: https://fonts.gstatic.com; " +
             "img-src 'self' data: https: http:; " +
-            "font-src 'self' data:; " +
             "connect-src 'self' ws://localhost:* http://localhost:* https://www.octgn.net https://*.myget.org"
           ],
         },
       });
     });
+  }
+
+  if (isDev) {
+    // Vite might be on different ports if others are in use
+    // Try ports 5173-5180
+    const ports = [5173, 5174, 5175, 5176, 5177, 5178, 5179, 5180];
+    
+    const tryLoadUrl = async () => {
+      for (const port of ports) {
+        const url = `http://localhost:${port}`;
+        try {
+          console.log(`[Main] Trying ${url}...`);
+          await mainWindow!.loadURL(url);
+          console.log(`[Main] Successfully loaded ${url}`);
+          return true;
+        } catch (err) {
+          console.log(`[Main] Port ${port} not available`);
+        }
+      }
+      return false;
+    };
+    
+    tryLoadUrl().then(success => {
+      if (!success) {
+        console.error('[Main] Failed to load any Vite port');
+      }
+    });
+    
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
   }
 }
 
