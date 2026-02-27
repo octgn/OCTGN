@@ -219,6 +219,8 @@ export interface GameState {
     width?: number;
     height?: number;
     backgroundStyle?: 'stretch' | 'tile' | 'uniform' | 'uniformToFill';
+    /** Resolved URL for the table background image (e.g. wood texture) */
+    backgroundUrl?: string;
   };
   turnNumber: number;
   activePlayer: number;

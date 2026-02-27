@@ -352,11 +352,16 @@ export class GameService {
           const gameDef = this.cardResolver.getGameDefinition(this.currentGameId);
           if (gameDef && this.gameState) {
             this.gameState.gameDefinition = { name: gameDef.name, id: gameDef.id };
-            // Populate table dimensions and background style from game definition
+            // Populate table dimensions, background style, and background image from game definition
             if (gameDef.table) {
               this.gameState.table.width = gameDef.table.width || undefined;
               this.gameState.table.height = gameDef.table.height || undefined;
               this.gameState.table.backgroundStyle = gameDef.table.backgroundStyle;
+              // Resolve table background image (e.g. wood texture) to an asset URL
+              if (gameDef.table.background) {
+                const encodedBgPath = encodeURIComponent(gameDef.table.background);
+                this.gameState.table.backgroundUrl = `octgn-asset://game-file/${this.currentGameId}/${encodedBgPath}`;
+              }
             }
             // Populate card sizes from game definition
             if (gameDef.defaultCardSize || (gameDef.cardWidth && gameDef.cardHeight)) {
@@ -1334,6 +1339,11 @@ export class GameService {
       this.gameState.table.width = gameDef.table.width || undefined;
       this.gameState.table.height = gameDef.table.height || undefined;
       this.gameState.table.backgroundStyle = gameDef.table.backgroundStyle;
+      // Resolve table background image (e.g. wood texture) to an asset URL
+      if (gameDef.table.background) {
+        const encodedBgPath = encodeURIComponent(gameDef.table.background);
+        this.gameState.table.backgroundUrl = `octgn-asset://game-file/${this.currentGameId}/${encodedBgPath}`;
+      }
     }
 
     this.broadcastState();

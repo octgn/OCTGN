@@ -268,6 +268,7 @@ const GamePage: React.FC = () => {
             boardWidth={gameState.table.board?.width}
             boardHeight={gameState.table.board?.height}
             backgroundStyle={gameState.table.backgroundStyle}
+            tableBackgroundUrl={gameState.table.backgroundUrl}
             tableWidth={gameState.table.width}
             tableHeight={gameState.table.height}
             onCardClick={handleCardClick}
