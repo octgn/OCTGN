@@ -1036,4 +1036,174 @@ describe('GameService', () => {
       mockResolveGroupName.mockReturnValue(undefined);
     });
   });
+
+  // -------------------------------------------------------------------------
+  // Pre-game lobby: send methods
+  // -------------------------------------------------------------------------
+
+  describe('sendSettings', () => {
+    it('sends a Settings message with the correct params', async () => {
+      const service = await serviceWithState();
+      mockSendMessage.mockClear();
+
+      service.sendSettings(true, true, false, true);
+
+      expect(mockSendMessage).toHaveBeenCalledWith(MessageType.Settings, 0, {
+        twoSidedTable: true,
+        allowSpectators: true,
+        muteSpectators: false,
+        allowCardList: true,
+      });
+    });
+  });
+
+  describe('sendPlayerSettings', () => {
+    it('sends a PlayerSettings message with the correct params', async () => {
+      const service = await serviceWithState();
+      mockSendMessage.mockClear();
+
+      service.sendPlayerSettings(42, true, false);
+
+      expect(mockSendMessage).toHaveBeenCalledWith(MessageType.PlayerSettings, 0, {
+        playerId: 42,
+        invertedTable: true,
+        spectator: false,
+      });
+    });
+  });
+
+  describe('bootPlayer', () => {
+    it('sends a Boot message with player id and reason', async () => {
+      const service = await serviceWithState();
+      mockSendMessage.mockClear();
+
+      service.bootPlayer(5, 'AFK');
+
+      expect(mockSendMessage).toHaveBeenCalledWith(MessageType.Boot, 0, {
+        player: 5,
+        reason: 'AFK',
+      });
+    });
+
+    it('uses empty reason by default', async () => {
+      const service = await serviceWithState();
+      mockSendMessage.mockClear();
+
+      service.bootPlayer(5);
+
+      expect(mockSendMessage).toHaveBeenCalledWith(MessageType.Boot, 0, {
+        player: 5,
+        reason: '',
+      });
+    });
+  });
+
+  describe('startGame', () => {
+    it('sends a Start message', async () => {
+      const service = await serviceWithState();
+      mockSendMessage.mockClear();
+
+      service.startGame();
+
+      expect(mockSendMessage).toHaveBeenCalledWith(MessageType.Start, 0, {});
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Pre-game lobby: host detection
+  // -------------------------------------------------------------------------
+
+  describe('host detection', () => {
+    it('marks player with id 1 as host in NewPlayer', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 2, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'HostUser', spectator: false }));
+
+      const state = lastState();
+      const host = state.players.find((p: any) => p.id === 1);
+      expect(host.isHost).toBe(true);
+    });
+
+    it('does not mark non-id-1 players as host in NewPlayer', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 3, nick: 'Guest', spectator: false }));
+
+      const state = lastState();
+      const guest = state.players.find((p: any) => p.id === 3);
+      expect(guest.isHost).toBe(false);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Pre-game lobby: Settings handler stores lobby fields
+  // -------------------------------------------------------------------------
+
+  describe('Settings handler lobby fields', () => {
+    it('stores allowSpectators, muteSpectators, and allowCardList', async () => {
+      const service = await serviceWithState();
+
+      const settings = getHandler('Settings');
+      settings(msg(MessageType.Settings, {
+        twoSidedTable: true,
+        allowSpectators: true,
+        muteSpectators: true,
+        allowCardList: false,
+      }));
+
+      const state = lastState();
+      expect(state.useTwoSidedTable).toBe(true);
+      expect(state.allowSpectators).toBe(true);
+      expect(state.muteSpectators).toBe(true);
+      expect(state.allowCardList).toBe(false);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Chat messages include player color
+  // -------------------------------------------------------------------------
+
+  describe('chat message color', () => {
+    it('includes the sending player color in chat messages', async () => {
+      const service = await serviceWithState();
+
+      // Add a player with a custom color
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 7, nick: 'Red', spectator: false }));
+
+      // Set that player's color
+      const setColor = getHandler('SetPlayerColor');
+      setColor(msg(MessageType.SetPlayerColor, { player: 7, color: '#ff0000' }));
+
+      // Send a chat from that player
+      const chat = getHandler('Chat');
+      chat(msg(MessageType.Chat, { player: 7, text: 'hello' }));
+
+      const state = lastState();
+      const chatMsg = state.chatMessages.find((m: any) => m.message === 'hello');
+      expect(chatMsg).toBeDefined();
+      expect(chatMsg.color).toBe('#ff0000');
+    });
+
+    it('omits color when player has no custom color set', async () => {
+      const service = await serviceWithState();
+
+      // Chat from local player (id 42) who has default color
+      const chat = getHandler('Chat');
+      chat(msg(MessageType.Chat, { player: 42, text: 'hi' }));
+
+      const state = lastState();
+      const chatMsg = state.chatMessages.find((m: any) => m.message === 'hi');
+      expect(chatMsg).toBeDefined();
+      // Default color is '#3b82f6' — but no player with id=42 was added via NewPlayer,
+      // so the player lookup returns undefined, and color will be undefined
+      expect(chatMsg.color).toBeUndefined();
+    });
+  });
 });
