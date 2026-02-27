@@ -1337,4 +1337,123 @@ describe('GameService', () => {
       expect(chatMsg.color).toBeUndefined();
     });
   });
+
+  // -------------------------------------------------------------------------
+  // Default board from game definition (loaded after Welcome)
+  // -------------------------------------------------------------------------
+
+  describe('default board from game definition', () => {
+    /**
+     * Helper: join a game with a game definition that has boards defined.
+     * Triggers Welcome and waits for the async loadGame → then() callback.
+     */
+    async function serviceWithGameDef(gameDef: Record<string, unknown>): Promise<GameService> {
+      // Set up getGameDefinition to return the provided definition
+      mockGetGameDefinition.mockReturnValue(gameDef);
+
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'Test' }));
+
+      // Flush the microtask queue so the loadGame().then() callback runs
+      await vi.waitFor(() => {
+        expect(mockGetGameDefinition).toHaveBeenCalled();
+      });
+
+      return service;
+    }
+
+    it('sets the default board from game definition boards[] when no SetBoard received', async () => {
+      await serviceWithGameDef({
+        name: 'Chess',
+        id: 'game-1',
+        boards: [
+          { name: 'default', source: 'boards/chess.png', x: -200, y: -150, width: 400, height: 300 },
+        ],
+      });
+
+      const state = lastState();
+      expect(state.table.board).toBeDefined();
+      expect(state.table.board.imageUrl).toContain('octgn-asset://game-file/');
+      expect(state.table.board.imageUrl).toContain(encodeURIComponent('boards/chess.png'));
+      expect(state.table.board.width).toBe(400);
+      expect(state.table.board.height).toBe(300);
+      expect(state.table.board.x).toBe(-200);
+      expect(state.table.board.y).toBe(-150);
+    });
+
+    it('sets the default board from table.board (legacy format) when no boards[] exists', async () => {
+      await serviceWithGameDef({
+        name: 'Legacy Game',
+        id: 'game-2',
+        table: {
+          board: { name: 'Default', source: 'board.jpg', x: 0, y: 0, width: 500, height: 500 },
+          width: 800,
+          height: 600,
+        },
+      });
+
+      const state = lastState();
+      expect(state.table.board).toBeDefined();
+      expect(state.table.board.imageUrl).toContain(encodeURIComponent('board.jpg'));
+    });
+
+    it('does NOT override board if SetBoard was already received', async () => {
+      mockGetGameDefinition.mockReturnValue({
+        name: 'Game',
+        id: 'game-3',
+        boards: [
+          { name: 'default', source: 'boards/default.png', x: 0, y: 0, width: 100, height: 100 },
+        ],
+      });
+
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'Test' }));
+
+      // SetBoard arrives before loadGame completes — set a board via protocol
+      const setBoard = getHandler('SetBoard');
+      setBoard(msg(MessageType.SetBoard, { player: 1, name: 'custom-board' }));
+
+      // The SetBoard handler sets the board (with fallback since def not loaded yet)
+      const stateAfterSetBoard = lastState();
+      expect(stateAfterSetBoard.table.board).toBeDefined();
+      expect(stateAfterSetBoard.table.board.name).toBe('custom-board');
+
+      // Flush the microtask queue for loadGame().then()
+      await vi.waitFor(() => {
+        expect(mockGetGameDefinition).toHaveBeenCalled();
+      });
+
+      // After definition loads, the board should have been re-resolved from pendingBoardName
+      // (via the pending board mechanism), NOT replaced by the default board
+      const stateAfterLoad = lastState();
+      expect(stateAfterLoad.table.board).toBeDefined();
+      // The board name should still be 'custom-board' (re-resolved, not replaced)
+      expect(stateAfterLoad.table.board.name).toBe('custom-board');
+    });
+
+    it('does NOT set board when game definition has no boards', async () => {
+      await serviceWithGameDef({
+        name: 'No Board Game',
+        id: 'game-4',
+      });
+
+      const state = lastState();
+      expect(state.table.board).toBeUndefined();
+    });
+
+    it('does NOT set board when board definition has no source', async () => {
+      await serviceWithGameDef({
+        name: 'Empty Board',
+        id: 'game-5',
+        boards: [
+          { name: 'default', source: '', x: 0, y: 0, width: 100, height: 100 },
+        ],
+      });
+
+      const state = lastState();
+      expect(state.table.board).toBeUndefined();
+    });
+  });
 });
