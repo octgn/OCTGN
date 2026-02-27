@@ -96,6 +96,34 @@ describe('CardResolver', () => {
       expect(resolver.resolve('anything')).toBeUndefined();
     });
 
+    it('keeps first definition when duplicate card IDs exist across sets', async () => {
+      const SET2_DUPE_XML = `<?xml version="1.0" encoding="utf-8"?>
+<set name="Alternate Art" id="set-alt" gameId="game-001" gameVersion="1.0" version="0.1">
+  <cards>
+    <card id="card-aaa" name="Ezuri (Alt Art)">
+      <property name="Type" value="Creature" />
+    </card>
+  </cards>
+</set>`;
+
+      const io = createMockIO({
+        readdir: vi.fn().mockResolvedValue(['CoreSet', 'AltArt']),
+        readFile: vi.fn().mockImplementation(async (path: string) => {
+          if (path.includes('definition.xml')) return DEFINITION_XML;
+          if (path.includes('CoreSet')) return SET1_XML;
+          if (path.includes('AltArt')) return SET2_DUPE_XML;
+          throw new Error('File not found');
+        }),
+      });
+      const resolver = new CardResolver(io);
+      await resolver.loadGame('game-001');
+
+      // First set's definition should win (not overwritten by second set)
+      const card = resolver.resolve('card-aaa');
+      expect(card?.name).toBe('Ezuri, Renegade Leader');
+      expect(card?.setId).toBe('set-001');
+    });
+
     it('handles missing Sets directory', async () => {
       const io = createMockIO({
         readdir: vi.fn().mockRejectedValue(new Error('ENOENT')),
