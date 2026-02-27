@@ -17,3 +17,16 @@ octgnFX/Octgn/packages/**/*.xml -text
 *.tt text
 *.py text
 *.bat text eol=crlf
+*.json text eol=crlf
+*.rtf text eol=crlf
+*.DotSettings text eol=crlf
+*.licenseheader text eol=crlf
+*.tss text eol=crlf
+*.ps1 text eol=crlf
+*.settings text eol=crlf
+*.wxs text eol=crlf
+*.wixproj text eol=crlf
+*.xslt text eol=crlf
+*.manifest text eol=crlf
+*.pubxml text eol=crlf
+*.targets text eol=crlf
