@@ -7,6 +7,7 @@ import { listInstalledGames, uninstallGame } from '../games/game-store';
 import { fetchAvailableGames } from '../games/game-feed';
 import { installGame } from '../games/game-installer';
 import { listFeeds, addFeed, removeFeed, setFeedEnabled } from '../games/feed-manager';
+import { resolveAndCacheIcons } from '../games/icon-cache';
 
 const apiClient = new OctgnApiClient();
 const gameService = new GameService();
@@ -205,7 +206,8 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
 
   ipcMain.handle(IPC_CHANNELS.GAMES_LIST_AVAILABLE, async () => {
     const feeds = await listFeeds();
-    return fetchAvailableGames(feeds);
+    const games = await fetchAvailableGames(feeds);
+    return resolveAndCacheIcons(games);
   });
 
   ipcMain.handle(

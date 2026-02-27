@@ -220,6 +220,23 @@ function InstalledTab({
   );
 }
 
+/* ── Game image with fallback ──────────────────────────────────────── */
+
+function GameImage({ name, iconUrl }: { name: string; iconUrl?: string }) {
+  const [failed, setFailed] = React.useState(false);
+  if (iconUrl && !failed) {
+    return (
+      <img
+        src={iconUrl}
+        alt=""
+        className="w-12 h-12 rounded-lg object-contain bg-octgn-surface/80 shrink-0"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  return <GameIcon name={name} size="lg" />;
+}
+
 /* ── Available Tab ─────────────────────────────────────────────────── */
 
 function AvailableTab({
@@ -245,9 +262,10 @@ function AvailableTab({
     [games, search]
   );
 
-  if (isLoading) return <LoadingGrid />;
+  // First load with no data yet — show skeleton
+  if (isLoading && games.length === 0) return <LoadingGrid />;
 
-  if (games.length === 0) {
+  if (!isLoading && games.length === 0) {
     return (
       <EmptyState
         icon="🌐"
@@ -257,17 +275,25 @@ function AvailableTab({
     );
   }
 
-  if (filtered.length === 0) {
+  if (!isLoading && filtered.length === 0) {
     return <EmptyState icon="🔍" message={`No games match "${search}"`} />;
   }
 
   return (
     <div className="p-4">
-      <p className="text-xs text-octgn-text-dim mb-3">
-        {filtered.length}{filtered.length !== games.length ? ` of ${games.length}` : ''} game{games.length !== 1 ? 's' : ''} available
-      </p>
+      <div className="flex items-center gap-2 mb-3">
+        <p className="text-xs text-octgn-text-dim">
+          {filtered.length}{filtered.length !== games.length ? ` of ${games.length}` : ''} game{games.length !== 1 ? 's' : ''} available
+        </p>
+        {isLoading && (
+          <span className="flex items-center gap-1 text-[10px] text-octgn-text-dim">
+            <span className="w-2.5 h-2.5 border border-octgn-primary/40 border-t-octgn-primary rounded-full animate-spin inline-block" />
+            Refreshing…
+          </span>
+        )}
+      </div>
       {/* Responsive grid: 1 col on narrow, 2 on wider, 3 on wide */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+      <div className={clsx('grid gap-3', isLoading && 'opacity-60 transition-opacity')} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
         {filtered.map((g) => {
           const isInstalled = installedIds.includes(g.id);
           const progress = installProgress[g.id];
@@ -301,16 +327,7 @@ function GameCard({
     <div className="flex flex-col rounded-xl bg-octgn-surface/60 border border-octgn-border/30 hover:border-octgn-border/60 transition-all overflow-hidden">
       {/* Card body */}
       <div className="flex items-start gap-3 p-4 flex-1">
-        {game.iconUrl ? (
-          <img
-            src={game.iconUrl}
-            alt=""
-            className="w-12 h-12 rounded-lg object-contain bg-octgn-surface shrink-0"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-        ) : (
-          <GameIcon name={game.name} size="lg" />
-        )}
+        <GameImage name={game.name} iconUrl={game.iconUrl} />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-octgn-text leading-snug">{game.name}</p>
           {game.authors && (
@@ -431,19 +448,36 @@ function FeedsPanel({
             key={feed.name}
             className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/4 transition-colors"
           >
-            {/* Toggle */}
+            {/* Toggle — inline styles so position is always correct */}
             <button
               onClick={() => onToggle(feed.name, !feed.enabled)}
               aria-label={feed.enabled ? 'Disable feed' : 'Enable feed'}
-              className={clsx(
-                'relative w-9 h-5 rounded-full transition-colors duration-200 shrink-0 focus:outline-none focus:ring-2 focus:ring-octgn-primary/40',
-                feed.enabled ? 'bg-octgn-primary' : 'bg-octgn-border/40'
-              )}
+              style={{
+                position: 'relative',
+                width: 40,
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: feed.enabled ? '#3b82f6' : 'rgba(75,85,99,0.5)',
+                border: 'none',
+                cursor: 'pointer',
+                flexShrink: 0,
+                transition: 'background-color 200ms',
+                padding: 0,
+                outline: 'none',
+              }}
             >
-              <span className={clsx(
-                'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200',
-                feed.enabled ? 'translate-x-4' : 'translate-x-0.5'
-              )} />
+              <span style={{
+                position: 'absolute',
+                top: 3,
+                left: feed.enabled ? 21 : 3,
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                backgroundColor: 'white',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.35)',
+                transition: 'left 180ms ease',
+                display: 'block',
+              }} />
             </button>
 
             <div className="flex-1 min-w-0">
