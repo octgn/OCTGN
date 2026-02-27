@@ -1,0 +1,79 @@
+appId: net.octgn.electron
+productName: OCTGN
+copyright: Copyright © 2024 OCTGN Community
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**/*
+  - node_modules/**/*
+  - package.json
+
+extraMetadata:
+  main: dist/main.js
+
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+    - target: portable
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: OCTGN
+
+mac:
+  icon: build/icon.icns
+  category: public.app-category.games
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+
+dmg:
+  icon: build/icon.icns
+  sign: false
+
+linux:
+  icon: build/icons
+  category: Game
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+    - target: deb
+      arch:
+        - x64
+    - target: tar.gz
+      arch:
+        - x64
+
+appImage:
+  systemIntegration: ask
+
+deb:
+  priority: optional
+
+publish:
+  provider: github
+  owner: octgn
+  repo: OCTGN
