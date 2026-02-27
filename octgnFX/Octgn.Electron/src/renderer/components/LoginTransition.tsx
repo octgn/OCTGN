@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface LoginTransitionProps {
-  /** true while waiting for the API response */
+  /** true while the login API call is in progress */
   isLoading: boolean;
-  /** true once login succeeded — triggers the success burst */
-  isSuccess: boolean;
+  /** true when the user has been authenticated */
+  isAuthenticated: boolean;
+  /** true when there's an error */
+  hasError: boolean;
   /** Called after the full exit animation completes */
   onComplete: () => void;
 }
+
+type AnimPhase = 'idle' | 'loading' | 'success' | 'exit' | 'done';
 
 /**
  * Full-screen overlay with an animated spinner shown during login,
@@ -15,48 +19,61 @@ interface LoginTransitionProps {
  */
 const LoginTransition: React.FC<LoginTransitionProps> = ({
   isLoading,
-  isSuccess,
+  isAuthenticated,
+  hasError,
   onComplete,
 }) => {
-  const [phase, setPhase] = useState<'idle' | 'loading' | 'success' | 'exit' | 'done'>('idle');
+  const [animPhase, setAnimPhase] = useState<AnimPhase>('idle');
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    if (isLoading && phase === 'idle') {
-      setPhase('loading');
+    // Start loading overlay
+    if (isLoading) {
+      setAnimPhase('loading');
+      return;
     }
-  }, [isLoading, phase]);
 
+    // Success: animate burst → exit → navigate
+    if (isAuthenticated) {
+      setAnimPhase('success');
+      return;
+    }
+
+    // Error: dismiss overlay
+    if (hasError) {
+      setAnimPhase('idle');
+    }
+  }, [isLoading, isAuthenticated, hasError]);
+
+  // success → exit after 800ms
   useEffect(() => {
-    if (isSuccess && phase === 'loading') {
-      setPhase('success');
-      // After the success burst, start exit
-      const t1 = setTimeout(() => setPhase('exit'), 800);
-      const t2 = setTimeout(() => {
-        setPhase('done');
-        onComplete();
-      }, 1400);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-      };
+    if (animPhase === 'success') {
+      const timer = setTimeout(() => setAnimPhase('exit'), 800);
+      return () => clearTimeout(timer);
     }
-  }, [isSuccess, phase, onComplete]);
+  }, [animPhase]);
 
-  // Reset when loading stops without success (error)
+  // exit → done after 600ms (overlay fade-out duration)
   useEffect(() => {
-    if (!isLoading && !isSuccess && phase === 'loading') {
-      setPhase('idle');
+    if (animPhase === 'exit') {
+      const timer = setTimeout(() => {
+        setAnimPhase('done');
+        onCompleteRef.current();
+      }, 600);
+      return () => clearTimeout(timer);
     }
-  }, [isLoading, isSuccess, phase]);
+  }, [animPhase]);
 
-  if (phase === 'idle' || phase === 'done') return null;
+  if (animPhase === 'idle' || animPhase === 'done') return null;
 
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-octgn-bg/80 ${
-        phase === 'exit' ? 'login-overlay-exit' : 'login-overlay-enter'
+        animPhase === 'exit' ? 'login-overlay-exit' : 'login-overlay-enter'
       }`}
       style={{ backdropFilter: 'blur(20px)' }}
+      data-testid="login-overlay"
     >
       {/* Pulse rings */}
       <div className="absolute flex items-center justify-center">
@@ -75,19 +92,19 @@ const LoginTransition: React.FC<LoginTransitionProps> = ({
       {/* Central spinner / success burst */}
       <div
         className={`flex flex-col items-center gap-6 ${
-          phase === 'success' ? 'login-success-burst' : ''
+          animPhase === 'success' ? 'login-success-burst' : ''
         }`}
       >
         <div className="login-spinner" />
         <p className="text-sm text-octgn-text-muted tracking-widest uppercase animate-pulse">
-          {phase === 'success' ? 'Welcome' : 'Authenticating'}
+          {animPhase === 'success' ? 'Welcome' : 'Authenticating'}
         </p>
       </div>
 
       {/* OCTGN branding watermark */}
       <h1
         className={`absolute font-display text-[120px] font-bold tracking-[0.3em] pointer-events-none select-none ${
-          phase === 'success'
+          animPhase === 'success'
             ? 'text-octgn-primary/20 scale-110 transition-all duration-700'
             : 'text-octgn-primary/5'
         }`}

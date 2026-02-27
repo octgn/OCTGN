@@ -29,8 +29,6 @@ const LoginPage: React.FC = () => {
     isLoading,
     error,
     user,
-    savedUsername,
-    savedPassword,
     rememberMe,
     setRememberMe,
     loadSavedCredentials,
@@ -41,7 +39,6 @@ const LoginPage: React.FC = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
   const [credentialsLoaded, setCredentialsLoaded] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -59,13 +56,6 @@ const LoginPage: React.FC = () => {
       if (state.savedPassword) setPassword(state.savedPassword);
     }
   }, [credentialsLoaded]);
-
-  // Track login success for transition
-  useEffect(() => {
-    if (user) {
-      setLoginSuccess(true);
-    }
-  }, [user]);
 
   const handleTransitionComplete = useCallback(() => {
     navigate('lobby');
@@ -227,7 +217,8 @@ const LoginPage: React.FC = () => {
       {/* Full-screen login transition overlay */}
       <LoginTransition
         isLoading={isLoading}
-        isSuccess={loginSuccess}
+        isAuthenticated={!!user}
+        hasError={!!error}
         onComplete={handleTransitionComplete}
       />
     </div>
