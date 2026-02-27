@@ -511,6 +511,25 @@ describe('GameService', () => {
           isSystem: true,
         });
       });
+
+      it('includes the player color when player is known', async () => {
+        const service = await serviceWithState();
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, {
+          id: 5, nick: 'Alice', pkey: BigInt(0), inversedTable: false, spectator: false,
+        }));
+        mockSend.mockClear();
+
+        const handler = getHandler('Print');
+        handler(msg(MessageType.Print, { player: 5, text: 'Alice draws a card' }));
+
+        const state = lastState();
+        const printMsg = state.chatMessages[state.chatMessages.length - 1];
+        expect(printMsg.message).toBe('Alice draws a card');
+        expect(printMsg.isSystem).toBe(true);
+        // Player 5 → index (5-1) % 14 = 4 → '#cc6600'
+        expect(printMsg.color).toBe('#cc6600');
+      });
     });
 
     describe('Settings', () => {
@@ -603,6 +622,26 @@ describe('GameService', () => {
         expect(readyMsg).toBeDefined();
         expect(readyMsg.message).toContain('Alice');
       });
+
+      it('includes the player color on the ready system message', async () => {
+        const service = await serviceWithState();
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, {
+          id: 5, nick: 'Alice', pkey: BigInt(0), inversedTable: false, spectator: false,
+        }));
+        mockSend.mockClear();
+
+        const ready = getHandler('Ready');
+        ready(msg(MessageType.Ready, { player: 5 }));
+
+        const state = lastState();
+        const readyMsg = state.chatMessages.find(
+          (m: { message: string }) => m.message.includes('ready'),
+        );
+        expect(readyMsg).toBeDefined();
+        // Player 5 → index (5-1) % 14 = 4 → '#cc6600' (dark orange)
+        expect(readyMsg.color).toBe('#cc6600');
+      });
     });
 
     describe('NextTurn', () => {
@@ -628,6 +667,22 @@ describe('GameService', () => {
         const state = lastState();
         expect(state.turnNumber).toBe(1);
         expect(state.activePlayer).toBe(0); // unchanged from initial
+      });
+
+      it('includes the active player color on the turn system message', async () => {
+        const service = await serviceWithState();
+        mockSend.mockClear();
+
+        const handler = getHandler('NextTurn');
+        handler(msg(MessageType.NextTurn, { player: 42, setActive: true }));
+
+        const state = lastState();
+        const turnMsg = state.chatMessages.find(
+          (m: { message: string }) => m.message.includes('Turn'),
+        );
+        expect(turnMsg).toBeDefined();
+        // Player 42 → (42-1) % 14 = 41 % 14 = 13 → '#0000ff' (bright blue)
+        expect(turnMsg.color).toBe('#0000ff');
       });
     });
 
@@ -910,6 +965,26 @@ describe('GameService', () => {
       });
     });
 
+    describe('Shuffled', () => {
+      it('includes the player color on the shuffle system message', async () => {
+        const service = await serviceWithState();
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, { id: 3, nick: 'Bob', spectator: false }));
+        mockSend.mockClear();
+
+        const handler = getHandler('Shuffled');
+        handler(msg(MessageType.Shuffled, { player: 3, group: 100, card: [] }));
+
+        const state = lastState();
+        const shuffleMsg = state.chatMessages.find(
+          (m: { message: string }) => m.message.includes('shuffled'),
+        );
+        expect(shuffleMsg).toBeDefined();
+        // Player 3 → (3-1) % 14 = 2 → '#000080' (dark blue)
+        expect(shuffleMsg.color).toBe('#000080');
+      });
+    });
+
     describe('SetCardProperty', () => {
       it('sets a custom property on a card', async () => {
         const service = await serviceWithState();
@@ -971,6 +1046,21 @@ describe('GameService', () => {
         const lastMsg = state.chatMessages[state.chatMessages.length - 1];
         expect(lastMsg.message).toBe('Eve disconnected');
         expect(lastMsg.isSystem).toBe(true);
+      });
+
+      it('includes the player color on the disconnect message', async () => {
+        const service = await serviceWithState();
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Eve', spectator: false }));
+        mockSend.mockClear();
+
+        const handler = getHandler('PlayerDisconnect');
+        handler(msg(MessageType.PlayerDisconnect, { player: 10 }));
+
+        const state = lastState();
+        const lastMsg = state.chatMessages[state.chatMessages.length - 1];
+        // Player 10 → (10-1) % 14 = 9 → '#ff0000' (bright red)
+        expect(lastMsg.color).toBe('#ff0000');
       });
     });
 
