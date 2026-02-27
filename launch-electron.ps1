@@ -21,41 +21,47 @@ if (-not (Test-Path $electronDir)) {
 
 Push-Location $electronDir
 try {
-    # Resolve local bin paths — avoids npx resolution issues on Windows
-    $bin = Join-Path (Get-Location) 'node_modules' '.bin'
-    $tsc = Join-Path $bin 'tsc.cmd'
-    $vite = Join-Path $bin 'vite.cmd'
-    $electron = Join-Path $bin 'electron.cmd'
+    # Always npm install on Windows if .cmd stubs are missing (e.g. deps installed from WSL)
+    $binDir = Join-Path (Get-Location) 'node_modules' '.bin'
+    $needsInstall = $Install -or
+        -not (Test-Path 'node_modules') -or
+        -not (Test-Path (Join-Path $binDir 'tsc.cmd'))
 
-    # Install deps if requested or node_modules missing
-    if ($Install -or -not (Test-Path 'node_modules')) {
+    if ($needsInstall) {
         Write-Host '[1/3] Installing dependencies...' -ForegroundColor Cyan
         npm install
         if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
     }
 
+    # Helper: run a local bin tool via cmd /c to handle .cmd resolution
+    function Invoke-Bin {
+        param([string]$Tool, [string[]]$Args)
+        $cmdArgs = @('/c', $Tool) + $Args
+        & cmd.exe $cmdArgs
+        if ($LASTEXITCODE -ne 0) { throw "$Tool failed (exit code $LASTEXITCODE)" }
+    }
+
     if ($Production -or $Build) {
         Write-Host '[2/3] Building...' -ForegroundColor Cyan
-        & $tsc -p tsconfig.main.json
-        if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
-        & $vite build
-        if ($LASTEXITCODE -ne 0) { throw 'Renderer build failed' }
+        Invoke-Bin 'npx' @('tsc', '-p', 'tsconfig.main.json')
+        Invoke-Bin 'npx' @('vite', 'build')
     }
 
     if ($Production) {
         Write-Host '[3/3] Starting OCTGN (production)...' -ForegroundColor Green
-        & $electron dist/main/index.js
+        Invoke-Bin 'npx' @('electron', 'dist/main/index.js')
     }
     else {
         Write-Host '[2/3] Building main process...' -ForegroundColor Cyan
-        & $tsc -p tsconfig.main.json
-        if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
+        Invoke-Bin 'npx' @('tsc', '-p', 'tsconfig.main.json')
 
         Write-Host '[3/3] Starting OCTGN (dev mode)...' -ForegroundColor Green
 
-        # Start Vite dev server as a background process
-        $viteProc = Start-Process -FilePath $vite -ArgumentList 'dev' `
-            -WorkingDirectory (Get-Location).Path -WindowStyle Hidden -PassThru
+        # Start Vite dev server as a background process via cmd /c
+        $viteProc = Start-Process -FilePath 'cmd.exe' `
+            -ArgumentList '/c', 'npx', 'vite', 'dev' `
+            -WorkingDirectory (Get-Location).Path `
+            -WindowStyle Hidden -PassThru
 
         try {
             # Poll until Vite is listening on port 5173
@@ -80,7 +86,7 @@ try {
             }
 
             Write-Host '     Vite is ready, launching Electron...        ' -ForegroundColor Green
-            & $electron dist/main/index.js
+            Invoke-Bin 'npx' @('electron', 'dist/main/index.js')
         }
         finally {
             # Kill Vite and its child tree when Electron exits
