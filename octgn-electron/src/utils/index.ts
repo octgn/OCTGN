@@ -18,3 +18,6 @@ export { cardImageService, useCardImage } from './cardImageService';
 
 export { TableRenderer } from './TableRenderer';
 export type { RenderCard, TableConfig } from './TableRenderer';
+
+export { GameStateSerializer } from './GameStateSerializer';
+export type { SerializedGameState, SerializedPlayer, SerializedGroup, SerializedCard, SerializedCounter } from './GameStateSerializer';
