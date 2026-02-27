@@ -1,4 +1,4 @@
-import type { LoginResult, Session, HostedGame, Deck } from '../../shared/types';
+import type { LoginResult, HostedGame, Deck } from '../../shared/types';
 
 const API_BASE = 'https://www.octgn.net';
 
@@ -126,8 +126,6 @@ export class OctgnApiClient {
 
   private async getDeviceId(): Promise<string> {
     // Generate a stable device ID based on machine info
-    const { machineId } = await import('node:crypto');
-    // Use a simple hash of hostname + platform as device ID
     const os = await import('node:os');
     const crypto = await import('node:crypto');
     const raw = `${os.hostname()}-${os.platform()}-${os.arch()}`;
