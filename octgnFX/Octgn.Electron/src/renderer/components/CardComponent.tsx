@@ -138,16 +138,13 @@ const CardComponent: React.FC<CardComponentProps> = ({
   if (isHovered && interactive) innerTransformParts.push('scale(1.06)');
 
   // Shared CSS classes for both card faces (front and back)
+  // WPF client renders cards as pure images with no border/shadow/rounding in normal state.
+  // Only selection, targeting, and highlight states add visual decoration.
   const faceClasses = clsx(
-    'absolute inset-0 rounded-lg overflow-hidden',
-    'border border-octgn-border/40',
-    'shadow-lg shadow-black/50',
+    'absolute inset-0 overflow-hidden',
     interactive && 'transition-shadow duration-300',
-    isHovered &&
-      interactive &&
-      'shadow-[0_0_15px_rgba(59,130,246,0.5),0_0_40px_rgba(59,130,246,0.25),0_0_80px_rgba(139,92,246,0.15)]',
     selected &&
-      'ring-2 ring-octgn-gold/70 shadow-[0_0_10px_rgba(251,191,36,0.5),0_0_30px_rgba(251,191,36,0.3),0_0_60px_rgba(251,191,36,0.15)]',
+      'ring-2 ring-octgn-gold/70 shadow-[0_0_10px_rgba(251,191,36,0.5),0_0_30px_rgba(251,191,36,0.3)]',
     isTargeted &&
       'ring-2 ring-octgn-danger/80 shadow-[0_0_12px_rgba(239,68,68,0.6),0_0_30px_rgba(239,68,68,0.3)] animate-glow-pulse',
     isHighlighted && 'ring-2'
@@ -231,7 +228,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
             <img
               src={frontImageUrl}
               alt={card.name}
-              className="w-full h-full object-cover select-none pointer-events-none"
+              className="w-full h-full object-fill select-none pointer-events-none"
               draggable={false}
               onError={() => setImgError(true)}
             />
@@ -345,7 +342,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
             <img
               src={backImageUrl}
               alt="Face-down card"
-              className="w-full h-full object-cover select-none pointer-events-none"
+              className="w-full h-full object-fill select-none pointer-events-none"
               draggable={false}
             />
           )}
