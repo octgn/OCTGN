@@ -16,7 +16,8 @@ let wsBridge: WebSocketBridge | null = null;
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 const WS_BRIDGE_PORT = 32457;
 const VITE_PORT = 32456;
-const GAME_SERVER_PORT = 32458;
+const GAME_SERVER_PORT = 8888; // OCTGN standard for interop
+const OCTGN_API_BASE = 'https://www.octgn.net';
 
 // Data paths
 function getDataPath(): string {
@@ -391,6 +392,109 @@ ipcMain.handle('maximize-window', async () => {
 ipcMain.handle('quit-app', async () => {
   app.quit();
   return { success: true };
+});
+
+// ============================================
+// OCTGN API Handlers (bypass CORS)
+// ============================================
+
+interface ApiResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+  status?: number;
+}
+
+function octgnApiRequest(
+  endpoint: string,
+  method: string = 'GET',
+  body?: any
+): Promise<ApiResponse> {
+  return new Promise((resolve) => {
+    const url = `${OCTGN_API_BASE}${endpoint}`;
+    const urlObj = new URL(url);
+    
+    const options: https.RequestOptions = {
+      hostname: urlObj.hostname,
+      port: 443,
+      path: urlObj.pathname + urlObj.search,
+      method: method,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        const success = res.statusCode !== undefined && res.statusCode >= 200 && res.statusCode < 300;
+        try {
+          const parsed = data ? JSON.parse(data) : null;
+          resolve({ success, data: parsed, status: res.statusCode });
+        } catch (e) {
+          resolve({ success, data, status: res.statusCode });
+        }
+      });
+    });
+
+    req.on('error', (error) => {
+      resolve({ success: false, error: error.message });
+    });
+
+    if (body) {
+      req.write(JSON.stringify(body));
+    }
+    
+    req.end();
+  });
+}
+
+// Login (legacy endpoint)
+ipcMain.handle('octgn-login', async (_, username: string, password: string) => {
+  const endpoint = `/api/user/loginandusername?username2=${encodeURIComponent(username)}&password2=${encodeURIComponent(password)}`;
+  return octgnApiRequest(endpoint, 'GET');
+});
+
+// Create session (modern API)
+ipcMain.handle('octgn-create-session', async (_, username: string, password: string, deviceId: string) => {
+  return octgnApiRequest('/api/sessions', 'POST', {
+    Username: username,
+    Password: password,
+    DeviceId: deviceId,
+  });
+});
+
+// Validate session
+ipcMain.handle('octgn-validate-session', async (_, userId: string, deviceId: string, sessionKey: string) => {
+  const endpoint = `/api/users/${userId}/devices/${deviceId}/session/validate`;
+  return octgnApiRequest(endpoint, 'PUT', sessionKey);
+});
+
+// Clear session
+ipcMain.handle('octgn-clear-session', async (_, userId: string, deviceId: string, sessionKey: string) => {
+  const endpoint = `/api/users/${userId}/devices/${deviceId}/session`;
+  return octgnApiRequest(endpoint, 'POST', sessionKey);
+});
+
+// Get hosted games
+ipcMain.handle('octgn-get-games', async () => {
+  return octgnApiRequest('/api/game', 'GET');
+});
+
+// Get stats
+ipcMain.handle('octgn-get-stats', async () => {
+  return octgnApiRequest('/api/stats/UsersOnlineNow?type=SubPercent', 'GET');
+});
+
+// Get release info
+ipcMain.handle('octgn-get-release-info', async () => {
+  return octgnApiRequest('/api/octgn/releaseinfo', 'GET');
 });
 
 // Helper functions

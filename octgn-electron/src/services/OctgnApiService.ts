@@ -2,6 +2,7 @@
  * OCTGN API Service
  * 
  * Connects to the real OCTGN.net backend services
+ * In Electron, routes through main process to bypass CORS
  * API endpoints from Octgn.Site.Api.ApiClient
  */
 
@@ -76,32 +77,9 @@ export interface GameDefinition {
   installPath?: string;
 }
 
-export interface ChatMessage {
-  id: string;
-  fromUserId: string;
-  fromUsername: string;
-  toUserId?: string;
-  channel?: string;
-  message: string;
-  timestamp: Date;
-  isPrivate: boolean;
-}
-
-// Extend Window interface
-declare global {
-  interface Window {
-    electronAPI?: {
-      installGame: (url: string, gameId: string) => Promise<{ success: boolean; path?: string; error?: string }>;
-      uninstallGame: (gameId: string) => Promise<{ success: boolean; error?: string }>;
-      connectToServer: (host: string, port: number) => Promise<void>;
-      disconnectFromServer: () => Promise<void>;
-      sendMessage: (data: Uint8Array) => Promise<void>;
-    };
-  }
-}
-
 /**
  * OCTGN API Client
+ * Uses Electron IPC when available to bypass CORS
  */
 export class OctgnApiClient {
   private baseUrl: string;
@@ -112,10 +90,37 @@ export class OctgnApiClient {
   }
 
   /**
+   * Check if running in Electron
+   */
+  private isElectron(): boolean {
+    return typeof window !== 'undefined' && !!window.electronAPI;
+  }
+
+  /**
    * Login with username and password (legacy endpoint)
    */
   async loginLegacy(username: string, password: string): Promise<LoginResult> {
     try {
+      // Use Electron IPC if available (bypasses CORS)
+      if (this.isElectron() && window.electronAPI?.octgnLogin) {
+        const result = await window.electronAPI.octgnLogin(username, password);
+        if (result.success && result.data) {
+          const data = result.data;
+          if (data.Type === 'Ok' || data.type === 'Ok') {
+            return {
+              type: 'Ok',
+              username: data.Username || data.username,
+            };
+          }
+          return {
+            type: data.Type || data.type || 'UnknownError',
+            username: data.Username || data.username,
+          };
+        }
+        return { type: 'UnknownError' };
+      }
+
+      // Fallback to fetch (for browser mode, will have CORS issues)
       const response = await fetch(
         `${this.baseUrl}/api/user/loginandusername?username2=${encodeURIComponent(username)}&password2=${encodeURIComponent(password)}`
       );
@@ -148,6 +153,41 @@ export class OctgnApiClient {
    */
   async createSession(username: string, password: string, deviceId: string): Promise<LoginResult & { sessionKey?: string; userId?: string }> {
     try {
+      // Use Electron IPC if available (bypasses CORS)
+      if (this.isElectron() && window.electronAPI?.octgnCreateSession) {
+        const result = await window.electronAPI.octgnCreateSession(username, password, deviceId);
+        
+        if (result.success && result.data) {
+          const data = result.data;
+          const loginResult = data.Result || data.result;
+          
+          if (loginResult?.Type === 'Ok' || loginResult?.type === 'Ok') {
+            const session: Session = {
+              userId: data.UserId || data.userId,
+              deviceId,
+              sessionKey: data.SessionKey || data.sessionKey,
+              username: loginResult.Username || loginResult.username || username,
+            };
+            
+            this.session = session;
+            
+            return {
+              type: 'Ok',
+              username: session.username,
+              sessionKey: session.sessionKey,
+              userId: session.userId,
+            };
+          }
+
+          return {
+            type: loginResult?.Type || loginResult?.type || 'UnknownError',
+          };
+        }
+        
+        return { type: 'UnknownError' };
+      }
+
+      // Fallback to fetch (for browser mode)
       const response = await fetch(`${this.baseUrl}/api/sessions`, {
         method: 'POST',
         headers: { 
@@ -169,14 +209,14 @@ export class OctgnApiClient {
       }
 
       const data = await response.json();
-      const result = data.Result || data.result;
+      const resResult = data.Result || data.result;
       
-      if (result?.Type === 'Ok' || result?.type === 'Ok') {
+      if (resResult?.Type === 'Ok' || resResult?.type === 'Ok') {
         const session: Session = {
           userId: data.UserId || data.userId,
           deviceId,
           sessionKey: data.SessionKey || data.sessionKey,
-          username: result.Username || result.username || username,
+          username: resResult.Username || resResult.username || username,
         };
         
         this.session = session;
@@ -190,7 +230,7 @@ export class OctgnApiClient {
       }
 
       return {
-        type: result?.Type || result?.type || 'UnknownError',
+        type: resResult?.Type || resResult?.type || 'UnknownError',
       };
     } catch (error) {
       console.error('Create session error:', error);
@@ -203,6 +243,13 @@ export class OctgnApiClient {
    */
   async validateSession(userId: string, deviceId: string, sessionKey: string): Promise<boolean> {
     try {
+      // Use Electron IPC if available
+      if (this.isElectron() && window.electronAPI?.octgnValidateSession) {
+        const result = await window.electronAPI.octgnValidateSession(userId, deviceId, sessionKey);
+        return result.success && result.data === 'ok';
+      }
+
+      // Fallback to fetch
       const url = `${this.baseUrl}/api/users/${encodeURIComponent(userId)}/devices/${encodeURIComponent(deviceId)}/session/validate`;
       
       const response = await fetch(url, {
@@ -230,6 +277,13 @@ export class OctgnApiClient {
    */
   async clearSession(userId: string, deviceId: string, sessionKey: string): Promise<void> {
     try {
+      // Use Electron IPC if available
+      if (this.isElectron() && window.electronAPI?.octgnClearSession) {
+        await window.electronAPI.octgnClearSession(userId, deviceId, sessionKey);
+        return;
+      }
+
+      // Fallback to fetch
       const url = `${this.baseUrl}/api/users/${encodeURIComponent(userId)}/devices/${encodeURIComponent(deviceId)}/session`;
       
       await fetch(url, {
@@ -245,29 +299,20 @@ export class OctgnApiClient {
   }
 
   /**
-   * Check if user is subscribed
-   */
-  async checkSubscription(username: string, password: string): Promise<boolean> {
-    try {
-      const response = await fetch(
-        `${this.baseUrl}/api/user/issubbed?subusername=${encodeURIComponent(username)}&subpassword=${encodeURIComponent(password)}`
-      );
-
-      if (!response.ok) return false;
-
-      const data = await response.json();
-      return data === true || data.IsSubbed === true || data.isSubbed === true;
-    } catch (error) {
-      console.error('Check subscription error:', error);
-      return false;
-    }
-  }
-
-  /**
    * Get list of hosted games
    */
   async getHostedGames(): Promise<HostedGame[]> {
     try {
+      // Use Electron IPC if available
+      if (this.isElectron() && window.electronAPI?.octgnGetGames) {
+        const result = await window.electronAPI.octgnGetGames();
+        if (result.success && result.data) {
+          return result.data.map((g: any) => this.mapHostedGame(g));
+        }
+        return [];
+      }
+
+      // Fallback to fetch
       const response = await fetch(`${this.baseUrl}/api/game`, {
         headers: { 'Accept': 'application/json' }
       });
@@ -285,35 +330,23 @@ export class OctgnApiClient {
   }
 
   /**
-   * Get user info
-   */
-  async getUser(userId: string): Promise<User | null> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/user/${encodeURIComponent(userId)}`, {
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return {
-        id: data.Id || data.id,
-        username: data.Username || data.username,
-        email: data.Email || data.email,
-        iconUrl: data.IconUrl || data.iconUrl,
-        isSubscribed: data.IsSubbed || data.isSubbed,
-      };
-    } catch (error) {
-      console.error('Get user error:', error);
-      return null;
-    }
-  }
-
-  /**
    * Get stats (users online, sub percentage)
    */
   async getStats(): Promise<{ usersOnline: number; subPercent: number }> {
     try {
+      // Use Electron IPC if available
+      if (this.isElectron() && window.electronAPI?.octgnGetStats) {
+        const result = await window.electronAPI.octgnGetStats();
+        if (result.success) {
+          const value = typeof result.data === 'string' 
+            ? parseInt(result.data.trim(), 10) 
+            : typeof result.data === 'number' ? result.data : 0;
+          return { usersOnline: 0, subPercent: isNaN(value) ? 0 : value };
+        }
+        return { usersOnline: 0, subPercent: 0 };
+      }
+
+      // Fallback to fetch
       const response = await fetch(`${this.baseUrl}/api/stats/UsersOnlineNow?type=SubPercent`);
       const text = await response.text();
       const value = parseInt(text.trim(), 10);
@@ -322,47 +355,6 @@ export class OctgnApiClient {
       console.error('Get stats error:', error);
       return { usersOnline: 0, subPercent: 0 };
     }
-  }
-
-  /**
-   * Get release info
-   */
-  async getReleaseInfo(): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/octgn/releaseinfo`);
-      return await response.json();
-    } catch (error) {
-      console.error('Get release info error:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Report hosted game (for when hosting)
-   */
-  async reportHostedGame(apiKey: string, game: Partial<HostedGame>): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/game`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ApiKey: apiKey,
-          Games: [game],
-        }),
-      });
-
-      return response.ok;
-    } catch (error) {
-      console.error('Report hosted game error:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Get chat server host
-   */
-  getChatHost(): string {
-    return CHAT_HOST;
   }
 
   /**
@@ -379,6 +371,9 @@ export class OctgnApiClient {
     this.session = session;
   }
 
+  /**
+   * Map API response to HostedGame
+   */
   private mapHostedGame(g: any): HostedGame {
     const hostAddress = g.HostAddress || g.hostAddress || '';
     const [host, portStr] = hostAddress.split(':');

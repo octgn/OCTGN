@@ -64,6 +64,21 @@ contextBridge.exposeInMainWorld('electronAPI', {
   maximize: () => ipcRenderer.invoke('maximize-window'),
   quit: () => ipcRenderer.invoke('quit-app'),
   
+  // ============================================
+  // OCTGN API (bypasses CORS)
+  // ============================================
+  octgnLogin: (username: string, password: string) =>
+    ipcRenderer.invoke('octgn-login', username, password),
+  octgnCreateSession: (username: string, password: string, deviceId: string) =>
+    ipcRenderer.invoke('octgn-create-session', username, password, deviceId),
+  octgnValidateSession: (userId: string, deviceId: string, sessionKey: string) =>
+    ipcRenderer.invoke('octgn-validate-session', userId, deviceId, sessionKey),
+  octgnClearSession: (userId: string, deviceId: string, sessionKey: string) =>
+    ipcRenderer.invoke('octgn-clear-session', userId, deviceId, sessionKey),
+  octgnGetGames: () => ipcRenderer.invoke('octgn-get-games'),
+  octgnGetStats: () => ipcRenderer.invoke('octgn-get-stats'),
+  octgnGetReleaseInfo: () => ipcRenderer.invoke('octgn-get-release-info'),
+  
   // Platform info
   platform: process.platform,
   isMac: process.platform === 'darwin',

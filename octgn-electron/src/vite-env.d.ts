@@ -120,6 +120,15 @@ interface ElectronAPI {
   maximize: () => Promise<{ success: boolean; maximized?: boolean }>;
   quit: () => Promise<{ success: boolean }>;
 
+  // OCTGN API (bypasses CORS)
+  octgnLogin: (username: string, password: string) => Promise<{ success: boolean; data?: any; error?: string }>;
+  octgnCreateSession: (username: string, password: string, deviceId: string) => Promise<{ success: boolean; data?: any; error?: string }>;
+  octgnValidateSession: (userId: string, deviceId: string, sessionKey: string) => Promise<{ success: boolean; data?: any; error?: string }>;
+  octgnClearSession: (userId: string, deviceId: string, sessionKey: string) => Promise<{ success: boolean; error?: string }>;
+  octgnGetGames: () => Promise<{ success: boolean; data?: any[]; error?: string }>;
+  octgnGetStats: () => Promise<{ success: boolean; data?: any; error?: string }>;
+  octgnGetReleaseInfo: () => Promise<{ success: boolean; data?: any; error?: string }>;
+
   // Platform
   platform: 'win32' | 'darwin' | 'linux' | string;
   isMac: boolean;
