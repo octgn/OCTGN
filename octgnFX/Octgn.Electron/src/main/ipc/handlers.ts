@@ -1,8 +1,10 @@
 import { IpcMain, BrowserWindow, app } from 'electron';
 import { IPC_CHANNELS } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
+import { GameService } from '../api/game-service';
 
 const apiClient = new OctgnApiClient();
+const gameService = new GameService();
 
 export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Auth handlers
@@ -28,24 +30,71 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   });
 
   ipcMain.handle(IPC_CHANNELS.JOIN_GAME, async (_event, gameId: string, password?: string) => {
-    return apiClient.joinGame(gameId, password);
+    // Get game details to find host:port, then connect via GameService
+    const games = await apiClient.getHostedGames();
+    const game = games.find((g) => g.id === gameId);
+    if (!game) {
+      return { success: false, error: 'Game not found' };
+    }
+    const session = apiClient.getSession();
+    if (!session) {
+      return { success: false, error: 'Not logged in' };
+    }
+    return gameService.joinGame(
+      game.hostAddress,
+      game.port,
+      session.username,
+      session.userId,
+      game.gameId,
+      game.gameVersion,
+      password ?? '',
+    );
   });
 
   ipcMain.handle(IPC_CHANNELS.LEAVE_GAME, async () => {
-    return apiClient.leaveGame();
+    return gameService.leaveGame();
   });
 
-  // Game handlers
-  ipcMain.handle(IPC_CHANNELS.GAME_ACTION, async (_event, action) => {
-    return apiClient.sendGameAction(action);
+  // Game handlers - now wired to GameService
+  ipcMain.handle(IPC_CHANNELS.GAME_ACTION, async (_event, action: Record<string, unknown>) => {
+    const type = action.type as string;
+    switch (type) {
+      case 'moveCards':
+        gameService.moveCards(
+          action.cardIds as number[],
+          action.groupId as number,
+          action.indices as number[],
+          action.faceUp as boolean[],
+        );
+        break;
+      case 'nextTurn':
+        gameService.nextTurn();
+        break;
+      case 'flipCard':
+        gameService.flipCard(action.cardId as number, action.faceUp as boolean);
+        break;
+      case 'rotateCard':
+        gameService.rotateCard(action.cardId as number, action.rotation as number);
+        break;
+      case 'setCounter':
+        gameService.setCounter(action.counterId as number, action.value as number);
+        break;
+    }
   });
 
   ipcMain.handle(IPC_CHANNELS.GAME_CHAT, async (_event, message: string) => {
-    return apiClient.sendChatMessage(message);
+    gameService.sendChat(message);
   });
 
-  ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (_event, deck) => {
-    return apiClient.loadDeck(deck);
+  ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (_event, deck: Record<string, unknown>) => {
+    gameService.loadDeck(
+      deck.ids as number[],
+      deck.types as string[],
+      deck.groups as number[],
+      deck.sizes as string[],
+      (deck.sleeve as string) ?? '',
+      (deck.limited as boolean) ?? false,
+    );
   });
 
   // Window control handlers
