@@ -170,14 +170,18 @@ async function fetchAllFromFeed(feedDef: GameFeed): Promise<AvailableGame[]> {
     authHeaders['Authorization'] = `Basic ${creds}`;
   }
 
-  const all: AvailableGame[] = [];
+  // Collect ALL raw entries across every page first, then parse once.
+  // Calling parseEntries per-page and concatenating the results is wrong:
+  // a game's versions can span pages, so per-page winner-picking uses incomplete
+  // information and the cross-page dedup (by downloadCount) can pick the wrong version.
+  const allEntries: NuGetEntry[] = [];
   while (url) {
     const { entries, nextUrl } = await fetchPage(url, authHeaders);
-    all.push(...parseEntries(feedBase, entries));
+    allEntries.push(...entries);
     url = nextUrl;
   }
 
-  return all;
+  return parseEntries(feedBase, allEntries);
 }
 
 export async function fetchAvailableGames(feeds: GameFeed[]): Promise<AvailableGame[]> {
