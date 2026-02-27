@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { Card as CardType, Group } from '../types/game';
+import { useRef, useCallback, useMemo } from 'react';
 
 export interface ContextMenuItem {
   label: string;
@@ -17,12 +16,7 @@ export interface ContextMenuState {
   x: number;
   y: number;
   items: ContextMenuItem[];
-  data: {
-    cards?: CardType[];
-    group?: Group;
-    player?: { id: string; name: string };
-    tablePosition?: { x: number; y: number };
-  };
+  data?: unknown;
 }
 
 export function useContextMenu() {
@@ -31,267 +25,251 @@ export function useContextMenu() {
     x: 0,
     y: 0,
     items: [],
-    data: {},
   });
 
-  const menuRef = useRef<HTMLDivElement>(null);
-
   const open = useCallback(
-    (
-      x: number,
-      y: number,
-      items: ContextMenuItem[],
-      data: ContextMenuState['data'] = {}
-    ) => {
+    (x: number, y: number, items: ContextMenuItem[], data?: unknown) => {
       setState({ isOpen: true, x, y, items, data });
     },
     []
   );
 
   const close = useCallback(() => {
-    setState((prev) => ({ ...prev, isOpen: false }));
+    setState((s) => ({ ...s, isOpen: false }));
   }, []);
 
-  const toggle = useCallback(
-    (
-      x: number,
-      y: number,
-      items: ContextMenuItem[],
-      data: ContextMenuState['data'] = {}
-    ) => {
-      if (state.isOpen) {
-        close();
-      } else {
-        open(x, y, items, data);
-      }
-    },
-    [state.isOpen, open, close]
-  );
-
-  // Close on click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        close();
-      }
-    };
-
-    if (state.isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('contextmenu', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('contextmenu', handleClickOutside);
-    };
-  }, [state.isOpen, close]);
-
-  // Close on escape
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        close();
-      }
-    };
-
-    if (state.isOpen) {
-      document.addEventListener('keydown', handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [state.isOpen, close]);
-
-  return {
-    ...state,
-    menuRef,
-    open,
-    close,
-    toggle,
-  };
+  return { ...state, open, close, menuRef: useRef<HTMLDivElement>(null) };
 }
 
-interface ContextMenuProps {
-  state: ContextMenuState;
-  menuRef: React.RefObject<HTMLDivElement>;
-  onClose: () => void;
-}
+// Add useState import
+import { useState } from 'react';
 
-export function ContextMenu({ state, menuRef, onClose }: ContextMenuProps) {
-  if (!state.isOpen) return null;
-
-  // Calculate position to keep menu on screen
-  const calculatePosition = () => {
-    let x = state.x;
-    let y = state.y;
-    const menuWidth = 200;
-    const menuHeight = 300; // Estimate
-
-    if (x + menuWidth > window.innerWidth) {
-      x = window.innerWidth - menuWidth - 10;
-    }
-    if (y + menuHeight > window.innerHeight) {
-      y = window.innerHeight - menuHeight - 10;
-    }
-
-    return { x: Math.max(10, x), y: Math.max(10, y) };
-  };
-
-  const position = calculatePosition();
-
-  const renderMenuItem = (item: ContextMenuItem, depth = 0): React.ReactNode => {
-    if (item.divider) {
-      return <hr key={Math.random()} className="border-octgn-accent my-1" />;
-    }
-
-    const hasSubmenu = item.submenu && item.submenu.length > 0;
-
-    return (
-      <div key={item.label} className="relative group">
-        <button
-          onClick={() => {
-            if (!item.disabled && item.onClick) {
-              item.onClick();
-              onClose();
-            }
-          }}
-          disabled={item.disabled}
-          className={`
-            w-full px-4 py-2 text-left flex items-center justify-between
-            transition-colors
-            ${item.disabled
-              ? 'text-gray-500 cursor-not-allowed'
-              : item.danger
-              ? 'text-red-400 hover:bg-red-600/30'
-              : 'text-gray-200 hover:bg-octgn-accent/50'
-            }
-          `}
-        >
-          <span className="flex items-center space-x-2">
-            {item.icon && <span>{item.icon}</span>}
-            <span>{item.label}</span>
-          </span>
-          <span className="flex items-center space-x-2 text-xs">
-            {item.shortcut && <span className="text-gray-500">{item.shortcut}</span>}
-            {hasSubmenu && <span>▶</span>}
-          </span>
-        </button>
-
-        {/* Submenu */}
-        {hasSubmenu && (
-          <div className="absolute left-full top-0 hidden group-hover:block bg-octgn-primary border border-octgn-accent rounded-lg shadow-lg min-w-[180px]">
-            {item.submenu!.map((subItem) => renderMenuItem(subItem, depth + 1))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  return (
-    <div
-      ref={menuRef}
-      className="fixed z-50 bg-octgn-primary border border-octgn-accent rounded-lg shadow-xl min-w-[180px] py-1"
-      style={{ left: position.x, top: position.y }}
-    >
-      {state.items.map((item) => renderMenuItem(item))}
-    </div>
-  );
-}
-
-/**
- * Default card context menu items
- */
 export function getCardContextMenuItems(
-  cards: CardType[],
-  actions: {
-    onFlipFaceUp?: () => void;
-    onFlipFaceDown?: () => void;
-    onRotate?: (degrees: number) => void;
-    onMoveToGroup?: (groupId: number) => void;
-    onAddMarker?: () => void;
-    onRemoveMarker?: () => void;
+  cards: Array<{ id: number; faceUp: boolean; rotation: number }>,
+  handlers: {
+    onFlipFaceUp: () => void;
+    onFlipFaceDown: () => void;
+    onRotate: (deg: number) => void;
+    onDelete: () => void;
     onTarget?: () => void;
     onHighlight?: (color: string) => void;
-    onDelete?: () => void;
   }
 ): ContextMenuItem[] {
-  const singleCard = cards.length === 1;
-  const card = cards[0];
+  const hasCards = cards.length > 0;
+  const singleCard = cards.length === 1 ? cards[0] : null;
 
   return [
     {
       label: 'Flip Face Up',
-      icon: '👁️',
-      shortcut: 'F',
-      onClick: actions.onFlipFaceUp,
-      disabled: card?.faceUp,
+      icon: '⬆️',
+      onClick: handlers.onFlipFaceUp,
+      disabled: !hasCards,
     },
     {
       label: 'Flip Face Down',
-      icon: '🔽',
-      shortcut: 'Shift+F',
-      onClick: actions.onFlipFaceDown,
-      disabled: !card?.faceUp,
+      icon: '⬇️',
+      onClick: handlers.onFlipFaceDown,
+      disabled: !hasCards,
     },
-    { divider: true, label: '' },
+    { divider: true, label: '', disabled: true },
     {
       label: 'Rotate',
       icon: '🔄',
       submenu: [
-        { label: '90° CW', onClick: () => actions.onRotate?.(90) },
-        { label: '180°', onClick: () => actions.onRotate?.(180) },
-        { label: '90° CCW', onClick: () => actions.onRotate?.(270) },
-        { label: 'Reset (0°)', onClick: () => actions.onRotate?.(0) },
+        { label: 'Rotate 90° CW', icon: '↻', onClick: () => handlers.onRotate(90) },
+        { label: 'Rotate 90° CCW', icon: '↺', onClick: () => handlers.onRotate(-90) },
+        { label: 'Rotate 180°', icon: '🔃', onClick: () => handlers.onRotate(180) },
+        { divider: true, label: '', disabled: true },
+        { label: 'Reset Rotation', icon: '⬆️', onClick: () => handlers.onRotate(0) },
       ],
+      disabled: !hasCards,
     },
+    { divider: true, label: '', disabled: true },
     {
-      label: 'Move To',
-      icon: '📦',
-      submenu: [
-        { label: 'Hand', onClick: () => actions.onMoveToGroup?.(-1) },
-        { label: 'Table', onClick: () => actions.onMoveToGroup?.(0) },
-        { label: 'Deck', onClick: () => actions.onMoveToGroup?.(-2) },
-        { label: 'Discard', onClick: () => actions.onMoveToGroup?.(-3) },
-      ],
+      label: 'Target',
+      icon: '🎯',
+      onClick: handlers.onTarget,
+      disabled: !hasCards || !handlers.onTarget,
     },
-    { divider: true, label: '' },
-    {
-      label: 'Add Marker',
-      icon: '➕',
-      onClick: actions.onAddMarker,
-      disabled: !singleCard,
-    },
-    {
-      label: 'Remove Marker',
-      icon: '➖',
-      onClick: actions.onRemoveMarker,
-      disabled: !singleCard || !card?.markers?.length,
-    },
-    { divider: true, label: '' },
     {
       label: 'Highlight',
-      icon: '🎨',
+      icon: '✨',
       submenu: [
-        { label: '🔴 Red', onClick: () => actions.onHighlight?.('#ef4444') },
-        { label: '🟢 Green', onClick: () => actions.onHighlight?.('#10b981') },
-        { label: '🔵 Blue', onClick: () => actions.onHighlight?.('#3b82f6') },
-        { label: '🟡 Yellow', onClick: () => actions.onHighlight?.('#f59e0b') },
-        { label: 'None', onClick: () => actions.onHighlight?.('') },
+        { label: 'Red', onClick: () => handlers.onHighlight?.('#EF4444') },
+        { label: 'Green', onClick: () => handlers.onHighlight?.('#22C55E') },
+        { label: 'Blue', onClick: () => handlers.onHighlight?.('#3B82F6') },
+        { label: 'Yellow', onClick: () => handlers.onHighlight?.('#EAB308') },
+        { label: 'Purple', onClick: () => handlers.onHighlight?.('#A855F7') },
+        { divider: true, label: '', disabled: true },
+        { label: 'Clear', onClick: () => handlers.onHighlight?.('') },
+      ],
+      disabled: !hasCards || !handlers.onHighlight,
+    },
+    { divider: true, label: '', disabled: true },
+    {
+      label: 'Add Marker',
+      icon: '🏷️',
+      disabled: !hasCards,
+      submenu: [
+        { label: '+1/+1 Counter', onClick: () => {} },
+        { label: '-1/-1 Counter', onClick: () => {} },
+        { label: 'Charge Counter', onClick: () => {} },
+        { label: 'Custom...', onClick: () => {} },
       ],
     },
+    { divider: true, label: '', disabled: true },
     {
-      label: card?.targeted ? 'Untarget' : 'Target',
-      icon: '🎯',
-      onClick: actions.onTarget,
-    },
-    { divider: true, label: '' },
-    {
-      label: `Delete (${cards.length})`,
+      label: 'Delete',
       icon: '🗑️',
+      onClick: handlers.onDelete,
       danger: true,
-      onClick: actions.onDelete,
+      disabled: !hasCards,
+      shortcut: 'Del',
     },
   ];
 }
+
+export function ContextMenu({
+  state,
+  menuRef,
+  onClose,
+}: {
+  state: ContextMenuState;
+  menuRef: React.RefObject<HTMLDivElement>;
+  onClose: () => void;
+}) {
+  const { isOpen, x, y, items } = state;
+
+  // Position calculation to keep menu in viewport
+  const position = useMemo(() => {
+    if (!isOpen) return { x, y };
+
+    const menuWidth = 200;
+    const menuHeight = items.length * 36;
+    const padding = 10;
+
+    let posX = x;
+    let posY = y;
+
+    // Adjust horizontal position
+    if (x + menuWidth + padding > window.innerWidth) {
+      posX = window.innerWidth - menuWidth - padding;
+    }
+
+    // Adjust vertical position
+    if (y + menuHeight + padding > window.innerHeight) {
+      posY = window.innerHeight - menuHeight - padding;
+    }
+
+    return { x: Math.max(padding, posX), y: Math.max(padding, posY) };
+  }, [isOpen, x, y, items]);
+
+  // Close on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose, menuRef]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      ref={menuRef}
+      className="fixed glass rounded-xl py-2 min-w-[200px] z-50 animate-fade-in shadow-2xl"
+      style={{ left: position.x, top: position.y }}
+    >
+      {items.map((item, index) => {
+        if (item.divider) {
+          return <div key={index} className="h-px bg-octgn-accent/50 my-2 mx-3" />;
+        }
+
+        return (
+          <div key={index} className="relative group">
+            <button
+              onClick={() => {
+                if (!item.disabled && item.onClick) {
+                  item.onClick();
+                  onClose();
+                }
+              }}
+              disabled={item.disabled}
+              className={`
+                w-full px-4 py-2 flex items-center justify-between
+                text-sm transition-colors
+                ${item.disabled
+                  ? 'text-gray-600 cursor-not-allowed'
+                  : item.danger
+                    ? 'text-red-400 hover:bg-red-500/20'
+                    : 'text-gray-300 hover:bg-octgn-accent/50 hover:text-white'
+                }
+              `}
+            >
+              <div className="flex items-center space-x-3">
+                {item.icon && <span className="w-5 text-center">{item.icon}</span>}
+                <span>{item.label}</span>
+              </div>
+              
+              <div className="flex items-center space-x-2 text-gray-500">
+                {item.shortcut && (
+                  <span className="text-xs font-mono">{item.shortcut}</span>
+                )}
+                {item.submenu && (
+                  <span>▸</span>
+                )}
+              </div>
+            </button>
+
+            {/* Submenu */}
+            {item.submenu && !item.disabled && (
+              <div className="absolute left-full top-0 hidden group-hover:block glass rounded-xl py-2 min-w-[180px] ml-1 shadow-2xl">
+                {item.submenu.map((subItem, subIndex) => {
+                  if (subItem.divider) {
+                    return <div key={subIndex} className="h-px bg-octgn-accent/50 my-2 mx-3" />;
+                  }
+
+                  return (
+                    <button
+                      key={subIndex}
+                      onClick={() => {
+                        if (!subItem.disabled && subItem.onClick) {
+                          subItem.onClick();
+                          onClose();
+                        }
+                      }}
+                      disabled={subItem.disabled}
+                      className={`
+                        w-full px-4 py-2 flex items-center space-x-3
+                        text-sm transition-colors
+                        ${subItem.disabled
+                          ? 'text-gray-600 cursor-not-allowed'
+                          : 'text-gray-300 hover:bg-octgn-accent/50 hover:text-white'
+                        }
+                      `}
+                    >
+                      {subItem.icon && <span className="w-5 text-center">{subItem.icon}</span>}
+                      <span>{subItem.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Add useEffect import
+import { useEffect } from 'react';
