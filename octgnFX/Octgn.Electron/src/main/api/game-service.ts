@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
 import { GameConnection } from '../protocol/connection';
 import { MessageType } from '../protocol/types';
-import type { GameState, ChatMessage, Player, Card, Group } from '../../shared/types';
+import type { GameState, ChatMessage, Player, Card } from '../../shared/types';
 import { IPC_CHANNELS } from '../../shared/types';
 
 /**
