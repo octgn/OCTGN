@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useGameStore } from '../stores/gameStore';
-import { parseDeck, serializeDeck, exportToText, saveDeckToFile, loadDeckFromFile } from '../utils';
+import { parseDeck, serializeDeck, exportToText } from '../utils/deckParser';
 import { Deck, DeckCard } from '../utils/deckParser';
-import { Button, Modal, CardZoom } from '../components';
+import { Button, Modal, Badge } from '../components';
+import { useInstalledGames, GamePackage } from '../services/GameFeedService';
 
 interface CardDatabaseCard {
   id: string;
@@ -13,7 +13,11 @@ interface CardDatabaseCard {
 }
 
 export default function DeckEditorPage() {
-  const { connected } = useGameStore();
+  const { games: installedGames } = useInstalledGames();
+  
+  // Selected game
+  const [selectedGameId, setSelectedGameId] = useState<string>('');
+  const [selectedGame, setSelectedGame] = useState<GamePackage | null>(null);
 
   // Deck state
   const [deckName, setDeckName] = useState('Untitled Deck');
@@ -25,30 +29,77 @@ export default function DeckEditorPage() {
   const [activeSection, setActiveSection] = useState('Main');
   const [notes, setNotes] = useState('');
 
-  // Card database (demo)
+  // Card database
   const [cardDatabase, setCardDatabase] = useState<CardDatabaseCard[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<CardDatabaseCard[]>([]);
+  const [databaseLoading, setDatabaseLoading] = useState(false);
 
   // UI state
   const [selectedCard, setSelectedCard] = useState<DeckCard | null>(null);
-  const [showCardDatabase, setShowCardDatabase] = useState(false);
   const [zoomCard, setZoomCard] = useState<CardDatabaseCard | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Load demo card database
+  // Recent decks
+  const [recentDecks, setRecentDecks] = useState<Array<{ name: string; path: string }>>([]);
+
+  // Load installed games and select first
   useEffect(() => {
-    const demoCards: CardDatabaseCard[] = [
-      { id: 'bolt', name: 'Lightning Bolt', set: 'M12', properties: { type: 'Instant', cost: 'R', text: 'Deal 3 damage to any target.' } },
-      { id: 'giantgrowth', name: 'Giant Growth', set: 'M10', properties: { type: 'Instant', cost: 'G', text: 'Target creature gets +3/+3 until end of turn.' } },
-      { id: 'mountain', name: 'Mountain', set: 'UNH', properties: { type: 'Basic Land', subtype: 'Mountain' } },
-      { id: 'forest', name: 'Forest', set: 'UNH', properties: { type: 'Basic Land', subtype: 'Forest' } },
-      { id: 'serra', name: 'Serra Angel', set: 'M10', properties: { type: 'Creature', cost: '3WW', pt: '4/4', text: 'Flying, vigilance' } },
-      { id: 'goblin', name: 'Goblin Guide', set: 'ZEN', properties: { type: 'Creature', cost: 'R', pt: '2/2', text: 'Haste. Whenever Goblin Guide attacks, defending player reveals the top card of their library.' } },
-      { id: 'monolith', name: 'Basalt Monolith', set: 'M12', properties: { type: 'Artifact', cost: '3', text: 'Tap: Add CCC. 3: Untap Basalt Monolith.' } },
-      { id: 'solring', name: 'Sol Ring', set: 'C13', properties: { type: 'Artifact', cost: '1', text: 'Tap: Add CC.' } },
-    ];
-    setCardDatabase(demoCards);
+    if (installedGames.length > 0 && !selectedGameId) {
+      setSelectedGameId(installedGames[0].id);
+      setSelectedGame(installedGames[0]);
+    }
+  }, [installedGames, selectedGameId]);
+
+  // Update selected game
+  useEffect(() => {
+    const game = installedGames.find((g) => g.id === selectedGameId);
+    setSelectedGame(game || null);
+  }, [selectedGameId, installedGames]);
+
+  // Load card database for selected game
+  useEffect(() => {
+    if (!selectedGame?.installPath) {
+      setCardDatabase([]);
+      return;
+    }
+
+    const loadDatabase = async () => {
+      setDatabaseLoading(true);
+      try {
+        // In a real implementation, we'd load cards from the game package
+        // For now, use demo cards
+        const demoCards: CardDatabaseCard[] = [
+          { id: 'card1', name: 'Lightning Bolt', set: 'M12', properties: { type: 'Instant', cost: 'R', text: 'Deal 3 damage to any target.' } },
+          { id: 'card2', name: 'Giant Growth', set: 'M10', properties: { type: 'Instant', cost: 'G', text: 'Target creature gets +3/+3 until end of turn.' } },
+          { id: 'card3', name: 'Mountain', set: 'UNH', properties: { type: 'Basic Land', subtype: 'Mountain' } },
+          { id: 'card4', name: 'Forest', set: 'UNH', properties: { type: 'Basic Land', subtype: 'Forest' } },
+          { id: 'card5', name: 'Serra Angel', set: 'M10', properties: { type: 'Creature', cost: '3WW', pt: '4/4', text: 'Flying, vigilance' } },
+          { id: 'card6', name: 'Goblin Guide', set: 'ZEN', properties: { type: 'Creature', cost: 'R', pt: '2/2', text: 'Haste' } },
+          { id: 'card7', name: 'Sol Ring', set: 'C13', properties: { type: 'Artifact', cost: '1', text: 'Tap: Add CC.' } },
+          { id: 'card8', name: 'Counterspell', set: 'IMA', properties: { type: 'Instant', cost: 'UU', text: 'Counter target spell.' } },
+        ];
+        setCardDatabase(demoCards);
+      } finally {
+        setDatabaseLoading(false);
+      }
+    };
+
+    loadDatabase();
+  }, [selectedGame]);
+
+  // Load recent decks on mount
+  useEffect(() => {
+    const loadRecentDecks = async () => {
+      if (window.electronAPI?.listDecks) {
+        const result = await window.electronAPI.listDecks();
+        if (result.success && result.decks) {
+          setRecentDecks(result.decks);
+        }
+      }
+    };
+    loadRecentDecks();
   }, []);
 
   // Search cards
@@ -132,38 +183,106 @@ export default function DeckEditorPage() {
 
   // Save deck
   const handleSave = useCallback(async () => {
+    if (!selectedGame) {
+      alert('Please select a game first');
+      return;
+    }
+
     const deck: Deck = {
-      gameId: 'magic', // Would come from selected game
+      gameId: selectedGame.id,
       name: deckName,
       sections: deckSections,
       notes,
     };
 
-    const xml = serializeDeck(deck);
-    await saveDeckToFile(xml);
-    setHasUnsavedChanges(false);
-  }, [deckName, deckSections, notes]);
+    setSaving(true);
+    try {
+      const xml = serializeDeck(deck);
+
+      if (window.electronAPI?.saveDeck) {
+        const result = await window.electronAPI.saveDeck(deckName, xml);
+        if (result.success) {
+          setHasUnsavedChanges(false);
+          // Refresh recent decks
+          if (window.electronAPI?.listDecks) {
+            const listResult = await window.electronAPI.listDecks();
+            if (listResult.success && listResult.decks) {
+              setRecentDecks(listResult.decks);
+            }
+          }
+        } else {
+          alert(`Failed to save: ${result.error}`);
+        }
+      } else {
+        // Browser fallback - download file
+        const blob = new Blob([xml], { type: 'application/xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${deckName}.o8d`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setHasUnsavedChanges(false);
+      }
+    } finally {
+      setSaving(false);
+    }
+  }, [selectedGame, deckName, deckSections, notes]);
 
   // Load deck
-  const handleLoad = useCallback(async () => {
-    const xml = await loadDeckFromFile();
-    if (xml) {
-      const deck = parseDeck(xml);
-      setDeckName(deck.name);
-      setDeckSections(deck.sections);
-      setNotes(deck.notes || '');
-      setHasUnsavedChanges(false);
-    }
-  }, []);
+  const handleLoad = useCallback(async (deckPath?: string) => {
+    setLoading(true);
+    try {
+      let xml: string | null = null;
 
-  // Export deck
+      if (deckPath && window.electronAPI?.loadDeck) {
+        const result = await window.electronAPI.loadDeck(deckPath);
+        if (result.success && result.data) {
+          xml = result.data;
+        }
+      } else if (window.electronAPI?.openFileDialog) {
+        const result = await window.electronAPI.openFileDialog({
+          title: 'Open Deck',
+          filters: [{ name: 'OCTGN Decks', extensions: ['o8d'] }],
+          properties: ['openFile'],
+        });
+
+        if (!result.canceled && result.filePaths.length > 0) {
+          const fileResult = await window.electronAPI.readFile(result.filePaths[0]);
+          if (fileResult.success && fileResult.data) {
+            xml = fileResult.data;
+          }
+        }
+      }
+
+      if (xml) {
+        const deck = parseDeck(xml);
+        setDeckName(deck.name);
+        setDeckSections(deck.sections);
+        setNotes(deck.notes || '');
+        setHasUnsavedChanges(false);
+        
+        // Update selected game if different
+        if (deck.gameId && deck.gameId !== selectedGameId) {
+          setSelectedGameId(deck.gameId);
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedGameId]);
+
+  // Export deck to text
   const handleExport = useCallback(() => {
+    if (!selectedGame) return;
+
     const deck: Deck = {
-      gameId: 'magic',
+      gameId: selectedGame.id,
       name: deckName,
       sections: deckSections,
       notes,
     };
+
     const text = exportToText(deck);
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -172,7 +291,7 @@ export default function DeckEditorPage() {
     a.download = `${deckName}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [deckName, deckSections, notes]);
+  }, [selectedGame, deckName, deckSections, notes]);
 
   // Clear deck
   const handleClear = useCallback(() => {
@@ -183,14 +302,36 @@ export default function DeckEditorPage() {
     setHasUnsavedChanges(false);
   }, [hasUnsavedChanges]);
 
+  // New deck
+  const handleNew = useCallback(() => {
+    handleClear();
+  }, [handleClear]);
+
   const sections = Object.keys(deckSections);
 
   return (
     <div className="h-full flex">
       {/* Left Panel - Card Database */}
       <div className="w-80 bg-octgn-primary border-r border-octgn-accent flex flex-col">
+        {/* Game Selector */}
         <div className="p-4 border-b border-octgn-accent">
-          <h2 className="font-bold text-white mb-2">Card Database</h2>
+          <label className="block text-sm text-gray-400 mb-2">Game</label>
+          <select
+            value={selectedGameId}
+            onChange={(e) => setSelectedGameId(e.target.value)}
+            className="input w-full"
+          >
+            <option value="">Select a game...</option>
+            {installedGames.map((game) => (
+              <option key={game.id} value={game.id}>
+                {game.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Search */}
+        <div className="p-4 border-b border-octgn-accent">
           <input
             type="text"
             value={searchTerm}
@@ -200,46 +341,52 @@ export default function DeckEditorPage() {
           />
         </div>
 
+        {/* Card List */}
         <div className="flex-1 overflow-y-auto p-2">
-          <div className="space-y-1">
-            {filteredCards.map((card) => (
-              <div
-                key={card.id}
-                className="flex items-center justify-between p-2 rounded hover:bg-octgn-accent/50 cursor-pointer group"
-                onClick={() => addCard(card)}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  setZoomCard(card);
-                }}
-              >
-                <div>
-                  <p className="text-white text-sm">{card.name}</p>
-                  <p className="text-gray-500 text-xs">{card.set}</p>
+          {databaseLoading ? (
+            <div className="text-center py-8 text-gray-400">Loading cards...</div>
+          ) : !selectedGame ? (
+            <div className="text-center py-8 text-gray-400">
+              Select a game to load cards
+            </div>
+          ) : filteredCards.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">No cards found</div>
+          ) : (
+            <div className="space-y-1">
+              {filteredCards.map((card) => (
+                <div
+                  key={card.id}
+                  className="flex items-center justify-between p-2 rounded hover:bg-octgn-accent/50 cursor-pointer group"
+                  onClick={() => addCard(card)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setZoomCard(card);
+                  }}
+                >
+                  <div>
+                    <p className="text-white text-sm">{card.name}</p>
+                    <p className="text-gray-500 text-xs">{card.set}</p>
+                  </div>
+                  <div className="opacity-0 group-hover:opacity-100 flex space-x-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addCard(card, 4);
+                      }}
+                      className="px-2 py-1 bg-octgn-highlight rounded text-xs text-white"
+                    >
+                      +4
+                    </button>
+                  </div>
                 </div>
-                <div className="opacity-0 group-hover:opacity-100 flex space-x-1">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addCard(card, 4);
-                    }}
-                    className="px-2 py-1 bg-octgn-highlight rounded text-xs text-white"
-                  >
-                    +4
-                  </button>
-                </div>
-              </div>
-            ))}
-
-            {filteredCards.length === 0 && (
-              <div className="text-center text-gray-400 py-8">
-                No cards found
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
+        {/* Stats */}
         <div className="p-4 border-t border-octgn-accent text-xs text-gray-500">
-          Click to add • Right-click for details
+          {cardDatabase.length} cards in database
         </div>
       </div>
 
@@ -255,20 +402,40 @@ export default function DeckEditorPage() {
               setHasUnsavedChanges(true);
             }}
             className="input flex-1"
+            placeholder="Deck Name"
           />
-          <Button onClick={handleSave} variant="primary">
+          <Button onClick={handleNew} variant="ghost" size="sm">
+            📄 New
+          </Button>
+          <Button onClick={handleSave} variant="primary" size="sm" loading={saving}>
             💾 Save
           </Button>
-          <Button onClick={handleLoad} variant="secondary">
-            📂 Load
+          <Button onClick={() => handleLoad()} variant="secondary" size="sm">
+            📂 Open
           </Button>
-          <Button onClick={handleExport} variant="secondary">
+          <Button onClick={handleExport} variant="secondary" size="sm">
             📤 Export
           </Button>
-          <Button onClick={handleClear} variant="danger">
+          <Button onClick={handleClear} variant="ghost" size="sm">
             🗑️ Clear
           </Button>
         </div>
+
+        {/* Recent Decks */}
+        {recentDecks.length > 0 && (
+          <div className="bg-octgn-accent/20 p-2 border-b border-octgn-accent flex items-center space-x-2 text-sm">
+            <span className="text-gray-400">Recent:</span>
+            {recentDecks.slice(0, 5).map((deck) => (
+              <button
+                key={deck.path}
+                onClick={() => handleLoad(deck.path)}
+                className="text-octgn-highlight hover:underline"
+              >
+                {deck.name.replace('.o8d', '')}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Section Tabs */}
         <div className="bg-octgn-primary/50 border-b border-octgn-accent">
@@ -294,10 +461,12 @@ export default function DeckEditorPage() {
 
         {/* Card List */}
         <div className="flex-1 overflow-y-auto p-4">
-          {deckSections[activeSection]?.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-16 text-gray-400">Loading deck...</div>
+          ) : deckSections[activeSection]?.length === 0 ? (
             <div className="text-gray-400 text-center py-16">
-              <p>No cards in this section</p>
-              <p className="text-sm mt-2">Click cards from the database to add them</p>
+              <p className="mb-2">No cards in this section</p>
+              <p className="text-sm">Click cards from the database to add them</p>
             </div>
           ) : (
             <div className="space-y-1">
@@ -359,9 +528,7 @@ export default function DeckEditorPage() {
 
         {/* Stats Bar */}
         <div className="bg-octgn-primary p-2 border-t border-octgn-accent flex items-center justify-between">
-          <span className="text-gray-400">
-            Total: {totalCards} cards
-          </span>
+          <span className="text-gray-400">Total: {totalCards} cards</span>
           <div className="flex space-x-4 text-sm">
             {sections.map((section) => (
               <span key={section} className="text-gray-400">
@@ -370,7 +537,7 @@ export default function DeckEditorPage() {
             ))}
           </div>
           {hasUnsavedChanges && (
-            <span className="text-yellow-500 text-sm">● Unsaved</span>
+            <Badge variant="warning">Unsaved</Badge>
           )}
         </div>
       </div>
@@ -419,12 +586,13 @@ export default function DeckEditorPage() {
         </div>
       </div>
 
-      {/* Card Zoom Overlay */}
+      {/* Card Zoom Modal */}
       {zoomCard && (
         <Modal
           isOpen={true}
           onClose={() => setZoomCard(null)}
           title={zoomCard.name}
+          size="sm"
         >
           <div className="space-y-4">
             <div className="aspect-[3/4] bg-octgn-accent rounded-lg flex items-center justify-center">
