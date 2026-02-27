@@ -44,7 +44,7 @@ ipcMain.handle('start-server', async (_, port: number) => {
   if (gameServer) {
     return { success: false, error: 'Server already running' };
   }
-  gameServer = new GameServer(port);
+  gameServer = new GameServer({ port });
   await gameServer.start();
   return { success: true, port };
 });

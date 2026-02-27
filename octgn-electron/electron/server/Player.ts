@@ -21,7 +21,7 @@ export class Player extends EventEmitter {
   private info: PlayerInfo;
   private buffer: Buffer[] = [];
   private connected = true;
-  private saidHello = false;
+  private _saidHello = false;
 
   constructor(
     id: string,
@@ -249,8 +249,7 @@ export class Player extends EventEmitter {
     return this._saidHello;
   }
 
-  private set saidHello(value: boolean) {
+  set saidHello(value: boolean) {
     this._saidHello = value;
   }
-  private _saidHello = false;
 }

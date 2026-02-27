@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { useState, useEffect, useRef } from 'react';
 
 export interface DiscoveredGame {
   id: string;
@@ -12,18 +12,43 @@ export interface DiscoveredGame {
   discoveredAt: Date;
 }
 
+// Simple event emitter that works in both Node and browser
+type EventCallback = (...args: unknown[]) => void;
+
+class SimpleEventEmitter {
+  private listeners: Map<string, Set<EventCallback>> = new Map();
+
+  on(event: string, callback: EventCallback): void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)!.add(callback);
+  }
+
+  off(event: string, callback: EventCallback): void {
+    this.listeners.get(event)?.delete(callback);
+  }
+
+  emit(event: string, ...args: unknown[]): void {
+    this.listeners.get(event)?.forEach((cb) => cb(...args));
+  }
+
+  removeAllListeners(): void {
+    this.listeners.clear();
+  }
+}
+
 /**
  * LAN Game Discovery Service
  * 
  * Listens for UDP broadcasts from OCTGN game servers on the local network.
  * This matches the existing broadcast protocol used by the WPF client.
  */
-export class GameDiscoveryService extends EventEmitter {
-  private socket: UDPWebSocket | null = null;
+export class GameDiscoveryService extends SimpleEventEmitter {
   private broadcastPort: number;
   private isListening = false;
   private discoveredGames: Map<string, DiscoveredGame> = new Map();
-  private cleanupInterval: NodeJS.Timeout | null = null;
+  private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(broadcastPort: number = 21234) {
     super();
@@ -52,11 +77,6 @@ export class GameDiscoveryService extends EventEmitter {
   stop(): void {
     if (!this.isListening) return;
 
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
-    }
-
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = null;
@@ -67,78 +87,25 @@ export class GameDiscoveryService extends EventEmitter {
   }
 
   /**
-   * Handle incoming broadcast message
+   * Handle incoming broadcast message (called from main process)
    */
-  handleBroadcast(data: Buffer, from: string): void {
+  handleBroadcast(data: { host: string; message: string }): void {
     try {
-      const message = this.parseBroadcast(data);
-      if (message) {
-        const game: DiscoveredGame = {
-          ...message,
-          host: from,
-          discoveredAt: new Date(),
-        };
+      const message = JSON.parse(data.message);
+      const game: DiscoveredGame = {
+        ...message,
+        host: data.host,
+        discoveredAt: new Date(),
+      };
 
-        // Update or add game
-        const existingKey = `${game.host}:${game.port}`;
-        this.discoveredGames.set(existingKey, game);
+      // Update or add game
+      const existingKey = `${game.host}:${game.port}`;
+      this.discoveredGames.set(existingKey, game);
 
-        this.emit('game-discovered', game);
-      }
+      this.emit('game-discovered', game);
     } catch (error) {
       console.error('Failed to parse broadcast:', error);
     }
-  }
-
-  /**
-   * Parse broadcast message format
-   * Format matches existing OCTGN protocol
-   */
-  private parseBroadcast(data: Buffer): Partial<DiscoveredGame> | null {
-    // Broadcast format:
-    // [4 bytes] magic number
-    // [2 bytes] port
-    // [string] game name (null-terminated)
-    // [string] session name (null-terminated)
-    // [byte] player count
-    // [byte] max players
-    // [byte] has password
-
-    if (data.length < 8) return null;
-
-    const magic = data.readUInt32LE(0);
-    if (magic !== 0x4f435447) return null; // 'OCTG'
-
-    const port = data.readUInt16LE(4);
-    
-    let offset = 6;
-    const gameName = this.readNullTerminatedString(data, offset);
-    offset += gameName.length + 1;
-    
-    const sessionName = this.readNullTerminatedString(data, offset);
-    offset += sessionName.length + 1;
-
-    const playerCount = data.readUInt8(offset++);
-    const maxPlayers = data.readUInt8(offset++);
-    const hasPassword = data.readUInt8(offset++) !== 0;
-
-    return {
-      id: `${gameName}-${port}`,
-      name: sessionName || gameName,
-      port,
-      gameName,
-      playerCount,
-      maxPlayers,
-      hasPassword,
-    };
-  }
-
-  private readNullTerminatedString(buffer: Buffer, offset: number): string {
-    let end = offset;
-    while (end < buffer.length && buffer[end] !== 0) {
-      end++;
-    }
-    return buffer.toString('utf8', offset, end);
   }
 
   /**
@@ -173,11 +140,6 @@ export class GameDiscoveryService extends EventEmitter {
   }
 }
 
-// Stub for UDP WebSocket (would use dgram in Node.js/Electron main)
-interface UDPWebSocket {
-  close(): void;
-}
-
 /**
  * React hook for game discovery
  */
@@ -189,16 +151,17 @@ export function useGameDiscovery(broadcastPort?: number) {
   useEffect(() => {
     service.current = new GameDiscoveryService(broadcastPort);
 
-    service.current.on('game-discovered', (game: DiscoveredGame) => {
+    service.current.on('game-discovered', () => {
       setGames(service.current?.getDiscoveredGames() || []);
     });
 
-    service.current.on('game-expired', (game: DiscoveredGame) => {
+    service.current.on('game-expired', () => {
       setGames(service.current?.getDiscoveredGames() || []);
     });
 
     return () => {
       service.current?.stop();
+      service.current?.removeAllListeners();
     };
   }, [broadcastPort]);
 
@@ -221,6 +184,3 @@ export function useGameDiscovery(broadcastPort?: number) {
     stopScanning,
   };
 }
-
-// Need useState and useRef for the hook
-import { useState, useEffect, useRef } from 'react';
