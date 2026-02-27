@@ -1,10 +1,9 @@
-#!/usr/bin/env pwsh
-# Launch the OCTGN Electron client.
+# Launch the OCTGN Electron client (Windows).
 #
 # Usage:
-#   ./launch-electron.ps1              Dev mode (Vite hot-reload + Electron)
-#   ./launch-electron.ps1 -Production  Build and run from compiled output
-#   ./launch-electron.ps1 -Install     Force npm install first
+#   .\launch-electron.ps1              Dev mode (Vite hot-reload + Electron)
+#   .\launch-electron.ps1 -Production  Build and run from compiled output
+#   .\launch-electron.ps1 -Install     Force npm install first
 
 param(
     [switch]$Production,
@@ -31,26 +30,27 @@ try {
 
     if ($Production -or $Build) {
         Write-Host '[2/3] Building...' -ForegroundColor Cyan
-        npx tsc -p tsconfig.main.json
+        npx.cmd tsc -p tsconfig.main.json
         if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
-        npx vite build
+        npx.cmd vite build
         if ($LASTEXITCODE -ne 0) { throw 'Renderer build failed' }
     }
 
     if ($Production) {
         Write-Host '[3/3] Starting OCTGN (production)...' -ForegroundColor Green
-        npx electron dist/main/index.js
+        npx.cmd electron dist/main/index.js
     }
     else {
         Write-Host '[2/3] Building main process...' -ForegroundColor Cyan
-        npx tsc -p tsconfig.main.json
+        npx.cmd tsc -p tsconfig.main.json
         if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
 
         Write-Host '[3/3] Starting OCTGN (dev mode)...' -ForegroundColor Green
 
         # Start Vite dev server as a background process
-        $viteProc = Start-Process -FilePath 'npx' -ArgumentList 'vite','dev' `
-            -WindowStyle Hidden -PassThru
+        # cmd /c is needed so Start-Process can find npx on Windows
+        $viteProc = Start-Process -FilePath 'cmd.exe' -ArgumentList '/c','npx','vite','dev' `
+            -WorkingDirectory (Get-Location).Path -WindowStyle Hidden -PassThru
 
         try {
             # Poll until Vite is listening on port 5173
@@ -75,12 +75,12 @@ try {
             }
 
             Write-Host '     Vite is ready, launching Electron...        ' -ForegroundColor Green
-            npx electron dist/main/index.js
+            npx.cmd electron dist/main/index.js
         }
         finally {
-            # Kill Vite when Electron exits
+            # Kill Vite and its child tree when Electron exits
             if ($viteProc -and -not $viteProc.HasExited) {
-                Stop-Process -Id $viteProc.Id -Force -ErrorAction SilentlyContinue
+                taskkill /PID $viteProc.Id /T /F 2>$null
             }
         }
     }
