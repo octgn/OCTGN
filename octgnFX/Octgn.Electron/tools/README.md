@@ -17,6 +17,8 @@ Reusable scripts for debugging the Electron app via CDP (Chrome DevTools Protoco
 | `cdp-join.mjs [id\|name] [--spectate]` | Join a game (no args = list games) |
 | `cdp-console.mjs "expr"` | Evaluate arbitrary JS in the renderer |
 | `cdp-check-images.mjs` | Check image loading status for all cards |
+| `cdp-login.mjs` | Trigger login if on login page (uses saved credentials) |
+| `cdp-watch.mjs [secs] [--no-screenshots]` | Watch a live game for state changes |
 | `tail-log.mjs [lines] [filter]` | Tail the Electron log file |
 
 ## PowerShell Scripts
@@ -54,4 +56,13 @@ node tools/tail-log.mjs 50 RESOLVER
 
 # Check IMAGE resolution log entries
 node tools/tail-log.mjs 50 IMAGE
+
+# Trigger login (when on login page with saved credentials)
+node tools/cdp-login.mjs
+
+# Watch a live game for 60 seconds, logging state changes
+node tools/cdp-watch.mjs 60
+
+# Watch without saving screenshots
+node tools/cdp-watch.mjs 120 --no-screenshots
 ```

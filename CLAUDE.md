@@ -32,6 +32,7 @@ node tools/cdp-cards.mjs               # Dump all card data
 node tools/cdp-check-images.mjs        # Check which card images loaded/failed
 node tools/cdp-screenshot.mjs out.png  # Screenshot the Electron renderer
 node tools/cdp-console.mjs "expr"      # Eval arbitrary JS in renderer
+node tools/cdp-watch.mjs 60             # Watch live game for state changes (60s)
 node tools/tail-log.mjs 50 IMAGE       # Tail log with filter keyword
 pwsh -File tools/capture-wpf.ps1 out.png  # Screenshot WPF OCTGN window
 ```
