@@ -7,7 +7,7 @@
     "dev": "concurrently -k \"npm run dev:renderer\" \"npm run dev:main\" \"npm run dev:electron\"",
     "dev:renderer": "vite",
     "dev:main": "tsc -p tsconfig.main.json --watch",
-    "dev:electron": "wait-on dist/main.js http://localhost:5173 && electron .",
+    "dev:electron": "node scripts/dev-launcher.js",
     "build": "npm run build:renderer && npm run build:main",
     "build:renderer": "vite build",
     "build:main": "tsc -p tsconfig.main.json",
