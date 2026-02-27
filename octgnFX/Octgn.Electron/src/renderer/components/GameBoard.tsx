@@ -386,6 +386,24 @@ const GameBoard: React.FC<GameBoardProps> = ({
         onMouseUp={handleTableMouseUp}
         onMouseLeave={handleTableMouseLeave}
       >
+        {/* Table background image (e.g. wood texture) — fills the entire viewport, static */}
+        {tableBackgroundUrl && (
+          <div
+            data-testid="table-background"
+            className="absolute inset-0 pointer-events-none select-none"
+            style={{
+              backgroundImage: `url(${tableBackgroundUrl})`,
+              backgroundRepeat: backgroundStyle === 'tile' ? 'repeat' : 'no-repeat',
+              backgroundSize: backgroundStyle === 'stretch' ? '100% 100%'
+                : backgroundStyle === 'tile' ? 'auto'
+                : backgroundStyle === 'uniformToFill' ? 'cover'
+                : 'contain',
+              backgroundPosition: 'center',
+              zIndex: 0,
+            }}
+          />
+        )}
+
         {/* ── Zoom/Pan transform container ────────────────────────── */}
         <div
           data-testid="transform-container"
@@ -426,28 +444,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
               inset: 0,
             }}
           >
-          {/* Table background image (e.g. wood texture) — fills the entire table */}
-          {tableBackgroundUrl && (
-            <div
-              data-testid="table-background"
-              className="pointer-events-none select-none"
-              style={{
-                position: 'absolute',
-                left: hasTableDimensions ? `${-(tableWidth ?? 0) / 2}px` : 0,
-                top: hasTableDimensions ? `${-(tableHeight ?? 0) / 2}px` : 0,
-                width: hasTableDimensions ? `${tableWidth}px` : '100%',
-                height: hasTableDimensions ? `${tableHeight}px` : '100%',
-                backgroundImage: `url(${tableBackgroundUrl})`,
-                backgroundRepeat: backgroundStyle === 'tile' ? 'repeat' : 'no-repeat',
-                backgroundSize: backgroundStyle === 'stretch' ? '100% 100%'
-                  : backgroundStyle === 'tile' ? 'auto'
-                  : backgroundStyle === 'uniformToFill' ? 'cover'
-                  : 'contain',
-                backgroundPosition: 'center',
-                zIndex: 0,
-              }}
-            />
-          )}
 
           {/* Board image (e.g. chess board) — positioned at specific coordinates on the table */}
           {boardImageUrl && (
