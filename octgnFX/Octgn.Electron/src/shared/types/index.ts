@@ -213,7 +213,12 @@ export interface GameState {
       imageUrl: string;
       width: number;
       height: number;
+      x?: number;
+      y?: number;
     };
+    width?: number;
+    height?: number;
+    backgroundStyle?: 'stretch' | 'tile' | 'uniform' | 'uniformToFill';
   };
   turnNumber: number;
   activePlayer: number;
@@ -222,6 +227,10 @@ export interface GameState {
   isStarted: boolean;
   connectionStatus?: 'connected' | 'disconnected' | 'reconnecting';
   globalVariables?: Record<string, string>;
+  /** Default card size from game definition (in mm) */
+  cardSize?: { width: number; height: number };
+  /** Named card sizes from game definition (in mm) */
+  cardSizes?: Record<string, { width: number; height: number }>;
 }
 
 export interface ChatMessage {
@@ -329,4 +338,7 @@ export const IPC_CHANNELS = {
   CREDS_SAVE: 'creds:save',
   CREDS_CLEAR: 'creds:clear',
   CLIPBOARD_WRITE: 'clipboard:write',
+
+  // Game assets
+  GAME_RESOLVE_ASSET: 'game:resolve-asset',
 } as const;

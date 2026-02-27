@@ -9,10 +9,14 @@ import { installGame } from '../games/game-installer';
 import { listFeeds, addFeed, removeFeed, setFeedEnabled } from '../games/feed-manager';
 import { resolveAndCacheIcons } from '../games/icon-cache';
 import { saveCredentials, loadCredentials, clearCredentials } from '../auth/credential-store';
+import { setImageResolver } from '../asset-protocol';
 import { log, logError } from '../logger';
 
 const apiClient = new OctgnApiClient();
 const gameService = new GameService();
+
+// Wire the GameService's ImageResolver to the asset protocol handler
+setImageResolver(gameService.getImageResolver());
 
 export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Auth handlers
@@ -51,17 +55,22 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     return apiClient.hostGame(options);
   });
 
-  ipcMain.handle(IPC_CHANNELS.JOIN_GAME, async (_event, gameId: string, password?: string) => {
+  ipcMain.handle(IPC_CHANNELS.JOIN_GAME, async (_event, gameId: string, password?: string, spectator?: boolean) => {
+    log('JOIN', `JOIN_GAME called: gameId=${gameId} spectator=${spectator}`);
     // Get game details to find host:port, then connect via GameService
     const games = await apiClient.getHostedGames();
+    log('JOIN', `Got ${games.length} games from API`);
     const game = games.find((g) => g.id === gameId);
+    log('JOIN', `Found game: ${game ? `${game.name} at ${game.hostAddress}:${game.port}` : 'NOT FOUND'}`);
     if (!game) {
       return { success: false, error: 'Game not found' };
     }
     const session = apiClient.getSession();
+    log('JOIN', `Session: ${session ? session.username : 'NULL'}`);
     if (!session) {
       return { success: false, error: 'Not logged in' };
     }
+    log('JOIN', `Calling gameService.joinGame(${game.hostAddress}, ${game.port}, ${session.username}, spectator=${spectator})`);
     return gameService.joinGame(
       game.hostAddress,
       game.port,
@@ -70,6 +79,7 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
       game.gameId,
       game.gameVersion,
       password ?? '',
+      spectator ?? false,
     );
   });
 
