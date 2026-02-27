@@ -5,9 +5,13 @@ import type { LoginResult } from '@shared/types';
 // Mock window.octgn
 // ---------------------------------------------------------------------------
 const mockOctgn = {
-  login: vi.fn<[string, string], Promise<LoginResult>>(),
+  login: vi.fn<[string, string, boolean?], Promise<LoginResult>>(),
   logout: vi.fn<[], Promise<void>>(),
   getSession: vi.fn<[], Promise<LoginResult>>(),
+  loadCredentials: vi.fn(),
+  saveCredentials: vi.fn(),
+  clearCredentials: vi.fn(),
+  writeClipboard: vi.fn(),
   getGames: vi.fn(),
   hostGame: vi.fn(),
   joinGame: vi.fn(),
@@ -42,6 +46,9 @@ describe('useAuthStore', () => {
       session: null,
       isLoading: false,
       error: null,
+      savedUsername: '',
+      savedPassword: '',
+      rememberMe: true,
     });
   });
 
@@ -53,7 +60,7 @@ describe('useAuthStore', () => {
         session: { userId: 'u1', sessionId: 's1', deviceId: 'd1' },
       });
 
-      await useAuthStore.getState().login('alice', 'pw');
+      await useAuthStore.getState().login('alice', 'pw', true);
 
       const state = useAuthStore.getState();
       expect(state.user).toEqual({ id: 'u1', username: 'alice', isSubscriber: false });
@@ -65,9 +72,17 @@ describe('useAuthStore', () => {
     it('should call window.octgn.login with the right arguments', async () => {
       mockOctgn.login.mockResolvedValue({ success: true });
 
-      await useAuthStore.getState().login('bob', 'secret');
+      await useAuthStore.getState().login('bob', 'secret', false);
 
-      expect(mockOctgn.login).toHaveBeenCalledWith('bob', 'secret');
+      expect(mockOctgn.login).toHaveBeenCalledWith('bob', 'secret', false);
+    });
+
+    it('should pass rememberMe flag to login', async () => {
+      mockOctgn.login.mockResolvedValue({ success: true });
+
+      await useAuthStore.getState().login('bob', 'secret', true);
+
+      expect(mockOctgn.login).toHaveBeenCalledWith('bob', 'secret', true);
     });
   });
 
@@ -78,7 +93,7 @@ describe('useAuthStore', () => {
         error: 'Unknown username',
       });
 
-      await useAuthStore.getState().login('nobody', 'pw');
+      await useAuthStore.getState().login('nobody', 'pw', false);
 
       const state = useAuthStore.getState();
       expect(state.user).toBeNull();
@@ -90,7 +105,7 @@ describe('useAuthStore', () => {
     it('should use fallback error when none provided', async () => {
       mockOctgn.login.mockResolvedValue({ success: false });
 
-      await useAuthStore.getState().login('x', 'y');
+      await useAuthStore.getState().login('x', 'y', false);
 
       expect(useAuthStore.getState().error).toBe('Login failed');
     });
@@ -100,7 +115,7 @@ describe('useAuthStore', () => {
     it('should set error from Error instance', async () => {
       mockOctgn.login.mockRejectedValue(new Error('Network down'));
 
-      await useAuthStore.getState().login('alice', 'pw');
+      await useAuthStore.getState().login('alice', 'pw', false);
 
       const state = useAuthStore.getState();
       expect(state.isLoading).toBe(false);
@@ -111,7 +126,7 @@ describe('useAuthStore', () => {
     it('should set generic error for non-Error exceptions', async () => {
       mockOctgn.login.mockRejectedValue('boom');
 
-      await useAuthStore.getState().login('alice', 'pw');
+      await useAuthStore.getState().login('alice', 'pw', false);
 
       expect(useAuthStore.getState().error).toBe('An unexpected error occurred');
     });
@@ -126,7 +141,7 @@ describe('useAuthStore', () => {
         }),
       );
 
-      const promise = useAuthStore.getState().login('alice', 'pw');
+      const promise = useAuthStore.getState().login('alice', 'pw', false);
       expect(useAuthStore.getState().isLoading).toBe(true);
 
       resolveLogin({ success: true });
@@ -138,7 +153,7 @@ describe('useAuthStore', () => {
       useAuthStore.setState({ error: 'old error' });
 
       mockOctgn.login.mockResolvedValue({ success: true });
-      await useAuthStore.getState().login('alice', 'pw');
+      await useAuthStore.getState().login('alice', 'pw', false);
 
       expect(useAuthStore.getState().error).toBeNull();
     });
@@ -175,6 +190,70 @@ describe('useAuthStore', () => {
 
       expect(useAuthStore.getState().error).toBe('Logout failed');
       expect(useAuthStore.getState().isLoading).toBe(false);
+    });
+  });
+
+  describe('loadSavedCredentials', () => {
+    it('should populate savedUsername and savedPassword from stored credentials', async () => {
+      mockOctgn.loadCredentials.mockResolvedValue({
+        username: 'alice',
+        password: 'saved-pw',
+      });
+
+      await useAuthStore.getState().loadSavedCredentials();
+
+      const state = useAuthStore.getState();
+      expect(state.savedUsername).toBe('alice');
+      expect(state.savedPassword).toBe('saved-pw');
+      expect(state.rememberMe).toBe(true);
+    });
+
+    it('should do nothing when no credentials are saved', async () => {
+      mockOctgn.loadCredentials.mockResolvedValue(null);
+
+      await useAuthStore.getState().loadSavedCredentials();
+
+      const state = useAuthStore.getState();
+      expect(state.savedUsername).toBe('');
+      expect(state.savedPassword).toBe('');
+    });
+
+    it('should handle loadCredentials errors gracefully', async () => {
+      mockOctgn.loadCredentials.mockRejectedValue(new Error('no access'));
+
+      await useAuthStore.getState().loadSavedCredentials();
+
+      // Should not throw, should keep defaults
+      const state = useAuthStore.getState();
+      expect(state.savedUsername).toBe('');
+    });
+  });
+
+  describe('copyError', () => {
+    it('should copy error text to clipboard', () => {
+      useAuthStore.setState({ error: 'Something went wrong' });
+
+      useAuthStore.getState().copyError();
+
+      expect(mockOctgn.writeClipboard).toHaveBeenCalledWith('Something went wrong');
+    });
+
+    it('should do nothing when no error', () => {
+      useAuthStore.setState({ error: null });
+
+      useAuthStore.getState().copyError();
+
+      expect(mockOctgn.writeClipboard).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('setRememberMe', () => {
+    it('should toggle rememberMe state', () => {
+      useAuthStore.getState().setRememberMe(false);
+      expect(useAuthStore.getState().rememberMe).toBe(false);
+
+      useAuthStore.getState().setRememberMe(true);
+      expect(useAuthStore.getState().rememberMe).toBe(true);
     });
   });
 });

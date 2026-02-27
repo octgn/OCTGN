@@ -3,10 +3,19 @@ import { IPC_CHANNELS } from '../shared/types';
 
 const api = {
   // Auth
-  login: (username: string, password: string) =>
-    ipcRenderer.invoke(IPC_CHANNELS.LOGIN, username, password),
+  login: (username: string, password: string, rememberMe?: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LOGIN, username, password, rememberMe),
   logout: () => ipcRenderer.invoke(IPC_CHANNELS.LOGOUT),
   getSession: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SESSION),
+
+  // Credentials
+  loadCredentials: () => ipcRenderer.invoke(IPC_CHANNELS.CREDS_LOAD),
+  saveCredentials: (username: string, password: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CREDS_SAVE, username, password),
+  clearCredentials: () => ipcRenderer.invoke(IPC_CHANNELS.CREDS_CLEAR),
+
+  // Clipboard
+  writeClipboard: (text: string) => ipcRenderer.invoke(IPC_CHANNELS.CLIPBOARD_WRITE, text),
 
   // Lobby
   getGames: () => ipcRenderer.invoke(IPC_CHANNELS.GET_GAMES),

@@ -1,4 +1,4 @@
-import { IpcMain, BrowserWindow, app, dialog } from 'electron';
+import { IpcMain, BrowserWindow, app, dialog, clipboard } from 'electron';
 import { readFile } from 'fs/promises';
 import { IPC_CHANNELS } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
@@ -8,14 +8,30 @@ import { fetchAvailableGames } from '../games/game-feed';
 import { installGame } from '../games/game-installer';
 import { listFeeds, addFeed, removeFeed, setFeedEnabled } from '../games/feed-manager';
 import { resolveAndCacheIcons } from '../games/icon-cache';
+import { saveCredentials, loadCredentials, clearCredentials } from '../auth/credential-store';
+import { log, logError } from '../logger';
 
 const apiClient = new OctgnApiClient();
 const gameService = new GameService();
 
 export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Auth handlers
-  ipcMain.handle(IPC_CHANNELS.LOGIN, async (_event, username: string, password: string) => {
-    return apiClient.login(username, password);
+  ipcMain.handle(IPC_CHANNELS.LOGIN, async (_event, username: string, password: string, rememberMe?: boolean) => {
+    log('LOGIN', `Attempting login for user: ${username}`);
+    try {
+      const result = await apiClient.login(username, password);
+      log('LOGIN', `Result: ${JSON.stringify(result)}`);
+      // Auto-save credentials on successful login when rememberMe is true
+      if (result.success && rememberMe) {
+        await saveCredentials(username, password).catch((err) =>
+          logError('LOGIN', err),
+        );
+      }
+      return result;
+    } catch (err) {
+      logError('LOGIN', err);
+      throw err;
+    }
   });
 
   ipcMain.handle(IPC_CHANNELS.LOGOUT, async () => {
@@ -205,9 +221,22 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   });
 
   ipcMain.handle(IPC_CHANNELS.GAMES_LIST_AVAILABLE, async () => {
-    const feeds = await listFeeds();
-    const games = await fetchAvailableGames(feeds);
-    return resolveAndCacheIcons(games);
+    try {
+      const feeds = await listFeeds();
+      log('GAMES', `Feeds: ${feeds.map(f => `${f.name}(${f.enabled ? 'ON' : 'OFF'})`).join(', ')}`);
+      const games = await fetchAvailableGames(feeds);
+      log('GAMES', `fetchAvailableGames returned ${games.length} games`);
+      if (games.length <= 20) {
+        for (const g of games) log('GAMES', `  ${g.name} v${g.version} (${g.downloadCount})`);
+      } else {
+        log('GAMES', `  First 5: ${games.slice(0, 5).map(g => g.name).join(', ')}`);
+        log('GAMES', `  Last 5: ${games.slice(-5).map(g => g.name).join(', ')}`);
+      }
+      return resolveAndCacheIcons(games);
+    } catch (err) {
+      logError('GAMES', err);
+      throw err;
+    }
   });
 
   ipcMain.handle(
@@ -238,5 +267,23 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
 
   ipcMain.handle(IPC_CHANNELS.FEEDS_SET_ENABLED, async (_event, name: string, enabled: boolean) => {
     return setFeedEnabled(name, enabled);
+  });
+
+  // Credential handlers
+  ipcMain.handle(IPC_CHANNELS.CREDS_LOAD, async () => {
+    return loadCredentials();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.CREDS_SAVE, async (_event, username: string, password: string) => {
+    return saveCredentials(username, password);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.CREDS_CLEAR, async () => {
+    return clearCredentials();
+  });
+
+  // Clipboard
+  ipcMain.handle(IPC_CHANNELS.CLIPBOARD_WRITE, (_event, text: string) => {
+    clipboard.writeText(text);
   });
 }

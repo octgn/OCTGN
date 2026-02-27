@@ -285,4 +285,10 @@ export const IPC_CHANNELS = {
   FEEDS_ADD: 'feeds:add',
   FEEDS_REMOVE: 'feeds:remove',
   FEEDS_SET_ENABLED: 'feeds:set-enabled',
+
+  // Credentials
+  CREDS_LOAD: 'creds:load',
+  CREDS_SAVE: 'creds:save',
+  CREDS_CLEAR: 'creds:clear',
+  CLIPBOARD_WRITE: 'clipboard:write',
 } as const;
