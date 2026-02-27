@@ -20,6 +20,15 @@ export {
   SkeletonText 
 } from './Loading';
 export { ErrorBoundary, useErrorHandler, ErrorMessage } from './ErrorBoundary';
+export { 
+  Tooltip, 
+  Badge, 
+  Divider, 
+  EmptyState, 
+  ProgressBar, 
+  Tabs, 
+  Avatar 
+} from './UI';
 export type { ContextMenuItem, ContextMenuState } from './ContextMenu';
 
 // Types
