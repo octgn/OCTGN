@@ -29,7 +29,7 @@ const parser = new XMLParser({
   removeNSPrefix: true,
 });
 
-interface NuGetEntry {
+export interface NuGetEntry {
   title?: string | { '#text': string; '@_type'?: string };
   summary?: string | { '#text': string; '@_type'?: string };
   author?: { name?: string } | string;
@@ -39,7 +39,7 @@ interface NuGetEntry {
     NormalizedVersion?: string;
     Description?: string;
     Tags?: string;
-    DownloadCount?: number | string;
+    DownloadCount?: number | string | { '#text': number | string };
     IconUrl?: string;
     IsLatestVersion?: string | boolean;
     IsAbsoluteLatestVersion?: string | boolean;
@@ -65,8 +65,9 @@ function isTruthy(v: unknown): boolean {
 /**
  * Compares two NuGet-style version strings (e.g. "2019.07.07.00", "1.0.0.11").
  * Returns >0 if a is newer, <0 if b is newer, 0 if equal.
+ * Exported for unit testing.
  */
-function compareVersions(a: string, b: string): number {
+export function compareVersions(a: string, b: string): number {
   const pa = a.split('.').map((n) => parseInt(n, 10) || 0);
   const pb = b.split('.').map((n) => parseInt(n, 10) || 0);
   const len = Math.max(pa.length, pb.length);
@@ -77,7 +78,8 @@ function compareVersions(a: string, b: string): number {
   return 0;
 }
 
-function parseEntries(feedBase: string, entries: NuGetEntry[]): AvailableGame[] {
+/** Exported for unit testing. */
+export function parseEntries(feedBase: string, entries: NuGetEntry[]): AvailableGame[] {
   // Collect all versions per game, then pick the best one.
   // Some feeds never set IsLatestVersion=true (e.g. The Spoils in octgngames),
   // so we can't simply filter on that flag — we'd drop the whole game.
@@ -106,7 +108,7 @@ function parseEntries(feedBase: string, entries: NuGetEntry[]): AvailableGame[] 
       tags: text(props.Tags),
       downloadUrl,
       iconUrl: text(props.IconUrl) || undefined,
-      downloadCount: Number(props.DownloadCount) || 0,
+      downloadCount: Number(text(props.DownloadCount)) || 0,
     };
 
     const existing = candidates.get(gameId);
