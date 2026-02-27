@@ -48,6 +48,7 @@ interface GameBoardProps {
   boardWidth?: number;
   boardHeight?: number;
   backgroundStyle?: 'stretch' | 'tile' | 'uniform' | 'uniformToFill';
+  tableBackgroundUrl?: string;
   tableWidth?: number;
   tableHeight?: number;
   onCardClick: (card: Card) => void;
@@ -69,6 +70,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   boardWidth,
   boardHeight,
   backgroundStyle,
+  tableBackgroundUrl,
   tableWidth,
   tableHeight,
   onCardClick,
@@ -421,8 +423,31 @@ const GameBoard: React.FC<GameBoardProps> = ({
               inset: 0,
             }}
           >
-          {/* Board background image */}
-          {boardImageUrl && backgroundStyle === 'tile' ? (
+          {/* Table background image (e.g. wood texture) — fills the entire table */}
+          {tableBackgroundUrl && (
+            <div
+              data-testid="table-background"
+              className="pointer-events-none select-none"
+              style={{
+                position: 'absolute',
+                left: hasTableDimensions ? `${-(tableWidth ?? 0) / 2}px` : 0,
+                top: hasTableDimensions ? `${-(tableHeight ?? 0) / 2}px` : 0,
+                width: hasTableDimensions ? `${tableWidth}px` : '100%',
+                height: hasTableDimensions ? `${tableHeight}px` : '100%',
+                backgroundImage: `url(${tableBackgroundUrl})`,
+                backgroundRepeat: backgroundStyle === 'tile' ? 'repeat' : 'no-repeat',
+                backgroundSize: backgroundStyle === 'stretch' ? '100% 100%'
+                  : backgroundStyle === 'tile' ? 'auto'
+                  : backgroundStyle === 'uniformToFill' ? 'cover'
+                  : 'contain',
+                backgroundPosition: 'center',
+                zIndex: 0,
+              }}
+            />
+          )}
+
+          {/* Board image (e.g. chess board) — positioned at specific coordinates on the table */}
+          {boardImageUrl && (
             <div
               data-testid="board-background"
               className="pointer-events-none select-none"
@@ -433,30 +458,16 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 width: boardWidth ? `${boardWidth}px` : '100%',
                 height: boardHeight ? `${boardHeight}px` : '100%',
                 backgroundImage: `url(${boardImageUrl})`,
-                backgroundRepeat: 'repeat',
-                backgroundSize: 'auto',
-                zIndex: 0,
-              }}
-            />
-          ) : boardImageUrl ? (
-            <img
-              data-testid="board-background"
-              src={boardImageUrl}
-              alt=""
-              className="pointer-events-none select-none"
-              style={{
-                position: 'absolute',
-                left: `${boardX}px`,
-                top: `${boardY}px`,
-                width: boardWidth ? `${boardWidth}px` : '100%',
-                height: boardHeight ? `${boardHeight}px` : '100%',
-                objectFit: backgroundStyle === 'stretch' ? 'fill'
+                backgroundRepeat: backgroundStyle === 'tile' ? 'repeat' : 'no-repeat',
+                backgroundSize: backgroundStyle === 'stretch' ? '100% 100%'
+                  : backgroundStyle === 'tile' ? 'auto'
                   : backgroundStyle === 'uniformToFill' ? 'cover'
-                  : 'contain', // 'uniform' or default
-                zIndex: 0,
+                  : 'contain',
+                backgroundPosition: 'center',
+                zIndex: 1,
               }}
             />
-          ) : null}
+          )}
 
           {/* Subtle grid pattern */}
           <div
@@ -466,12 +477,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
               backgroundImage:
                 'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
               backgroundSize: '40px 40px',
-              zIndex: 1,
+              zIndex: 2,
             }}
           />
 
           {/* Table cards with smooth transitions */}
-          <div data-testid="table-cards" className="absolute inset-0 p-4" style={{ zIndex: 2 }}>
+          <div data-testid="table-cards" className="absolute inset-0 p-4" style={{ zIndex: 3 }}>
             {tableCards.map((card) => (
               <div
                 key={card.id}

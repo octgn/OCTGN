@@ -85,10 +85,10 @@ describe('GameBoard — Board Background', () => {
       boardImageUrl: 'data:image/png;base64,AAAA',
     });
 
-    const img = container.querySelector('[data-testid="board-background"]') as HTMLImageElement;
-    expect(img).toBeInTheDocument();
-    expect(img.tagName).toBe('IMG');
-    expect(img.src).toBe('data:image/png;base64,AAAA');
+    const el = container.querySelector('[data-testid="board-background"]') as HTMLElement;
+    expect(el).toBeInTheDocument();
+    expect(el.tagName).toBe('DIV');
+    expect(el.style.backgroundImage).toContain('data:image/png;base64,AAAA');
   });
 
   it('should not render board image when boardImageUrl is not set', () => {
@@ -183,15 +183,15 @@ describe('GameBoard — Board Positioning', () => {
 describe('GameBoard — Background Style', () => {
   afterEach(() => cleanup());
 
-  it('should apply object-fill for "stretch" backgroundStyle', () => {
+  it('should apply background-size 100% 100% for "stretch" backgroundStyle', () => {
     const { container } = renderBoard({
       boardImageUrl: 'data:image/png;base64,AAAA',
       backgroundStyle: 'stretch',
     });
 
-    const img = container.querySelector('[data-testid="board-background"]') as HTMLElement;
-    expect(img).toBeInTheDocument();
-    expect(img.style.objectFit).toBe('fill');
+    const el = container.querySelector('[data-testid="board-background"]') as HTMLElement;
+    expect(el).toBeInTheDocument();
+    expect(el.style.backgroundSize).toBe('100% 100%');
   });
 
   it('should apply background-repeat for "tile" backgroundStyle', () => {
@@ -200,43 +200,43 @@ describe('GameBoard — Background Style', () => {
       backgroundStyle: 'tile',
     });
 
-    // For tile mode, we use a div with background-image instead of img
     const tileEl = container.querySelector('[data-testid="board-background"]') as HTMLElement;
     expect(tileEl).toBeInTheDocument();
     expect(tileEl.style.backgroundRepeat).toBe('repeat');
+    expect(tileEl.style.backgroundSize).toBe('auto');
   });
 
-  it('should apply object-contain for "uniform" backgroundStyle', () => {
+  it('should apply background-size contain for "uniform" backgroundStyle', () => {
     const { container } = renderBoard({
       boardImageUrl: 'data:image/png;base64,AAAA',
       backgroundStyle: 'uniform',
     });
 
-    const img = container.querySelector('[data-testid="board-background"]') as HTMLElement;
-    expect(img).toBeInTheDocument();
-    expect(img.style.objectFit).toBe('contain');
+    const el = container.querySelector('[data-testid="board-background"]') as HTMLElement;
+    expect(el).toBeInTheDocument();
+    expect(el.style.backgroundSize).toBe('contain');
   });
 
-  it('should apply object-cover for "uniformToFill" backgroundStyle', () => {
+  it('should apply background-size cover for "uniformToFill" backgroundStyle', () => {
     const { container } = renderBoard({
       boardImageUrl: 'data:image/png;base64,AAAA',
       backgroundStyle: 'uniformToFill',
     });
 
-    const img = container.querySelector('[data-testid="board-background"]') as HTMLElement;
-    expect(img).toBeInTheDocument();
-    expect(img.style.objectFit).toBe('cover');
+    const el = container.querySelector('[data-testid="board-background"]') as HTMLElement;
+    expect(el).toBeInTheDocument();
+    expect(el.style.backgroundSize).toBe('cover');
   });
 
-  it('should default to object-contain when no backgroundStyle provided', () => {
+  it('should default to background-size contain when no backgroundStyle provided', () => {
     const { container } = renderBoard({
       boardImageUrl: 'data:image/png;base64,AAAA',
     });
 
-    const img = container.querySelector('[data-testid="board-background"]') as HTMLElement;
-    expect(img).toBeInTheDocument();
+    const el = container.querySelector('[data-testid="board-background"]') as HTMLElement;
+    expect(el).toBeInTheDocument();
     // Default behavior: contain (show whole image)
-    expect(img.style.objectFit).toBe('contain');
+    expect(el.style.backgroundSize).toBe('contain');
   });
 });
 
