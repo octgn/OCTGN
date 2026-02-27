@@ -21,6 +21,7 @@
   "author": "OCTGN Community",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -36,6 +37,7 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
+    "adm-zip": "^0.5.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
