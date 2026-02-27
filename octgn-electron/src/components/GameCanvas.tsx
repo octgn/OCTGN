@@ -1,205 +1,222 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { Card as CardType, Group } from '../types/game';
-import { TableRenderer, RenderCard } from '../utils/TableRenderer';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
+import { TableRenderer, RenderCard } from '../utils/TableRenderer';
 
-interface GameCanvasProps {
-  className?: string;
-}
-
-export function useGameCanvas() {
+export default function GameCanvas({ className = '' }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<TableRenderer | null>(null);
-  const animationFrameRef = useRef<number>(0);
+  const animationRef = useRef<number>(0);
+
+  const [isPanning, setIsPanning] = useState(false);
+  const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const {
     cards,
-    groups,
     panOffset,
     zoom,
     selectedCards,
-    hoveredCard,
     setPanOffset,
     setZoom,
-    selectCards,
-    clearSelection,
-    setHoveredCard,
+    updateCard,
   } = useGameStore();
 
   // Initialize renderer
   useEffect(() => {
-    if (canvasRef.current && !rendererRef.current) {
-      const ctx = canvasRef.current.getContext('2d');
-      if (ctx) {
-        rendererRef.current = new TableRenderer(ctx);
-      }
-    }
-  }, []);
-
-  // Convert cards to render cards
-  const getRenderCards = useCallback((): RenderCard[] => {
-    return Array.from(cards.values()).map((card) => ({
-      ...card,
-      screenX: card.x,
-      screenY: card.y,
-      screenRotation: card.rotation,
-      zIndex: 0,
-    }));
-  }, [cards]);
-
-  // Main render loop
-  const render = useCallback(() => {
-    const renderer = rendererRef.current;
     const canvas = canvasRef.current;
-    if (!renderer || !canvas) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Handle resize
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    rendererRef.current = new TableRenderer(ctx);
+  }, []);
 
-    // Render background
-    renderer.renderBackground(panOffset, zoom);
-
-    // Render groups (areas)
-    const tableGroups = Array.from(groups.values()).filter(
-      (g) => g.type === 'table' && g.x !== undefined
-    );
-    tableGroups.forEach((group) => {
-      renderer.renderGroup(group, panOffset, zoom, false);
-    });
-
-    // Render cards
-    const renderCards = getRenderCards();
-    renderCards.forEach((card) => {
-      const isSelected = selectedCards.includes(card.id);
-      const isHovered = hoveredCard === card.id;
-      renderer.renderCard(card, panOffset, zoom, isSelected, isHovered);
-    });
-
-    animationFrameRef.current = requestAnimationFrame(render);
-  }, [panOffset, zoom, selectedCards, hoveredCard, getRenderCards, groups]);
-
-  // Start render loop
+  // Handle resize
   useEffect(() => {
-    animationFrameRef.current = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(animationFrameRef.current);
-  }, [render]);
-
-  // Hit testing
-  const getCardAtPoint = useCallback(
-    (clientX: number, clientY: number): CardType | null => {
+    const handleResize = () => {
       const canvas = canvasRef.current;
-      const renderer = rendererRef.current;
-      if (!canvas || !renderer) return null;
+      if (!canvas) return;
 
-      const rect = canvas.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
+      const container = canvas.parentElement;
+      if (!container) return;
 
-      const renderCards = getRenderCards();
-      // Check in reverse order (top cards first)
-      for (let i = renderCards.length - 1; i >= 0; i--) {
-        const card = renderCards[i];
-        if (renderer.hitTestCard(card, x, y, panOffset, zoom)) {
-          return cards.get(card.id) || null;
-        }
-      }
-      return null;
-    },
-    [getRenderCards, panOffset, zoom, cards]
-  );
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    };
 
-  // Pan handling
-  const [isPanning, setIsPanning] = useState(false);
-  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.button === 1 || (e.button === 0 && e.altKey)) {
-        // Middle click or Alt+click to pan
-        setIsPanning(true);
-        setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
-        e.preventDefault();
-      } else if (e.button === 0) {
-        const card = getCardAtPoint(e.clientX, e.clientY);
-        if (card) {
-          // Card click handled by parent
-        } else {
-          // Clear selection if clicking empty space
-          clearSelection();
-        }
-      }
-    },
-    [panOffset, getCardAtPoint, clearSelection]
-  );
+  // Render loop
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const renderer = rendererRef.current;
+    if (!canvas || !renderer) return;
+
+    const render = () => {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Render background
+      renderer.renderBackground(panOffset, zoom);
+
+      // Convert cards to render cards
+      const renderCards: RenderCard[] = Array.from(cards.values()).map((card) => ({
+        ...card,
+        screenX: card.x * zoom,
+        screenY: card.y * zoom,
+        screenRotation: card.rotation,
+        zIndex: 0,
+      }));
+
+      // Render cards
+      renderCards.forEach((card) => {
+        renderer.renderCard(
+          card,
+          panOffset,
+          zoom,
+          selectedCards.includes(card.id),
+          hoveredCard === card.id
+        );
+      });
+
+      animationRef.current = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationRef.current);
+    };
+  }, [cards, panOffset, zoom, selectedCards, hoveredCard]);
+
+  // Mouse handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+      // Middle click or alt+left click for panning
+      setIsPanning(true);
+      setLastMousePos({ x: e.clientX, y: e.clientY });
+    }
+  }, []);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (isPanning) {
-        setPanOffset({
-          x: e.clientX - panStart.x,
-          y: e.clientY - panStart.y,
-        });
+        const dx = e.clientX - lastMousePos.x;
+        const dy = e.clientY - lastMousePos.y;
+        setPanOffset({ x: panOffset.x + dx, y: panOffset.y + dy });
+        setLastMousePos({ x: e.clientX, y: e.clientY });
       } else {
-        // Hover detection
-        const card = getCardAtPoint(e.clientX, e.clientY);
-        setHoveredCard(card?.id ?? null);
+        // Hit test for hover
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - panOffset.x;
+        const mouseY = e.clientY - rect.top - panOffset.y;
+
+        let found = false;
+        for (const card of cards.values()) {
+          const cardX = card.x * zoom;
+          const cardY = card.y * zoom;
+          const cardW = 200 * zoom;
+          const cardH = 280 * zoom;
+
+          if (
+            mouseX >= cardX &&
+            mouseX <= cardX + cardW &&
+            mouseY >= cardY &&
+            mouseY <= cardY + cardH
+          ) {
+            setHoveredCard(card.id);
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          setHoveredCard(null);
+        }
       }
     },
-    [isPanning, panStart, setPanOffset, getCardAtPoint, setHoveredCard]
+    [isPanning, lastMousePos, panOffset, setPanOffset, cards, zoom]
   );
 
   const handleMouseUp = useCallback(() => {
     setIsPanning(false);
   }, []);
 
-  // Zoom handling
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? 0.9 : 1.1;
-        setZoom(zoom * delta);
-      }
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      const newZoom = Math.max(0.1, Math.min(3, zoom * delta));
+      setZoom(newZoom);
     },
     [zoom, setZoom]
   );
 
-  return {
-    canvasRef,
-    renderer: rendererRef.current,
-    getCardAtPoint,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-    handleWheel,
-  };
-}
+  // Keyboard handlers
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '+' && e.ctrlKey) {
+        e.preventDefault();
+        setZoom(Math.min(3, zoom * 1.1));
+      } else if (e.key === '-' && e.ctrlKey) {
+        e.preventDefault();
+        setZoom(Math.max(0.1, zoom / 1.1));
+      } else if (e.key === '0' && e.ctrlKey) {
+        e.preventDefault();
+        setZoom(1);
+        setPanOffset({ x: 0, y: 0 });
+      }
+    };
 
-export default function GameCanvas({ className = '' }: GameCanvasProps) {
-  const {
-    canvasRef,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-    handleWheel,
-  } = useGameCanvas();
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [zoom, setZoom, setPanOffset]);
 
   return (
     <canvas
       ref={canvasRef}
-      className={`w-full h-full cursor-crosshair ${className}`}
+      className={`game-table cursor-grab active:cursor-grabbing ${className}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
+      onContextMenu={(e) => e.preventDefault()}
     />
   );
+}
+
+// Hook for external access
+export function useGameCanvas() {
+  const { panOffset, zoom, setPanOffset, setZoom } = useGameStore();
+
+  const resetView = useCallback(() => {
+    setPanOffset({ x: 0, y: 0 });
+    setZoom(1);
+  }, [setPanOffset, setZoom]);
+
+  const zoomIn = useCallback(() => {
+    setZoom(Math.min(3, zoom * 1.2));
+  }, [zoom, setZoom]);
+
+  const zoomOut = useCallback(() => {
+    setZoom(Math.max(0.1, zoom / 1.2));
+  }, [zoom, setZoom]);
+
+  return {
+    panOffset,
+    zoom,
+    setPanOffset,
+    setZoom,
+    resetView,
+    zoomIn,
+    zoomOut,
+  };
 }
