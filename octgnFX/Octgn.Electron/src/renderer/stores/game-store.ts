@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { GameState, Deck } from '../../shared/types';
+import { useToastStore } from './toast-store';
 
 interface GameStoreState {
   gameState: GameState | null;
@@ -51,9 +52,11 @@ export const useGameStore = create<GameStore>()(
       try {
         await window.octgn.gameAction(action);
       } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to send action';
         set((state) => {
-          state.error = err instanceof Error ? err.message : 'Failed to send action';
+          state.error = message;
         });
+        useToastStore.getState().addToast(message, 'error');
       }
     },
 
@@ -61,9 +64,11 @@ export const useGameStore = create<GameStore>()(
       try {
         await window.octgn.gameChat(message);
       } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Failed to send chat';
         set((state) => {
-          state.error = err instanceof Error ? err.message : 'Failed to send chat';
+          state.error = errorMsg;
         });
+        useToastStore.getState().addToast(errorMsg, 'error');
       }
     },
 
@@ -78,10 +83,12 @@ export const useGameStore = create<GameStore>()(
           state.isLoading = false;
         });
       } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to load deck';
         set((state) => {
           state.isLoading = false;
-          state.error = err instanceof Error ? err.message : 'Failed to load deck';
+          state.error = message;
         });
+        useToastStore.getState().addToast(message, 'error');
       }
     },
 
@@ -93,22 +100,53 @@ export const useGameStore = create<GameStore>()(
           state.isConnected = false;
         });
       } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to leave game';
         set((state) => {
-          state.error = err instanceof Error ? err.message : 'Failed to leave game';
+          state.error = message;
         });
+        useToastStore.getState().addToast(message, 'error');
       }
     },
 
     subscribe: () => {
+      let previousState: GameState | null = null;
+
       const unsubscribe = window.octgn.onGameStateUpdate((rawState) => {
         const gameState = rawState as GameState;
+        const addToast = useToastStore.getState().addToast;
+
+        if (previousState) {
+          const prevPlayerIds = new Set(previousState.players.map((p) => p.id));
+          const newPlayerIds = new Set(gameState.players.map((p) => p.id));
+
+          for (const player of gameState.players) {
+            if (!prevPlayerIds.has(player.id)) {
+              addToast(`${player.name} joined the game`, 'info');
+            }
+          }
+
+          for (const player of previousState.players) {
+            if (!newPlayerIds.has(player.id)) {
+              addToast(`${player.name} left the game`, 'warning');
+            }
+          }
+
+          if (!previousState.isStarted && gameState.isStarted) {
+            addToast('Game has started!', 'success');
+          }
+        }
+
+        previousState = structuredClone(gameState);
+
         set((state) => {
           state.gameState = gameState;
           state.isConnected = true;
+          state.error = null;
         });
       });
 
       return () => {
+        previousState = null;
         unsubscribe();
         set((state) => {
           state.isConnected = false;

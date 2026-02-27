@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import TitleBar from './components/TitleBar';
+import ToastContainer from './components/ToastContainer';
 import LoginPage from './pages/LoginPage';
 import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
@@ -36,6 +37,7 @@ const App: React.FC = () => {
     <div className="flex flex-col h-screen w-screen bg-octgn-bg overflow-hidden">
       <TitleBar />
       <main className="flex-1 overflow-hidden">{page}</main>
+      <ToastContainer />
     </div>
   );
 };

@@ -2,10 +2,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { clsx } from 'clsx';
 import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
+import CreateGameDialog from '../components/CreateGameDialog';
 import { useLobbyStore } from '../stores/lobby-store';
 import { useAuthStore } from '../stores/auth-store';
 import { useAppStore } from '../stores/app-store';
-import type { HostedGame, GameStatus } from '../../shared/types';
+import type { HostedGame } from '../../shared/types';
 
 const statusLabel: Record<number, string> = {
   0: 'Unknown',
@@ -23,6 +24,7 @@ const statusColor: Record<number, string> = {
 
 const LobbyPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCreateGame, setShowCreateGame] = useState(false);
   const { games, isLoading, joinGame, startAutoRefresh } = useLobbyStore();
   const user = useAuthStore((s) => s.user);
   const navigate = useAppStore((s) => s.navigate);
@@ -74,6 +76,7 @@ const LobbyPage: React.FC = () => {
           {([
             { id: 'lobby', label: 'Game Lobby', icon: GamepadIcon },
             { id: 'deck-builder', label: 'Deck Builder', icon: LayersIcon },
+            { id: 'profile', label: 'Profile', icon: ProfileIcon },
             { id: 'settings', label: 'Settings', icon: GearIcon },
           ] as const).map((item) => (
             <button
@@ -137,7 +140,7 @@ const LobbyPage: React.FC = () => {
             {isLoading ? 'Refreshing' : 'Live'}
           </div>
 
-          <Button variant="primary" size="sm" onClick={() => navigate('host-game' as any)}>
+          <Button variant="primary" size="sm" onClick={() => setShowCreateGame(true)}>
             Host Game
           </Button>
         </div>
@@ -209,6 +212,14 @@ const LobbyPage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Create Game Dialog */}
+      {showCreateGame && (
+        <CreateGameDialog
+          onClose={() => setShowCreateGame(false)}
+          gameDefinitions={[]}
+        />
+      )}
     </div>
   );
 };
@@ -248,6 +259,15 @@ function SearchIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
       <circle cx="6.5" cy="6.5" r="4.5" />
       <path d="M10 10l4 4" />
+    </svg>
+  );
+}
+
+function ProfileIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="5" r="3" />
+      <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" />
     </svg>
   );
 }

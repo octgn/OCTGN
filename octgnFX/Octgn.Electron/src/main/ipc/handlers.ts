@@ -1,4 +1,5 @@
-import { IpcMain, BrowserWindow, app } from 'electron';
+import { IpcMain, BrowserWindow, app, dialog } from 'electron';
+import { readFile } from 'fs/promises';
 import { IPC_CHANNELS } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
 import { GameService } from '../api/game-service';
@@ -137,6 +138,31 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
       (deck.limited as boolean) ?? false,
     );
   });
+
+  // File dialog handler
+  ipcMain.handle(
+    IPC_CHANNELS.OPEN_FILE_DIALOG,
+    async (_event, filters?: { name: string; extensions: string[] }[]) => {
+      const defaultFilters = filters ?? [
+        { name: 'OCTGN Deck Files', extensions: ['o8d'] },
+        { name: 'All Files', extensions: ['*'] },
+      ];
+
+      const result = await dialog.showOpenDialog({
+        title: 'Open Deck File',
+        filters: defaultFilters,
+        properties: ['openFile'],
+      });
+
+      if (result.canceled || result.filePaths.length === 0) {
+        return null;
+      }
+
+      const filePath = result.filePaths[0];
+      const content = await readFile(filePath, 'utf-8');
+      return { filePath, content };
+    },
+  );
 
   // Window control handlers
   ipcMain.handle(IPC_CHANNELS.APP_MINIMIZE, () => {

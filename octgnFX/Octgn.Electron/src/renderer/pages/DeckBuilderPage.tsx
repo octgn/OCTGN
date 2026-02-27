@@ -3,8 +3,9 @@ import { clsx } from 'clsx';
 import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import DeckLoader from '../components/DeckLoader';
 import { useAppStore } from '../stores/app-store';
-import type { DeckCard, DeckSection } from '../../shared/types';
+import type { Deck, DeckCard, DeckSection } from '../../shared/types';
 
 interface SearchResult {
   id: string;
@@ -95,6 +96,14 @@ const DeckBuilderPage: React.FC = () => {
     0
   );
 
+  const handleDeckLoaded = useCallback((deck: Deck) => {
+    if (deck.sections.length > 0) {
+      setSections(deck.sections);
+      setActiveSection(0);
+      setDeckName(deck.notes || 'Loaded Deck');
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -110,6 +119,7 @@ const DeckBuilderPage: React.FC = () => {
           Deck Builder
         </h2>
         <div className="flex-1" />
+        <DeckLoader onDeckLoaded={handleDeckLoaded} />
         <Button variant="primary" size="sm">
           Save Deck
         </Button>
