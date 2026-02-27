@@ -34,6 +34,10 @@ const api = {
   maximize: () => ipcRenderer.invoke(IPC_CHANNELS.APP_MAXIMIZE),
   quit: () => ipcRenderer.invoke(IPC_CHANNELS.APP_QUIT),
   getVersion: () => ipcRenderer.invoke(IPC_CHANNELS.APP_VERSION),
+
+  // File dialog
+  openFileDialog: (filters?: { name: string; extensions: string[] }[]) =>
+    ipcRenderer.invoke(IPC_CHANNELS.OPEN_FILE_DIALOG, filters),
 };
 
 contextBridge.exposeInMainWorld('octgn', api);
