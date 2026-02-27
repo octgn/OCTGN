@@ -23,6 +23,7 @@ export class GameService {
   private cardResolver: CardResolver = new CardResolver();
   private imageResolver: ImageResolver = new ImageResolver();
   private currentGameId: string = '';
+  private pendingBoardName: string | undefined;
 
   /**
    * Join a game server and start receiving state updates.
@@ -378,6 +379,13 @@ export class GameService {
             }
             // Update existing card sizes to use game definition values
             this.updateCardSizesFromDefinition();
+            // Re-resolve board now that definition is loaded
+            if (this.pendingBoardName) {
+              this.resolveBoardImage(this.pendingBoardName);
+              this.pendingBoardName = undefined;
+            }
+            // Update card names and images from now-loaded definitions
+            this.updateCardNamesAndImages();
             this.broadcastState();
           }
         }).catch((err) => logError('GAME', err));
@@ -1165,6 +1173,40 @@ export class GameService {
   }
 
   /**
+   * Retroactively update card names and image URLs from now-loaded game definitions.
+   * Called after cardResolver.loadGame() completes so that cards which arrived
+   * before definitions were ready get their proper name and image.
+   */
+  private updateCardNamesAndImages(): void {
+    if (!this.gameState || !this.currentGameId) return;
+
+    const allCards = [
+      ...this.gameState.table.cards,
+      ...this.gameState.players.flatMap(p =>
+        p.groups.flatMap(g => g.cards || [])
+      ),
+    ];
+
+    let updated = 0;
+    for (const card of allCards) {
+      const def = this.cardResolver.resolve(card.definitionId);
+      if (def) {
+        if (def.name) card.name = def.name;
+        if (def.setId) {
+          card.imageUrl = this.imageResolver.buildAssetUrl(
+            this.currentGameId, def.setId, card.definitionId
+          );
+        }
+        updated++;
+      }
+    }
+
+    if (updated > 0) {
+      log('GAME', `Retroactively updated ${updated} card(s) with names/images from definitions`);
+    }
+  }
+
+  /**
    * Add a card to the appropriate group or table.
    */
   private addCardToGroup(card: Card, groupId: number): void {
@@ -1321,6 +1363,8 @@ export class GameService {
       log('GAME', `Board resolved: ${boardName} -> ${imageUrl} (${boardDef.width}x${boardDef.height} at ${boardDef.x},${boardDef.y})`);
     } else {
       // Fallback: use the board name as-is (may be a direct path)
+      // Store pending name so we can re-resolve after loadGame completes
+      this.pendingBoardName = boardName;
       const encodedPath = encodeURIComponent(boardName);
       const imageUrl = `octgn-asset://game-file/${this.currentGameId}/${encodedPath}`;
 
@@ -1331,7 +1375,7 @@ export class GameService {
         height: 0,
       };
 
-      log('GAME', `Board fallback: ${boardName} -> ${imageUrl} (no definition found)`);
+      log('GAME', `Board fallback: ${boardName} -> ${imageUrl} (no definition found, will retry after loadGame)`);
     }
 
     // Also apply table metadata from game definition if available
