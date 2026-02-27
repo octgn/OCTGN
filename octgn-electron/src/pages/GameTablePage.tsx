@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useGameStore } from '../stores/gameStore';
 import { useGameClient } from '../hooks/useGameClient';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
@@ -14,15 +14,35 @@ import {
   CardZoom,
   Modal,
   Button,
-  Layout,
+  Badge,
   ContextMenu,
 } from '../components';
 import { Card as CardType, Player } from '../types/game';
+
+interface ChatMsg {
+  id: string;
+  playerId: string;
+  playerName: string;
+  message: string;
+  timestamp: number;
+  isSystem?: boolean;
+}
 import { soundManager } from '../utils';
+
+type GamePhase = 'connecting' | 'lobby' | 'playing' | 'finished';
 
 export default function GameTablePage() {
   const { gameId } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // URL params
+  const isHost = searchParams.get('host') === 'true';
+  const hostAddress = searchParams.get('host') || 'localhost';
+  const port = parseInt(searchParams.get('port') || '8888', 10);
+  const gameName = searchParams.get('gameName') || 'Unknown Game';
+  const serverName = searchParams.get('name') || 'Game';
+  const password = searchParams.get('password') || '';
 
   // Game store
   const {
@@ -66,6 +86,14 @@ export default function GameTablePage() {
     setPhase,
   } = useGameStore();
 
+  // Game phase
+  const [gamePhase, setGamePhase] = useState<GamePhase>('connecting');
+  const [error, setError] = useState<string | null>(null);
+
+  // Player info
+  const [nickname, setNickname] = useState('');
+  const [showNameModal, setShowNameModal] = useState(false);
+
   // Selection box state
   const selectionBox = useSelectionBox();
   const [isSelecting, setIsSelecting] = useState(false);
@@ -91,471 +119,439 @@ export default function GameTablePage() {
       });
     },
     onDragEnd: (cardIds, x, y) => {
-      // Would send to server here
+      // Send to server via game client
     },
   });
 
   // Context menu
   const contextMenu = useContextMenu();
 
-  // Game client
+  // Game client hook
   const gameClient = useGameClient({
     onConnected: () => {
       setConnected(true);
-      setConnecting(false);
+      setGamePhase('lobby');
+      addChatMessage({
+        id: crypto.randomUUID(),
+        playerId: 'system',
+        playerName: 'System',
+        message: 'Connected to game server',
+        timestamp: Date.now(),
+        isSystem: true,
+      });
     },
-    onDisconnected: () => {
+    onDisconnected: (data) => {
       setConnected(false);
-      setConnecting(false);
+      setGamePhase('connecting');
+      addChatMessage({
+        id: crypto.randomUUID(),
+        playerId: 'system',
+        playerName: 'System',
+        message: data?.reason || 'Disconnected from server',
+        timestamp: Date.now(),
+        isSystem: true,
+      });
     },
     onError: (err) => {
-      console.error('Connection error:', err);
-      setConnecting(false);
+      setError('Connection error');
+      setGamePhase('connecting');
     },
     onChat: (data) => {
-      const player = players.find((p) => p.id === data.player);
       addChatMessage({
-        id: Date.now().toString(),
-        playerId: data.player,
-        playerName: player?.name || 'Unknown',
-        message: data.text,
+        id: crypto.randomUUID(),
+        playerId: data.playerId || data.sender,
+        playerName: data.sender || data.playerName,
+        message: data.text || data.message,
         timestamp: Date.now(),
       });
-      soundManager.play('chat');
     },
     onPlayerJoined: (data) => {
       addPlayer({
-        id: data.id,
-        name: data.nick,
-        userId: data.userId,
-        publicKey: BigInt(data.pkey),
-        tableSide: data.tableSide,
-        spectator: data.spectator,
+        id: data.playerId,
+        name: data.name,
+        userId: data.userId || data.playerId,
+        publicKey: BigInt(0),
+        tableSide: true,
+        spectator: data.spectating || false,
         ready: false,
+        color: data.color || '#9370DB',
+        hand: { id: -1, name: 'Hand', type: 'hand', visibility: 'owner', visibleTo: [], cards: [], controllerId: data.playerId },
+        deck: { id: -2, name: 'Deck', type: 'deck', visibility: 'nobody', visibleTo: [], cards: [], controllerId: data.playerId },
+        discard: { id: -3, name: 'Discard', type: 'discard', visibility: 'all', visibleTo: [], cards: [], controllerId: data.playerId },
+        counters: [],
         disconnected: false,
         invertedTable: false,
-        hand: { id: -1, name: 'Hand', type: 'hand', visibility: 'owner', visibleTo: [], cards: [], controllerId: data.id },
-        deck: { id: -2, name: 'Deck', type: 'deck', visibility: 'nobody', visibleTo: [], cards: [], controllerId: data.id },
-        discard: { id: -3, name: 'Discard', type: 'discard', visibility: 'all', visibleTo: [], cards: [], controllerId: data.id },
-        counters: [],
       });
     },
     onPlayerLeft: (data) => {
-      removePlayer(data.player);
-    },
-    onCardTurned: (data) => {
-      updateCard(data.card, { faceUp: data.up });
-      soundManager.play('cardflip');
-    },
-    onCardsMoved: (data) => {
-      // Update card positions
+      removePlayer(data.playerId);
     },
     onTurnChanged: (data) => {
-      nextTurn();
+      // Update turn state
     },
   });
 
-  // Keyboard shortcuts
-  useKeyboardShortcuts([
-    { key: 'Escape', action: () => clearSelection() },
-    { key: 'Delete', action: () => deleteSelectedCards() },
-    { key: 'h', action: () => toggleHand() },
-    { key: 'c', action: () => toggleChat() },
-    { key: 'f', action: () => flipSelectedCards(true) },
-    { key: 'r', action: () => rotateSelectedCards(90) },
-    { key: '=', ctrl: true, action: () => setZoom(zoom * 1.1) },
-    { key: '-', ctrl: true, action: () => setZoom(zoom / 1.1) },
-    { key: '0', ctrl: true, action: () => setZoom(1) },
-    { key: 's', ctrl: true, action: () => saveGame() },
-    { key: 'o', ctrl: true, action: () => loadGame() },
-  ]);
-
-  // Initialize sound
-  useEffect(() => {
-    soundManager.initialize();
-  }, []);
-
-  // Demo cards for testing
-  useEffect(() => {
-    if (cards.size === 0) {
-      const demoCards: CardType[] = [
-        {
-          id: 1,
-          modelId: 'card1',
-          groupId: 0,
-          x: 200,
-          y: 200,
-          width: 200,
-          height: 280,
-          faceUp: true,
-          rotation: 0,
-          ownerId: playerId || '1',
-          name: 'Lightning Bolt',
-          properties: { type: 'Instant', cost: 'R' },
-          markers: [],
-          anchored: false,
-          targeted: false,
-        },
-        {
-          id: 2,
-          modelId: 'card2',
-          groupId: 0,
-          x: 450,
-          y: 200,
-          width: 200,
-          height: 280,
-          faceUp: true,
-          rotation: 0,
-          ownerId: playerId || '1',
-          name: 'Giant Growth',
-          properties: { type: 'Instant', cost: 'G' },
-          markers: [],
-          anchored: false,
-          targeted: false,
-        },
-        {
-          id: 3,
-          modelId: 'card3',
-          groupId: 0,
-          x: 700,
-          y: 200,
-          width: 200,
-          height: 280,
-          faceUp: false,
-          rotation: 0,
-          ownerId: playerId || '1',
-          name: 'Mystery Card',
-          properties: {},
-          markers: [],
-          anchored: false,
-          targeted: false,
-        },
-        {
-          id: 4,
-          modelId: 'card4',
-          groupId: 0,
-          x: 300,
-          y: 500,
-          width: 200,
-          height: 280,
-          faceUp: true,
-          rotation: 90,
-          ownerId: playerId || '1',
-          name: 'Serra Angel',
-          properties: { type: 'Creature', cost: '3WW' },
-          markers: [{ id: 'm1', name: '+1/+1', count: 2 }],
-          anchored: false,
-          targeted: false,
-        },
-      ];
-
-      demoCards.forEach((card) => {
-        useGameStore.getState().addCard(card);
-      });
-    }
-  }, []);
-
-  // Handlers
-  const handleCardClick = useCallback(
-    (card: CardType, event: React.MouseEvent) => {
-      cardSelection.handleCardClick(card.id, event);
-    },
-    [cardSelection]
-  );
-
-  const handleCardDoubleClick = useCallback((card: CardType) => {
-    updateCard(card.id, { faceUp: !card.faceUp });
-    soundManager.play('cardflip');
-  }, [updateCard]);
-
-  const handleCardContextMenu = useCallback(
-    (e: React.MouseEvent, card: CardType) => {
-      e.preventDefault();
-      const selected = selectedCards.includes(card.id) ? selectedCards : [card.id];
-      selectCards(selected);
-
-      const menuItems = getCardContextMenuItems(
-        selected.map((id) => cards.get(id)!).filter(Boolean),
-        {
-          onFlipFaceUp: () => flipSelectedCards(true),
-          onFlipFaceDown: () => flipSelectedCards(false),
-          onRotate: (deg) => rotateSelectedCards(deg),
-          onDelete: () => deleteSelectedCards(),
-          onTarget: () => targetSelectedCards(),
-          onHighlight: (color) => highlightSelectedCards(color),
-        }
-      );
-
-      contextMenu.open(e.clientX, e.clientY, menuItems, { cards: selected.map((id) => cards.get(id)!) });
-    },
-    [selectedCards, cards, selectCards, contextMenu]
-  );
-
-  const flipSelectedCards = useCallback(
-    (faceUp: boolean) => {
-      selectedCards.forEach((id) => {
-        updateCard(id, { faceUp });
-      });
-      soundManager.play('cardflip');
-    },
-    [selectedCards, updateCard]
-  );
-
-  const rotateSelectedCards = useCallback(
-    (degrees: number) => {
-      selectedCards.forEach((id) => {
-        const card = cards.get(id);
-        if (card) {
-          const newRotation = (card.rotation + degrees) % 360;
-          updateCard(id, { rotation: newRotation });
-        }
-      });
-    },
-    [selectedCards, cards, updateCard]
-  );
-
-  const deleteSelectedCards = useCallback(() => {
-    selectedCards.forEach((id) => {
-      useGameStore.getState().removeCard(id);
-    });
-    clearSelection();
-  }, [selectedCards, clearSelection]);
-
-  const targetSelectedCards = useCallback(() => {
-    selectedCards.forEach((id) => {
-      const card = cards.get(id);
-      if (card) {
-        updateCard(id, { targeted: !card.targeted });
-      }
-    });
-  }, [selectedCards, cards, updateCard]);
-
-  const highlightSelectedCards = useCallback(
-    (color: string) => {
-      selectedCards.forEach((id) => {
-        updateCard(id, { highlighted: color || undefined });
-      });
-    },
-    [selectedCards, updateCard]
-  );
-
-  const handleLeave = useCallback(() => {
-    gameClient.leave();
-    resetGame();
-    navigate('/');
-  }, [gameClient, resetGame, navigate]);
-
+  // Chat input
   const [chatInput, setChatInput] = useState('');
 
+  // Check if we need to ask for nickname
+  useEffect(() => {
+    if (!playerName && !showNameModal) {
+      setShowNameModal(true);
+    }
+  }, [playerName, showNameModal]);
+
+  // Auto-connect when we have all info
+  useEffect(() => {
+    if (playerName && !connected && !connecting && gameId !== 'local') {
+      handleConnect();
+    }
+  }, [playerName, connected, connecting, gameId]);
+
+  // Handle connecting to server
+  const handleConnect = useCallback(async () => {
+    if (!playerName) return;
+    
+    setConnecting(true);
+    setError(null);
+    
+    try {
+      await gameClient.connect(hostAddress, port, playerName, false);
+    } catch (err: any) {
+      setError(err.message || 'Failed to connect');
+      setConnecting(false);
+    }
+  }, [playerName, hostAddress, port, gameClient]);
+
+  // Handle name submission
+  const handleNameSubmit = useCallback(() => {
+    if (nickname.trim()) {
+      setPlayerId(crypto.randomUUID());
+      // Store nickname in game store
+      setShowNameModal(false);
+    }
+  }, [nickname]);
+
+  // Handle hosting game
+  const handleHostGame = useCallback(async () => {
+    if (!window.electronAPI?.startServer) {
+      setError('Server not available - running in browser mode');
+      return;
+    }
+
+    try {
+      const result = await window.electronAPI.startServer(port);
+      if (!result.success) {
+        setError(result.error || 'Failed to start server');
+        return;
+      }
+      
+      // Now connect to our own server
+      await handleConnect();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }, [port, handleConnect]);
+
+  // Handle disconnect
+  const handleDisconnect = useCallback(() => {
+    gameClient.disconnect();
+    navigate('/play');
+  }, [gameClient, navigate]);
+
+  // Handle sending chat
   const handleSendChat = useCallback(() => {
     if (chatInput.trim()) {
-      gameClient.sendChat(chatInput);
-      addChatMessage({
-        id: Date.now().toString(),
-        playerId: playerId || 'local',
-        playerName: playerName,
-        message: chatInput,
-        timestamp: Date.now(),
-      });
+      gameClient.sendChat(chatInput.trim());
       setChatInput('');
     }
-  }, [chatInput, gameClient, playerId, playerName, addChatMessage]);
+  }, [chatInput, gameClient]);
 
-  const isMyTurn = activePlayerId === playerId;
-  const handCards = Array.from(cards.values()).filter((c) => c.groupId === -1);
+  // Handle card context menu
+  const handleCardContextMenu = useCallback((card: CardType, event: React.MouseEvent) => {
+    event.preventDefault();
+    const items = getCardContextMenuItems(card, {
+      onFlip: () => gameClient.turnCard(parseInt(card.id), !card.faceUp),
+      onRotate: (rotation) => gameClient.rotateCard(parseInt(card.id), rotation),
+      onMove: (groupId) => {
+        // Move card to group
+      },
+    });
+    contextMenu.show(event.clientX, event.clientY, items);
+  }, [gameClient, contextMenu]);
+
+  // Handle canvas click
+  const handleCanvasClick = useCallback((x: number, y: number) => {
+    clearSelection();
+    contextMenu.hide();
+  }, [clearSelection, contextMenu]);
+
+  // Handle canvas right-click
+  const handleCanvasContextMenu = useCallback((x: number, y: number, event: React.MouseEvent) => {
+    event.preventDefault();
+    // Show table context menu
+    contextMenu.show(event.clientX, event.clientY, [
+      { id: 'create-card', label: 'Create Card', icon: '🃏', action: () => {} },
+      { id: 'divider', type: 'separator' },
+      { id: 'reset-zoom', label: 'Reset View', icon: '🔍', action: () => { setZoom(1); setPanOffset({ x: 0, y: 0 }); } },
+    ]);
+  }, [contextMenu, setZoom, setPanOffset]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onUndo: () => {},
+    onRedo: () => {},
+    onDelete: () => {},
+    onCopy: () => {},
+    onPaste: () => {},
+    onSelectAll: () => {},
+    onZoomIn: () => setZoom(Math.min(3, zoom * 1.2)),
+    onZoomOut: () => setZoom(Math.max(0.3, zoom / 1.2)),
+    onResetZoom: () => { setZoom(1); setPanOffset({ x: 0, y: 0 }); },
+    onToggleChat: toggleChat,
+    onToggleHand: toggleHand,
+    onQuit: handleDisconnect,
+  });
+
+  // Convert store cards to canvas format
+  const canvasCards = useMemo(() => {
+    return Array.from(cards.values()).map((card) => ({
+      id: card.id,
+      x: card.x,
+      y: card.y,
+      width: 100,
+      height: 140,
+      faceUp: card.faceUp,
+      rotation: card.rotation || 0,
+      name: card.name,
+      imageUrl: card.imageUrl,
+      selected: selectedCards.has(card.id),
+    }));
+  }, [cards, selectedCards]);
+
+  // Player list for display
+  const playerList = useMemo(() => {
+    return Array.from(players.values());
+  }, [players]);
+
+  // Render connecting modal
+  if (gamePhase === 'connecting' && !showNameModal) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="glass rounded-2xl p-8 text-center max-w-md">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-octgn-accent animate-pulse flex items-center justify-center">
+            <span className="text-3xl">🎮</span>
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Connecting...</h2>
+          <p className="text-gray-400 mb-4">
+            {isHost ? 'Starting game server...' : `Connecting to ${hostAddress}:${port}...`}
+          </p>
+          {error && (
+            <p className="text-red-400 mb-4">{error}</p>
+          )}
+          <div className="flex justify-center space-x-3">
+            {isHost && (
+              <Button variant="primary" onClick={handleHostGame}>
+                Start Server
+              </Button>
+            )}
+            <Button variant="secondary" onClick={handleDisconnect}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Render name input modal
+  if (showNameModal) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="glass rounded-2xl p-8 max-w-md w-full">
+          <h2 className="text-xl font-bold text-white mb-4">Enter Your Name</h2>
+          <input
+            type="text"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            placeholder="Your nickname..."
+            className="input w-full mb-4"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleNameSubmit();
+              }
+            }}
+          />
+          <div className="flex justify-end space-x-3">
+            <Button variant="secondary" onClick={() => navigate('/play')}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleNameSubmit}>
+              {isHost ? 'Host Game' : 'Join Game'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-screen flex flex-col bg-octgn-dark">
-      {/* Top toolbar */}
-      <div className="bg-octgn-primary border-b border-octgn-accent px-4 py-2 flex items-center justify-between">
+    <div className="h-full flex flex-col">
+      {/* Top Bar */}
+      <div className="h-12 bg-octgn-primary border-b border-octgn-accent/30 flex items-center justify-between px-4">
         <div className="flex items-center space-x-4">
-          <h1 className="text-lg font-bold text-white">
-            {gameId || 'Local Game'}
-          </h1>
-          <span
-            className={`text-sm ${connected ? 'text-green-500' : 'text-gray-500'}`}
-          >
-            {connected ? '● Connected' : connecting ? '○ Connecting...' : '○ Offline'}
-          </span>
+          <h2 className="text-lg font-bold text-white">{serverName}</h2>
+          <Badge variant={connected ? 'success' : 'error'}>
+            {connected ? 'Connected' : 'Disconnected'}
+          </Badge>
+          <span className="text-sm text-gray-400">{gameName}</span>
         </div>
-
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-400">Zoom: {Math.round(zoom * 100)}%</span>
-          <Button size="sm" variant="secondary" onClick={() => setZoom(1)}>
-            Reset
+        
+        <div className="flex items-center space-x-3">
+          {gamePhase === 'lobby' && (
+            <Button variant="primary" size="sm" onClick={() => gameClient.ready()}>
+              Ready
+            </Button>
+          )}
+          <Button variant="ghost" size="sm" onClick={toggleChat}>
+            💬
           </Button>
-          <Button size="sm" variant="secondary" onClick={toggleHand}>
-            👋 Hand
+          <Button variant="ghost" size="sm" onClick={toggleHand}>
+            🃏
           </Button>
-          <Button size="sm" variant="secondary" onClick={toggleChat}>
-            💬 Chat
-          </Button>
-          <Button size="sm" variant="secondary" onClick={() => saveGame()}>
-            💾 Save
-          </Button>
-          <Button size="sm" variant="secondary" onClick={() => loadGame()}>
-            📂 Load
-          </Button>
-          <Button size="sm" variant="danger" onClick={handleLeave}>
+          <Button variant="danger" size="sm" onClick={handleDisconnect}>
             Leave
           </Button>
         </div>
       </div>
 
-      {/* Main game area */}
+      {/* Main Game Area */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left sidebar - Players & Turn */}
-        <div className="w-64 bg-octgn-primary border-r border-octgn-accent flex flex-col">
-          <div className="p-3">
-            <TurnIndicator
-              turnNumber={turnNumber}
-              activePlayerName={
-                players.find((p) => p.id === activePlayerId)?.name || null
-              }
-              currentPhase={phase}
-              isMyTurn={isMyTurn}
-              phases={phases}
-              onNextTurn={() => nextTurn()}
-              onSetPhase={(p) => setPhase(p)}
-            />
-          </div>
+        {/* Game Canvas */}
+        <div className="flex-1 relative">
+          <GameCanvas
+            cards={canvasCards}
+            panOffset={panOffset}
+            zoom={zoom}
+            onPanChange={setPanOffset}
+            onZoomChange={setZoom}
+            onClick={handleCanvasClick}
+            onContextMenu={handleCanvasContextMenu}
+            onCardClick={(card) => selectCards([card.id], false)}
+            onCardDoubleClick={(card) => gameClient.turnCard(parseInt(card.id), !card.faceUp)}
+            onCardContextMenu={handleCardContextMenu}
+            onCardDragStart={(card, e) => cardDrag.startDrag([card.id], e)}
+            onSelectionChange={() => {}}
+          />
 
-          <div className="flex-1 overflow-y-auto p-3">
-            <PlayerList
-              players={players}
-              currentPlayerId={playerId}
-              activePlayerId={activePlayerId}
-            />
-          </div>
-
-          <div className="p-3 border-t border-octgn-accent">
-            <CounterPanel
-              counters={Array.from(counters.values())}
-              playerId={playerId || ''}
-              onUpdateCounter={(name, value) => {
-                useGameStore.getState().setCounter(name, value);
-              }}
-            />
+          {/* Zoom Controls */}
+          <div className="absolute bottom-4 left-4 glass rounded-lg p-2 flex items-center space-x-2">
+            <button
+              onClick={() => setZoom(Math.max(0.3, zoom / 1.2))}
+              className="w-8 h-8 rounded hover:bg-octgn-accent flex items-center justify-center text-white"
+            >
+              ➖
+            </button>
+            <span className="text-white text-sm w-16 text-center">{Math.round(zoom * 100)}%</span>
+            <button
+              onClick={() => setZoom(Math.min(3, zoom * 1.2))}
+              className="w-8 h-8 rounded hover:bg-octgn-accent flex items-center justify-center text-white"
+            >
+              ➕
+            </button>
           </div>
         </div>
 
-        {/* Center - Game table */}
-        <div className="flex-1 flex flex-col">
-          {/* Opponent's area */}
-          <div className="h-32 bg-octgn-accent/20 border-b border-octgn-accent flex items-center justify-center text-gray-500">
-            Opponent's Area
+        {/* Right Sidebar */}
+        <div className="w-64 bg-octgn-primary border-l border-octgn-accent/30 flex flex-col">
+          {/* Player List */}
+          <div className="p-4 border-b border-octgn-accent/30">
+            <h3 className="font-bold text-white mb-3">Players</h3>
+            <PlayerList
+              players={playerList}
+              activePlayerId={activePlayerId}
+              localPlayerId={playerId}
+            />
           </div>
 
-          {/* Table - Game Canvas */}
-          <div className="flex-1 relative">
-            <GameCanvas className="absolute inset-0" />
-
-            {/* Zoom controls overlay */}
-            <div className="absolute bottom-4 right-4 flex space-x-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => setZoom(zoom / 1.2)}
-              >
-                -
-              </Button>
-              <Button size="sm" variant="secondary" onClick={() => setZoom(1)}>
-                100%
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => setZoom(zoom * 1.2)}
-              >
-                +
-              </Button>
-            </div>
-          </div>
-
-          {/* Player's hand */}
-          {showHand && (
-            <div className="border-t border-octgn-accent">
-              <PlayerHand
-                cards={handCards}
-                selectedCardIds={selectedCards}
-                onCardClick={(card) => {
-                  if (!selectedCards.includes(card.id)) {
-                    selectCards([card.id]);
-                  }
-                }}
-                onCardDoubleClick={handleCardDoubleClick}
-                onCardContextMenu={(e, card) => handleCardContextMenu(e, card)}
+          {/* Turn Info */}
+          {gamePhase === 'playing' && (
+            <div className="p-4 border-b border-octgn-accent/30">
+              <TurnIndicator
+                turnNumber={turnNumber}
+                phase={phase || ''}
+                phases={phases || []}
+                activePlayerId={activePlayerId}
+                onNextTurn={nextTurn}
+                onSetPhase={setPhase}
               />
             </div>
           )}
-        </div>
 
-        {/* Right sidebar - Chat */}
-        {showChat && (
-          <div className="w-72 bg-octgn-primary border-l border-octgn-accent flex flex-col">
-            <div className="p-3 border-b border-octgn-accent">
-              <h3 className="font-bold text-white">Chat</h3>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {chatMessages.map((msg) => (
-                <div key={msg.id} className="text-sm">
-                  <span className="font-medium text-octgn-highlight">
-                    {msg.playerName}:
-                  </span>{' '}
-                  <span className="text-gray-300">{msg.message}</span>
-                </div>
-              ))}
-              {chatMessages.length === 0 && (
-                <div className="text-center text-gray-500 text-sm">
-                  No messages yet
-                </div>
-              )}
-            </div>
-
-            <div className="p-3 border-t border-octgn-accent">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSendChat();
-                }}
-              >
+          {/* Chat */}
+          {showChat && (
+            <div className="flex-1 flex flex-col min-h-0">
+              <div className="p-4 border-b border-octgn-accent/30">
+                <h3 className="font-bold text-white">Chat</h3>
+              </div>
+              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                {chatMessages.map((msg) => (
+                  <div key={msg.id} className="text-sm">
+                    <span className="text-octgn-highlight font-medium">{msg.playerName}:</span>{' '}
+                    <span className="text-gray-300">{msg.message}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="p-2 border-t border-octgn-accent/30">
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
                     placeholder="Type a message..."
                     className="input flex-1 text-sm"
                   />
-                  <Button type="submit" size="sm">
+                  <Button size="sm" onClick={handleSendChat}>
                     Send
                   </Button>
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Card Zoom Overlay */}
+      {/* Player Hand (Bottom) */}
+      {showHand && (
+        <div className="h-48 bg-octgn-primary border-t border-octgn-accent/30">
+          <PlayerHand
+            cards={Array.from(cards.values()).filter((c) => c.group === 'hand')}
+            selectedCards={selectedCards}
+            onCardClick={(card) => selectCards([card.id], false)}
+            onCardDoubleClick={(card) => gameClient.turnCard(parseInt(card.id), !card.faceUp)}
+            onCardContextMenu={handleCardContextMenu}
+          />
+        </div>
+      )}
+
+      {/* Card Zoom Modal */}
       {zoomedCard && (
         <CardZoom
           card={zoomedCard}
           onClose={() => setZoomedCard(null)}
-          showActions
-          onPlayCard={(card) => {
-            setZoomedCard(null);
-          }}
         />
       )}
 
       {/* Context Menu */}
-      <ContextMenu
-        state={contextMenu}
-        menuRef={contextMenu.menuRef}
-        onClose={contextMenu.close}
-      />
+      {contextMenu.state.visible && (
+        <ContextMenu
+          items={contextMenu.state.items}
+          position={{ x: contextMenu.state.x, y: contextMenu.state.y }}
+          onClose={contextMenu.hide}
+        />
+      )}
     </div>
   );
 }
