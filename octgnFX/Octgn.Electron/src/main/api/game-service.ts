@@ -1,9 +1,11 @@
 import { BrowserWindow } from 'electron';
 import { GameConnection } from '../protocol/connection';
-import { MessageType } from '../protocol/types';
-import type { GameState, ChatMessage, Player, Card } from '../../shared/types';
-import { IPC_CHANNELS } from '../../shared/types';
+import { MessageType, type ProtocolMessage } from '../protocol/types';
+import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker } from '../../shared/types';
+import { IPC_CHANNELS, GroupVisibility } from '../../shared/types';
 import { ScriptEngine } from '../scripting/script-engine';
+import { CardResolver } from '../games/card-resolver';
+import { log, logError } from '../logger';
 
 /**
  * Manages the active game connection and bridges protocol messages
@@ -16,6 +18,9 @@ export class GameService {
   private chatMessages: ChatMessage[] = [];
   private chatIdCounter: number = 0;
   private scriptEngine: ScriptEngine = new ScriptEngine();
+  private isSpectator: boolean = false;
+  private cardResolver: CardResolver = new CardResolver();
+  private currentGameId: string = '';
 
   /**
    * Join a game server and start receiving state updates.
@@ -31,28 +36,35 @@ export class GameService {
     spectator: boolean = false,
   ): Promise<{ success: boolean; error?: string }> {
     try {
+      log('GAME', `Joining game at ${host}:${port} as ${nickname} (spectator=${spectator})`);
+      this.isSpectator = spectator;
+      this.currentGameId = gameId;
       this.connection = new GameConnection({ host, port });
 
       this.setupMessageHandlers();
 
       await this.connection.connect();
+      log('GAME', 'TCP connection established, sending Hello handshake');
 
       // Send Hello handshake
+      log('GAME', `Sending Hello: nick=${nickname} userId=${userId} gameId=${gameId} gameVer=${gameVersion} spectator=${spectator}`);
       this.connection.sendMessage(MessageType.Hello, 0, {
         nick: nickname,
         userId,
         pkey: BigInt(0),
         client: 'OCTGN-Electron',
-        clientVer: '0.1.0',
-        octgnVer: '3.4.424.0',
+        clientVer: '3.4.426.0',
+        octgnVer: '3.4.426.0',
         gameId,
         gameVersion,
         password,
         spectator,
       });
 
+      log('GAME', 'Hello handshake sent, join returning success');
       return { success: true };
     } catch (err) {
+      logError('GAME', err);
       return { success: false, error: (err as Error).message };
     }
   }
@@ -268,28 +280,85 @@ export class GameService {
     return this.connection?.isConnected ?? false;
   }
 
+  // ---------------------------------------------------------------------------
+  // Helper: extract params from ProtocolMessage
+  // ---------------------------------------------------------------------------
+
+  private p(msg: ProtocolMessage): Record<string, unknown> {
+    return msg.params;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Message handler setup
+  // ---------------------------------------------------------------------------
+
   private setupMessageHandlers(): void {
     if (!this.connection) return;
 
+    // Log all incoming messages (BigInt-safe serialization)
+    this.connection.on('message', (msg: ProtocolMessage) => {
+      const safeParams = JSON.stringify(msg.params, (_k, v) => typeof v === 'bigint' ? v.toString() : v);
+      const truncated = safeParams.length > 500 ? safeParams.slice(0, 500) + '...' : safeParams;
+      log('GAME', `<-- type=${msg.type} (${MessageType[msg.type] ?? '?'}) ${truncated}`);
+    });
+
+    // Log connection lifecycle events
+    this.connection.on('connected', () => log('GAME', 'Connection established'));
+    this.connection.on('disconnected', (hadError: boolean) => log('GAME', `Disconnected (hadError=${hadError})`));
+    this.connection.on('error', (err: Error) => logError('GAME', err));
+    this.connection.on('reconnecting', (attempt: number) => log('GAME', `Reconnecting attempt ${attempt}`));
+
+    // Kick — server rejected us
+    this.connection.on('Kick', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const reason = (params.reason as string) || 'Unknown reason';
+      log('GAME', `KICKED: ${reason}`);
+      // Broadcast an error state to the renderer
+      if (this.gameState) {
+        this.gameState.connectionStatus = 'disconnected';
+      } else {
+        this.initializeGameState('', '');
+        this.gameState!.connectionStatus = 'disconnected';
+      }
+      this.addSystemMessage(`Kicked from game: ${reason}`);
+      this.broadcastState();
+      // Disconnect
+      this.connection?.disconnect();
+      this.connection = null;
+    });
+
     // Welcome - we've been assigned a player ID
-    this.connection.on('Welcome', (params: Record<string, unknown>) => {
+    this.connection.on('Welcome', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       this.localPlayerId = params.id as number;
       this.initializeGameState(
         params.gameSessionId as string,
         params.gameName as string,
       );
       this.broadcastState();
+
+      // Load card definitions in the background
+      if (this.currentGameId) {
+        this.cardResolver.loadGame(this.currentGameId).then(() => {
+          const gameDef = this.cardResolver.getGameDefinition(this.currentGameId);
+          if (gameDef && this.gameState) {
+            this.gameState.gameDefinition = { name: gameDef.name, id: gameDef.id };
+            this.broadcastState();
+          }
+        }).catch((err) => logError('GAME', err));
+      }
     });
 
     // New player joined
-    this.connection.on('NewPlayer', (params: Record<string, unknown>) => {
+    this.connection.on('NewPlayer', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       const player: Player = {
         id: params.id as number,
         name: params.nick as string,
         color: '#3b82f6',
         isHost: false,
-        isSpectator: params.spectator as boolean,
+        isSpectator: (params.spectator as boolean) ?? false,
         groups: [],
         counters: [],
         globalVariables: {},
@@ -298,8 +367,22 @@ export class GameService {
       this.broadcastState();
     });
 
+    // Player settings (inverted table, spectator status)
+    this.connection.on('PlayerSettings', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const player = this.gameState.players.find(
+        (p) => p.id === (params.playerId as number),
+      );
+      if (player) {
+        player.isSpectator = (params.spectator as boolean) ?? player.isSpectator;
+      }
+      this.broadcastState();
+    });
+
     // Player left
-    this.connection.on('Leave', (params: Record<string, unknown>) => {
+    this.connection.on('Leave', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       this.gameState.players = this.gameState.players.filter(
         (p) => p.id !== (params.player as number),
@@ -308,8 +391,9 @@ export class GameService {
     });
 
     // Chat message received
-    this.connection.on('Chat', (params: Record<string, unknown>) => {
-      const msg: ChatMessage = {
+    this.connection.on('Chat', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const chatMsg: ChatMessage = {
         id: String(this.chatIdCounter++),
         playerId: params.player as number,
         playerName: this.getPlayerName(params.player as number),
@@ -317,7 +401,7 @@ export class GameService {
         timestamp: Date.now(),
         isSystem: false,
       };
-      this.chatMessages.push(msg);
+      this.chatMessages.push(chatMsg);
       if (this.gameState) {
         this.gameState.chatMessages = [...this.chatMessages];
       }
@@ -325,8 +409,9 @@ export class GameService {
     });
 
     // Print (system message)
-    this.connection.on('Print', (params: Record<string, unknown>) => {
-      const msg: ChatMessage = {
+    this.connection.on('Print', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const chatMsg: ChatMessage = {
         id: String(this.chatIdCounter++),
         playerId: params.player as number,
         playerName: 'System',
@@ -334,7 +419,7 @@ export class GameService {
         timestamp: Date.now(),
         isSystem: true,
       };
-      this.chatMessages.push(msg);
+      this.chatMessages.push(chatMsg);
       if (this.gameState) {
         this.gameState.chatMessages = [...this.chatMessages];
       }
@@ -342,38 +427,77 @@ export class GameService {
     });
 
     // Settings
-    this.connection.on('Settings', (_params: Record<string, unknown>) => {
-      // Store game settings - for now just acknowledge
+    this.connection.on('Settings', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      // For spectators, initialize game state on Settings since Welcome may not come
+      if (!this.gameState) {
+        this.initializeGameState('', '');
+      }
+      log('GAME', `Settings: twoSided=${params.twoSidedTable} spectators=${params.allowSpectators} mute=${params.muteSpectators}`);
       this.broadcastState();
     });
 
     // Game started
-    this.connection.on('Start', () => {
-      if (this.gameState) {
-        this.gameState.isStarted = true;
+    this.connection.on('Start', (_msg: ProtocolMessage) => {
+      if (!this.gameState) {
+        this.initializeGameState('', '');
       }
+      this.gameState!.isStarted = true;
+      log('GAME', 'Game started');
       this.broadcastState();
     });
 
+    // Full GameState snapshot (sent to spectators joining mid-game)
+    this.connection.on('GameState', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const stateJson = params.state as string;
+      log('GAME', `GameState snapshot received (${stateJson.length} chars)`);
+      try {
+        this.parseGameStateSnapshot(stateJson);
+        this.broadcastState();
+      } catch (err) {
+        logError('GAME', err);
+      }
+    });
+
     // Next turn
-    this.connection.on('NextTurn', (params: Record<string, unknown>) => {
+    this.connection.on('NextTurn', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       this.gameState.turnNumber++;
       if (params.setActive) {
         this.gameState.activePlayer = params.player as number;
       }
+      this.addSystemMessage(`Turn ${this.gameState.turnNumber} — ${this.getPlayerName(params.player as number)}`);
       this.broadcastState();
     });
 
     // Phase change
-    this.connection.on('SetPhase', (params: Record<string, unknown>) => {
+    this.connection.on('SetPhase', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       this.gameState.phase = params.phase as number;
       this.broadcastState();
     });
 
+    // SetActivePlayer
+    this.connection.on('SetActivePlayer', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      this.gameState.activePlayer = params.player as number;
+      this.broadcastState();
+    });
+
+    // ClearActivePlayer
+    this.connection.on('ClearActivePlayer', (_msg: ProtocolMessage) => {
+      if (!this.gameState) return;
+      this.gameState.activePlayer = 0;
+      this.broadcastState();
+    });
+
     // Counter update
-    this.connection.on('Counter', (params: Record<string, unknown>) => {
+    this.connection.on('Counter', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       const player = this.gameState.players.find(
         (p) => p.id === (params.player as number),
@@ -384,13 +508,92 @@ export class GameService {
         );
         if (counter) {
           counter.value = params.value as number;
+        } else {
+          // Counter doesn't exist yet — create it
+          player.counters.push({
+            id: params.counter as number,
+            name: `Counter ${params.counter}`,
+            value: params.value as number,
+          });
         }
       }
       this.broadcastState();
     });
 
+    // LoadDeck — creates groups and cards for a player
+    this.connection.on('LoadDeck', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const ids = params.id as number[];
+      const types = params.type as string[];
+      const groups = params.group as number[];
+      const sizes = params.size as string[];
+
+      for (let i = 0; i < ids.length; i++) {
+        const groupId = groups[i];
+        const card = this.createCard(
+          ids[i],
+          types[i],
+          sizes[i] ?? '',
+          String(groupId),
+        );
+        this.addCardToGroup(card, groupId);
+      }
+      this.broadcastState();
+    });
+
+    // CreateCard — creates card(s) in a player group
+    this.connection.on('CreateCard', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const ids = params.id as number[];
+      const types = params.type as string[];
+      const sizes = params.size as string[];
+      const groupId = params.group as number;
+
+      for (let i = 0; i < ids.length; i++) {
+        const card = this.createCard(
+          ids[i],
+          types[i],
+          sizes[i] ?? '',
+          String(groupId),
+        );
+        this.addCardToGroup(card, groupId);
+      }
+      this.broadcastState();
+    });
+
+    // CreateCardAt — creates card(s) at a table position
+    this.connection.on('CreateCardAt', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const ids = params.id as number[];
+      const modelIds = params.modelId as string[];
+      const xs = params.x as number[];
+      const ys = params.y as number[];
+      const faceUp = params.faceUp as boolean;
+
+      for (let i = 0; i < ids.length; i++) {
+        const card = this.createCard(ids[i], modelIds[i], '', 'table');
+        card.position = { x: xs[i], y: ys[i] };
+        card.faceUp = faceUp;
+        this.gameState.table.cards.push(card);
+      }
+      this.broadcastState();
+    });
+
+    // DeleteCard — remove a card from the game
+    this.connection.on('DeleteCard', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const cardId = params.card as number;
+      this.removeCard(cardId);
+      this.broadcastState();
+    });
+
     // Card moved to group
-    this.connection.on('MoveCard', (params: Record<string, unknown>) => {
+    this.connection.on('MoveCard', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       const cardIds = params.id as number[];
       const groupId = params.group as number;
@@ -399,15 +602,21 @@ export class GameService {
       for (let i = 0; i < cardIds.length; i++) {
         const card = this.findCard(cardIds[i]);
         if (card) {
+          // Remove from current location
+          this.removeCard(cardIds[i]);
+          // Update properties
           card.groupId = String(groupId);
           card.faceUp = faceUp[i] ?? card.faceUp;
+          // Add to new group
+          this.addCardToGroup(card, groupId);
         }
       }
       this.broadcastState();
     });
 
     // Card moved to position on table
-    this.connection.on('MoveCardAt', (params: Record<string, unknown>) => {
+    this.connection.on('MoveCardAt', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       const cardIds = params.id as number[];
       const xs = params.x as number[];
@@ -415,17 +624,23 @@ export class GameService {
       const faceUp = params.faceUp as boolean[];
 
       for (let i = 0; i < cardIds.length; i++) {
-        const card = this.findCard(cardIds[i]);
+        let card = this.findCard(cardIds[i]);
         if (card) {
+          // Remove from current location
+          this.removeCard(cardIds[i]);
           card.position = { x: xs[i], y: ys[i] };
           card.faceUp = faceUp[i] ?? card.faceUp;
+          card.groupId = 'table';
+          // Add to table
+          this.gameState.table.cards.push(card);
         }
       }
       this.broadcastState();
     });
 
     // Card turned face up/down
-    this.connection.on('Turn', (params: Record<string, unknown>) => {
+    this.connection.on('Turn', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       const card = this.findCard(params.card as number);
       if (card) {
         card.faceUp = params.up as boolean;
@@ -434,7 +649,8 @@ export class GameService {
     });
 
     // Card rotated
-    this.connection.on('Rotate', (params: Record<string, unknown>) => {
+    this.connection.on('Rotate', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       const card = this.findCard(params.card as number);
       if (card) {
         card.rotation = (params.rot as number) * 90;
@@ -443,7 +659,8 @@ export class GameService {
     });
 
     // Card highlight
-    this.connection.on('Highlight', (params: Record<string, unknown>) => {
+    this.connection.on('Highlight', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       const card = this.findCard(params.card as number);
       if (card) {
         card.highlighted = (params.color as string) || undefined;
@@ -451,8 +668,155 @@ export class GameService {
       this.broadcastState();
     });
 
+    // Target — mark a card as targeted by a player
+    this.connection.on('Target', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const card = this.findCard(params.card as number);
+      if (card) {
+        card.targetedBy = String(params.player);
+      }
+      this.broadcastState();
+    });
+
+    // Untarget — remove targeting from a card
+    this.connection.on('Untarget', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const card = this.findCard(params.card as number);
+      if (card) {
+        card.targetedBy = undefined;
+      }
+      this.broadcastState();
+    });
+
+    // Peek — a player is peeking at a card
+    this.connection.on('Peek', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const card = this.findCard(params.card as number);
+      if (card) {
+        const playerId = String(params.player);
+        if (!card.peekingPlayers.includes(playerId)) {
+          card.peekingPlayers.push(playerId);
+        }
+      }
+      this.broadcastState();
+    });
+
+    // AddMarker — add a marker to a card
+    this.connection.on('AddMarker', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const card = this.findCard(params.card as number);
+      if (card) {
+        const markerId = params.id as string;
+        const existing = card.markers.find((m) => m.id === markerId);
+        if (existing) {
+          existing.count = params.count as number;
+        } else {
+          card.markers.push({
+            id: markerId,
+            name: params.name as string,
+            iconUrl: '',
+            count: params.count as number,
+          });
+        }
+      }
+      this.broadcastState();
+    });
+
+    // RemoveMarker — remove a marker from a card
+    this.connection.on('RemoveMarker', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const card = this.findCard(params.card as number);
+      if (card) {
+        const markerId = params.id as string;
+        const count = params.count as number;
+        const existing = card.markers.find((m) => m.id === markerId);
+        if (existing) {
+          existing.count -= count;
+          if (existing.count <= 0) {
+            card.markers = card.markers.filter((m) => m.id !== markerId);
+          }
+        }
+      }
+      this.broadcastState();
+    });
+
+    // Shuffled — reorder cards in a group
+    this.connection.on('Shuffled', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const groupId = params.group as number;
+      const cardIds = params.card as number[];
+
+      // Find the group and reorder cards
+      const group = this.findGroup(groupId);
+      if (group && cardIds.length > 0) {
+        const cardMap = new Map(group.cards.map((c) => [c.id, c]));
+        const reordered: Card[] = [];
+        for (const id of cardIds) {
+          const card = cardMap.get(String(id));
+          if (card) reordered.push(card);
+        }
+        // Any cards not in the new order stay at end
+        for (const card of group.cards) {
+          if (!reordered.includes(card)) reordered.push(card);
+        }
+        group.cards = reordered;
+      }
+
+      this.addSystemMessage(`${this.getPlayerName(params.player as number)} shuffled a pile`);
+      this.broadcastState();
+    });
+
+    // SetCardProperty — update a card's custom property
+    this.connection.on('SetCardProperty', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const card = this.findCard(params.id as number);
+      if (card) {
+        card.properties[params.name as string] = params.val as string;
+      }
+      this.broadcastState();
+    });
+
+    // GroupVis — group visibility change
+    this.connection.on('GroupVis', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const group = this.findGroup(params.group as number);
+      if (group) {
+        if (params.defined as boolean) {
+          group.visibility = (params.visible as boolean)
+            ? GroupVisibility.Everybody
+            : GroupVisibility.Nobody;
+        } else {
+          group.visibility = GroupVisibility.Undefined;
+        }
+      }
+      this.broadcastState();
+    });
+
+    // SetBoard — set table background image
+    this.connection.on('SetBoard', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      this.gameState.table.board = {
+        name: params.name as string,
+        imageUrl: params.name as string,
+        width: 0,
+        height: 0,
+      };
+      this.broadcastState();
+    });
+
+    // PlaySound — play a game sound effect
+    this.connection.on('PlaySound', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      this.addSystemMessage(`♪ Sound: ${params.name as string}`);
+      this.broadcastState();
+    });
+
     // Player color
-    this.connection.on('SetPlayerColor', (params: Record<string, unknown>) => {
+    this.connection.on('SetPlayerColor', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       if (!this.gameState) return;
       const player = this.gameState.players.find(
         (p) => p.id === (params.player as number),
@@ -464,20 +828,23 @@ export class GameService {
     });
 
     // Error
-    this.connection.on('Error', (params: Record<string, unknown>) => {
+    this.connection.on('Error', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       this.addSystemMessage(`Error: ${params.msg as string}`);
       this.broadcastState();
     });
 
     // Player disconnect
-    this.connection.on('PlayerDisconnect', (params: Record<string, unknown>) => {
+    this.connection.on('PlayerDisconnect', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       const name = this.getPlayerName(params.player as number);
       this.addSystemMessage(`${name} disconnected`);
       this.broadcastState();
     });
 
     // RemoteCall - script function execution from server
-    this.connection.on('RemoteCall', (params: Record<string, unknown>) => {
+    this.connection.on('RemoteCall', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
       const playerId = params.player as number;
       const functionName = params.function as string;
       const args = params.args as string;
@@ -490,21 +857,72 @@ export class GameService {
       }
     });
 
-    // Game state sync (from another player or server)
-    this.connection.on('GameState', (params: Record<string, unknown>) => {
-      try {
-        const stateJson = params.state as string;
-        if (stateJson) {
-          const parsed = JSON.parse(stateJson);
-          // Merge received state with our local state
-          if (this.gameState && parsed) {
-            Object.assign(this.gameState, parsed);
-          }
+    // Note: GameState handler is registered above (line ~436) — no duplicate needed
+
+    // PlayerState — player global variable updates
+    this.connection.on('PlayerState', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const player = this.gameState.players.find(
+        (p) => p.id === (params.toPlayer as number),
+      );
+      if (player && params.state) {
+        try {
+          const vars = JSON.parse(params.state as string);
+          Object.assign(player.globalVariables, vars);
+        } catch {
+          // ignore
         }
-      } catch {
-        // Ignore malformed state
       }
       this.broadcastState();
+    });
+
+    // SetGlobalVariable — game-level global variable
+    this.connection.on('SetGlobalVariable', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      if (!this.gameState.globalVariables) {
+        this.gameState.globalVariables = {};
+      }
+      this.gameState.globalVariables[params.name as string] = params.value as string;
+      this.broadcastState();
+    });
+
+    // PlayerSetGlobalVariable — player-level global variable
+    this.connection.on('PlayerSetGlobalVariable', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      if (!this.gameState) return;
+      const player = this.gameState.players.find(
+        (p) => p.id === (params.player as number),
+      );
+      if (player) {
+        player.globalVariables[params.name as string] = params.value as string;
+      }
+      this.broadcastState();
+    });
+
+    // Connection lifecycle events
+    this.connection.on('disconnected', () => {
+      this.addSystemMessage('Disconnected from game server');
+      if (this.gameState) {
+        this.gameState.connectionStatus = 'disconnected';
+      }
+      this.broadcastState();
+    });
+
+    this.connection.on('reconnecting', () => {
+      this.addSystemMessage('Reconnecting...');
+      if (this.gameState) {
+        this.gameState.connectionStatus = 'reconnecting';
+      }
+      this.broadcastState();
+    });
+
+    this.connection.on('connected', () => {
+      if (this.gameState) {
+        this.gameState.connectionStatus = 'connected';
+        this.broadcastState();
+      }
     });
   }
 
@@ -514,13 +932,135 @@ export class GameService {
       gameName,
       players: [],
       localPlayerId: this.localPlayerId,
+      isSpectator: this.isSpectator,
       table: { cards: [] },
       turnNumber: 0,
       activePlayer: 0,
       phase: 0,
       chatMessages: [],
       isStarted: false,
+      connectionStatus: 'connected',
     };
+  }
+
+
+
+  /**
+   * Parse a full GameState JSON snapshot from the server.
+   * This is sent to spectators joining a game already in progress.
+   */
+  private parseGameStateSnapshot(json: string): void {
+    const data = JSON.parse(json);
+
+    if (!this.gameState) {
+      this.initializeGameState(data.SessionId ?? '', '');
+    }
+
+    // Parse players
+    const players: Player[] = (data.Players ?? []).map((p: any) => {
+      const groups: Group[] = (p.Groups ?? []).map((g: any) => ({
+        id: String(g.Id),
+        name: this.resolveGroupName(g.Id, g.Visiblity),
+        cards: (g.Cards ?? []).map((c: any) => this.parseSnapshotCard(c)),
+        visibility: g.Visiblity ?? 0,
+        controller: p.Id,
+      }));
+
+      const counters: Counter[] = (p.Counters ?? []).map((c: any) => ({
+        id: c.Id ?? 0,
+        name: c.Name ?? 'Counter',
+        value: c.Value ?? 0,
+      }));
+
+      return {
+        id: p.Id,
+        name: p.Nickname ?? `Player ${p.Id}`,
+        color: p.Color ?? '#3b82f6',
+        isHost: false,
+        isSpectator: false,
+        groups,
+        counters,
+        globalVariables: p.GlobalVariables ?? {},
+      } as Player;
+    });
+
+    // Parse table cards
+    const tableCards: Card[] = data.Table?.Cards
+      ? data.Table.Cards.map((c: any) => this.parseSnapshotCard(c))
+      : [];
+
+    this.gameState!.players = players;
+    this.gameState!.table.cards = tableCards;
+    this.gameState!.turnNumber = data.TurnNumber ?? 0;
+    this.gameState!.activePlayer = data.ActivePlayer ?? 0;
+    this.gameState!.isStarted = true;
+    this.gameState!.globalVariables = data.GlobalVariables ?? {};
+
+    if (data.GameBoard) {
+      this.gameState!.table.board = {
+        name: 'Board',
+        imageUrl: data.GameBoard,
+        width: 0,
+        height: 0,
+      };
+    }
+
+    log('GAME', `Parsed snapshot: ${players.length} players, ${tableCards.length} table cards, turn=${data.TurnNumber}`);
+  }
+
+  private parseSnapshotCard(c: any): Card {
+    const markers: Marker[] = (c.Markers ?? []).map((m: any) => ({
+      id: m.Id ?? '',
+      name: m.Name ?? '',
+      iconUrl: '',
+      count: m.Count ?? 1,
+    }));
+
+    const definitionId = c.Type ?? '';
+    const def = this.cardResolver.resolve(definitionId);
+
+    // Merge: definition properties as base, protocol overrides on top
+    const properties = def?.properties
+      ? { ...def.properties, ...(c.PropertyOverrides ?? {}) }
+      : (c.PropertyOverrides ?? {});
+
+    return {
+      id: String(c.Id),
+      definitionId,
+      name: def?.name ?? `Card ${c.Id}`,
+      imageUrl: '',
+      faceUp: c.FaceUp ?? false,
+      position: { x: c.X ?? 0, y: c.Y ?? 0 },
+      size: { width: 100, height: 140 },
+      ownerId: String(c.Owner ?? 0),
+      groupId: '',
+      markers,
+      rotation: (c.Orientation ?? 0) * 90,
+      highlighted: c.HighlightColor ?? undefined,
+      targetedBy: c.TargetedBy ? String(c.TargetedBy) : undefined,
+      properties,
+      peekingPlayers: c.PeekingPlayers ? c.PeekingPlayers.split(',').filter(Boolean) : [],
+    };
+  }
+
+  /** Resolve group name from game definition, falling back to heuristic guess. */
+  private resolveGroupName(groupId: number, visibility: number): string {
+    // Try to resolve from loaded game definition first
+    if (this.currentGameId) {
+      const name = this.cardResolver.resolveGroupName(this.currentGameId, groupId);
+      if (name) return name;
+    }
+
+    // Fallback: OCTGN group IDs encode player + group index in low byte
+    const idx = groupId & 0xFF;
+    switch (idx) {
+      case 1: return 'Hand';
+      case 2: return visibility === 1 ? 'Deck' : 'Library';
+      case 3: return 'Discard';
+      case 4: return 'Special';
+      case 5: return 'Extra';
+      default: return `Zone ${idx}`;
+    }
   }
 
   private broadcastState(): void {
@@ -528,6 +1068,108 @@ export class GameService {
     const windows = BrowserWindow.getAllWindows();
     for (const win of windows) {
       win.webContents.send(IPC_CHANNELS.GAME_STATE_UPDATE, this.gameState);
+    }
+  }
+
+  /**
+   * Create a Card object from protocol data.
+   */
+  private createCard(id: number, definitionId: string, size: string, groupId: string): Card {
+    const [w, h] = size.includes(',')
+      ? size.split(',').map(Number)
+      : [100, 140];
+
+    const def = this.cardResolver.resolve(definitionId);
+
+    return {
+      id: String(id),
+      definitionId,
+      name: def?.name ?? `Card ${id}`,
+      imageUrl: '',
+      faceUp: false,
+      position: { x: 0, y: 0 },
+      rotation: 0,
+      groupId,
+      ownerId: '',
+      markers: [],
+      properties: def?.properties ?? {},
+      peekingPlayers: [],
+      size: { width: w || 100, height: h || 140 },
+    };
+  }
+
+  /**
+   * Add a card to the appropriate group or table.
+   */
+  private addCardToGroup(card: Card, groupId: number): void {
+    if (!this.gameState) return;
+
+    // Group id 0 is typically the table
+    if (groupId === 0) {
+      this.gameState.table.cards.push(card);
+      return;
+    }
+
+    // Find the group across all players
+    const group = this.findGroup(groupId);
+    if (group) {
+      group.cards.push(card);
+      return;
+    }
+
+    // Group doesn't exist yet — create it under the first non-spectator player
+    // or add to table as fallback
+    const targetPlayer = this.gameState.players.find((p) => !p.isSpectator);
+    if (targetPlayer) {
+      const newGroup: Group = {
+        id: String(groupId),
+        name: this.resolveGroupName(groupId, GroupVisibility.Owner),
+        cards: [card],
+        visibility: GroupVisibility.Owner,
+        controller: targetPlayer.id,
+      };
+      targetPlayer.groups.push(newGroup);
+    } else {
+      // Fallback to table
+      this.gameState.table.cards.push(card);
+    }
+  }
+
+  /**
+   * Find a group by numeric ID across all players.
+   */
+  private findGroup(groupId: number): Group | undefined {
+    if (!this.gameState) return undefined;
+    for (const player of this.gameState.players) {
+      const group = player.groups.find((g) => g.id === String(groupId));
+      if (group) return group;
+    }
+    return undefined;
+  }
+
+  /**
+   * Remove a card from wherever it currently exists.
+   */
+  private removeCard(cardId: number): void {
+    if (!this.gameState) return;
+    const idStr = String(cardId);
+
+    // Check table
+    const tableIdx = this.gameState.table.cards.findIndex((c) => c.id === idStr);
+    if (tableIdx >= 0) {
+      this.gameState.table.cards.splice(tableIdx, 1);
+      return;
+    }
+
+    // Check player groups
+    for (const player of this.gameState.players) {
+      for (const group of player.groups) {
+        const idx = group.cards.findIndex((c) => c.id === idStr);
+        if (idx >= 0) {
+          group.cards.splice(idx, 1);
+          return;
+        }
+      }
     }
   }
 

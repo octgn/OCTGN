@@ -168,8 +168,10 @@ export interface Counter {
 export interface GameState {
   gameId: string;
   gameName: string;
+  gameDefinition?: { name: string; id: string };
   players: Player[];
   localPlayerId: number;
+  isSpectator: boolean;
   table: {
     cards: Card[];
     board?: {
@@ -184,6 +186,8 @@ export interface GameState {
   phase: number;
   chatMessages: ChatMessage[];
   isStarted: boolean;
+  connectionStatus?: 'connected' | 'disconnected' | 'reconnecting';
+  globalVariables?: Record<string, string>;
 }
 
 export interface ChatMessage {
