@@ -456,6 +456,14 @@ export class GameService {
               this.resolveBoardImage(this.pendingBoardName);
               this.pendingBoardName = undefined;
             }
+            // Set default board from game definition if no board has been set yet
+            // (WPF client does this at init via GameBoards[""] — the default board)
+            if (!this.gameState.table.board) {
+              const defaultBoard = gameDef.boards?.[0] ?? gameDef.table?.board;
+              if (defaultBoard?.source) {
+                this.resolveBoardImage(defaultBoard.name || '');
+              }
+            }
             // Update card names and images from now-loaded definitions
             this.updateCardNamesAndImages();
             this.broadcastState();
