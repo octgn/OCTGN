@@ -77,11 +77,13 @@ describe.skipIf(!RUN_INTEGRATION)('INTEGRATION — live feed fetches', () => {
     }
   }, TIMEOUT);
 
-  it('Community Games feed returns games (expect many)', async () => {
+  it('Community Games feed returns all 58 games', async () => {
     const games = await fetchAvailableGames([community]);
-    expect(games.length).toBeGreaterThan(10);
+    // Feed had exactly 58 unique game IDs as of 2026-02. Allow some drift.
+    expect(games.length).toBeGreaterThanOrEqual(50);
     console.log(`Community Games count: ${games.length}`);
-    console.log('First 5:', games.slice(0, 5).map((g) => `${g.name} v${g.version}`));
+    console.log('First 10:', games.slice(0, 10).map((g) => `${g.name} v${g.version} (${g.downloadCount})`));
+    console.log('Last 5:', games.slice(-5).map((g) => `${g.name} v${g.version} (${g.downloadCount})`));
   }, TIMEOUT);
 
   it('The Spoils feed returns games', async () => {
