@@ -21,6 +21,9 @@ interface DefinitionsState {
   setFeedEnabled: (name: string, enabled: boolean) => Promise<void>;
 }
 
+// Monotonically incrementing sequence number — only the latest fetch wins.
+let fetchAvailableSeq = 0;
+
 export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
   // Subscribe to install progress events from main
   if (window.octgn?.onInstallProgress) {
@@ -55,12 +58,20 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
     },
 
     fetchAvailable: async () => {
+      // Claim this sequence slot. If another call comes in while we're awaiting,
+      // it will increment the counter and our result will be discarded.
+      const seq = ++fetchAvailableSeq;
       set({ isLoadingAvailable: true });
       try {
         const games = (await window.octgn.listAvailableGames()) as AvailableGame[];
-        set({ availableGames: games });
-      } finally {
-        set({ isLoadingAvailable: false });
+        // Only commit if no newer fetch has started since we launched
+        if (seq === fetchAvailableSeq) {
+          set({ availableGames: games, isLoadingAvailable: false });
+        }
+      } catch {
+        if (seq === fetchAvailableSeq) {
+          set({ isLoadingAvailable: false });
+        }
       }
     },
 
@@ -103,11 +114,13 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
     },
 
     setFeedEnabled: async (name, enabled) => {
-      await window.octgn.setFeedEnabled(name, enabled);
+      // Optimistic update — flip the toggle immediately so the UI responds instantly
       set((s) => ({
-        feeds: s.feeds.map((f) => f.name === name ? { ...f, enabled } : f),
+        feeds: s.feeds.map((f) => (f.name === name ? { ...f, enabled } : f)),
       }));
-      // Re-fetch available games with the new feed state
+      // Persist to disk (fast local write, non-blocking for UX)
+      await window.octgn.setFeedEnabled(name, enabled);
+      // Re-fetch available games — race-safe because fetchAvailable uses a sequence counter
       get().fetchAvailable();
     },
   };
