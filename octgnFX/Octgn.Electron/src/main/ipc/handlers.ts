@@ -67,6 +67,15 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
           action.faceUp as boolean[],
         );
         break;
+      case 'moveCardsAt':
+        gameService.moveCardsAt(
+          action.cardIds as number[],
+          action.x as number[],
+          action.y as number[],
+          action.indices as number[],
+          action.faceUp as boolean[],
+        );
+        break;
       case 'nextTurn':
         gameService.nextTurn();
         break;
@@ -78,6 +87,38 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
         break;
       case 'setCounter':
         gameService.setCounter(action.counterId as number, action.value as number);
+        break;
+      case 'peekCard':
+        gameService.peekCard(action.cardId as number);
+        break;
+      case 'targetCard':
+        gameService.targetCard(
+          action.cardId as number,
+          action.playerId as number,
+          action.active as boolean,
+        );
+        break;
+      case 'highlightCard':
+        gameService.highlightCard(action.cardId as number, action.color as string);
+        break;
+      case 'addMarker':
+        gameService.addMarker(
+          action.cardId as number,
+          action.markerId as string,
+          action.markerName as string,
+          action.count as number,
+        );
+        break;
+      case 'removeMarker':
+        gameService.removeMarker(
+          action.cardId as number,
+          action.markerId as string,
+          action.markerName as string,
+          action.count as number,
+        );
+        break;
+      case 'shuffleGroup':
+        gameService.shuffleGroup(action.groupId as number);
         break;
     }
   });

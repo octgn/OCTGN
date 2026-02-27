@@ -5,9 +5,10 @@ import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
 import DeckBuilderPage from './pages/DeckBuilderPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfilePage from './pages/ProfilePage';
 import { useAppStore } from './stores/app-store';
 
-type Page = 'login' | 'lobby' | 'game' | 'deck-builder' | 'settings';
+type Page = 'login' | 'lobby' | 'game' | 'deck-builder' | 'settings' | 'profile';
 
 const App: React.FC = () => {
   const currentPage = useAppStore((s) => s.currentPage) as Page;
@@ -24,6 +25,8 @@ const App: React.FC = () => {
         return <DeckBuilderPage />;
       case 'settings':
         return <SettingsPage />;
+      case 'profile':
+        return <ProfilePage />;
       default:
         return <LoginPage />;
     }

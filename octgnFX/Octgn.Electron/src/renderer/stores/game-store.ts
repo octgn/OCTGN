@@ -15,9 +15,30 @@ interface GameStoreActions {
   loadDeck: (deck: Deck) => Promise<void>;
   leaveGame: () => Promise<void>;
   subscribe: () => () => void;
+  // Typed game actions
+  flipCard: (cardId: number, faceUp: boolean) => Promise<void>;
+  rotateCard: (cardId: number, rotation: number) => Promise<void>;
+  moveCards: (cardIds: number[], groupId: number, indices: number[], faceUp: boolean[]) => Promise<void>;
+  moveCardsAt: (cardIds: number[], x: number[], y: number[], indices: number[], faceUp: boolean[]) => Promise<void>;
+  nextTurn: () => Promise<void>;
+  setCounter: (counterId: number, value: number) => Promise<void>;
+  peekCard: (cardId: number) => Promise<void>;
+  targetCard: (cardId: number, playerId: number, active: boolean) => Promise<void>;
+  highlightCard: (cardId: number, color: string) => Promise<void>;
+  addMarker: (cardId: number, markerId: string, markerName: string, count: number) => Promise<void>;
+  removeMarker: (cardId: number, markerId: string, markerName: string, count: number) => Promise<void>;
+  shuffleGroup: (groupId: number) => Promise<void>;
 }
 
 export type GameStore = GameStoreState & GameStoreActions;
+
+const sendTypedAction = async (action: Record<string, unknown>) => {
+  try {
+    await window.octgn.gameAction(action);
+  } catch {
+    // errors handled by store
+  }
+};
 
 export const useGameStore = create<GameStore>()(
   immer((set) => ({
@@ -94,5 +115,24 @@ export const useGameStore = create<GameStore>()(
         });
       };
     },
+
+    // Typed game actions
+    flipCard: (cardId, faceUp) => sendTypedAction({ type: 'flipCard', cardId, faceUp }),
+    rotateCard: (cardId, rotation) => sendTypedAction({ type: 'rotateCard', cardId, rotation }),
+    moveCards: (cardIds, groupId, indices, faceUp) =>
+      sendTypedAction({ type: 'moveCards', cardIds, groupId, indices, faceUp }),
+    moveCardsAt: (cardIds, x, y, indices, faceUp) =>
+      sendTypedAction({ type: 'moveCardsAt', cardIds, x, y, indices, faceUp }),
+    nextTurn: () => sendTypedAction({ type: 'nextTurn' }),
+    setCounter: (counterId, value) => sendTypedAction({ type: 'setCounter', counterId, value }),
+    peekCard: (cardId) => sendTypedAction({ type: 'peekCard', cardId }),
+    targetCard: (cardId, playerId, active) =>
+      sendTypedAction({ type: 'targetCard', cardId, playerId, active }),
+    highlightCard: (cardId, color) => sendTypedAction({ type: 'highlightCard', cardId, color }),
+    addMarker: (cardId, markerId, markerName, count) =>
+      sendTypedAction({ type: 'addMarker', cardId, markerId, markerName, count }),
+    removeMarker: (cardId, markerId, markerName, count) =>
+      sendTypedAction({ type: 'removeMarker', cardId, markerId, markerName, count }),
+    shuffleGroup: (groupId) => sendTypedAction({ type: 'shuffleGroup', groupId }),
   })),
 );
