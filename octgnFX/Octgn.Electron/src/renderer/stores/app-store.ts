@@ -19,38 +19,43 @@ interface AppActions {
 
 export type AppStore = AppState & AppActions;
 
-export const useAppStore = create<AppStore>()((set) => ({
-  currentPage: 'login',
-  version: '',
-  isMaximized: false,
+export const useAppStore = create<AppStore>()((set, get, api) => {
+  if (import.meta.env.DEV && typeof window !== 'undefined') {
+    (window as any).__appStore = api;
+  }
+  return {
+    currentPage: 'login',
+    version: '',
+    isMaximized: false,
 
-  navigate: (page) => {
-    set({ currentPage: page });
-  },
+    navigate: (page) => {
+      set({ currentPage: page });
+    },
 
-  minimize: async () => {
-    await window.octgn.minimize();
-  },
+    minimize: async () => {
+      await window.octgn.minimize();
+    },
 
-  maximize: async () => {
-    await window.octgn.maximize();
-    set((state) => ({ isMaximized: !state.isMaximized }));
-  },
+    maximize: async () => {
+      await window.octgn.maximize();
+      set((state) => ({ isMaximized: !state.isMaximized }));
+    },
 
-  quit: async () => {
-    await window.octgn.quit();
-  },
+    quit: async () => {
+      await window.octgn.quit();
+    },
 
-  loadVersion: async () => {
-    try {
-      const version: string = await window.octgn.getVersion();
-      set({ version });
-    } catch {
-      // Version fetch is non-critical
-    }
-  },
+    loadVersion: async () => {
+      try {
+        const version: string = await window.octgn.getVersion();
+        set({ version });
+      } catch {
+        // Version fetch is non-critical
+      }
+    },
 
-  setMaximized: (maximized) => {
-    set({ isMaximized: maximized });
-  },
-}));
+    setMaximized: (maximized) => {
+      set({ isMaximized: maximized });
+    },
+  };
+});
