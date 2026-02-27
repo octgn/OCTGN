@@ -8,7 +8,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const VITE_PORT = 5173;
+const VITE_PORT = 32456;
 const MAX_RETRIES = 30;
 const RETRY_DELAY = 1000;
 

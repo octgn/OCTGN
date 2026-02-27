@@ -14,7 +14,9 @@ let gameServer: GameServer | null = null;
 let wsBridge: WebSocketBridge | null = null;
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
-const WS_BRIDGE_PORT = 8889;
+const WS_BRIDGE_PORT = 32457;
+const VITE_PORT = 32456;
+const GAME_SERVER_PORT = 32458;
 
 // Data paths
 function getDataPath(): string {
@@ -108,11 +110,11 @@ function createWindow() {
           ...details.responseHeaders,
           'Content-Security-Policy': [
             "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:*; " +
-            "style-src 'self' 'unsafe-inline' http://localhost:* https://fonts.googleapis.com; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:32456; " +
+            "style-src 'self' 'unsafe-inline' http://localhost:32456 https://fonts.googleapis.com; " +
             "font-src 'self' data: https://fonts.gstatic.com; " +
             "img-src 'self' data: https: http:; " +
-            "connect-src 'self' ws://localhost:* http://localhost:* https://www.octgn.net https://*.myget.org"
+            "connect-src 'self' ws://localhost:32456 ws://localhost:32457 http://localhost:* https://www.octgn.net https://*.myget.org"
           ],
         },
       });
@@ -120,31 +122,12 @@ function createWindow() {
   }
 
   if (isDev) {
-    // Vite might be on different ports if others are in use
-    // Try ports 5173-5180
-    const ports = [5173, 5174, 5175, 5176, 5177, 5178, 5179, 5180];
-    
-    const tryLoadUrl = async () => {
-      for (const port of ports) {
-        const url = `http://localhost:${port}`;
-        try {
-          console.log(`[Main] Trying ${url}...`);
-          await mainWindow!.loadURL(url);
-          console.log(`[Main] Successfully loaded ${url}`);
-          return true;
-        } catch (err) {
-          console.log(`[Main] Port ${port} not available`);
-        }
-      }
-      return false;
-    };
-    
-    tryLoadUrl().then(success => {
-      if (!success) {
-        console.error('[Main] Failed to load any Vite port');
-      }
+    // Load from Vite dev server
+    const url = `http://localhost:${VITE_PORT}`;
+    console.log(`[Main] Loading ${url}...`);
+    mainWindow.loadURL(url).catch(err => {
+      console.error(`[Main] Failed to load ${url}:`, err.message);
     });
-    
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));

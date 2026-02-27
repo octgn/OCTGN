@@ -71,7 +71,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isLinux: process.platform === 'linux',
   
   // WebSocket bridge port
-  wsBridgePort: 8889,
+  wsBridgePort: 32457,
+  
+  // Vite dev server port
+  vitePort: 32456,
+  
+  // Game server port
+  gameServerPort: 32458,
   
   // Development mode
   isDev: process.env.NODE_ENV === 'development',

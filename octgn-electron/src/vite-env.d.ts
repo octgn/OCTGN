@@ -127,7 +127,9 @@ interface ElectronAPI {
   isLinux: boolean;
 
   // Config
-  wsBridgePort: 8889;
+  wsBridgePort: 32457;
+  vitePort: 32456;
+  gameServerPort: 32458;
   isDev: boolean;
 }
 

@@ -41,7 +41,7 @@ export function useGameClient(options: UseGameClientOptions = {}): UseGameClient
   const [error, setError] = useState<string | null>(null);
 
   // Get WebSocket bridge port from Electron or use default
-  const bridgePort = window.electronAPI?.wsBridgePort || 8889;
+  const bridgePort = window.electronAPI?.wsBridgePort || 32457;
 
   const sendCommand = useCallback((type: string, payload: any): Promise<any> => {
     return new Promise((resolve, reject) => {
