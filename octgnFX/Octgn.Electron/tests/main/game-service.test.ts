@@ -1127,6 +1127,24 @@ describe('GameService', () => {
       expect(host.isHost).toBe(true);
     });
 
+    it('assigns distinct colors to players based on their ID', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'P1', spectator: false }));
+      newPlayer(msg(MessageType.NewPlayer, { id: 2, nick: 'P2', spectator: false }));
+      newPlayer(msg(MessageType.NewPlayer, { id: 3, nick: 'P3', spectator: false }));
+
+      const state = lastState();
+      const colors = state.players.map((p: any) => p.color);
+      // All three players should have different colors
+      expect(new Set(colors).size).toBe(3);
+      // Colors should not all be the same default blue
+      expect(colors.every((c: string) => c === '#3b82f6')).toBe(false);
+    });
+
     it('does not mark non-id-1 players as host in NewPlayer', async () => {
       const service = await joinedService();
       const welcome = getHandler('Welcome');

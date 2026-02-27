@@ -9,6 +9,30 @@ import { ImageResolver } from '../games/image-resolver';
 import { log, logError } from '../logger';
 
 /**
+ * Distinct player colors indexed by player ID (1-based).
+ * Provides visually distinct colors so players are identifiable
+ * even before the server sends SetPlayerColor.
+ */
+const PLAYER_COLORS = [
+  '#3b82f6', // blue (fallback / index 0)
+  '#ef4444', // red    — player 1
+  '#3b82f6', // blue   — player 2
+  '#22c55e', // green  — player 3
+  '#f59e0b', // amber  — player 4
+  '#a855f7', // purple — player 5
+  '#06b6d4', // cyan   — player 6
+  '#f97316', // orange — player 7
+  '#ec4899', // pink   — player 8
+  '#14b8a6', // teal   — player 9
+  '#eab308', // yellow — player 10
+];
+
+function playerColorById(id: number): string {
+  if (id >= 1 && id < PLAYER_COLORS.length) return PLAYER_COLORS[id];
+  return PLAYER_COLORS[id % PLAYER_COLORS.length];
+}
+
+/**
  * Manages the active game connection and bridges protocol messages
  * to the renderer process via IPC.
  */
@@ -445,7 +469,7 @@ export class GameService {
       const player: Player = {
         id: playerId,
         name: params.nick as string,
-        color: '#3b82f6',
+        color: playerColorById(playerId),
         isHost: playerId === 1,
         isSpectator: (params.spectator as boolean) ?? false,
         invertedTable: (params.tableSide as boolean) ?? false,
@@ -1068,7 +1092,7 @@ export class GameService {
       return {
         id: p.Id,
         name: p.Nickname ?? `Player ${p.Id}`,
-        color: p.Color ?? '#3b82f6',
+        color: p.Color ?? playerColorById(p.Id),
         isHost: false,
         isSpectator: false,
         invertedTable: false,

@@ -260,25 +260,30 @@ const PreGameLobby: React.FC<PreGameLobbyProps> = ({ gameState }) => {
               </div>
 
               <div className="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs">
-                {gameState.chatMessages.map((msg: ChatMessage) => (
-                  <div
-                    key={msg.id}
-                    className={clsx(
-                      'leading-relaxed break-words',
-                      msg.isSystem ? 'text-octgn-text-dim italic' : 'text-octgn-text'
-                    )}
-                  >
-                    {!msg.isSystem && (
-                      <span
-                        className="font-semibold mr-1"
-                        style={{ color: msg.color || '#9ca3af' }}
-                      >
-                        {msg.playerName}:
-                      </span>
-                    )}
-                    {msg.message}
-                  </div>
-                ))}
+                {gameState.chatMessages.map((msg: ChatMessage) => {
+                  const senderColor = msg.color
+                    || gameState.players.find(p => p.id === msg.playerId)?.color
+                    || '#9ca3af';
+                  return (
+                    <div
+                      key={msg.id}
+                      className={clsx(
+                        'leading-relaxed break-words',
+                        msg.isSystem ? 'text-octgn-text-dim italic' : 'text-octgn-text'
+                      )}
+                    >
+                      {!msg.isSystem && (
+                        <span
+                          className="font-semibold mr-1"
+                          style={{ color: senderColor }}
+                        >
+                          {msg.playerName}:
+                        </span>
+                      )}
+                      {msg.message}
+                    </div>
+                  );
+                })}
                 <div ref={chatEndRef} />
               </div>
 
