@@ -3,6 +3,7 @@ import { GameConnection } from '../protocol/connection';
 import { MessageType } from '../protocol/types';
 import type { GameState, ChatMessage, Player, Card } from '../../shared/types';
 import { IPC_CHANNELS } from '../../shared/types';
+import { ScriptEngine } from '../scripting/script-engine';
 
 /**
  * Manages the active game connection and bridges protocol messages
@@ -14,6 +15,7 @@ export class GameService {
   private localPlayerId: number = 0;
   private chatMessages: ChatMessage[] = [];
   private chatIdCounter: number = 0;
+  private scriptEngine: ScriptEngine = new ScriptEngine();
 
   /**
    * Join a game server and start receiving state updates.
@@ -244,6 +246,24 @@ export class GameService {
     });
   }
 
+  /**
+   * Execute a script function via RemoteCall.
+   */
+  executeScript(functionName: string, args: string = ''): void {
+    this.connection?.sendMessage(MessageType.RemoteCall, 0, {
+      player: this.localPlayerId,
+      function: functionName,
+      args,
+    });
+  }
+
+  /**
+   * Get the script engine instance.
+   */
+  getScriptEngine(): ScriptEngine {
+    return this.scriptEngine;
+  }
+
   get isConnected(): boolean {
     return this.connection?.isConnected ?? false;
   }
@@ -454,6 +474,20 @@ export class GameService {
       const name = this.getPlayerName(params.player as number);
       this.addSystemMessage(`${name} disconnected`);
       this.broadcastState();
+    });
+
+    // RemoteCall - script function execution from server
+    this.connection.on('RemoteCall', (params: Record<string, unknown>) => {
+      const playerId = params.player as number;
+      const functionName = params.function as string;
+      const args = params.args as string;
+
+      const result = this.scriptEngine.handleRemoteCall(playerId, functionName, args);
+
+      if (!result.success) {
+        this.addSystemMessage(`Script error: ${result.error}`);
+        this.broadcastState();
+      }
     });
 
     // Game state sync (from another player or server)

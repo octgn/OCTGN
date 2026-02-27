@@ -240,4 +240,8 @@ export const IPC_CHANNELS = {
   APP_MINIMIZE: 'app:minimize',
   APP_MAXIMIZE: 'app:maximize',
   OPEN_FILE_DIALOG: 'app:open-file-dialog',
+
+  // Scripting
+  SCRIPT_EVENT: 'script:event',
+  SCRIPT_EXECUTE: 'script:execute',
 } as const;

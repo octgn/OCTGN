@@ -185,4 +185,12 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   ipcMain.handle(IPC_CHANNELS.APP_VERSION, () => {
     return app.getVersion();
   });
+
+  // Script execution handler
+  ipcMain.handle(
+    IPC_CHANNELS.SCRIPT_EXECUTE,
+    async (_event, functionName: string, args: string = '') => {
+      gameService.executeScript(functionName, args);
+    },
+  );
 }

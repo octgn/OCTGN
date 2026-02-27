@@ -38,6 +38,15 @@ const api = {
   // File dialog
   openFileDialog: (filters?: { name: string; extensions: string[] }[]) =>
     ipcRenderer.invoke(IPC_CHANNELS.OPEN_FILE_DIALOG, filters),
+
+  // Scripting
+  executeScript: (functionName: string, args?: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SCRIPT_EXECUTE, functionName, args ?? ''),
+  onScriptEvent: (callback: (event: unknown) => void) => {
+    const listener = (_event: unknown, data: unknown) => callback(data);
+    ipcRenderer.on(IPC_CHANNELS.SCRIPT_EVENT, listener);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.SCRIPT_EVENT, listener);
+  },
 };
 
 contextBridge.exposeInMainWorld('octgn', api);
