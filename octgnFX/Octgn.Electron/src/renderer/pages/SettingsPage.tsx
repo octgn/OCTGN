@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { clsx } from 'clsx';
 import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
+import Input from '../components/Input';
 import { useAppStore } from '../stores/app-store';
 import { useAuthStore } from '../stores/auth-store';
+import { useSettingsStore } from '../stores/settings-store';
 
-type SettingsTab = 'account' | 'game' | 'display' | 'audio';
+type SettingsTab = 'account' | 'game' | 'display' | 'audio' | 'network' | 'defaults';
 
 interface ToggleProps {
   label: string;
@@ -91,38 +93,19 @@ const SliderField: React.FC<SliderFieldProps> = ({ label, value, min, max, onCha
 const SettingsPage: React.FC = () => {
   const navigate = useAppStore((s) => s.navigate);
   const user = useAuthStore((s) => s.user);
+  const settings = useSettingsStore();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('account');
 
-  // Settings state (local for now, will be persisted via store later)
-  const [settings, setSettings] = useState({
-    // Game
-    autoConfirmActions: false,
-    enableAnimations: true,
-    showCardPreviews: true,
-    cardPreviewSize: 'medium',
-    // Display
-    uiScale: '100',
-    theme: 'dark',
-    reducedMotion: false,
-    showFps: false,
-    // Audio
-    masterVolume: 80,
-    sfxVolume: 70,
-    musicVolume: 40,
-    muteOnMinimize: true,
-    chatSounds: true,
-  });
+  const update = settings.update;
 
-  const update = <K extends keyof typeof settings>(key: K, value: (typeof settings)[K]) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const tabs: { id: SettingsTab; label: string }[] = [
-    { id: 'account', label: 'Account' },
-    { id: 'game', label: 'Game' },
-    { id: 'display', label: 'Display' },
-    { id: 'audio', label: 'Audio' },
+  const tabs: { id: SettingsTab; label: string; icon: React.FC }[] = [
+    { id: 'account', label: 'Account', icon: AccountIcon },
+    { id: 'game', label: 'Game', icon: GameIcon },
+    { id: 'display', label: 'Display', icon: DisplayIcon },
+    { id: 'audio', label: 'Audio', icon: AudioIcon },
+    { id: 'network', label: 'Network', icon: NetworkIcon },
+    { id: 'defaults', label: 'Game Defaults', icon: DefaultsIcon },
   ];
 
   return (
@@ -149,12 +132,13 @@ const SettingsPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={clsx(
-                'w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-150',
+                'w-full flex items-center gap-2.5 text-left px-3 py-2 rounded-lg text-sm transition-all duration-150',
                 activeTab === tab.id
                   ? 'bg-octgn-primary/10 text-octgn-primary font-medium'
                   : 'text-octgn-text-muted hover:bg-white/5 hover:text-octgn-text'
               )}
             >
+              <tab.icon />
               {tab.label}
             </button>
           ))}
@@ -244,6 +228,15 @@ const SettingsPage: React.FC = () => {
                 <SectionTitle>Interface</SectionTitle>
                 <div className="divide-y divide-octgn-border/20">
                   <SelectField
+                    label="Theme"
+                    value={settings.theme}
+                    options={[
+                      { value: 'dark', label: 'Dark' },
+                      { value: 'light', label: 'Light (Coming Soon)' },
+                    ]}
+                    onChange={(v) => update('theme', v)}
+                  />
+                  <SelectField
                     label="UI Scale"
                     value={settings.uiScale}
                     options={[
@@ -314,6 +307,73 @@ const SettingsPage: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {activeTab === 'network' && (
+              <div className="animate-fade-in">
+                <SectionTitle>Server Connection</SectionTitle>
+                <GlassPanel variant="light" padding="md" glow="none" className="space-y-4">
+                  <Input
+                    label="Server URL"
+                    value={settings.serverUrl}
+                    onChange={(e) => update('serverUrl', e.target.value)}
+                  />
+                  <p className="text-xs text-octgn-text-dim">
+                    The OCTGN server endpoint used for matchmaking and game hosting.
+                    Only change this if you are connecting to a custom server.
+                  </p>
+                </GlassPanel>
+
+                <Divider />
+                <SectionTitle>Connection Status</SectionTitle>
+                <GlassPanel variant="light" padding="md" glow="none">
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-octgn-success animate-pulse" />
+                    <p className="text-sm text-octgn-text">Connected</p>
+                    <span className="text-xs text-octgn-text-dim ml-auto font-mono">
+                      {settings.serverUrl}
+                    </span>
+                  </div>
+                </GlassPanel>
+              </div>
+            )}
+
+            {activeTab === 'defaults' && (
+              <div className="animate-fade-in">
+                <SectionTitle>Game Defaults</SectionTitle>
+                <p className="text-xs text-octgn-text-dim mb-4">
+                  These settings apply as defaults when joining or creating a new game.
+                </p>
+                <div className="divide-y divide-octgn-border/20">
+                  <Toggle
+                    label="Auto-pass priority"
+                    description="Automatically pass when you have no available actions"
+                    checked={settings.autoPass}
+                    onChange={(v) => update('autoPass', v)}
+                  />
+                  <SelectField
+                    label="Animation speed"
+                    value={settings.animationSpeed}
+                    options={[
+                      { value: 'slow', label: 'Slow' },
+                      { value: 'normal', label: 'Normal' },
+                      { value: 'fast', label: 'Fast' },
+                      { value: 'instant', label: 'Instant' },
+                    ]}
+                    onChange={(v) => update('animationSpeed', v)}
+                  />
+                </div>
+
+                <Divider />
+                <SectionTitle>Reset</SectionTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => useSettingsStore.getState().reset()}
+                >
+                  Reset All Settings to Defaults
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -321,7 +381,7 @@ const SettingsPage: React.FC = () => {
   );
 };
 
-/* ── Small helper components ───────────────────────────────────────── */
+/* -- Small helper components ------------------------------------------------ */
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -333,6 +393,63 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 function Divider() {
   return <div className="my-6 border-t border-octgn-border/20" />;
+}
+
+/* -- Inline SVG icons ------------------------------------------------------- */
+
+function AccountIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="5" r="3" />
+      <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" />
+    </svg>
+  );
+}
+
+function GameIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="4" width="14" height="9" rx="2" />
+      <path d="M5 7v3M3.5 8.5h3M10.5 7.5h.01M12.5 9.5h.01" />
+    </svg>
+  );
+}
+
+function DisplayIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="2" width="14" height="10" rx="1.5" />
+      <path d="M5 14h6M8 12v2" />
+    </svg>
+  );
+}
+
+function AudioIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h2l3-3v10L5 10H3a1 1 0 01-1-1V7a1 1 0 011-1z" />
+      <path d="M11 5a4 4 0 010 6M13 3a7 7 0 010 10" />
+    </svg>
+  );
+}
+
+function NetworkIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="8" r="6.5" />
+      <path d="M1.5 8h13M8 1.5c-2 2-3 4-3 6.5s1 4.5 3 6.5M8 1.5c2 2 3 4 3 6.5s-1 4.5-3 6.5" />
+    </svg>
+  );
+}
+
+function DefaultsIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 4h12M2 8h8M2 12h5" />
+      <circle cx="13" cy="10" r="2" />
+      <path d="M13 8v-.5M13 12.5v-.5M11.27 9l-.43-.25M15.16 11.25l-.43-.25M11.27 11l-.43.25M15.16 8.75l-.43.25" />
+    </svg>
+  );
 }
 
 export default SettingsPage;
