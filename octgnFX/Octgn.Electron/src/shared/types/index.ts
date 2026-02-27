@@ -229,6 +229,9 @@ export interface GameState {
   chatMessages: ChatMessage[];
   isStarted: boolean;
   useTwoSidedTable?: boolean;
+  allowSpectators?: boolean;
+  muteSpectators?: boolean;
+  allowCardList?: boolean;
   connectionStatus?: 'connected' | 'disconnected' | 'reconnecting';
   globalVariables?: Record<string, string>;
   /** Default card size from game definition (in mm) */
@@ -312,6 +315,10 @@ export const IPC_CHANNELS = {
   GAME_ACTION: 'game:action',
   GAME_CHAT: 'game:chat',
   LOAD_DECK: 'game:load-deck',
+  GAME_SETTINGS: 'game:settings',
+  GAME_PLAYER_SETTINGS: 'game:player-settings',
+  GAME_BOOT_PLAYER: 'game:boot-player',
+  GAME_START: 'game:start',
 
   // App
   APP_VERSION: 'app:version',

@@ -273,6 +273,46 @@ export class GameService {
   }
 
   /**
+   * Send game settings (host only).
+   */
+  sendSettings(twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean): void {
+    this.connection?.sendMessage(MessageType.Settings, 0, {
+      twoSidedTable,
+      allowSpectators,
+      muteSpectators,
+      allowCardList,
+    });
+  }
+
+  /**
+   * Send player settings (side/spectator toggle).
+   */
+  sendPlayerSettings(playerId: number, invertedTable: boolean, spectator: boolean): void {
+    this.connection?.sendMessage(MessageType.PlayerSettings, 0, {
+      playerId,
+      invertedTable,
+      spectator,
+    });
+  }
+
+  /**
+   * Boot (kick) a player from the game (host only).
+   */
+  bootPlayer(playerId: number, reason: string = ''): void {
+    this.connection?.sendMessage(MessageType.Boot, 0, {
+      player: playerId,
+      reason,
+    });
+  }
+
+  /**
+   * Start the game (host only).
+   */
+  startGame(): void {
+    this.connection?.sendMessage(MessageType.Start, 0, {});
+  }
+
+  /**
    * Get the script engine instance.
    */
   getScriptEngine(): ScriptEngine {
@@ -345,6 +385,11 @@ export class GameService {
         params.gameSessionId as string,
         params.gameName as string,
       );
+      // Player ID 1 is the host
+      if (this.localPlayerId === 1) {
+        const localPlayer = this.gameState!.players.find(p => p.id === this.localPlayerId);
+        if (localPlayer) localPlayer.isHost = true;
+      }
       this.broadcastState();
 
       // Load card definitions in the background
@@ -396,11 +441,12 @@ export class GameService {
     this.connection.on('NewPlayer', (msg: ProtocolMessage) => {
       const params = this.p(msg);
       if (!this.gameState) return;
+      const playerId = params.id as number;
       const player: Player = {
-        id: params.id as number,
+        id: playerId,
         name: params.nick as string,
         color: '#3b82f6',
-        isHost: false,
+        isHost: playerId === 1,
         isSpectator: (params.spectator as boolean) ?? false,
         invertedTable: (params.tableSide as boolean) ?? false,
         groups: [],
@@ -478,8 +524,11 @@ export class GameService {
       if (!this.gameState) {
         this.initializeGameState('', '');
       }
-      log('GAME', `Settings: twoSided=${params.twoSidedTable} spectators=${params.allowSpectators} mute=${params.muteSpectators}`);
+      log('GAME', `Settings: twoSided=${params.twoSidedTable} spectators=${params.allowSpectators} mute=${params.muteSpectators} cardList=${params.allowCardList}`);
       this.gameState!.useTwoSidedTable = params.twoSidedTable as boolean;
+      this.gameState!.allowSpectators = (params.allowSpectators as boolean) ?? false;
+      this.gameState!.muteSpectators = (params.muteSpectators as boolean) ?? false;
+      this.gameState!.allowCardList = (params.allowCardList as boolean) ?? false;
       this.broadcastState();
     });
 
