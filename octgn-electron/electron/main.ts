@@ -51,13 +51,17 @@ function getDecksPath(): string {
 }
 
 function createWindow() {
+  // Check for icon file (may not exist in dev)
+  const iconPath = path.join(__dirname, 'assets', 'icon.png');
+  const iconExists = fs.existsSync(iconPath);
+
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
     minWidth: 1024,
     minHeight: 768,
     title: 'OCTGN',
-    icon: path.join(__dirname, 'assets/icon.png'),
+    ...(iconExists ? { icon: iconPath } : {}),
     backgroundColor: '#171717',
     webPreferences: {
       nodeIntegration: false,
@@ -84,6 +88,25 @@ function createWindow() {
     }
     return { action: 'deny' };
   });
+
+  // Set Content Security Policy for dev mode
+  if (isDev) {
+    mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': [
+            "default-src 'self'; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173; " +
+            "style-src 'self' 'unsafe-inline' http://localhost:5173; " +
+            "img-src 'self' data: https: http:; " +
+            "font-src 'self' data:; " +
+            "connect-src 'self' ws://localhost:* http://localhost:* https://www.octgn.net https://*.myget.org"
+          ],
+        },
+      });
+    });
+  }
 }
 
 // ============================================
