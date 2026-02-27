@@ -1,37 +1,55 @@
 # OCTGN Electron Client
 
-Cross-platform Electron client for OCTGN (Online Card and Tabletop Gaming Network).
+Cross-platform OCTGN (Online Card and Tabletop Gaming Network) client built with Electron, React, and Tailwind CSS.
 
-![OCTGN Electron](./build/icon.svg)
+![OCTGN Electron](./screenshot.png)
 
 ## Features
 
-- 🎮 **Game Table**: Interactive canvas-based game table with pan/zoom
-- 🃏 **Deck Editor**: Build and manage your decks with card sections
-- 📦 **Game Library**: Browse and install card games
-- 💬 **Chat**: In-game chat support
-- 🌍 **Cross-Platform**: Windows, macOS, and Linux
-- 🔌 **Protocol Compatible**: Works with existing OCTGN clients
+### 🎮 Full Cross-Platform Support
+- **Windows** - NSIS installer + portable
+- **macOS** - DMG + ZIP (Intel & Apple Silicon)
+- **Linux** - AppImage, DEB, tar.gz
 
-## Quick Start
+### 🎨 Modern UI
+- Dark theme matching original OCTGN aesthetic
+- Glassmorphism effects with purple highlights
+- Smooth animations and transitions
+- Responsive layout
 
-### Windows (Easy Launch)
-```powershell
-# From the repository root, simply run:
-.\launch.ps1
+### 🌐 Real OCTGN.net Integration
+- Login to real OCTGN.net servers
+- Browse hosted games
+- Game library with MyGet feeds
+- User statistics
 
-# Or double-click launch.bat
-```
+### 🃏 Deck Editor
+- Create and edit decks
+- Save/load to .o8d format
+- Card search and filtering
+- Section management (Main, Sideboard, Commander)
+- Export to text
 
-Options:
-```powershell
-.\launch.ps1              # Development mode
-.\launch.ps1 -Production  # Production build
-.\launch.ps1 -Install     # Reinstall dependencies
-.\launch.ps1 -Build       # Build before launching
-```
+### 🎲 Game Table
+- Canvas-based rendering
+- Pan and zoom controls
+- Card drag and drop
+- Context menus
+- Player hands
+- Turn indicators
+- Chat system
 
-### Manual Setup
+### 💾 Local Play
+- Offline mode with demo cards
+- No server required
+- Perfect for testing
+
+## Installation
+
+### Download Release
+Download the latest release for your platform from [GitHub Releases](https://github.com/octgn/OCTGN/releases).
+
+### Build from Source
 
 ```bash
 # Clone the repository
@@ -41,248 +59,163 @@ cd OCTGN/octgn-electron
 # Install dependencies
 npm install
 
-# Start development server
+# Development
 npm run dev
 
 # Build for production
 npm run build
 
 # Package for distribution
-npm run dist
+npm run dist          # Current platform
+npm run dist:win      # Windows
+npm run dist:mac      # macOS
+npm run dist:linux    # Linux
 ```
 
-## Architecture
-
-### Frontend (Electron + React + Tailwind)
-- **React 18** with hooks and Zustand state management
-- **Tailwind CSS** for styling
-- **Canvas 2D** for game table rendering
-- **WebSocket** for realtime communication
-
-### Backend (Node.js + TypeScript)
-- TCP game server compatible with existing clients
-- Binary protocol implementation (110+ methods)
-- Game state management and synchronization
-- Player connection handling
-
-### Project Structure
-```
-octgn-electron/
-├── electron/           # Main process code
-│   ├── main.ts         # Electron entry point
-│   ├── preload.ts      # Context bridge
-│   └── server/         # Game server
-│       ├── GameServer.ts
-│       ├── GameClient.ts
-│       ├── GameState.ts
-│       ├── Player.ts
-│       ├── BinaryProtocol.ts
-│       └── WebSocketBridge.ts
-│
-├── src/                # Renderer process
-│   ├── components/     # React components
-│   ├── pages/          # Route pages
-│   ├── stores/         # Zustand stores
-│   ├── hooks/          # Custom hooks
-│   ├── types/          # TypeScript types
-│   └── utils/          # Utilities
-│
-└── build/              # Build resources
-```
-
-## Components
-
-### Game Components
-- **GameCanvas**: Canvas-based table rendering
-- **Card**: Card display with face up/down, markers, highlights
-- **CardPile**: Stacked/fanned card groups
-- **PlayerHand**: Fan-style hand display
-- **CardZoom**: Hover card preview
-
-### UI Components
-- **Layout**: Main app layout with sidebar
-- **Modal**: Dialog component
-- **Button**: Styled button with variants
-- **ContextMenu**: Right-click menu with submenus
-- **PlayerList**: Connected players display
-- **TurnIndicator**: Turn and phase tracking
-- **CounterPanel**: Game counter management
-
-### Dialogs
-- **HostGameModal**: Game hosting configuration
-- **JoinGameModal**: Server connection dialog
-
-## Utilities
-
-### deckParser
-Parse and serialize OCTGN deck files (.o8d)
-
-```typescript
-import { parseDeck, serializeDeck } from './utils';
-
-const deck = parseDeck(xmlString);
-const xml = serializeDeck(deck);
-```
-
-### soundManager
-Audio playback with generated placeholder sounds
-
-```typescript
-import { soundManager } from './utils';
-
-soundManager.play('cardflip');
-soundManager.play('shuffle');
-```
-
-### gamePackage
-Load and parse game definition files (.o8g)
-
-```typescript
-import { parseGameDefinition } from './utils';
-
-const gameDef = parseGameDefinition(xmlString);
-```
-
-### GameStateSerializer
-Save and load game state
-
-```typescript
-import { GameStateSerializer } from './utils';
-
-await GameStateSerializer.saveToFile(data);
-const state = await GameStateSerializer.loadFromFile();
-```
-
-### TableRenderer
-Canvas-based table rendering
-
-```typescript
-import { TableRenderer } from './utils';
-
-const renderer = new TableRenderer(ctx);
-renderer.renderBackground(panOffset, zoom);
-renderer.renderCard(card, panOffset, zoom, isSelected, isHovered);
-```
-
-## Hooks
-
-### useGameClient
-React hook for game server communication
-
-```typescript
-const { connected, connect, sendChat, moveCards } = useGameClient({
-  onChat: (data) => { },
-  onPlayerJoined: (data) => { },
-});
-```
-
-### useKeyboardShortcuts
-Global keyboard shortcut handling
-
-```typescript
-useKeyboardShortcuts([
-  { key: 'f', action: () => flipCards() },
-  { key: 'r', action: () => rotateCards() },
-]);
-```
-
-### useCardSelection
-Card selection with click/shift-click/box
-
-```typescript
-const { selectedIds, handleCardClick, clearSelection } = useCardSelection(cards);
-```
-
-## Protocol
-
-This client implements the OCTGN binary wire protocol for compatibility:
-- Message format: `[4-byte length][4-byte muted][1-byte method][args...]`
-- All 110+ protocol methods defined
-- BinaryReader/BinaryWriter helper classes
-
-### Supported Methods
-- Card operations: Move, Turn, Rotate, Target, Highlight
-- Deck operations: Load, Shuffle
-- Player operations: Join, Leave, Ready
-- Game operations: Start, Reset, NextTurn, SetPhase
-- Communication: Chat, Print
-
-## Building
+## Development
 
 ### Prerequisites
 - Node.js 18+
 - npm 9+
 
-### Development
-```bash
-npm run dev
+### Project Structure
+
+```
+octgn-electron/
+├── electron/
+│   ├── main.ts              # Electron main process
+│   ├── preload.ts           # Preload script (IPC bridge)
+│   ├── server/              # Game server components
+│   │   ├── GameServer.ts    # Local game server
+│   │   ├── GameClient.ts    # Game client
+│   │   ├── BinaryProtocol.ts # Protocol implementation
+│   │   └── WebSocketBridge.ts # Renderer-main bridge
+│   └── assets/              # Application assets
+├── src/
+│   ├── components/          # React components
+│   │   ├── Layout.tsx
+│   │   ├── GameCanvas.tsx
+│   │   ├── Modal.tsx
+│   │   └── ...
+│   ├── pages/               # Page components
+│   │   ├── HomePage.tsx
+│   │   ├── PlayPage.tsx
+│   │   ├── GameTablePage.tsx
+│   │   └── ...
+│   ├── stores/              # Zustand state stores
+│   ├── services/            # API services
+│   ├── hooks/               # Custom React hooks
+│   ├── utils/               # Utility functions
+│   └── types/               # TypeScript types
+├── dist/                    # Build output
+└── release/                 # Packaged applications
 ```
 
-### Production Build
-```bash
-# Build renderer and main process
-npm run build
+### Available Scripts
 
-# Package for current platform
-npm run pack
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (renderer + main) |
+| `npm run dev:renderer` | Start Vite dev server for renderer |
+| `npm run dev:main` | Watch and compile main process |
+| `npm run build` | Build for production |
+| `npm run start` | Run the built application |
+| `npm run dist` | Package distributable |
+| `npm run pack` | Package without creating installer |
 
-# Create distributable
-npm run dist
+## Technology Stack
 
-# Platform-specific builds
-npm run dist:linux
-npm run dist:mac
-npm run dist:win
-```
+- **Electron** - Cross-platform desktop framework
+- **React** - UI components
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Vite** - Build tooling
+- **Zustand** - State management
+- **WebSocket** - Real-time communication
 
-### Build Output
-- **Windows**: NSIS installer, portable executable
-- **macOS**: DMG, ZIP (x64, arm64)
-- **Linux**: AppImage, DEB, tar.gz
+## OCTGN Compatibility
+
+This client maintains compatibility with the existing OCTGN ecosystem:
+
+- **Binary Protocol** - Full implementation of 110+ protocol methods
+- **Game Packages** - Compatible with existing .nupkg game definitions
+- **Deck Format** - Standard .o8d XML deck format
+- **Network** - Can connect to existing OCTGN servers
 
 ## Configuration
 
-### Environment Variables
+### User Data
+Application data is stored in:
+- **Windows**: `%APPDATA%\octgn-electron\octgn-data\`
+- **macOS**: `~/Library/Application Support/octgn-electron/octgn-data/`
+- **Linux**: `~/.config/octgn-electron/octgn-data/`
+
+### Data Structure
 ```
-VITE_APP_TITLE=OCTGN
-VITE_WS_BRIDGE_PORT=8889
+octgn-data/
+├── games/        # Installed game packages
+│   ├── magic/
+│   ├── pokemon/
+│   └── ...
+└── decks/        # Saved decks
+    ├── deck1.o8d
+    └── ...
 ```
 
-### Electron Builder
-See `electron-builder.yml` for build configuration.
+## API Integration
+
+### OCTGN.net API
+- Base URL: `https://www.octgn.net`
+- Login: `POST /api/sessions`
+- Games: `GET /api/game`
+- Stats: `GET /api/stats/UsersOnlineNow`
+
+### Game Feeds
+- Official: `https://www.myget.org/F/octgngames/`
+- Community: `https://www.myget.org/f/octgngamedirectory`
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| F | Flip selected cards |
-| R | Rotate selected cards 90° |
-| Delete | Delete selected cards |
-| H | Toggle hand visibility |
-| C | Toggle chat visibility |
-| Ctrl+S | Save game |
-| Ctrl+O | Load game |
-| Ctrl++ | Zoom in |
-| Ctrl+- | Zoom out |
-| Ctrl+0 | Reset zoom |
-| Escape | Clear selection |
-
-## License
-
-AGPL-3.0
-
-## Credits
-
-- OCTGN Community
-- Based on [OCTGN](https://github.com/octgn/OCTGN)
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Z` | Undo |
+| `Ctrl+Y` | Redo |
+| `Ctrl+C` | Copy |
+| `Ctrl+V` | Paste |
+| `Ctrl+A` | Select All |
+| `Delete` | Delete selected |
+| `+` / `=` | Zoom in |
+| `-` | Zoom out |
+| `0` | Reset zoom |
+| `C` | Toggle chat |
+| `H` | Toggle hand |
+| `Escape` | Clear selection |
+| `F11` | Toggle fullscreen |
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+AGPL-3.0 - See [LICENSE](../LICENSE) for details.
+
+## Credits
+
+- Original OCTGN - [octgn.net](https://octgn.net)
+- Community contributors
+- Game developers
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/octgn/OCTGN/issues)
+- **Discord**: [OCTGN Community](https://discord.gg/clawd)
+- **Wiki**: [Documentation](https://docs.octgn.net)
 
 ---
 
-*Built with ❤️ by the OCTGN community*
+Built with ❤️ by the OCTGN Community

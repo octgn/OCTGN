@@ -57,6 +57,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // ============================================
   openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
   
+  // Window controls
+  toggleFullscreen: () => ipcRenderer.invoke('toggle-fullscreen'),
+  setFullscreen: (fullscreen: boolean) => ipcRenderer.invoke('set-fullscreen', fullscreen),
+  minimize: () => ipcRenderer.invoke('minimize-window'),
+  maximize: () => ipcRenderer.invoke('maximize-window'),
+  quit: () => ipcRenderer.invoke('quit-app'),
+  
   // Platform info
   platform: process.platform,
   isMac: process.platform === 'darwin',

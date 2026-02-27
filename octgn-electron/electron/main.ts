@@ -303,6 +303,48 @@ ipcMain.handle('open-external', async (_, url: string) => {
   return { success: true };
 });
 
+// Window controls
+ipcMain.handle('toggle-fullscreen', async () => {
+  if (mainWindow) {
+    mainWindow.setFullScreen(!mainWindow.isFullScreen());
+    return { success: true, fullscreen: mainWindow.isFullScreen() };
+  }
+  return { success: false, error: 'No window' };
+});
+
+ipcMain.handle('set-fullscreen', async (_, fullscreen: boolean) => {
+  if (mainWindow) {
+    mainWindow.setFullScreen(fullscreen);
+    return { success: true };
+  }
+  return { success: false, error: 'No window' };
+});
+
+ipcMain.handle('minimize-window', async () => {
+  if (mainWindow) {
+    mainWindow.minimize();
+    return { success: true };
+  }
+  return { success: false };
+});
+
+ipcMain.handle('maximize-window', async () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+    return { success: true, maximized: mainWindow.isMaximized() };
+  }
+  return { success: false };
+});
+
+ipcMain.handle('quit-app', async () => {
+  app.quit();
+  return { success: true };
+});
+
 // Helper functions
 function downloadFile(url: string, destPath: string): Promise<void> {
   return new Promise((resolve, reject) => {

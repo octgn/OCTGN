@@ -113,6 +113,13 @@ interface ElectronAPI {
   // Utilities
   openExternal: (url: string) => Promise<{ success: boolean }>;
 
+  // Window Controls
+  toggleFullscreen: () => Promise<{ success: boolean; fullscreen?: boolean; error?: string }>;
+  setFullscreen: (fullscreen: boolean) => Promise<{ success: boolean; error?: string }>;
+  minimize: () => Promise<{ success: boolean }>;
+  maximize: () => Promise<{ success: boolean; maximized?: boolean }>;
+  quit: () => Promise<{ success: boolean }>;
+
   // Platform
   platform: 'win32' | 'darwin' | 'linux' | string;
   isMac: boolean;

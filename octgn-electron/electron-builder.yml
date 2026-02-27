@@ -1,21 +1,28 @@
-appId: net.octgn.electron
+appId: ai.octgn.electron
 productName: OCTGN
-copyright: Copyright © 2024 OCTGN Community
+copyright: Copyright © 2026 OCTGN Community
 
 directories:
   output: release
-  buildResources: build
+  buildResources: electron/assets
 
 files:
   - dist/**/*
-  - node_modules/**/*
   - package.json
+  - "!**/*.map"
+  - "!**/*.ts"
+  - "!src/**/*"
+  - "!node_modules/.cache/**/*"
+  - "!node_modules/typescript/**/*"
+  - "!node_modules/@types/**/*"
 
-extraMetadata:
-  main: dist/main.js
+extraResources:
+  - from: electron/assets
+    to: assets
+    filter:
+      - "**/*"
 
 win:
-  icon: build/icon.ico
   target:
     - target: nsis
       arch:
@@ -24,20 +31,19 @@ win:
     - target: portable
       arch:
         - x64
+  icon: electron/assets/icon.ico
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  installerIcon: build/icon.ico
-  uninstallerIcon: build/icon.ico
-  installerHeaderIcon: build/icon.ico
-  createDesktopShortcut: true
+  installerIcon: electron/assets/icon.ico
+  uninstallerIcon: electron/assets/icon.ico
+  installerHeaderIcon: electron/assets/icon.ico
+  createDesktopShortcut: always
   createStartMenuShortcut: true
   shortcutName: OCTGN
 
 mac:
-  icon: build/icon.icns
-  category: public.app-category.games
   target:
     - target: dmg
       arch:
@@ -47,33 +53,50 @@ mac:
       arch:
         - x64
         - arm64
-
-dmg:
-  icon: build/icon.icns
-  sign: false
+  icon: electron/assets/icon.icns
+  category: public.app-category.games
+  hardenedRuntime: true
+  gatekeeperAssess: false
 
 linux:
-  icon: build/icons
-  category: Game
   target:
     - target: AppImage
       arch:
         - x64
-        - arm64
     - target: deb
       arch:
         - x64
+        - arm64
     - target: tar.gz
       arch:
         - x64
+  icon: electron/assets/icons
+  category: Game
+  maintainer: OCTGN Community
+  desktop:
+    Name: OCTGN
+    Comment: Online Card and Tabletop Gaming Network
+    Categories: Game;CardGame;
+
+dmg:
+  background: electron/assets/dmg-background.png
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 140
+      y: 180
+      type: file
+    - x: 400
+      y: 180
+      type: link
+      path: /Applications
 
 appImage:
   systemIntegration: ask
-
-deb:
-  priority: optional
 
 publish:
   provider: github
   owner: octgn
   repo: OCTGN
+  releaseType: draft

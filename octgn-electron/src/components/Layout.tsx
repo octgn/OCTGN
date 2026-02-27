@@ -1,17 +1,43 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useEffect } from 'react';
 
 const navItems = [
   { path: '/', label: 'Home', icon: '🏠', auth: true },
   { path: '/games', label: 'Games', icon: '📦', auth: true },
   { path: '/deckeditor', label: 'Deck Editor', icon: '🃏', auth: false },
   { path: '/play', label: 'Play', icon: '🎮', auth: true },
+  { path: '/play/local', label: 'Local Game', icon: '🎲', auth: false },
   { path: '/settings', label: 'Settings', icon: '⚙️', auth: true },
 ];
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // F11 - Toggle fullscreen
+      if (e.key === 'F11') {
+        e.preventDefault();
+        if (window.electronAPI?.toggleFullscreen) {
+          window.electronAPI.toggleFullscreen();
+        }
+      }
+      
+      // Ctrl+Q - Quit
+      if (e.ctrlKey && e.key === 'q') {
+        e.preventDefault();
+        if (window.electronAPI?.quit) {
+          window.electronAPI.quit();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
