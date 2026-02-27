@@ -293,7 +293,7 @@ function AvailableTab({
         )}
       </div>
       {/* Responsive grid: 1 col on narrow, 2 on wider, 3 on wide */}
-      <div className={clsx('grid gap-3', isLoading && 'opacity-60 transition-opacity')} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+      <div className={clsx('grid gap-3', isLoading && 'opacity-60 transition-opacity')} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
         {filtered.map((g) => {
           const isInstalled = installedIds.includes(g.id);
           const progress = installProgress[g.id];
@@ -587,7 +587,7 @@ function LoadingGrid() {
   return (
     <div className="p-4">
       <div className="h-4 w-32 bg-octgn-surface/80 rounded mb-3 animate-pulse" />
-      <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+      <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
         {Array.from({ length: 9 }).map((_, i) => (
           <div key={i} className="rounded-xl bg-octgn-surface/60 border border-octgn-border/20 overflow-hidden animate-pulse">
             <div className="flex items-start gap-3 p-4">
