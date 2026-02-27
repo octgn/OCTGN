@@ -213,17 +213,23 @@ const GamePage: React.FC = () => {
             <span className="text-xs text-octgn-text-muted">
               Turn {gameState.turnNumber}
             </span>
-            {gameState.activePlayer != null && gameState.activePlayer !== 0 && (
-              <>
-                <div className="w-px h-4 bg-octgn-border/50" />
-                <span className="text-xs text-octgn-text-muted">
-                  Active:{' '}
-                  <span className="text-octgn-text font-medium">
-                    {gameState.players.find((p: Player) => p.id === gameState.activePlayer)?.name ?? '?'}
+            {gameState.activePlayer != null && gameState.activePlayer !== 0 && (() => {
+              const activePlayer = gameState.players.find((p: Player) => p.id === gameState.activePlayer);
+              return (
+                <>
+                  <div className="w-px h-4 bg-octgn-border/50" />
+                  <span className="text-xs text-octgn-text-muted">
+                    Active:{' '}
+                    <span
+                      className="font-medium"
+                      style={{ color: readablePlayerColor(activePlayer?.color || '#f9fafb') }}
+                    >
+                      {activePlayer?.name ?? '?'}
+                    </span>
                   </span>
-                </span>
-              </>
-            )}
+                </>
+              );
+            })()}
             <div className="flex-1" />
 
             {/* Player counters (spectator sees none, non-spectator sees own) */}
@@ -336,13 +342,33 @@ const GamePage: React.FC = () => {
                 const senderColor = msg.color
                   || gameState.players.find((p: Player) => p.id === msg.playerId)?.color
                   || '#9ca3af';
+                const isTurnMsg = msg.isSystem && /^Turn \d+ — /.test(msg.message);
+
+                if (isTurnMsg) {
+                  const msgColor = msg.color || '#9ca3af';
+                  return (
+                    <div
+                      key={msg.id}
+                      className="leading-relaxed italic border-l-4 pl-2 py-0.5 my-1 rounded-r bg-octgn-surface/30"
+                      style={{ borderColor: `${msgColor}99` }}
+                    >
+                      <span style={{ color: readablePlayerColor(msgColor) }}>
+                        {msg.message}
+                      </span>
+                    </div>
+                  );
+                }
+
                 return (
                   <div
                     key={msg.id}
                     className={clsx(
                       'leading-relaxed',
-                      msg.isSystem ? 'text-octgn-text-dim italic' : 'text-octgn-text'
+                      msg.isSystem ? 'italic' : 'text-octgn-text'
                     )}
+                    style={msg.isSystem && msg.color
+                      ? { color: readablePlayerColor(msg.color) }
+                      : msg.isSystem ? { color: 'var(--color-octgn-text-dim)' } : undefined}
                   >
                     {!msg.isSystem && (
                       <span
@@ -393,6 +419,8 @@ interface PlayerPanelProps {
 const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isActive, isSpectatorView }) => {
   const handGroup = player.groups.find((g) => g.name.toLowerCase() === 'hand');
   const otherGroups = player.groups.filter((g) => g.name.toLowerCase() !== 'hand');
+  const pColor = player.color || '#6b7280';
+  const readableColor = readablePlayerColor(pColor);
 
   return (
     <GlassPanel
@@ -401,20 +429,26 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isActive, isSpectator
       glow={isActive ? 'blue' : 'none'}
       className={clsx(
         'text-xs min-w-[180px] transition-all duration-300',
-        isActive && 'ring-1 ring-octgn-primary/50 shadow-[0_0_12px_rgba(59,130,246,0.3)]'
+        isActive && 'ring-1'
       )}
+      style={isActive ? {
+        '--tw-ring-color': `${pColor}80`,
+        boxShadow: `0 0 12px ${pColor}4D`,
+      } as React.CSSProperties : undefined}
     >
       <div className="flex items-center gap-2 mb-1">
         <div
           className={clsx(
             'w-2.5 h-2.5 rounded-full transition-shadow duration-300',
-            isActive && 'shadow-[0_0_8px_rgba(59,130,246,0.7)]'
           )}
-          style={{ backgroundColor: player.color || '#6b7280' }}
+          style={{
+            backgroundColor: pColor,
+            boxShadow: isActive ? `0 0 8px ${pColor}B3` : undefined,
+          }}
         />
-        <span className="font-medium text-octgn-text">{player.name}</span>
+        <span className="font-medium" style={{ color: readableColor }}>{player.name}</span>
         {isActive && (
-          <span className="text-[9px] text-octgn-primary font-bold tracking-wider">ACTIVE</span>
+          <span className="text-[9px] font-bold tracking-wider" style={{ color: readableColor }}>ACTIVE</span>
         )}
         {player.isSpectator && (
           <span className="text-[9px] text-octgn-accent">(Spectator)</span>

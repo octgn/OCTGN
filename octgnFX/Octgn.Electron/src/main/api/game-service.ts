@@ -540,13 +540,18 @@ export class GameService {
     // Print (system message)
     this.connection.on('Print', (msg: ProtocolMessage) => {
       const params = this.p(msg);
+      const printPlayerId = params.player as number;
+      const playerColor = printPlayerId
+        ? this.gameState?.players.find(p => p.id === printPlayerId)?.color ?? playerColorById(printPlayerId)
+        : undefined;
       const chatMsg: ChatMessage = {
         id: String(this.chatIdCounter++),
-        playerId: params.player as number,
+        playerId: printPlayerId,
         playerName: 'System',
         message: params.text as string,
         timestamp: Date.now(),
         isSystem: true,
+        color: playerColor,
       };
       this.chatMessages.push(chatMsg);
       if (this.gameState) {
@@ -592,7 +597,7 @@ export class GameService {
       const player = this.gameState?.players.find(p => p.id === playerId);
       const name = player?.name || `Player ${playerId}`;
       log('GAME', `${name} is ready`);
-      this.addSystemMessage(`${name} is ready`);
+      this.addSystemMessage(`${name} is ready`, playerId);
       this.broadcastState();
     });
 
@@ -617,7 +622,7 @@ export class GameService {
       if (params.setActive) {
         this.gameState.activePlayer = params.player as number;
       }
-      this.addSystemMessage(`Turn ${this.gameState.turnNumber} — ${this.getPlayerName(params.player as number)}`);
+      this.addSystemMessage(`Turn ${this.gameState.turnNumber} — ${this.getPlayerName(params.player as number)}`, params.player as number);
       this.broadcastState();
     });
 
@@ -912,7 +917,7 @@ export class GameService {
         group.cards = reordered;
       }
 
-      this.addSystemMessage(`${this.getPlayerName(params.player as number)} shuffled a pile`);
+      this.addSystemMessage(`${this.getPlayerName(params.player as number)} shuffled a pile`, params.player as number);
       this.broadcastState();
     });
 
@@ -981,8 +986,9 @@ export class GameService {
     // Player disconnect
     this.connection.on('PlayerDisconnect', (msg: ProtocolMessage) => {
       const params = this.p(msg);
-      const name = this.getPlayerName(params.player as number);
-      this.addSystemMessage(`${name} disconnected`);
+      const disconnectPlayerId = params.player as number;
+      const name = this.getPlayerName(disconnectPlayerId);
+      this.addSystemMessage(`${name} disconnected`, disconnectPlayerId);
       this.broadcastState();
     });
 
@@ -1412,7 +1418,10 @@ export class GameService {
     return player?.name ?? `Player ${playerId}`;
   }
 
-  private addSystemMessage(text: string): void {
+  private addSystemMessage(text: string, playerId?: number): void {
+    const color = playerId != null
+      ? this.gameState?.players.find(p => p.id === playerId)?.color ?? playerColorById(playerId)
+      : undefined;
     const msg: ChatMessage = {
       id: String(this.chatIdCounter++),
       playerId: 0,
@@ -1420,6 +1429,7 @@ export class GameService {
       message: text,
       timestamp: Date.now(),
       isSystem: true,
+      color,
     };
     this.chatMessages.push(msg);
     if (this.gameState) {
