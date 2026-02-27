@@ -76,8 +76,12 @@ export class CardResolver {
         const xml = await this.io.readFile(setXmlPath, 'utf-8');
         const cards = parseSetXml(xml);
         for (const card of cards) {
-          this.cache.set(card.id, card);
-          cardCount++;
+          // First-set-wins: don't overwrite if a card with this ID was already
+          // loaded from an earlier set (matches WPF client's FirstOrDefault behavior)
+          if (!this.cache.has(card.id)) {
+            this.cache.set(card.id, card);
+            cardCount++;
+          }
         }
       } catch {
         // set.xml doesn't exist or isn't parseable — skip
