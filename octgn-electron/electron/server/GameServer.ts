@@ -22,9 +22,9 @@ export class GameServer extends EventEmitter {
 
   constructor(config: ServerConfig) {
     super();
-    this.port = config.port || 32458;
+    this.port = config.port || 8888; // OCTGN standard port for interop
     this.maxPlayers = config.maxPlayers || 8;
-    this.broadcastPort = config.broadcastPort || 32459;
+    this.broadcastPort = config.broadcastPort || 21234; // OCTGN standard LAN discovery port
     this.protocol = new BinaryProtocol();
     this.gameState = new GameState();
   }

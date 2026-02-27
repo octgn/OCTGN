@@ -127,9 +127,10 @@ interface ElectronAPI {
   isLinux: boolean;
 
   // Config
-  wsBridgePort: 32457;
-  vitePort: 32456;
-  gameServerPort: 32458;
+  wsBridgePort: 32457;      // Internal - dev tools
+  vitePort: 32456;          // Internal - dev tools
+  gameServerPort: 8888;     // OCTGN standard - for interop
+  lanBroadcastPort: 21234;  // OCTGN standard - for interop
   isDev: boolean;
 }
 

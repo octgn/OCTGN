@@ -162,6 +162,15 @@ octgn-data/
     └── ...
 ```
 
+### Ports
+**OCTGN Standard Ports** (for interoperability with Windows client):
+- Game Server: **8888** (host/join games)
+- LAN Discovery: **21234** (broadcast for local games)
+
+**Internal Dev Ports** (won't affect interop):
+- Vite Dev Server: 32456 (hot reload during development)
+- WebSocket Bridge: 32457 (Electron IPC)
+
 ## API Integration
 
 ### OCTGN.net API
