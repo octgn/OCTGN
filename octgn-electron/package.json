@@ -17,11 +17,16 @@
     "dist:mac": "electron-builder --mac",
     "dist:win": "electron-builder --win"
   },
-  "keywords": ["octgn", "tabletop", "gaming", "electron"],
+  "keywords": [
+    "octgn",
+    "tabletop",
+    "gaming",
+    "electron"
+  ],
   "author": "OCTGN Community",
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@types/adm-zip": "^0.5.5",
+    "@types/adm-zip": "^0.5.7",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -37,11 +42,11 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "adm-zip": "^0.5.10",
+    "adm-zip": "^0.5.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
-    "zustand": "^4.4.7",
-    "ws": "^8.14.0"
+    "ws": "^8.14.0",
+    "zustand": "^4.4.7"
   }
 }

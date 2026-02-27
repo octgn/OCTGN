@@ -9,14 +9,24 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
-// Electron types
+// Electron dialog types
 declare namespace Electron {
   interface OpenDialogOptions {
     title?: string;
     defaultPath?: string;
     buttonLabel?: string;
     filters?: Array<{ name: string; extensions: string[] }>;
-    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
+    properties?: Array<
+      | 'openFile'
+      | 'openDirectory'
+      | 'multiSelections'
+      | 'showHiddenFiles'
+      | 'createDirectory'
+      | 'promptToCreate'
+      | 'noResolveAliases'
+      | 'treatPackageAsDirectory'
+      | 'dontAddToRecent'
+    >;
   }
 
   interface SaveDialogOptions {
@@ -24,7 +34,13 @@ declare namespace Electron {
     defaultPath?: string;
     buttonLabel?: string;
     filters?: Array<{ name: string; extensions: string[] }>;
-    properties?: Array<'showHiddenFiles' | 'createDirectory' | 'treatPackageAsDirectory' | 'showOverwriteConfirmation' | 'dontAddToRecent'>;
+    properties?: Array<
+      | 'showHiddenFiles'
+      | 'createDirectory'
+      | 'treatPackageAsDirectory'
+      | 'showOverwriteConfirmation'
+      | 'dontAddToRecent'
+    >;
   }
 
   interface OpenDialogReturnValue {
@@ -38,25 +54,80 @@ declare namespace Electron {
   }
 }
 
+// Full Electron API interface
+interface ElectronAPI {
+  // Game Server
+  startServer: (port: number) => Promise<{ success: boolean; port?: number; error?: string }>;
+  stopServer: () => Promise<{ success: boolean; error?: string }>;
+  getServerStatus: () => Promise<{ running: boolean; port?: number }>;
+
+  // Game Installation
+  installGame: (
+    downloadUrl: string,
+    gameId: string
+  ) => Promise<{ success: boolean; path?: string; error?: string }>;
+  uninstallGame: (gameId: string) => Promise<{ success: boolean; error?: string }>;
+  getInstalledGames: () => Promise<{
+    success: boolean;
+    games?: Array<{ id: string; path: string }>;
+    error?: string;
+  }>;
+
+  // Deck Management
+  saveDeck: (
+    deckName: string,
+    deckData: string
+  ) => Promise<{ success: boolean; path?: string; error?: string }>;
+  loadDeck: (deckPath: string) => Promise<{ success: boolean; data?: string; error?: string }>;
+  listDecks: () => Promise<{
+    success: boolean;
+    decks?: Array<{ name: string; path: string }>;
+    error?: string;
+  }>;
+
+  // File System
+  openFileDialog: (
+    options: Electron.OpenDialogOptions
+  ) => Promise<Electron.OpenDialogReturnValue>;
+  saveFileDialog: (
+    options: Electron.SaveDialogOptions
+  ) => Promise<Electron.SaveDialogReturnValue>;
+  readFile: (filePath: string) => Promise<{ success: boolean; data?: string; error?: string }>;
+  writeFile: (filePath: string, data: string) => Promise<{ success: boolean; error?: string }>;
+  deleteFile: (filePath: string) => Promise<{ success: boolean; error?: string }>;
+  listFiles: (
+    dirPath: string,
+    extension?: string
+  ) => Promise<{
+    success: boolean;
+    files?: Array<{ name: string; path: string; isDirectory: boolean }>;
+    error?: string;
+  }>;
+
+  // App Info
+  getAppPath: () => Promise<string>;
+  getGamesPath: () => Promise<string>;
+  getDecksPath: () => Promise<string>;
+  getVersion: () => Promise<string>;
+
+  // Utilities
+  openExternal: (url: string) => Promise<{ success: boolean }>;
+
+  // Platform
+  platform: 'win32' | 'darwin' | 'linux' | string;
+  isMac: boolean;
+  isWindows: boolean;
+  isLinux: boolean;
+
+  // Config
+  wsBridgePort: 8889;
+  isDev: boolean;
+}
+
 // Window extensions
 declare global {
   interface Window {
-    electronAPI?: {
-      startServer: (port: number) => Promise<{ success: boolean; port?: number; error?: string }>;
-      stopServer: () => Promise<{ success: boolean }>;
-      connectToServer: (host: string, port: number) => Promise<{ success: boolean }>;
-      platform: string;
-      isMac: boolean;
-      isWindows: boolean;
-      isLinux: boolean;
-      wsBridgePort: number;
-      openFileDialog: (options: Electron.OpenDialogOptions) => Promise<Electron.OpenDialogReturnValue>;
-      saveFileDialog: (options: Electron.SaveDialogOptions) => Promise<Electron.SaveDialogReturnValue>;
-      readFile: (path: string) => Promise<{ success: boolean; data?: string; error?: string }>;
-      writeFile: (path: string, data: string) => Promise<{ success: boolean; error?: string }>;
-      getAppPath: () => Promise<string>;
-      getVersion: () => Promise<string>;
-    };
+    electronAPI?: ElectronAPI;
   }
 }
 

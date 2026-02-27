@@ -2,9 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useHostedGames, HostedGame } from '../services/OctgnApiService';
-import { Button, Modal, Badge, EmptyState } from '../components';
-import { HostGameModal } from '../components/HostGameModal';
-import { JoinGameModal } from '../components/JoinGameModal';
+import { Button, Modal, Badge, EmptyState, HostGameModal, JoinGameModal } from '../components';
 
 type Tab = 'browse' | 'host' | 'history';
 
