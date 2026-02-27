@@ -1,17 +1,24 @@
 import { create } from 'zustand';
-import type { GameDefinition, AvailableGame, InstallProgress } from '../../shared/types';
+import type { GameDefinition, AvailableGame, InstallProgress, GameFeed } from '../../shared/types';
 
 interface DefinitionsState {
   installedGames: GameDefinition[];
   availableGames: AvailableGame[];
+  feeds: GameFeed[];
   installProgress: Record<string, InstallProgress>;
   isLoadingInstalled: boolean;
   isLoadingAvailable: boolean;
+  isLoadingFeeds: boolean;
 
   loadInstalled: () => Promise<void>;
   fetchAvailable: () => Promise<void>;
   install: (gameId: string, downloadUrl: string) => Promise<void>;
   uninstall: (gameId: string) => Promise<void>;
+
+  loadFeeds: () => Promise<void>;
+  addFeed: (name: string, url: string, username?: string, password?: string) => Promise<{ success: boolean; error?: string }>;
+  removeFeed: (name: string) => Promise<void>;
+  setFeedEnabled: (name: string, enabled: boolean) => Promise<void>;
 }
 
 export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
@@ -22,7 +29,6 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
       set((s) => ({
         installProgress: { ...s.installProgress, [progress.gameId]: progress },
       }));
-      // When done, refresh installed list
       if (progress.phase === 'done') {
         get().loadInstalled();
       }
@@ -32,9 +38,11 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
   return {
     installedGames: [],
     availableGames: [],
+    feeds: [],
     installProgress: {},
     isLoadingInstalled: false,
     isLoadingAvailable: false,
+    isLoadingFeeds: false,
 
     loadInstalled: async () => {
       set({ isLoadingInstalled: true });
@@ -47,7 +55,7 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
     },
 
     fetchAvailable: async () => {
-      set({ isLoadingAvailable: true });
+      set({ isLoadingAvailable: true, availableGames: [] });
       try {
         const games = (await window.octgn.listAvailableGames()) as AvailableGame[];
         set({ availableGames: games });
@@ -64,7 +72,6 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
         },
       }));
       await window.octgn.installGame(gameId, downloadUrl);
-      // Progress updates come via onInstallProgress listener above
     },
 
     uninstall: async (gameId) => {
@@ -72,6 +79,36 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
       set((s) => ({
         installedGames: s.installedGames.filter((g) => g.id !== gameId),
       }));
+    },
+
+    loadFeeds: async () => {
+      set({ isLoadingFeeds: true });
+      try {
+        const feeds = (await window.octgn.listFeeds()) as GameFeed[];
+        set({ feeds });
+      } finally {
+        set({ isLoadingFeeds: false });
+      }
+    },
+
+    addFeed: async (name, url, username, password) => {
+      const result = (await window.octgn.addFeed(name, url, username, password)) as { success: boolean; error?: string };
+      if (result.success) await get().loadFeeds();
+      return result;
+    },
+
+    removeFeed: async (name) => {
+      await window.octgn.removeFeed(name);
+      await get().loadFeeds();
+    },
+
+    setFeedEnabled: async (name, enabled) => {
+      await window.octgn.setFeedEnabled(name, enabled);
+      set((s) => ({
+        feeds: s.feeds.map((f) => f.name === name ? { ...f, enabled } : f),
+      }));
+      // Re-fetch available games with the new feed state
+      get().fetchAvailable();
     },
   };
 });

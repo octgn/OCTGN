@@ -6,6 +6,7 @@ import { GameService } from '../api/game-service';
 import { listInstalledGames, uninstallGame } from '../games/game-store';
 import { fetchAvailableGames } from '../games/game-feed';
 import { installGame } from '../games/game-installer';
+import { listFeeds, addFeed, removeFeed, setFeedEnabled } from '../games/feed-manager';
 
 const apiClient = new OctgnApiClient();
 const gameService = new GameService();
@@ -203,7 +204,8 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   });
 
   ipcMain.handle(IPC_CHANNELS.GAMES_LIST_AVAILABLE, async () => {
-    return fetchAvailableGames();
+    const feeds = await listFeeds();
+    return fetchAvailableGames(feeds);
   });
 
   ipcMain.handle(
@@ -217,5 +219,22 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
 
   ipcMain.handle(IPC_CHANNELS.GAMES_UNINSTALL, async (_event, gameId: string) => {
     return uninstallGame(gameId);
+  });
+
+  // Feed management handlers
+  ipcMain.handle(IPC_CHANNELS.FEEDS_LIST, async () => {
+    return listFeeds();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.FEEDS_ADD, async (_event, name: string, url: string, username?: string, password?: string) => {
+    return addFeed(name, url, username, password);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.FEEDS_REMOVE, async (_event, name: string) => {
+    return removeFeed(name);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.FEEDS_SET_ENABLED, async (_event, name: string, enabled: boolean) => {
+    return setFeedEnabled(name, enabled);
   });
 }
