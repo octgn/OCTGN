@@ -47,42 +47,41 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
 
         Write-Host '[3/3] Starting OCTGN (dev mode)...' -ForegroundColor Green
-        Write-Host '     Vite dev server will start on http://localhost:5173' -ForegroundColor DarkGray
-        Write-Host '     Electron will launch once the server is ready' -ForegroundColor DarkGray
-        Write-Host ''
 
-        # Start Vite in background, poll until ready, then launch Electron
-        $viteJob = Start-Job -ScriptBlock {
-            param($dir)
-            Set-Location $dir
-            npx vite dev 2>&1
-        } -ArgumentList (Get-Location).Path
+        # Start Vite dev server as a background process
+        $viteProc = Start-Process -FilePath 'npx' -ArgumentList 'vite','dev' `
+            -WindowStyle Hidden -PassThru
 
-        # Wait for Vite to be ready
-        $ready = $false
-        for ($i = 0; $i -lt 30; $i++) {
-            Start-Sleep -Seconds 1
-            try {
-                $null = Invoke-WebRequest -Uri 'http://localhost:5173' -UseBasicParsing -TimeoutSec 2 -ErrorAction Stop
-                $ready = $true
-                break
-            }
-            catch { }
-        }
-
-        if (-not $ready) {
-            Stop-Job $viteJob -ErrorAction SilentlyContinue
-            Remove-Job $viteJob -Force -ErrorAction SilentlyContinue
-            throw 'Vite dev server did not start within 30 seconds'
-        }
-
-        Write-Host '     Vite is ready, launching Electron...' -ForegroundColor Green
         try {
+            # Poll until Vite is listening on port 5173
+            $ready = $false
+            for ($i = 0; $i -lt 30; $i++) {
+                Start-Sleep -Seconds 1
+                try {
+                    $tcp = New-Object System.Net.Sockets.TcpClient
+                    $tcp.Connect('127.0.0.1', 5173)
+                    $tcp.Close()
+                    $ready = $true
+                    break
+                }
+                catch {
+                    Write-Host "     Waiting for Vite... ($($i+1)s)" -ForegroundColor DarkGray -NoNewline
+                    Write-Host "`r" -NoNewline
+                }
+            }
+
+            if (-not $ready) {
+                throw 'Vite dev server did not start within 30 seconds'
+            }
+
+            Write-Host '     Vite is ready, launching Electron...        ' -ForegroundColor Green
             npx electron dist/main/index.js
         }
         finally {
-            Stop-Job $viteJob -ErrorAction SilentlyContinue
-            Remove-Job $viteJob -Force -ErrorAction SilentlyContinue
+            # Kill Vite when Electron exits
+            if ($viteProc -and -not $viteProc.HasExited) {
+                Stop-Process -Id $viteProc.Id -Force -ErrorAction SilentlyContinue
+            }
         }
     }
 }
