@@ -1,482 +1,561 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../stores/gameStore';
-import { Card as CardType } from '../types/game';
-
-interface TableCard extends CardType {
-  screenX: number;
-  screenY: number;
-  screenRotation: number;
-}
+import { useGameClient } from '../hooks/useGameClient';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { useCardSelection, useCardDrag, useSelectionBox } from '../hooks/useCardDrag';
+import { useContextMenu, getCardContextMenuItems } from '../components/ContextMenu';
+import {
+  GameCanvas,
+  PlayerHand,
+  PlayerList,
+  TurnIndicator,
+  CounterPanel,
+  CardZoom,
+  Modal,
+  Button,
+  Layout,
+  ContextMenu,
+} from '../components';
+import { Card as CardType, Player } from '../types/game';
+import { soundManager } from '../utils';
 
 export default function GameTablePage() {
   const { gameId } = useParams();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [tableCards, setTableCards] = useState<TableCard[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [draggedCards, setDraggedCards] = useState<number[]>([]);
-  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    cards: number[];
-  } | null>(null);
+  const navigate = useNavigate();
 
+  // Game store
   const {
+    playerId,
+    playerName,
+    players,
     cards,
     groups,
+    counters,
+    connected,
+    connecting,
+    activePlayerId,
+    turnNumber,
+    phase,
+    phases,
     selectedCards,
+    panOffset,
+    zoom,
+    chatMessages,
+    showChat,
+    showHand,
+    zoomedCard,
+    setConnected,
+    setConnecting,
+    setPlayerId,
+    addChatMessage,
+    addPlayer,
+    removePlayer,
+    updateCard,
     selectCards,
     clearSelection,
-    moveCards,
-    turnCard,
-    rotateCard,
-    zoomCard,
-    showChat,
-    chatMessages,
-    sendChat,
-    chatInput,
-    setChatInput,
+    setZoomedCard,
+    toggleChat,
+    toggleHand,
+    setPanOffset,
+    setZoom,
+    saveGame,
+    loadGame,
+    resetGame,
+    nextTurn,
+    setPhase,
   } = useGameStore();
 
-  // Card dimensions
-  const CARD_WIDTH = 200;
-  const CARD_HEIGHT = 280;
-  const CARD_RADIUS = 10;
+  // Selection box state
+  const selectionBox = useSelectionBox();
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectStart, setSelectStart] = useState({ x: 0, y: 0 });
 
-  // Render table
-  const render = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  // Card selection
+  const cardSelection = useCardSelection(
+    Array.from(cards.values()),
+    selectCards
+  );
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const { width, height } = canvas.getBoundingClientRect();
-    canvas.width = width * window.devicePixelRatio;
-    canvas.height = height * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
-    // Clear canvas
-    ctx.fillStyle = '#1a1a2e';
-    ctx.fillRect(0, 0, width, height);
-
-    // Draw table background
-    ctx.fillStyle = '#16213e';
-    ctx.fillRect(20, 20, width - 40, height - 40);
-
-    // Draw grid
-    ctx.strokeStyle = '#0f3460';
-    ctx.lineWidth = 1;
-    const gridSize = 50 * zoom;
-    for (let x = (panOffset.x % gridSize); x < width; x += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
-    }
-    for (let y = (panOffset.y % gridSize); y < height; y += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
-
-    // Draw cards
-    tableCards.forEach((card) => {
-      const isSelected = selectedCards.includes(card.id);
-      const isHovered = false; // TODO
-
-      drawCard(ctx, card, isSelected, isHovered);
-    });
-
-    // Draw selection box if dragging
-    if (isDragging && draggedCards.length === 0) {
-      ctx.strokeStyle = '#e94560';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
-      const x = Math.min(dragStart.x, panOffset.x);
-      const y = Math.min(dragStart.y, panOffset.y);
-      const w = Math.abs(panOffset.x - dragStart.x);
-      const h = Math.abs(panOffset.y - dragStart.y);
-      ctx.strokeRect(x, y, w, h);
-      ctx.setLineDash([]);
-    }
-  }, [tableCards, selectedCards, isDragging, dragStart, panOffset, zoom]);
-
-  // Draw a single card
-  const drawCard = (
-    ctx: CanvasRenderingContext2D,
-    card: TableCard,
-    isSelected: boolean,
-    isHovered: boolean
-  ) => {
-    const x = card.screenX + panOffset.x;
-    const y = card.screenY + panOffset.y;
-    const w = CARD_WIDTH * zoom;
-    const h = CARD_HEIGHT * zoom;
-
-    ctx.save();
-    ctx.translate(x + w / 2, y + h / 2);
-    ctx.rotate((card.screenRotation * Math.PI) / 180);
-
-    // Card shadow
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 3;
-    ctx.shadowOffsetY = 3;
-
-    // Card background
-    ctx.beginPath();
-    ctx.roundRect(-w / 2, -h / 2, w, h, CARD_RADIUS * zoom);
-    ctx.fillStyle = card.faceUp ? '#ffffff' : '#2563eb';
-    ctx.fill();
-
-    // Selection highlight
-    if (isSelected) {
-      ctx.strokeStyle = '#e94560';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-    } else if (isHovered) {
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-
-    ctx.shadowColor = 'transparent';
-
-    // Card content
-    if (card.faceUp) {
-      // Draw card image or placeholder
-      if (card.imageUrl) {
-        // TODO: Load and draw image
-        drawCardPlaceholder(ctx, card, w, h);
-      } else {
-        drawCardPlaceholder(ctx, card, w, h);
-      }
-    } else {
-      // Card back pattern
-      ctx.fillStyle = '#1d4ed8';
-      ctx.beginPath();
-      ctx.roundRect(-w / 2 + 5, -h / 2 + 5, w - 10, h - 10, CARD_RADIUS * zoom - 2);
-      ctx.fill();
-
-      // Back pattern
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 2;
-      for (let i = -w / 2 + 15; i < w / 2 - 10; i += 15) {
-        ctx.beginPath();
-        ctx.moveTo(i, -h / 2 + 15);
-        ctx.lineTo(i, h / 2 - 15);
-        ctx.stroke();
-      }
-    }
-
-    // Markers
-    if (card.markers && card.markers.length > 0) {
-      const markerSize = 20 * zoom;
-      let mx = -w / 2 + 5;
-      const my = h / 2 - markerSize - 5;
-      card.markers.forEach((marker) => {
-        ctx.fillStyle = '#ef4444';
-        ctx.beginPath();
-        ctx.arc(mx + markerSize / 2, my + markerSize / 2, markerSize / 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        ctx.font = `${12 * zoom}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(String(marker.count), mx + markerSize / 2, my + markerSize / 2);
-        mx += markerSize + 2;
-      });
-    }
-
-    ctx.restore();
-  };
-
-  // Draw card placeholder
-  const drawCardPlaceholder = (
-    ctx: CanvasRenderingContext2D,
-    card: TableCard,
-    w: number,
-    h: number
-  ) => {
-    ctx.fillStyle = '#f3f4f6';
-    ctx.beginPath();
-    ctx.roundRect(-w / 2 + 5, -h / 2 + 5, w - 10, h - 10, CARD_RADIUS * zoom - 2);
-    ctx.fill();
-
-    // Card name
-    ctx.fillStyle = '#1f2937';
-    ctx.font = `bold ${14 * zoom}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    const name = card.name || `Card ${card.id}`;
-    ctx.fillText(name.substring(0, 20), 0, -h / 2 + 15);
-
-    // Card ID (debug)
-    ctx.fillStyle = '#9ca3af';
-    ctx.font = `${10 * zoom}px monospace`;
-    ctx.fillText(`#${card.id}`, 0, h / 2 - 20);
-  };
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => render();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [render]);
-
-  // Render on state change
-  useEffect(() => {
-    render();
-  }, [render]);
-
-  // Mouse handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Check if clicking on a card
-    const clickedCard = getCardAtPosition(x, y);
-
-    if (clickedCard) {
-      if (e.ctrlKey || e.metaKey) {
-        // Add to selection
-        if (selectedCards.includes(clickedCard.id)) {
-          selectCards(selectedCards.filter((id) => id !== clickedCard.id));
-        } else {
-          selectCards([...selectedCards, clickedCard.id]);
+  // Drag state
+  const cardDrag = useCardDrag({
+    onDragStart: (cardIds) => {
+      soundManager.play('cardmove');
+    },
+    onDragMove: (cardIds, dx, dy) => {
+      cardIds.forEach((id) => {
+        const card = cards.get(id);
+        if (card) {
+          updateCard(id, { x: card.x + dx, y: card.y + dy });
         }
-      } else if (!selectedCards.includes(clickedCard.id)) {
-        selectCards([clickedCard.id]);
-      }
-      setIsDragging(true);
-      setDraggedCards(selectedCards.length > 0 ? selectedCards : [clickedCard.id]);
-      setDragStart({ x, y });
-    } else {
-      // Start selection box or pan
-      clearSelection();
-      setIsDragging(true);
-      setDraggedCards([]);
-      setDragStart({ x, y });
-    }
+      });
+    },
+    onDragEnd: (cardIds, x, y) => {
+      // Would send to server here
+    },
+  });
 
-    setContextMenu(null);
-  };
+  // Context menu
+  const contextMenu = useContextMenu();
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
+  // Game client
+  const gameClient = useGameClient({
+    onConnected: () => {
+      setConnected(true);
+      setConnecting(false);
+    },
+    onDisconnected: () => {
+      setConnected(false);
+      setConnecting(false);
+    },
+    onError: (err) => {
+      console.error('Connection error:', err);
+      setConnecting(false);
+    },
+    onChat: (data) => {
+      const player = players.find((p) => p.id === data.player);
+      addChatMessage({
+        id: Date.now().toString(),
+        playerId: data.player,
+        playerName: player?.name || 'Unknown',
+        message: data.text,
+        timestamp: Date.now(),
+      });
+      soundManager.play('chat');
+    },
+    onPlayerJoined: (data) => {
+      addPlayer({
+        id: data.id,
+        name: data.nick,
+        userId: data.userId,
+        publicKey: BigInt(data.pkey),
+        tableSide: data.tableSide,
+        spectator: data.spectator,
+        ready: false,
+        disconnected: false,
+        invertedTable: false,
+        hand: { id: -1, name: 'Hand', type: 'hand', visibility: 'owner', visibleTo: [], cards: [], controllerId: data.id },
+        deck: { id: -2, name: 'Deck', type: 'deck', visibility: 'nobody', visibleTo: [], cards: [], controllerId: data.id },
+        discard: { id: -3, name: 'Discard', type: 'discard', visibility: 'all', visibleTo: [], cards: [], controllerId: data.id },
+        counters: [],
+      });
+    },
+    onPlayerLeft: (data) => {
+      removePlayer(data.player);
+    },
+    onCardTurned: (data) => {
+      updateCard(data.card, { faceUp: data.up });
+      soundManager.play('cardflip');
+    },
+    onCardsMoved: (data) => {
+      // Update card positions
+    },
+    onTurnChanged: (data) => {
+      nextTurn();
+    },
+  });
 
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    { key: 'Escape', action: () => clearSelection() },
+    { key: 'Delete', action: () => deleteSelectedCards() },
+    { key: 'h', action: () => toggleHand() },
+    { key: 'c', action: () => toggleChat() },
+    { key: 'f', action: () => flipSelectedCards(true) },
+    { key: 'r', action: () => rotateSelectedCards(90) },
+    { key: '=', ctrl: true, action: () => setZoom(zoom * 1.1) },
+    { key: '-', ctrl: true, action: () => setZoom(zoom / 1.1) },
+    { key: '0', ctrl: true, action: () => setZoom(1) },
+    { key: 's', ctrl: true, action: () => saveGame() },
+    { key: 'o', ctrl: true, action: () => loadGame() },
+  ]);
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    if (draggedCards.length > 0) {
-      // Move cards
-      const dx = x - dragStart.x;
-      const dy = y - dragStart.y;
-
-      setTableCards((cards) =>
-        cards.map((card) => {
-          if (draggedCards.includes(card.id)) {
-            return {
-              ...card,
-              screenX: card.screenX + dx,
-              screenY: card.screenY + dy,
-            };
-          }
-          return card;
-        })
-      );
-
-      setDragStart({ x, y });
-    } else {
-      // Update selection box endpoint
-      setPanOffset({ x, y });
-    }
-  };
-
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (isDragging && draggedCards.length > 0) {
-      // Send move to server
-      // moveCards(draggedCards, ...);
-    }
-    setIsDragging(false);
-    setDraggedCards([]);
-  };
-
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const clickedCard = getCardAtPosition(x, y);
-    if (clickedCard) {
-      if (!selectedCards.includes(clickedCard.id)) {
-        selectCards([clickedCard.id]);
-      }
-      setContextMenu({ x: e.clientX, y: e.clientY, cards: selectedCards.length > 0 ? selectedCards : [clickedCard.id] });
-    }
-  };
-
-  const getCardAtPosition = (x: number, y: number): TableCard | null => {
-    // Check cards in reverse order (top cards first)
-    for (let i = tableCards.length - 1; i >= 0; i--) {
-      const card = tableCards[i];
-      const cx = card.screenX + panOffset.x;
-      const cy = card.screenY + panOffset.y;
-      const w = CARD_WIDTH * zoom;
-      const h = CARD_HEIGHT * zoom;
-
-      if (x >= cx && x <= cx + w && y >= cy && y <= cy + h) {
-        return card;
-      }
-    }
-    return null;
-  };
-
-  // Zoom handler
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      setZoom((z) => Math.max(0.25, Math.min(3, z * delta)));
-    }
-  };
-
-  // Add demo cards
+  // Initialize sound
   useEffect(() => {
-    const demoCards: TableCard[] = [
-      { id: 1, modelId: 'card1', groupId: 0, x: 100, y: 100, screenX: 100, screenY: 100, screenRotation: 0, width: CARD_WIDTH, height: CARD_HEIGHT, faceUp: true, rotation: 0, ownerId: '1', name: 'Lightning Bolt', properties: {}, markers: [], anchored: false, targeted: false },
-      { id: 2, modelId: 'card2', groupId: 0, x: 350, y: 100, screenX: 350, screenY: 100, screenRotation: 0, width: CARD_WIDTH, height: CARD_HEIGHT, faceUp: true, rotation: 0, ownerId: '1', name: 'Giant Growth', properties: {}, markers: [], anchored: false, targeted: false },
-      { id: 3, modelId: 'card3', groupId: 0, x: 600, y: 100, screenX: 600, screenY: 100, screenRotation: 0, width: CARD_WIDTH, height: CARD_HEIGHT, faceUp: false, rotation: 0, ownerId: '1', name: 'Mystery Card', properties: {}, markers: [], anchored: false, targeted: false },
-      { id: 4, modelId: 'card4', groupId: 0, x: 200, y: 400, screenX: 200, screenY: 400, screenRotation: 90, width: CARD_WIDTH, height: CARD_HEIGHT, faceUp: true, rotation: 90, ownerId: '1', name: 'Serra Angel', properties: {}, markers: [{ id: 'm1', name: '+1/+1', count: 3 }], anchored: false, targeted: false },
-    ];
-    setTableCards(demoCards);
+    soundManager.initialize();
   }, []);
 
+  // Demo cards for testing
+  useEffect(() => {
+    if (cards.size === 0) {
+      const demoCards: CardType[] = [
+        {
+          id: 1,
+          modelId: 'card1',
+          groupId: 0,
+          x: 200,
+          y: 200,
+          width: 200,
+          height: 280,
+          faceUp: true,
+          rotation: 0,
+          ownerId: playerId || '1',
+          name: 'Lightning Bolt',
+          properties: { type: 'Instant', cost: 'R' },
+          markers: [],
+          anchored: false,
+          targeted: false,
+        },
+        {
+          id: 2,
+          modelId: 'card2',
+          groupId: 0,
+          x: 450,
+          y: 200,
+          width: 200,
+          height: 280,
+          faceUp: true,
+          rotation: 0,
+          ownerId: playerId || '1',
+          name: 'Giant Growth',
+          properties: { type: 'Instant', cost: 'G' },
+          markers: [],
+          anchored: false,
+          targeted: false,
+        },
+        {
+          id: 3,
+          modelId: 'card3',
+          groupId: 0,
+          x: 700,
+          y: 200,
+          width: 200,
+          height: 280,
+          faceUp: false,
+          rotation: 0,
+          ownerId: playerId || '1',
+          name: 'Mystery Card',
+          properties: {},
+          markers: [],
+          anchored: false,
+          targeted: false,
+        },
+        {
+          id: 4,
+          modelId: 'card4',
+          groupId: 0,
+          x: 300,
+          y: 500,
+          width: 200,
+          height: 280,
+          faceUp: true,
+          rotation: 90,
+          ownerId: playerId || '1',
+          name: 'Serra Angel',
+          properties: { type: 'Creature', cost: '3WW' },
+          markers: [{ id: 'm1', name: '+1/+1', count: 2 }],
+          anchored: false,
+          targeted: false,
+        },
+      ];
+
+      demoCards.forEach((card) => {
+        useGameStore.getState().addCard(card);
+      });
+    }
+  }, []);
+
+  // Handlers
+  const handleCardClick = useCallback(
+    (card: CardType, event: React.MouseEvent) => {
+      cardSelection.handleCardClick(card.id, event);
+    },
+    [cardSelection]
+  );
+
+  const handleCardDoubleClick = useCallback((card: CardType) => {
+    updateCard(card.id, { faceUp: !card.faceUp });
+    soundManager.play('cardflip');
+  }, [updateCard]);
+
+  const handleCardContextMenu = useCallback(
+    (e: React.MouseEvent, card: CardType) => {
+      e.preventDefault();
+      const selected = selectedCards.includes(card.id) ? selectedCards : [card.id];
+      selectCards(selected);
+
+      const menuItems = getCardContextMenuItems(
+        selected.map((id) => cards.get(id)!).filter(Boolean),
+        {
+          onFlipFaceUp: () => flipSelectedCards(true),
+          onFlipFaceDown: () => flipSelectedCards(false),
+          onRotate: (deg) => rotateSelectedCards(deg),
+          onDelete: () => deleteSelectedCards(),
+          onTarget: () => targetSelectedCards(),
+          onHighlight: (color) => highlightSelectedCards(color),
+        }
+      );
+
+      contextMenu.open(e.clientX, e.clientY, menuItems, { cards: selected.map((id) => cards.get(id)!) });
+    },
+    [selectedCards, cards, selectCards, contextMenu]
+  );
+
+  const flipSelectedCards = useCallback(
+    (faceUp: boolean) => {
+      selectedCards.forEach((id) => {
+        updateCard(id, { faceUp });
+      });
+      soundManager.play('cardflip');
+    },
+    [selectedCards, updateCard]
+  );
+
+  const rotateSelectedCards = useCallback(
+    (degrees: number) => {
+      selectedCards.forEach((id) => {
+        const card = cards.get(id);
+        if (card) {
+          const newRotation = (card.rotation + degrees) % 360;
+          updateCard(id, { rotation: newRotation });
+        }
+      });
+    },
+    [selectedCards, cards, updateCard]
+  );
+
+  const deleteSelectedCards = useCallback(() => {
+    selectedCards.forEach((id) => {
+      useGameStore.getState().removeCard(id);
+    });
+    clearSelection();
+  }, [selectedCards, clearSelection]);
+
+  const targetSelectedCards = useCallback(() => {
+    selectedCards.forEach((id) => {
+      const card = cards.get(id);
+      if (card) {
+        updateCard(id, { targeted: !card.targeted });
+      }
+    });
+  }, [selectedCards, cards, updateCard]);
+
+  const highlightSelectedCards = useCallback(
+    (color: string) => {
+      selectedCards.forEach((id) => {
+        updateCard(id, { highlighted: color || undefined });
+      });
+    },
+    [selectedCards, updateCard]
+  );
+
+  const handleLeave = useCallback(() => {
+    gameClient.leave();
+    resetGame();
+    navigate('/');
+  }, [gameClient, resetGame, navigate]);
+
+  const [chatInput, setChatInput] = useState('');
+
+  const handleSendChat = useCallback(() => {
+    if (chatInput.trim()) {
+      gameClient.sendChat(chatInput);
+      addChatMessage({
+        id: Date.now().toString(),
+        playerId: playerId || 'local',
+        playerName: playerName,
+        message: chatInput,
+        timestamp: Date.now(),
+      });
+      setChatInput('');
+    }
+  }, [chatInput, gameClient, playerId, playerName, addChatMessage]);
+
+  const isMyTurn = activePlayerId === playerId;
+  const handCards = Array.from(cards.values()).filter((c) => c.groupId === -1);
+
   return (
-    <div className="h-full flex flex-col">
-      {/* Toolbar */}
-      <div className="bg-octgn-primary p-2 flex items-center space-x-2 border-b border-octgn-accent">
-        <button className="btn btn-secondary text-sm">🎴 Load Deck</button>
-        <button className="btn btn-secondary text-sm">🔀 Shuffle</button>
-        <button className="btn btn-secondary text-sm">↩️ Reset</button>
-        <div className="flex-1" />
-        <span className="text-sm text-gray-400">Zoom: {Math.round(zoom * 100)}%</span>
-        <button onClick={() => setZoom(1)} className="btn btn-secondary text-sm">100%</button>
-        <button onClick={() => setZoom((z) => Math.max(0.25, z - 0.25))} className="btn btn-secondary text-sm">-</button>
-        <button onClick={() => setZoom((z) => Math.min(3, z + 0.25))} className="btn btn-secondary text-sm">+</button>
+    <div className="h-screen flex flex-col bg-octgn-dark">
+      {/* Top toolbar */}
+      <div className="bg-octgn-primary border-b border-octgn-accent px-4 py-2 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-lg font-bold text-white">
+            {gameId || 'Local Game'}
+          </h1>
+          <span
+            className={`text-sm ${connected ? 'text-green-500' : 'text-gray-500'}`}
+          >
+            {connected ? '● Connected' : connecting ? '○ Connecting...' : '○ Offline'}
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-400">Zoom: {Math.round(zoom * 100)}%</span>
+          <Button size="sm" variant="secondary" onClick={() => setZoom(1)}>
+            Reset
+          </Button>
+          <Button size="sm" variant="secondary" onClick={toggleHand}>
+            👋 Hand
+          </Button>
+          <Button size="sm" variant="secondary" onClick={toggleChat}>
+            💬 Chat
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => saveGame()}>
+            💾 Save
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => loadGame()}>
+            📂 Load
+          </Button>
+          <Button size="sm" variant="danger" onClick={handleLeave}>
+            Leave
+          </Button>
+        </div>
       </div>
 
       {/* Main game area */}
-      <div className="flex-1 flex">
-        {/* Canvas */}
-        <div className="flex-1 relative">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full cursor-crosshair"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onContextMenu={handleContextMenu}
-            onWheel={handleWheel}
-          />
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left sidebar - Players & Turn */}
+        <div className="w-64 bg-octgn-primary border-r border-octgn-accent flex flex-col">
+          <div className="p-3">
+            <TurnIndicator
+              turnNumber={turnNumber}
+              activePlayerName={
+                players.find((p) => p.id === activePlayerId)?.name || null
+              }
+              currentPhase={phase}
+              isMyTurn={isMyTurn}
+              phases={phases}
+              onNextTurn={() => nextTurn()}
+              onSetPhase={(p) => setPhase(p)}
+            />
+          </div>
 
-          {/* Context Menu */}
-          {contextMenu && (
-            <div
-              className="absolute bg-octgn-primary border border-octgn-accent rounded-lg shadow-lg py-2 min-w-[150px]"
-              style={{ left: contextMenu.x, top: contextMenu.y }}
-            >
-              <button
-                className="w-full px-4 py-2 text-left hover:bg-octgn-accent/50"
-                onClick={() => {
-                  contextMenu.cards.forEach((id) => turnCard(id, true));
-                  setContextMenu(null);
-                }}
+          <div className="flex-1 overflow-y-auto p-3">
+            <PlayerList
+              players={players}
+              currentPlayerId={playerId}
+              activePlayerId={activePlayerId}
+            />
+          </div>
+
+          <div className="p-3 border-t border-octgn-accent">
+            <CounterPanel
+              counters={Array.from(counters.values())}
+              playerId={playerId || ''}
+              onUpdateCounter={(name, value) => {
+                useGameStore.getState().setCounter(name, value);
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Center - Game table */}
+        <div className="flex-1 flex flex-col">
+          {/* Opponent's area */}
+          <div className="h-32 bg-octgn-accent/20 border-b border-octgn-accent flex items-center justify-center text-gray-500">
+            Opponent's Area
+          </div>
+
+          {/* Table - Game Canvas */}
+          <div className="flex-1 relative">
+            <GameCanvas className="absolute inset-0" />
+
+            {/* Zoom controls overlay */}
+            <div className="absolute bottom-4 right-4 flex space-x-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setZoom(zoom / 1.2)}
               >
-                👁️ Flip Face Up
-              </button>
-              <button
-                className="w-full px-4 py-2 text-left hover:bg-octgn-accent/50"
-                onClick={() => {
-                  contextMenu.cards.forEach((id) => turnCard(id, false));
-                  setContextMenu(null);
-                }}
+                -
+              </Button>
+              <Button size="sm" variant="secondary" onClick={() => setZoom(1)}>
+                100%
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setZoom(zoom * 1.2)}
               >
-                🔽 Flip Face Down
-              </button>
-              <hr className="border-octgn-accent my-1" />
-              <button
-                className="w-full px-4 py-2 text-left hover:bg-octgn-accent/50"
-                onClick={() => {
-                  contextMenu.cards.forEach((id) => rotateCard(id, 90));
-                  setContextMenu(null);
+                +
+              </Button>
+            </div>
+          </div>
+
+          {/* Player's hand */}
+          {showHand && (
+            <div className="border-t border-octgn-accent">
+              <PlayerHand
+                cards={handCards}
+                selectedCardIds={selectedCards}
+                onCardClick={(card) => {
+                  if (!selectedCards.includes(card.id)) {
+                    selectCards([card.id]);
+                  }
                 }}
-              >
-                🔄 Rotate 90°
-              </button>
-              <button
-                className="w-full px-4 py-2 text-left hover:bg-octgn-accent/50"
-                onClick={() => {
-                  contextMenu.cards.forEach((id) => rotateCard(id, 180));
-                  setContextMenu(null);
-                }}
-              >
-                🔄 Rotate 180°
-              </button>
+                onCardDoubleClick={handleCardDoubleClick}
+                onCardContextMenu={(e, card) => handleCardContextMenu(e, card)}
+              />
             </div>
           )}
         </div>
 
-        {/* Chat Panel */}
+        {/* Right sidebar - Chat */}
         {showChat && (
           <div className="w-72 bg-octgn-primary border-l border-octgn-accent flex flex-col">
-            <div className="p-2 border-b border-octgn-accent">
+            <div className="p-3 border-b border-octgn-accent">
               <h3 className="font-bold text-white">Chat</h3>
             </div>
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+
+            <div className="flex-1 overflow-y-auto p-3 space-y-2">
               {chatMessages.map((msg) => (
-                <div key={msg.id} className={`text-sm ${msg.isSystem ? 'text-gray-400 italic' : ''}`}>
-                  <span className="font-bold text-octgn-highlight">{msg.playerName}: </span>
-                  {msg.message}
+                <div key={msg.id} className="text-sm">
+                  <span className="font-medium text-octgn-highlight">
+                    {msg.playerName}:
+                  </span>{' '}
+                  <span className="text-gray-300">{msg.message}</span>
                 </div>
               ))}
+              {chatMessages.length === 0 && (
+                <div className="text-center text-gray-500 text-sm">
+                  No messages yet
+                </div>
+              )}
             </div>
-            <div className="p-2 border-t border-octgn-accent">
+
+            <div className="p-3 border-t border-octgn-accent">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (chatInput.trim()) {
-                    sendChat(chatInput);
-                    setChatInput('');
-                  }
+                  handleSendChat();
                 }}
               >
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  placeholder="Type a message..."
-                  className="input w-full text-sm"
-                />
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Type a message..."
+                    className="input flex-1 text-sm"
+                  />
+                  <Button type="submit" size="sm">
+                    Send
+                  </Button>
+                </div>
               </form>
             </div>
           </div>
         )}
       </div>
+
+      {/* Card Zoom Overlay */}
+      {zoomedCard && (
+        <CardZoom
+          card={zoomedCard}
+          onClose={() => setZoomedCard(null)}
+          showActions
+          onPlayCard={(card) => {
+            setZoomedCard(null);
+          }}
+        />
+      )}
+
+      {/* Context Menu */}
+      <ContextMenu
+        state={contextMenu}
+        menuRef={contextMenu.menuRef}
+        onClose={contextMenu.close}
+      />
     </div>
   );
 }
