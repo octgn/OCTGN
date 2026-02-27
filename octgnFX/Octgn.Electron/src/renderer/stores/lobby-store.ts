@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { HostedGame, GameStatus } from '../../shared/types';
+import type { HostedGame } from '../../shared/types';
 
 interface LobbyFilter {
   searchText: string;

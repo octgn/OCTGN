@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { clsx } from 'clsx';
-import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
-import Input from '../components/Input';
 import DeckLoader from '../components/DeckLoader';
 import { useAppStore } from '../stores/app-store';
 import type { Deck, DeckCard, DeckSection } from '../../shared/types';

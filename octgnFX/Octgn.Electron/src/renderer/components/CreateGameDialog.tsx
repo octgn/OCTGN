@@ -6,7 +6,6 @@ import Input from './Input';
 import { useLobbyStore } from '../stores/lobby-store';
 
 interface CreateGameDialogProps {
-  open: boolean;
   onClose: () => void;
   gameDefinitions: GameDefOption[];
 }
@@ -19,7 +18,6 @@ interface GameDefOption {
 }
 
 const CreateGameDialog: React.FC<CreateGameDialogProps> = ({
-  open,
   onClose,
   gameDefinitions,
 }) => {
@@ -37,27 +35,24 @@ const CreateGameDialog: React.FC<CreateGameDialogProps> = ({
   const selectedGame = gameDefinitions.find((g) => g.id === selectedGameId);
   const maxPlayers = selectedGame?.maxPlayers ?? 8;
 
-  // Reset form when dialog opens
+  // Reset form when dialog mounts
   useEffect(() => {
-    if (open) {
-      setSelectedGameId(gameDefinitions[0]?.id ?? '');
-      setGameName('');
-      setPassword('');
-      setPlayerCount(2);
-      setSpectatorsAllowed(false);
-      setError(null);
-    }
-  }, [open, gameDefinitions]);
+    setSelectedGameId(gameDefinitions[0]?.id ?? '');
+    setGameName('');
+    setPassword('');
+    setPlayerCount(2);
+    setSpectatorsAllowed(false);
+    setError(null);
+  }, [gameDefinitions]);
 
   // Close on escape key
   useEffect(() => {
-    if (!open) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [open, onClose]);
+  }, [onClose]);
 
   const handleOverlayClick = useCallback(
     (e: React.MouseEvent) => {
@@ -98,8 +93,6 @@ const CreateGameDialog: React.FC<CreateGameDialogProps> = ({
     },
     [selectedGameId, gameName, password, playerCount, spectatorsAllowed, hostGame, onClose],
   );
-
-  if (!open) return null;
 
   return (
     <div
