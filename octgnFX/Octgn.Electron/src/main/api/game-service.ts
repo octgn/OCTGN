@@ -484,13 +484,16 @@ export class GameService {
     // Chat message received
     this.connection.on('Chat', (msg: ProtocolMessage) => {
       const params = this.p(msg);
+      const playerId = params.player as number;
+      const playerColor = this.gameState?.players.find(p => p.id === playerId)?.color;
       const chatMsg: ChatMessage = {
         id: String(this.chatIdCounter++),
-        playerId: params.player as number,
-        playerName: this.getPlayerName(params.player as number),
+        playerId,
+        playerName: this.getPlayerName(playerId),
         message: params.text as string,
         timestamp: Date.now(),
         isSystem: false,
+        color: playerColor,
       };
       this.chatMessages.push(chatMsg);
       if (this.gameState) {
