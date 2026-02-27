@@ -14,45 +14,65 @@ export class OctgnApiClient {
 
   async login(username: string, password: string): Promise<LoginResult> {
     try {
-      // Generate a device ID for this installation
+      // Generate a stable device ID for this installation (persisted across sessions)
       const deviceId = await this.getDeviceId();
 
-      const response = await fetch(`${API_BASE}/api/user/createsession`, {
+      const response = await fetch(`${API_BASE}/api/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, deviceId }),
+        body: JSON.stringify({ Username: username, Password: password, DeviceId: deviceId }),
       });
 
       if (!response.ok) {
-        return { success: false, error: 'Invalid username or password' };
+        const body = await response.text().catch(() => '');
+        return { success: false, error: `Server error (${response.status}): ${body || response.statusText}` };
       }
 
       const data = await response.json();
 
-      if (data.result === 'Ok') {
+      // Response: { Result: { Type: 0|1|2|3|4|5|6, Username: '...' }, SessionKey: '...', UserId: '...' }
+      // Type enum: 0=UnknownError, 1=Ok, 2=EmailUnverified, 3=UnknownUsername,
+      //            4=PasswordWrong, 5=NotSubscribed, 6=NoEmailAssociated
+      const resultType = data.Result?.Type ?? data.result?.type ?? -1;
+      const returnedUsername: string = data.Result?.Username ?? data.result?.username ?? username;
+
+      if (resultType === 1 || resultType === 'Ok') {
         this.session = {
-          userId: data.userId,
-          sessionId: data.sessionKey,
+          userId: data.UserId ?? data.userId,
+          sessionId: data.SessionKey ?? data.sessionKey,
           deviceId,
-          username,
+          username: returnedUsername,
         };
 
         return {
           success: true,
           user: {
-            id: data.userId,
-            username,
-            isSubscriber: data.isSubscriber || false,
+            id: this.session.userId,
+            username: returnedUsername,
+            isSubscriber: false,
           },
           session: {
-            userId: data.userId,
-            sessionId: data.sessionKey,
+            userId: this.session.userId,
+            sessionId: this.session.sessionId,
             deviceId,
           },
         };
       }
 
-      return { success: false, error: data.message || 'Login failed' };
+      // Map server error types to user-friendly messages
+      const errorMessages: Record<string | number, string> = {
+        0: 'Unknown server error',
+        2: 'Please verify your email before logging in',
+        3: 'Unknown username',
+        4: 'Incorrect password',
+        5: 'Account is not subscribed',
+        6: 'No email associated with your account — visit octgn.net to add one',
+        UnknownUsername: 'Unknown username',
+        PasswordWrong: 'Incorrect password',
+        EmailUnverified: 'Please verify your email before logging in',
+      };
+      const errorMsg = errorMessages[resultType] ?? `Login failed (code ${resultType})`;
+      return { success: false, error: errorMsg };
     } catch (err) {
       return { success: false, error: `Connection error: ${(err as Error).message}` };
     }
@@ -61,15 +81,15 @@ export class OctgnApiClient {
   async logout(): Promise<void> {
     if (this.session) {
       try {
-        await fetch(`${API_BASE}/api/user/clearsession`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: this.session.userId,
-            deviceId: this.session.deviceId,
-            sessionId: this.session.sessionId,
-          }),
-        });
+        // POST /api/users/{userId}/devices/{deviceId}/session to clear
+        await fetch(
+          `${API_BASE}/api/users/${this.session.userId}/devices/${this.session.deviceId}/session`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ SessionKey: this.session.sessionId }),
+          },
+        );
       } catch {
         // Ignore logout errors
       }

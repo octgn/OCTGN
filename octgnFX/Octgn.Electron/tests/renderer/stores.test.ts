@@ -442,7 +442,7 @@ describe('useLobbyStore', () => {
 
       await useLobbyStore.getState().joinGame('game-123');
 
-      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-123', undefined);
+      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-123', undefined, undefined);
       expect(useLobbyStore.getState().isLoading).toBe(false);
     });
 
@@ -451,7 +451,7 @@ describe('useLobbyStore', () => {
 
       await useLobbyStore.getState().joinGame('game-123', 'secret');
 
-      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-123', 'secret');
+      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-123', 'secret', undefined);
     });
 
     it('should handle join error', async () => {
