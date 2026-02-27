@@ -578,6 +578,22 @@ export class GameService {
       this.gameState!.isStarted = true;
       log('GAME', 'Game started');
       this.broadcastState();
+
+      // Signal readiness to the server — the WPF host shows a "Waiting for Other
+      // Users" dialog until every player sends Ready (#90). Without this, the host
+      // waits indefinitely for the Electron player.
+      this.connection?.sendMessage(MessageType.Ready, 0, { player: this.localPlayerId });
+    });
+
+    // A player signalled ready (echoed by the server to all players)
+    this.connection.on('Ready', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const playerId = params.player as number;
+      const player = this.gameState?.players.find(p => p.id === playerId);
+      const name = player?.name || `Player ${playerId}`;
+      log('GAME', `${name} is ready`);
+      this.addSystemMessage(`${name} is ready`);
+      this.broadcastState();
     });
 
     // Full GameState snapshot (sent to spectators joining mid-game)

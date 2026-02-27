@@ -548,6 +548,61 @@ describe('GameService', () => {
         const state = lastState();
         expect(state.isStarted).toBe(true);
       });
+
+      it('sends Ready message with local player ID after Start', async () => {
+        const service = await serviceWithState();
+        mockSendMessage.mockClear();
+
+        const start = getHandler('Start');
+        start(msg(MessageType.Start, {}));
+
+        // Should send Ready (type 90) with the local player's ID (42 from Welcome)
+        expect(mockSendMessage).toHaveBeenCalledWith(
+          MessageType.Ready,
+          0,
+          { player: 42 },
+        );
+      });
+
+      it('sends Ready even if gameState was not initialized before Start', async () => {
+        // Edge case: Start arrives without prior Welcome (shouldn't happen normally,
+        // but the handler calls initializeGameState as a fallback)
+        const service = await joinedService();
+        mockSendMessage.mockClear();
+
+        const start = getHandler('Start');
+        start(msg(MessageType.Start, {}));
+
+        // localPlayerId defaults to 0 if no Welcome was received
+        expect(mockSendMessage).toHaveBeenCalledWith(
+          MessageType.Ready,
+          0,
+          { player: 0 },
+        );
+      });
+    });
+
+    describe('Ready', () => {
+      it('adds system message when a player signals ready', async () => {
+        const service = await serviceWithState();
+        // Add a player first
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, {
+          id: 5, nick: 'Alice', pkey: BigInt(0), inversedTable: false, spectator: false,
+        }));
+        mockSend.mockClear();
+
+        const ready = getHandler('Ready');
+        ready(msg(MessageType.Ready, { player: 5 }));
+
+        const state = lastState();
+        expect(state.chatMessages).toBeDefined();
+        const readyMsg = state.chatMessages.find(
+          (m: { message: string }) => m.message.includes('ready'),
+        );
+        expect(readyMsg).toBeDefined();
+        expect(readyMsg.message).toContain('Alice');
+      });
     });
 
     describe('NextTurn', () => {
