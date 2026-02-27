@@ -62,28 +62,42 @@ function isTruthy(v: unknown): boolean {
   return false;
 }
 
+/**
+ * Compares two NuGet-style version strings (e.g. "2019.07.07.00", "1.0.0.11").
+ * Returns >0 if a is newer, <0 if b is newer, 0 if equal.
+ */
+function compareVersions(a: string, b: string): number {
+  const pa = a.split('.').map((n) => parseInt(n, 10) || 0);
+  const pb = b.split('.').map((n) => parseInt(n, 10) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (diff !== 0) return diff;
+  }
+  return 0;
+}
+
 function parseEntries(feedBase: string, entries: NuGetEntry[]): AvailableGame[] {
-  const games: AvailableGame[] = [];
+  // Collect all versions per game, then pick the best one.
+  // Some feeds never set IsLatestVersion=true (e.g. The Spoils in octgngames),
+  // so we can't simply filter on that flag — we'd drop the whole game.
+  type Candidate = { game: AvailableGame; isLatest: boolean; isAbsoluteLatest: boolean };
+  const candidates = new Map<string, Candidate>();
 
   for (const entry of entries) {
     const props = entry.properties ?? {};
-
-    // Only include latest versions to avoid duplicates per game
-    // (some feeds may not have this field — include entry if field absent)
-    if ('IsLatestVersion' in props && !isTruthy(props.IsLatestVersion)) {
-      continue;
-    }
-
     const gameId = text(props.Id);
-    const gameName = text(entry.title);  // Real name — NOT the GUID
+    const gameName = text(entry.title); // Real name — NOT the GUID
     if (!gameId || !gameName) continue;
 
+    const isLatest = isTruthy(props.IsLatestVersion);
+    const isAbsoluteLatest = isTruthy(props.IsAbsoluteLatestVersion);
     const version = text(props.NormalizedVersion) || text(props.Version);
     const description = text(props.Description) || text(entry.summary);
     const authors = text(entry.author);
     const downloadUrl = `${feedBase.replace(/\/$/, '')}/package/${encodeURIComponent(gameId)}/${encodeURIComponent(version)}`;
 
-    games.push({
+    const game: AvailableGame = {
       id: gameId,
       name: gameName,
       version,
@@ -93,10 +107,23 @@ function parseEntries(feedBase: string, entries: NuGetEntry[]): AvailableGame[] 
       downloadUrl,
       iconUrl: text(props.IconUrl) || undefined,
       downloadCount: Number(props.DownloadCount) || 0,
-    });
+    };
+
+    const existing = candidates.get(gameId);
+    if (!existing) {
+      candidates.set(gameId, { game, isLatest, isAbsoluteLatest });
+    } else {
+      // Priority: IsLatestVersion=true > IsAbsoluteLatestVersion=true > highest version string
+      const win =
+        (!existing.isLatest && isLatest) ||
+        (!existing.isLatest && !existing.isAbsoluteLatest && isAbsoluteLatest) ||
+        (!existing.isLatest && !existing.isAbsoluteLatest && !isAbsoluteLatest &&
+          compareVersions(version, existing.game.version) > 0);
+      if (win) candidates.set(gameId, { game, isLatest, isAbsoluteLatest });
+    }
   }
 
-  return games;
+  return [...candidates.values()].map(({ game }) => game);
 }
 
 function getNextLink(doc: Record<string, unknown>): string | null {
