@@ -10,3 +10,6 @@ export {
   gamePackageManager 
 } from './gamePackage';
 export type { GamePackage, CardDatabase, CardInfo, SetInfo } from './gamePackage';
+
+export { GameDiscoveryService, useGameDiscovery } from './gameDiscovery';
+export type { DiscoveredGame } from './gameDiscovery';

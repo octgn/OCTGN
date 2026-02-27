@@ -27,6 +27,10 @@ export interface Card {
   // Alternate card faces
   alternate?: string;
   alternates?: Record<string, CardAlternate>;
+  
+  // Additional state
+  faceUp?: boolean; // Alias for consistency
+  selected?: boolean;
 }
 
 export interface CardAlternate {
@@ -79,12 +83,17 @@ export interface Player {
   tableSide: boolean; // true = bottom, false = top
   spectator: boolean;
   ready: boolean;
+  color?: string;
   
   // Player-specific groups
   hand: Group;
   deck: Group;
   discard: Group;
   counters: Counter[];
+  
+  // State
+  disconnected: boolean;
+  invertedTable: boolean;
 }
 
 export interface GameDefinition {
