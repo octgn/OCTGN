@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Card as CardType } from '../../shared/types';
@@ -30,6 +30,24 @@ function getGradientForCard(card: CardType): string {
 const CARD_ASPECT = 2.5 / 3.5;
 const DEFAULT_WIDTH = 100;
 const DEFAULT_HEIGHT = Math.round(DEFAULT_WIDTH / CARD_ASPECT);
+
+/**
+ * Compute the shortest-path rotation in degrees.
+ * Given a previous angle (fromDeg) and target angle (toDeg), both in [0,360),
+ * returns the target angle adjusted so CSS transitions take the shortest arc.
+ *
+ * Examples:
+ *   shortestRotationDeg(0, 270) => -90  (go -90 instead of +270)
+ *   shortestRotationDeg(270, 0) => 360  (go +90 instead of -270)
+ */
+export function shortestRotationDeg(fromDeg: number, toDeg: number): number {
+  let diff = toDeg - fromDeg;
+  // Normalize diff to (-360, 360)
+  // Then pick the shortest direction: if |diff| > 180, go the other way
+  while (diff > 180) diff -= 360;
+  while (diff < -180) diff += 360;
+  return fromDeg + diff;
+}
 
 export interface CardComponentProps {
   card: CardType;
@@ -64,15 +82,23 @@ const CardComponent: React.FC<CardComponentProps> = ({
   const width = style?.width ?? card.size?.width ?? DEFAULT_WIDTH;
   const height = style?.height ?? card.size?.height ?? DEFAULT_HEIGHT;
 
-  const rotationDeg = (card.rotation ?? 0) * 90; // 0,1,2,3 -> 0,90,180,270
+  // Track previous rotation to compute shortest path
+  const prevRotationRef = useRef(0);
+  const targetDeg = (card.rotation ?? 0) * 90; // 0,1,2,3 -> 0,90,180,270
+  const rotationDeg = shortestRotationDeg(prevRotationRef.current, targetDeg);
+  // Update ref for next render
+  prevRotationRef.current = rotationDeg;
+
   const isFlippedUp = card.faceUp;
   const isPeeking =
     !card.faceUp && card.peekingPlayers && card.peekingPlayers.length > 0;
   const isTargeted = !!card.targetedBy;
   const isHighlighted = !!card.highlighted;
   const hasMarkers = card.markers && card.markers.length > 0;
-  const imageUrl = isFlippedUp ? card.imageUrl : cardBackUrl;
-  const showPlaceholder = !imageUrl || imgError;
+  const frontImageUrl = card.imageUrl;
+  const backImageUrl = cardBackUrl;
+  const showFrontPlaceholder = !frontImageUrl || imgError;
+  const showBackPlaceholder = !backImageUrl;
   const gradient = useMemo(() => getGradientForCard(card), [card]);
 
   const handleClick = useCallback(() => onClick?.(card), [onClick, card]);
@@ -102,6 +128,35 @@ const CardComponent: React.FC<CardComponentProps> = ({
     [onDragEnd, card]
   );
 
+  // Build the combined transform for the inner 3D container:
+  // - Z-axis rotation (card orientation: 0/90/180/270)
+  // - Y-axis rotation (flip: 0 or 180)
+  // - Hover scale
+  const innerTransformParts: string[] = [];
+  if (rotationDeg) innerTransformParts.push(`rotate(${rotationDeg}deg)`);
+  if (!isFlippedUp) innerTransformParts.push('rotateY(180deg)');
+  if (isHovered && interactive) innerTransformParts.push('scale(1.06)');
+
+  // Shared CSS classes for both card faces (front and back)
+  const faceClasses = clsx(
+    'absolute inset-0 rounded-lg overflow-hidden',
+    'border border-octgn-border/40',
+    'shadow-lg shadow-black/50',
+    interactive && 'transition-shadow duration-300',
+    isHovered &&
+      interactive &&
+      'shadow-[0_0_15px_rgba(59,130,246,0.5),0_0_40px_rgba(59,130,246,0.25),0_0_80px_rgba(139,92,246,0.15)]',
+    selected &&
+      'ring-2 ring-octgn-gold/70 shadow-[0_0_10px_rgba(251,191,36,0.5),0_0_30px_rgba(251,191,36,0.3),0_0_60px_rgba(251,191,36,0.15)]',
+    isTargeted &&
+      'ring-2 ring-octgn-danger/80 shadow-[0_0_12px_rgba(239,68,68,0.6),0_0_30px_rgba(239,68,68,0.3)] animate-glow-pulse',
+    isHighlighted && 'ring-2'
+  );
+
+  const highlightStyle = isHighlighted
+    ? { outlineColor: card.highlighted, borderColor: card.highlighted }
+    : undefined;
+
   return (
     <div
       className={twMerge(
@@ -116,23 +171,20 @@ const CardComponent: React.FC<CardComponentProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* 3D Flip container */}
+      {/* 3D Flip + Rotation container */}
       <div
         className={clsx(
           'octgn-card-inner',
-          'absolute inset-0 transition-transform duration-500',
+          'absolute inset-0',
           interactive && 'cursor-pointer'
         )}
         style={{
           transformStyle: 'preserve-3d',
-          transform: [
-            rotationDeg ? `rotate(${rotationDeg}deg)` : '',
-            isHovered && interactive ? 'scale(1.06)' : '',
-          ]
-            .filter(Boolean)
-            .join(' ') || undefined,
+          transform: innerTransformParts.length > 0
+            ? innerTransformParts.join(' ')
+            : undefined,
           transition:
-            'transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.35s cubic-bezier(0.23, 1, 0.32, 1)',
+            'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.35s cubic-bezier(0.23, 1, 0.32, 1)',
         }}
         onClick={interactive ? handleClick : undefined}
         onDoubleClick={interactive ? handleDoubleClick : undefined}
@@ -143,78 +195,42 @@ const CardComponent: React.FC<CardComponentProps> = ({
         role={interactive ? 'button' : undefined}
         tabIndex={interactive ? 0 : undefined}
       >
-        {/* Card face */}
+        {/* ── FRONT FACE (visible when face-up) ───────────────────────── */}
         <div
-          className={clsx(
-            'absolute inset-0 rounded-lg overflow-hidden',
-            'border border-octgn-border/40',
-            'shadow-lg shadow-black/50',
-            // Glow effects
-            interactive && 'transition-shadow duration-300',
-            isHovered &&
-              interactive &&
-              'shadow-[0_0_15px_rgba(59,130,246,0.5),0_0_40px_rgba(59,130,246,0.25),0_0_80px_rgba(139,92,246,0.15)]',
-            selected &&
-              'ring-2 ring-octgn-gold/70 shadow-[0_0_10px_rgba(251,191,36,0.5),0_0_30px_rgba(251,191,36,0.3),0_0_60px_rgba(251,191,36,0.15)]',
-            isTargeted &&
-              'ring-2 ring-octgn-danger/80 shadow-[0_0_12px_rgba(239,68,68,0.6),0_0_30px_rgba(239,68,68,0.3)] animate-glow-pulse',
-            isHighlighted && 'ring-2'
-          )}
-          style={
-            isHighlighted
-              ? { outlineColor: card.highlighted, borderColor: card.highlighted }
-              : undefined
-          }
+          className={clsx('octgn-card-front', faceClasses)}
+          style={{
+            backfaceVisibility: 'hidden',
+            ...highlightStyle,
+          }}
         >
           {/* Card image or placeholder gradient */}
-          {showPlaceholder ? (
+          {showFrontPlaceholder ? (
             <div
               className={clsx(
                 'w-full h-full bg-gradient-to-br',
-                isFlippedUp ? gradient : 'from-indigo-950 to-slate-900'
+                gradient
               )}
             >
-              {/* Card back pattern */}
-              {!isFlippedUp && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="absolute inset-2 rounded border border-octgn-border/20 bg-gradient-to-br from-octgn-primary/10 to-octgn-accent/10" />
-                  <div className="absolute inset-4 rounded border border-octgn-border/10">
-                    <div
-                      className="w-full h-full opacity-[0.06]"
-                      style={{
-                        backgroundImage:
-                          'repeating-linear-gradient(45deg, transparent, transparent 8px, currentColor 8px, currentColor 9px)',
-                      }}
-                    />
-                  </div>
-                  <span className="relative font-display text-[10px] text-octgn-text-dim/40 tracking-widest uppercase">
-                    OCTGN
-                  </span>
-                </div>
-              )}
-
               {/* Face-up placeholder with name */}
-              {isFlippedUp && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                  <div className="w-8 h-8 mb-2 rounded-full bg-white/10 flex items-center justify-center">
-                    <svg
-                      className="w-4 h-4 text-white/40"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <path d="M8 1l2.5 5 5.5.8-4 3.9.9 5.3L8 13.5 3.1 16l.9-5.3-4-3.9L5.5 6z" />
-                    </svg>
-                  </div>
-                  <span className="text-[9px] font-semibold text-white/70 text-center leading-tight line-clamp-3">
-                    {card.name}
-                  </span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
+                <div className="w-8 h-8 mb-2 rounded-full bg-white/10 flex items-center justify-center">
+                  <svg
+                    className="w-4 h-4 text-white/40"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                  >
+                    <path d="M8 1l2.5 5 5.5.8-4 3.9.9 5.3L8 13.5 3.1 16l.9-5.3-4-3.9L5.5 6z" />
+                  </svg>
                 </div>
-              )}
+                <span className="text-[9px] font-semibold text-white/70 text-center leading-tight line-clamp-3">
+                  {card.name}
+                </span>
+              </div>
             </div>
           ) : (
             <img
-              src={imageUrl}
-              alt={isFlippedUp ? card.name : 'Face-down card'}
+              src={frontImageUrl}
+              alt={card.name}
               className="w-full h-full object-cover select-none pointer-events-none"
               draggable={false}
               onError={() => setImgError(true)}
@@ -234,7 +250,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-octgn-gold/10 to-transparent" />
           )}
 
-          {/* Peeking overlay */}
+          {/* Peeking overlay (shown on front when someone peeks at a face-down card) */}
           {isPeeking && (
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute inset-0 bg-octgn-primary/10 backdrop-blur-[1px]" />
@@ -288,13 +304,50 @@ const CardComponent: React.FC<CardComponentProps> = ({
             </div>
           )}
 
-          {/* Card name tooltip on face-up cards */}
-          {isFlippedUp && !showPlaceholder && isHovered && (
+          {/* Card name tooltip on face-up cards with real images */}
+          {!showFrontPlaceholder && isHovered && (
             <div className="absolute bottom-0 left-0 right-0 px-1.5 py-1 bg-gradient-to-t from-black/80 to-transparent">
               <span className="text-[9px] font-medium text-octgn-text/90 leading-tight line-clamp-1">
                 {card.name}
               </span>
             </div>
+          )}
+        </div>
+
+        {/* ── BACK FACE (visible when face-down) ──────────────────────── */}
+        <div
+          className={clsx('octgn-card-back', faceClasses)}
+          style={{
+            backfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+            ...highlightStyle,
+          }}
+        >
+          {showBackPlaceholder ? (
+            <div className="w-full h-full bg-gradient-to-br from-indigo-950 to-slate-900">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-2 rounded border border-octgn-border/20 bg-gradient-to-br from-octgn-primary/10 to-octgn-accent/10" />
+                <div className="absolute inset-4 rounded border border-octgn-border/10">
+                  <div
+                    className="w-full h-full opacity-[0.06]"
+                    style={{
+                      backgroundImage:
+                        'repeating-linear-gradient(45deg, transparent, transparent 8px, currentColor 8px, currentColor 9px)',
+                    }}
+                  />
+                </div>
+                <span className="relative font-display text-[10px] text-octgn-text-dim/40 tracking-widest uppercase">
+                  OCTGN
+                </span>
+              </div>
+            </div>
+          ) : (
+            <img
+              src={backImageUrl}
+              alt="Face-down card"
+              className="w-full h-full object-cover select-none pointer-events-none"
+              draggable={false}
+            />
           )}
         </div>
       </div>
