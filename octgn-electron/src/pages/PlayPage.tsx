@@ -1,372 +1,281 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useGameStore } from '../stores/gameStore';
-import { useGameClient } from '../hooks/useGameClient';
-import {
-  Layout,
-  PlayerHand,
-  PlayerList,
-  TurnIndicator,
-  CounterPanel,
-  CardZoom,
-  Modal,
-  Button,
-} from '../components';
-import { Card as CardType, Player, Counter, Group } from '../types/game';
-import { soundManager } from '../utils';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { useHostedGames, HostedGame } from '../services/OctgnApiService';
+import { Button, Modal, Badge, EmptyState } from '../components';
+import { HostGameModal } from '../components/HostGameModal';
+import { JoinGameModal } from '../components/JoinGameModal';
+
+type Tab = 'browse' | 'host' | 'history';
 
 export default function PlayPage() {
-  const { gameId } = useParams();
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuthStore();
+  const { games, loading, error, refresh } = useHostedGames();
   
-  // Local game state
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [handCards, setHandCards] = useState<CardType[]>([]);
-  const [tableCards, setTableCards] = useState<CardType[]>([]);
-  const [counters, setCounters] = useState<Counter[]>([]);
-  const [activePlayerId, setActivePlayerId] = useState<string | null>(null);
-  const [turnNumber, setTurnNumber] = useState(0);
-  const [currentPhase, setCurrentPhase] = useState(0);
-  
-  // UI state
-  const [selectedCards, setSelectedCards] = useState<number[]>([]);
-  const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
-  const [showHand, setShowHand] = useState(true);
-  const [showChat, setShowChat] = useState(true);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  
-  // Connection state
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('browse');
+  const [showHostModal, setShowHostModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<HostedGame | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<'all' | 'staging' | 'playing' | 'no-password'>('all');
 
-  const {
-    playerId,
-    playerName,
-    connected,
-    connect: storeConnect,
-    disconnect,
-  } = useGameStore();
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
 
-  // Game client hook
-  const {
-    connected: clientConnected,
-    connecting,
-    error: clientError,
-    connect,
-    disconnect: clientDisconnect,
-    sendChat,
-    moveCards,
-    turnCard,
-    rotateCard,
-    ready,
-    leave,
-  } = useGameClient({
-    onConnected: () => {
-      setIsConnecting(false);
-      setError(null);
-    },
-    onDisconnected: () => {
-      setIsConnecting(false);
-    },
-    onError: (err) => {
-      setError(err.message || 'Connection error');
-      setIsConnecting(false);
-    },
-    onChat: (data) => {
-      const player = players.find(p => p.id === data.player);
-      setChatMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        playerId: data.player,
-        playerName: player?.name || 'Unknown',
-        message: data.text,
-        timestamp: Date.now(),
-      }]);
-      soundManager.play('chat');
-    },
-    onPlayerJoined: (data) => {
-      const newPlayer: Player = {
-        id: data.id,
-        name: data.nick,
-        userId: data.userId,
-        publicKey: data.pkey,
-        tableSide: data.tableSide,
-        spectator: data.spectator,
-        ready: false,
-        hand: { id: -1, name: 'Hand', type: 'hand', visibility: 'owner', visibleTo: [], cards: [], controllerId: data.id },
-        deck: { id: -2, name: 'Deck', type: 'deck', visibility: 'nobody', visibleTo: [], cards: [], controllerId: data.id },
-        discard: { id: -3, name: 'Discard', type: 'discard', visibility: 'all', visibleTo: [], cards: [], controllerId: data.id },
-        counters: [],
-        disconnected: false,
-        invertedTable: false,
-      };
-      setPlayers(prev => [...prev, newPlayer]);
-    },
-    onPlayerLeft: (data) => {
-      setPlayers(prev => prev.filter(p => p.id !== data.player));
-    },
-    onCardCreated: (data) => {
-      // Add new card to appropriate group
-    },
-    onCardsMoved: (data) => {
-      // Update card positions
-    },
-    onCardTurned: (data) => {
-      soundManager.play('cardflip');
-    },
-    onTurnChanged: (data) => {
-      setActivePlayerId(data.activePlayer);
-      setTurnNumber(prev => prev + 1);
-      soundManager.play('turn');
-    },
+  // Filter games
+  const filteredGames = games.filter((game) => {
+    // Search filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const matches = 
+        game.name.toLowerCase().includes(term) ||
+        game.gameName.toLowerCase().includes(term) ||
+        game.hostUser.username.toLowerCase().includes(term);
+      if (!matches) return false;
+    }
+
+    // Status filter
+    switch (filter) {
+      case 'staging':
+        return game.status === 'Staging';
+      case 'playing':
+        return game.status === 'Playing';
+      case 'no-password':
+        return !game.hasPassword;
+      default:
+        return true;
+    }
   });
 
-  // Initialize sound manager
-  useEffect(() => {
-    soundManager.initialize();
+  // Handle joining a game
+  const handleJoinGame = useCallback((game: HostedGame) => {
+    setSelectedGame(game);
+    setShowJoinModal(true);
   }, []);
 
-  // Handle card selection
-  const handleCardClick = useCallback((card: CardType) => {
-    setSelectedCards(prev => {
-      if (prev.includes(card.id)) {
-        return prev.filter(id => id !== card.id);
-      }
-      return [...prev, card.id];
+  // Handle hosting a game
+  const handleHostGame = useCallback(() => {
+    setShowHostModal(true);
+  }, []);
+
+  // Handle connecting to a game
+  const handleConnect = useCallback((game: HostedGame, password?: string) => {
+    // Navigate to game table with connection info
+    const params = new URLSearchParams({
+      host: game.hostAddress,
+      port: String(game.port || 8888),
+      game: game.gameId,
+      gameName: game.gameName,
+      name: game.name,
     });
-  }, []);
-
-  const handleCardDoubleClick = useCallback((card: CardType) => {
-    // Toggle face up/down
-    turnCard(card.id, !card.faceUp);
-  }, [turnCard]);
-
-  const handleCardContextMenu = useCallback((e: React.MouseEvent, card: CardType) => {
-    e.preventDefault();
-    setZoomedCard(card);
-  }, []);
-
-  // Handle chat
-  const handleSendChat = useCallback(() => {
-    if (chatInput.trim()) {
-      sendChat(chatInput);
-      setChatInput('');
+    
+    if (password) {
+      params.set('password', password);
     }
-  }, [chatInput, sendChat]);
+    
+    navigate(`/play/${game.id}?${params.toString()}`);
+  }, [navigate]);
 
-  // Handle leave
-  const handleLeave = useCallback(() => {
-    leave();
-    navigate('/');
-  }, [leave, navigate]);
+  // Start local game
+  const handleLocalGame = useCallback(() => {
+    navigate('/play/local');
+  }, [navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="h-screen flex flex-col bg-octgn-dark">
-      {/* Top toolbar */}
-      <div className="bg-octgn-primary border-b border-octgn-accent px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-lg font-bold text-white">
-            {gameId || 'Local Game'}
-          </h1>
-          <span className={`text-sm ${connected ? 'text-green-500' : 'text-gray-500'}`}>
-            {connected ? '● Connected' : connecting ? '○ Connecting...' : '○ Disconnected'}
-          </span>
+    <div className="h-full flex flex-col">
+      {/* Header */}
+      <div className="bg-octgn-primary/50 border-b border-octgn-accent/30 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Play Games</h1>
+            <p className="text-gray-400 mt-1">
+              {games.length} games available • {loading ? 'Refreshing...' : 'Live'}
+            </p>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <Button variant="secondary" onClick={refresh} loading={loading}>
+              🔄 Refresh
+            </Button>
+            <Button variant="secondary" onClick={handleLocalGame}>
+              🎮 Local Game
+            </Button>
+            <Button variant="primary" onClick={handleHostGame}>
+              ➕ Host Game
+            </Button>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setShowHand(!showHand)}
-            className={`btn ${showHand ? 'btn-primary' : 'btn-secondary'} text-sm`}
-          >
-            👋 Hand
-          </button>
-          <button
-            onClick={() => setShowChat(!showChat)}
-            className={`btn ${showChat ? 'btn-primary' : 'btn-secondary'} text-sm`}
-          >
-            💬 Chat
-          </button>
-          <button
-            onClick={handleLeave}
-            className="btn btn-danger text-sm"
-          >
-            Leave
-          </button>
+        {/* Search and Filters */}
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search games..."
+              className="input w-full pl-10"
+            />
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
+          </div>
+
+          <div className="flex rounded-lg overflow-hidden border border-octgn-accent">
+            {[
+              { id: 'all', label: 'All' },
+              { id: 'staging', label: 'Staging' },
+              { id: 'playing', label: 'In Progress' },
+              { id: 'no-password', label: 'No Password' },
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id as any)}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  filter === f.id
+                    ? 'bg-octgn-highlight text-white'
+                    : 'bg-octgn-primary text-gray-300 hover:bg-octgn-accent'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Main game area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left sidebar - Players & Turn */}
-        <div className="w-64 bg-octgn-primary border-r border-octgn-accent flex flex-col">
-          <div className="p-3">
-            <TurnIndicator
-              turnNumber={turnNumber}
-              activePlayerName={players.find(p => p.id === activePlayerId)?.name || null}
-              currentPhase={currentPhase}
-              isMyTurn={activePlayerId === playerId}
-              phases={[
-                { name: 'Draw' },
-                { name: 'Main' },
-                { name: 'Combat' },
-                { name: 'End' },
-              ]}
-              onNextTurn={() => {
-                // Send next turn
-              }}
-              onSetPhase={(phase) => setCurrentPhase(phase)}
-            />
+      {/* Game List */}
+      <div className="flex-1 overflow-y-auto p-6">
+        {error && (
+          <div className="glass rounded-xl p-4 mb-4 text-red-400">
+            <p className="font-medium">Failed to load games</p>
+            <p className="text-sm text-gray-400">{error}</p>
+            <Button variant="secondary" size="sm" className="mt-2" onClick={refresh}>
+              Retry
+            </Button>
           </div>
+        )}
 
-          <div className="flex-1 overflow-y-auto p-3">
-            <PlayerList
-              players={players}
-              currentPlayerId={playerId}
-              activePlayerId={activePlayerId}
-            />
-          </div>
-
-          <div className="p-3 border-t border-octgn-accent">
-            <CounterPanel
-              counters={counters}
-              playerId={playerId || ''}
-              onUpdateCounter={(name, value) => {
-                // Send counter update
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Center - Game table */}
-        <div className="flex-1 flex flex-col">
-          {/* Opponent's area */}
-          <div className="h-48 bg-octgn-accent/20 border-b border-octgn-accent">
-            {/* Opponent's cards/areas would go here */}
-            <div className="h-full flex items-center justify-center text-gray-500">
-              Opponent's Area
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="flex-1 bg-octgn-primary/50 relative overflow-hidden">
-            {/* Game board / cards would be rendered here */}
-            <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-              {tableCards.length === 0 ? (
-                <div className="text-center">
-                  <p className="text-lg">No cards on the table</p>
-                  <p className="text-sm mt-2">Load a deck to start playing</p>
-                </div>
-              ) : (
-                // Render table cards
-                <div>Table cards would render here</div>
-              )}
-            </div>
-          </div>
-
-          {/* Player's hand */}
-          {showHand && (
-            <div className="border-t border-octgn-accent">
-              <PlayerHand
-                cards={handCards}
-                selectedCardIds={selectedCards}
-                onCardClick={handleCardClick}
-                onCardDoubleClick={handleCardDoubleClick}
-                onCardContextMenu={handleCardContextMenu}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Right sidebar - Chat */}
-        {showChat && (
-          <div className="w-72 bg-octgn-primary border-l border-octgn-accent flex flex-col">
-            <div className="p-3 border-b border-octgn-accent">
-              <h3 className="font-bold text-white">Chat</h3>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {chatMessages.map((msg) => (
-                <div key={msg.id} className="text-sm">
-                  <span className="font-medium text-octgn-highlight">
-                    {msg.playerName}:
-                  </span>{' '}
-                  <span className="text-gray-300">{msg.message}</span>
-                </div>
-              ))}
-              {chatMessages.length === 0 && (
-                <div className="text-center text-gray-500 text-sm">
-                  No messages yet
-                </div>
-              )}
-            </div>
-
-            <div className="p-3 border-t border-octgn-accent">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSendChat();
-                }}
+        {filteredGames.length === 0 ? (
+          <EmptyState
+            icon="🎮"
+            title={searchTerm ? 'No games match your search' : 'No games available'}
+            description={
+              searchTerm
+                ? 'Try a different search term'
+                : 'Be the first to host a game!'
+            }
+            action={
+              !searchTerm && (
+                <Button variant="primary" onClick={handleHostGame}>
+                  Host a Game
+                </Button>
+              )
+            }
+          />
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredGames.map((game) => (
+              <div
+                key={game.id}
+                className="card-glow cursor-pointer"
+                onClick={() => handleJoinGame(game)}
               >
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Type a message..."
-                    className="input flex-1 text-sm"
-                  />
-                  <Button type="submit" size="sm">
-                    Send
+                {/* Game Header */}
+                <div className="h-24 bg-gradient-to-br from-octgn-highlight/20 to-octgn-blue/20 flex items-center justify-center relative">
+                  {game.gameIconUrl ? (
+                    <img
+                      src={game.gameIconUrl}
+                      alt={game.gameName}
+                      className="h-16 w-16 object-contain"
+                    />
+                  ) : (
+                    <span className="text-4xl">🃏</span>
+                  )}
+                  
+                  <div className="absolute top-2 right-2 flex items-center space-x-2">
+                    {game.hasPassword && (
+                      <span className="text-sm" title="Password required">🔒</span>
+                    )}
+                    <Badge variant={game.status === 'Staging' ? 'success' : 'warning'}>
+                      {game.status}
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Game Info */}
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-white mb-1 truncate">
+                    {game.name}
+                  </h3>
+                  <p className="text-sm text-octgn-highlight mb-3">{game.gameName}</p>
+                  
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-octgn-highlight to-octgn-blue flex items-center justify-center text-white text-xs font-bold">
+                        {game.hostUser.username[0].toUpperCase()}
+                      </div>
+                      <span>{game.hostUser.username}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      {game.spectators && (
+                        <span title="Spectators allowed">👁️</span>
+                      )}
+                      <span>v{game.gameVersion}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action */}
+                <div className="p-4 pt-0">
+                  <Button
+                    variant={game.status === 'Staging' ? 'primary' : 'secondary'}
+                    className="w-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleJoinGame(game);
+                    }}
+                  >
+                    {game.status === 'Staging' ? 'Join Game' : 'Spectate'}
                   </Button>
                 </div>
-              </form>
-            </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Card Zoom Overlay */}
-      {zoomedCard && (
-        <CardZoom
-          card={zoomedCard}
-          onClose={() => setZoomedCard(null)}
-          showActions
-          onPlayCard={(card) => {
-            // Play card to table
-            setZoomedCard(null);
-          }}
-        />
-      )}
+      {/* Host Game Modal */}
+      <HostGameModal
+        isOpen={showHostModal}
+        onClose={() => setShowHostModal(false)}
+        onHost={(options) => {
+          // Host the game and navigate
+          const gameId = crypto.randomUUID();
+          navigate(`/play/${gameId}?host=true&${new URLSearchParams(options as any).toString()}`);
+        }}
+      />
 
-      {/* Connection Error Modal */}
-      {!connected && connectionError && (
-        <Modal
-          isOpen={true}
-          onClose={() => navigate('/')}
-          title="Connection Error"
-          footer={
-            <>
-              <Button variant="ghost" onClick={() => navigate('/')}>
-                Go Home
-              </Button>
-              <Button variant="primary" onClick={() => setIsConnecting(true)}>
-                Retry
-              </Button>
-            </>
-          }
-        >
-          <p className="text-gray-300">{connectionError}</p>
-        </Modal>
-      )}
+      {/* Join Game Modal */}
+      <JoinGameModal
+        isOpen={showJoinModal}
+        game={selectedGame}
+        onClose={() => {
+          setShowJoinModal(false);
+          setSelectedGame(null);
+        }}
+        onJoin={(game, password) => {
+          handleConnect(game, password);
+        }}
+      />
     </div>
   );
-}
-
-interface ChatMessage {
-  id: string;
-  playerId: string;
-  playerName: string;
-  message: string;
-  timestamp: number;
 }

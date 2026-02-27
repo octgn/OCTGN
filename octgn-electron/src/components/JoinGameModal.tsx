@@ -1,169 +1,174 @@
 import { useState } from 'react';
 import Modal from './Modal';
 import Button from './Button';
+import { HostedGame } from '../services/OctgnApiService';
 
 interface JoinGameModalProps {
   isOpen: boolean;
+  game: HostedGame | null;
   onClose: () => void;
-  onJoin: (options: JoinOptions) => void;
-  recentServers?: ServerInfo[];
-}
-
-export interface ServerInfo {
-  host: string;
-  port: number;
-  name?: string;
-  lastConnected?: Date;
-}
-
-export interface JoinOptions {
-  host: string;
-  port: number;
-  password?: string;
-  spectator: boolean;
+  onJoin: (game: HostedGame, password?: string) => void;
 }
 
 export default function JoinGameModal({
   isOpen,
+  game,
   onClose,
   onJoin,
-  recentServers = [],
 }: JoinGameModalProps) {
-  const [host, setHost] = useState('');
-  const [port, setPort] = useState(8888);
   const [password, setPassword] = useState('');
-  const [spectator, setSpectator] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleJoin = () => {
-    if (!host) {
-      alert('Please enter a server address');
+  const handleJoin = async () => {
+    if (!game) return;
+
+    if (game.hasPassword && !password) {
+      setError('Password is required for this game');
       return;
     }
 
-    onJoin({
-      host,
-      port,
-      password: password || undefined,
-      spectator,
-    });
+    setIsJoining(true);
+    setError(null);
 
-    onClose();
-  };
-
-  const handleSelectRecent = (server: ServerInfo) => {
-    setHost(server.host);
-    setPort(server.port);
-  };
-
-  const handlePasteFromClipboard = async () => {
     try {
-      const text = await navigator.clipboard.readText();
-      // Try to parse as "host:port"
-      const match = text.match(/^([^:]+):(\d+)$/);
-      if (match) {
-        setHost(match[1]);
-        setPort(parseInt(match[2], 10));
-      } else {
-        setHost(text.trim());
-      }
-    } catch (e) {
-      console.error('Failed to read clipboard:', e);
+      onJoin(game, password || undefined);
+      onClose();
+    } catch (err: any) {
+      setError(err.message || 'Failed to join game');
+    } finally {
+      setIsJoining(false);
     }
   };
+
+  // Reset when modal opens/closes
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setPassword('');
+      setError(null);
+      onClose();
+    }
+  };
+
+  if (!game) return null;
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      title="Join a Game"
-      footer={
-        <>
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleJoin}>
-            Connect
-          </Button>
-        </>
-      }
+      onClose={() => handleOpenChange(false)}
+      title="Join Game"
+      size="md"
     >
-      <div className="space-y-4">
-        {/* Server Address */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Server Address
-          </label>
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              value={host}
-              onChange={(e) => setHost(e.target.value)}
-              placeholder="hostname or IP"
-              className="input flex-1"
-            />
-            <input
-              type="number"
-              value={port}
-              onChange={(e) => setPort(parseInt(e.target.value, 10) || 8888)}
-              className="input w-24"
-            />
-            <Button
-              variant="secondary"
-              onClick={handlePasteFromClipboard}
-              title="Paste from clipboard"
-            >
-              📋
-            </Button>
-          </div>
-        </div>
+      <div className="space-y-6">
+        {/* Game Info */}
+        <div className="glass rounded-xl p-4">
+          <div className="flex items-start space-x-4">
+            {/* Game Icon */}
+            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-octgn-highlight/30 to-octgn-blue/30 flex items-center justify-center flex-shrink-0">
+              {game.gameIconUrl ? (
+                <img
+                  src={game.gameIconUrl}
+                  alt={game.gameName}
+                  className="w-14 h-14 object-contain"
+                />
+              ) : (
+                <span className="text-4xl">🃏</span>
+              )}
+            </div>
 
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Password (if required)
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            className="input w-full"
-          />
-        </div>
-
-        {/* Spectator mode */}
-        <label className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            checked={spectator}
-            onChange={(e) => setSpectator(e.target.checked)}
-            className="w-4 h-4"
-          />
-          <span className="text-sm text-gray-300">Join as spectator</span>
-        </label>
-
-        {/* Recent Servers */}
-        {recentServers.length > 0 && (
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Recent Servers
-            </label>
-            <div className="space-y-1 max-h-32 overflow-y-auto">
-              {recentServers.map((server, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSelectRecent(server)}
-                  className="w-full text-left px-3 py-2 rounded bg-octgn-accent/30 hover:bg-octgn-accent/50 text-sm text-gray-300 transition-colors"
-                >
-                  <span className="font-mono">{server.host}:{server.port}</span>
-                  {server.name && (
-                    <span className="ml-2 text-gray-500">({server.name})</span>
-                  )}
-                </button>
-              ))}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl font-bold text-white truncate">
+                {game.name}
+              </h3>
+              <p className="text-octgn-highlight font-medium">{game.gameName}</p>
+              
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                {game.hasPassword && (
+                  <span className="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">
+                    🔒 Password Required
+                  </span>
+                )}
+                {game.spectators && (
+                  <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">
+                    👁️ Spectators Allowed
+                  </span>
+                )}
+                <span className="text-xs px-2 py-1 rounded bg-octgn-accent/30 text-gray-400">
+                  v{game.gameVersion}
+                </span>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Host Info */}
+        <div className="flex items-center justify-between p-3 rounded-lg bg-octgn-dark/50">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-octgn-highlight to-octgn-blue flex items-center justify-center text-white font-bold">
+              {game.hostUser.username[0].toUpperCase()}
+            </div>
+            <div>
+              <p className="font-medium text-white">{game.hostUser.username}</p>
+              <p className="text-xs text-gray-500">Host</p>
+            </div>
+          </div>
+          
+          <div className="text-right">
+            <p className={`text-sm font-medium ${
+              game.status === 'Staging' ? 'text-octgn-success' : 'text-octgn-warning'
+            }`}>
+              {game.status === 'Staging' ? 'Waiting for players' : 'Game in progress'}
+            </p>
+            <p className="text-xs text-gray-500">
+              {game.status === 'Staging' ? 'You can join' : 'You can spectate'}
+            </p>
+          </div>
+        </div>
+
+        {/* Password Input */}
+        {game.hasPassword && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
+              placeholder="Enter the game password"
+              className="input w-full"
+              autoFocus
+            />
+            {error && (
+              <p className="text-sm text-red-400 mt-1">{error}</p>
+            )}
+          </div>
         )}
+
+        {/* Connection Info */}
+        <div className="text-xs text-gray-500 space-y-1">
+          <p>Server: {game.hostAddress}:{game.port || 8888}</p>
+          <p>Game ID: {game.gameId}</p>
+          <p>Created: {new Date(game.dateCreated).toLocaleString()}</p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end space-x-3 pt-4 border-t border-octgn-accent/30">
+          <Button variant="ghost" onClick={() => handleOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleJoin}
+            loading={isJoining}
+            disabled={game.hasPassword && !password}
+          >
+            {game.status === 'Staging' ? 'Join Game' : 'Spectate'}
+          </Button>
+        </div>
       </div>
     </Modal>
   );
