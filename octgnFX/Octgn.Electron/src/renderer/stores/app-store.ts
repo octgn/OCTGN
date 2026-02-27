@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type AppPage = 'login' | 'lobby' | 'game' | 'deck-builder' | 'settings' | 'profile';
+export type AppPage = 'login' | 'lobby' | 'game' | 'deck-builder' | 'settings' | 'profile' | 'games';
 
 interface AppState {
   currentPage: AppPage;
