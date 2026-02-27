@@ -10,6 +10,7 @@ export { default as PlayerList } from './PlayerList';
 export { default as TurnIndicator } from './TurnIndicator';
 export { default as CounterPanel } from './CounterPanel';
 export { default as CardZoom } from './CardZoom';
+export { default as GameCanvas, useGameCanvas } from './GameCanvas';
 export { ContextMenu, useContextMenu, getCardContextMenuItems } from './ContextMenu';
 export type { ContextMenuItem, ContextMenuState } from './ContextMenu';
 

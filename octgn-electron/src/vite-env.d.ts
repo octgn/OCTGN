@@ -9,6 +9,35 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+// Electron types
+declare namespace Electron {
+  interface OpenDialogOptions {
+    title?: string;
+    defaultPath?: string;
+    buttonLabel?: string;
+    filters?: Array<{ name: string; extensions: string[] }>;
+    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
+  }
+
+  interface SaveDialogOptions {
+    title?: string;
+    defaultPath?: string;
+    buttonLabel?: string;
+    filters?: Array<{ name: string; extensions: string[] }>;
+    properties?: Array<'showHiddenFiles' | 'createDirectory' | 'treatPackageAsDirectory' | 'showOverwriteConfirmation' | 'dontAddToRecent'>;
+  }
+
+  interface OpenDialogReturnValue {
+    canceled: boolean;
+    filePaths: string[];
+  }
+
+  interface SaveDialogReturnValue {
+    canceled: boolean;
+    filePath?: string;
+  }
+}
+
 // Window extensions
 declare global {
   interface Window {
