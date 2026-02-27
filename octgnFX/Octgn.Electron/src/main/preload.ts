@@ -35,6 +35,14 @@ const api = {
     ipcRenderer.invoke(IPC_CHANNELS.GAME_ACTION, action),
   gameChat: (message: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.GAME_CHAT, message),
+  gameSettings: (twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAME_SETTINGS, twoSidedTable, allowSpectators, muteSpectators, allowCardList),
+  gamePlayerSettings: (playerId: number, invertedTable: boolean, spectator: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAME_PLAYER_SETTINGS, playerId, invertedTable, spectator),
+  bootPlayer: (playerId: number, reason: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAME_BOOT_PLAYER, playerId, reason ?? ''),
+  startGame: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAME_START),
   loadDeck: (deck: unknown) =>
     ipcRenderer.invoke(IPC_CHANNELS.LOAD_DECK, deck),
 

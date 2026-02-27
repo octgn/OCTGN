@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { clsx } from 'clsx';
 import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
+import PreGameLobby from '../components/PreGameLobby';
 import { DragDropProvider } from '../components/DragDropContext';
 import GameBoard from '../components/GameBoard';
 import { useGameStore } from '../stores/game-store';
@@ -168,6 +169,11 @@ const GamePage: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // Show pre-game lobby when game hasn't started yet
+  if (!gameState.isStarted) {
+    return <PreGameLobby gameState={gameState} />;
   }
 
   return (

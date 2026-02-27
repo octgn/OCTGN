@@ -159,6 +159,22 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     gameService.sendChat(message);
   });
 
+  ipcMain.handle(IPC_CHANNELS.GAME_SETTINGS, async (_event, twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean) => {
+    gameService.sendSettings(twoSidedTable, allowSpectators, muteSpectators, allowCardList);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GAME_PLAYER_SETTINGS, async (_event, playerId: number, invertedTable: boolean, spectator: boolean) => {
+    gameService.sendPlayerSettings(playerId, invertedTable, spectator);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GAME_BOOT_PLAYER, async (_event, playerId: number, reason: string) => {
+    gameService.bootPlayer(playerId, reason ?? '');
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GAME_START, async () => {
+    gameService.startGame();
+  });
+
   ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (_event, deck: Record<string, unknown>) => {
     gameService.loadDeck(
       deck.ids as number[],

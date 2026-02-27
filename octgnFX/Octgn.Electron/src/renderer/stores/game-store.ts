@@ -29,6 +29,11 @@ interface GameStoreActions {
   addMarker: (cardId: number, markerId: string, markerName: string, count: number) => Promise<void>;
   removeMarker: (cardId: number, markerId: string, markerName: string, count: number) => Promise<void>;
   shuffleGroup: (groupId: number) => Promise<void>;
+  // Pre-game lobby actions
+  updateSettings: (twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean) => Promise<void>;
+  updatePlayerSettings: (playerId: number, invertedTable: boolean, spectator: boolean) => Promise<void>;
+  bootPlayer: (playerId: number) => Promise<void>;
+  startGame: () => Promise<void>;
 }
 
 export type GameStore = GameStoreState & GameStoreActions;
@@ -172,6 +177,40 @@ export const useGameStore = create<GameStore>()(
     removeMarker: (cardId, markerId, markerName, count) =>
       sendTypedAction({ type: 'removeMarker', cardId, markerId, markerName, count }),
     shuffleGroup: (groupId) => sendTypedAction({ type: 'shuffleGroup', groupId }),
+
+    // Pre-game lobby actions
+    updateSettings: async (twoSidedTable, allowSpectators, muteSpectators, allowCardList) => {
+      try {
+        await window.octgn.gameSettings(twoSidedTable, allowSpectators, muteSpectators, allowCardList);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to update settings';
+        useToastStore.getState().addToast(message, 'error');
+      }
+    },
+    updatePlayerSettings: async (playerId, invertedTable, spectator) => {
+      try {
+        await window.octgn.gamePlayerSettings(playerId, invertedTable, spectator);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to update player settings';
+        useToastStore.getState().addToast(message, 'error');
+      }
+    },
+    bootPlayer: async (playerId) => {
+      try {
+        await window.octgn.bootPlayer(playerId, '');
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to kick player';
+        useToastStore.getState().addToast(message, 'error');
+      }
+    },
+    startGame: async () => {
+      try {
+        await window.octgn.startGame();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to start game';
+        useToastStore.getState().addToast(message, 'error');
+      }
+    },
   })),
 );
 
