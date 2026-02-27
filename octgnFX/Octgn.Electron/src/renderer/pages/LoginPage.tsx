@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
   );
 
   const openExternal = useCallback((url: string) => {
-    (window as any).electronAPI?.openExternal(url);
+    window.open(url, '_blank');
   }, []);
 
   return (

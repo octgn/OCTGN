@@ -23,7 +23,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Orbitron', 'monospace'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       animation: {

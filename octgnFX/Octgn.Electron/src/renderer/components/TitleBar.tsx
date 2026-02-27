@@ -1,20 +1,22 @@
 import React, { useCallback } from 'react';
-import { IPC_CHANNELS } from '../../shared/types';
+import { useAppStore } from '../stores/app-store';
 
 const TitleBar: React.FC = () => {
-  const ipc = (window as any).electronAPI;
+  const minimize = useAppStore((s) => s.minimize);
+  const maximize = useAppStore((s) => s.maximize);
+  const quit = useAppStore((s) => s.quit);
 
   const handleMinimize = useCallback(() => {
-    ipc?.send(IPC_CHANNELS.APP_MINIMIZE);
-  }, []);
+    minimize();
+  }, [minimize]);
 
   const handleMaximize = useCallback(() => {
-    ipc?.send(IPC_CHANNELS.APP_MAXIMIZE);
-  }, []);
+    maximize();
+  }, [maximize]);
 
   const handleClose = useCallback(() => {
-    ipc?.send(IPC_CHANNELS.APP_QUIT);
-  }, []);
+    quit();
+  }, [quit]);
 
   return (
     <header className="drag-region flex items-center justify-between h-9 px-3 bg-octgn-surface/80 backdrop-blur-md border-b border-octgn-border/50 shrink-0 z-50">
