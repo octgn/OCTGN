@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import TitleBar from './components/TitleBar';
 import ToastContainer from './components/ToastContainer';
+import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from './pages/LoginPage';
 import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
@@ -13,6 +14,7 @@ type Page = 'login' | 'lobby' | 'game' | 'deck-builder' | 'settings' | 'profile'
 
 const App: React.FC = () => {
   const currentPage = useAppStore((s) => s.currentPage) as Page;
+  const navigate = useAppStore((s) => s.navigate);
 
   const page = useMemo(() => {
     switch (currentPage) {
@@ -36,7 +38,11 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen w-screen bg-octgn-bg overflow-hidden">
       <TitleBar />
-      <main className="flex-1 overflow-hidden">{page}</main>
+      <main className="flex-1 overflow-hidden">
+        <ErrorBoundary key={currentPage} onNavigate={navigate}>
+          {page}
+        </ErrorBoundary>
+      </main>
       <ToastContainer />
     </div>
   );
