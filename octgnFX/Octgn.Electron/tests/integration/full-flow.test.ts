@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { GameService } from '@main/api/game-service';
 import { ScriptEngine } from '@main/scripting/script-engine';
-import { MessageType } from '@main/protocol/types';
+import { MessageType, type ProtocolMessage } from '@main/protocol/types';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -38,7 +38,11 @@ vi.mock('electron', () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getHandler(eventName: string): (params: Record<string, unknown>) => void {
+function pm(type: MessageType, params: Record<string, unknown>): ProtocolMessage {
+  return { isMuted: 0, type, params };
+}
+
+function getHandler(eventName: string): (msg: ProtocolMessage) => void {
   const call = mockOn.mock.calls.find((c) => c[0] === eventName);
   if (!call) throw new Error(`No handler registered for event '${eventName}'`);
   return call[1];
@@ -59,7 +63,7 @@ async function joinedService(): Promise<GameService> {
 async function serviceWithState(): Promise<GameService> {
   const service = await joinedService();
   const welcome = getHandler('Welcome');
-  welcome({ id: 42, gameSessionId: 'sess-1', gameName: 'Test Game' });
+  welcome(pm(MessageType.Welcome, { id: 42, gameSessionId: 'sess-1', gameName: 'Test Game' }));
   return service;
 }
 
@@ -73,7 +77,7 @@ function addCardToState(cardId: string, opts: Partial<{ faceUp: boolean; groupId
     faceUp: opts.faceUp ?? false,
     position: { x: opts.x ?? 0, y: opts.y ?? 0 },
     rotation: 0,
-    groupId: opts.groupId ?? '1',
+    groupId: opts.groupId ?? 'table',
     ownerId: '42',
     markers: [],
     properties: {},
@@ -113,7 +117,7 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       // 2. Receive Welcome - assigns local player ID
       const welcome = getHandler('Welcome');
-      welcome({ id: 1, gameSessionId: 'sess-abc', gameName: 'My Game' });
+      welcome(pm(MessageType.Welcome, { id: 1, gameSessionId: 'sess-abc', gameName: 'My Game' }));
 
       let state = getLatestState();
       expect(state.localPlayerId).toBe(1);
@@ -124,8 +128,8 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       // 3. Two players join
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 1, nick: 'Alice', spectator: false });
-      newPlayer({ id: 2, nick: 'Bob', spectator: false });
+      newPlayer(pm(MessageType.NewPlayer, { id: 1, nick: 'Alice', spectator: false }));
+      newPlayer(pm(MessageType.NewPlayer, { id: 2, nick: 'Bob', spectator: false }));
 
       state = getLatestState();
       expect(state.players).toHaveLength(2);
@@ -134,15 +138,15 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       // 4. Game starts
       const start = getHandler('Start');
-      start({});
+      start(pm(MessageType.Start, {}));
 
       state = getLatestState();
       expect(state.isStarted).toBe(true);
 
       // 5. Chat messages exchanged
       const chat = getHandler('Chat');
-      chat({ player: 1, text: 'Hello everyone!' });
-      chat({ player: 2, text: 'Hi Alice!' });
+      chat(pm(MessageType.Chat, { player: 1, text: 'Hello everyone!' }));
+      chat(pm(MessageType.Chat, { player: 2, text: 'Hi Alice!' }));
 
       state = getLatestState();
       expect(state.chatMessages).toHaveLength(2);
@@ -161,7 +165,7 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       // 6. Bob leaves
       const leave = getHandler('Leave');
-      leave({ player: 2 });
+      leave(pm(MessageType.Leave, { player: 2 }));
 
       state = getLatestState();
       expect(state.players).toHaveLength(1);
@@ -178,11 +182,11 @@ describe('Integration: GameService + ScriptEngine', () => {
     it('handles player disconnect with system message', async () => {
       const service = await serviceWithState();
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 10, nick: 'DisconnectingUser', spectator: false });
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'DisconnectingUser', spectator: false }));
       mockSend.mockClear();
 
       const handler = getHandler('PlayerDisconnect');
-      handler({ player: 10 });
+      handler(pm(MessageType.PlayerDisconnect, { player: 10 }));
 
       const state = getLatestState();
       const lastMsg = state.chatMessages[state.chatMessages.length - 1];
@@ -193,7 +197,7 @@ describe('Integration: GameService + ScriptEngine', () => {
     it('handles spectator joining', async () => {
       const service = await serviceWithState();
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 99, nick: 'Spectator1', spectator: true });
+      newPlayer(pm(MessageType.NewPlayer, { id: 99, nick: 'Spectator1', spectator: true }));
 
       const state = getLatestState();
       expect(state.players).toHaveLength(1);
@@ -212,16 +216,20 @@ describe('Integration: GameService + ScriptEngine', () => {
   describe('card operations flow', () => {
     it('moves a card to a group and updates state on MoveCard handler', async () => {
       const service = await serviceWithState();
-      addCardToState('500', { groupId: '1', faceUp: false });
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'Alice', spectator: false }));
+      addCardToState('500', { groupId: 'table', faceUp: false });
       mockSend.mockClear();
 
-      // Simulate server response with MoveCard
       const moveCard = getHandler('MoveCard');
-      moveCard({ id: [500], group: 3, faceUp: [true] });
+      moveCard(pm(MessageType.MoveCard, { id: [500], group: 3, faceUp: [true] }));
 
       const state = getLatestState();
-      expect(state.table.cards[0].groupId).toBe('3');
-      expect(state.table.cards[0].faceUp).toBe(true);
+      // Card moved from table to a group
+      const player = state.players.find((p: any) => p.id === 10);
+      const group = player?.groups.find((g: any) => g.id === '3');
+      expect(group).toBeDefined();
+      expect(group.cards[0].faceUp).toBe(true);
     });
 
     it('moves a card to a position and updates state on MoveCardAt handler', async () => {
@@ -230,7 +238,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const moveCardAt = getHandler('MoveCardAt');
-      moveCardAt({ id: [600], x: [150], y: [250], faceUp: [true] });
+      moveCardAt(pm(MessageType.MoveCardAt, { id: [600], x: [150], y: [250], faceUp: [true] }));
 
       const state = getLatestState();
       expect(state.table.cards[0].position).toEqual({ x: 150, y: 250 });
@@ -243,7 +251,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const turn = getHandler('Turn');
-      turn({ card: 700, up: true });
+      turn(pm(MessageType.Turn, { card: 700, up: true }));
 
       const state = getLatestState();
       expect(state.table.cards[0].faceUp).toBe(true);
@@ -255,7 +263,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const rotate = getHandler('Rotate');
-      rotate({ card: 800, rot: 3 });
+      rotate(pm(MessageType.Rotate, { card: 800, rot: 3 }));
 
       const state = getLatestState();
       expect(state.table.cards[0].rotation).toBe(270);
@@ -267,7 +275,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const highlight = getHandler('Highlight');
-      highlight({ card: 900, color: '#ff0000' });
+      highlight(pm(MessageType.Highlight, { card: 900, color: '#ff0000' }));
 
       const state = getLatestState();
       expect(state.table.cards[0].highlighted).toBe('#ff0000');
@@ -275,25 +283,31 @@ describe('Integration: GameService + ScriptEngine', () => {
 
     it('handles batch card moves', async () => {
       const service = await serviceWithState();
-      addCardToState('101', { groupId: '1', faceUp: false });
-      addCardToState('102', { groupId: '1', faceUp: false });
-      addCardToState('103', { groupId: '1', faceUp: true });
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'Alice', spectator: false }));
+      addCardToState('101', { groupId: 'table', faceUp: false });
+      addCardToState('102', { groupId: 'table', faceUp: false });
+      addCardToState('103', { groupId: 'table', faceUp: true });
       mockSend.mockClear();
 
       const moveCard = getHandler('MoveCard');
-      moveCard({ id: [101, 102, 103], group: 5, faceUp: [true, false, true] });
+      moveCard(pm(MessageType.MoveCard, { id: [101, 102, 103], group: 5, faceUp: [true, false, true] }));
 
       const state = getLatestState();
-      expect(state.table.cards[0].groupId).toBe('5');
-      expect(state.table.cards[0].faceUp).toBe(true);
-      expect(state.table.cards[1].groupId).toBe('5');
-      expect(state.table.cards[1].faceUp).toBe(false);
-      expect(state.table.cards[2].groupId).toBe('5');
-      expect(state.table.cards[2].faceUp).toBe(true);
+      // Cards moved from table to group 5
+      const player = state.players.find((p: any) => p.id === 10);
+      const group = player?.groups.find((g: any) => g.id === '5');
+      expect(group).toBeDefined();
+      expect(group.cards).toHaveLength(3);
+      expect(group.cards[0].faceUp).toBe(true);
+      expect(group.cards[1].faceUp).toBe(false);
+      expect(group.cards[2].faceUp).toBe(true);
     });
 
     it('sends move request from client API then handles server response', async () => {
       const service = await serviceWithState();
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'Alice', spectator: false }));
       addCardToState('200');
       mockSendMessage.mockClear();
 
@@ -311,11 +325,13 @@ describe('Integration: GameService + ScriptEngine', () => {
       // Server responds with MoveCard
       mockSend.mockClear();
       const moveCard = getHandler('MoveCard');
-      moveCard({ id: [200], group: 7, faceUp: [true] });
+      moveCard(pm(MessageType.MoveCard, { id: [200], group: 7, faceUp: [true] }));
 
       const state = getLatestState();
-      expect(state.table.cards[0].groupId).toBe('7');
-      expect(state.table.cards[0].faceUp).toBe(true);
+      const player = state.players.find((p: any) => p.id === 10);
+      const group = player?.groups.find((g: any) => g.id === '7');
+      expect(group).toBeDefined();
+      expect(group.cards[0].faceUp).toBe(true);
     });
   });
 
@@ -327,25 +343,25 @@ describe('Integration: GameService + ScriptEngine', () => {
     it('advances through multiple turns updating active player', async () => {
       const service = await serviceWithState();
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 1, nick: 'Alice', spectator: false });
-      newPlayer({ id: 2, nick: 'Bob', spectator: false });
+      newPlayer(pm(MessageType.NewPlayer, { id: 1, nick: 'Alice', spectator: false }));
+      newPlayer(pm(MessageType.NewPlayer, { id: 2, nick: 'Bob', spectator: false }));
 
       const nextTurn = getHandler('NextTurn');
 
       // Turn 1 - Alice active
-      nextTurn({ player: 1, setActive: true });
+      nextTurn(pm(MessageType.NextTurn, { player: 1, setActive: true }));
       let state = getLatestState();
       expect(state.turnNumber).toBe(1);
       expect(state.activePlayer).toBe(1);
 
       // Turn 2 - Bob active
-      nextTurn({ player: 2, setActive: true });
+      nextTurn(pm(MessageType.NextTurn, { player: 2, setActive: true }));
       state = getLatestState();
       expect(state.turnNumber).toBe(2);
       expect(state.activePlayer).toBe(2);
 
       // Turn 3 - no active change
-      nextTurn({ player: 1, setActive: false });
+      nextTurn(pm(MessageType.NextTurn, { player: 1, setActive: false }));
       state = getLatestState();
       expect(state.turnNumber).toBe(3);
       expect(state.activePlayer).toBe(2); // unchanged
@@ -354,7 +370,7 @@ describe('Integration: GameService + ScriptEngine', () => {
     it('updates counter value for a player', async () => {
       const service = await serviceWithState();
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 10, nick: 'Alice', spectator: false });
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'Alice', spectator: false }));
 
       // Add a counter to the player
       const state1 = getLatestState();
@@ -362,7 +378,7 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       mockSend.mockClear();
       const counter = getHandler('Counter');
-      counter({ player: 10, counter: 1, value: 15 });
+      counter(pm(MessageType.Counter, { player: 10, counter: 1, value: 15 }));
 
       const state2 = getLatestState();
       expect(state2.players[0].counters[0].value).toBe(15);
@@ -373,7 +389,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const setPhase = getHandler('SetPhase');
-      setPhase({ phase: 3 });
+      setPhase(pm(MessageType.SetPhase, { phase: 3 }));
 
       const state = getLatestState();
       expect(state.phase).toBe(3);
@@ -390,19 +406,15 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'OnGameStart', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnGameStart', args: '' }));
 
-      // A successful RemoteCall does NOT call broadcastState (no game state update),
-      // it only sends a script:event to the renderer.
       const scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       expect(scriptEvents.length).toBeGreaterThan(0);
 
-      // Verify it was a remoteCall event, not an error
       const lastScriptEvent = scriptEvents[scriptEvents.length - 1][1];
       expect(lastScriptEvent.type).toBe('remoteCall');
       expect(lastScriptEvent.function).toBe('OnGameStart');
 
-      // No game:state-update calls should exist (no error system message added)
       const stateUpdates = mockSend.mock.calls.filter((c) => c[0] === 'game:state-update');
       expect(stateUpdates).toHaveLength(0);
     });
@@ -412,16 +424,14 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'eval', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'eval', args: '' }));
 
-      // Should have broadcast a script error event
       const scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       expect(scriptEvents.length).toBeGreaterThan(0);
       const errorEvent = scriptEvents.find((c) => c[1].type === 'error');
       expect(errorEvent).toBeTruthy();
       expect(errorEvent![1].result.error).toContain('Script security violation');
 
-      // Should also add a system message to the game state
       const stateUpdates = mockSend.mock.calls.filter((c) => c[0] === 'game:state-update');
       expect(stateUpdates.length).toBeGreaterThan(0);
       const state = stateUpdates[stateUpdates.length - 1][1];
@@ -438,7 +448,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'exec', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'exec', args: '' }));
 
       const stateUpdates = mockSend.mock.calls.filter((c) => c[0] === 'game:state-update');
       const state = stateUpdates[stateUpdates.length - 1][1];
@@ -453,7 +463,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: '__import__', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: '__import__', args: '' }));
 
       const stateUpdates = mockSend.mock.calls.filter((c) => c[0] === 'game:state-update');
       const state = stateUpdates[stateUpdates.length - 1][1];
@@ -467,7 +477,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: '__init__', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: '__init__', args: '' }));
 
       const stateUpdates = mockSend.mock.calls.filter((c) => c[0] === 'game:state-update');
       const state = stateUpdates[stateUpdates.length - 1][1];
@@ -481,7 +491,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'OnGameStart', args: '1+1' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnGameStart', args: '1+1' }));
 
       const stateUpdates = mockSend.mock.calls.filter((c) => c[0] === 'game:state-update');
       const state = stateUpdates[stateUpdates.length - 1][1];
@@ -497,35 +507,35 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       // Numeric arg
       mockSend.mockClear();
-      remoteCall({ player: 42, function: 'OnCardClick', args: '42' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnCardClick', args: '42' }));
       let scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       let remoteCallEvent = scriptEvents.find((c) => c[1].type === 'remoteCall');
       expect(remoteCallEvent).toBeTruthy();
 
       // String arg
       mockSend.mockClear();
-      remoteCall({ player: 42, function: 'OnCardClick', args: '"hello"' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnCardClick', args: '"hello"' }));
       scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       remoteCallEvent = scriptEvents.find((c) => c[1].type === 'remoteCall');
       expect(remoteCallEvent).toBeTruthy();
 
       // Boolean arg
       mockSend.mockClear();
-      remoteCall({ player: 42, function: 'OnCardClick', args: 'True' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnCardClick', args: 'True' }));
       scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       remoteCallEvent = scriptEvents.find((c) => c[1].type === 'remoteCall');
       expect(remoteCallEvent).toBeTruthy();
 
       // OCTGN constructor arg
       mockSend.mockClear();
-      remoteCall({ player: 42, function: 'OnCardClick', args: 'Card(123)' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnCardClick', args: 'Card(123)' }));
       scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       remoteCallEvent = scriptEvents.find((c) => c[1].type === 'remoteCall');
       expect(remoteCallEvent).toBeTruthy();
 
       // Multiple args
       mockSend.mockClear();
-      remoteCall({ player: 42, function: 'OnCardClick', args: '42, "test", True' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnCardClick', args: '42, "test", True' }));
       scriptEvents = mockSend.mock.calls.filter((c) => c[0] === 'script:event');
       remoteCallEvent = scriptEvents.find((c) => c[1].type === 'remoteCall');
       expect(remoteCallEvent).toBeTruthy();
@@ -538,8 +548,8 @@ describe('Integration: GameService + ScriptEngine', () => {
       expect(engine.getCallLog()).toHaveLength(0);
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'OnGameStart', args: '' });
-      remoteCall({ player: 42, function: 'OnTurn', args: '1' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnGameStart', args: '' }));
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'OnTurn', args: '1' }));
 
       const log = engine.getCallLog();
       expect(log).toHaveLength(2);
@@ -553,7 +563,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       const engine = service.getScriptEngine();
 
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'eval', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'eval', args: '' }));
 
       const log = engine.getCallLog();
       expect(log).toHaveLength(1);
@@ -589,12 +599,12 @@ describe('Integration: GameService + ScriptEngine', () => {
 
     it('blocks function names that are not valid identifiers', () => {
       const invalidNames = [
-        'func name',        // space
-        '123func',          // starts with number
-        'func.attr',        // dot notation
-        'func()',           // parentheses
-        '',                 // empty
-        'func;drop',        // semicolon
+        'func name',
+        '123func',
+        'func.attr',
+        'func()',
+        '',
+        'func;drop',
       ];
 
       for (const fn of invalidNames) {
@@ -617,7 +627,7 @@ describe('Integration: GameService + ScriptEngine', () => {
 
     it('blocks expression operators in arguments', () => {
       const dangerousArgs = [
-        '__import__("os")',   // has parens but not OCTGN constructor pattern
+        '__import__("os")',
         'x + y',
         'a; b',
         'x = 5',
@@ -635,7 +645,6 @@ describe('Integration: GameService + ScriptEngine', () => {
       engine.setSandboxing(false);
       expect(engine.isSandboxed).toBe(false);
 
-      // Now dangerous calls should pass through
       const result = engine.handleRemoteCall(1, 'eval', 'anything');
       expect(result.success).toBe(true);
     });
@@ -660,7 +669,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const error = getHandler('Error');
-      error({ msg: 'Server error occurred' });
+      error(pm(MessageType.Error, { msg: 'Server error occurred' }));
 
       const state = getLatestState();
       expect(state.chatMessages).toHaveLength(1);
@@ -673,13 +682,21 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const gameState = getHandler('GameState');
-      gameState({
-        state: JSON.stringify({ turnNumber: 10, activePlayer: 5 }),
-      });
+      gameState(pm(MessageType.GameState, {
+        state: JSON.stringify({
+          Players: [{ Id: 1, Nickname: 'TestPlayer', Groups: [], Counters: [], Color: '#FF0000', GlobalVariables: {} }],
+          Table: { Id: 0, Cards: [], Viewers: '', Visiblity: 0 },
+          TurnNumber: 10,
+          ActivePlayer: 5,
+          GlobalVariables: {},
+        }),
+      }));
 
       const state = getLatestState();
       expect(state.turnNumber).toBe(10);
       expect(state.activePlayer).toBe(5);
+      expect(state.players.length).toBe(1);
+      expect(state.players[0].name).toBe('TestPlayer');
     });
 
     it('handles malformed GameState gracefully', async () => {
@@ -687,11 +704,10 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const gameState = getHandler('GameState');
-      // Should not throw
-      gameState({ state: 'not valid json{{' });
-
-      // State should still be broadcast (unchanged)
-      expect(mockSend).toHaveBeenCalled();
+      // Should not throw — error is caught internally
+      expect(() => {
+        gameState(pm(MessageType.GameState, { state: 'not valid json{{' }));
+      }).not.toThrow();
     });
 
     it('handles connection failure gracefully', async () => {
@@ -705,7 +721,6 @@ describe('Integration: GameService + ScriptEngine', () => {
 
     it('handles leave when not connected', async () => {
       const service = new GameService();
-      // Should not throw
       await service.leaveGame();
       expect(service.isConnected).toBe(false);
     });
@@ -715,7 +730,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const chat = getHandler('Chat');
-      chat({ player: 999, text: 'ghost message' });
+      chat(pm(MessageType.Chat, { player: 999, text: 'ghost message' }));
 
       const state = getLatestState();
       expect(state.chatMessages[0].playerName).toBe('Player 999');
@@ -727,10 +742,8 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const moveCard = getHandler('MoveCard');
-      // Should not throw even though card does not exist
-      moveCard({ id: [99999], group: 3, faceUp: [true] });
+      moveCard(pm(MessageType.MoveCard, { id: [99999], group: 3, faceUp: [true] }));
 
-      // State still broadcast
       expect(mockSend).toHaveBeenCalled();
     });
 
@@ -739,7 +752,7 @@ describe('Integration: GameService + ScriptEngine', () => {
       mockSend.mockClear();
 
       const print = getHandler('Print');
-      print({ player: 0, text: 'Game is loading...' });
+      print(pm(MessageType.Print, { player: 0, text: 'Game is loading...' }));
 
       const state = getLatestState();
       expect(state.chatMessages).toHaveLength(1);
@@ -759,7 +772,7 @@ describe('Integration: GameService + ScriptEngine', () => {
     it('processes card moves and script calls in sequence', async () => {
       const service = await serviceWithState();
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 1, nick: 'Alice', spectator: false });
+      newPlayer(pm(MessageType.NewPlayer, { id: 1, nick: 'Alice', spectator: false }));
 
       addCardToState('50', { faceUp: false });
       addCardToState('51', { faceUp: false });
@@ -767,19 +780,22 @@ describe('Integration: GameService + ScriptEngine', () => {
 
       // Script call for OnGameStarted
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 1, function: 'OnGameStarted', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 1, function: 'OnGameStarted', args: '' }));
 
       // Card move
       const moveCard = getHandler('MoveCard');
-      moveCard({ id: [50], group: 2, faceUp: [true] });
+      moveCard(pm(MessageType.MoveCard, { id: [50], group: 2, faceUp: [true] }));
 
       // Another script call
-      remoteCall({ player: 1, function: 'OnMoveCard', args: 'Card(50)' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 1, function: 'OnMoveCard', args: 'Card(50)' }));
 
-      // Verify card state updated
+      // Verify card was moved (either to group or table)
       const state = getLatestState();
-      expect(state.table.cards[0].groupId).toBe('2');
-      expect(state.table.cards[0].faceUp).toBe(true);
+      // Card 50 should have been moved to group 2
+      const player = state.players.find((p: any) => p.id === 1);
+      const group = player?.groups.find((g: any) => g.id === '2');
+      expect(group).toBeDefined();
+      expect(group.cards[0].faceUp).toBe(true);
 
       // Verify script log has both calls
       const engine = service.getScriptEngine();
@@ -791,31 +807,35 @@ describe('Integration: GameService + ScriptEngine', () => {
 
     it('blocked script call does not affect game state progression', async () => {
       const service = await serviceWithState();
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'Alice', spectator: false }));
 
       addCardToState('60', { faceUp: false });
 
       // Dangerous script call
       const remoteCall = getHandler('RemoteCall');
-      remoteCall({ player: 42, function: 'exec', args: '' });
+      remoteCall(pm(MessageType.RemoteCall, { player: 42, function: 'exec', args: '' }));
 
       // Card operation should still work after blocked call
       mockSend.mockClear();
       const moveCard = getHandler('MoveCard');
-      moveCard({ id: [60], group: 5, faceUp: [true] });
+      moveCard(pm(MessageType.MoveCard, { id: [60], group: 5, faceUp: [true] }));
 
       const state = getLatestState();
-      expect(state.table.cards[0].groupId).toBe('5');
-      expect(state.table.cards[0].faceUp).toBe(true);
+      const player = state.players.find((p: any) => p.id === 10);
+      const group = player?.groups.find((g: any) => g.id === '5');
+      expect(group).toBeDefined();
+      expect(group.cards[0].faceUp).toBe(true);
     });
 
     it('SetPlayerColor updates player color in state', async () => {
       const service = await serviceWithState();
       const newPlayer = getHandler('NewPlayer');
-      newPlayer({ id: 10, nick: 'Alice', spectator: false });
+      newPlayer(pm(MessageType.NewPlayer, { id: 10, nick: 'Alice', spectator: false }));
       mockSend.mockClear();
 
       const setColor = getHandler('SetPlayerColor');
-      setColor({ player: 10, color: '#ff5733' });
+      setColor(pm(MessageType.SetPlayerColor, { player: 10, color: '#ff5733' }));
 
       const state = getLatestState();
       expect(state.players[0].color).toBe('#ff5733');

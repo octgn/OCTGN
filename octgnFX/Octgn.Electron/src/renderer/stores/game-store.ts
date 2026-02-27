@@ -174,3 +174,7 @@ export const useGameStore = create<GameStore>()(
     shuffleGroup: (groupId) => sendTypedAction({ type: 'shuffleGroup', groupId }),
   })),
 );
+
+if (typeof window !== 'undefined') {
+  (window as any).__gameStore = useGameStore;
+}

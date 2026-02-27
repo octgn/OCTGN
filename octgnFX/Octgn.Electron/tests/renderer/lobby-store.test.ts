@@ -152,7 +152,7 @@ describe('useLobbyStore', () => {
 
       await useLobbyStore.getState().joinGame('game-abc');
 
-      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-abc', undefined);
+      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-abc', undefined, undefined);
     });
 
     it('should call IPC joinGame with password when provided', async () => {
@@ -160,7 +160,7 @@ describe('useLobbyStore', () => {
 
       await useLobbyStore.getState().joinGame('game-abc', 'secret123');
 
-      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-abc', 'secret123');
+      expect(mockOctgn.joinGame).toHaveBeenCalledWith('game-abc', 'secret123', undefined);
     });
 
     it('should set isLoading during join', async () => {

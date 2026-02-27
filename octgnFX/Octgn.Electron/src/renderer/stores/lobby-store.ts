@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { HostedGame } from '../../shared/types';
+import { useAppStore } from './app-store';
 
 interface LobbyFilter {
   searchText: string;
@@ -16,7 +17,7 @@ interface LobbyState {
 interface LobbyActions {
   refreshGames: () => Promise<void>;
   hostGame: (options: Record<string, unknown>) => Promise<void>;
-  joinGame: (gameId: string, password?: string) => Promise<void>;
+  joinGame: (gameId: string, password?: string, spectator?: boolean) => Promise<void>;
   setFilter: (filter: Partial<LobbyFilter>) => void;
   startAutoRefresh: () => () => void;
 }
@@ -91,11 +92,14 @@ export const useLobbyStore = create<LobbyStore>()((set, get) => ({
     }
   },
 
-  joinGame: async (gameId, password?) => {
+  joinGame: async (gameId, password?, spectator?) => {
     set({ isLoading: true, error: null });
     try {
-      await window.octgn.joinGame(gameId, password);
+      const result = await window.octgn.joinGame(gameId, password, spectator);
       set({ isLoading: false });
+      if (result && result.success) {
+        useAppStore.getState().navigate('game');
+      }
     } catch (err) {
       set({
         isLoading: false,
@@ -122,6 +126,10 @@ export const useLobbyStore = create<LobbyStore>()((set, get) => ({
     return () => clearInterval(intervalId);
   },
 }));
+
+if (typeof window !== 'undefined') {
+  (window as any).__lobbyStore = useLobbyStore;
+}
 
 /** Selector that returns games after applying the current filter. */
 export function useFilteredGames(): HostedGame[] {
