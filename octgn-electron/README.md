@@ -15,6 +15,24 @@ Cross-platform Electron client for OCTGN (Online Card and Tabletop Gaming Networ
 
 ## Quick Start
 
+### Windows (Easy Launch)
+```powershell
+# From the repository root, simply run:
+.\launch.ps1
+
+# Or double-click launch.bat
+```
+
+Options:
+```powershell
+.\launch.ps1              # Development mode
+.\launch.ps1 -Production  # Production build
+.\launch.ps1 -Install     # Reinstall dependencies
+.\launch.ps1 -Build       # Build before launching
+```
+
+### Manual Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/octgn/OCTGN.git
