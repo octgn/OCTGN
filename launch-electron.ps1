@@ -21,6 +21,12 @@ if (-not (Test-Path $electronDir)) {
 
 Push-Location $electronDir
 try {
+    # Resolve local bin paths — avoids npx resolution issues on Windows
+    $bin = Join-Path (Get-Location) 'node_modules' '.bin'
+    $tsc = Join-Path $bin 'tsc.cmd'
+    $vite = Join-Path $bin 'vite.cmd'
+    $electron = Join-Path $bin 'electron.cmd'
+
     # Install deps if requested or node_modules missing
     if ($Install -or -not (Test-Path 'node_modules')) {
         Write-Host '[1/3] Installing dependencies...' -ForegroundColor Cyan
@@ -30,26 +36,25 @@ try {
 
     if ($Production -or $Build) {
         Write-Host '[2/3] Building...' -ForegroundColor Cyan
-        npx.cmd tsc -p tsconfig.main.json
+        & $tsc -p tsconfig.main.json
         if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
-        npx.cmd vite build
+        & $vite build
         if ($LASTEXITCODE -ne 0) { throw 'Renderer build failed' }
     }
 
     if ($Production) {
         Write-Host '[3/3] Starting OCTGN (production)...' -ForegroundColor Green
-        npx.cmd electron dist/main/index.js
+        & $electron dist/main/index.js
     }
     else {
         Write-Host '[2/3] Building main process...' -ForegroundColor Cyan
-        npx.cmd tsc -p tsconfig.main.json
+        & $tsc -p tsconfig.main.json
         if ($LASTEXITCODE -ne 0) { throw 'Main process build failed' }
 
         Write-Host '[3/3] Starting OCTGN (dev mode)...' -ForegroundColor Green
 
         # Start Vite dev server as a background process
-        # cmd /c is needed so Start-Process can find npx on Windows
-        $viteProc = Start-Process -FilePath 'cmd.exe' -ArgumentList '/c','npx','vite','dev' `
+        $viteProc = Start-Process -FilePath $vite -ArgumentList 'dev' `
             -WorkingDirectory (Get-Location).Path -WindowStyle Hidden -PassThru
 
         try {
@@ -75,7 +80,7 @@ try {
             }
 
             Write-Host '     Vite is ready, launching Electron...        ' -ForegroundColor Green
-            npx.cmd electron dist/main/index.js
+            & $electron dist/main/index.js
         }
         finally {
             # Kill Vite and its child tree when Electron exits
