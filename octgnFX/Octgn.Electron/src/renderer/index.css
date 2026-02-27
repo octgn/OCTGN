@@ -1,0 +1,226 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base Layer ─────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --glow-blue: rgba(59, 130, 246, 0.6);
+    --glow-violet: rgba(139, 92, 246, 0.6);
+    --glow-red: rgba(239, 68, 68, 0.5);
+    --glow-gold: rgba(251, 191, 36, 0.5);
+    --glass-bg: rgba(17, 24, 39, 0.65);
+    --glass-border: rgba(55, 65, 81, 0.45);
+  }
+
+  body {
+    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    background-color: #0a0e17;
+    color: #f9fafb;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Orbitron', monospace;
+  }
+}
+
+/* ── Glass Morphism ─────────────────────────────────────────────────── */
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-heavy {
+    background: rgba(17, 24, 39, 0.82);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(55, 65, 81, 0.55);
+  }
+
+  .glass-light {
+    background: rgba(31, 41, 55, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(55, 65, 81, 0.3);
+  }
+}
+
+/* ── Glow Effects ───────────────────────────────────────────────────── */
+@layer components {
+  .glow-blue {
+    box-shadow: 0 0 12px var(--glow-blue), inset 0 0 12px rgba(59, 130, 246, 0.08);
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 12px var(--glow-violet), inset 0 0 12px rgba(139, 92, 246, 0.08);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 12px var(--glow-red);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 12px var(--glow-gold);
+  }
+
+  .glow-text-blue {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.7), 0 0 30px rgba(59, 130, 246, 0.3);
+  }
+
+  .glow-text-violet {
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.7), 0 0 30px rgba(139, 92, 246, 0.3);
+  }
+}
+
+/* ── Animated Gradient Background ───────────────────────────────────── */
+@layer components {
+  .animated-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animated-bg::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(59, 130, 246, 0.06) 0deg,
+      rgba(139, 92, 246, 0.08) 90deg,
+      rgba(16, 185, 129, 0.04) 180deg,
+      rgba(59, 130, 246, 0.06) 270deg,
+      rgba(139, 92, 246, 0.08) 360deg
+    );
+    animation: bg-rotate 25s linear infinite;
+    z-index: 0;
+  }
+
+  .animated-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes bg-rotate {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Mesh gradient orbs */
+  .mesh-gradient {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mesh-gradient::before,
+  .mesh-gradient::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .mesh-gradient::before {
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    right: -100px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.25), transparent 70%);
+    animation: mesh-drift-1 20s ease-in-out infinite alternate;
+  }
+
+  .mesh-gradient::after {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    left: -100px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent 70%);
+    animation: mesh-drift-2 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes mesh-drift-1 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, 40px) scale(1.1); }
+    100% { transform: translate(30px, -30px) scale(0.95); }
+  }
+
+  @keyframes mesh-drift-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -30px) scale(1.15); }
+    100% { transform: translate(-40px, 20px) scale(0.9); }
+  }
+}
+
+/* ── Card Glow ──────────────────────────────────────────────────────── */
+@layer components {
+  .card-glow {
+    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card-glow:hover {
+    box-shadow:
+      0 0 15px rgba(59, 130, 246, 0.5),
+      0 0 40px rgba(59, 130, 246, 0.25),
+      0 0 80px rgba(139, 92, 246, 0.15);
+    transform: translateY(-6px) scale(1.04);
+  }
+
+  .card-glow-selected {
+    box-shadow:
+      0 0 10px rgba(251, 191, 36, 0.5),
+      0 0 30px rgba(251, 191, 36, 0.3),
+      0 0 60px rgba(251, 191, 36, 0.15);
+  }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 14, 23, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(55, 65, 81, 0.7);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.9);
+}
+
+/* ── Focus Outlines ─────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+}
+
+/* ── Utility Animations ─────────────────────────────────────────────── */
+@layer utilities {
+  .animate-in {
+    animation: slide-up 0.4s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .transition-gpu {
+    transition-property: transform, opacity, box-shadow;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    transition-duration: 300ms;
+    will-change: transform, opacity;
+  }
+
+  .drag-region {
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+
+  .no-drag {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+}
