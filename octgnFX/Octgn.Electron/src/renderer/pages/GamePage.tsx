@@ -7,25 +7,75 @@ import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
 import type { Card, ChatMessage, Player, Counter } from '../../shared/types';
 
+interface ContextMenu {
+  x: number;
+  y: number;
+  cardId: string;
+}
+
 const GamePage: React.FC = () => {
   const gameState = useGameStore((s) => s.gameState);
   const sendChat = useGameStore((s) => s.sendChat);
+  const flipCard = useGameStore((s) => s.flipCard);
+  const rotateCard = useGameStore((s) => s.rotateCard);
+  const peekCard = useGameStore((s) => s.peekCard);
+  const nextTurn = useGameStore((s) => s.nextTurn);
+  const subscribe = useGameStore((s) => s.subscribe);
   const navigate = useAppStore((s) => s.navigate);
 
   const [chatOpen, setChatOpen] = useState(true);
   const [chatInput, setChatInput] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Subscribe to game state updates from main process
+  useEffect(() => {
+    const unsubscribe = subscribe();
+    return unsubscribe;
+  }, [subscribe]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [gameState?.chatMessages?.length]);
+
+  // Close context menu on click anywhere
+  useEffect(() => {
+    const handler = () => setContextMenu(null);
+    window.addEventListener('click', handler);
+    return () => window.removeEventListener('click', handler);
+  }, []);
 
   const handleSendChat = useCallback(() => {
     if (!chatInput.trim()) return;
     sendChat(chatInput.trim());
     setChatInput('');
   }, [chatInput, sendChat]);
+
+  const handleCardContextMenu = useCallback((e: React.MouseEvent, card: Card) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, cardId: card.id });
+    setSelectedCardId(card.id);
+  }, []);
+
+  const handleFlipCard = useCallback(() => {
+    if (!contextMenu) return;
+    const card = [...(gameState?.table.cards ?? []), ...handCards].find(c => c.id === contextMenu.cardId);
+    if (card) flipCard(Number(card.id), !card.faceUp);
+    setContextMenu(null);
+  }, [contextMenu, gameState, flipCard]);
+
+  const handleRotateCard = useCallback((degrees: number) => {
+    if (!contextMenu) return;
+    rotateCard(Number(contextMenu.cardId), degrees);
+    setContextMenu(null);
+  }, [contextMenu, rotateCard]);
+
+  const handlePeekCard = useCallback(() => {
+    if (!contextMenu) return;
+    peekCard(Number(contextMenu.cardId));
+    setContextMenu(null);
+  }, [contextMenu, peekCard]);
 
   const localPlayer = gameState?.players.find(
     (p: Player) => p.id === gameState.localPlayerId
@@ -37,8 +87,6 @@ const GamePage: React.FC = () => {
   const handCards: Card[] =
     localPlayer?.groups.find((g) => g.name.toLowerCase() === 'hand')?.cards ?? [];
   const tableCards: Card[] = gameState?.table.cards ?? [];
-
-  const phases = gameState?.players?.[0] ? [] : []; // phases come from game definition
 
   if (!gameState) {
     return (
@@ -89,6 +137,9 @@ const GamePage: React.FC = () => {
             </div>
           ))}
 
+          <Button variant="ghost" size="sm" onClick={() => nextTurn()}>
+            Next Turn
+          </Button>
           <Button variant="ghost" size="sm" onClick={() => setChatOpen((v) => !v)}>
             Chat
           </Button>
@@ -149,6 +200,7 @@ const GamePage: React.FC = () => {
                 key={card.id}
                 className="absolute"
                 style={{ left: card.position.x, top: card.position.y }}
+                onContextMenu={(e) => handleCardContextMenu(e, card)}
               >
                 <CardComponent
                   card={card}
@@ -175,18 +227,45 @@ const GamePage: React.FC = () => {
               <p className="text-xs text-octgn-text-dim py-4 mx-auto">Your hand is empty</p>
             )}
             {handCards.map((card: Card) => (
-              <CardComponent
-                key={card.id}
-                card={card}
-                selected={card.id === selectedCardId}
-                onClick={(c) => setSelectedCardId(c.id === selectedCardId ? null : c.id)}
-                className="shrink-0"
-                style={{ width: 80, height: 112 }}
-              />
+              <div key={card.id} onContextMenu={(e) => handleCardContextMenu(e, card)}>
+                <CardComponent
+                  card={card}
+                  selected={card.id === selectedCardId}
+                  onClick={(c) => setSelectedCardId(c.id === selectedCardId ? null : c.id)}
+                  className="shrink-0"
+                  style={{ width: 80, height: 112 }}
+                />
+              </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Context menu */}
+      {contextMenu && (
+        <div
+          className="fixed z-50 py-1 min-w-[160px] rounded-lg border border-octgn-border/50 bg-octgn-surface/95 backdrop-blur-md shadow-xl shadow-black/40"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button onClick={handleFlipCard} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
+            Flip Card
+          </button>
+          <button onClick={() => handleRotateCard(1)} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
+            Rotate 90°
+          </button>
+          <button onClick={() => handleRotateCard(2)} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
+            Rotate 180°
+          </button>
+          <button onClick={() => handleRotateCard(0)} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
+            Reset Rotation
+          </button>
+          <div className="my-1 border-t border-octgn-border/30" />
+          <button onClick={handlePeekCard} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
+            Peek
+          </button>
+        </div>
+      )}
 
       {/* Chat panel */}
       {chatOpen && (

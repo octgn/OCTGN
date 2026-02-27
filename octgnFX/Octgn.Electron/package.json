@@ -16,10 +16,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/",
-    "package": "electron-builder",
-    "package:linux": "electron-builder --linux",
-    "package:mac": "electron-builder --mac",
-    "package:win": "electron-builder --win"
+    "package": "npm run build && electron-builder",
+    "package:linux": "npm run build && electron-builder --linux",
+    "package:mac": "npm run build && electron-builder --mac",
+    "package:win": "npm run build && electron-builder --win"
   },
   "dependencies": {
     "clsx": "^2.1.0",
@@ -52,29 +52,75 @@
   "build": {
     "appId": "net.octgn.electron",
     "productName": "OCTGN",
+    "asar": true,
     "directories": {
       "output": "release"
     },
     "files": [
       "dist/**/*",
-      "resources/**/*"
+      "resources/**/*",
+      "!resources/icons/icon.icns",
+      "!resources/icons/icon.png"
+    ],
+    "fileAssociations": [
+      {
+        "ext": "o8d",
+        "name": "OCTGN Deck",
+        "description": "OCTGN Deck File",
+        "role": "Editor",
+        "mimeType": "application/x-octgn-deck"
+      },
+      {
+        "ext": "o8g",
+        "name": "OCTGN Game Definition",
+        "description": "OCTGN Game Definition Package",
+        "role": "Viewer",
+        "mimeType": "application/x-octgn-game"
+      }
     ],
     "linux": {
       "target": [
         "AppImage",
         "deb"
       ],
-      "category": "Game"
+      "category": "Game",
+      "icon": "resources/icons",
+      "desktop": {
+        "MimeType": "application/x-octgn-deck;application/x-octgn-game"
+      }
     },
     "mac": {
       "target": [
         "dmg"
       ],
-      "category": "public.app-category.card-games"
+      "category": "public.app-category.card-games",
+      "icon": "resources/icons/icon.icns"
     },
     "win": {
       "target": [
         "nsis"
+      ],
+      "icon": "resources/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
       ]
     }
   }

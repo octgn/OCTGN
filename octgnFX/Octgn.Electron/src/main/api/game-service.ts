@@ -136,6 +136,83 @@ export class GameService {
   }
 
   /**
+   * Peek at a card (view it without revealing).
+   */
+  peekCard(cardId: number): void {
+    this.connection?.sendMessage(MessageType.PeekReq, 0, {
+      card: cardId,
+    });
+  }
+
+  /**
+   * Stop peeking at a card.
+   */
+  unpeekCard(cardId: number): void {
+    this.connection?.sendMessage(MessageType.UntargetReq, 0, {
+      card: cardId,
+      isScriptChange: false,
+    });
+  }
+
+  /**
+   * Target a card.
+   */
+  targetCard(cardId: number, _playerId: number, isScriptChange: boolean = false): void {
+    this.connection?.sendMessage(MessageType.TargetReq, 0, {
+      card: cardId,
+      isScriptChange,
+    });
+  }
+
+  /**
+   * Highlight a card with a color.
+   */
+  highlightCard(cardId: number, color: string): void {
+    this.connection?.sendMessage(MessageType.Highlight, 0, {
+      card: cardId,
+      color,
+    });
+  }
+
+  /**
+   * Add a marker to a card.
+   */
+  addMarker(cardId: number, markerId: string, markerName: string, count: number, origCount: number = 0): void {
+    this.connection?.sendMessage(MessageType.AddMarkerReq, 0, {
+      card: cardId,
+      id: markerId,
+      name: markerName,
+      count,
+      origCount,
+      isScriptChange: false,
+    });
+  }
+
+  /**
+   * Remove a marker from a card.
+   */
+  removeMarker(cardId: number, markerId: string, markerName: string, count: number, origCount: number = 0): void {
+    this.connection?.sendMessage(MessageType.RemoveMarkerReq, 0, {
+      card: cardId,
+      id: markerId,
+      name: markerName,
+      count,
+      origCount,
+      isScriptChange: false,
+    });
+  }
+
+  /**
+   * Shuffle a group (e.g., deck).
+   */
+  shuffleGroup(groupId: number): void {
+    this.connection?.sendMessage(MessageType.ShuffleDeprecated, 0, {
+      group: groupId,
+      card: [],
+    });
+  }
+
+  /**
    * Update a counter value.
    */
   setCounter(counterId: number, value: number): void {
