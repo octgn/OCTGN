@@ -275,6 +275,7 @@ const GamePage: React.FC = () => {
             onCardContextMenu={handleCardContextMenu}
             onCardMoveToTable={handleCardMoveToTable}
             onCardMoveToGroup={handleCardMoveToGroup}
+            useTwoSidedTable={gameState.useTwoSidedTable}
             isSpectator={isSpectator}
             allPlayers={isSpectator ? activePlayers : undefined}
           />

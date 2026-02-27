@@ -299,3 +299,63 @@ describe('GameBoard — Fallback', () => {
     expect(cards.length).toBeGreaterThanOrEqual(1);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Two-sided table mode
+// ---------------------------------------------------------------------------
+
+describe('GameBoard — Two-Sided Table', () => {
+  afterEach(() => cleanup());
+
+  it('should render middle line when useTwoSidedTable is true', () => {
+    const { container } = renderBoard({
+      useTwoSidedTable: true,
+    });
+
+    const line = container.querySelector('[data-testid="two-sided-middle-line"]');
+    expect(line).toBeInTheDocument();
+  });
+
+  it('should NOT render middle line when useTwoSidedTable is false', () => {
+    const { container } = renderBoard({
+      useTwoSidedTable: false,
+    });
+
+    const line = container.querySelector('[data-testid="two-sided-middle-line"]');
+    expect(line).not.toBeInTheDocument();
+  });
+
+  it('should NOT render middle line when useTwoSidedTable is not provided', () => {
+    const { container } = renderBoard({});
+
+    const line = container.querySelector('[data-testid="two-sided-middle-line"]');
+    expect(line).not.toBeInTheDocument();
+  });
+
+  it('should pass invertedZone to cards in the inverted zone', () => {
+    // Card with y < -cardHeight/2 (y=-100, height=140, threshold=-70)
+    const invertedCard = makeCard({ id: 'inv-1', position: { x: 0, y: -100 }, size: { width: 100, height: 140 } });
+    const { container } = renderBoard({
+      tableCards: [invertedCard],
+      useTwoSidedTable: true,
+    });
+
+    // The card's inner element should have scale(-1, -1) from invertedZone
+    const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
+    expect(inner).toBeInTheDocument();
+    expect(inner.style.transform).toContain('scale(-1, -1)');
+  });
+
+  it('should NOT pass invertedZone to cards in the normal zone', () => {
+    // Card with y=100 (positive, normal zone)
+    const normalCard = makeCard({ id: 'norm-1', position: { x: 0, y: 100 }, size: { width: 100, height: 140 } });
+    const { container } = renderBoard({
+      tableCards: [normalCard],
+      useTwoSidedTable: true,
+    });
+
+    const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
+    expect(inner).toBeInTheDocument();
+    expect(inner.style.transform).not.toContain('scale(-1, -1)');
+  });
+});

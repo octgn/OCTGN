@@ -5,6 +5,7 @@ import { useDragDrop } from './DragDropContext';
 import { useTableTransform } from '../hooks/useTableTransform';
 import { calculateTableScale } from '../utils/table-scaling';
 import type { Card, Group, Player } from '../../shared/types';
+import { isInInvertedZone } from '../../shared/table-utils';
 
 // ─── Zone identifiers ────────────────────────────────────────────────
 const ZONE_TABLE = 'table';
@@ -55,6 +56,7 @@ interface GameBoardProps {
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onCardMoveToTable: (cardId: string, x: number, y: number) => void;
   onCardMoveToGroup: (cardId: string, groupId: string) => void;
+  useTwoSidedTable?: boolean;
   isSpectator?: boolean;
   allPlayers?: Player[];
 }
@@ -77,6 +79,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onCardContextMenu,
   onCardMoveToTable,
   onCardMoveToGroup,
+  useTwoSidedTable = false,
   isSpectator = false,
   allPlayers,
 }) => {
@@ -469,6 +472,22 @@ const GameBoard: React.FC<GameBoardProps> = ({
             />
           )}
 
+          {/* Two-sided table middle line at Y=0 */}
+          {useTwoSidedTable && (
+            <div
+              data-testid="two-sided-middle-line"
+              className="absolute pointer-events-none"
+              style={{
+                left: hasTableDimensions ? `${-(tableWidth ?? 0) / 2}px` : 0,
+                top: 0,
+                width: hasTableDimensions ? `${tableWidth}px` : '100%',
+                height: 0,
+                borderTop: '2px dashed rgba(255, 255, 255, 0.3)',
+                zIndex: 4,
+              }}
+            />
+          )}
+
           {/* Subtle grid pattern */}
           <div
             data-testid="table-grid"
@@ -498,6 +517,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   card={card}
                   selected={card.id === selectedCardId}
                   interactive={!isSpectator}
+                  invertedZone={useTwoSidedTable && isInInvertedZone(card.position.y, card.size.height)}
                   onClick={onCardClick}
                   onContextMenu={(c, e) => onCardContextMenu(e, c)}
                   onDragStart={isSpectator ? undefined : handleCardDragStart(ZONE_TABLE)}
