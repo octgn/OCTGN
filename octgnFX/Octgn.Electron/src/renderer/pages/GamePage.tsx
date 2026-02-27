@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { clsx } from 'clsx';
 import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
@@ -6,7 +6,7 @@ import { DragDropProvider } from '../components/DragDropContext';
 import GameBoard from '../components/GameBoard';
 import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
-import type { Card, ChatMessage, Player, Counter } from '../../shared/types';
+import type { Card, ChatMessage, Player, Counter, Group } from '../../shared/types';
 
 interface ContextMenu {
   x: number;
@@ -24,6 +24,7 @@ const GamePage: React.FC = () => {
   const moveCards = useGameStore((s) => s.moveCards);
   const nextTurn = useGameStore((s) => s.nextTurn);
   const subscribe = useGameStore((s) => s.subscribe);
+  const leaveGame = useGameStore((s) => s.leaveGame);
   const navigate = useAppStore((s) => s.navigate);
 
   const [chatOpen, setChatOpen] = useState(true);
@@ -31,6 +32,8 @@ const GamePage: React.FC = () => {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const isSpectator = gameState?.isSpectator ?? false;
 
   // Subscribe to game state updates from main process
   useEffect(() => {
@@ -63,17 +66,29 @@ const GamePage: React.FC = () => {
   );
 
   const handleCardContextMenu = useCallback((e: React.MouseEvent, card: Card) => {
+    if (isSpectator) return; // No context menu for spectators
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, cardId: card.id });
     setSelectedCardId(card.id);
-  }, []);
+  }, [isSpectator]);
+
+  const allCards = useMemo(() => {
+    if (!gameState) return [];
+    const cards = [...(gameState.table.cards ?? [])];
+    for (const player of gameState.players) {
+      for (const group of player.groups) {
+        cards.push(...group.cards);
+      }
+    }
+    return cards;
+  }, [gameState]);
 
   const handleFlipCard = useCallback(() => {
     if (!contextMenu) return;
-    const card = [...(gameState?.table.cards ?? []), ...handCards].find(c => c.id === contextMenu.cardId);
+    const card = allCards.find(c => c.id === contextMenu.cardId);
     if (card) flipCard(Number(card.id), !card.faceUp);
     setContextMenu(null);
-  }, [contextMenu, gameState, flipCard]);
+  }, [contextMenu, allCards, flipCard]);
 
   const handleRotateCard = useCallback((degrees: number) => {
     if (!contextMenu) return;
@@ -90,47 +105,63 @@ const GamePage: React.FC = () => {
   /** Drag-drop: move card to table at (x, y) position */
   const handleCardMoveToTable = useCallback(
     (cardId: string, x: number, y: number) => {
+      if (isSpectator) return;
       moveCardsAt(
         [Number(cardId)],
         [x],
         [y],
         [0],
-        [true] // face up when dropped on table
+        [true]
       );
     },
-    [moveCardsAt]
+    [moveCardsAt, isSpectator]
   );
 
   /** Drag-drop: move card to a named group */
   const handleCardMoveToGroup = useCallback(
     (cardId: string, groupId: string) => {
+      if (isSpectator) return;
       moveCards(
         [Number(cardId)],
         Number(groupId),
         [0],
-        [false] // face down when going to a group like deck
+        [false]
       );
     },
-    [moveCards]
+    [moveCards, isSpectator]
   );
 
+  const handleLeave = useCallback(async () => {
+    await leaveGame();
+    navigate('lobby');
+  }, [leaveGame, navigate]);
+
+  // Collect all players (spectators see everyone)
+  const allPlayers = gameState?.players ?? [];
   const localPlayer = gameState?.players.find(
-    (p: Player) => p.id === gameState.localPlayerId
+    (p: Player) => p.id === gameState?.localPlayerId
   );
-  const otherPlayers = gameState?.players.filter(
-    (p: Player) => p.id !== gameState?.localPlayerId
-  ) ?? [];
+  const activePlayers = allPlayers.filter((p: Player) => !p.isSpectator);
+  const otherPlayers = isSpectator
+    ? activePlayers
+    : allPlayers.filter((p: Player) => p.id !== gameState?.localPlayerId);
 
-  const handCards: Card[] =
-    localPlayer?.groups.find((g) => g.name.toLowerCase() === 'hand')?.cards ?? [];
+  // Spectators see ALL hands; regular players only see their own
+  const handCards: Card[] = isSpectator
+    ? [] // spectators don't have a personal hand zone
+    : localPlayer?.groups.find((g) => g.name.toLowerCase() === 'hand')?.cards ?? [];
   const tableCards: Card[] = gameState?.table.cards ?? [];
-  const playerGroups = localPlayer?.groups ?? [];
+  const playerGroups = isSpectator ? [] : localPlayer?.groups ?? [];
+
+  // Connection status
+  const connectionStatus = gameState?.connectionStatus ?? 'connected';
 
   if (!gameState) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center animate-in">
-          <p className="font-display text-lg text-octgn-text-muted">Waiting for game state...</p>
+          <div className="w-8 h-8 border-2 border-octgn-primary/30 border-t-octgn-primary rounded-full animate-spin mx-auto mb-4" />
+          <p className="font-display text-lg text-octgn-text-muted">Connecting to game...</p>
           <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('lobby')}>
             Return to Lobby
           </Button>
@@ -146,6 +177,28 @@ const GamePage: React.FC = () => {
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top bar: game info + turn info */}
           <div className="flex items-center gap-3 px-4 py-2 border-b border-octgn-border/30 bg-octgn-surface/40 backdrop-blur-sm">
+            {/* Connection status indicator */}
+            <div className="flex items-center gap-1.5">
+              <span className={clsx(
+                'w-2 h-2 rounded-full',
+                connectionStatus === 'connected' && 'bg-octgn-success',
+                connectionStatus === 'disconnected' && 'bg-octgn-danger',
+                connectionStatus === 'reconnecting' && 'bg-octgn-warning animate-pulse',
+              )} />
+              {connectionStatus !== 'connected' && (
+                <span className="text-[10px] text-octgn-warning">
+                  {connectionStatus === 'reconnecting' ? 'Reconnecting...' : 'Disconnected'}
+                </span>
+              )}
+            </div>
+
+            {/* Spectator badge */}
+            {isSpectator && (
+              <span className="px-2 py-0.5 rounded-full bg-octgn-accent/20 border border-octgn-accent/40 text-[10px] font-bold text-octgn-accent tracking-widest uppercase animate-pulse">
+                Spectating
+              </span>
+            )}
+
             <span className="font-display text-xs font-semibold tracking-wider text-octgn-primary">
               {gameState.gameName}
             </span>
@@ -153,7 +206,7 @@ const GamePage: React.FC = () => {
             <span className="text-xs text-octgn-text-muted">
               Turn {gameState.turnNumber}
             </span>
-            {gameState.activePlayer != null && (
+            {gameState.activePlayer != null && gameState.activePlayer !== 0 && (
               <>
                 <div className="w-px h-4 bg-octgn-border/50" />
                 <span className="text-xs text-octgn-text-muted">
@@ -166,8 +219,8 @@ const GamePage: React.FC = () => {
             )}
             <div className="flex-1" />
 
-            {/* Player counters */}
-            {localPlayer?.counters.map((c: Counter) => (
+            {/* Player counters (spectator sees none, non-spectator sees own) */}
+            {!isSpectator && localPlayer?.counters.map((c: Counter) => (
               <div key={c.id} className="flex items-center gap-1.5 text-xs">
                 <span className="text-octgn-text-dim">{c.name}</span>
                 <span className="font-mono font-bold text-octgn-text bg-octgn-surface px-1.5 py-0.5 rounded border border-octgn-border/30">
@@ -176,37 +229,29 @@ const GamePage: React.FC = () => {
               </div>
             ))}
 
-            <Button variant="ghost" size="sm" onClick={() => nextTurn()}>
-              Next Turn
-            </Button>
+            {!isSpectator && (
+              <Button variant="ghost" size="sm" onClick={() => nextTurn()}>
+                Next Turn
+              </Button>
+            )}
             <Button variant="ghost" size="sm" onClick={() => setChatOpen((v) => !v)}>
               Chat
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('lobby')}>
+            <Button variant="ghost" size="sm" onClick={handleLeave}>
               Leave
             </Button>
           </div>
 
-          {/* Other players area */}
+          {/* Player panels — spectators see all players, non-spectators see opponents */}
           {otherPlayers.length > 0 && (
-            <div className="flex items-start gap-3 px-4 py-2 border-b border-octgn-border/20 bg-octgn-surface/20">
+            <div className="flex items-start gap-3 px-4 py-2 border-b border-octgn-border/20 bg-octgn-surface/20 overflow-x-auto">
               {otherPlayers.map((player: Player) => (
-                <GlassPanel key={player.id} variant="light" padding="sm" glow="none" className="text-xs">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: player.color || '#6b7280' }}
-                    />
-                    <span className="font-medium text-octgn-text">{player.name}</span>
-                  </div>
-                  <div className="flex gap-2 mt-1">
-                    {player.counters.map((c: Counter) => (
-                      <span key={c.id} className="text-octgn-text-dim">
-                        {c.name}: <span className="text-octgn-text font-mono">{c.value}</span>
-                      </span>
-                    ))}
-                  </div>
-                </GlassPanel>
+                <PlayerPanel
+                  key={player.id}
+                  player={player}
+                  isActive={player.id === gameState.activePlayer}
+                  isSpectatorView={isSpectator}
+                />
               ))}
             </div>
           )}
@@ -218,15 +263,24 @@ const GamePage: React.FC = () => {
             groups={playerGroups}
             selectedCardId={selectedCardId}
             boardImageUrl={gameState.table.board?.imageUrl}
+            boardX={gameState.table.board?.x}
+            boardY={gameState.table.board?.y}
+            boardWidth={gameState.table.board?.width}
+            boardHeight={gameState.table.board?.height}
+            backgroundStyle={gameState.table.backgroundStyle}
+            tableWidth={gameState.table.width}
+            tableHeight={gameState.table.height}
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
             onCardMoveToTable={handleCardMoveToTable}
             onCardMoveToGroup={handleCardMoveToGroup}
+            isSpectator={isSpectator}
+            allPlayers={isSpectator ? activePlayers : undefined}
           />
         </div>
 
-        {/* Context menu */}
-        {contextMenu && (
+        {/* Context menu (non-spectator only) */}
+        {!isSpectator && contextMenu && (
           <div
             className="fixed z-50 py-1 min-w-[160px] rounded-lg border border-octgn-border/50 bg-octgn-surface/95 backdrop-blur-md shadow-xl shadow-black/40"
             style={{ left: contextMenu.x, top: contextMenu.y }}
@@ -298,7 +352,7 @@ const GamePage: React.FC = () => {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
-                  placeholder="Send a message..."
+                  placeholder={isSpectator ? 'Chat as spectator...' : 'Send a message...'}
                   className="flex-1 h-7 px-2 text-xs rounded bg-octgn-surface border border-octgn-border/50 text-octgn-text placeholder-octgn-text-dim outline-none focus:border-octgn-primary/50 transition-colors"
                 />
                 <Button variant="primary" size="sm" onClick={handleSendChat} className="h-7 px-2">
@@ -312,6 +366,77 @@ const GamePage: React.FC = () => {
         )}
       </div>
     </DragDropProvider>
+  );
+};
+
+// ─── Player Panel Component ──────────────────────────────────────────────
+interface PlayerPanelProps {
+  player: Player;
+  isActive: boolean;
+  isSpectatorView: boolean;
+}
+
+const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isActive, isSpectatorView }) => {
+  const handGroup = player.groups.find((g) => g.name.toLowerCase() === 'hand');
+  const otherGroups = player.groups.filter((g) => g.name.toLowerCase() !== 'hand');
+
+  return (
+    <GlassPanel
+      variant="light"
+      padding="sm"
+      glow={isActive ? 'blue' : 'none'}
+      className={clsx(
+        'text-xs min-w-[180px] transition-all duration-300',
+        isActive && 'ring-1 ring-octgn-primary/50 shadow-[0_0_12px_rgba(59,130,246,0.3)]'
+      )}
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <div
+          className={clsx(
+            'w-2.5 h-2.5 rounded-full transition-shadow duration-300',
+            isActive && 'shadow-[0_0_8px_rgba(59,130,246,0.7)]'
+          )}
+          style={{ backgroundColor: player.color || '#6b7280' }}
+        />
+        <span className="font-medium text-octgn-text">{player.name}</span>
+        {isActive && (
+          <span className="text-[9px] text-octgn-primary font-bold tracking-wider">ACTIVE</span>
+        )}
+        {player.isSpectator && (
+          <span className="text-[9px] text-octgn-accent">(Spectator)</span>
+        )}
+      </div>
+
+      {/* Counters */}
+      {player.counters.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-1">
+          {player.counters.map((c: Counter) => (
+            <div key={c.id} className="flex items-center gap-1">
+              <span className="text-octgn-text-dim text-[10px]">{c.name}</span>
+              <span className="font-mono font-bold text-octgn-text text-[11px] bg-octgn-surface/60 px-1 rounded border border-octgn-border/20">
+                {c.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Group card counts (spectator view) */}
+      {isSpectatorView && (
+        <div className="flex flex-wrap gap-1.5 mt-1.5">
+          {handGroup && (
+            <span className="text-[10px] text-octgn-text-dim bg-octgn-surface/40 px-1.5 py-0.5 rounded">
+              Hand: {handGroup.cards.length}
+            </span>
+          )}
+          {otherGroups.map((g: Group) => (
+            <span key={g.id} className="text-[10px] text-octgn-text-dim bg-octgn-surface/40 px-1.5 py-0.5 rounded">
+              {g.name}: {g.cards.length}
+            </span>
+          ))}
+        </div>
+      )}
+    </GlassPanel>
   );
 };
 

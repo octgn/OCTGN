@@ -1,8 +1,9 @@
-import React, { useCallback, useRef, useMemo, useEffect } from 'react';
+import React, { useCallback, useRef, useMemo, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
 import { useDragDrop } from './DragDropContext';
 import { useTableTransform } from '../hooks/useTableTransform';
+import { calculateTableScale } from '../utils/table-scaling';
 import type { Card, Group, Player } from '../../shared/types';
 
 // ─── Zone identifiers ────────────────────────────────────────────────
@@ -42,6 +43,13 @@ interface GameBoardProps {
   groups?: Group[];
   selectedCardId: string | null;
   boardImageUrl?: string;
+  boardX?: number;
+  boardY?: number;
+  boardWidth?: number;
+  boardHeight?: number;
+  backgroundStyle?: 'stretch' | 'tile' | 'uniform' | 'uniformToFill';
+  tableWidth?: number;
+  tableHeight?: number;
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onCardMoveToTable: (cardId: string, x: number, y: number) => void;
@@ -56,6 +64,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
   groups = [],
   selectedCardId,
   boardImageUrl,
+  boardX = 0,
+  boardY = 0,
+  boardWidth,
+  boardHeight,
+  backgroundStyle,
+  tableWidth,
+  tableHeight,
   onCardClick,
   onCardContextMenu,
   onCardMoveToTable,
@@ -66,6 +81,36 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const tableRef = useRef<HTMLDivElement>(null);
   const { dragState, startDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
     useDragDrop();
+
+  // ─── Container size tracking for base scale ─────────────────────────
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const el = tableRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setContainerSize({ width, height });
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // ─── Base scale: map mm-space to screen-space ──────────────────────
+  const baseScale = useMemo(
+    () =>
+      calculateTableScale(
+        tableWidth ?? 0,
+        tableHeight ?? 0,
+        containerSize.width,
+        containerSize.height,
+      ),
+    [tableWidth, tableHeight, containerSize.width, containerSize.height],
+  );
+
+  const hasTableDimensions = !!(tableWidth && tableWidth > 0 && tableHeight && tableHeight > 0);
 
   // ─── Zoom / Pan transform ────────────────────────────────────────────
   const {
@@ -186,13 +231,21 @@ const GameBoard: React.FC<GameBoardProps> = ({
       const cardId = e.dataTransfer.getData('application/octgn-card');
       if (!cardId || !tableRef.current) return;
 
-      // Convert screen drop position to table-space coordinates
-      const { x, y } = screenToTable(e.clientX, e.clientY);
+      // Convert screen drop position to zoom/pan content space
+      const contentPos = screenToTable(e.clientX, e.clientY);
+
+      // Then invert the base scale to get mm-space coordinates
+      let x = contentPos.x;
+      let y = contentPos.y;
+      if (hasTableDimensions && baseScale.scale !== 0) {
+        x = (x - baseScale.offsetX) / baseScale.scale;
+        y = (y - baseScale.offsetY) / baseScale.scale;
+      }
 
       onCardMoveToTable(cardId, x, y);
       endDrag();
     },
-    [onCardMoveToTable, endDrag, isSpectator, screenToTable]
+    [onCardMoveToTable, endDrag, isSpectator, screenToTable, hasTableDimensions, baseScale]
   );
 
   const handleTableDragLeave = useCallback(
@@ -327,6 +380,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
       >
         {/* ── Zoom/Pan transform container ────────────────────────── */}
         <div
+          data-testid="transform-container"
           className="absolute inset-0"
           style={{
             transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
@@ -334,27 +388,73 @@ const GameBoard: React.FC<GameBoardProps> = ({
             willChange: 'transform',
           }}
         >
+        {/* ── Base scale container: mm-space to screen-space ───────── */}
+        <div
+          data-testid="base-scale-container"
+          style={hasTableDimensions ? {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: `${tableWidth}px`,
+            height: `${tableHeight}px`,
+            transform: `translate(${baseScale.offsetX}px, ${baseScale.offsetY}px) scale(${baseScale.scale})`,
+            transformOrigin: '0 0',
+          } : {
+            position: 'absolute',
+            inset: 0,
+          }}
+        >
           {/* Board background image */}
-          {boardImageUrl && (
+          {boardImageUrl && backgroundStyle === 'tile' ? (
+            <div
+              data-testid="board-background"
+              className="pointer-events-none select-none"
+              style={{
+                position: 'absolute',
+                left: `${boardX}px`,
+                top: `${boardY}px`,
+                width: boardWidth ? `${boardWidth}px` : '100%',
+                height: boardHeight ? `${boardHeight}px` : '100%',
+                backgroundImage: `url(${boardImageUrl})`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: 'auto',
+                zIndex: 0,
+              }}
+            />
+          ) : boardImageUrl ? (
             <img
+              data-testid="board-background"
               src={boardImageUrl}
               alt=""
-              className="absolute inset-0 w-full h-full object-contain opacity-20 pointer-events-none select-none"
+              className="pointer-events-none select-none"
+              style={{
+                position: 'absolute',
+                left: `${boardX}px`,
+                top: `${boardY}px`,
+                width: boardWidth ? `${boardWidth}px` : '100%',
+                height: boardHeight ? `${boardHeight}px` : '100%',
+                objectFit: backgroundStyle === 'stretch' ? 'fill'
+                  : backgroundStyle === 'uniformToFill' ? 'cover'
+                  : 'contain', // 'uniform' or default
+                zIndex: 0,
+              }}
             />
-          )}
+          ) : null}
 
           {/* Subtle grid pattern */}
           <div
+            data-testid="table-grid"
             className="absolute inset-0 pointer-events-none opacity-[0.03]"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
               backgroundSize: '40px 40px',
+              zIndex: 1,
             }}
           />
 
           {/* Table cards with smooth transitions */}
-          <div className="absolute inset-0 p-4">
+          <div data-testid="table-cards" className="absolute inset-0 p-4" style={{ zIndex: 2 }}>
             {tableCards.map((card) => (
               <div
                 key={card.id}
@@ -394,7 +494,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
               </div>
             )}
           </div>
-        </div>
+        </div>{/* close base-scale-container */}
+        </div>{/* close transform-container */}
 
         {/* Drop zone highlight ring (outside transform so it stays fixed) */}
         {!isSpectator && isDragging && dragState.dropTargetZone === ZONE_TABLE && (

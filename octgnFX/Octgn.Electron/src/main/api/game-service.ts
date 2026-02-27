@@ -5,6 +5,7 @@ import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker } fro
 import { IPC_CHANNELS, GroupVisibility } from '../../shared/types';
 import { ScriptEngine } from '../scripting/script-engine';
 import { CardResolver } from '../games/card-resolver';
+import { ImageResolver } from '../games/image-resolver';
 import { log, logError } from '../logger';
 
 /**
@@ -20,6 +21,7 @@ export class GameService {
   private scriptEngine: ScriptEngine = new ScriptEngine();
   private isSpectator: boolean = false;
   private cardResolver: CardResolver = new CardResolver();
+  private imageResolver: ImageResolver = new ImageResolver();
   private currentGameId: string = '';
 
   /**
@@ -280,6 +282,13 @@ export class GameService {
     return this.connection?.isConnected ?? false;
   }
 
+  /**
+   * Get the ImageResolver instance (used by the asset protocol handler).
+   */
+  getImageResolver(): ImageResolver {
+    return this.imageResolver;
+  }
+
   // ---------------------------------------------------------------------------
   // Helper: extract params from ProtocolMessage
   // ---------------------------------------------------------------------------
@@ -343,6 +352,27 @@ export class GameService {
           const gameDef = this.cardResolver.getGameDefinition(this.currentGameId);
           if (gameDef && this.gameState) {
             this.gameState.gameDefinition = { name: gameDef.name, id: gameDef.id };
+            // Populate table dimensions and background style from game definition
+            if (gameDef.table) {
+              this.gameState.table.width = gameDef.table.width || undefined;
+              this.gameState.table.height = gameDef.table.height || undefined;
+              this.gameState.table.backgroundStyle = gameDef.table.backgroundStyle;
+            }
+            // Populate card sizes from game definition
+            if (gameDef.defaultCardSize || (gameDef.cardWidth && gameDef.cardHeight)) {
+              this.gameState.cardSize = gameDef.defaultCardSize
+                ? { width: gameDef.defaultCardSize.width, height: gameDef.defaultCardSize.height }
+                : { width: gameDef.cardWidth, height: gameDef.cardHeight };
+            }
+            if (gameDef.cardSizes) {
+              const sizes: Record<string, { width: number; height: number }> = {};
+              for (const [name, sizeDef] of Object.entries(gameDef.cardSizes)) {
+                sizes[name] = { width: sizeDef.width, height: sizeDef.height };
+              }
+              this.gameState.cardSizes = sizes;
+            }
+            // Update existing card sizes to use game definition values
+            this.updateCardSizesFromDefinition();
             this.broadcastState();
           }
         }).catch((err) => logError('GAME', err));
@@ -798,13 +828,8 @@ export class GameService {
     this.connection.on('SetBoard', (msg: ProtocolMessage) => {
       const params = this.p(msg);
       if (!this.gameState) return;
-      this.gameState.table.board = {
-        name: params.name as string,
-        imageUrl: params.name as string,
-        width: 0,
-        height: 0,
-      };
-      this.broadcastState();
+      const boardName = params.name as string;
+      this.resolveBoardImage(boardName);
     });
 
     // PlaySound — play a game sound effect
@@ -997,12 +1022,8 @@ export class GameService {
     this.gameState!.globalVariables = data.GlobalVariables ?? {};
 
     if (data.GameBoard) {
-      this.gameState!.table.board = {
-        name: 'Board',
-        imageUrl: data.GameBoard,
-        width: 0,
-        height: 0,
-      };
+      // Use resolveBoardImage to properly resolve the board from game definition
+      this.resolveBoardImage(data.GameBoard);
     }
 
     log('GAME', `Parsed snapshot: ${players.length} players, ${tableCards.length} table cards, turn=${data.TurnNumber}`);
@@ -1018,6 +1039,9 @@ export class GameService {
 
     const definitionId = c.Type ?? '';
     const def = this.cardResolver.resolve(definitionId);
+    const imageUrl = def?.setId
+      ? this.imageResolver.buildAssetUrl(this.currentGameId, def.setId, definitionId)
+      : '';
 
     // Merge: definition properties as base, protocol overrides on top
     const properties = def?.properties
@@ -1028,10 +1052,10 @@ export class GameService {
       id: String(c.Id),
       definitionId,
       name: def?.name ?? `Card ${c.Id}`,
-      imageUrl: '',
+      imageUrl,
       faceUp: c.FaceUp ?? false,
       position: { x: c.X ?? 0, y: c.Y ?? 0 },
-      size: { width: 100, height: 140 },
+      size: this.resolveCardSize(c.Size ?? ''),
       ownerId: String(c.Owner ?? 0),
       groupId: '',
       markers,
@@ -1075,17 +1099,18 @@ export class GameService {
    * Create a Card object from protocol data.
    */
   private createCard(id: number, definitionId: string, size: string, groupId: string): Card {
-    const [w, h] = size.includes(',')
-      ? size.split(',').map(Number)
-      : [100, 140];
+    const cardSize = this.resolveCardSize(size);
 
     const def = this.cardResolver.resolve(definitionId);
+    const imageUrl = def?.setId
+      ? this.imageResolver.buildAssetUrl(this.currentGameId, def.setId, definitionId)
+      : '';
 
     return {
       id: String(id),
       definitionId,
       name: def?.name ?? `Card ${id}`,
-      imageUrl: '',
+      imageUrl,
       faceUp: false,
       position: { x: 0, y: 0 },
       rotation: 0,
@@ -1094,8 +1119,44 @@ export class GameService {
       markers: [],
       properties: def?.properties ?? {},
       peekingPlayers: [],
-      size: { width: w || 100, height: h || 140 },
+      size: cardSize,
     };
+  }
+
+  /** Resolve card size from protocol size string, game definition, or fallback. */
+  private resolveCardSize(size: string): { width: number; height: number } {
+    if (size.includes(',')) {
+      const [w, h] = size.split(',').map(Number);
+      if (w > 0 && h > 0) return { width: w, height: h };
+    }
+    if (size && this.gameState?.cardSizes?.[size]) {
+      return { ...this.gameState.cardSizes[size] };
+    }
+    if (this.gameState?.cardSize) {
+      return { ...this.gameState.cardSize };
+    }
+    return { width: 100, height: 140 };
+  }
+
+  /** Update all existing cards with fallback size to use game definition values. */
+  private updateCardSizesFromDefinition(): void {
+    if (!this.gameState?.cardSize) return;
+    const defaultSize = this.gameState.cardSize;
+    const updateCard = (card: Card) => {
+      if (card.size.width === 100 && card.size.height === 140) {
+        card.size = { ...defaultSize };
+      }
+    };
+    for (const card of this.gameState.table.cards) {
+      updateCard(card);
+    }
+    for (const player of this.gameState.players) {
+      for (const group of player.groups) {
+        for (const card of group.cards) {
+          updateCard(card);
+        }
+      }
+    }
   }
 
   /**
@@ -1210,5 +1271,71 @@ export class GameService {
     if (this.gameState) {
       this.gameState.chatMessages = [...this.chatMessages];
     }
+  }
+
+  /**
+   * Resolve a board name to an image URL and update game state.
+   * The board name from the protocol is matched against the game definition's
+   * boards list to find the source file and positioning info.
+   * The image is served via the octgn-asset:// protocol.
+   */
+  private resolveBoardImage(boardName: string): void {
+    if (!this.gameState) return;
+
+    const gameDef = this.cardResolver.getGameDefinition(this.currentGameId);
+
+    // Try to find the board in the game definition
+    let boardDef = gameDef?.boards?.find(
+      (b) => b.name.toLowerCase() === boardName.toLowerCase(),
+    );
+
+    // If not found by name, try the first board (common case: single board)
+    if (!boardDef && gameDef?.boards?.length) {
+      boardDef = gameDef.boards[0];
+    }
+
+    // Also check the table's embedded board definition
+    if (!boardDef && gameDef?.table?.board) {
+      boardDef = gameDef.table.board;
+    }
+
+    if (boardDef && boardDef.source) {
+      // Build an octgn-asset:// URL for the board image file
+      const encodedPath = encodeURIComponent(boardDef.source);
+      const imageUrl = `octgn-asset://game-file/${this.currentGameId}/${encodedPath}`;
+
+      this.gameState.table.board = {
+        name: boardName,
+        imageUrl,
+        width: boardDef.width,
+        height: boardDef.height,
+        x: boardDef.x,
+        y: boardDef.y,
+      };
+
+      log('GAME', `Board resolved: ${boardName} -> ${imageUrl} (${boardDef.width}x${boardDef.height} at ${boardDef.x},${boardDef.y})`);
+    } else {
+      // Fallback: use the board name as-is (may be a direct path)
+      const encodedPath = encodeURIComponent(boardName);
+      const imageUrl = `octgn-asset://game-file/${this.currentGameId}/${encodedPath}`;
+
+      this.gameState.table.board = {
+        name: boardName,
+        imageUrl,
+        width: 0,
+        height: 0,
+      };
+
+      log('GAME', `Board fallback: ${boardName} -> ${imageUrl} (no definition found)`);
+    }
+
+    // Also apply table metadata from game definition if available
+    if (gameDef?.table) {
+      this.gameState.table.width = gameDef.table.width || undefined;
+      this.gameState.table.height = gameDef.table.height || undefined;
+      this.gameState.table.backgroundStyle = gameDef.table.backgroundStyle;
+    }
+
+    this.broadcastState();
   }
 }
