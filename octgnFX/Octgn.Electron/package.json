@@ -2,6 +2,7 @@
   "name": "octgn-electron",
   "version": "0.1.0",
   "description": "OCTGN Cross-Platform Client",
+  "type": "module",
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
