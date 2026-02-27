@@ -1,47 +1,126 @@
-import { ReactNode } from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
 
-interface ButtonProps {
-  children: ReactNode;
-  onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'success';
   size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
-  className?: string;
-  title?: string;
+  loading?: boolean;
+  icon?: string;
 }
 
-export default function Button({
-  children,
-  onClick,
-  variant = 'primary',
-  size = 'md',
-  disabled = false,
-  className = '',
-  title,
-}: ButtonProps) {
-  const baseClasses = 'font-medium rounded-lg transition-all duration-200 inline-flex items-center justify-center';
-  
-  const variantClasses = {
-    primary: 'bg-octgn-accent hover:bg-octgn-highlight text-white',
-    secondary: 'bg-octgn-primary hover:bg-octgn-accent text-white border border-octgn-accent',
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    ghost: 'bg-transparent hover:bg-octgn-accent/30 text-gray-300',
-  };
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'secondary', size = 'md', loading, icon, children, className = '', disabled, ...props }, ref) => {
+    const variantClasses = {
+      primary: 'btn-primary',
+      secondary: 'btn-secondary',
+      danger: 'btn-danger',
+      ghost: 'btn-ghost',
+      success: 'bg-gradient-to-br from-octgn-success to-emerald-600 border-octgn-success/50 hover:from-green-500 hover:to-green-600 text-white font-semibold',
+    };
 
-  const sizeClasses = {
-    sm: 'px-2 py-1 text-xs',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
-  };
+    const sizeClasses = {
+      sm: 'btn-sm',
+      md: '',
+      lg: 'btn-lg',
+    };
 
-  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
+    return (
+      <button
+        ref={ref}
+        className={`
+          btn ${variantClasses[variant]} ${sizeClasses[size]}
+          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}
+          ${className}
+        `}
+        disabled={disabled || loading}
+        {...props}
+      >
+        {loading ? (
+          <span className="flex items-center justify-center">
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading...
+          </span>
+        ) : (
+          <>
+            {icon && <span className="mr-2">{icon}</span>}
+            {children}
+          </>
+        )}
+      </button>
+    );
+  }
+);
 
+Button.displayName = 'Button';
+
+export default Button;
+
+// Icon button for toolbars
+export function IconButton({ 
+  icon, 
+  onClick, 
+  title, 
+  active = false,
+  danger = false,
+}: { 
+  icon: string; 
+  onClick?: () => void; 
+  title?: string;
+  active?: boolean;
+  danger?: boolean;
+}) {
   return (
     <button
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
+      onClick={onClick}
       title={title}
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`}
+      className={`
+        w-8 h-8 rounded-lg flex items-center justify-center
+        transition-all duration-200
+        ${active 
+          ? 'bg-octgn-highlight/20 text-octgn-highlight' 
+          : danger
+            ? 'text-gray-400 hover:text-red-400 hover:bg-red-500/10'
+            : 'text-gray-400 hover:text-white hover:bg-white/10'
+        }
+      `}
+    >
+      <span className="text-lg">{icon}</span>
+    </button>
+  );
+}
+
+// Button group for toolbars
+export function ButtonGroup({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex rounded-lg overflow-hidden border border-octgn-accent">
+      {children}
+    </div>
+  );
+}
+
+export function ButtonGroupItem({ 
+  active, 
+  onClick, 
+  children 
+}: { 
+  active?: boolean; 
+  onClick?: () => void; 
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        px-3 py-1.5 text-sm font-medium
+        border-r border-octgn-accent last:border-r-0
+        transition-colors duration-200
+        ${active 
+          ? 'bg-octgn-highlight text-white' 
+          : 'bg-octgn-primary text-gray-300 hover:bg-octgn-accent hover:text-white'
+        }
+      `}
     >
       {children}
     </button>
