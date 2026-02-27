@@ -87,6 +87,7 @@ try {
             }
 
             Write-Host '     Vite is ready, launching Electron...        ' -ForegroundColor Green
+            $env:NODE_ENV = 'development'
             $electronBin = Join-Path $binDir 'electron.cmd'
             & $electronBin dist/main/index.js
         }
