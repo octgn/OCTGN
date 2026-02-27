@@ -92,12 +92,12 @@ const LoginTransition: React.FC<LoginTransitionProps> = ({
       {/* Central spinner / success burst */}
       <div
         className={`flex flex-col items-center gap-6 ${
-          animPhase === 'success' ? 'login-success-burst' : ''
+          animPhase === 'success' || animPhase === 'exit' ? 'login-success-burst' : ''
         }`}
       >
         <div className="login-spinner" />
         <p className="text-sm text-octgn-text-muted tracking-widest uppercase animate-pulse">
-          {animPhase === 'success' ? 'Welcome' : 'Authenticating'}
+          {animPhase === 'success' || animPhase === 'exit' ? 'Welcome' : 'Authenticating'}
         </p>
       </div>
 

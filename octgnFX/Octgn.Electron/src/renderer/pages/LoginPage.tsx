@@ -92,7 +92,7 @@ const LoginPage: React.FC = () => {
       {/* Login form */}
       <div
         className={`relative z-10 w-full max-w-sm mx-4 ${
-          isLoading ? 'login-form-exit' : 'animate-in'
+          isLoading || user ? 'login-form-exit' : 'animate-in'
         }`}
       >
         <GlassPanel variant="heavy" padding="lg" glow="subtle" className="rounded-2xl">
