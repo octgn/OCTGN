@@ -55,7 +55,7 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
     },
 
     fetchAvailable: async () => {
-      set({ isLoadingAvailable: true, availableGames: [] });
+      set({ isLoadingAvailable: true });
       try {
         const games = (await window.octgn.listAvailableGames()) as AvailableGame[];
         set({ availableGames: games });
