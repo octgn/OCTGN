@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -66,9 +66,6 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return this.props.children;
   }
 }
-
-// Need React for class component
-import React from 'react';
 
 export function useErrorHandler() {
   const [error, setError] = useState<Error | null>(null);
