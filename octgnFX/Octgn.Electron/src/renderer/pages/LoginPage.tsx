@@ -1,13 +1,19 @@
-import React, { useState, useCallback, FormEvent } from 'react';
+import React, { useState, useCallback, useEffect, FormEvent } from 'react';
 import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuthStore } from '../stores/auth-store';
+import { useAppStore } from '../stores/app-store';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading, error } = useAuthStore();
+  const { login, isLoading, error, user } = useAuthStore();
+  const navigate = useAppStore((s) => s.navigate);
+
+  useEffect(() => {
+    if (user) navigate('lobby');
+  }, [user, navigate]);
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
