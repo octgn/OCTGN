@@ -162,7 +162,8 @@ const LobbyPage: React.FC = () => {
                   >
                     Watch
                   </Button>
-                ) : game.status === GameStatus.GameReady ? (
+                ) : game.status === GameStatus.GameReady ||
+                  game.status === GameStatus.Unknown ? (
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="primary"
