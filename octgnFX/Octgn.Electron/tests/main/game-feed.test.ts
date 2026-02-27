@@ -337,6 +337,27 @@ describe('fetchAvailableGames', () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
+  it('picks correct version when same game spans multiple pages — not by download count', async () => {
+    // Old version on page 1 has MORE downloads; new version on page 2 has IsLatestVersion=true.
+    // The correct winner is the one with IsLatestVersion=true, regardless of download count.
+    const page1Xml = makeAtomXml(
+      [makeEntryXml('chess-id', 'Chess', '1.0.0.9', false, false, 9999)],
+      'https://example.com/page2',
+    );
+    const page2Xml = makeAtomXml([
+      makeEntryXml('chess-id', 'Chess', '1.0.0.11', true, true, 100),
+    ]);
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({ ok: true, text: async () => page1Xml } as Response)
+      .mockResolvedValueOnce({ ok: true, text: async () => page2Xml } as Response);
+
+    const result = await fetchAvailableGames([testFeed]);
+    expect(result).toHaveLength(1);
+    // Must pick v1.0.0.11 (IsLatestVersion=true), NOT v1.0.0.9 (higher downloads)
+    expect(result[0].version).toBe('1.0.0.11');
+  });
+
   it('deduplicates same game across multiple feeds — keeps highest download count', async () => {
     const feed1Xml = makeAtomXml([makeEntryXml('game-id', 'My Game', '1.0', true, true, 1000)]);
     const feed2Xml = makeAtomXml([makeEntryXml('game-id', 'My Game', '1.0', true, true, 5000)]);
