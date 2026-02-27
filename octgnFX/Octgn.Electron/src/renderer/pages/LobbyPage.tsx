@@ -23,15 +23,14 @@ const statusColor: Record<number, string> = {
 
 const LobbyPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { games, isLoading, fetchGames, joinGame } = useLobbyStore();
+  const { games, isLoading, joinGame, startAutoRefresh } = useLobbyStore();
   const user = useAuthStore((s) => s.user);
   const navigate = useAppStore((s) => s.navigate);
 
   useEffect(() => {
-    fetchGames();
-    const interval = setInterval(fetchGames, 15000);
-    return () => clearInterval(interval);
-  }, [fetchGames]);
+    const cleanup = startAutoRefresh();
+    return cleanup;
+  }, [startAutoRefresh]);
 
   const filteredGames = games.filter(
     (g: HostedGame) =>
