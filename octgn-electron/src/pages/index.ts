@@ -1,4 +1,5 @@
 export { default as HomePage } from './HomePage';
+export { default as LoginPage } from './LoginPage';
 export { default as GameTablePage } from './GameTablePage';
 export { default as PlayPage } from './PlayPage';
 export { default as DeckEditorPage } from './DeckEditorPage';
