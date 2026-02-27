@@ -44,6 +44,36 @@ export enum GameStatus {
   Finished = 3,
 }
 
+export interface TableDefinition {
+  name: string;
+  width: number;
+  height: number;
+  background?: string;
+  backgroundStyle?: 'stretch' | 'tile' | 'uniform' | 'uniformToFill';
+  board?: BoardDefinition;
+}
+
+export interface BoardDefinition {
+  name: string;
+  source: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface CardSizeDefinition {
+  name: string;
+  width: number;
+  height: number;
+  cornerRadius: number;
+  back: string;
+  front: string;
+  backWidth: number;
+  backHeight: number;
+  backCornerRadius: number;
+}
+
 export interface GameDefinition {
   id: string;
   name: string;
@@ -58,6 +88,10 @@ export interface GameDefinition {
   players: PlayerDefinition[];
   globalVariables: Variable[];
   phases: GamePhase[];
+  table?: TableDefinition;
+  boards?: BoardDefinition[];
+  cardSizes?: Record<string, CardSizeDefinition>;
+  defaultCardSize?: CardSizeDefinition;
 }
 
 export interface PlayerDefinition {
