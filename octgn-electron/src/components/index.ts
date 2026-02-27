@@ -12,6 +12,14 @@ export { default as CounterPanel } from './CounterPanel';
 export { default as CardZoom } from './CardZoom';
 export { default as GameCanvas, useGameCanvas } from './GameCanvas';
 export { ContextMenu, useContextMenu, getCardContextMenuItems } from './ContextMenu';
+export { 
+  default as LoadingScreen, 
+  LoadingOverlay, 
+  LoadingSpinner, 
+  SkeletonCard, 
+  SkeletonText 
+} from './Loading';
+export { ErrorBoundary, useErrorHandler, ErrorMessage } from './ErrorBoundary';
 export type { ContextMenuItem, ContextMenuState } from './ContextMenu';
 
 // Types
