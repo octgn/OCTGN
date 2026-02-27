@@ -79,8 +79,8 @@ function makeGameState(overrides: Partial<GameState> = {}): GameState {
     gameId: 'game-1',
     gameName: 'Test Game',
     players: [
-      makePlayer({ id: 1, name: 'Host', color: '#ff0000', isHost: true }),
-      makePlayer({ id: 2, name: 'Guest', color: '#00ff00', isHost: false }),
+      makePlayer({ id: 1, name: 'Host', color: '#008000', isHost: true }),
+      makePlayer({ id: 2, name: 'Guest', color: '#cc0000', isHost: false }),
     ],
     localPlayerId: 1,
     isSpectator: false,
@@ -121,9 +121,9 @@ describe('PreGameLobby', () => {
     const guestName = screen.getByText('Guest');
     expect(hostName).toBeTruthy();
     expect(guestName).toBeTruthy();
-    // Check that player names have inline color styles
-    expect(hostName.style.color).toBe('rgb(255, 0, 0)');
-    expect(guestName.style.color).toBe('rgb(0, 255, 0)');
+    // Check that player names have inline color styles (WPF palette)
+    expect(hostName.style.color).toBe('rgb(0, 128, 0)');    // #008000
+    expect(guestName.style.color).toBe('rgb(204, 0, 0)');   // #cc0000
   });
 
   it('shows HOST badge for the host player', () => {

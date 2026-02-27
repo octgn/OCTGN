@@ -9,27 +9,30 @@ import { ImageResolver } from '../games/image-resolver';
 import { log, logError } from '../logger';
 
 /**
- * Distinct player colors indexed by player ID (1-based).
- * Provides visually distinct colors so players are identifiable
- * even before the server sends SetPlayerColor.
+ * Player color palette matching the WPF OCTGN client (Player.cs _playerColors).
+ * 14 colors, indexed 0-13. Player ID maps via (id - 1) % 14.
+ * IDs 0 and 255 get black (global player / spectator).
  */
 const PLAYER_COLORS = [
-  '#3b82f6', // blue (fallback / index 0)
-  '#ef4444', // red    — player 1
-  '#3b82f6', // blue   — player 2
-  '#22c55e', // green  — player 3
-  '#f59e0b', // amber  — player 4
-  '#a855f7', // purple — player 5
-  '#06b6d4', // cyan   — player 6
-  '#f97316', // orange — player 7
-  '#ec4899', // pink   — player 8
-  '#14b8a6', // teal   — player 9
-  '#eab308', // yellow — player 10
+  '#008000', // 0: dark green
+  '#cc0000', // 1: dark red
+  '#000080', // 2: dark blue
+  '#800080', // 3: dark magenta
+  '#cc6600', // 4: dark orange
+  '#008080', // 5: dark cyan
+  '#664b32', // 6: brown
+  '#502060', // 7: dark purple
+  '#808000', // 8: olive
+  '#ff0000', // 9: bright red
+  '#808080', // 10: gray
+  '#206020', // 11: dark green
+  '#ff00ff', // 12: magenta
+  '#0000ff', // 13: bright blue
 ];
 
 function playerColorById(id: number): string {
-  if (id >= 1 && id < PLAYER_COLORS.length) return PLAYER_COLORS[id];
-  return PLAYER_COLORS[id % PLAYER_COLORS.length];
+  if (id === 0 || id === 255) return '#000000';
+  return PLAYER_COLORS[(id - 1) % PLAYER_COLORS.length];
 }
 
 /**

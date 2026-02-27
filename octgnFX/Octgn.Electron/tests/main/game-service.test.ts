@@ -1127,22 +1127,135 @@ describe('GameService', () => {
       expect(host.isHost).toBe(true);
     });
 
-    it('assigns distinct colors to players based on their ID', async () => {
+    it('assigns player 1 dark green (#008000) matching WPF palette', async () => {
       const service = await joinedService();
       const welcome = getHandler('Welcome');
       welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
 
       const newPlayer = getHandler('NewPlayer');
       newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'P1', spectator: false }));
+
+      const state = lastState();
+      const p1 = state.players.find((p: any) => p.id === 1);
+      expect(p1.color).toBe('#008000');
+    });
+
+    it('assigns player 2 dark red (#cc0000) matching WPF palette', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
       newPlayer(msg(MessageType.NewPlayer, { id: 2, nick: 'P2', spectator: false }));
+
+      const state = lastState();
+      const p2 = state.players.find((p: any) => p.id === 2);
+      expect(p2.color).toBe('#cc0000');
+    });
+
+    it('assigns player 3 dark blue (#000080) matching WPF palette', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
       newPlayer(msg(MessageType.NewPlayer, { id: 3, nick: 'P3', spectator: false }));
 
       const state = lastState();
-      const colors = state.players.map((p: any) => p.color);
-      // All three players should have different colors
-      expect(new Set(colors).size).toBe(3);
-      // Colors should not all be the same default blue
-      expect(colors.every((c: string) => c === '#3b82f6')).toBe(false);
+      const p3 = state.players.find((p: any) => p.id === 3);
+      expect(p3.color).toBe('#000080');
+    });
+
+    it('assigns all 14 WPF palette colors correctly for players 1-14', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const expectedColors = [
+        '#008000', // 1: dark green
+        '#cc0000', // 2: dark red
+        '#000080', // 3: dark blue
+        '#800080', // 4: dark magenta
+        '#cc6600', // 5: dark orange
+        '#008080', // 6: dark cyan
+        '#664b32', // 7: brown
+        '#502060', // 8: dark purple
+        '#808000', // 9: olive
+        '#ff0000', // 10: bright red
+        '#808080', // 11: gray
+        '#206020', // 12: dark green
+        '#ff00ff', // 13: magenta
+        '#0000ff', // 14: bright blue
+      ];
+
+      const newPlayer = getHandler('NewPlayer');
+      for (let i = 1; i <= 14; i++) {
+        newPlayer(msg(MessageType.NewPlayer, { id: i, nick: `P${i}`, spectator: false }));
+      }
+
+      const state = lastState();
+      for (let i = 1; i <= 14; i++) {
+        const player = state.players.find((p: any) => p.id === i);
+        expect(player.color).toBe(expectedColors[i - 1]);
+      }
+    });
+
+    it('wraps around palette for player 15 (same as player 1)', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 15, nick: 'P15', spectator: false }));
+
+      const state = lastState();
+      const p15 = state.players.find((p: any) => p.id === 15);
+      // (15 - 1) % 14 = 0 → same as player 1
+      expect(p15.color).toBe('#008000');
+    });
+
+    it('assigns black (#000000) for player ID 0 (global player)', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 0, nick: 'Global', spectator: false }));
+
+      const state = lastState();
+      const p0 = state.players.find((p: any) => p.id === 0);
+      expect(p0.color).toBe('#000000');
+    });
+
+    it('assigns black (#000000) for player ID 255 (spectator)', async () => {
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'G' }));
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 255, nick: 'Spec', spectator: true }));
+
+      const state = lastState();
+      const p255 = state.players.find((p: any) => p.id === 255);
+      expect(p255.color).toBe('#000000');
+    });
+
+    it('SetPlayerColor overrides the default color', async () => {
+      const service = await serviceWithState();
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 5, nick: 'Alice', spectator: false }));
+
+      // Default should be dark orange
+      let state = lastState();
+      expect(state.players.find((p: any) => p.id === 5).color).toBe('#cc6600');
+
+      // Override via protocol
+      const setColor = getHandler('SetPlayerColor');
+      setColor(msg(MessageType.SetPlayerColor, { player: 5, color: '#abcdef' }));
+
+      state = lastState();
+      expect(state.players.find((p: any) => p.id === 5).color).toBe('#abcdef');
     });
 
     it('does not mark non-id-1 players as host in NewPlayer', async () => {
