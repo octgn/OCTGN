@@ -33,33 +33,34 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
     }
 
-    # Helper: run a local bin tool via cmd /c to handle .cmd resolution
+    # Helper: run a local .cmd bin stub directly
     function Invoke-Bin {
-        param([string]$Tool, [string[]]$Args)
-        $cmdArgs = @('/c', $Tool) + $Args
-        & cmd.exe $cmdArgs
+        param([string]$Tool, [string[]]$ToolArgs)
+        $cmd = Join-Path $binDir "$Tool.cmd"
+        if (-not (Test-Path $cmd)) { throw "$Tool not found at $cmd" }
+        & $cmd @ToolArgs
         if ($LASTEXITCODE -ne 0) { throw "$Tool failed (exit code $LASTEXITCODE)" }
     }
 
     if ($Production -or $Build) {
         Write-Host '[2/3] Building...' -ForegroundColor Cyan
-        Invoke-Bin 'npx' @('tsc', '-p', 'tsconfig.main.json')
-        Invoke-Bin 'npx' @('vite', 'build')
+        Invoke-Bin 'tsc' @('-p', 'tsconfig.main.json')
+        Invoke-Bin 'vite' @('build')
     }
 
     if ($Production) {
         Write-Host '[3/3] Starting OCTGN (production)...' -ForegroundColor Green
-        Invoke-Bin 'npx' @('electron', 'dist/main/index.js')
+        Invoke-Bin 'electron' @('dist/main/index.js')
     }
     else {
         Write-Host '[2/3] Building main process...' -ForegroundColor Cyan
-        Invoke-Bin 'npx' @('tsc', '-p', 'tsconfig.main.json')
+        Invoke-Bin 'tsc' @('-p', 'tsconfig.main.json')
 
         Write-Host '[3/3] Starting OCTGN (dev mode)...' -ForegroundColor Green
 
-        # Start Vite dev server as a background process via cmd /c
-        $viteProc = Start-Process -FilePath 'cmd.exe' `
-            -ArgumentList '/c', 'npx', 'vite', 'dev' `
+        # Start Vite dev server as a background process
+        $viteBin = Join-Path $binDir 'vite.cmd'
+        $viteProc = Start-Process -FilePath $viteBin -ArgumentList 'dev' `
             -WorkingDirectory (Get-Location).Path `
             -WindowStyle Hidden -PassThru
 
@@ -86,7 +87,8 @@ try {
             }
 
             Write-Host '     Vite is ready, launching Electron...        ' -ForegroundColor Green
-            Invoke-Bin 'npx' @('electron', 'dist/main/index.js')
+            $electronBin = Join-Path $binDir 'electron.cmd'
+            & $electronBin dist/main/index.js
         }
         finally {
             # Kill Vite and its child tree when Electron exits
