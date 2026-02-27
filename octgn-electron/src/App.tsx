@@ -8,6 +8,7 @@ import { Layout, LoadingScreen, ErrorBoundary } from './components';
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const GameTablePage = lazy(() => import('./pages/GameTablePage'));
+const LocalPlayPage = lazy(() => import('./pages/LocalPlayPage'));
 const DeckEditorPage = lazy(() => import('./pages/DeckEditorPage'));
 const GamesPage = lazy(() => import('./pages/GamesPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
@@ -78,7 +79,7 @@ function App() {
         <Route path="/play/local" element={
           <Layout>
             <Suspense fallback={<LoadingScreen message="Loading game..." />}>
-              <GameTablePage />
+              <LocalPlayPage />
             </Suspense>
           </Layout>
         } />
