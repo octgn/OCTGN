@@ -5,6 +5,7 @@ import GlassPanel from './GlassPanel';
 import type { GameState, Player, ChatMessage } from '../../shared/types';
 import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
+import { readablePlayerColor } from '../utils/player-colors';
 
 interface PreGameLobbyProps {
   gameState: GameState;
@@ -143,7 +144,7 @@ const PreGameLobby: React.FC<PreGameLobbyProps> = ({ gameState }) => {
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                         <span
                           className="text-xs sm:text-sm font-medium truncate"
-                          style={{ color: player.color || '#f9fafb' }}
+                          style={{ color: readablePlayerColor(player.color || '#f9fafb') }}
                         >
                           {player.name}
                         </span>
@@ -275,7 +276,7 @@ const PreGameLobby: React.FC<PreGameLobbyProps> = ({ gameState }) => {
                       {!msg.isSystem && (
                         <span
                           className="font-semibold mr-1"
-                          style={{ color: senderColor }}
+                          style={{ color: readablePlayerColor(senderColor) }}
                         >
                           {msg.playerName}:
                         </span>

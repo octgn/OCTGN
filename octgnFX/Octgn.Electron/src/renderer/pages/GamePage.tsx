@@ -8,6 +8,7 @@ import GameBoard from '../components/GameBoard';
 import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
 import type { Card, ChatMessage, Player, Counter, Group } from '../../shared/types';
+import { readablePlayerColor } from '../utils/player-colors';
 
 interface ContextMenu {
   x: number;
@@ -346,7 +347,7 @@ const GamePage: React.FC = () => {
                     {!msg.isSystem && (
                       <span
                         className="font-semibold mr-1"
-                        style={{ color: senderColor }}
+                        style={{ color: readablePlayerColor(senderColor) }}
                       >
                         {msg.playerName}:
                       </span>

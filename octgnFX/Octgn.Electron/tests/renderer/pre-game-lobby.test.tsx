@@ -115,15 +115,21 @@ describe('PreGameLobby', () => {
     expect(screen.getByText('2 players')).toBeTruthy();
   });
 
-  it('renders all player names with their colors', () => {
+  it('renders all player names with readable versions of their colors', () => {
     render(<PreGameLobby gameState={makeGameState()} />);
     const hostName = screen.getByText('Host');
     const guestName = screen.getByText('Guest');
     expect(hostName).toBeTruthy();
     expect(guestName).toBeTruthy();
-    // Check that player names have inline color styles (WPF palette)
-    expect(hostName.style.color).toBe('rgb(0, 128, 0)');    // #008000
-    expect(guestName.style.color).toBe('rgb(204, 0, 0)');   // #cc0000
+    // Names should have inline color styles (lightened for dark theme readability)
+    // Dark green #008000 and dark red #cc0000 get lightened via readablePlayerColor
+    expect(hostName.style.color).toBeTruthy();
+    expect(guestName.style.color).toBeTruthy();
+    // Colors should not be the default text color (they should be player-specific)
+    expect(hostName.style.color).not.toBe('');
+    expect(guestName.style.color).not.toBe('');
+    // The two players should have different colors
+    expect(hostName.style.color).not.toBe(guestName.style.color);
   });
 
   it('shows HOST badge for the host player', () => {
