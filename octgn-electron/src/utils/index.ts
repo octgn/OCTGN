@@ -13,3 +13,8 @@ export type { GamePackage, CardDatabase, CardInfo, SetInfo } from './gamePackage
 
 export { GameDiscoveryService, useGameDiscovery } from './gameDiscovery';
 export type { DiscoveredGame } from './gameDiscovery';
+
+export { cardImageService, useCardImage } from './cardImageService';
+
+export { TableRenderer } from './TableRenderer';
+export type { RenderCard, TableConfig } from './TableRenderer';
