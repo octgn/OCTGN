@@ -215,6 +215,15 @@ export interface DeckCard {
   properties: Record<string, string>;
 }
 
+export interface GameFeed {
+  name: string;
+  url: string;
+  enabled: boolean;
+  isBuiltIn: boolean;
+  username?: string;
+  password?: string;
+}
+
 export interface AvailableGame {
   id: string;
   name: string;
@@ -270,4 +279,10 @@ export const IPC_CHANNELS = {
   GAMES_INSTALL: 'games:install',
   GAMES_UNINSTALL: 'games:uninstall',
   GAMES_INSTALL_PROGRESS: 'games:install-progress',
+
+  // Feeds
+  FEEDS_LIST: 'feeds:list',
+  FEEDS_ADD: 'feeds:add',
+  FEEDS_REMOVE: 'feeds:remove',
+  FEEDS_SET_ENABLED: 'feeds:set-enabled',
 } as const;

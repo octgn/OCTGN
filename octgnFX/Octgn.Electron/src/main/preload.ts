@@ -60,6 +60,14 @@ const api = {
     ipcRenderer.on(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);
     return () => ipcRenderer.removeListener(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);
   },
+
+  // Feeds
+  listFeeds: () => ipcRenderer.invoke(IPC_CHANNELS.FEEDS_LIST),
+  addFeed: (name: string, url: string, username?: string, password?: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.FEEDS_ADD, name, url, username, password),
+  removeFeed: (name: string) => ipcRenderer.invoke(IPC_CHANNELS.FEEDS_REMOVE, name),
+  setFeedEnabled: (name: string, enabled: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.FEEDS_SET_ENABLED, name, enabled),
 };
 
 contextBridge.exposeInMainWorld('octgn', api);
