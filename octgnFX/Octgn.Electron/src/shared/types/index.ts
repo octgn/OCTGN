@@ -215,6 +215,25 @@ export interface DeckCard {
   properties: Record<string, string>;
 }
 
+export interface AvailableGame {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  authors: string;
+  tags: string;
+  downloadUrl: string;
+  iconUrl?: string;
+  downloadCount?: number;
+}
+
+export interface InstallProgress {
+  gameId: string;
+  phase: 'downloading' | 'extracting' | 'parsing' | 'done' | 'error';
+  percent: number;
+  error?: string;
+}
+
 // IPC Channel names
 export const IPC_CHANNELS = {
   // Auth
@@ -244,4 +263,11 @@ export const IPC_CHANNELS = {
   // Scripting
   SCRIPT_EVENT: 'script:event',
   SCRIPT_EXECUTE: 'script:execute',
+
+  // Game definitions
+  GAMES_LIST_INSTALLED: 'games:list-installed',
+  GAMES_LIST_AVAILABLE: 'games:list-available',
+  GAMES_INSTALL: 'games:install',
+  GAMES_UNINSTALL: 'games:uninstall',
+  GAMES_INSTALL_PROGRESS: 'games:install-progress',
 } as const;

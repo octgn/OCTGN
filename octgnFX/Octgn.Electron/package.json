@@ -2,7 +2,6 @@
   "name": "octgn-electron",
   "version": "0.1.0",
   "description": "OCTGN Cross-Platform Client",
-
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
@@ -25,7 +24,10 @@
     "package:win": "npm run build && electron-builder --win"
   },
   "dependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "adm-zip": "^0.5.16",
     "clsx": "^2.1.0",
+    "fast-xml-parser": "^5.4.1",
     "immer": "^11.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -3,6 +3,9 @@ import { readFile } from 'fs/promises';
 import { IPC_CHANNELS } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
 import { GameService } from '../api/game-service';
+import { listInstalledGames, uninstallGame } from '../games/game-store';
+import { fetchAvailableGames } from '../games/game-feed';
+import { installGame } from '../games/game-installer';
 
 const apiClient = new OctgnApiClient();
 const gameService = new GameService();
@@ -193,4 +196,26 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
       gameService.executeScript(functionName, args);
     },
   );
+
+  // Game definitions handlers
+  ipcMain.handle(IPC_CHANNELS.GAMES_LIST_INSTALLED, async () => {
+    return listInstalledGames();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GAMES_LIST_AVAILABLE, async () => {
+    return fetchAvailableGames();
+  });
+
+  ipcMain.handle(
+    IPC_CHANNELS.GAMES_INSTALL,
+    async (event, gameId: string, downloadUrl: string) => {
+      return installGame(gameId, downloadUrl, (progress) => {
+        event.sender.send(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, progress);
+      });
+    },
+  );
+
+  ipcMain.handle(IPC_CHANNELS.GAMES_UNINSTALL, async (_event, gameId: string) => {
+    return uninstallGame(gameId);
+  });
 }

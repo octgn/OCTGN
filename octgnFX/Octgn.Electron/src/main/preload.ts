@@ -47,6 +47,19 @@ const api = {
     ipcRenderer.on(IPC_CHANNELS.SCRIPT_EVENT, listener);
     return () => ipcRenderer.removeListener(IPC_CHANNELS.SCRIPT_EVENT, listener);
   },
+
+  // Game definitions
+  listInstalledGames: () => ipcRenderer.invoke(IPC_CHANNELS.GAMES_LIST_INSTALLED),
+  listAvailableGames: () => ipcRenderer.invoke(IPC_CHANNELS.GAMES_LIST_AVAILABLE),
+  installGame: (gameId: string, downloadUrl: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAMES_INSTALL, gameId, downloadUrl),
+  uninstallGame: (gameId: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAMES_UNINSTALL, gameId),
+  onInstallProgress: (callback: (progress: unknown) => void) => {
+    const listener = (_event: unknown, data: unknown) => callback(data);
+    ipcRenderer.on(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);
+  },
 };
 
 contextBridge.exposeInMainWorld('octgn', api);
