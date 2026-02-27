@@ -10,10 +10,20 @@ import { constants } from 'fs';
 import { parseDefinitionXml } from './definition-parser';
 import type { GameDefinition } from '../../shared/types';
 
-function getOctgnGameDatabasePath(): string {
-  // %LOCALAPPDATA%\Octgn\GameDatabase on Windows
+/** Possible GameDatabase paths in priority order (newest install path first). */
+function getOctgnGameDatabasePaths(): string[] {
   const localAppData = process.env.LOCALAPPDATA ?? join(app.getPath('home'), 'AppData', 'Local');
-  return join(localAppData, 'Octgn', 'GameDatabase');
+  return [
+    join(localAppData, 'Programs', 'OCTGN', 'Data', 'GameDatabase'),
+    join(localAppData, 'Octgn', 'GameDatabase'),
+  ];
+}
+
+async function getOctgnGameDatabasePath(): Promise<string | null> {
+  for (const p of getOctgnGameDatabasePaths()) {
+    if (await exists(p)) return p;
+  }
+  return null;
 }
 
 function getOurGamesPath(): string {
@@ -57,8 +67,9 @@ async function scanDirectory(baseDir: string): Promise<GameDefinition[]> {
 }
 
 export async function listInstalledGames(): Promise<GameDefinition[]> {
+  const legacyPath = await getOctgnGameDatabasePath();
   const [legacy, ours] = await Promise.all([
-    scanDirectory(getOctgnGameDatabasePath()),
+    legacyPath ? scanDirectory(legacyPath) : Promise.resolve([]),
     scanDirectory(getOurGamesPath()),
   ]);
 
@@ -85,4 +96,22 @@ export async function uninstallGame(gameId: string): Promise<{ success: boolean;
 
 export function getInstallDir(gameId: string): string {
   return join(getOurGamesPath(), gameId);
+}
+
+/**
+ * Find the directory for a specific game by ID.
+ * Checks our managed install dir first, then legacy OCTGN paths.
+ */
+export async function findGameDir(gameId: string): Promise<string | null> {
+  // Check our install dir first
+  const ourDir = join(getOurGamesPath(), gameId);
+  if (await exists(ourDir)) return ourDir;
+
+  // Check legacy OCTGN paths
+  const legacyBase = await getOctgnGameDatabasePath();
+  if (legacyBase) {
+    const legacyDir = join(legacyBase, gameId);
+    if (await exists(legacyDir)) return legacyDir;
+  }
+  return null;
 }

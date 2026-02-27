@@ -21,8 +21,8 @@ const api = {
   getGames: () => ipcRenderer.invoke(IPC_CHANNELS.GET_GAMES),
   hostGame: (options: Record<string, unknown>) =>
     ipcRenderer.invoke(IPC_CHANNELS.HOST_GAME, options),
-  joinGame: (gameId: string, password?: string) =>
-    ipcRenderer.invoke(IPC_CHANNELS.JOIN_GAME, gameId, password),
+  joinGame: (gameId: string, password?: string, spectator?: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.JOIN_GAME, gameId, password ?? '', spectator ?? false),
   leaveGame: () => ipcRenderer.invoke(IPC_CHANNELS.LEAVE_GAME),
 
   // Game

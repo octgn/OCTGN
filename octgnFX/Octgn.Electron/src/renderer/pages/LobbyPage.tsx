@@ -7,6 +7,7 @@ import CreateGameDialog from '../components/CreateGameDialog';
 import { useLobbyStore } from '../stores/lobby-store';
 import { useDefinitionsStore } from '../stores/definitions-store';
 import type { HostedGame } from '../../shared/types';
+import { GameStatus } from '../../shared/types';
 
 const statusLabel: Record<number, string> = {
   0: 'Unknown',
@@ -42,8 +43,8 @@ const LobbyPage: React.FC = () => {
   );
 
   const handleJoin = useCallback(
-    async (game: HostedGame) => {
-      await joinGame(game.id);
+    async (game: HostedGame, spectator: boolean = false) => {
+      await joinGame(game.id, undefined, spectator);
     },
     [joinGame]
   );
@@ -139,18 +140,54 @@ const LobbyPage: React.FC = () => {
                   {statusLabel[game.status as number]}
                 </span>
 
-                {/* Join */}
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleJoin(game);
-                  }}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  Join
-                </Button>
+                {/* Spectator indicator */}
+                {game.spectators && (
+                  <span className="text-[10px] text-octgn-text-dim" title="Spectators allowed">
+                    <svg className="w-3 h-3 inline" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 3C4.5 3 1.5 5.5 0 8c1.5 2.5 4.5 5 8 5s6.5-2.5 8-5c-1.5-2.5-4.5-5-8-5zm0 8a3 3 0 110-6 3 3 0 010 6zm0-5a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>
+                  </span>
+                )}
+
+                {/* Join / Watch */}
+                {game.status === GameStatus.InProgress && game.spectators ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleJoin(game, true);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    Watch
+                  </Button>
+                ) : game.status === GameStatus.GameReady ? (
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJoin(game);
+                      }}
+                    >
+                      Join
+                    </Button>
+                    {game.spectators && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleJoin(game, true);
+                        }}
+                      >
+                        Watch
+                      </Button>
+                    )}
+                  </div>
+                ) : null}
               </div>
             </GlassPanel>
           ))}
