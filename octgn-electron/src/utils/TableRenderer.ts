@@ -21,12 +21,12 @@ export interface TableConfig {
 const DEFAULT_CONFIG: TableConfig = {
   width: 1920,
   height: 1080,
-  backgroundColor: '#16213e',
-  gridColor: '#0f3460',
+  backgroundColor: '#1a1a2e', // OCTGN dark
+  gridColor: 'rgba(147, 112, 219, 0.1)', // Subtle purple grid
   gridSpacing: 50,
   cardWidth: 200,
   cardHeight: 280,
-  cardRadius: 10,
+  cardRadius: 12,
 };
 
 export class TableRenderer {
@@ -47,16 +47,28 @@ export class TableRenderer {
     const { width, height } = this.ctx.canvas;
     const ctx = this.ctx;
 
-    // Clear
-    ctx.fillStyle = '#1a1a2e';
+    // Clear with OCTGN dark
+    ctx.fillStyle = '#171717';
     ctx.fillRect(0, 0, width, height);
 
-    // Table surface
-    ctx.fillStyle = this.config.backgroundColor;
-    const tableMargin = 20;
-    ctx.fillRect(tableMargin, tableMargin, width - tableMargin * 2, height - tableMargin * 2);
+    // Radial gradient for depth - subtle purple glow at center
+    const gradient = ctx.createRadialGradient(
+      width / 2, height / 2, 0,
+      width / 2, height / 2, Math.max(width, height) / 2
+    );
+    gradient.addColorStop(0, 'rgba(147, 112, 219, 0.05)');
+    gradient.addColorStop(0.5, 'rgba(104, 134, 212, 0.02)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
 
-    // Grid
+    // Table surface with subtle border
+    const tableMargin = 20;
+    ctx.strokeStyle = 'rgba(74, 74, 74, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tableMargin, tableMargin, width - tableMargin * 2, height - tableMargin * 2);
+
+    // Grid - subtle purple lines
     ctx.strokeStyle = this.config.gridColor;
     ctx.lineWidth = 1;
 
@@ -104,28 +116,36 @@ export class TableRenderer {
     ctx.translate(x + w / 2, y + h / 2);
     ctx.rotate((rot * Math.PI) / 180);
 
-    // Card shadow
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-    ctx.shadowBlur = 10 * zoom;
-    ctx.shadowOffsetX = 3 * zoom;
-    ctx.shadowOffsetY = 3 * zoom;
+    // Card shadow - deeper for depth
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 15 * zoom;
+    ctx.shadowOffsetX = 4 * zoom;
+    ctx.shadowOffsetY = 4 * zoom;
 
     // Card background
     this.drawRoundedRect(ctx, -w / 2, -h / 2, w, h, cardRadius * zoom);
-    ctx.fillStyle = card.faceUp ? '#ffffff' : '#2563eb';
+    ctx.fillStyle = card.faceUp ? '#2a2a2a' : '#171717';
     ctx.fill();
 
     // Reset shadow for border
     ctx.shadowColor = 'transparent';
 
-    // Selection/hover highlight
+    // Selection glow - OCTGN purple
     if (isSelected) {
-      ctx.strokeStyle = '#e94560';
+      ctx.shadowColor = 'rgba(147, 112, 219, 0.6)';
+      ctx.shadowBlur = 20 * zoom;
+      ctx.strokeStyle = '#9370DB';
       ctx.lineWidth = 3 * zoom;
       ctx.stroke();
+      ctx.shadowColor = 'transparent';
     } else if (isHovered) {
-      ctx.strokeStyle = '#10b981';
+      ctx.strokeStyle = 'rgba(147, 112, 219, 0.5)';
       ctx.lineWidth = 2 * zoom;
+      ctx.stroke();
+    } else {
+      // Subtle border
+      ctx.strokeStyle = 'rgba(74, 74, 74, 0.5)';
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
 
@@ -197,21 +217,37 @@ export class TableRenderer {
       ctx.drawImage(cachedImage, -w / 2 + 2, -h / 2 + 2, w - 4, h - 4);
       ctx.restore();
     } else {
-      // Placeholder
-      ctx.fillStyle = '#f3f4f6';
+      // Placeholder - OCTGN dark style
+      ctx.fillStyle = '#333333';
       this.drawRoundedRect(ctx, -w / 2 + 5, -h / 2 + 5, w - 10, h - 10, cardRadius * zoom - 2);
       ctx.fill();
 
-      // Card name
-      ctx.fillStyle = '#1f2937';
+      // Gradient overlay
+      const gradient = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.05)');
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+      ctx.fillStyle = gradient;
+      this.drawRoundedRect(ctx, -w / 2 + 5, -h / 2 + 5, w - 10, h - 10, cardRadius * zoom - 2);
+      ctx.fill();
+
+      // Card name - white text
+      ctx.fillStyle = '#ffffff';
       ctx.font = `bold ${14 * zoom}px sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       const name = card.name || `Card ${card.id}`;
       this.wrapText(ctx, name, 0, -h / 2 + 20 * zoom, w - 20 * zoom, 16 * zoom);
 
+      // Card properties
+      if (card.properties?.type) {
+        ctx.fillStyle = '#9370DB'; // OCTGN purple
+        ctx.font = `${12 * zoom}px sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.fillText(card.properties.type, 0, 0);
+      }
+
       // Card ID (debug)
-      ctx.fillStyle = '#9ca3af';
+      ctx.fillStyle = '#6b7280';
       ctx.font = `${10 * zoom}px monospace`;
       ctx.textBaseline = 'bottom';
       ctx.fillText(`#${card.id}`, 0, h / 2 - 10 * zoom);
@@ -224,7 +260,7 @@ export class TableRenderer {
   }
 
   /**
-   * Render the card back
+   * Render the card back - OCTGN style
    */
   private renderCardBack(
     ctx: CanvasRenderingContext2D,
@@ -234,30 +270,48 @@ export class TableRenderer {
   ): void {
     const { cardRadius } = this.config;
 
-    // Inner border
-    ctx.fillStyle = '#1d4ed8';
+    // Dark background
+    ctx.fillStyle = '#171717';
     this.drawRoundedRect(ctx, -w / 2 + 5, -h / 2 + 5, w - 10, h - 10, cardRadius * zoom - 2);
     ctx.fill();
 
-    // Pattern
-    ctx.strokeStyle = '#3b82f6';
+    // Inner border - subtle
+    ctx.strokeStyle = 'rgba(147, 112, 219, 0.3)';
+    ctx.lineWidth = 2 * zoom;
+    this.drawRoundedRect(ctx, -w / 2 + 10, -h / 2 + 10, w - 20, h - 20, cardRadius * zoom - 4);
+    ctx.stroke();
+
+    // Diagonal pattern - subtle
+    ctx.strokeStyle = 'rgba(74, 74, 74, 0.3)';
     ctx.lineWidth = 1;
-    for (let i = -w / 2 + 15; i < w / 2 - 10; i += 15 * zoom) {
+    for (let i = -w; i < w; i += 20 * zoom) {
       ctx.beginPath();
-      ctx.moveTo(i, -h / 2 + 15);
-      ctx.lineTo(i, h / 2 - 15);
+      ctx.moveTo(i, -h / 2);
+      ctx.lineTo(i + h, h / 2);
       ctx.stroke();
     }
 
-    // Center decoration
-    ctx.fillStyle = '#3b82f6';
+    // Center decoration - OCTGN purple glow
+    ctx.shadowColor = 'rgba(147, 112, 219, 0.5)';
+    ctx.shadowBlur = 20 * zoom;
+    ctx.fillStyle = '#9370DB';
     ctx.beginPath();
-    ctx.arc(0, 0, 30 * zoom, 0, Math.PI * 2);
+    ctx.arc(0, 0, 25 * zoom, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#1d4ed8';
+    ctx.shadowColor = 'transparent';
+
+    // Inner circle
+    ctx.fillStyle = '#171717';
     ctx.beginPath();
-    ctx.arc(0, 0, 20 * zoom, 0, Math.PI * 2);
+    ctx.arc(0, 0, 18 * zoom, 0, Math.PI * 2);
     ctx.fill();
+
+    // OCTGN text
+    ctx.fillStyle = '#9370DB';
+    ctx.font = `bold ${10 * zoom}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('OCTGN', 0, 0);
   }
 
   /**
