@@ -240,12 +240,15 @@ const GameBoard: React.FC<GameBoardProps> = ({
       if (hasTableDimensions && baseScale.scale !== 0) {
         x = (x - baseScale.offsetX) / baseScale.scale;
         y = (y - baseScale.offsetY) / baseScale.scale;
+        // Invert the origin shift: protocol uses center-based coords
+        x -= (tableWidth ?? 0) / 2;
+        y -= (tableHeight ?? 0) / 2;
       }
 
       onCardMoveToTable(cardId, x, y);
       endDrag();
     },
-    [onCardMoveToTable, endDrag, isSpectator, screenToTable, hasTableDimensions, baseScale]
+    [onCardMoveToTable, endDrag, isSpectator, screenToTable, hasTableDimensions, baseScale, tableWidth, tableHeight]
   );
 
   const handleTableDragLeave = useCallback(
@@ -404,6 +407,20 @@ const GameBoard: React.FC<GameBoardProps> = ({
             inset: 0,
           }}
         >
+          {/* Origin-shift wrapper: OCTGN protocol uses (0,0) as table center;
+              translate by half the table dimensions so center-based coords
+              map to the correct pixel positions. */}
+          <div
+            data-testid="origin-shift"
+            style={hasTableDimensions ? {
+              position: 'absolute',
+              inset: 0,
+              transform: `translate(${(tableWidth ?? 0) / 2}px, ${(tableHeight ?? 0) / 2}px)`,
+            } : {
+              position: 'absolute',
+              inset: 0,
+            }}
+          >
           {/* Board background image */}
           {boardImageUrl && backgroundStyle === 'tile' ? (
             <div
@@ -494,6 +511,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               </div>
             )}
           </div>
+          </div>{/* close origin-shift */}
         </div>{/* close base-scale-container */}
         </div>{/* close transform-container */}
 
