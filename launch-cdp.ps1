@@ -2,9 +2,11 @@ $ErrorActionPreference = 'Stop'
 $dir = Join-Path $PSScriptRoot 'octgnFX' 'Octgn.Electron'
 Push-Location $dir
 
-# Build main process
+# Build main process + preload
 & ./node_modules/.bin/tsc.cmd -p tsconfig.main.json
 if ($LASTEXITCODE -ne 0) { throw "tsc failed" }
+& ./node_modules/.bin/esbuild.cmd src/main/preload.ts --bundle --platform=node --outfile=dist/main/preload.js --external:electron --format=cjs
+if ($LASTEXITCODE -ne 0) { throw "esbuild preload failed" }
 
 # Kill any old vite
 Get-Process -Name node -ErrorAction SilentlyContinue | Where-Object {

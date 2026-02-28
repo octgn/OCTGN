@@ -46,6 +46,9 @@ const api = {
   loadDeck: (deck: unknown) =>
     ipcRenderer.invoke(IPC_CHANNELS.LOAD_DECK, deck),
 
+  // App state recovery
+  getAppState: () => ipcRenderer.invoke(IPC_CHANNELS.GET_APP_STATE),
+
   // Window controls
   minimize: () => ipcRenderer.invoke(IPC_CHANNELS.APP_MINIMIZE),
   maximize: () => ipcRenderer.invoke(IPC_CHANNELS.APP_MAXIMIZE),

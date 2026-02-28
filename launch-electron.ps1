@@ -45,6 +45,7 @@ try {
     if ($Production -or $Build) {
         Write-Host '[2/3] Building...' -ForegroundColor Cyan
         Invoke-Bin 'tsc' @('-p', 'tsconfig.main.json')
+        Invoke-Bin 'esbuild' @('src/main/preload.ts', '--bundle', '--platform=node', '--outfile=dist/main/preload.js', '--external:electron', '--format=cjs')
         Invoke-Bin 'vite' @('build')
     }
 
@@ -55,6 +56,7 @@ try {
     else {
         Write-Host '[2/3] Building main process...' -ForegroundColor Cyan
         Invoke-Bin 'tsc' @('-p', 'tsconfig.main.json')
+        Invoke-Bin 'esbuild' @('src/main/preload.ts', '--bundle', '--platform=node', '--outfile=dist/main/preload.js', '--external:electron', '--format=cjs')
 
         Write-Host '[3/3] Starting OCTGN (dev mode)...' -ForegroundColor Green
 

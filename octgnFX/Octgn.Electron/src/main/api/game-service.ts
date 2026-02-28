@@ -1,4 +1,6 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
+import { writeFile, readFile, unlink } from 'fs/promises';
+import { join } from 'path';
 import { GameConnection } from '../protocol/connection';
 import { MessageType, type ProtocolMessage } from '../protocol/types';
 import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker, Deck, DeckSectionDef } from '../../shared/types';
@@ -7,6 +9,20 @@ import { ScriptEngine } from '../scripting/script-engine';
 import { CardResolver } from '../games/card-resolver';
 import { ImageResolver } from '../games/image-resolver';
 import { log, logError } from '../logger';
+
+export interface SavedConnectionInfo {
+  host: string;
+  port: number;
+  nickname: string;
+  userId: string;
+  playerId: number;
+  pkey: string;
+  gameId: string;
+  gameVersion: string;
+  password: string;
+  isSpectator: boolean;
+  connectedAt: number;
+}
 
 /**
  * Player color palette matching the WPF OCTGN client (Player.cs _playerColors).
@@ -52,6 +68,7 @@ export class GameService {
   private currentGameId: string = '';
   private pendingBoardName: string | undefined;
   private nextCardUniqueId: number = 1;
+  private joinParams: { host: string; port: number; nickname: string; userId: string; gameVersion: string; password: string } | null = null;
 
   /**
    * Join a game server and start receiving state updates.
@@ -70,6 +87,7 @@ export class GameService {
       log('GAME', `Joining game at ${host}:${port} as ${nickname} (spectator=${spectator})`);
       this.isSpectator = spectator;
       this.currentGameId = gameId;
+      this.joinParams = { host, port, nickname, userId, gameVersion, password };
       this.connection = new GameConnection({ host, port });
 
       this.setupMessageHandlers();
@@ -113,6 +131,8 @@ export class GameService {
     }
     this.gameState = null;
     this.chatMessages = [];
+    this.joinParams = null;
+    this.clearConnectionInfo();
   }
 
   /**
@@ -469,6 +489,102 @@ export class GameService {
     return this.imageResolver;
   }
 
+  /**
+   * Get the current game state (used by GET_APP_STATE for renderer recovery).
+   */
+  getState(): GameState | null {
+    return this.gameState;
+  }
+
+  /**
+   * Reconnect to a game server using HelloAgain after a main process restart.
+   */
+  async reconnectGame(info: SavedConnectionInfo): Promise<{ success: boolean; error?: string }> {
+    try {
+      log('GAME', `Reconnecting to game at ${info.host}:${info.port} as ${info.nickname} (pid=${info.playerId})`);
+      this.isSpectator = info.isSpectator;
+      this.currentGameId = info.gameId;
+      this.localPlayerId = info.playerId;
+      this.connection = new GameConnection({ host: info.host, port: info.port });
+
+      this.setupMessageHandlers();
+
+      await this.connection.connect();
+      log('GAME', 'TCP connection established, sending HelloAgain handshake');
+
+      this.connection.sendMessage(MessageType.HelloAgain, 0, {
+        pid: info.playerId,
+        nick: info.nickname,
+        userId: info.userId,
+        pkey: BigInt(info.pkey),
+        client: 'OCTGN-Electron',
+        clientVer: '3.4.426.0',
+        octgnVer: '3.4.426.0',
+        gameId: info.gameId,
+        gameVersion: info.gameVersion,
+        password: info.password,
+      });
+
+      log('GAME', 'HelloAgain sent, reconnect returning success');
+      return { success: true };
+    } catch (err) {
+      logError('GAME', err);
+      await this.clearConnectionInfo();
+      return { success: false, error: (err as Error).message };
+    }
+  }
+
+  private getConnectionInfoPath(): string {
+    return join(app.getPath('userData'), 'game-connection.json');
+  }
+
+  private async saveConnectionInfo(host: string, port: number, nickname: string, userId: string, gameId: string, gameVersion: string, password: string): Promise<void> {
+    const info: SavedConnectionInfo = {
+      host,
+      port,
+      nickname,
+      userId,
+      playerId: this.localPlayerId,
+      pkey: '0',
+      gameId,
+      gameVersion,
+      password,
+      isSpectator: this.isSpectator,
+      connectedAt: Date.now(),
+    };
+    try {
+      await writeFile(this.getConnectionInfoPath(), JSON.stringify(info), 'utf-8');
+      log('GAME', 'Saved connection info for potential reconnection');
+    } catch (err) {
+      logError('GAME', err);
+    }
+  }
+
+  async clearConnectionInfo(): Promise<void> {
+    try {
+      await unlink(this.getConnectionInfoPath());
+    } catch {
+      // File may not exist
+    }
+  }
+
+  static async loadConnectionInfo(): Promise<SavedConnectionInfo | null> {
+    try {
+      const filePath = join(app.getPath('userData'), 'game-connection.json');
+      const data = await readFile(filePath, 'utf-8');
+      const info: SavedConnectionInfo = JSON.parse(data);
+      // Only use if less than 90 seconds old
+      if (Date.now() - info.connectedAt > 90_000) {
+        log('GAME', 'Connection info too old, ignoring');
+        await unlink(filePath).catch(() => {});
+        return null;
+      }
+      return info;
+    } catch {
+      return null;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Helper: extract params from ProtocolMessage
   // ---------------------------------------------------------------------------
@@ -493,9 +609,34 @@ export class GameService {
 
     // Log connection lifecycle events
     this.connection.on('connected', () => log('GAME', 'Connection established'));
-    this.connection.on('disconnected', (hadError: boolean) => log('GAME', `Disconnected (hadError=${hadError})`));
+    this.connection.on('disconnected', (hadError: boolean) => {
+      log('GAME', `Disconnected (hadError=${hadError})`);
+      if (this.gameState) {
+        this.gameState.connectionStatus = 'reconnecting';
+        this.broadcastState();
+      }
+    });
     this.connection.on('error', (err: Error) => logError('GAME', err));
     this.connection.on('reconnecting', (attempt: number) => log('GAME', `Reconnecting attempt ${attempt}`));
+
+    // On TCP auto-reconnect, re-send HelloAgain to restore the game session
+    this.connection.on('reconnected', () => {
+      log('GAME', 'TCP reconnected, sending HelloAgain');
+      if (this.joinParams && this.connection) {
+        this.connection.sendMessage(MessageType.HelloAgain, 0, {
+          pid: this.localPlayerId,
+          nick: this.joinParams.nickname,
+          userId: this.joinParams.userId,
+          pkey: BigInt(0),
+          client: 'OCTGN-Electron',
+          clientVer: '3.4.426.0',
+          octgnVer: '3.4.426.0',
+          gameId: this.currentGameId,
+          gameVersion: this.joinParams.gameVersion,
+          password: this.joinParams.password,
+        });
+      }
+    });
 
     // Kick — server rejected us
     this.connection.on('Kick', (msg: ProtocolMessage) => {
@@ -511,6 +652,7 @@ export class GameService {
       }
       this.addSystemMessage(`Kicked from game: ${reason}`);
       this.broadcastState();
+      this.clearConnectionInfo();
       // Disconnect
       this.connection?.disconnect();
       this.connection = null;
@@ -530,6 +672,19 @@ export class GameService {
         if (localPlayer) localPlayer.isHost = true;
       }
       this.broadcastState();
+
+      // Persist connection info for reconnection after main process restart
+      if (this.joinParams) {
+        this.saveConnectionInfo(
+          this.joinParams.host,
+          this.joinParams.port,
+          this.joinParams.nickname,
+          this.joinParams.userId,
+          this.currentGameId,
+          this.joinParams.gameVersion,
+          this.joinParams.password,
+        );
+      }
 
       // Load card definitions in the background
       if (this.currentGameId) {

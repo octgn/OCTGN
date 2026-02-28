@@ -101,6 +101,25 @@ export class OctgnApiClient {
     return this.session;
   }
 
+  getSessionAsLoginResult(): LoginResult {
+    if (!this.session) {
+      return { success: false };
+    }
+    return {
+      success: true,
+      user: {
+        id: this.session.userId,
+        username: this.session.username,
+        isSubscriber: false,
+      },
+      session: {
+        userId: this.session.userId,
+        sessionId: this.session.sessionId,
+        deviceId: this.session.deviceId,
+      },
+    };
+  }
+
   async getHostedGames(): Promise<HostedGame[]> {
     try {
       const response = await fetch(`${API_BASE}/api/game/list`);

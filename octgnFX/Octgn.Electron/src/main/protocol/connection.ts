@@ -53,6 +53,8 @@ export interface GameConnectionOptions {
 export interface GameConnectionEvents {
   /** Emitted when the TCP connection is established. */
   connected: () => void;
+  /** Emitted when a dropped connection is re-established via auto-reconnect. */
+  reconnected: () => void;
   /** Emitted when the connection is closed (gracefully or due to error). */
   disconnected: (hadError: boolean) => void;
   /** Emitted on socket or protocol errors. */
@@ -318,6 +320,8 @@ export class GameConnection extends EventEmitter {
     this.reconnectTimer = setTimeout(async () => {
       try {
         await this.connect();
+        // Emit reconnected to distinguish from initial connect
+        this.emit('reconnected');
       } catch {
         // connect() failure will trigger onClose which will reschedule.
       }

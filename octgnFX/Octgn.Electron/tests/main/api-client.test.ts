@@ -260,6 +260,188 @@ describe('OctgnApiClient', () => {
     });
   });
 
+  describe('getSessionAsLoginResult', () => {
+    it('should return { success: false } when no session exists', () => {
+      const result = client.getSessionAsLoginResult();
+      expect(result.success).toBe(false);
+      expect(result.user).toBeUndefined();
+      expect(result.session).toBeUndefined();
+    });
+
+    it('should return a LoginResult with user and session after login', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse({
+          Result: { Type: 1, Username: 'alice' },
+          SessionKey: 'sess-123',
+          UserId: 'user-456',
+        }),
+      );
+      await client.login('alice', 'pw');
+
+      const result = client.getSessionAsLoginResult();
+      expect(result.success).toBe(true);
+      expect(result.user).toEqual({
+        id: 'user-456',
+        username: 'alice',
+        isSubscriber: false,
+      });
+      expect(result.session).toEqual({
+        userId: 'user-456',
+        sessionId: 'sess-123',
+        deviceId: expect.any(String),
+      });
+    });
+
+    it('should return { success: false } after logout', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse({
+          Result: { Type: 1, Username: 'alice' },
+          SessionKey: 'sess-123',
+          UserId: 'user-456',
+        }),
+      );
+      await client.login('alice', 'pw');
+
+      mockFetch.mockResolvedValue(jsonResponse({}));
+      await client.logout();
+
+      const result = client.getSessionAsLoginResult();
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('getHostedGames', () => {
+    it('should parse nested HostUser object from API response', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse([
+          {
+            Id: 'game-1',
+            Name: 'Friday Night Chess',
+            HostUser: { Id: 'user-99', DisplayName: 'ChessMaster42' },
+            GameId: 'chess-guid',
+            GameName: 'Chess',
+            GameVersion: '1.0.0',
+            HasPassword: false,
+            Spectators: true,
+            HostAddress: '192.168.1.10:5000',
+            Status: 1,
+            DateCreated: '2026-02-28T12:00:00Z',
+            PlayerCount: 1,
+            MaxPlayers: 2,
+            HostUserIconUrl: 'https://octgn.net/icons/user-99.png',
+            GameIconUrl: 'https://octgn.net/icons/chess.png',
+          },
+        ]),
+      );
+
+      const games = await client.getHostedGames();
+
+      expect(games).toHaveLength(1);
+      expect(games[0].hostUser.id).toBe('user-99');
+      expect(games[0].hostUser.username).toBe('ChessMaster42');
+    });
+
+    it('should capture HostUserIconUrl as hostUser.iconUrl', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse([
+          {
+            Id: 'game-2',
+            Name: 'Test Game',
+            HostUser: { Id: 'user-1', DisplayName: 'Alice' },
+            GameId: 'g1',
+            GameName: 'TestGame',
+            GameVersion: '1.0',
+            HasPassword: false,
+            Spectators: false,
+            HostAddress: '10.0.0.1:9000',
+            Status: 2,
+            DateCreated: '2026-02-28T10:00:00Z',
+            PlayerCount: 2,
+            MaxPlayers: 4,
+            HostUserIconUrl: 'https://octgn.net/icons/alice.png',
+            GameIconUrl: '',
+          },
+        ]),
+      );
+
+      const games = await client.getHostedGames();
+
+      expect(games[0].hostUser.iconUrl).toBe('https://octgn.net/icons/alice.png');
+    });
+
+    it('should capture GameIconUrl as gameIconUrl', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse([
+          {
+            Id: 'game-3',
+            Name: 'MTG Draft',
+            HostUser: { Id: 'user-5', DisplayName: 'Bob' },
+            GameId: 'mtg-guid',
+            GameName: 'Magic: The Gathering',
+            GameVersion: '2.0',
+            HasPassword: true,
+            Spectators: true,
+            HostAddress: '10.0.0.2:8080',
+            Status: 1,
+            DateCreated: '2026-02-28T09:00:00Z',
+            PlayerCount: 3,
+            MaxPlayers: 8,
+            HostUserIconUrl: '',
+            GameIconUrl: 'https://octgn.net/icons/mtg.png',
+          },
+        ]),
+      );
+
+      const games = await client.getHostedGames();
+
+      expect(games[0].gameIconUrl).toBe('https://octgn.net/icons/mtg.png');
+    });
+
+    it('should handle missing HostUser gracefully', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse([
+          {
+            Id: 'game-4',
+            Name: 'No Host Info',
+            GameId: 'g1',
+            GameName: 'SomeGame',
+            GameVersion: '1.0',
+            HasPassword: false,
+            Spectators: false,
+            HostAddress: '10.0.0.1:9000',
+            Status: 0,
+            DateCreated: '2026-02-28T08:00:00Z',
+            PlayerCount: 0,
+            MaxPlayers: 2,
+          },
+        ]),
+      );
+
+      const games = await client.getHostedGames();
+
+      expect(games).toHaveLength(1);
+      expect(games[0].hostUser.id).toBe('');
+      expect(games[0].hostUser.username).toBe('');
+      expect(games[0].hostUser.iconUrl).toBeUndefined();
+    });
+
+    it('should return empty array on HTTP error', async () => {
+      mockFetch.mockResolvedValue(jsonResponse('Server Error', 500));
+
+      const games = await client.getHostedGames();
+
+      expect(games).toEqual([]);
+    });
+
+    it('should return empty array on network failure', async () => {
+      mockFetch.mockRejectedValue(new Error('Network down'));
+
+      const games = await client.getHostedGames();
+
+      expect(games).toEqual([]);
+    });
+  });
+
   describe('getDeviceId', () => {
     it('should produce a deterministic device ID', async () => {
       mockFetch.mockResolvedValue(

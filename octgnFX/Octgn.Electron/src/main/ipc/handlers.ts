@@ -2,7 +2,7 @@ import { IpcMain, BrowserWindow, app, dialog, clipboard } from 'electron';
 import { readFile } from 'fs/promises';
 import { IPC_CHANNELS, type Deck } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
-import { GameService } from '../api/game-service';
+import { GameService, type SavedConnectionInfo } from '../api/game-service';
 import { listInstalledGames, uninstallGame, getUserDecksDir, getPrebuiltDecksDir } from '../games/game-store';
 import { fetchAvailableGames } from '../games/game-feed';
 import { installGame } from '../games/game-installer';
@@ -43,7 +43,14 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_SESSION, async () => {
-    return apiClient.getSession();
+    return apiClient.getSessionAsLoginResult();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GET_APP_STATE, async () => {
+    return {
+      session: apiClient.getSessionAsLoginResult(),
+      gameState: gameService.getState(),
+    };
   });
 
   // Lobby handlers
@@ -314,5 +321,21 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Clipboard
   ipcMain.handle(IPC_CHANNELS.CLIPBOARD_WRITE, (_event, text: string) => {
     clipboard.writeText(text);
+  });
+
+  // Attempt game reconnection on startup (main process restart scenario)
+  GameService.loadConnectionInfo().then(async (info: SavedConnectionInfo | null) => {
+    if (info) {
+      log('RECONNECT', `Found recent connection info, attempting reconnection to ${info.host}:${info.port}`);
+      const result = await gameService.reconnectGame(info);
+      if (result.success) {
+        log('RECONNECT', 'Game reconnection successful');
+      } else {
+        log('RECONNECT', `Game reconnection failed: ${result.error}`);
+        await gameService.clearConnectionInfo();
+      }
+    }
+  }).catch((err) => {
+    logError('RECONNECT', err);
   });
 }

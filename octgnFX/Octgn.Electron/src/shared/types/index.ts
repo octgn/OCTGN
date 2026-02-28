@@ -330,6 +330,7 @@ export const IPC_CHANNELS = {
   GAME_START: 'game:start',
 
   // App
+  GET_APP_STATE: 'app:get-state',
   APP_VERSION: 'app:version',
   APP_QUIT: 'app:quit',
   APP_MINIMIZE: 'app:minimize',
