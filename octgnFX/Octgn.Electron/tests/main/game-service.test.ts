@@ -1601,4 +1601,184 @@ describe('GameService', () => {
       expect(state.table.board).toBeUndefined();
     });
   });
+
+  // -------------------------------------------------------------------------
+  // loadDeckFromFile
+  // -------------------------------------------------------------------------
+
+  describe('loadDeckFromFile', () => {
+    /**
+     * Helper: create a service with state AND a local player with groups.
+     */
+    async function serviceWithPlayerGroups(
+      groups: { id: string; name: string }[] = [],
+    ): Promise<GameService> {
+      const service = await serviceWithState();
+      // Add local player via NewPlayer
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 42, nick: 'Nick', spectator: false }));
+      // Set up groups on the local player
+      const state = lastState();
+      const localPlayer = state.players.find((p: any) => p.id === 42);
+      if (localPlayer) {
+        localPlayer.groups = groups.map((g) => ({
+          id: g.id,
+          name: g.name,
+          cards: [],
+          visibility: 2,
+          controller: 42,
+        }));
+      }
+      return service;
+    }
+
+    it('generates card IDs using (playerId << 16) | counter', async () => {
+      const service = await serviceWithPlayerGroups();
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          {
+            name: 'Hand',
+            cards: [
+              { id: 'card-a', name: 'Card A', quantity: 2, properties: {} },
+            ],
+          },
+        ],
+      });
+
+      expect(mockSendMessage).toHaveBeenCalledWith(
+        MessageType.LoadDeck,
+        0,
+        expect.objectContaining({
+          id: [(42 << 16) | 1, (42 << 16) | 2],
+          type: ['card-a', 'card-a'],
+        }),
+      );
+    });
+
+    it('expands cards by quantity', async () => {
+      const service = await serviceWithPlayerGroups();
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          {
+            name: 'Hand',
+            cards: [
+              { id: 'c1', name: 'One', quantity: 3, properties: {} },
+            ],
+          },
+        ],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      expect(call![2].id).toHaveLength(3);
+      expect(call![2].type).toEqual(['c1', 'c1', 'c1']);
+    });
+
+    it('maps sections to group IDs using game definition deckSections', async () => {
+      mockGetGameDefinition.mockReturnValue({
+        id: 'gid',
+        name: 'Test',
+        players: [{
+          name: 'Player',
+          groups: [
+            { name: 'Hand', visibility: 2, ordered: false, cardActions: [], groupActions: [] },
+            { name: 'Library', visibility: 1, ordered: false, cardActions: [], groupActions: [] },
+          ],
+          counters: [],
+          globalVariables: [],
+        }],
+        deckSections: [
+          { name: 'Main Deck', group: 'Library', shared: false },
+          { name: 'Hand Cards', group: 'Hand', shared: false },
+        ],
+        sharedDeckSections: [],
+      });
+
+      const service = await serviceWithPlayerGroups([
+        { id: String((42 << 8) | 1), name: 'Hand' },
+        { id: String((42 << 8) | 2), name: 'Library' },
+      ]);
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          { name: 'Main Deck', cards: [{ id: 'c1', name: 'Card', quantity: 1, properties: {} }] },
+          { name: 'Hand Cards', cards: [{ id: 'c2', name: 'Card', quantity: 1, properties: {} }] },
+        ],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      // "Main Deck" → group "Library" → (42 << 8) | 2
+      // "Hand Cards" → group "Hand" → (42 << 8) | 1
+      expect(call![2].group).toEqual([
+        (42 << 8) | 2,
+        (42 << 8) | 1,
+      ]);
+    });
+
+    it('falls back to matching section name directly to group name', async () => {
+      // No game definition loaded
+      mockGetGameDefinition.mockReturnValue(undefined);
+
+      const service = await serviceWithPlayerGroups([
+        { id: '100', name: 'Hand' },
+        { id: '200', name: 'Deck' },
+      ]);
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          { name: 'Hand', cards: [{ id: 'c1', name: 'Card', quantity: 1, properties: {} }] },
+          { name: 'Deck', cards: [{ id: 'c2', name: 'Card', quantity: 1, properties: {} }] },
+        ],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      expect(call![2].group).toEqual([100, 200]);
+    });
+
+    it('does not send LoadDeck for empty deck', async () => {
+      const service = await serviceWithPlayerGroups();
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeUndefined();
+    });
+
+    it('passes sleeve URL from deck', async () => {
+      const service = await serviceWithPlayerGroups();
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          { name: 'Hand', cards: [{ id: 'c1', name: 'Card', quantity: 1, properties: {} }] },
+        ],
+        sleeveUrl: 'http://example.com/sleeve.png',
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      expect(call![2].sleeve).toBe('http://example.com/sleeve.png');
+    });
+  });
 });

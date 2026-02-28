@@ -243,4 +243,74 @@ describe('parseDefinitionXml — table, board, and card size parsing', () => {
       expect(def!.cardBack).toBe('cards/back.png');
     });
   });
+
+  describe('deck section parsing', () => {
+    it('parses <deck> element with section children', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <deck>
+          <section name="Starting" group="Starting" />
+          <section name="Life Deck" group="Life Deck" />
+        </deck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.deckSections).toHaveLength(2);
+      expect(def!.deckSections[0]).toEqual({ name: 'Starting', group: 'Starting', shared: false });
+      expect(def!.deckSections[1]).toEqual({ name: 'Life Deck', group: 'Life Deck', shared: false });
+    });
+
+    it('parses <sharedDeck> element with section children', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <sharedDeck>
+          <section name="Shared Pile" group="Shared" />
+        </sharedDeck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.sharedDeckSections).toHaveLength(1);
+      expect(def!.sharedDeckSections[0]).toEqual({ name: 'Shared Pile', group: 'Shared', shared: true });
+    });
+
+    it('defaults group to section name when group attribute is missing', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <deck>
+          <section name="Hand" />
+        </deck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.deckSections).toHaveLength(1);
+      expect(def!.deckSections[0]).toEqual({ name: 'Hand', group: 'Hand', shared: false });
+    });
+
+    it('falls back to player groups when no <deck> element exists', () => {
+      const xml = minimalGame(`<table name="T" width="100" height="100" />`);
+      const def = parseDefinitionXml(xml);
+      // minimalGame has one player group: "Hand"
+      expect(def!.deckSections).toHaveLength(1);
+      expect(def!.deckSections[0]).toEqual({ name: 'Hand', group: 'Hand', shared: false });
+    });
+
+    it('returns empty sharedDeckSections when no <sharedDeck> element exists', () => {
+      const xml = minimalGame(`<table name="T" width="100" height="100" />`);
+      const def = parseDefinitionXml(xml);
+      expect(def!.sharedDeckSections).toEqual([]);
+    });
+
+    it('handles section with different name and group', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <deck>
+          <section name="Main Deck" group="Library" />
+          <section name="Side Board" group="Sideboard Pile" />
+        </deck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.deckSections).toHaveLength(2);
+      expect(def!.deckSections[0]).toEqual({ name: 'Main Deck', group: 'Library', shared: false });
+      expect(def!.deckSections[1]).toEqual({ name: 'Side Board', group: 'Sideboard Pile', shared: false });
+    });
+  });
 });

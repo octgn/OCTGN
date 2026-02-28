@@ -1,11 +1,11 @@
 import { XMLParser } from 'fast-xml-parser';
-import type { GameDefinition, PlayerDefinition, GroupDefinition, CounterDefinition, GamePhase, CardAction, GroupAction, Variable, GroupVisibility, TableDefinition, BoardDefinition, CardSizeDefinition } from '../../shared/types';
+import type { GameDefinition, PlayerDefinition, GroupDefinition, CounterDefinition, GamePhase, CardAction, GroupAction, Variable, GroupVisibility, TableDefinition, BoardDefinition, CardSizeDefinition, DeckSectionDef } from '../../shared/types';
 
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '@_',
   isArray: (tagName) =>
-    ['player', 'group', 'action', 'groupaction', 'counter', 'phase', 'globalvariable', 'variable', 'size', 'gameboard'].includes(tagName.toLowerCase()),
+    ['player', 'group', 'action', 'groupaction', 'counter', 'phase', 'globalvariable', 'variable', 'size', 'gameboard', 'section'].includes(tagName.toLowerCase()),
 });
 
 function attr(obj: Record<string, unknown>, name: string, fallback = ''): string {
@@ -191,6 +191,21 @@ function parseBoards(gameEl: Record<string, unknown>): BoardDefinition[] | undef
   return boards.length > 0 ? boards : undefined;
 }
 
+function parseDeckSections(raw: unknown, shared: boolean): DeckSectionDef[] {
+  if (!raw) return [];
+  const sections: DeckSectionDef[] = [];
+  const sectionArr = (raw as Record<string, unknown>)['section'];
+  if (!sectionArr) return [];
+  const arr = Array.isArray(sectionArr) ? sectionArr : [sectionArr];
+  for (const s of arr) {
+    const o = s as Record<string, unknown>;
+    const name = attr(o, 'name');
+    const group = attr(o, 'group') || name; // default group = section name
+    if (name) sections.push({ name, group, shared });
+  }
+  return sections;
+}
+
 function parsePlayer(raw: Record<string, unknown>): PlayerDefinition {
   const groups: GroupDefinition[] = [];
   const counters: CounterDefinition[] = [];
@@ -280,10 +295,16 @@ export function parseDefinitionXml(xml: string | Buffer): GameDefinition | null 
       }
     }
 
-    // Deck sections — read from first player's groups that are "deck-like"
-    // or from a <shared> element if present
-    const deckSections = players[0]?.groups.map((gr) => gr.name) ?? [];
-    const sharedDeckSections: string[] = [];
+    // Deck sections — parse from <deck> and <sharedDeck> elements if present,
+    // otherwise fallback to generating from player groups
+    const deckEl = g['deck'] as Record<string, unknown> | undefined;
+    const sharedDeckEl = g['sharedDeck'] as Record<string, unknown> | undefined;
+    const deckSections: DeckSectionDef[] = deckEl
+      ? parseDeckSections(deckEl, false)
+      : (players[0]?.groups.map((gr) => ({ name: gr.name, group: gr.name, shared: false })) ?? []);
+    const sharedDeckSections: DeckSectionDef[] = sharedDeckEl
+      ? parseDeckSections(sharedDeckEl, true)
+      : [];
 
     return {
       id,

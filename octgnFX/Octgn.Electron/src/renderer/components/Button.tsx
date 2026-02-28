@@ -57,7 +57,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       className={twMerge(
         clsx(
-          'relative inline-flex items-center justify-center font-medium tracking-wide',
+          'relative inline-flex items-center justify-center font-medium tracking-wide whitespace-nowrap',
           'transition-all duration-200 ease-out',
           'disabled:opacity-40 disabled:pointer-events-none disabled:shadow-none',
           variantStyles[variant],

@@ -14,6 +14,7 @@ interface GameStoreActions {
   sendAction: (action: Record<string, unknown>) => Promise<void>;
   sendChat: (message: string) => Promise<void>;
   loadDeck: (deck: Deck) => Promise<void>;
+  getDeckPaths: (gameId?: string) => Promise<{ userDecksPath: string | null; prebuiltDecksPath: string | null }>;
   leaveGame: () => Promise<void>;
   subscribe: () => () => void;
   // Typed game actions
@@ -94,6 +95,14 @@ export const useGameStore = create<GameStore>()(
           state.error = message;
         });
         useToastStore.getState().addToast(message, 'error');
+      }
+    },
+
+    getDeckPaths: async (gameId?: string) => {
+      try {
+        return await window.octgn.getDeckPaths(gameId);
+      } catch {
+        return { userDecksPath: null, prebuiltDecksPath: null };
       }
     },
 
