@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
 import PileViewer from './PileViewer';
@@ -143,21 +143,56 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
     [isGlobalTab, selectedPlayer, isOwnTab],
   );
 
+  // ─── Resize drag state ───────────────────────────────────────────
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ startY: number; startH: number } | null>(null);
+
+  const handleResizePointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    const el = containerRef.current;
+    if (!el) return;
+    dragRef.current = { startY: e.clientY, startH: el.offsetHeight };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const handleResizePointerMove = useCallback((e: React.PointerEvent) => {
+    const d = dragRef.current;
+    const el = containerRef.current;
+    if (!d || !el) return;
+    const newH = Math.max(100, d.startH - (e.clientY - d.startY));
+    el.style.height = `${newH}px`;
+  }, []);
+
+  const handleResizePointerUp = useCallback(() => {
+    dragRef.current = null;
+  }, []);
+
   // ─── Counters for selected player ─────────────────────────────────
   const counters = selectedPlayer?.counters ?? [];
 
   return (
     <>
       <div
+        ref={containerRef}
         data-testid="player-group-browser"
         className={clsx(
           'border-t border-octgn-border/30 flex flex-col shrink-0',
           'bg-gradient-to-t from-octgn-bg/80 via-octgn-surface/60 to-octgn-surface/40',
           'backdrop-blur-md',
         )}
+        style={{ height: 200 }}
       >
+        {/* ── Resize handle (top edge) ──────────────────────────── */}
+        <div
+          className="h-1 shrink-0 cursor-ns-resize hover:bg-octgn-primary/30 active:bg-octgn-primary/50 transition-colors"
+          onPointerDown={handleResizePointerDown}
+          onPointerMove={handleResizePointerMove}
+          onPointerUp={handleResizePointerUp}
+          onPointerCancel={handleResizePointerUp}
+        />
+
         {/* ── Tab bar ─────────────────────────────────────────────── */}
-        <div className="flex items-center gap-0.5 px-2 sm:px-3 py-1 overflow-x-auto scrollbar-thin border-b border-octgn-border/20">
+        <div className="flex items-center gap-0.5 px-2 sm:px-3 py-1 overflow-x-auto scrollbar-thin border-b border-octgn-border/20 shrink-0">
           {/* Global tab */}
           {globalGroups && globalGroups.length > 0 && (
             <button
@@ -240,7 +275,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
 
         {/* ── Counters row ────────────────────────────────────────── */}
         {!isGlobalTab && counters.length > 0 && (
-          <div className="flex items-center gap-3 px-3 sm:px-4 py-1 border-b border-octgn-border/10 overflow-x-auto">
+          <div className="flex items-center gap-3 px-3 sm:px-4 py-1 border-b border-octgn-border/10 overflow-x-auto shrink-0">
             {counters.map((c) => (
               <div key={c.id} className="flex items-center gap-1.5 text-xs whitespace-nowrap">
                 <span className="text-octgn-text-dim text-[10px] uppercase tracking-wider">{c.name}</span>
@@ -252,26 +287,29 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
           </div>
         )}
 
-        {/* ── Group strip (all groups except hand) ─────────────────── */}
-        <GroupStrip
-          groups={sideGroups}
-          isOwn={isOwnTab}
-          onPileClick={handlePileClick}
-          onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
-        />
-
-        {/* ── Hand zone (always shown as fan for all players) ─────── */}
-        {handGroup && (
-          <HandZone
-            cards={handGroup.cards}
-            handGroupId={handGroup.id}
-            selectedCardId={selectedCardId}
-            interactive={isOwnTab}
-            onCardClick={onCardClick}
-            onCardContextMenu={onCardContextMenu}
-            onCardMoveToGroup={onCardMoveToGroup}
+        {/* ── Scrollable content area ──────────────────────────────── */}
+        <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
+          {/* ── Group strip (all groups except hand) ───────────────── */}
+          <GroupStrip
+            groups={sideGroups}
+            isOwn={isOwnTab}
+            onPileClick={handlePileClick}
+            onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
           />
-        )}
+
+          {/* ── Hand zone (always shown as fan for all players) ───── */}
+          {handGroup && (
+            <HandZone
+              cards={handGroup.cards}
+              handGroupId={handGroup.id}
+              selectedCardId={selectedCardId}
+              interactive={isOwnTab}
+              onCardClick={onCardClick}
+              onCardContextMenu={onCardContextMenu}
+              onCardMoveToGroup={onCardMoveToGroup}
+            />
+          )}
+        </div>
       </div>
 
       {/* Pile Viewer overlay */}
