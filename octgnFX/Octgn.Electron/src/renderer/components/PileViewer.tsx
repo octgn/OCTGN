@@ -35,7 +35,7 @@ const PileViewer: React.FC<PileViewerProps> = ({
       startDrag(card.id, `pile:${group.id}`, e);
       setDraggingFromPile(true);
     },
-    [startDrag, group.id],
+    [startDrag, group.id, isOwn],
   );
 
   const handleCardDragEnd = useCallback(() => {

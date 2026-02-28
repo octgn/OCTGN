@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
 import { useDragDrop } from './DragDropContext';
-import type { Group } from '../../shared/types';
+import type { Card, Group } from '../../shared/types';
 
 export interface PileThumbnailProps {
   group: Group;
@@ -17,10 +17,25 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   onPileClick,
   onCardMoveToGroup,
 }) => {
-  const { dragState, updateDropTarget, endDrag, isDragging } = useDragDrop();
+  const { dragState, startDrag, updateDropTarget, endDrag, isDragging } = useDragDrop();
 
   const isDropTarget = isDragging && dragState.dropTargetZone === group.id;
   const hasCards = group.cards.length > 0;
+  const topCard = hasCards ? group.cards[0] : null;
+
+  // Drag the top card out of the pile to the table
+  const handleTopCardDragStart = useCallback(
+    (card: Card, e: React.DragEvent) => {
+      if (!isOwn) return;
+      e.stopPropagation();
+      startDrag(card.id, `pile:${group.id}`, e);
+    },
+    [isOwn, startDrag, group.id],
+  );
+
+  const handleTopCardDragEnd = useCallback(() => {
+    endDrag();
+  }, [endDrag]);
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -45,10 +60,12 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   );
 
   return (
-    <button
+    <div
       data-testid={`pile-${group.id}`}
+      role="button"
+      tabIndex={0}
       className={clsx(
-        'group/pile relative flex flex-col items-center rounded-xl p-2 min-w-[72px] sm:min-w-[80px] shrink-0',
+        'group/pile relative flex flex-col items-center rounded-xl p-2 min-w-[72px] sm:min-w-[80px] shrink-0 cursor-pointer select-none',
         'border transition-all duration-200 ease-out',
         isDropTarget
           ? 'border-octgn-primary/60 bg-octgn-primary/10 shadow-[0_0_16px_rgba(59,130,246,0.25)] scale-[1.04]'
@@ -85,8 +102,10 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
           )}
           <div className="relative w-[52px] sm:w-[56px] h-[72px] sm:h-[78px] rounded-lg border border-octgn-border/15 overflow-hidden transition-transform duration-200 group-hover/pile:translate-y-[-2px]">
             <CardComponent
-              card={group.cards[0]}
-              interactive={false}
+              card={topCard!}
+              interactive={isOwn}
+              onDragStart={isOwn ? handleTopCardDragStart : undefined}
+              onDragEnd={isOwn ? handleTopCardDragEnd : undefined}
               style={{ width: '100%', height: '100%' }}
             />
           </div>
@@ -106,7 +125,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
       )}>
         {group.cards.length}
       </span>
-    </button>
+    </div>
   );
 };
 

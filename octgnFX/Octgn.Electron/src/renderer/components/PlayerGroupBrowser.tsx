@@ -79,7 +79,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
   onCardContextMenu,
   onCardMoveToGroup,
 }) => {
-  const { dragState, isDragging } = useDragDrop();
+  const { dragState, isDragging, updateMousePosition } = useDragDrop();
 
   // Active players (non-spectator, non-global)
   const activePlayers = useMemo(
@@ -170,6 +170,17 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
   // ─── Counters for selected player ─────────────────────────────────
   const counters = selectedPlayer?.counters ?? [];
 
+  // Track mouse position during drag so the ghost adorner follows the cursor
+  // even when dragging over the bottom panel (not just the table).
+  const handlePanelDragOver = useCallback(
+    (e: React.DragEvent) => {
+      if (isDragging) {
+        updateMousePosition(e.clientX, e.clientY);
+      }
+    },
+    [isDragging, updateMousePosition],
+  );
+
   return (
     <>
       <div
@@ -181,6 +192,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
           'backdrop-blur-md',
         )}
         style={{ height: 200 }}
+        onDragOver={handlePanelDragOver}
       >
         {/* ── Resize handle (top edge) ──────────────────────────── */}
         <div
@@ -325,10 +337,12 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
         />
       )}
 
-      {/* Drag Ghost Overlay */}
-      {isOwnTab && isDragging && dragState.draggingCardId && (() => {
-        const allCards = players
-          .flatMap((p) => p.groups.flatMap((g) => g.cards));
+      {/* Drag Ghost Overlay — show card adorner following mouse during any drag */}
+      {isDragging && dragState.draggingCardId && (() => {
+        const allCards = [
+          ...players.flatMap((p) => p.groups.flatMap((g) => g.cards)),
+          ...(globalGroups ?? []).flatMap((g) => g.cards),
+        ];
         const draggingCard = allCards.find((c) => c.id === dragState.draggingCardId);
         if (!draggingCard) return null;
         return (
