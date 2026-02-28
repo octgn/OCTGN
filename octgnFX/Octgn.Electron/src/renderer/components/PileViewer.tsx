@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
 import { useDragDrop } from './DragDropContext';
@@ -26,20 +26,23 @@ const PileViewer: React.FC<PileViewerProps> = ({
 }) => {
   const { startDrag, endDrag } = useDragDrop();
   const readableColor = readablePlayerColor(playerColor);
+  const [draggingFromPile, setDraggingFromPile] = useState(false);
 
-  // When a card drag starts, close the overlay so the table becomes a drop target
+  // When drag starts, hide the overlay so the table can receive the drop.
+  // We don't unmount (onClose) because that would remove the drag source and cancel the drag.
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
       startDrag(card.id, `pile:${group.id}`, e);
-      // Close overlay after a tick so the drag operation is established first
-      requestAnimationFrame(() => onClose());
+      setDraggingFromPile(true);
     },
-    [startDrag, group.id, onClose],
+    [startDrag, group.id],
   );
 
   const handleCardDragEnd = useCallback(() => {
     endDrag();
-  }, [endDrag]);
+    // Close the viewer after the drag completes (drop or cancel)
+    onClose();
+  }, [endDrag, onClose]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -63,7 +66,12 @@ const PileViewer: React.FC<PileViewerProps> = ({
   return (
     <div
       data-testid="pile-viewer-overlay"
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-sm animate-fade-in"
+      className={clsx(
+        'fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fade-in',
+        draggingFromPile
+          ? 'pointer-events-none opacity-0'
+          : 'bg-black/65 backdrop-blur-sm',
+      )}
       onClick={handleOverlayClick}
     >
       <div
