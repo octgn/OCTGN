@@ -313,4 +313,40 @@ describe('parseDefinitionXml — table, board, and card size parsing', () => {
       expect(def!.deckSections[1]).toEqual({ name: 'Side Board', group: 'Sideboard Pile', shared: false });
     });
   });
+
+  describe('globalPlayer (shared element) parsing', () => {
+    it('parses groups from the <shared> element', () => {
+      const xml = minimalGame(`
+        <shared>
+          <group name="Shared Library" visibility="everybody" ordered="false" />
+          <group name="Tokens" visibility="everybody" ordered="false" />
+        </shared>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.globalPlayer).toBeDefined();
+      expect(def!.globalPlayer!.groups).toHaveLength(2);
+      expect(def!.globalPlayer!.groups[0].name).toBe('Shared Library');
+      expect(def!.globalPlayer!.groups[1].name).toBe('Tokens');
+    });
+
+    it('returns undefined globalPlayer when no <shared> element exists', () => {
+      const xml = minimalGame('');
+      const def = parseDefinitionXml(xml);
+      expect(def!.globalPlayer).toBeUndefined();
+    });
+
+    it('parses counters from the <shared> element', () => {
+      const xml = minimalGame(`
+        <shared>
+          <counter name="Shared Pool" icon="pool.png" default="0" />
+          <group name="Common" visibility="everybody" ordered="false" />
+        </shared>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.globalPlayer).toBeDefined();
+      expect(def!.globalPlayer!.groups).toHaveLength(1);
+      expect(def!.globalPlayer!.groups[0].name).toBe('Common');
+    });
+  });
 });

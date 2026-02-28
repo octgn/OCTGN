@@ -295,6 +295,19 @@ export function parseDefinitionXml(xml: string | Buffer): GameDefinition | null 
       }
     }
 
+    // Global player (shared groups/counters) — from <shared> element
+    const sharedEl = g['shared'] as Record<string, unknown> | undefined;
+    let globalPlayer: { groups: GroupDefinition[] } | undefined;
+    if (sharedEl) {
+      const sharedGroups: GroupDefinition[] = [];
+      const rawSharedGroups = sharedEl['group'];
+      if (rawSharedGroups) {
+        const arr = Array.isArray(rawSharedGroups) ? rawSharedGroups : [rawSharedGroups];
+        for (const sg of arr) sharedGroups.push(parseGroup(sg as Record<string, unknown>));
+      }
+      globalPlayer = { groups: sharedGroups };
+    }
+
     // Deck sections — parse from <deck> and <sharedDeck> elements if present,
     // otherwise fallback to generating from player groups
     const deckEl = g['deck'] as Record<string, unknown> | undefined;
@@ -324,6 +337,7 @@ export function parseDefinitionXml(xml: string | Buffer): GameDefinition | null 
       boards,
       cardSizes,
       defaultCardSize,
+      globalPlayer,
     };
   } catch {
     return null;

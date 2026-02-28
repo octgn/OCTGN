@@ -1871,6 +1871,58 @@ describe('GameService', () => {
       const sharedGroupId = 0x01000000 | (0 << 16) | 1; // global player = 0
       expect(call![2].group).toEqual([handGroupId, sharedGroupId]);
     });
+
+    it('uses deck section shared flag to route to global player even when name matches a player group', async () => {
+      // Game has a player group "Library" AND a global group "Library"
+      // The deck file's shared flag determines which one to use
+      mockGetGameDefinition.mockReturnValue({
+        id: 'gid',
+        name: 'Test',
+        players: [{
+          name: 'Player',
+          groups: [
+            { name: 'Hand', visibility: 2, ordered: false, cardActions: [], groupActions: [] },
+            { name: 'Library', visibility: 1, ordered: false, cardActions: [], groupActions: [] },
+          ],
+          counters: [],
+          globalVariables: [],
+        }],
+        deckSections: [
+          { name: 'Player Cards', group: 'Library', shared: false },
+        ],
+        sharedDeckSections: [
+          { name: 'Shared Cards', group: 'Library', shared: true },
+        ],
+        globalPlayer: {
+          groups: [
+            { name: 'Library', visibility: 0, ordered: false, cardActions: [], groupActions: [] },
+          ],
+        },
+      });
+
+      const service = await serviceWithPlayerGroups([
+        { id: String(0x01000000 | (42 << 16) | 1), name: 'Hand' },
+        { id: String(0x01000000 | (42 << 16) | 2), name: 'Library' },
+      ]);
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          // This section is marked shared in the deck file — should go to global player
+          { name: 'Shared Cards', cards: [{ id: 'c1', name: 'Token', quantity: 1, properties: {} }], shared: true },
+          // This section is NOT shared — should go to local player
+          { name: 'Player Cards', cards: [{ id: 'c2', name: 'Card', quantity: 1, properties: {} }], shared: false },
+        ],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      const globalLibraryId = 0x01000000 | (0 << 16) | 1; // global player, group 1
+      const playerLibraryId = 0x01000000 | (42 << 16) | 2; // local player, group 2
+      expect(call![2].group).toEqual([globalLibraryId, playerLibraryId]);
+    });
   });
 
   // -------------------------------------------------------------------------

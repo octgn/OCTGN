@@ -306,11 +306,8 @@ export class GameService {
       ? this.cardResolver.getGameDefinition(this.currentGameId)
       : undefined;
 
-    // Combine player and shared deck section definitions
-    const deckSectionDefs: DeckSectionDef[] = [
-      ...(gameDef?.deckSections ?? []),
-      ...(gameDef?.sharedDeckSections ?? []),
-    ];
+    const playerDeckSections: DeckSectionDef[] = gameDef?.deckSections ?? [];
+    const sharedDeckSections: DeckSectionDef[] = gameDef?.sharedDeckSections ?? [];
 
     const ids: number[] = [];
     const types: string[] = [];
@@ -318,8 +315,12 @@ export class GameService {
     const sizes: string[] = [];
 
     for (const section of deck.sections) {
-      // Find the target group for this section
-      const groupId = this.resolveGroupIdForSection(section.name, deckSectionDefs, gameDef);
+      // WPF uses the deck file's shared flag to pick which definition dictionary to search
+      const isShared = section.shared ?? false;
+      const sectionDefs = isShared ? sharedDeckSections : playerDeckSections;
+      // Fallback: if not found in the primary list, try the other
+      const allDefs = [...sectionDefs, ...(isShared ? playerDeckSections : sharedDeckSections)];
+      const groupId = this.resolveGroupIdForSection(section.name, allDefs, gameDef);
 
       for (const card of section.cards) {
         for (let i = 0; i < card.quantity; i++) {

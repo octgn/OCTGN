@@ -98,6 +98,7 @@ export interface GameDefinition {
   boards?: BoardDefinition[];
   cardSizes?: Record<string, CardSizeDefinition>;
   defaultCardSize?: CardSizeDefinition;
+  globalPlayer?: { groups: GroupDefinition[] };
 }
 
 export interface PlayerDefinition {
@@ -266,6 +267,7 @@ export interface Deck {
 export interface DeckSection {
   name: string;
   cards: DeckCard[];
+  shared?: boolean;
 }
 
 export interface DeckCard {

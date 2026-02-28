@@ -25,11 +25,15 @@ export function parseO8dXml(xmlContent: string): Deck {
 
   const gameId = deckElement.getAttribute('game') || '';
 
+  // Legacy: deck-level shared attribute makes ALL sections shared
+  const deckLevelShared = deckElement.getAttribute('shared')?.toLowerCase() === 'true';
+
   const sectionElements = deckElement.querySelectorAll('section');
   const sections: DeckSection[] = [];
 
   sectionElements.forEach((sectionEl) => {
     const sectionName = sectionEl.getAttribute('name') || 'Unknown';
+    const sectionShared = sectionEl.getAttribute('shared')?.toLowerCase() === 'true';
     const cards: DeckCard[] = [];
 
     const cardElements = sectionEl.querySelectorAll('card');
@@ -46,7 +50,7 @@ export function parseO8dXml(xmlContent: string): Deck {
       });
     });
 
-    sections.push({ name: sectionName, cards });
+    sections.push({ name: sectionName, cards, shared: deckLevelShared || sectionShared });
   });
 
   const notesElement = deckElement.querySelector('notes');
