@@ -17,7 +17,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   onPileClick,
   onCardMoveToGroup,
 }) => {
-  const { dragState, startDrag, updateDropTarget, endDrag, isDragging } = useDragDrop();
+  const { dragState, startDrag, startTouchDrag, updateDropTarget, endDrag, isDragging } = useDragDrop();
 
   const isDropTarget = isDragging && dragState.dropTargetZone === group.id;
   const hasCards = group.cards.length > 0;
@@ -36,6 +36,14 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   const handleTopCardDragEnd = useCallback(() => {
     endDrag();
   }, [endDrag]);
+
+  const handleTopCardTouchDragStart = useCallback(
+    (card: Card, x: number, y: number) => {
+      if (!isOwn) return;
+      startTouchDrag(card.id, `pile:${group.id}`, x, y);
+    },
+    [isOwn, startTouchDrag, group.id],
+  );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -76,6 +84,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
               'active:scale-[0.97]',
             ],
       )}
+      data-drop-zone={group.id}
       onClick={() => onPileClick(group)}
       onDragOver={isOwn ? handleDragOver : undefined}
       onDrop={isOwn ? handleDrop : undefined}
@@ -106,6 +115,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
               interactive={isOwn}
               onDragStart={isOwn ? handleTopCardDragStart : undefined}
               onDragEnd={isOwn ? handleTopCardDragEnd : undefined}
+              onTouchDragStart={isOwn ? handleTopCardTouchDragStart : undefined}
               style={{ width: '100%', height: '100%' }}
             />
           </div>

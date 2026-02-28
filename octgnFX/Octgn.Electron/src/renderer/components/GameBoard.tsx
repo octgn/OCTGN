@@ -11,6 +11,9 @@ import { isInInvertedZone } from '../../shared/table-utils';
 const ZONE_TABLE = 'table';
 
 // ─── Props ───────────────────────────────────────────────────────────
+/** Function that converts screen (clientX, clientY) to table mm-space coordinates */
+export type ScreenToTableCoordsFn = (screenX: number, screenY: number) => { x: number; y: number };
+
 interface GameBoardProps {
   tableCards: Card[];
   selectedCardId: string | null;
@@ -28,6 +31,8 @@ interface GameBoardProps {
   onCardMoveToTable: (cardId: string, x: number, y: number) => void;
   useTwoSidedTable?: boolean;
   isSpectator?: boolean;
+  /** Ref that receives a function to convert screen coords to table coords */
+  screenToTableCoordsRef?: React.MutableRefObject<ScreenToTableCoordsFn | null>;
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
@@ -47,9 +52,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onCardMoveToTable,
   useTwoSidedTable = false,
   isSpectator = false,
+  screenToTableCoordsRef,
 }) => {
   const tableRef = useRef<HTMLDivElement>(null);
-  const { dragState, startDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
+  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
     useDragDrop();
 
   // ─── Container size tracking for base scale ─────────────────────────
@@ -82,6 +88,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   const hasTableDimensions = !!(tableWidth && tableWidth > 0 && tableHeight && tableHeight > 0);
 
+  // ─── Expose screen→table coordinate conversion for touch drag ────────
+  // This is populated after screenToTable and baseScale are available.
+  // We use a second useEffect below (after screenToTable is defined).
+
   // ─── Zoom / Pan transform ────────────────────────────────────────────
   const {
     zoom,
@@ -96,6 +106,23 @@ const GameBoard: React.FC<GameBoardProps> = ({
     setContainerRect,
     screenToTable,
   } = useTableTransform();
+
+  // Expose screen→table coordinate conversion for touch drag layer
+  useEffect(() => {
+    if (!screenToTableCoordsRef) return;
+    screenToTableCoordsRef.current = (screenX: number, screenY: number) => {
+      const contentPos = screenToTable(screenX, screenY);
+      let x = contentPos.x;
+      let y = contentPos.y;
+      if (hasTableDimensions && baseScale.scale !== 0) {
+        x = (x - baseScale.offsetX) / baseScale.scale;
+        y = (y - baseScale.offsetY) / baseScale.scale;
+        x -= (tableWidth ?? 0) / 2;
+        y -= (tableHeight ?? 0) / 2;
+      }
+      return { x, y };
+    };
+  }, [screenToTableCoordsRef, screenToTable, hasTableDimensions, baseScale, tableWidth, tableHeight]);
 
   // Track space key for space+click panning
   const spaceDownRef = useRef(false);
@@ -237,6 +264,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
     endDrag();
   }, [endDrag]);
 
+  const handleCardTouchDragStart = useCallback(
+    (card: Card, x: number, y: number) => {
+      if (isSpectator) return;
+      startTouchDrag(card.id, ZONE_TABLE, x, y);
+    },
+    [startTouchDrag, isSpectator]
+  );
+
   // Zoom percentage for display
   const zoomPercent = Math.round(zoom * 100);
 
@@ -255,6 +290,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             'bg-transparent',
           isPanning && 'cursor-grabbing'
         )}
+        data-drop-zone={ZONE_TABLE}
         onDragOver={handleTableDragOver}
         onDrop={handleTableDrop}
         onDragLeave={handleTableDragLeave}
@@ -392,6 +428,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   onContextMenu={(c, e) => onCardContextMenu(e, c)}
                   onDragStart={isSpectator ? undefined : handleCardDragStart}
                   onDragEnd={isSpectator ? undefined : handleCardDragEnd}
+                  onTouchDragStart={isSpectator ? undefined : handleCardTouchDragStart}
                 />
               </div>
             ))}

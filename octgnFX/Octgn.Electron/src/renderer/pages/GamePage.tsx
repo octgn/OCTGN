@@ -3,7 +3,9 @@ import { clsx } from 'clsx';
 import Button from '../components/Button';
 import PreGameLobby from '../components/PreGameLobby';
 import { DragDropProvider } from '../components/DragDropContext';
+import TouchDragLayer from '../components/TouchDragLayer';
 import GameBoard from '../components/GameBoard';
+import type { ScreenToTableCoordsFn } from '../components/GameBoard';
 import PlayerGroupBrowser from '../components/PlayerGroupBrowser';
 import { parseO8dXml } from '../components/DeckLoader';
 import { useGameStore } from '../stores/game-store';
@@ -172,7 +174,7 @@ const GamePage: React.FC = () => {
     setContextMenu(null);
   }, [contextMenu, peekCard]);
 
-  /** Drag-drop: move card to table at (x, y) position */
+  /** Drag-drop: move card to table at (x, y) position (table-space coords) */
   const handleCardMoveToTable = useCallback(
     (cardId: string, x: number, y: number) => {
       if (isSpectator) return;
@@ -199,6 +201,30 @@ const GamePage: React.FC = () => {
       );
     },
     [moveCards, isSpectator]
+  );
+
+  /** Touch drag: screen→table coordinate conversion ref, populated by GameBoard */
+  const screenToTableCoordsRef = useRef<ScreenToTableCoordsFn | null>(null);
+
+  /** Touch drag: drop card on table using screen coordinates */
+  const handleTouchTableDrop = useCallback(
+    (cardId: string, screenX: number, screenY: number) => {
+      if (isSpectator) return;
+      const convert = screenToTableCoordsRef.current;
+      if (!convert) return;
+      const { x, y } = convert(screenX, screenY);
+      handleCardMoveToTable(cardId, x, y);
+    },
+    [isSpectator, handleCardMoveToTable]
+  );
+
+  /** Touch drag: drop card on a group */
+  const handleTouchGroupDrop = useCallback(
+    (cardId: string, groupId: string) => {
+      if (isSpectator) return;
+      handleCardMoveToGroup(cardId, groupId);
+    },
+    [isSpectator, handleCardMoveToGroup]
   );
 
   const handleLeave = useCallback(async () => {
@@ -232,6 +258,7 @@ const GamePage: React.FC = () => {
 
   return (
     <DragDropProvider>
+    <TouchDragLayer onTableDrop={handleTouchTableDrop} onGroupDrop={handleTouchGroupDrop}>
       <div className="flex h-full bg-octgn-bg">
         {/* Main game area */}
         <div className="flex-1 flex flex-col min-w-0">
@@ -361,6 +388,7 @@ const GamePage: React.FC = () => {
             onCardMoveToTable={handleCardMoveToTable}
             useTwoSidedTable={gameState.useTwoSidedTable}
             isSpectator={isSpectator}
+            screenToTableCoordsRef={screenToTableCoordsRef}
           />
 
           {/* Player Group Browser — bottom panel with tabs, groups, hand */}
@@ -487,6 +515,7 @@ const GamePage: React.FC = () => {
           </div>
         )}
       </div>
+    </TouchDragLayer>
     </DragDropProvider>
   );
 };

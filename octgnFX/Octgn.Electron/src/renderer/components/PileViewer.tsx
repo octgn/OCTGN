@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
 import { useDragDrop } from './DragDropContext';
@@ -24,9 +24,18 @@ const PileViewer: React.FC<PileViewerProps> = ({
   onCardClick,
   onCardContextMenu,
 }) => {
-  const { startDrag, endDrag } = useDragDrop();
+  const { startDrag, startTouchDrag, endDrag, isDragging } = useDragDrop();
   const readableColor = readablePlayerColor(playerColor);
   const [draggingFromPile, setDraggingFromPile] = useState(false);
+  const wasTouchDragging = useRef(false);
+
+  // Close the viewer when a touch drag ends (TouchDragLayer calls endDrag globally)
+  useEffect(() => {
+    if (wasTouchDragging.current && !isDragging) {
+      wasTouchDragging.current = false;
+      onClose();
+    }
+  }, [isDragging, onClose]);
 
   // When drag starts, hide the overlay so the table can receive the drop.
   // We don't unmount (onClose) because that would remove the drag source and cancel the drag.
@@ -43,6 +52,15 @@ const PileViewer: React.FC<PileViewerProps> = ({
     // Close the viewer after the drag completes (drop or cancel)
     onClose();
   }, [endDrag, onClose]);
+
+  const handleCardTouchDragStart = useCallback(
+    (card: Card, x: number, y: number) => {
+      startTouchDrag(card.id, `pile:${group.id}`, x, y);
+      setDraggingFromPile(true);
+      wasTouchDragging.current = true;
+    },
+    [startTouchDrag, group.id],
+  );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -165,6 +183,7 @@ const PileViewer: React.FC<PileViewerProps> = ({
                       onClick={onCardClick}
                       onDragStart={isOwn ? handleCardDragStart : undefined}
                       onDragEnd={isOwn ? handleCardDragEnd : undefined}
+                      onTouchDragStart={isOwn ? handleCardTouchDragStart : undefined}
                       onContextMenu={
                         onCardContextMenu
                           ? (c, e) => onCardContextMenu(e, c)

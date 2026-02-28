@@ -12,19 +12,23 @@ export interface DragState {
   draggingCardId: string | null;
   /** Zone the card was dragged from */
   sourceZone: string | null;
-  /** Current mouse/pointer position while dragging */
+  /** Current cursor/touch position while dragging */
   mousePosition: { x: number; y: number };
   /** Zone the drag is currently hovering over */
   dropTargetZone: string | null;
+  /** Whether this is a touch-initiated drag (vs HTML5 drag) */
+  isTouchDrag: boolean;
 }
 
 interface DragDropContextValue {
   dragState: DragState;
-  /** Call when a card drag begins */
+  /** Call when a card drag begins (HTML5 drag) */
   startDrag: (cardId: string, sourceZone: string, e: React.DragEvent) => void;
+  /** Call when a touch drag begins */
+  startTouchDrag: (cardId: string, sourceZone: string, x: number, y: number) => void;
   /** Call while dragging over a valid zone to update drop target */
   updateDropTarget: (zone: string | null) => void;
-  /** Update the mouse position (used by dragOver handlers) */
+  /** Update the cursor position (used by dragOver/touchMove handlers) */
   updateMousePosition: (x: number, y: number) => void;
   /** Call when the drag ends (drop or cancel) */
   endDrag: () => void;
@@ -37,6 +41,7 @@ const initialState: DragState = {
   sourceZone: null,
   mousePosition: { x: 0, y: 0 },
   dropTargetZone: null,
+  isTouchDrag: false,
 };
 
 const DragDropCtx = createContext<DragDropContextValue | null>(null);
@@ -69,6 +74,20 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
         sourceZone,
         mousePosition: { x: e.clientX, y: e.clientY },
         dropTargetZone: null,
+        isTouchDrag: false,
+      });
+    },
+    []
+  );
+
+  const startTouchDrag = useCallback(
+    (cardId: string, sourceZone: string, x: number, y: number) => {
+      setDragState({
+        draggingCardId: cardId,
+        sourceZone,
+        mousePosition: { x, y },
+        dropTargetZone: null,
+        isTouchDrag: true,
       });
     },
     []
@@ -96,6 +115,7 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         dragState,
         startDrag,
+        startTouchDrag,
         updateDropTarget,
         updateMousePosition,
         endDrag,

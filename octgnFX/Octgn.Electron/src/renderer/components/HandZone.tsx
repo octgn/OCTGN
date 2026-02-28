@@ -46,7 +46,7 @@ const HandZone: React.FC<HandZoneProps> = ({
   onCardContextMenu,
   onCardMoveToGroup,
 }) => {
-  const { dragState, startDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
+  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
     useDragDrop();
 
   const handleHandDragOver = useCallback(
@@ -84,11 +84,20 @@ const HandZone: React.FC<HandZoneProps> = ({
     endDrag();
   }, [endDrag]);
 
+  const handleCardTouchDragStart = useCallback(
+    (card: Card, x: number, y: number) => {
+      if (!interactive) return;
+      startTouchDrag(card.id, ZONE_HAND, x, y);
+    },
+    [interactive, startTouchDrag],
+  );
+
   const isDropTarget = interactive && isDragging && dragState.dropTargetZone === ZONE_HAND;
 
   return (
     <div
       data-testid="hand-zone"
+      data-drop-zone={ZONE_HAND}
       className={clsx(
         'relative border-t transition-all duration-200',
         isDropTarget
@@ -143,6 +152,7 @@ const HandZone: React.FC<HandZoneProps> = ({
                   onClick={interactive ? onCardClick : undefined}
                   onDragStart={interactive ? handleCardDragStart : undefined}
                   onDragEnd={interactive ? handleCardDragEnd : undefined}
+                  onTouchDragStart={interactive ? handleCardTouchDragStart : undefined}
                   interactive={interactive}
                   style={{ width: HAND_CARD_WIDTH, height: HAND_CARD_HEIGHT }}
                 />

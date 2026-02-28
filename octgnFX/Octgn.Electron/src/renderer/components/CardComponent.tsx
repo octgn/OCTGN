@@ -62,6 +62,7 @@ export interface CardComponentProps {
   onContextMenu?: (card: CardType, e: React.MouseEvent) => void;
   onDragStart?: (card: CardType, e: React.DragEvent) => void;
   onDragEnd?: (card: CardType, e: React.DragEvent) => void;
+  onTouchDragStart?: (card: CardType, x: number, y: number) => void;
 }
 
 const CardComponent: React.FC<CardComponentProps> = ({
@@ -77,6 +78,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
   onContextMenu,
   onDragStart,
   onDragEnd,
+  onTouchDragStart,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -129,6 +131,36 @@ const CardComponent: React.FC<CardComponentProps> = ({
     },
     [onDragEnd, card]
   );
+
+  // Touch-based drag: touchstart initiates, touchmove/touchend handled globally
+  const touchStartRef = useRef<{ x: number; y: number; id: number } | null>(null);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!onTouchDragStart || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY, id: touch.identifier };
+    },
+    [onTouchDragStart]
+  );
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStartRef.current || !onTouchDragStart) return;
+      const touch = Array.from(e.touches).find((t) => t.identifier === touchStartRef.current!.id);
+      if (!touch) return;
+      const dx = touch.clientX - touchStartRef.current.x;
+      const dy = touch.clientY - touchStartRef.current.y;
+      // Require a small drag threshold (8px) before starting
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+        e.preventDefault();
+        onTouchDragStart(card, touch.clientX, touch.clientY);
+        touchStartRef.current = null; // Only fire once
+      }
+    },
+    [onTouchDragStart, card]
+  );
+  const handleTouchEnd = useCallback(() => {
+    touchStartRef.current = null;
+  }, []);
 
   // Build the combined transform for the inner 3D container:
   // - Z-axis rotation (card orientation: 0/90/180/270)
@@ -192,6 +224,10 @@ const CardComponent: React.FC<CardComponentProps> = ({
         draggable={interactive}
         onDragStart={interactive ? handleDragStart : undefined}
         onDragEnd={interactive ? handleDragEnd : undefined}
+        onTouchStart={interactive && onTouchDragStart ? handleTouchStart : undefined}
+        onTouchMove={interactive && onTouchDragStart ? handleTouchMove : undefined}
+        onTouchEnd={interactive && onTouchDragStart ? handleTouchEnd : undefined}
+        onTouchCancel={interactive && onTouchDragStart ? handleTouchEnd : undefined}
         role={interactive ? 'button' : undefined}
         tabIndex={interactive ? 0 : undefined}
       >
