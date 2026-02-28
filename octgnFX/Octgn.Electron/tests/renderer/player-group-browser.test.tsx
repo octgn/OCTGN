@@ -70,9 +70,9 @@ function renderBrowser(props: Partial<React.ComponentProps<typeof PlayerGroupBro
         name: 'Alice',
         color: '#ff0000',
         groups: [
-          makeGroup({ id: 'g-hand', name: 'Hand', cards: [makeCard({ id: 'h1' })] }),
-          makeGroup({ id: 'g-deck', name: 'Deck', cards: [makeCard({ id: 'd1' }), makeCard({ id: 'd2' })] }),
-          makeGroup({ id: 'g-disc', name: 'Discard', cards: [] }),
+          makeGroup({ id: 'g-hand', name: 'Hand', cards: [makeCard({ id: 'h1' })], visibility: GroupVisibility.Owner }),
+          makeGroup({ id: 'g-deck', name: 'Deck', cards: [makeCard({ id: 'd1' }), makeCard({ id: 'd2' })], visibility: GroupVisibility.Owner }),
+          makeGroup({ id: 'g-disc', name: 'Discard', cards: [], visibility: GroupVisibility.Everybody }),
         ],
       }),
       makePlayer({
@@ -80,8 +80,9 @@ function renderBrowser(props: Partial<React.ComponentProps<typeof PlayerGroupBro
         name: 'Bob',
         color: '#0000ff',
         groups: [
-          makeGroup({ id: 'g2-hand', name: 'Hand', controller: 2, cards: [makeCard({ id: 'bh1' })] }),
-          makeGroup({ id: 'g2-deck', name: 'Deck', controller: 2, cards: [makeCard({ id: 'bd1' })] }),
+          makeGroup({ id: 'g2-hand', name: 'Hand', controller: 2, cards: [makeCard({ id: 'bh1' })], visibility: GroupVisibility.Owner }),
+          makeGroup({ id: 'g2-deck', name: 'Deck', controller: 2, cards: [makeCard({ id: 'bd1' })], visibility: GroupVisibility.Owner }),
+          makeGroup({ id: 'g2-disc', name: 'Discard', controller: 2, cards: [], visibility: GroupVisibility.Everybody }),
         ],
       }),
     ],
@@ -104,18 +105,19 @@ function renderBrowser(props: Partial<React.ComponentProps<typeof PlayerGroupBro
 describe('PlayerGroupBrowser', () => {
   afterEach(cleanup);
 
+  // ─── Basic rendering ─────────────────────────────────────────────
   it('renders the player group browser container', () => {
     renderBrowser();
     expect(screen.getByTestId('player-group-browser')).toBeTruthy();
   });
 
-  it('renders tabs for all non-spectator players', () => {
+  it('renders rows for all non-spectator players', () => {
     renderBrowser();
     expect(screen.getByTestId('tab-player-1')).toBeTruthy();
     expect(screen.getByTestId('tab-player-2')).toBeTruthy();
   });
 
-  it('does not render tabs for spectator players', () => {
+  it('does not render rows for spectator players', () => {
     renderBrowser({
       players: [
         makePlayer({ id: 1, name: 'Alice', isSpectator: false }),
@@ -126,75 +128,170 @@ describe('PlayerGroupBrowser', () => {
     expect(screen.queryByTestId('tab-player-3')).toBeNull();
   });
 
-  it('shows player names in tabs', () => {
+  it('shows player names in rows', () => {
     renderBrowser();
     expect(screen.getByText('Alice')).toBeTruthy();
     expect(screen.getByText('Bob')).toBeTruthy();
   });
 
-  it('shows "(you)" indicator on local player tab', () => {
+  it('shows "(you)" indicator on local player row', () => {
     renderBrowser();
     expect(screen.getByText('(you)')).toBeTruthy();
   });
 
-  it('shows Shared tab when globalGroups are provided', () => {
+  it('shows Shared row when globalGroups are provided', () => {
     renderBrowser({
       globalGroups: [
-        makeGroup({ id: 'g-global', name: 'Shared Deck', cards: [makeCard()] }),
+        makeGroup({ id: 'g-global', name: 'Shared Deck', cards: [makeCard()], visibility: GroupVisibility.Everybody }),
       ],
     });
     expect(screen.getByTestId('tab-global')).toBeTruthy();
     expect(screen.getByText('Shared')).toBeTruthy();
   });
 
-  it('does not show Shared tab when no globalGroups', () => {
+  it('does not show Shared row when no globalGroups', () => {
     renderBrowser({ globalGroups: undefined });
     expect(screen.queryByTestId('tab-global')).toBeNull();
   });
 
-  it('shows own groups by default (local player selected)', () => {
+  // ─── Accordion behavior ──────────────────────────────────────────
+  it('shows all player rows simultaneously', () => {
     renderBrowser();
-    // Should show Deck and Discard piles (Hand is shown as fan, not in group strip)
+    // Both player rows exist in the DOM at the same time (not tab-switching)
+    expect(screen.getByTestId('tab-player-1')).toBeTruthy();
+    expect(screen.getByTestId('tab-player-2')).toBeTruthy();
+  });
+
+  it('local player row is expanded by default showing own groups', () => {
+    renderBrowser();
+    // Local player's piles should be visible without clicking (expanded by default)
+    // Deck and Discard piles shown (Hand shown as fan, not in group strip)
     expect(screen.getByTestId('pile-g-deck')).toBeTruthy();
     expect(screen.getByTestId('pile-g-disc')).toBeTruthy();
   });
 
-  it('shows hand zone when viewing own groups', () => {
+  it('shows hand zone when local player row is expanded', () => {
     renderBrowser();
     expect(screen.getByTestId('hand-zone')).toBeTruthy();
   });
 
-  it('hides hand zone when viewing other player groups', () => {
+  it('other player rows are collapsed by default', () => {
     renderBrowser();
-    fireEvent.click(screen.getByTestId('tab-player-2'));
-    expect(screen.queryByTestId('hand-zone')).toBeNull();
+    // Bob's piles should NOT be visible initially (collapsed)
+    expect(screen.queryByTestId('pile-g2-hand')).toBeNull();
+    expect(screen.queryByTestId('pile-g2-deck')).toBeNull();
   });
 
-  it('switches to other player groups when their tab is clicked', () => {
+  it('expands other player groups when their row header is clicked', () => {
     renderBrowser();
     fireEvent.click(screen.getByTestId('tab-player-2'));
 
-    // Bob's groups should now be visible
-    expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
-    expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
+    // Bob's groups should now be visible (only Everybody-visible ones for non-spectator)
+    expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
   });
 
-  it('switches to global groups when Shared tab is clicked', () => {
+  it('collapses a player row when their header is clicked again', () => {
+    renderBrowser();
+    // Expand Bob
+    fireEvent.click(screen.getByTestId('tab-player-2'));
+    expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
+
+    // Collapse Bob
+    fireEvent.click(screen.getByTestId('tab-player-2'));
+    expect(screen.queryByTestId('pile-g2-disc')).toBeNull();
+  });
+
+  it('does not show hand zone for other players', () => {
+    renderBrowser();
+    fireEvent.click(screen.getByTestId('tab-player-2'));
+    // Hand zone should only exist for local player
+    const handZones = screen.getAllByTestId('hand-zone');
+    expect(handZones.length).toBe(1);
+  });
+
+  it('shows group summary pills in row headers', () => {
+    renderBrowser();
+    // Even when collapsed, Bob's row header should show group name + count summaries
+    // Check for group name text in the header area
+    const bobHeader = screen.getByTestId('tab-player-2');
+    expect(bobHeader.textContent).toContain('Discard');
+  });
+
+  // ─── Visibility filtering ────────────────────────────────────────
+  it('hides Owner-visibility groups of other players for non-spectators', () => {
+    renderBrowser();
+    // Expand Bob
+    fireEvent.click(screen.getByTestId('tab-player-2'));
+
+    // Bob's Hand and Deck have visibility: Owner — should be hidden from Alice
+    expect(screen.queryByTestId('pile-g2-hand')).toBeNull();
+    expect(screen.queryByTestId('pile-g2-deck')).toBeNull();
+
+    // Bob's Discard has visibility: Everybody — should be visible
+    expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
+  });
+
+  it('shows all groups for own player regardless of visibility', () => {
+    renderBrowser();
+    // Alice can see her own Owner-visibility groups
+    expect(screen.getByTestId('pile-g-deck')).toBeTruthy();
+  });
+
+  it('spectators see all groups including Owner and Nobody visibility', () => {
     renderBrowser({
-      globalGroups: [
-        makeGroup({ id: 'g-shared', name: 'Community Pile', cards: [] }),
+      isSpectator: true,
+      players: [
+        makePlayer({
+          id: 1,
+          name: 'Alice',
+          groups: [
+            makeGroup({ id: 'g-hand', name: 'Hand', cards: [makeCard({ id: 'h1' })], visibility: GroupVisibility.Owner }),
+            makeGroup({ id: 'g-secret', name: 'Secret', cards: [], visibility: GroupVisibility.Nobody }),
+          ],
+        }),
       ],
     });
-    fireEvent.click(screen.getByTestId('tab-global'));
-    expect(screen.getByTestId('pile-g-shared')).toBeTruthy();
+
+    // Expand Alice's row (spectator: first active player is expanded by default)
+    expect(screen.getByTestId('pile-g-hand')).toBeTruthy();
+    expect(screen.getByTestId('pile-g-secret')).toBeTruthy();
   });
 
-  it('shows group card counts', () => {
-    renderBrowser();
-    // Deck has 2 cards
-    expect(screen.getByText('2')).toBeTruthy();
+  it('hides Nobody-visibility groups for non-spectators even for own player', () => {
+    renderBrowser({
+      players: [
+        makePlayer({
+          id: 1,
+          name: 'Alice',
+          groups: [
+            makeGroup({ id: 'g-deck', name: 'Deck', cards: [], visibility: GroupVisibility.Owner }),
+            makeGroup({ id: 'g-nobody', name: 'Hidden', cards: [], visibility: GroupVisibility.Nobody }),
+          ],
+        }),
+      ],
+    });
+
+    expect(screen.getByTestId('pile-g-deck')).toBeTruthy();
+    expect(screen.queryByTestId('pile-g-nobody')).toBeNull();
   });
 
+  // ─── Counters ────────────────────────────────────────────────────
+  it('shows counters for selected player', () => {
+    renderBrowser({
+      players: [
+        makePlayer({
+          id: 1,
+          name: 'Alice',
+          counters: [{ id: 1, name: 'Life', value: 20 } as Counter],
+          groups: [makeGroup({ id: 'g1', name: 'Deck', visibility: GroupVisibility.Owner })],
+        }),
+      ],
+    });
+    expect(screen.getAllByText('Life').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('20').length).toBeGreaterThan(0);
+  });
+
+  // ─── PileViewer ──────────────────────────────────────────────────
   it('opens pile viewer when a group pile is clicked', () => {
     renderBrowser();
     fireEvent.click(screen.getByTestId('pile-g-deck'));
@@ -210,35 +307,45 @@ describe('PlayerGroupBrowser', () => {
     expect(screen.queryByTestId('pile-viewer-overlay')).toBeNull();
   });
 
-  it('shows counters for selected player', () => {
-    renderBrowser({
-      players: [
-        makePlayer({
-          id: 1,
-          name: 'Alice',
-          counters: [{ id: 1, name: 'Life', value: 20 } as Counter],
-          groups: [makeGroup({ id: 'g1', name: 'Deck' })],
-        }),
-      ],
-    });
-    expect(screen.getByText('Life')).toBeTruthy();
-    expect(screen.getByText('20')).toBeTruthy();
-  });
-
-  it('renders in spectator mode showing all player groups', () => {
+  // ─── Spectator mode ─────────────────────────────────────────────
+  it('renders in spectator mode showing all player rows', () => {
     renderBrowser({ isSpectator: true });
-    // In spectator mode, first active player should be selected by default
-    // and we can switch to any player
     expect(screen.getByTestId('tab-player-1')).toBeTruthy();
     expect(screen.getByTestId('tab-player-2')).toBeTruthy();
   });
 
-  it('shows all groups (including hand) when viewing another player as spectator', () => {
+  it('spectator sees first player expanded by default', () => {
     renderBrowser({ isSpectator: true });
-    // Spectator viewing first player — hand is shown as a pile, not as fan
-    // All groups should be in the group strip
+    // First active player's groups should be visible
+    // Spectators see all groups including Owner visibility
+    expect(screen.getByTestId('pile-g-hand')).toBeTruthy();
+    expect(screen.getByTestId('pile-g-deck')).toBeTruthy();
+  });
+
+  it('shows all groups when viewing another player as spectator', () => {
+    renderBrowser({ isSpectator: true });
+    // Expand Bob
     fireEvent.click(screen.getByTestId('tab-player-2'));
+    // Spectator can see all of Bob's groups including Owner-visibility ones
     expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
+    expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
+  });
+
+  // ─── Global groups ───────────────────────────────────────────────
+  it('shows global groups when Shared row is expanded', () => {
+    renderBrowser({
+      globalGroups: [
+        makeGroup({ id: 'g-shared', name: 'Community Pile', cards: [], visibility: GroupVisibility.Everybody }),
+      ],
+    });
+    fireEvent.click(screen.getByTestId('tab-global'));
+    expect(screen.getByTestId('pile-g-shared')).toBeTruthy();
+  });
+
+  it('group card counts are shown', () => {
+    renderBrowser();
+    // Deck has 2 cards — count appears in pile thumbnail and possibly in header summary
+    expect(screen.getAllByText('2').length).toBeGreaterThan(0);
   });
 });
