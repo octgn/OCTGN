@@ -1,15 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { clsx } from 'clsx';
-import GlassPanel from '../components/GlassPanel';
 import Button from '../components/Button';
 import PreGameLobby from '../components/PreGameLobby';
 import { DragDropProvider } from '../components/DragDropContext';
 import GameBoard from '../components/GameBoard';
+import PlayerGroupBrowser from '../components/PlayerGroupBrowser';
 import { parseO8dXml } from '../components/DeckLoader';
 import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
 import { useToastStore } from '../stores/toast-store';
-import type { Card, ChatMessage, Player, Counter, Group } from '../../shared/types';
+import type { Card, ChatMessage, Player } from '../../shared/types';
 import { readablePlayerColor } from '../utils/player-colors';
 
 interface ContextMenu {
@@ -206,22 +206,7 @@ const GamePage: React.FC = () => {
     navigate('lobby');
   }, [leaveGame, navigate]);
 
-  // Collect all players (spectators see everyone)
-  const allPlayers = gameState?.players ?? [];
-  const localPlayer = gameState?.players.find(
-    (p: Player) => p.id === gameState?.localPlayerId
-  );
-  const activePlayers = allPlayers.filter((p: Player) => !p.isSpectator);
-  const otherPlayers = isSpectator
-    ? activePlayers
-    : allPlayers.filter((p: Player) => p.id !== gameState?.localPlayerId);
-
-  // Spectators see ALL hands; regular players only see their own
-  const handCards: Card[] = isSpectator
-    ? [] // spectators don't have a personal hand zone
-    : localPlayer?.groups.find((g) => g.name.toLowerCase() === 'hand')?.cards ?? [];
   const tableCards: Card[] = gameState?.table.cards ?? [];
-  const playerGroups = isSpectator ? [] : localPlayer?.groups ?? [];
 
   // Connection status
   const connectionStatus = gameState?.connectionStatus ?? 'connected';
@@ -300,16 +285,6 @@ const GamePage: React.FC = () => {
             })()}
             <div className="flex-1" />
 
-            {/* Player counters (spectator sees none, non-spectator sees own) */}
-            {!isSpectator && localPlayer?.counters.map((c: Counter) => (
-              <div key={c.id} className="flex items-center gap-1.5 text-xs">
-                <span className="text-octgn-text-dim">{c.name}</span>
-                <span className="font-mono font-bold text-octgn-text bg-octgn-surface px-1.5 py-0.5 rounded border border-octgn-border/30">
-                  {c.value}
-                </span>
-              </div>
-            ))}
-
             {!isSpectator && (
               <>
                 {/* Deck actions cluster */}
@@ -368,25 +343,9 @@ const GamePage: React.FC = () => {
             </Button>
           </div>
 
-          {/* Player panels — spectators see all players, non-spectators see opponents */}
-          {otherPlayers.length > 0 && (
-            <div className="flex items-start gap-3 px-4 py-2 border-b border-octgn-border/20 bg-octgn-surface/20 overflow-x-auto">
-              {otherPlayers.map((player: Player) => (
-                <PlayerPanel
-                  key={player.id}
-                  player={player}
-                  isActive={player.id === gameState.activePlayer}
-                  isSpectatorView={isSpectator}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Game Board with table, hand, and group zones */}
+          {/* Game Board — table area only */}
           <GameBoard
             tableCards={tableCards}
-            handCards={handCards}
-            groups={playerGroups}
             selectedCardId={selectedCardId}
             boardImageUrl={gameState.table.board?.imageUrl}
             boardX={gameState.table.board?.x}
@@ -400,10 +359,20 @@ const GamePage: React.FC = () => {
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
             onCardMoveToTable={handleCardMoveToTable}
-            onCardMoveToGroup={handleCardMoveToGroup}
             useTwoSidedTable={gameState.useTwoSidedTable}
             isSpectator={isSpectator}
-            allPlayers={isSpectator ? activePlayers : undefined}
+          />
+
+          {/* Player Group Browser — bottom panel with tabs, groups, hand */}
+          <PlayerGroupBrowser
+            players={gameState.players}
+            localPlayerId={gameState.localPlayerId}
+            globalGroups={gameState.players.find((p) => p.id === 0)?.groups}
+            isSpectator={isSpectator}
+            selectedCardId={selectedCardId}
+            onCardClick={handleCardClick}
+            onCardContextMenu={handleCardContextMenu}
+            onCardMoveToGroup={handleCardMoveToGroup}
           />
         </div>
 
@@ -519,85 +488,6 @@ const GamePage: React.FC = () => {
         )}
       </div>
     </DragDropProvider>
-  );
-};
-
-// ─── Player Panel Component ──────────────────────────────────────────────
-interface PlayerPanelProps {
-  player: Player;
-  isActive: boolean;
-  isSpectatorView: boolean;
-}
-
-const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isActive, isSpectatorView }) => {
-  const handGroup = player.groups.find((g) => g.name.toLowerCase() === 'hand');
-  const otherGroups = player.groups.filter((g) => g.name.toLowerCase() !== 'hand');
-  const pColor = player.color || '#6b7280';
-  const readableColor = readablePlayerColor(pColor);
-
-  return (
-    <GlassPanel
-      variant="light"
-      padding="sm"
-      glow={isActive ? 'blue' : 'none'}
-      className={clsx(
-        'text-xs min-w-[180px] transition-all duration-300',
-        isActive && 'ring-1'
-      )}
-      style={isActive ? {
-        '--tw-ring-color': `${pColor}80`,
-        boxShadow: `0 0 12px ${pColor}4D`,
-      } as React.CSSProperties : undefined}
-    >
-      <div className="flex items-center gap-2 mb-1">
-        <div
-          className={clsx(
-            'w-2.5 h-2.5 rounded-full transition-shadow duration-300',
-          )}
-          style={{
-            backgroundColor: pColor,
-            boxShadow: isActive ? `0 0 8px ${pColor}B3` : undefined,
-          }}
-        />
-        <span className="font-medium" style={{ color: readableColor }}>{player.name}</span>
-        {isActive && (
-          <span className="text-[9px] font-bold tracking-wider" style={{ color: readableColor }}>ACTIVE</span>
-        )}
-        {player.isSpectator && (
-          <span className="text-[9px] text-octgn-accent">(Spectator)</span>
-        )}
-      </div>
-
-      {/* Counters */}
-      {player.counters.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-1">
-          {player.counters.map((c: Counter) => (
-            <div key={c.id} className="flex items-center gap-1">
-              <span className="text-octgn-text-dim text-[10px]">{c.name}</span>
-              <span className="font-mono font-bold text-octgn-text text-[11px] bg-octgn-surface/60 px-1 rounded border border-octgn-border/20">
-                {c.value}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Group card counts (spectator view) */}
-      {isSpectatorView && (
-        <div className="flex flex-wrap gap-1.5 mt-1.5">
-          {handGroup && (
-            <span className="text-[10px] text-octgn-text-dim bg-octgn-surface/40 px-1.5 py-0.5 rounded">
-              Hand: {handGroup.cards.length}
-            </span>
-          )}
-          {otherGroups.map((g: Group) => (
-            <span key={g.id} className="text-[10px] text-octgn-text-dim bg-octgn-surface/40 px-1.5 py-0.5 rounded">
-              {g.name}: {g.cards.length}
-            </span>
-          ))}
-        </div>
-      )}
-    </GlassPanel>
   );
 };
 

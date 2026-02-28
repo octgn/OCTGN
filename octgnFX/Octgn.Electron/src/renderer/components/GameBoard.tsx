@@ -4,44 +4,15 @@ import CardComponent from './CardComponent';
 import { useDragDrop } from './DragDropContext';
 import { useTableTransform } from '../hooks/useTableTransform';
 import { calculateTableScale } from '../utils/table-scaling';
-import type { Card, Group, Player } from '../../shared/types';
+import type { Card } from '../../shared/types';
 import { isInInvertedZone } from '../../shared/table-utils';
 
 // ─── Zone identifiers ────────────────────────────────────────────────
 const ZONE_TABLE = 'table';
-const ZONE_HAND = 'hand';
-
-// ─── Hand arc layout helpers ─────────────────────────────────────────
-const HAND_CARD_WIDTH = 80;
-const HAND_CARD_HEIGHT = 112;
-
-/** Returns transform values for a card in a fan/arc hand layout */
-function handCardTransform(
-  index: number,
-  total: number
-): { x: number; y: number; rotate: number } {
-  if (total <= 1) return { x: 0, y: 0, rotate: 0 };
-
-  const maxSpread = Math.min(total * 55, 600);
-  const maxArc = Math.min(total * 2.2, 18);
-  const maxLift = Math.min(total * 1.2, 12);
-
-  // Normalized position: -1 to 1
-  const t = total === 1 ? 0 : (index / (total - 1)) * 2 - 1;
-
-  const x = t * (maxSpread / 2);
-  const rotate = t * maxArc;
-  // Parabolic arc: cards in center are higher
-  const y = (1 - t * t) * -maxLift;
-
-  return { x, y, rotate };
-}
 
 // ─── Props ───────────────────────────────────────────────────────────
 interface GameBoardProps {
   tableCards: Card[];
-  handCards: Card[];
-  groups?: Group[];
   selectedCardId: string | null;
   boardImageUrl?: string;
   boardX?: number;
@@ -55,16 +26,12 @@ interface GameBoardProps {
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onCardMoveToTable: (cardId: string, x: number, y: number) => void;
-  onCardMoveToGroup: (cardId: string, groupId: string) => void;
   useTwoSidedTable?: boolean;
   isSpectator?: boolean;
-  allPlayers?: Player[];
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
   tableCards,
-  handCards,
-  groups = [],
   selectedCardId,
   boardImageUrl,
   boardX = 0,
@@ -78,10 +45,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onCardClick,
   onCardContextMenu,
   onCardMoveToTable,
-  onCardMoveToGroup,
   useTwoSidedTable = false,
   isSpectator = false,
-  allPlayers,
 }) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const { dragState, startDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
@@ -179,13 +144,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
   // ─── Pan via mouse (middle-click or space+left-click) ────────────────
   const handleTableMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      // Middle-click always starts pan
       if (e.button === 1) {
         e.preventDefault();
         handlePanStart(e.clientX, e.clientY);
         return;
       }
-      // Space + left-click starts pan
       if (e.button === 0 && spaceDownRef.current) {
         e.preventDefault();
         handlePanStart(e.clientX, e.clientY);
@@ -212,7 +175,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [isPanning, handlePanEnd]
   );
 
-  // Also end pan if mouse leaves table zone while panning
   const handleTableMouseLeave = useCallback(() => {
     if (isPanning) handlePanEnd();
   }, [isPanning, handlePanEnd]);
@@ -236,16 +198,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
       const cardId = e.dataTransfer.getData('application/octgn-card');
       if (!cardId || !tableRef.current) return;
 
-      // Convert screen drop position to zoom/pan content space
       const contentPos = screenToTable(e.clientX, e.clientY);
 
-      // Then invert the base scale to get mm-space coordinates
       let x = contentPos.x;
       let y = contentPos.y;
       if (hasTableDimensions && baseScale.scale !== 0) {
         x = (x - baseScale.offsetX) / baseScale.scale;
         y = (y - baseScale.offsetY) / baseScale.scale;
-        // Invert the origin shift: protocol uses center-based coords
         x -= (tableWidth ?? 0) / 2;
         y -= (tableHeight ?? 0) / 2;
       }
@@ -265,63 +224,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [updateDropTarget]
   );
 
-  // ─── Hand zone drag handlers ───────────────────────────────────────
-  const handleHandDragOver = useCallback(
-    (e: React.DragEvent) => {
-      if (isSpectator) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      updateDropTarget(ZONE_HAND);
-      updateMousePosition(e.clientX, e.clientY);
-    },
-    [updateDropTarget, updateMousePosition, isSpectator]
-  );
-
-  const handleHandDrop = useCallback(
-    (e: React.DragEvent) => {
-      if (isSpectator) return;
-      e.preventDefault();
-      const cardId = e.dataTransfer.getData('application/octgn-card');
-      if (!cardId) return;
-      const handGroup = groups.find(
-        (g) => g.name.toLowerCase() === 'hand'
-      );
-      if (handGroup) {
-        onCardMoveToGroup(cardId, handGroup.id);
-      }
-      endDrag();
-    },
-    [groups, onCardMoveToGroup, endDrag, isSpectator]
-  );
-
-  // ─── Group zone drag handlers ──────────────────────────────────────
-  const handleGroupDragOver = useCallback(
-    (groupId: string) => (e: React.DragEvent) => {
-      if (isSpectator) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      updateDropTarget(groupId);
-    },
-    [updateDropTarget, isSpectator]
-  );
-
-  const handleGroupDrop = useCallback(
-    (groupId: string) => (e: React.DragEvent) => {
-      if (isSpectator) return;
-      e.preventDefault();
-      const cardId = e.dataTransfer.getData('application/octgn-card');
-      if (!cardId) return;
-      onCardMoveToGroup(cardId, groupId);
-      endDrag();
-    },
-    [onCardMoveToGroup, endDrag, isSpectator]
-  );
-
   // ─── Card event wrappers ───────────────────────────────────────────
   const handleCardDragStart = useCallback(
-    (zone: string) => (card: Card, e: React.DragEvent) => {
+    (card: Card, e: React.DragEvent) => {
       if (isSpectator) return;
-      startDrag(card.id, zone, e);
+      startDrag(card.id, ZONE_TABLE, e);
     },
     [startDrag, isSpectator]
   );
@@ -329,36 +236,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const handleCardDragEnd = useCallback(() => {
     endDrag();
   }, [endDrag]);
-
-  // ─── Dragging card ghost ───────────────────────────────────────────
-  const draggingCard = useMemo(() => {
-    if (!dragState.draggingCardId) return null;
-    return (
-      [...tableCards, ...handCards].find(
-        (c) => c.id === dragState.draggingCardId
-      ) ?? null
-    );
-  }, [dragState.draggingCardId, tableCards, handCards]);
-
-  // Non-hand groups (deck, discard, etc.)
-  const sideGroups = useMemo(
-    () => groups.filter((g) => g.name.toLowerCase() !== 'hand'),
-    [groups]
-  );
-
-  // For spectator view: collect all groups across all players
-  const spectatorGroups = useMemo(() => {
-    if (!isSpectator || !allPlayers) return [];
-    const groups: { player: Player; group: Group }[] = [];
-    for (const player of allPlayers) {
-      for (const group of player.groups) {
-        if (group.name.toLowerCase() !== 'hand') {
-          groups.push({ player, group });
-        }
-      }
-    }
-    return groups;
-  }, [isSpectator, allPlayers]);
 
   // Zoom percentage for display
   const zoomPercent = Math.round(zoom * 100);
@@ -386,7 +263,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         onMouseUp={handleTableMouseUp}
         onMouseLeave={handleTableMouseLeave}
       >
-        {/* Table background image (e.g. wood texture) — fills the entire viewport, static */}
+        {/* Table background image */}
         {tableBackgroundUrl && (
           <div
             data-testid="table-background"
@@ -430,9 +307,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
             inset: 0,
           }}
         >
-          {/* Origin-shift wrapper: OCTGN protocol uses (0,0) as table center;
-              translate by half the table dimensions so center-based coords
-              map to the correct pixel positions. */}
           <div
             data-testid="origin-shift"
             style={hasTableDimensions ? {
@@ -445,7 +319,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             }}
           >
 
-          {/* Board image (e.g. chess board) — positioned at specific coordinates on the table */}
+          {/* Board image */}
           {boardImageUrl && (
             <div
               data-testid="board-background"
@@ -468,7 +342,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             />
           )}
 
-          {/* Two-sided table middle line at Y=0 */}
+          {/* Two-sided table middle line */}
           {useTwoSidedTable && (
             <div
               data-testid="two-sided-middle-line"
@@ -496,7 +370,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             }}
           />
 
-          {/* Table cards with smooth transitions */}
+          {/* Table cards */}
           <div data-testid="table-cards" className="absolute inset-0 p-4" style={{ zIndex: 3 }}>
             {tableCards.map((card) => (
               <div
@@ -516,7 +390,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   invertedZone={useTwoSidedTable && isInInvertedZone(card.position.y, card.size.height)}
                   onClick={onCardClick}
                   onContextMenu={(c, e) => onCardContextMenu(e, c)}
-                  onDragStart={isSpectator ? undefined : handleCardDragStart(ZONE_TABLE)}
+                  onDragStart={isSpectator ? undefined : handleCardDragStart}
                   onDragEnd={isSpectator ? undefined : handleCardDragEnd}
                 />
               </div>
@@ -542,83 +416,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
         </div>{/* close base-scale-container */}
         </div>{/* close transform-container */}
 
-        {/* Drop zone highlight ring (outside transform so it stays fixed) */}
+        {/* Drop zone highlight ring */}
         {!isSpectator && isDragging && dragState.dropTargetZone === ZONE_TABLE && (
           <div className="absolute inset-2 rounded-xl border-2 border-dashed border-octgn-primary/30 pointer-events-none transition-opacity duration-200 animate-pulse z-20">
             <div className="absolute inset-0 rounded-xl bg-octgn-primary/5" />
           </div>
         )}
 
-        {/* Side groups (deck/discard/etc) stacked on the right — outside transform */}
-        {!isSpectator && sideGroups.length > 0 && (
-          <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
-            {sideGroups.map((group) => (
-              <div
-                key={group.id}
-                className={clsx(
-                  'w-[72px] rounded-lg border transition-all duration-200 p-1.5',
-                  isDragging && dragState.dropTargetZone === group.id
-                    ? 'border-octgn-primary/60 bg-octgn-primary/10 shadow-[0_0_12px_rgba(59,130,246,0.3)]'
-                    : 'border-octgn-border/30 bg-octgn-surface/40 backdrop-blur-sm'
-                )}
-                onDragOver={handleGroupDragOver(group.id)}
-                onDrop={handleGroupDrop(group.id)}
-              >
-                <div className="text-[8px] font-semibold text-octgn-text-dim uppercase tracking-wider mb-1 truncate text-center">
-                  {group.name}
-                </div>
-                <div className="text-[10px] text-octgn-text-muted text-center font-mono">
-                  {group.cards.length}
-                </div>
-                {group.cards.length > 0 && (
-                  <div className="mt-1 mx-auto w-[56px] h-[78px] rounded border border-octgn-border/20 overflow-hidden">
-                    <CardComponent
-                      card={group.cards[0]}
-                      interactive={false}
-                      style={{ width: 56, height: 78 }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Spectator view: all players' groups on the right — outside transform */}
-        {isSpectator && spectatorGroups.length > 0 && (
-          <div className="absolute top-3 right-3 flex flex-col gap-2 z-10 max-h-[calc(100%-24px)] overflow-y-auto">
-            {spectatorGroups.map(({ player, group }) => (
-              <div
-                key={`${player.id}-${group.id}`}
-                className="w-[80px] rounded-lg border border-octgn-border/30 bg-octgn-surface/40 backdrop-blur-sm p-1.5"
-              >
-                <div
-                  className="text-[7px] font-bold uppercase tracking-wider mb-0.5 truncate text-center"
-                  style={{ color: player.color || '#9ca3af' }}
-                >
-                  {player.name}
-                </div>
-                <div className="text-[8px] font-semibold text-octgn-text-dim uppercase tracking-wider mb-1 truncate text-center">
-                  {group.name}
-                </div>
-                <div className="text-[10px] text-octgn-text-muted text-center font-mono">
-                  {group.cards.length}
-                </div>
-                {group.cards.length > 0 && (
-                  <div className="mt-1 mx-auto w-[56px] h-[78px] rounded border border-octgn-border/20 overflow-hidden">
-                    <CardComponent
-                      card={group.cards[0]}
-                      interactive={false}
-                      style={{ width: 56, height: 78 }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ── Zoom indicator + reset button (bottom-left corner) ───── */}
+        {/* ── Zoom indicator + reset button ───── */}
         <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1.5">
           <div
             className={clsx(
@@ -646,93 +451,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
           )}
         </div>
       </div>
-
-      {/* ── Hand Zone (non-spectator only) ──────────────────────────── */}
-      {!isSpectator && (
-        <div
-          className={clsx(
-            'relative border-t transition-all duration-200',
-            isDragging && dragState.dropTargetZone === ZONE_HAND
-              ? 'border-octgn-primary/50 bg-octgn-primary/5'
-              : 'border-octgn-border/30 bg-octgn-surface/40',
-            'backdrop-blur-sm'
-          )}
-          onDragOver={handleHandDragOver}
-          onDrop={handleHandDrop}
-          style={{ minHeight: HAND_CARD_HEIGHT + 32 }}
-        >
-          {isDragging && dragState.dropTargetZone === ZONE_HAND && (
-            <div className="absolute inset-1 rounded-lg border-2 border-dashed border-octgn-primary/30 pointer-events-none" />
-          )}
-
-          <div className="flex items-end justify-center h-full py-2 px-4 overflow-visible">
-            {handCards.length === 0 && (
-              <p className="text-xs text-octgn-text-dim py-4">
-                {isDragging ? 'Drop to add to hand' : 'Your hand is empty'}
-              </p>
-            )}
-
-            <div className="relative flex items-end justify-center" style={{ height: HAND_CARD_HEIGHT + 16 }}>
-              {handCards.map((card, index) => {
-                const { x, y, rotate } = handCardTransform(
-                  index,
-                  handCards.length
-                );
-                const isDraggingThis =
-                  isDragging && dragState.draggingCardId === card.id;
-
-                return (
-                  <div
-                    key={card.id}
-                    className={clsx(
-                      'absolute transition-all duration-300 ease-out',
-                      isDraggingThis && 'opacity-30 scale-90'
-                    )}
-                    style={{
-                      transform: `translateX(${x}px) translateY(${y}px) rotate(${rotate}deg)`,
-                      zIndex: index,
-                      transformOrigin: 'bottom center',
-                    }}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      onCardContextMenu(e, card);
-                    }}
-                  >
-                    <CardComponent
-                      card={card}
-                      selected={card.id === selectedCardId}
-                      onClick={onCardClick}
-                      onDragStart={handleCardDragStart(ZONE_HAND)}
-                      onDragEnd={handleCardDragEnd}
-                      style={{ width: HAND_CARD_WIDTH, height: HAND_CARD_HEIGHT }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Drag Ghost Overlay ──────────────────────────────────────── */}
-      {!isSpectator && isDragging && draggingCard && (
-        <div
-          className="fixed pointer-events-none z-[9999]"
-          style={{
-            left: dragState.mousePosition.x - HAND_CARD_WIDTH / 2,
-            top: dragState.mousePosition.y - HAND_CARD_HEIGHT / 2,
-            opacity: 0.85,
-            transform: 'rotate(-4deg) scale(1.05)',
-            filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
-          }}
-        >
-          <CardComponent
-            card={draggingCard}
-            interactive={false}
-            style={{ width: HAND_CARD_WIDTH, height: HAND_CARD_HEIGHT }}
-          />
-        </div>
-      )}
     </div>
   );
 };
