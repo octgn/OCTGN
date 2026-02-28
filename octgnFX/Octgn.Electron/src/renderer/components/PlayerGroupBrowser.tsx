@@ -107,7 +107,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
   const selectedPlayer = isGlobalTab
     ? null
     : activePlayers.find((p) => p.id === selectedTab);
-  const isOwnTab = !isGlobalTab && selectedTab === localPlayerId && !isSpectator;
+  const isOwnTab = !isSpectator && (isGlobalTab || selectedTab === localPlayerId);
   const selectedPlayerId = selectedPlayer?.id ?? 0;
 
   // Apply card visibility to all groups
