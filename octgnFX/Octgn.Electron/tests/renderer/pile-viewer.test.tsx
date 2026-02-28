@@ -12,6 +12,7 @@ import React from 'react';
 };
 
 import PileViewer from '@renderer/components/PileViewer';
+import { DragDropProvider } from '@renderer/components/DragDropContext';
 import type { Card, Group } from '@shared/types';
 import { GroupVisibility } from '@shared/types';
 
@@ -47,20 +48,26 @@ function makeGroup(overrides: Partial<Group> = {}): Group {
 
 const noop = () => {};
 
+function renderPileViewer(props: React.ComponentProps<typeof PileViewer>) {
+  return render(
+    <DragDropProvider>
+      <PileViewer {...props} />
+    </DragDropProvider>,
+  );
+}
+
 describe('PileViewer', () => {
   afterEach(cleanup);
 
   it('renders the overlay with player name and group name', () => {
     const group = makeGroup({ name: 'Discard', cards: [makeCard()] });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Alice"
-        playerColor="#ff0000"
-        isOwn={false}
-        onClose={noop}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Alice',
+      playerColor: '#ff0000',
+      isOwn: false,
+      onClose: noop,
+    });
 
     expect(screen.getByText('Alice')).toBeTruthy();
     expect(screen.getByText('Discard')).toBeTruthy();
@@ -74,15 +81,13 @@ describe('PileViewer', () => {
       makeCard({ id: 'c3', name: 'Card C' }),
     ];
     const group = makeGroup({ cards });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Bob"
-        playerColor="#00ff00"
-        isOwn={false}
-        onClose={noop}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Bob',
+      playerColor: '#00ff00',
+      isOwn: false,
+      onClose: noop,
+    });
 
     expect(screen.getByText('3')).toBeTruthy();
   });
@@ -93,15 +98,13 @@ describe('PileViewer', () => {
       makeCard({ id: 'c2', name: 'Beta Card' }),
     ];
     const group = makeGroup({ cards });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Test"
-        playerColor="#0000ff"
-        isOwn={false}
-        onClose={noop}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose: noop,
+    });
 
     expect(screen.getAllByText('Alpha Card').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Beta Card').length).toBeGreaterThan(0);
@@ -109,15 +112,13 @@ describe('PileViewer', () => {
 
   it('shows empty state when group has no cards', () => {
     const group = makeGroup({ cards: [] });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Test"
-        playerColor="#0000ff"
-        isOwn={false}
-        onClose={noop}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose: noop,
+    });
 
     expect(screen.getByText('No cards in this pile')).toBeTruthy();
   });
@@ -125,15 +126,13 @@ describe('PileViewer', () => {
   it('calls onClose when close button is clicked', () => {
     const onClose = vi.fn();
     const group = makeGroup({ cards: [makeCard()] });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Test"
-        playerColor="#0000ff"
-        isOwn={false}
-        onClose={onClose}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose,
+    });
 
     fireEvent.click(screen.getByTestId('pile-viewer-close'));
     expect(onClose).toHaveBeenCalledOnce();
@@ -142,15 +141,13 @@ describe('PileViewer', () => {
   it('calls onClose when Escape is pressed', () => {
     const onClose = vi.fn();
     const group = makeGroup({ cards: [makeCard()] });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Test"
-        playerColor="#0000ff"
-        isOwn={false}
-        onClose={onClose}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose,
+    });
 
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledOnce();
@@ -159,15 +156,13 @@ describe('PileViewer', () => {
   it('calls onClose when overlay backdrop is clicked', () => {
     const onClose = vi.fn();
     const group = makeGroup({ cards: [makeCard()] });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Test"
-        playerColor="#0000ff"
-        isOwn={false}
-        onClose={onClose}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose,
+    });
 
     fireEvent.click(screen.getByTestId('pile-viewer-overlay'));
     expect(onClose).toHaveBeenCalledOnce();
@@ -177,16 +172,14 @@ describe('PileViewer', () => {
     const onCardClick = vi.fn();
     const card = makeCard({ id: 'c1', name: 'Clickable Card' });
     const group = makeGroup({ cards: [card] });
-    render(
-      <PileViewer
-        group={group}
-        playerName="Me"
-        playerColor="#ff0000"
-        isOwn={true}
-        onClose={noop}
-        onCardClick={onCardClick}
-      />,
-    );
+    renderPileViewer({
+      group,
+      playerName: 'Me',
+      playerColor: '#ff0000',
+      isOwn: true,
+      onClose: noop,
+      onCardClick,
+    });
 
     // Click on the card component — find it by its role button
     const cardButtons = screen.getAllByRole('button');

@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
+import { useDragDrop } from './DragDropContext';
 import { readablePlayerColor } from '../utils/player-colors';
 import type { Card, Group } from '../../shared/types';
 
@@ -23,7 +24,22 @@ const PileViewer: React.FC<PileViewerProps> = ({
   onCardClick,
   onCardContextMenu,
 }) => {
+  const { startDrag, endDrag } = useDragDrop();
   const readableColor = readablePlayerColor(playerColor);
+
+  // When a card drag starts, close the overlay so the table becomes a drop target
+  const handleCardDragStart = useCallback(
+    (card: Card, e: React.DragEvent) => {
+      startDrag(card.id, `pile:${group.id}`, e);
+      // Close overlay after a tick so the drag operation is established first
+      requestAnimationFrame(() => onClose());
+    },
+    [startDrag, group.id, onClose],
+  );
+
+  const handleCardDragEnd = useCallback(() => {
+    endDrag();
+  }, [endDrag]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -139,6 +155,8 @@ const PileViewer: React.FC<PileViewerProps> = ({
                       card={card}
                       interactive={isOwn}
                       onClick={onCardClick}
+                      onDragStart={isOwn ? handleCardDragStart : undefined}
+                      onDragEnd={isOwn ? handleCardDragEnd : undefined}
                       onContextMenu={
                         onCardContextMenu
                           ? (c, e) => onCardContextMenu(e, c)
