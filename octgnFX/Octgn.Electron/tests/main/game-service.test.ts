@@ -1700,9 +1700,11 @@ describe('GameService', () => {
         sharedDeckSections: [],
       });
 
+      const handGroupId = 0x01000000 | (42 << 16) | 1;
+      const libraryGroupId = 0x01000000 | (42 << 16) | 2;
       const service = await serviceWithPlayerGroups([
-        { id: String((42 << 8) | 1), name: 'Hand' },
-        { id: String((42 << 8) | 2), name: 'Library' },
+        { id: String(handGroupId), name: 'Hand' },
+        { id: String(libraryGroupId), name: 'Library' },
       ]);
 
       service.loadDeckFromFile({
@@ -1717,11 +1719,11 @@ describe('GameService', () => {
         (c) => c[0] === MessageType.LoadDeck,
       );
       expect(call).toBeDefined();
-      // "Main Deck" → group "Library" → (42 << 8) | 2
-      // "Hand Cards" → group "Hand" → (42 << 8) | 1
+      // "Main Deck" → group "Library" → libraryGroupId
+      // "Hand Cards" → group "Hand" → handGroupId
       expect(call![2].group).toEqual([
-        (42 << 8) | 2,
-        (42 << 8) | 1,
+        libraryGroupId,
+        handGroupId,
       ]);
     });
 
@@ -1779,6 +1781,183 @@ describe('GameService', () => {
       );
       expect(call).toBeDefined();
       expect(call![2].sleeve).toBe('http://example.com/sleeve.png');
+    });
+
+    it('uses WPF-compatible group ID encoding: 0x01000000 | (playerId << 16) | (groupIndex + 1)', async () => {
+      // When falling back to game definition for group resolution (no groups in state),
+      // the group ID must match WPF format: 0x01000000 | (Owner.Id << 16) | Def.Id
+      mockGetGameDefinition.mockReturnValue({
+        id: 'gid',
+        name: 'Test',
+        players: [{
+          name: 'Player',
+          groups: [
+            { name: 'Hand', visibility: 2, ordered: false, cardActions: [], groupActions: [] },
+            { name: 'Library', visibility: 1, ordered: false, cardActions: [], groupActions: [] },
+          ],
+          counters: [],
+          globalVariables: [],
+        }],
+        deckSections: [
+          { name: 'Main Deck', group: 'Library', shared: false },
+        ],
+        sharedDeckSections: [],
+      });
+
+      // No pre-existing groups in player state — forces fallback to game definition
+      const service = await serviceWithPlayerGroups([]);
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          { name: 'Main Deck', cards: [{ id: 'c1', name: 'Card', quantity: 1, properties: {} }] },
+        ],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      // Library is group index 1 (0-based), so Def.Id = 2 (1-based)
+      // playerId = 42, so group ID = 0x01000000 | (42 << 16) | 2
+      const expectedGroupId = 0x01000000 | (42 << 16) | 2;
+      expect(call![2].group).toEqual([expectedGroupId]);
+    });
+
+    it('handles shared deck sections mapped to global player groups', async () => {
+      mockGetGameDefinition.mockReturnValue({
+        id: 'gid',
+        name: 'Test',
+        players: [{
+          name: 'Player',
+          groups: [
+            { name: 'Hand', visibility: 2, ordered: false, cardActions: [], groupActions: [] },
+          ],
+          counters: [],
+          globalVariables: [],
+        }],
+        deckSections: [
+          { name: 'Main Deck', group: 'Hand', shared: false },
+        ],
+        sharedDeckSections: [
+          { name: 'Shared Tokens', group: 'Tokens', shared: true },
+        ],
+        globalPlayer: {
+          groups: [
+            { name: 'Tokens', visibility: 0, ordered: false, cardActions: [], groupActions: [] },
+          ],
+        },
+      });
+
+      const service = await serviceWithPlayerGroups([
+        { id: String(0x01000000 | (42 << 16) | 1), name: 'Hand' },
+      ]);
+
+      service.loadDeckFromFile({
+        gameId: 'gid',
+        sections: [
+          { name: 'Main Deck', cards: [{ id: 'c1', name: 'Card', quantity: 1, properties: {} }] },
+          { name: 'Shared Tokens', cards: [{ id: 'c2', name: 'Token', quantity: 1, properties: {} }] },
+        ],
+      });
+
+      const call = mockSendMessage.mock.calls.find(
+        (c) => c[0] === MessageType.LoadDeck,
+      );
+      expect(call).toBeDefined();
+      // Main Deck → Hand group of local player
+      // Shared Tokens → global player group (player 0), Tokens at index 0, Def.Id = 1
+      const handGroupId = 0x01000000 | (42 << 16) | 1;
+      const sharedGroupId = 0x01000000 | (0 << 16) | 1; // global player = 0
+      expect(call![2].group).toEqual([handGroupId, sharedGroupId]);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // LoadDeck handler (receiving cards from server)
+  // -------------------------------------------------------------------------
+
+  describe('LoadDeck handler', () => {
+    it('adds cards to the correct player group by decoding player from group ID', async () => {
+      const service = await serviceWithState();
+      // Add a player with a group
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'Host', spectator: false }));
+
+      // Manually set up a group on that player matching WPF group ID
+      const state = lastState();
+      const player = state.players.find((p: any) => p.id === 1);
+      const groupId = 0x01000000 | (1 << 16) | 1; // player 1, group def id 1
+      player.groups = [{
+        id: String(groupId),
+        name: 'Hand',
+        cards: [],
+        visibility: 2,
+        controller: 1,
+      }];
+
+      // Trigger LoadDeck handler with that group ID
+      const loadDeck = getHandler('LoadDeck');
+      loadDeck(msg(MessageType.LoadDeck, {
+        id: [0x00010001],
+        type: ['def-1'],
+        group: [groupId],
+        size: [''],
+      }));
+
+      const finalState = lastState();
+      const p = finalState.players.find((p: any) => p.id === 1);
+      const g = p.groups.find((g: any) => g.id === String(groupId));
+      expect(g).toBeDefined();
+      expect(g.cards).toHaveLength(1);
+    });
+
+    it('creates group under correct player when group does not exist yet', async () => {
+      const service = await serviceWithState();
+      // Add two players
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'Host', spectator: false }));
+      newPlayer(msg(MessageType.NewPlayer, { id: 2, nick: 'Guest', spectator: false }));
+
+      // Trigger LoadDeck with a group ID encoding player 2
+      const loadDeck = getHandler('LoadDeck');
+      const groupIdForPlayer2 = 0x01000000 | (2 << 16) | 1;
+      loadDeck(msg(MessageType.LoadDeck, {
+        id: [0x00020001],
+        type: ['def-1'],
+        group: [groupIdForPlayer2],
+        size: [''],
+      }));
+
+      const finalState = lastState();
+      // Card should be on player 2, not player 1
+      const player2 = finalState.players.find((p: any) => p.id === 2);
+      expect(player2).toBeDefined();
+      const group = player2.groups.find((g: any) => g.id === String(groupIdForPlayer2));
+      expect(group).toBeDefined();
+      expect(group.cards).toHaveLength(1);
+
+      // Player 1 should NOT have this group
+      const player1 = finalState.players.find((p: any) => p.id === 1);
+      expect(player1.groups.find((g: any) => g.id === String(groupIdForPlayer2))).toBeUndefined();
+    });
+
+    it('treats 0x01000000 as table group', async () => {
+      const service = await serviceWithState();
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'Host', spectator: false }));
+
+      const loadDeck = getHandler('LoadDeck');
+      const tableGroupId = 0x01000000; // special table ID
+      loadDeck(msg(MessageType.LoadDeck, {
+        id: [0x00010001],
+        type: ['def-1'],
+        group: [tableGroupId],
+        size: [''],
+      }));
+
+      const finalState = lastState();
+      expect(finalState.table.cards).toHaveLength(1);
     });
   });
 });

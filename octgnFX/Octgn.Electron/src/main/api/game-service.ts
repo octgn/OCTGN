@@ -306,7 +306,11 @@ export class GameService {
       ? this.cardResolver.getGameDefinition(this.currentGameId)
       : undefined;
 
-    const deckSectionDefs: DeckSectionDef[] = gameDef?.deckSections ?? [];
+    // Combine player and shared deck section definitions
+    const deckSectionDefs: DeckSectionDef[] = [
+      ...(gameDef?.deckSections ?? []),
+      ...(gameDef?.sharedDeckSections ?? []),
+    ];
 
     const ids: number[] = [];
     const types: string[] = [];
@@ -315,7 +319,7 @@ export class GameService {
 
     for (const section of deck.sections) {
       // Find the target group for this section
-      const groupId = this.resolveGroupIdForSection(section.name, deckSectionDefs);
+      const groupId = this.resolveGroupIdForSection(section.name, deckSectionDefs, gameDef);
 
       for (const card of section.cards) {
         for (let i = 0; i < card.quantity; i++) {
@@ -339,43 +343,60 @@ export class GameService {
   /**
    * Resolve the numeric group ID for a deck section name.
    * Uses game definition deck sections to map section name → group name → player group ID.
+   * Shared sections map to the global player (ID 0).
    */
-  private resolveGroupIdForSection(sectionName: string, deckSectionDefs: DeckSectionDef[]): number {
+  private resolveGroupIdForSection(
+    sectionName: string,
+    deckSectionDefs: DeckSectionDef[],
+    gameDef?: { players: { groups: { name: string }[] }[]; globalPlayer?: { groups: { name: string }[] } },
+  ): number {
     // Step 1: find the deck section definition matching this section name
     const sectionDef = deckSectionDefs.find(
       (d) => d.name.toLowerCase() === sectionName.toLowerCase(),
     );
     const targetGroupName = sectionDef?.group ?? sectionName;
+    const isShared = sectionDef?.shared ?? false;
 
-    // Step 2: find the local player's group matching that group name
-    const localPlayer = this.gameState?.players.find((p) => p.id === this.localPlayerId);
-    if (localPlayer) {
-      const group = localPlayer.groups.find(
-        (g) => g.name.toLowerCase() === targetGroupName.toLowerCase(),
-      );
-      if (group) return Number(group.id);
+    // Step 2: for non-shared sections, find the local player's group matching that group name
+    if (!isShared) {
+      const localPlayer = this.gameState?.players.find((p) => p.id === this.localPlayerId);
+      if (localPlayer) {
+        const group = localPlayer.groups.find(
+          (g) => g.name.toLowerCase() === targetGroupName.toLowerCase(),
+        );
+        if (group) return Number(group.id);
+      }
     }
 
-    // Step 3: fallback — find by group name in game definition player groups to get index
-    const gameDef = this.currentGameId
-      ? this.cardResolver.getGameDefinition(this.currentGameId)
-      : undefined;
-    if (gameDef?.players && gameDef.players.length > 0) {
+    // Step 3: look up group index in the appropriate group list from game definition
+    if (isShared && gameDef?.globalPlayer) {
+      // Shared sections use the global player (ID 0)
+      const groupIndex = gameDef.globalPlayer.groups.findIndex(
+        (g) => g.name.toLowerCase() === targetGroupName.toLowerCase(),
+      );
+      if (groupIndex >= 0) {
+        // WPF Group.Id encoding: 0x01000000 | (Owner.Id << 16) | Def.Id
+        // Global player ID is 0
+        return 0x01000000 | (0 << 16) | (groupIndex + 1);
+      }
+    } else if (gameDef?.players && gameDef.players.length > 0) {
       const playerDef = gameDef.players[0];
       const groupIndex = playerDef.groups.findIndex(
         (g) => g.name.toLowerCase() === targetGroupName.toLowerCase(),
       );
       if (groupIndex >= 0) {
-        // Encode as (playerId << 8) | (groupIndex + 1)
-        return (this.localPlayerId << 8) | (groupIndex + 1);
+        // WPF Group.Id encoding: 0x01000000 | (Owner.Id << 16) | Def.Id
+        // Def.Id is 1-based group index
+        return 0x01000000 | (this.localPlayerId << 16) | (groupIndex + 1);
       }
     }
 
-    // Final fallback: first group of local player, or 0 (table)
+    // Final fallback: first group of local player, or table (0x01000000)
+    const localPlayer = this.gameState?.players.find((p) => p.id === this.localPlayerId);
     if (localPlayer && localPlayer.groups.length > 0) {
       return Number(localPlayer.groups[0].id);
     }
-    return 0;
+    return 0x01000000;
   }
 
   /**
@@ -554,6 +575,8 @@ export class GameService {
                 this.resolveBoardImage(defaultBoard.name || '');
               }
             }
+            // Initialize player groups from game definition for players that don't have groups yet
+            this.initializePlayerGroupsFromDefinition(gameDef);
             // Update card names and images from now-loaded definitions
             this.updateCardNamesAndImages();
             this.broadcastState();
@@ -1183,7 +1206,30 @@ export class GameService {
     };
   }
 
+  /**
+   * Initialize player groups from game definition for players that don't have groups yet.
+   * WPF creates groups from definition.xml when the game engine starts; we do it after
+   * the game definition is loaded asynchronously.
+   */
+  private initializePlayerGroupsFromDefinition(gameDef: { players: { groups: { name: string; visibility?: number }[] }[] }): void {
+    if (!this.gameState || !gameDef?.players || gameDef.players.length === 0) return;
+    const playerGroupDefs = gameDef.players[0].groups;
+    if (!playerGroupDefs || playerGroupDefs.length === 0) return;
 
+    for (const player of this.gameState.players) {
+      if (player.isSpectator) continue;
+      if (player.groups.length > 0) continue; // already has groups (e.g. from GameState snapshot)
+
+      player.groups = playerGroupDefs.map((gDef, index) => ({
+        id: String(0x01000000 | (player.id << 16) | (index + 1)),
+        name: gDef.name,
+        cards: [],
+        visibility: (gDef as any).visibility ?? GroupVisibility.Owner,
+        controller: player.id,
+      }));
+      log('GAME', `Initialized ${player.groups.length} groups for player ${player.id} (${player.name})`);
+    }
+  }
 
   /**
    * Parse a full GameState JSON snapshot from the server.
@@ -1411,12 +1457,14 @@ export class GameService {
 
   /**
    * Add a card to the appropriate group or table.
+   * WPF Group ID encoding: 0x01000000 | (Owner.Id << 16) | Def.Id
+   * Special case: 0x01000000 (no owner, Def.Id=0) = Table
    */
   private addCardToGroup(card: Card, groupId: number): void {
     if (!this.gameState) return;
 
-    // Group id 0 is typically the table
-    if (groupId === 0) {
+    // Table: group id 0 or 0x01000000 (WPF Table.Id has no owner and Def.Id=0)
+    if (groupId === 0 || groupId === 0x01000000) {
       this.gameState.table.cards.push(card);
       return;
     }
@@ -1428,9 +1476,12 @@ export class GameService {
       return;
     }
 
-    // Group doesn't exist yet — create it under the first non-spectator player
-    // or add to table as fallback
-    const targetPlayer = this.gameState.players.find((p) => !p.isSpectator);
+    // Group doesn't exist yet — decode the owner player ID from the group ID
+    // WPF: Player.Find((byte)(id >> 16))
+    const ownerId = (groupId >> 16) & 0xFF;
+    const targetPlayer = this.gameState.players.find((p) => p.id === ownerId)
+      ?? this.gameState.players.find((p) => !p.isSpectator);
+
     if (targetPlayer) {
       const newGroup: Group = {
         id: String(groupId),
