@@ -1,9 +1,9 @@
 import { IpcMain, BrowserWindow, app, dialog, clipboard } from 'electron';
 import { readFile } from 'fs/promises';
-import { IPC_CHANNELS } from '../../shared/types';
+import { IPC_CHANNELS, type Deck } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
 import { GameService } from '../api/game-service';
-import { listInstalledGames, uninstallGame } from '../games/game-store';
+import { listInstalledGames, uninstallGame, getUserDecksDir, getPrebuiltDecksDir } from '../games/game-store';
 import { fetchAvailableGames } from '../games/game-feed';
 import { installGame } from '../games/game-installer';
 import { listFeeds, addFeed, removeFeed, setFeedEnabled } from '../games/feed-manager';
@@ -175,21 +175,14 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     gameService.startGame();
   });
 
-  ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (_event, deck: Record<string, unknown>) => {
-    gameService.loadDeck(
-      deck.ids as number[],
-      deck.types as string[],
-      deck.groups as number[],
-      deck.sizes as string[],
-      (deck.sleeve as string) ?? '',
-      (deck.limited as boolean) ?? false,
-    );
+  ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (_event, deck: Deck) => {
+    gameService.loadDeckFromFile(deck);
   });
 
   // File dialog handler
   ipcMain.handle(
     IPC_CHANNELS.OPEN_FILE_DIALOG,
-    async (_event, filters?: { name: string; extensions: string[] }[]) => {
+    async (_event, filters?: { name: string; extensions: string[] }[], defaultPath?: string) => {
       const defaultFilters = filters ?? [
         { name: 'OCTGN Deck Files', extensions: ['o8d'] },
         { name: 'All Files', extensions: ['*'] },
@@ -199,6 +192,7 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
         title: 'Open Deck File',
         filters: defaultFilters,
         properties: ['openFile'],
+        defaultPath: defaultPath || undefined,
       });
 
       if (result.canceled || result.filePaths.length === 0) {
@@ -210,6 +204,15 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
       return { filePath, content };
     },
   );
+
+  // Deck paths handler
+  ipcMain.handle(IPC_CHANNELS.DECK_PATHS, async (_event, gameId?: string) => {
+    log('DECK_PATHS', `Resolving deck paths for gameId=${gameId}`);
+    const userDecksPath = await getUserDecksDir();
+    const prebuiltDecksPath = gameId ? await getPrebuiltDecksDir(gameId) : null;
+    log('DECK_PATHS', `userDecksPath=${userDecksPath}, prebuiltDecksPath=${prebuiltDecksPath}`);
+    return { userDecksPath, prebuiltDecksPath };
+  });
 
   // Window control handlers
   ipcMain.handle(IPC_CHANNELS.APP_MINIMIZE, () => {

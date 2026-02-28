@@ -74,6 +74,12 @@ export interface CardSizeDefinition {
   backCornerRadius: number;
 }
 
+export interface DeckSectionDef {
+  name: string;
+  group: string;
+  shared: boolean;
+}
+
 export interface GameDefinition {
   id: string;
   name: string;
@@ -83,8 +89,8 @@ export interface GameDefinition {
   cardWidth: number;
   cardHeight: number;
   cardBack: string;
-  deckSections: string[];
-  sharedDeckSections: string[];
+  deckSections: DeckSectionDef[];
+  sharedDeckSections: DeckSectionDef[];
   players: PlayerDefinition[];
   globalVariables: Variable[];
   phases: GamePhase[];
@@ -315,6 +321,7 @@ export const IPC_CHANNELS = {
   GAME_ACTION: 'game:action',
   GAME_CHAT: 'game:chat',
   LOAD_DECK: 'game:load-deck',
+  DECK_PATHS: 'game:deck-paths',
   GAME_SETTINGS: 'game:settings',
   GAME_PLAYER_SETTINGS: 'game:player-settings',
   GAME_BOOT_PLAYER: 'game:boot-player',

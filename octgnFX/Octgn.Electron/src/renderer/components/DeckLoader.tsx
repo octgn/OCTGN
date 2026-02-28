@@ -9,7 +9,7 @@ interface DeckLoaderProps {
   className?: string;
 }
 
-function parseO8dXml(xmlContent: string): Deck {
+export function parseO8dXml(xmlContent: string): Deck {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlContent, 'application/xml');
 

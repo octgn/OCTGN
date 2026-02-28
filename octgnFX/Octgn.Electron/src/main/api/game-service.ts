@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
 import { GameConnection } from '../protocol/connection';
 import { MessageType, type ProtocolMessage } from '../protocol/types';
-import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker } from '../../shared/types';
+import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker, Deck, DeckSectionDef } from '../../shared/types';
 import { IPC_CHANNELS, GroupVisibility } from '../../shared/types';
 import { ScriptEngine } from '../scripting/script-engine';
 import { CardResolver } from '../games/card-resolver';
@@ -51,6 +51,7 @@ export class GameService {
   private imageResolver: ImageResolver = new ImageResolver();
   private currentGameId: string = '';
   private pendingBoardName: string | undefined;
+  private nextCardUniqueId: number = 1;
 
   /**
    * Join a game server and start receiving state updates.
@@ -286,6 +287,95 @@ export class GameService {
       sleeve,
       limited,
     });
+  }
+
+  /**
+   * Generate a unique card ID matching WPF's GenerateCardId.
+   */
+  private generateCardId(): number {
+    return (this.localPlayerId << 16) | (this.nextCardUniqueId++ & 0xFFFF);
+  }
+
+  /**
+   * Load a deck from a parsed Deck object.
+   * Maps deck sections to player groups using game definition, generates card IDs,
+   * and sends the LoadDeck protocol message.
+   */
+  loadDeckFromFile(deck: Deck): void {
+    const gameDef = this.currentGameId
+      ? this.cardResolver.getGameDefinition(this.currentGameId)
+      : undefined;
+
+    const deckSectionDefs: DeckSectionDef[] = gameDef?.deckSections ?? [];
+
+    const ids: number[] = [];
+    const types: string[] = [];
+    const groups: number[] = [];
+    const sizes: string[] = [];
+
+    for (const section of deck.sections) {
+      // Find the target group for this section
+      const groupId = this.resolveGroupIdForSection(section.name, deckSectionDefs);
+
+      for (const card of section.cards) {
+        for (let i = 0; i < card.quantity; i++) {
+          ids.push(this.generateCardId());
+          types.push(card.id); // card definition ID (GUID)
+          groups.push(groupId);
+          sizes.push(''); // default size
+        }
+      }
+    }
+
+    if (ids.length === 0) {
+      log('GAME', 'loadDeckFromFile: no cards to load');
+      return;
+    }
+
+    log('GAME', `loadDeckFromFile: loading ${ids.length} cards into ${new Set(groups).size} groups`);
+    this.loadDeck(ids, types, groups, sizes, deck.sleeveUrl ?? '', false);
+  }
+
+  /**
+   * Resolve the numeric group ID for a deck section name.
+   * Uses game definition deck sections to map section name → group name → player group ID.
+   */
+  private resolveGroupIdForSection(sectionName: string, deckSectionDefs: DeckSectionDef[]): number {
+    // Step 1: find the deck section definition matching this section name
+    const sectionDef = deckSectionDefs.find(
+      (d) => d.name.toLowerCase() === sectionName.toLowerCase(),
+    );
+    const targetGroupName = sectionDef?.group ?? sectionName;
+
+    // Step 2: find the local player's group matching that group name
+    const localPlayer = this.gameState?.players.find((p) => p.id === this.localPlayerId);
+    if (localPlayer) {
+      const group = localPlayer.groups.find(
+        (g) => g.name.toLowerCase() === targetGroupName.toLowerCase(),
+      );
+      if (group) return Number(group.id);
+    }
+
+    // Step 3: fallback — find by group name in game definition player groups to get index
+    const gameDef = this.currentGameId
+      ? this.cardResolver.getGameDefinition(this.currentGameId)
+      : undefined;
+    if (gameDef?.players && gameDef.players.length > 0) {
+      const playerDef = gameDef.players[0];
+      const groupIndex = playerDef.groups.findIndex(
+        (g) => g.name.toLowerCase() === targetGroupName.toLowerCase(),
+      );
+      if (groupIndex >= 0) {
+        // Encode as (playerId << 8) | (groupIndex + 1)
+        return (this.localPlayerId << 8) | (groupIndex + 1);
+      }
+    }
+
+    // Final fallback: first group of local player, or 0 (table)
+    if (localPlayer && localPlayer.groups.length > 0) {
+      return Number(localPlayer.groups[0].id);
+    }
+    return 0;
   }
 
   /**

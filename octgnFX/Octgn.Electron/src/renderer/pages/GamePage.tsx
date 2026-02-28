@@ -5,8 +5,10 @@ import Button from '../components/Button';
 import PreGameLobby from '../components/PreGameLobby';
 import { DragDropProvider } from '../components/DragDropContext';
 import GameBoard from '../components/GameBoard';
+import { parseO8dXml } from '../components/DeckLoader';
 import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
+import { useToastStore } from '../stores/toast-store';
 import type { Card, ChatMessage, Player, Counter, Group } from '../../shared/types';
 import { readablePlayerColor } from '../utils/player-colors';
 
@@ -27,9 +29,14 @@ const GamePage: React.FC = () => {
   const nextTurn = useGameStore((s) => s.nextTurn);
   const subscribe = useGameStore((s) => s.subscribe);
   const leaveGame = useGameStore((s) => s.leaveGame);
+  const loadDeck = useGameStore((s) => s.loadDeck);
+  const getDeckPaths = useGameStore((s) => s.getDeckPaths);
   const navigate = useAppStore((s) => s.navigate);
+  const addToast = useToastStore((s) => s.addToast);
 
   const [chatOpen, setChatOpen] = useState(true);
+  const [deckLoading, setDeckLoading] = useState<'user' | 'prebuilt' | false>(false);
+  const [prebuiltDecksPath, setPrebuiltDecksPath] = useState<string | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
@@ -46,6 +53,67 @@ const GamePage: React.FC = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [gameState?.chatMessages?.length]);
+
+  // Fetch deck paths when game definition is available
+  useEffect(() => {
+    if (gameState?.gameDefinition?.id && !isSpectator) {
+      getDeckPaths(gameState.gameDefinition.id).then(({ prebuiltDecksPath: prebuilt }) => {
+        setPrebuiltDecksPath(prebuilt);
+      });
+    }
+  }, [gameState?.gameDefinition?.id, isSpectator, getDeckPaths]);
+
+  const handleLoadDeck = useCallback(async (defaultPath?: string | null) => {
+    try {
+      const result = await window.octgn.openFileDialog(
+        [
+          { name: 'OCTGN Deck Files', extensions: ['o8d'] },
+          { name: 'All Files', extensions: ['*'] },
+        ],
+        defaultPath || undefined,
+      );
+
+      if (!result) {
+        setDeckLoading(false);
+        return;
+      }
+
+      const deck = parseO8dXml(result.content);
+      const totalCards = deck.sections.reduce(
+        (sum, section) => sum + section.cards.reduce((a, c) => a + c.quantity, 0),
+        0,
+      );
+
+      if (totalCards === 0) {
+        addToast('Deck file is empty - no cards found', 'warning');
+        setDeckLoading(false);
+        return;
+      }
+
+      await loadDeck(deck);
+      const fileName = result.filePath.split(/[/\\]/).pop() || 'deck';
+      addToast(
+        `Loaded "${fileName}" - ${totalCards} card${totalCards !== 1 ? 's' : ''}`,
+        'success',
+      );
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load deck file';
+      addToast(message, 'error');
+    } finally {
+      setDeckLoading(false);
+    }
+  }, [loadDeck, addToast]);
+
+  const handleLoadUserDeck = useCallback(async () => {
+    setDeckLoading('user');
+    const { userDecksPath } = await getDeckPaths(gameState?.gameDefinition?.id);
+    handleLoadDeck(userDecksPath);
+  }, [getDeckPaths, gameState?.gameDefinition?.id, handleLoadDeck]);
+
+  const handleLoadPrebuiltDeck = useCallback(async () => {
+    setDeckLoading('prebuilt');
+    handleLoadDeck(prebuiltDecksPath);
+  }, [prebuiltDecksPath, handleLoadDeck]);
 
   // Close context menu on click anywhere
   useEffect(() => {
@@ -243,9 +311,54 @@ const GamePage: React.FC = () => {
             ))}
 
             {!isSpectator && (
-              <Button variant="ghost" size="sm" onClick={() => nextTurn()}>
-                Next Turn
-              </Button>
+              <>
+                {/* Deck actions cluster */}
+                <div className="flex items-center gap-0.5 bg-white/[0.03] rounded-lg border border-octgn-border/20 p-0.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLoadUserDeck}
+                    loading={deckLoading === 'user'}
+                    disabled={!!deckLoading && deckLoading !== 'user'}
+                    icon={
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="10" height="10" rx="1.5" />
+                        <path d="M5 4V3a1.5 1.5 0 011.5-1.5h5A1.5 1.5 0 0113 3v7" />
+                        <path d="M6 8.5h4M6 11h2.5" />
+                      </svg>
+                    }
+                  >
+                    Load Deck
+                  </Button>
+                  {prebuiltDecksPath && (
+                    <>
+                      <div className="w-px h-4 bg-octgn-border/30" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleLoadPrebuiltDeck}
+                        loading={deckLoading === 'prebuilt'}
+                        disabled={!!deckLoading && deckLoading !== 'prebuilt'}
+                        icon={
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2.5 5L8 2l5.5 3L8 8 2.5 5z" />
+                            <path d="M2.5 5v6L8 14l5.5-3V5" />
+                            <path d="M8 8v6" />
+                          </svg>
+                        }
+                      >
+                        Pre-Built Deck
+                      </Button>
+                    </>
+                  )}
+                </div>
+
+                <div className="w-px h-4 bg-octgn-border/30" />
+
+                <Button variant="ghost" size="sm" onClick={() => nextTurn()}>
+                  Next Turn
+                </Button>
+              </>
             )}
             <Button variant="ghost" size="sm" onClick={() => setChatOpen((v) => !v)}>
               Chat

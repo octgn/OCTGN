@@ -8,6 +8,7 @@ import { readdir, readFile, access } from 'fs/promises';
 import { join } from 'path';
 import { constants } from 'fs';
 import { parseDefinitionXml } from './definition-parser';
+import { resolveUserDecksDir, resolvePrebuiltDecksDir, type OctgnPathsIO } from './octgn-paths';
 import type { GameDefinition } from '../../shared/types';
 
 /** Possible GameDatabase paths in priority order (newest install path first). */
@@ -114,4 +115,33 @@ export async function findGameDir(gameId: string): Promise<string | null> {
     if (await exists(legacyDir)) return legacyDir;
   }
   return null;
+}
+
+/** Default IO implementation for octgn-paths (uses real fs + env). */
+function defaultIO(): OctgnPathsIO {
+  return {
+    exists,
+    readFile: async (path: string) => (await readFile(path, 'utf-8')),
+    env: (name: string) => process.env[name],
+    homedir: () => app.getPath('home'),
+    documentsDir: () => app.getPath('documents'),
+  };
+}
+
+/**
+ * Find the user's deck directory following the WPF client's resolution chain:
+ * OCTGN_DATA env → data.path file → My Documents\Octgn → {install}\Data
+ * Then returns {dataDir}\Decks.
+ */
+export async function getUserDecksDir(): Promise<string | null> {
+  return resolveUserDecksDir(defaultIO());
+}
+
+/**
+ * Find the pre-built decks directory for a specific game: {gameInstallPath}\Decks
+ */
+export async function getPrebuiltDecksDir(gameId: string): Promise<string | null> {
+  const gameDir = await findGameDir(gameId);
+  if (!gameDir) return null;
+  return resolvePrebuiltDecksDir(gameDir, defaultIO());
 }
