@@ -578,6 +578,8 @@ export class GameService {
             }
             // Initialize player groups from game definition for players that don't have groups yet
             this.initializePlayerGroupsFromDefinition(gameDef);
+            // Initialize global player (shared groups) from game definition
+            this.initializeGlobalPlayer(gameDef);
             // Update card names and images from now-loaded definitions
             this.updateCardNamesAndImages();
             this.broadcastState();
@@ -1230,6 +1232,38 @@ export class GameService {
       }));
       log('GAME', `Initialized ${player.groups.length} groups for player ${player.id} (${player.name})`);
     }
+  }
+
+  /**
+   * Initialize global player (ID 0) from game definition's globalPlayer/shared groups.
+   * The global player holds shared piles accessible to all players.
+   */
+  private initializeGlobalPlayer(gameDef: { globalPlayer?: { groups: { name: string; visibility?: number }[] } }): void {
+    if (!this.gameState || !gameDef?.globalPlayer?.groups?.length) return;
+
+    // Don't create if global player already exists
+    if (this.gameState.players.some((p) => p.id === 0)) return;
+
+    const globalGroups: Group[] = gameDef.globalPlayer.groups.map((gDef, index) => ({
+      id: String(0x01000000 | (0 << 16) | (index + 1)),
+      name: gDef.name,
+      cards: [],
+      visibility: (gDef as any).visibility ?? GroupVisibility.Everybody,
+      controller: 0,
+    }));
+
+    this.gameState.players.push({
+      id: 0,
+      name: 'Global',
+      color: '#000000',
+      isHost: false,
+      isSpectator: false,
+      invertedTable: false,
+      groups: globalGroups,
+      counters: [],
+      globalVariables: {},
+    });
+    log('GAME', `Initialized global player with ${globalGroups.length} shared groups`);
   }
 
   /**

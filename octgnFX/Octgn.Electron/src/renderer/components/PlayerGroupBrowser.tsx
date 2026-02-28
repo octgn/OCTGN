@@ -2,8 +2,10 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
 import PileViewer from './PileViewer';
-import PlayerRow from './PlayerRow';
+import GroupStrip from './GroupStrip';
+import HandZone from './HandZone';
 import { useDragDrop } from './DragDropContext';
+import { readablePlayerColor } from '../utils/player-colors';
 import type { Card, Group, Player } from '../../shared/types';
 import { GroupVisibility } from '../../shared/types';
 
@@ -57,33 +59,18 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
 }) => {
   const { dragState, isDragging } = useDragDrop();
 
-  // Active (non-spectator, non-global) players
+  // Active players (non-spectator, non-global)
   const activePlayers = useMemo(
     () => players.filter((p) => !p.isSpectator && p.id !== 0),
     [players],
   );
 
-  // Default expanded: local player (or first active for spectator)
-  const defaultExpanded = useMemo(() => {
-    if (isSpectator && activePlayers.length > 0) {
-      return new Set<number | 'global'>([activePlayers[0].id]);
-    }
-    return new Set<number | 'global'>([localPlayerId]);
-  }, []);
-
-  const [expandedPlayers, setExpandedPlayers] = useState<Set<number | 'global'>>(defaultExpanded);
-
-  const toggleExpand = useCallback((id: number | 'global') => {
-    setExpandedPlayers((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
+  // Tab state: 'global' | player ID
+  const [selectedTab, setSelectedTab] = useState<string | number>(
+    isSpectator && activePlayers.length > 0
+      ? activePlayers[0].id
+      : localPlayerId,
+  );
 
   // Pile viewer state
   const [viewingPile, setViewingPile] = useState<{
@@ -93,33 +80,55 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
     isOwn: boolean;
   } | null>(null);
 
-  const handlePileClick = useCallback(
-    (group: Group, player: Player, isOwn: boolean) => {
-      const isGlobal = player.id === 0;
-      setViewingPile({
-        group,
-        playerName: isGlobal ? 'Shared' : player.name,
-        playerColor: isGlobal ? '#6b7280' : player.color,
-        isOwn,
-      });
-    },
-    [],
+  // Resolve selected player/groups
+  const isGlobalTab = selectedTab === 'global';
+  const selectedPlayer = isGlobalTab
+    ? null
+    : activePlayers.find((p) => p.id === selectedTab);
+  const isOwnTab = !isGlobalTab && selectedTab === localPlayerId && !isSpectator;
+
+  // Apply visibility filtering
+  const displayGroups = useMemo(() => {
+    if (isGlobalTab) return globalGroups ?? [];
+    if (!selectedPlayer) return [];
+    return filterVisibleGroups(
+      selectedPlayer.groups,
+      selectedPlayer.id,
+      localPlayerId,
+      isSpectator,
+    );
+  }, [isGlobalTab, globalGroups, selectedPlayer, localPlayerId, isSpectator]);
+
+  const handGroup = useMemo(
+    () => (isOwnTab ? displayGroups.find((g) => g.name.toLowerCase() === 'hand') : null),
+    [isOwnTab, displayGroups],
   );
 
-  // Synthetic global player
-  const globalPlayer = useMemo((): Player | null => {
-    if (!globalGroups || globalGroups.length === 0) return null;
-    return {
-      id: 0,
-      name: 'Shared',
-      color: '#6b7280',
-      isHost: false,
-      isSpectator: false,
-      groups: globalGroups,
-      counters: [],
-      globalVariables: {},
-    };
-  }, [globalGroups]);
+  const sideGroups = useMemo(
+    () =>
+      isOwnTab
+        ? displayGroups.filter((g) => g.name.toLowerCase() !== 'hand')
+        : displayGroups,
+    [isOwnTab, displayGroups],
+  );
+
+  // ─── Pile click handler ────────────────────────────────────────────
+  const handlePileClick = useCallback(
+    (group: Group) => {
+      const pName = isGlobalTab ? 'Global' : selectedPlayer?.name ?? '';
+      const pColor = isGlobalTab ? '#6b7280' : selectedPlayer?.color ?? '#6b7280';
+      setViewingPile({
+        group,
+        playerName: pName,
+        playerColor: pColor,
+        isOwn: isOwnTab,
+      });
+    },
+    [isGlobalTab, selectedPlayer, isOwnTab],
+  );
+
+  // ─── Counters for selected player ─────────────────────────────────
+  const counters = selectedPlayer?.counters ?? [];
 
   return (
     <>
@@ -127,59 +136,125 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
         data-testid="player-group-browser"
         className={clsx(
           'border-t border-octgn-border/30 flex flex-col shrink-0',
-          'bg-gradient-to-t from-octgn-bg/90 via-octgn-surface/70 to-octgn-surface/50',
+          'bg-gradient-to-t from-octgn-bg/80 via-octgn-surface/60 to-octgn-surface/40',
           'backdrop-blur-md',
-          'max-h-[50vh] overflow-y-auto scrollbar-thin',
         )}
       >
-        {/* Top edge accent line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        {/* ── Tab bar ─────────────────────────────────────────────── */}
+        <div className="flex items-center gap-0.5 px-2 sm:px-3 py-1 overflow-x-auto scrollbar-thin border-b border-octgn-border/20">
+          {/* Global tab */}
+          {globalGroups && globalGroups.length > 0 && (
+            <button
+              data-testid="tab-global"
+              onClick={() => setSelectedTab('global')}
+              className={clsx(
+                'group relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap',
+                'transition-all duration-250 ease-out',
+                isGlobalTab
+                  ? 'bg-white/[0.08] text-octgn-text shadow-[0_0_10px_rgba(107,114,128,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]'
+                  : 'text-octgn-text-dim hover:text-octgn-text-muted hover:bg-white/[0.03]',
+              )}
+            >
+              {isGlobalTab && (
+                <div className="absolute inset-x-0 -bottom-[1px] h-[2px] bg-gradient-to-r from-transparent via-octgn-text-dim/50 to-transparent" />
+              )}
+              <svg
+                className={clsx('w-3 h-3 transition-opacity duration-200', isGlobalTab ? 'opacity-70' : 'opacity-40 group-hover:opacity-50')}
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <path d="M2.5 8h11M8 2.5c-1.8 1.8-1.8 3.5-1.8 5.5s0 3.7 1.8 5.5M8 2.5c1.8 1.8 1.8 3.5 1.8 5.5s0 3.7-1.8 5.5" stroke="currentColor" strokeWidth="0.8" fill="none" />
+              </svg>
+              <span>Shared</span>
+            </button>
+          )}
 
-        {/* Global player row */}
-        {globalPlayer && (
-          <PlayerRow
-            player={globalPlayer}
-            isLocal={false}
-            isExpanded={expandedPlayers.has('global')}
-            isSpectator={isSpectator}
-            visibleGroups={filterVisibleGroups(globalPlayer.groups, 0, localPlayerId, isSpectator)}
-            onToggleExpand={() => toggleExpand('global')}
-            onPileClick={(group) => handlePileClick(group, globalPlayer, false)}
+          {/* Player tabs */}
+          {activePlayers.map((player) => {
+            const isSelected = !isGlobalTab && selectedTab === player.id;
+            const isLocal = player.id === localPlayerId;
+            const pColor = player.color || '#6b7280';
+            const readableColor = readablePlayerColor(pColor);
+
+            return (
+              <button
+                key={player.id}
+                data-testid={`tab-player-${player.id}`}
+                onClick={() => setSelectedTab(player.id)}
+                className={clsx(
+                  'group relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap',
+                  'transition-all duration-250 ease-out',
+                  isSelected
+                    ? 'bg-white/[0.07] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]'
+                    : 'text-octgn-text-dim hover:text-octgn-text-muted hover:bg-white/[0.03]',
+                )}
+              >
+                {/* Active indicator bar */}
+                {isSelected && (
+                  <div
+                    className="absolute inset-x-2 -bottom-[1px] h-[2px] rounded-full"
+                    style={{
+                      background: `linear-gradient(90deg, transparent, ${pColor}cc, transparent)`,
+                      boxShadow: `0 0 6px ${pColor}40`,
+                    }}
+                  />
+                )}
+
+                {/* Player color dot */}
+                <div
+                  className={clsx(
+                    'w-2 h-2 rounded-full shrink-0 transition-all duration-250',
+                    isSelected && 'scale-110',
+                  )}
+                  style={{
+                    backgroundColor: pColor,
+                    boxShadow: isSelected ? `0 0 6px ${pColor}80` : undefined,
+                  }}
+                />
+                <span style={isSelected ? { color: readableColor } : undefined}>
+                  {player.name}
+                  {isLocal && !isSpectator && (
+                    <span className="ml-1 text-[9px] opacity-40 font-normal">(you)</span>
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Counters row ────────────────────────────────────────── */}
+        {!isGlobalTab && counters.length > 0 && (
+          <div className="flex items-center gap-3 px-3 sm:px-4 py-1 border-b border-octgn-border/10 overflow-x-auto">
+            {counters.map((c) => (
+              <div key={c.id} className="flex items-center gap-1.5 text-xs whitespace-nowrap">
+                <span className="text-octgn-text-dim text-[10px] uppercase tracking-wider">{c.name}</span>
+                <span className="font-mono font-bold text-octgn-text bg-octgn-surface/80 px-1.5 py-0.5 rounded border border-octgn-border/25 text-[11px]">
+                  {c.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Group strip ─────────────────────────────────────────── */}
+        <GroupStrip
+          groups={sideGroups}
+          isOwn={isOwnTab}
+          onPileClick={handlePileClick}
+          onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
+        />
+
+        {/* ── Hand zone (own player only, non-spectator) ──────────── */}
+        {isOwnTab && handGroup && (
+          <HandZone
+            cards={handGroup.cards}
+            handGroupId={handGroup.id}
             selectedCardId={selectedCardId}
             onCardClick={onCardClick}
             onCardContextMenu={onCardContextMenu}
             onCardMoveToGroup={onCardMoveToGroup}
           />
         )}
-
-        {/* Player rows */}
-        {activePlayers.map((player) => {
-          const isLocal = player.id === localPlayerId;
-          const isOwnRow = isLocal && !isSpectator;
-          const visibleGroups = filterVisibleGroups(
-            player.groups,
-            player.id,
-            localPlayerId,
-            isSpectator,
-          );
-
-          return (
-            <PlayerRow
-              key={player.id}
-              player={player}
-              isLocal={isLocal}
-              isExpanded={expandedPlayers.has(player.id)}
-              isSpectator={isSpectator}
-              visibleGroups={visibleGroups}
-              onToggleExpand={() => toggleExpand(player.id)}
-              onPileClick={(group) => handlePileClick(group, player, isOwnRow)}
-              selectedCardId={selectedCardId}
-              onCardClick={onCardClick}
-              onCardContextMenu={onCardContextMenu}
-              onCardMoveToGroup={onCardMoveToGroup}
-            />
-          );
-        })}
       </div>
 
       {/* Pile Viewer overlay */}
@@ -196,8 +271,9 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
       )}
 
       {/* Drag Ghost Overlay */}
-      {isDragging && dragState.draggingCardId && (() => {
-        const allCards = players.flatMap((p) => p.groups.flatMap((g) => g.cards));
+      {isOwnTab && isDragging && dragState.draggingCardId && (() => {
+        const allCards = players
+          .flatMap((p) => p.groups.flatMap((g) => g.cards));
         const draggingCard = allCards.find((c) => c.id === dragState.draggingCardId);
         if (!draggingCard) return null;
         return (
