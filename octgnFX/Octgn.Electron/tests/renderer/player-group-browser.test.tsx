@@ -167,18 +167,19 @@ describe('PlayerGroupBrowser', () => {
     expect(screen.getByTestId('hand-zone')).toBeTruthy();
   });
 
-  it('hides hand zone when viewing other player groups', () => {
+  it('shows hand zone (non-interactive) when viewing other player groups', () => {
     renderBrowser();
     fireEvent.click(screen.getByTestId('tab-player-2'));
-    expect(screen.queryByTestId('hand-zone')).toBeNull();
+    // Hand is always shown as a fan for all players
+    expect(screen.getByTestId('hand-zone')).toBeTruthy();
   });
 
   it('switches to other player groups when their tab is clicked', () => {
     renderBrowser();
     fireEvent.click(screen.getByTestId('tab-player-2'));
 
-    // All of Bob's groups should be visible
-    expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
+    // Bob's non-hand groups shown as piles, hand shown as fan
+    expect(screen.getByTestId('hand-zone')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
   });
@@ -232,14 +233,28 @@ describe('PlayerGroupBrowser', () => {
   });
 
   // ─── All groups visible ────────────────────────────────────────
-  it('shows all groups for other players (card visibility handled by protocol)', () => {
+  it('shows all groups for other players (hand as fan, others as piles)', () => {
     renderBrowser();
     fireEvent.click(screen.getByTestId('tab-player-2'));
 
-    // All of Bob's groups are shown — cards appear face-down per protocol
-    expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
+    // Hand shown as fan, other groups as piles
+    expect(screen.getByTestId('hand-zone')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
+  });
+
+  // ─── Card visibility ─────────────────────────────────────────────
+  it('forces cards face-down in Owner-visibility groups when viewing other players', () => {
+    const { container } = renderBrowser();
+    fireEvent.click(screen.getByTestId('tab-player-2'));
+    // Bob's hand has Owner visibility — cards should be rendered face-down
+    // The hand zone shows Bob's cards but they should have faceUp=false applied
+    // We verify by checking the card-back side is visible (rotateY(0deg) on back)
+    const handZone = screen.getByTestId('hand-zone');
+    expect(handZone).toBeTruthy();
+    // Cards in Owner groups of other players should show card backs
+    const cardBacks = handZone.querySelectorAll('.octgn-card-back');
+    expect(cardBacks.length).toBeGreaterThan(0);
   });
 
   // ─── Spectator mode ─────────────────────────────────────────────
@@ -252,8 +267,8 @@ describe('PlayerGroupBrowser', () => {
   it('shows all groups when viewing another player as spectator', () => {
     renderBrowser({ isSpectator: true });
     fireEvent.click(screen.getByTestId('tab-player-2'));
-    // Spectator sees all groups including Owner-visibility ones
-    expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
+    // Spectator sees all groups — hand as fan, others as piles
+    expect(screen.getByTestId('hand-zone')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
   });

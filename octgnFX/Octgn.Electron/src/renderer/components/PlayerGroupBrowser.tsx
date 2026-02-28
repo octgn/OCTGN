@@ -7,6 +7,53 @@ import HandZone from './HandZone';
 import { useDragDrop } from './DragDropContext';
 import { readablePlayerColor } from '../utils/player-colors';
 import type { Card, Group, Player } from '../../shared/types';
+import { GroupVisibility } from '../../shared/types';
+
+// ─── Visibility helpers ─────────────────────────────────────────────
+
+/**
+ * Check if the local player can see cards in this group face-up.
+ * If not, cards should be shown face-down (card backs).
+ */
+function canSeeGroupCards(
+  group: Group,
+  groupOwnerId: number,
+  localPlayerId: number,
+  isSpectator: boolean,
+): boolean {
+  if (isSpectator) return true;
+  if (groupOwnerId === localPlayerId) return true;
+  switch (group.visibility) {
+    case GroupVisibility.Everybody:
+      return true;
+    case GroupVisibility.Owner:
+    case GroupVisibility.Undefined:
+    case GroupVisibility.Nobody:
+      return false;
+    default:
+      return true;
+  }
+}
+
+/**
+ * Apply visibility to a group's cards: if the viewer can't see them,
+ * return copies with faceUp forced to false.
+ */
+function applyCardVisibility(
+  group: Group,
+  groupOwnerId: number,
+  localPlayerId: number,
+  isSpectator: boolean,
+): Group {
+  if (canSeeGroupCards(group, groupOwnerId, localPlayerId, isSpectator)) {
+    return group;
+  }
+  return {
+    ...group,
+    cards: group.cards.map((c) => ({ ...c, faceUp: false })),
+  };
+}
+
 // ─── Props ──────────────────────────────────────────────────────────
 export interface PlayerGroupBrowserProps {
   players: Player[];
@@ -61,23 +108,24 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
     ? null
     : activePlayers.find((p) => p.id === selectedTab);
   const isOwnTab = !isGlobalTab && selectedTab === localPlayerId && !isSpectator;
+  const selectedPlayerId = selectedPlayer?.id ?? 0;
 
+  // Apply card visibility to all groups
   const displayGroups = useMemo(() => {
-    if (isGlobalTab) return globalGroups ?? [];
-    return selectedPlayer?.groups ?? [];
-  }, [isGlobalTab, globalGroups, selectedPlayer]);
+    const raw = isGlobalTab ? (globalGroups ?? []) : (selectedPlayer?.groups ?? []);
+    const ownerId = isGlobalTab ? 0 : selectedPlayerId;
+    return raw.map((g) => applyCardVisibility(g, ownerId, localPlayerId, isSpectator));
+  }, [isGlobalTab, globalGroups, selectedPlayer, selectedPlayerId, localPlayerId, isSpectator]);
 
+  // Always separate hand from other groups for ALL players
   const handGroup = useMemo(
-    () => (isOwnTab ? displayGroups.find((g) => g.name.toLowerCase() === 'hand') : null),
-    [isOwnTab, displayGroups],
+    () => displayGroups.find((g) => g.name.toLowerCase() === 'hand') ?? null,
+    [displayGroups],
   );
 
   const sideGroups = useMemo(
-    () =>
-      isOwnTab
-        ? displayGroups.filter((g) => g.name.toLowerCase() !== 'hand')
-        : displayGroups,
-    [isOwnTab, displayGroups],
+    () => displayGroups.filter((g) => g.name.toLowerCase() !== 'hand'),
+    [displayGroups],
   );
 
   // ─── Pile click handler ────────────────────────────────────────────
@@ -204,7 +252,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
           </div>
         )}
 
-        {/* ── Group strip ─────────────────────────────────────────── */}
+        {/* ── Group strip (all groups except hand) ─────────────────── */}
         <GroupStrip
           groups={sideGroups}
           isOwn={isOwnTab}
@@ -212,12 +260,13 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
           onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
         />
 
-        {/* ── Hand zone (own player only, non-spectator) ──────────── */}
-        {isOwnTab && handGroup && (
+        {/* ── Hand zone (always shown as fan for all players) ─────── */}
+        {handGroup && (
           <HandZone
             cards={handGroup.cards}
             handGroupId={handGroup.id}
             selectedCardId={selectedCardId}
+            interactive={isOwnTab}
             onCardClick={onCardClick}
             onCardContextMenu={onCardContextMenu}
             onCardMoveToGroup={onCardMoveToGroup}

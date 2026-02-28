@@ -30,6 +30,8 @@ export interface HandZoneProps {
   cards: Card[];
   handGroupId: string;
   selectedCardId: string | null;
+  /** Whether the user can interact with these cards (drag, click, context menu) */
+  interactive: boolean;
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onCardMoveToGroup: (cardId: string, groupId: string) => void;
@@ -39,6 +41,7 @@ const HandZone: React.FC<HandZoneProps> = ({
   cards,
   handGroupId,
   selectedCardId,
+  interactive,
   onCardClick,
   onCardContextMenu,
   onCardMoveToGroup,
@@ -48,50 +51,55 @@ const HandZone: React.FC<HandZoneProps> = ({
 
   const handleHandDragOver = useCallback(
     (e: React.DragEvent) => {
+      if (!interactive) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
       updateDropTarget(ZONE_HAND);
       updateMousePosition(e.clientX, e.clientY);
     },
-    [updateDropTarget, updateMousePosition],
+    [interactive, updateDropTarget, updateMousePosition],
   );
 
   const handleHandDrop = useCallback(
     (e: React.DragEvent) => {
+      if (!interactive) return;
       e.preventDefault();
       const cardId = e.dataTransfer.getData('application/octgn-card');
       if (!cardId) return;
       onCardMoveToGroup(cardId, handGroupId);
       endDrag();
     },
-    [handGroupId, onCardMoveToGroup, endDrag],
+    [interactive, handGroupId, onCardMoveToGroup, endDrag],
   );
 
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
+      if (!interactive) return;
       startDrag(card.id, ZONE_HAND, e);
     },
-    [startDrag],
+    [interactive, startDrag],
   );
 
   const handleCardDragEnd = useCallback(() => {
     endDrag();
   }, [endDrag]);
 
+  const isDropTarget = interactive && isDragging && dragState.dropTargetZone === ZONE_HAND;
+
   return (
     <div
       data-testid="hand-zone"
       className={clsx(
         'relative border-t transition-all duration-200',
-        isDragging && dragState.dropTargetZone === ZONE_HAND
+        isDropTarget
           ? 'border-octgn-primary/50 bg-octgn-primary/[0.04]'
           : 'border-white/[0.05] bg-gradient-to-b from-transparent to-octgn-bg/40',
       )}
-      onDragOver={handleHandDragOver}
-      onDrop={handleHandDrop}
+      onDragOver={interactive ? handleHandDragOver : undefined}
+      onDrop={interactive ? handleHandDrop : undefined}
       style={{ minHeight: HAND_CARD_HEIGHT + 32 }}
     >
-      {isDragging && dragState.dropTargetZone === ZONE_HAND && (
+      {isDropTarget && (
         <div className="absolute inset-1 rounded-xl border-2 border-dashed border-octgn-primary/25 pointer-events-none">
           <div className="absolute inset-0 rounded-xl bg-octgn-primary/[0.03]" />
         </div>
@@ -100,7 +108,7 @@ const HandZone: React.FC<HandZoneProps> = ({
       <div className="flex items-end justify-center h-full py-2 px-4 overflow-visible">
         {cards.length === 0 && (
           <p className="text-xs text-octgn-text-dim/40 py-4 font-display tracking-wider">
-            {isDragging ? 'Drop to add to hand' : 'Your hand is empty'}
+            {interactive && isDragging ? 'Drop to add to hand' : interactive ? 'Your hand is empty' : 'No cards in hand'}
           </p>
         )}
 
@@ -110,7 +118,7 @@ const HandZone: React.FC<HandZoneProps> = ({
         >
           {cards.map((card, index) => {
             const { x, y, rotate } = handCardTransform(index, cards.length);
-            const isDraggingThis = isDragging && dragState.draggingCardId === card.id;
+            const isDraggingThis = interactive && isDragging && dragState.draggingCardId === card.id;
 
             return (
               <div
@@ -124,17 +132,18 @@ const HandZone: React.FC<HandZoneProps> = ({
                   zIndex: index,
                   transformOrigin: 'bottom center',
                 }}
-                onContextMenu={(e) => {
+                onContextMenu={interactive ? (e) => {
                   e.preventDefault();
                   onCardContextMenu(e, card);
-                }}
+                } : undefined}
               >
                 <CardComponent
                   card={card}
-                  selected={card.id === selectedCardId}
-                  onClick={onCardClick}
-                  onDragStart={handleCardDragStart}
-                  onDragEnd={handleCardDragEnd}
+                  selected={interactive && card.id === selectedCardId}
+                  onClick={interactive ? onCardClick : undefined}
+                  onDragStart={interactive ? handleCardDragStart : undefined}
+                  onDragEnd={interactive ? handleCardDragEnd : undefined}
+                  interactive={interactive}
                   style={{ width: HAND_CARD_WIDTH, height: HAND_CARD_HEIGHT }}
                 />
               </div>
