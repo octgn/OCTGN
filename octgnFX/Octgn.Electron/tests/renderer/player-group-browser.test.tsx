@@ -177,7 +177,9 @@ describe('PlayerGroupBrowser', () => {
     renderBrowser();
     fireEvent.click(screen.getByTestId('tab-player-2'));
 
-    // Bob's Discard (Everybody visibility) should be visible
+    // All of Bob's groups should be visible
+    expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
+    expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
   });
 
@@ -229,62 +231,15 @@ describe('PlayerGroupBrowser', () => {
     expect(screen.getByText('20')).toBeTruthy();
   });
 
-  // ─── Visibility filtering ────────────────────────────────────────
-  it('hides Owner-visibility groups of other players for non-spectators', () => {
+  // ─── All groups visible ────────────────────────────────────────
+  it('shows all groups for other players (card visibility handled by protocol)', () => {
     renderBrowser();
-    // Switch to Bob's tab
     fireEvent.click(screen.getByTestId('tab-player-2'));
 
-    // Bob's Hand and Deck have visibility: Owner — should be hidden from Alice
-    expect(screen.queryByTestId('pile-g2-hand')).toBeNull();
-    expect(screen.queryByTestId('pile-g2-deck')).toBeNull();
-
-    // Bob's Discard has visibility: Everybody — should be visible
+    // All of Bob's groups are shown — cards appear face-down per protocol
+    expect(screen.getByTestId('pile-g2-hand')).toBeTruthy();
+    expect(screen.getByTestId('pile-g2-deck')).toBeTruthy();
     expect(screen.getByTestId('pile-g2-disc')).toBeTruthy();
-  });
-
-  it('shows all groups for own player regardless of Owner visibility', () => {
-    renderBrowser();
-    // Alice can see her own Owner-visibility groups
-    expect(screen.getByTestId('pile-g-deck')).toBeTruthy();
-  });
-
-  it('spectators see all groups including Owner and Nobody visibility', () => {
-    renderBrowser({
-      isSpectator: true,
-      players: [
-        makePlayer({
-          id: 1,
-          name: 'Alice',
-          groups: [
-            makeGroup({ id: 'g-hand', name: 'Hand', cards: [makeCard({ id: 'h1' })], visibility: GroupVisibility.Owner }),
-            makeGroup({ id: 'g-secret', name: 'Secret', cards: [], visibility: GroupVisibility.Nobody }),
-          ],
-        }),
-      ],
-    });
-
-    // Spectator viewing Alice — sees everything
-    expect(screen.getByTestId('pile-g-hand')).toBeTruthy();
-    expect(screen.getByTestId('pile-g-secret')).toBeTruthy();
-  });
-
-  it('hides Nobody-visibility groups for non-spectators even for own player', () => {
-    renderBrowser({
-      players: [
-        makePlayer({
-          id: 1,
-          name: 'Alice',
-          groups: [
-            makeGroup({ id: 'g-deck', name: 'Deck', cards: [], visibility: GroupVisibility.Owner }),
-            makeGroup({ id: 'g-nobody', name: 'Hidden', cards: [], visibility: GroupVisibility.Nobody }),
-          ],
-        }),
-      ],
-    });
-
-    expect(screen.getByTestId('pile-g-deck')).toBeTruthy();
-    expect(screen.queryByTestId('pile-g-nobody')).toBeNull();
   });
 
   // ─── Spectator mode ─────────────────────────────────────────────

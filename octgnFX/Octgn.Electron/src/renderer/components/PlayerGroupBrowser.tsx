@@ -7,31 +7,6 @@ import HandZone from './HandZone';
 import { useDragDrop } from './DragDropContext';
 import { readablePlayerColor } from '../utils/player-colors';
 import type { Card, Group, Player } from '../../shared/types';
-import { GroupVisibility } from '../../shared/types';
-
-// ─── Visibility filtering ──────────────────────────────────────────
-function filterVisibleGroups(
-  groups: Group[],
-  playerId: number,
-  localPlayerId: number,
-  isSpectator: boolean,
-): Group[] {
-  if (isSpectator) return groups;
-  return groups.filter((g) => {
-    switch (g.visibility) {
-      case GroupVisibility.Everybody:
-        return true;
-      case GroupVisibility.Owner:
-      case GroupVisibility.Undefined:
-        return playerId === localPlayerId;
-      case GroupVisibility.Nobody:
-        return false;
-      default:
-        return true;
-    }
-  });
-}
-
 // ─── Props ──────────────────────────────────────────────────────────
 export interface PlayerGroupBrowserProps {
   players: Player[];
@@ -87,17 +62,10 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
     : activePlayers.find((p) => p.id === selectedTab);
   const isOwnTab = !isGlobalTab && selectedTab === localPlayerId && !isSpectator;
 
-  // Apply visibility filtering
   const displayGroups = useMemo(() => {
     if (isGlobalTab) return globalGroups ?? [];
-    if (!selectedPlayer) return [];
-    return filterVisibleGroups(
-      selectedPlayer.groups,
-      selectedPlayer.id,
-      localPlayerId,
-      isSpectator,
-    );
-  }, [isGlobalTab, globalGroups, selectedPlayer, localPlayerId, isSpectator]);
+    return selectedPlayer?.groups ?? [];
+  }, [isGlobalTab, globalGroups, selectedPlayer]);
 
   const handGroup = useMemo(
     () => (isOwnTab ? displayGroups.find((g) => g.name.toLowerCase() === 'hand') : null),
