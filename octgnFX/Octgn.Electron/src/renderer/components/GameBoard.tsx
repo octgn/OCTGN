@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useMemo, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
-import { useDragDrop } from './DragDropContext';
+import { useDragDrop, cardToDragInfo } from './DragDropContext';
 import { useTableTransform } from '../hooks/useTableTransform';
 import { calculateTableScale } from '../utils/table-scaling';
 import type { Card } from '../../shared/types';
@@ -55,8 +55,35 @@ const GameBoard: React.FC<GameBoardProps> = ({
   screenToTableCoordsRef,
 }) => {
   const tableRef = useRef<HTMLDivElement>(null);
-  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging } =
+  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging, recentlyDroppedCardId, clearRecentlyDropped } =
     useDragDrop();
+
+  // When a dropped card's position changes in the DOM, wait for the paint
+  // then re-enable transitions so future server-driven moves animate normally.
+  const prevDroppedPosRef = useRef<{ id: string; x: number; y: number } | null>(null);
+  useEffect(() => {
+    if (!recentlyDroppedCardId) {
+      prevDroppedPosRef.current = null;
+      return;
+    }
+    const card = tableCards.find((c) => c.id === recentlyDroppedCardId);
+    if (!card) {
+      // Card moved off the table (e.g. to a group) — clear immediately
+      clearRecentlyDropped();
+      return;
+    }
+    const prev = prevDroppedPosRef.current;
+    if (prev && prev.id === card.id && (prev.x !== card.position.x || prev.y !== card.position.y)) {
+      // Position changed — the new position is being rendered without transition.
+      // Wait two rAFs (one for React commit, one for paint) then re-enable transitions.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          clearRecentlyDropped();
+        });
+      });
+    }
+    prevDroppedPosRef.current = { id: card.id, x: card.position.x, y: card.position.y };
+  }, [recentlyDroppedCardId, tableCards, clearRecentlyDropped]);
 
   // ─── Container size tracking for base scale ─────────────────────────
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -255,7 +282,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
       if (isSpectator) return;
-      startDrag(card.id, ZONE_TABLE, e);
+      startDrag(card.id, ZONE_TABLE, e, cardToDragInfo(card));
     },
     [startDrag, isSpectator]
   );
@@ -267,7 +294,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const handleCardTouchDragStart = useCallback(
     (card: Card, x: number, y: number) => {
       if (isSpectator) return;
-      startTouchDrag(card.id, ZONE_TABLE, x, y);
+      startTouchDrag(card.id, ZONE_TABLE, x, y, cardToDragInfo(card));
     },
     [startTouchDrag, isSpectator]
   );
@@ -412,7 +439,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
               <div
                 key={card.id}
                 className={clsx(
-                  'absolute transition-all duration-500 ease-out',
+                  'absolute',
+                  recentlyDroppedCardId === card.id
+                    ? '' // Skip transition — adorner already provided visual continuity
+                    : 'transition-all duration-500 ease-out',
                   !isSpectator && isDragging &&
                     dragState.draggingCardId === card.id &&
                     'opacity-30 scale-95'

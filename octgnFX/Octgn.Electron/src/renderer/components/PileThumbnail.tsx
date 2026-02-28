@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
-import { useDragDrop } from './DragDropContext';
+import { useDragDrop, cardToDragInfo } from './DragDropContext';
 import type { Card, Group } from '../../shared/types';
 
 export interface PileThumbnailProps {
@@ -28,7 +28,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
     (card: Card, e: React.DragEvent) => {
       if (!isOwn) return;
       e.stopPropagation();
-      startDrag(card.id, `pile:${group.id}`, e);
+      startDrag(card.id, `pile:${group.id}`, e, cardToDragInfo(card));
     },
     [isOwn, startDrag, group.id],
   );
@@ -40,7 +40,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   const handleTopCardTouchDragStart = useCallback(
     (card: Card, x: number, y: number) => {
       if (!isOwn) return;
-      startTouchDrag(card.id, `pile:${group.id}`, x, y);
+      startTouchDrag(card.id, `pile:${group.id}`, x, y, cardToDragInfo(card));
     },
     [isOwn, startTouchDrag, group.id],
   );

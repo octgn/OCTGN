@@ -3,9 +3,20 @@ import React, {
   useContext,
   useCallback,
   useState,
+  useEffect,
   useRef,
   type ReactNode,
 } from 'react';
+
+/** Visual info about the card being dragged, used by the adorner */
+export interface DragCardInfo {
+  imageUrl: string;
+  name: string;
+  width: number;
+  height: number;
+  faceUp: boolean;
+  cardBackUrl?: string;
+}
 
 export interface DragState {
   /** ID of the card currently being dragged, or null */
@@ -18,14 +29,16 @@ export interface DragState {
   dropTargetZone: string | null;
   /** Whether this is a touch-initiated drag (vs HTML5 drag) */
   isTouchDrag: boolean;
+  /** Visual info about the dragged card for the adorner */
+  cardInfo: DragCardInfo | null;
 }
 
 interface DragDropContextValue {
   dragState: DragState;
   /** Call when a card drag begins (HTML5 drag) */
-  startDrag: (cardId: string, sourceZone: string, e: React.DragEvent) => void;
+  startDrag: (cardId: string, sourceZone: string, e: React.DragEvent, cardInfo?: DragCardInfo) => void;
   /** Call when a touch drag begins */
-  startTouchDrag: (cardId: string, sourceZone: string, x: number, y: number) => void;
+  startTouchDrag: (cardId: string, sourceZone: string, x: number, y: number, cardInfo?: DragCardInfo) => void;
   /** Call while dragging over a valid zone to update drop target */
   updateDropTarget: (zone: string | null) => void;
   /** Update the cursor position (used by dragOver/touchMove handlers) */
@@ -34,6 +47,10 @@ interface DragDropContextValue {
   endDrag: () => void;
   /** Whether any card is currently being dragged */
   isDragging: boolean;
+  /** Card ID that was just dropped — suppresses position transition so the card snaps into place (adorner already provided visual continuity) */
+  recentlyDroppedCardId: string | null;
+  /** Acknowledge that the dropped card's new position has been painted */
+  clearRecentlyDropped: () => void;
 }
 
 const initialState: DragState = {
@@ -42,6 +59,7 @@ const initialState: DragState = {
   mousePosition: { x: 0, y: 0 },
   dropTargetZone: null,
   isTouchDrag: false,
+  cardInfo: null,
 };
 
 const DragDropCtx = createContext<DragDropContextValue | null>(null);
@@ -52,9 +70,10 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
   const [dragState, setDragState] = useState<DragState>(initialState);
   const dragStateRef = useRef(dragState);
   dragStateRef.current = dragState;
+  const [recentlyDroppedCardId, setRecentlyDroppedCardId] = useState<string | null>(null);
 
   const startDrag = useCallback(
-    (cardId: string, sourceZone: string, e: React.DragEvent) => {
+    (cardId: string, sourceZone: string, e: React.DragEvent, cardInfo?: DragCardInfo) => {
       // Configure the native HTML5 drag transfer
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('application/octgn-card', cardId);
@@ -75,19 +94,21 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
         mousePosition: { x: e.clientX, y: e.clientY },
         dropTargetZone: null,
         isTouchDrag: false,
+        cardInfo: cardInfo ?? null,
       });
     },
     []
   );
 
   const startTouchDrag = useCallback(
-    (cardId: string, sourceZone: string, x: number, y: number) => {
+    (cardId: string, sourceZone: string, x: number, y: number, cardInfo?: DragCardInfo) => {
       setDragState({
         draggingCardId: cardId,
         sourceZone,
         mousePosition: { x, y },
         dropTargetZone: null,
         isTouchDrag: true,
+        cardInfo: cardInfo ?? null,
       });
     },
     []
@@ -105,10 +126,32 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   const endDrag = useCallback(() => {
+    const droppedId = dragStateRef.current.draggingCardId;
     setDragState(initialState);
+    if (droppedId) setRecentlyDroppedCardId(droppedId);
+  }, []);
+
+  /** Call to acknowledge that the dropped card's position has been painted
+   *  (re-enables transitions for that card). */
+  const clearRecentlyDropped = useCallback(() => {
+    setRecentlyDroppedCardId(null);
   }, []);
 
   const isDragging = dragState.draggingCardId !== null;
+
+  // Track mouse position globally during HTML5 drag (dragover only fires on
+  // drop targets — this ensures we get position updates everywhere)
+  useEffect(() => {
+    if (!isDragging || dragState.isTouchDrag) return;
+
+    const handleGlobalDragOver = (e: DragEvent) => {
+      // Don't prevent default here — let drop zones handle that
+      setDragState((prev) => ({ ...prev, mousePosition: { x: e.clientX, y: e.clientY } }));
+    };
+
+    document.addEventListener('dragover', handleGlobalDragOver);
+    return () => document.removeEventListener('dragover', handleGlobalDragOver);
+  }, [isDragging, dragState.isTouchDrag]);
 
   return (
     <DragDropCtx.Provider
@@ -120,6 +163,8 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
         updateMousePosition,
         endDrag,
         isDragging,
+        recentlyDroppedCardId,
+        clearRecentlyDropped,
       }}
     >
       {children}
@@ -134,6 +179,18 @@ export function useDragDrop(): DragDropContextValue {
     throw new Error('useDragDrop must be used within a DragDropProvider');
   }
   return ctx;
+}
+
+/** Build DragCardInfo from a Card object */
+export function cardToDragInfo(card: { imageUrl: string; name: string; faceUp: boolean; size: { width: number; height: number } }, cardBackUrl?: string): DragCardInfo {
+  return {
+    imageUrl: card.imageUrl,
+    name: card.name,
+    width: card.size.width,
+    height: card.size.height,
+    faceUp: card.faceUp,
+    cardBackUrl,
+  };
 }
 
 export default DragDropProvider;

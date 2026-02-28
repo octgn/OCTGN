@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
-import { useDragDrop } from './DragDropContext';
+import { useDragDrop, cardToDragInfo } from './DragDropContext';
 import type { Card } from '../../shared/types';
 
 const HAND_CARD_WIDTH = 80;
@@ -75,7 +75,7 @@ const HandZone: React.FC<HandZoneProps> = ({
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
       if (!interactive) return;
-      startDrag(card.id, ZONE_HAND, e);
+      startDrag(card.id, ZONE_HAND, e, cardToDragInfo(card));
     },
     [interactive, startDrag],
   );
@@ -87,7 +87,7 @@ const HandZone: React.FC<HandZoneProps> = ({
   const handleCardTouchDragStart = useCallback(
     (card: Card, x: number, y: number) => {
       if (!interactive) return;
-      startTouchDrag(card.id, ZONE_HAND, x, y);
+      startTouchDrag(card.id, ZONE_HAND, x, y, cardToDragInfo(card));
     },
     [interactive, startTouchDrag],
   );

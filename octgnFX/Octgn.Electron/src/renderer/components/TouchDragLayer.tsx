@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDragDrop } from './DragDropContext';
+import CardDragAdorner from './CardDragAdorner';
 
 /**
  * Global touch drag handler layer.
@@ -97,6 +98,7 @@ const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
   return (
     <div ref={containerRef} className="contents">
       {children}
+      <CardDragAdorner />
     </div>
   );
 };

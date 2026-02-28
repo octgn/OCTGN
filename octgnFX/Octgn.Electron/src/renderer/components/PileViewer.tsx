@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
-import { useDragDrop } from './DragDropContext';
+import { useDragDrop, cardToDragInfo } from './DragDropContext';
 import { readablePlayerColor } from '../utils/player-colors';
 import type { Card, Group } from '../../shared/types';
 
@@ -41,7 +41,7 @@ const PileViewer: React.FC<PileViewerProps> = ({
   // We don't unmount (onClose) because that would remove the drag source and cancel the drag.
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
-      startDrag(card.id, `pile:${group.id}`, e);
+      startDrag(card.id, `pile:${group.id}`, e, cardToDragInfo(card));
       setDraggingFromPile(true);
     },
     [startDrag, group.id, isOwn],
@@ -55,7 +55,7 @@ const PileViewer: React.FC<PileViewerProps> = ({
 
   const handleCardTouchDragStart = useCallback(
     (card: Card, x: number, y: number) => {
-      startTouchDrag(card.id, `pile:${group.id}`, x, y);
+      startTouchDrag(card.id, `pile:${group.id}`, x, y, cardToDragInfo(card));
       setDraggingFromPile(true);
       wasTouchDragging.current = true;
     },
