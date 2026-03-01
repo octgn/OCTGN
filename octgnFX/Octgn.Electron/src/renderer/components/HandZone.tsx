@@ -473,7 +473,7 @@ function computeIndicatorTransform(
   if (visibleInsert === 0) {
     const first = visible[0];
     return {
-      x: first.x - HAND_CARD_WIDTH / 2 - 6,
+      x: first.x - HAND_CARD_WIDTH / 2 - REORDER_GAP / 2,
       y: first.y,
       rotate: first.rotate,
     };
@@ -481,7 +481,7 @@ function computeIndicatorTransform(
   if (visibleInsert >= visible.length) {
     const last = visible[visible.length - 1];
     return {
-      x: last.x + HAND_CARD_WIDTH / 2 + 6,
+      x: last.x + HAND_CARD_WIDTH / 2 + REORDER_GAP / 2,
       y: last.y,
       rotate: last.rotate,
     };
