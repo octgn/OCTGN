@@ -97,6 +97,9 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Game handlers - now wired to GameService
   ipcMain.handle(IPC_CHANNELS.GAME_ACTION, async (_event, action: Record<string, unknown>) => {
     const type = action.type as string;
+    if (type === 'moveCards' || type === 'moveCardsAt') {
+      log('IPC', `GAME_ACTION: ${type} ${JSON.stringify(action)}`);
+    }
     switch (type) {
       case 'moveCards':
         gameService.moveCards(

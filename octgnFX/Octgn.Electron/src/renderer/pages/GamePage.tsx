@@ -197,7 +197,7 @@ const GamePage: React.FC = () => {
         [Number(cardId)],
         Number(groupId),
         [0],
-        [false]
+        [true]
       );
     },
     [moveCards, isSpectator]

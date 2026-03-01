@@ -6,8 +6,6 @@ import type { Card } from '../../shared/types';
 
 const HAND_CARD_WIDTH = 80;
 const HAND_CARD_HEIGHT = 112;
-const ZONE_HAND = 'hand';
-
 function handCardTransform(
   index: number,
   total: number,
@@ -54,10 +52,10 @@ const HandZone: React.FC<HandZoneProps> = ({
       if (!interactive) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
-      updateDropTarget(ZONE_HAND);
+      updateDropTarget(handGroupId);
       updateMousePosition(e.clientX, e.clientY);
     },
-    [interactive, updateDropTarget, updateMousePosition],
+    [interactive, handGroupId, updateDropTarget, updateMousePosition],
   );
 
   const handleHandDrop = useCallback(
@@ -75,7 +73,7 @@ const HandZone: React.FC<HandZoneProps> = ({
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
       if (!interactive) return;
-      startDrag(card.id, ZONE_HAND, e, cardToDragInfo(card));
+      startDrag(card.id, handGroupId, e, cardToDragInfo(card));
     },
     [interactive, startDrag],
   );
@@ -87,17 +85,17 @@ const HandZone: React.FC<HandZoneProps> = ({
   const handleCardTouchDragStart = useCallback(
     (card: Card, x: number, y: number) => {
       if (!interactive) return;
-      startTouchDrag(card.id, ZONE_HAND, x, y, cardToDragInfo(card));
+      startTouchDrag(card.id, handGroupId, x, y, cardToDragInfo(card));
     },
     [interactive, startTouchDrag],
   );
 
-  const isDropTarget = interactive && isDragging && dragState.dropTargetZone === ZONE_HAND;
+  const isDropTarget = interactive && isDragging && dragState.dropTargetZone === handGroupId;
 
   return (
     <div
       data-testid="hand-zone"
-      data-drop-zone={ZONE_HAND}
+      data-drop-zone={handGroupId}
       className={clsx(
         'relative border-t transition-all duration-200',
         isDropTarget

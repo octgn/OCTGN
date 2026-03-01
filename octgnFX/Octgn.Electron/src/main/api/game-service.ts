@@ -146,20 +146,43 @@ export class GameService {
    * Send a card move request.
    */
   moveCards(cardIds: number[], groupId: number, indices: number[], faceUp: boolean[], isScript: boolean = false): void {
-    this.connection?.sendMessage(MessageType.MoveCardReq, 0, {
+    log('MOVE', `moveCards: cardIds=[${cardIds}] groupId=${groupId} faceUp=[${faceUp}] connected=${!!this.connection}`);
+    if (!this.connection) {
+      log('MOVE', 'WARNING: moveCards called but connection is null — message not sent');
+      return;
+    }
+    this.connection.sendMessage(MessageType.MoveCardReq, 0, {
       id: cardIds,
       group: groupId,
       idx: indices,
       faceUp,
       isScriptMove: isScript,
     });
+    // Optimistic local update — move cards immediately before server echo
+    if (this.gameState) {
+      for (let i = 0; i < cardIds.length; i++) {
+        const card = this.findCard(cardIds[i]);
+        if (card) {
+          this.removeCard(cardIds[i]);
+          card.groupId = String(groupId);
+          card.faceUp = faceUp[i] ?? card.faceUp;
+          this.addCardToGroup(card, groupId);
+        }
+      }
+      this.broadcastState();
+    }
   }
 
   /**
    * Send a card move to position request.
    */
   moveCardsAt(cardIds: number[], x: number[], y: number[], indices: number[], faceUp: boolean[], isScript: boolean = false): void {
-    this.connection?.sendMessage(MessageType.MoveCardAtReq, 0, {
+    log('MOVE', `moveCardsAt: cardIds=[${cardIds}] x=[${x}] y=[${y}] faceUp=[${faceUp}] connected=${!!this.connection}`);
+    if (!this.connection) {
+      log('MOVE', 'WARNING: moveCardsAt called but connection is null — message not sent');
+      return;
+    }
+    this.connection.sendMessage(MessageType.MoveCardAtReq, 0, {
       id: cardIds,
       x,
       y,
@@ -167,6 +190,20 @@ export class GameService {
       faceUp,
       isScriptMove: isScript,
     });
+    // Optimistic local update — move cards to table position immediately
+    if (this.gameState) {
+      for (let i = 0; i < cardIds.length; i++) {
+        const card = this.findCard(cardIds[i]);
+        if (card) {
+          this.removeCard(cardIds[i]);
+          card.position = { x: x[i], y: y[i] };
+          card.faceUp = faceUp[i] ?? card.faceUp;
+          card.groupId = 'table';
+          this.gameState.table.cards.push(card);
+        }
+      }
+      this.broadcastState();
+    }
   }
 
   /**
@@ -1023,6 +1060,7 @@ export class GameService {
       const cardIds = params.id as number[];
       const groupId = params.group as number;
       const faceUp = params.faceUp as boolean[];
+      log('MOVE', `MoveCard response: cardIds=[${cardIds}] groupId=${groupId} faceUp=[${faceUp}]`);
 
       for (let i = 0; i < cardIds.length; i++) {
         const card = this.findCard(cardIds[i]);
@@ -1047,6 +1085,7 @@ export class GameService {
       const xs = params.x as number[];
       const ys = params.y as number[];
       const faceUp = params.faceUp as boolean[];
+      log('MOVE', `MoveCardAt response: cardIds=[${cardIds}] x=[${xs}] y=[${ys}] faceUp=[${faceUp}]`);
 
       for (let i = 0; i < cardIds.length; i++) {
         let card = this.findCard(cardIds[i]);
