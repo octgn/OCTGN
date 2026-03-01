@@ -6,3 +6,4 @@ coverage/
 *.tsbuildinfo
 .env
 .env.local
+.test-hook-marker
