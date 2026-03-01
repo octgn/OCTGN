@@ -28,6 +28,7 @@ const GamePage: React.FC = () => {
   const peekCard = useGameStore((s) => s.peekCard);
   const moveCardsAt = useGameStore((s) => s.moveCardsAt);
   const moveCards = useGameStore((s) => s.moveCards);
+  const reorderHandCard = useGameStore((s) => s.reorderHandCard);
   const nextTurn = useGameStore((s) => s.nextTurn);
   const subscribe = useGameStore((s) => s.subscribe);
   const leaveGame = useGameStore((s) => s.leaveGame);
@@ -203,6 +204,20 @@ const GamePage: React.FC = () => {
     [moveCards, isSpectator]
   );
 
+  /** Drag-drop: reorder card within the hand (local only) */
+  const handleReorderCard = useCallback(
+    (cardId: string, newIndex: number) => {
+      if (isSpectator) return;
+      // Find which hand group this card belongs to
+      const player = gameState?.players.find((p) => p.id === gameState.localPlayerId);
+      const handGroup = player?.groups.find((g) => g.name.toLowerCase() === 'hand');
+      if (handGroup) {
+        reorderHandCard(handGroup.id, cardId, newIndex);
+      }
+    },
+    [isSpectator, reorderHandCard, gameState],
+  );
+
   /** Touch drag: screen→table coordinate conversion ref, populated by GameBoard */
   const screenToTableCoordsRef = useRef<ScreenToTableCoordsFn | null>(null);
 
@@ -220,8 +235,10 @@ const GamePage: React.FC = () => {
 
   /** Touch drag: drop card on a group */
   const handleTouchGroupDrop = useCallback(
-    (cardId: string, groupId: string) => {
+    (cardId: string, groupId: string, sourceZone: string | null) => {
       if (isSpectator) return;
+      // Same-zone hand drops are handled by HandZone's touch reorder effect
+      if (sourceZone === groupId) return;
       handleCardMoveToGroup(cardId, groupId);
     },
     [isSpectator, handleCardMoveToGroup]
@@ -401,6 +418,7 @@ const GamePage: React.FC = () => {
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
             onCardMoveToGroup={handleCardMoveToGroup}
+            onReorderCard={handleReorderCard}
           />
         </div>
 

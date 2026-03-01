@@ -64,6 +64,7 @@ export interface PlayerGroupBrowserProps {
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onCardMoveToGroup: (cardId: string, groupId: string) => void;
+  onReorderCard?: (cardId: string, newIndex: number) => void;
 }
 
 const HAND_CARD_WIDTH = 80;
@@ -78,6 +79,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
   onCardClick,
   onCardContextMenu,
   onCardMoveToGroup,
+  onReorderCard,
 }) => {
   const { dragState, isDragging, updateMousePosition } = useDragDrop();
 
@@ -321,6 +323,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
               onCardClick={onCardClick}
               onCardContextMenu={onCardContextMenu}
               onCardMoveToGroup={onCardMoveToGroup}
+              onReorderCard={isOwnTab ? onReorderCard : undefined}
             />
           )}
         </div>

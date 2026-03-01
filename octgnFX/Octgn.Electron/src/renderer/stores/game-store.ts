@@ -30,6 +30,8 @@ interface GameStoreActions {
   addMarker: (cardId: number, markerId: string, markerName: string, count: number) => Promise<void>;
   removeMarker: (cardId: number, markerId: string, markerName: string, count: number) => Promise<void>;
   shuffleGroup: (groupId: number) => Promise<void>;
+  /** Reorder a card within a group locally (no server action) */
+  reorderHandCard: (groupId: string, cardId: string, newIndex: number) => void;
   // Pre-game lobby actions
   updateSettings: (twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean) => Promise<void>;
   updatePlayerSettings: (playerId: number, invertedTable: boolean, spectator: boolean) => Promise<void>;
@@ -186,6 +188,25 @@ export const useGameStore = create<GameStore>()(
     removeMarker: (cardId, markerId, markerName, count) =>
       sendTypedAction({ type: 'removeMarker', cardId, markerId, markerName, count }),
     shuffleGroup: (groupId) => sendTypedAction({ type: 'shuffleGroup', groupId }),
+
+    reorderHandCard: (groupId, cardId, newIndex) => {
+      set((state) => {
+        if (!state.gameState) return;
+        for (const player of state.gameState.players) {
+          for (const group of player.groups) {
+            if (group.id === groupId) {
+              const oldIndex = group.cards.findIndex((c) => c.id === cardId);
+              if (oldIndex === -1) return;
+              const clamped = Math.max(0, Math.min(newIndex, group.cards.length - 1));
+              if (oldIndex === clamped) return;
+              const [card] = group.cards.splice(oldIndex, 1);
+              group.cards.splice(clamped, 0, card);
+              return;
+            }
+          }
+        }
+      });
+    },
 
     // Pre-game lobby actions
     updateSettings: async (twoSidedTable, allowSpectators, muteSpectators, allowCardList) => {

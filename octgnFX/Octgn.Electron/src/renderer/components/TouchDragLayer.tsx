@@ -24,7 +24,7 @@ interface TouchDragLayerProps {
   /** Called when a touch drag drops onto the table zone */
   onTableDrop?: (cardId: string, x: number, y: number) => void;
   /** Called when a touch drag drops onto a group zone */
-  onGroupDrop?: (cardId: string, groupId: string) => void;
+  onGroupDrop?: (cardId: string, groupId: string, sourceZone: string | null) => void;
 }
 
 const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
@@ -65,13 +65,14 @@ const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
 
       const cardId = dragState.draggingCardId;
       const zone = dragState.dropTargetZone;
+      const sourceZone = dragState.sourceZone;
       const { x, y } = dragState.mousePosition;
 
       if (cardId && zone) {
         if (zone === 'table' && onTableDrop) {
           onTableDrop(cardId, x, y);
         } else if (zone !== 'table' && onGroupDrop) {
-          onGroupDrop(cardId, zone);
+          onGroupDrop(cardId, zone, sourceZone);
         }
       }
 
