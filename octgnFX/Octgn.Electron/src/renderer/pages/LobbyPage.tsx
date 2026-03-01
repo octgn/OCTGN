@@ -6,7 +6,7 @@ import AppSidebar from '../components/AppSidebar';
 import CreateGameDialog from '../components/CreateGameDialog';
 import { useLobbyStore } from '../stores/lobby-store';
 import { useDefinitionsStore } from '../stores/definitions-store';
-import type { HostedGame } from '../../shared/types';
+import type { HostedGame, User } from '../../shared/types';
 import { GameStatus } from '../../shared/types';
 
 const statusLabel: Record<number, string> = {
@@ -105,9 +105,12 @@ const LobbyPage: React.FC = () => {
               variant="light"
               padding="none"
               glow="none"
-              className="group hover:bg-octgn-surface-light/50 transition-colors duration-150 cursor-pointer"
+              className="group hover:bg-octgn-surface-light/50 transition-all duration-200 cursor-pointer hover:shadow-[0_0_24px_rgba(59,130,246,0.06)]"
             >
-              <div className="flex items-center gap-4 px-4 py-3">
+              <div className="flex items-center gap-3 px-4 py-3">
+                {/* Host avatar */}
+                <HostAvatar user={game.hostUser} />
+
                 {/* Game info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -118,15 +121,18 @@ const LobbyPage: React.FC = () => {
                       </svg>
                     )}
                   </div>
-                  <p className="text-xs text-octgn-text-dim mt-0.5">
-                    {game.gameName}
-                    <span className="mx-1.5 text-octgn-border">|</span>
-                    Hosted by {game.hostUser.username}
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-xs text-octgn-text-dim truncate">{game.gameName}</span>
+                    <span className="text-octgn-border text-[10px]">/</span>
+                    <span className="text-xs text-octgn-primary/80 font-medium truncate">{game.hostUser.username}</span>
+                  </div>
                 </div>
 
                 {/* Players */}
-                <div className="text-xs text-octgn-text-muted whitespace-nowrap">
+                <div className="flex items-center gap-1 text-xs text-octgn-text-muted whitespace-nowrap">
+                  <svg className="w-3 h-3 opacity-50" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm5 6H3s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1z" />
+                  </svg>
                   {game.playerCount}/{game.maxPlayers}
                 </div>
 
@@ -210,6 +216,55 @@ const LobbyPage: React.FC = () => {
     </div>
   );
 };
+
+const avatarColors = [
+  'from-blue-500/80 to-blue-700/80',
+  'from-violet-500/80 to-violet-700/80',
+  'from-emerald-500/80 to-emerald-700/80',
+  'from-amber-500/80 to-amber-700/80',
+  'from-rose-500/80 to-rose-700/80',
+  'from-cyan-500/80 to-cyan-700/80',
+  'from-fuchsia-500/80 to-fuchsia-700/80',
+  'from-teal-500/80 to-teal-700/80',
+];
+
+function hashToIndex(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) % avatarColors.length;
+}
+
+function HostAvatar({ user }: { user: User }) {
+  const initial = (user.username || '?')[0].toUpperCase();
+  const colorIdx = hashToIndex(user.id || user.username || '');
+
+  if (user.iconUrl) {
+    return (
+      <div className="relative shrink-0">
+        <img
+          src={user.iconUrl}
+          alt={user.username}
+          className="w-8 h-8 rounded-full object-cover ring-1 ring-white/10"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={clsx(
+        'w-8 h-8 rounded-full shrink-0 flex items-center justify-center',
+        'bg-gradient-to-br text-white/90 text-xs font-bold tracking-wide',
+        'ring-1 ring-white/10',
+        avatarColors[colorIdx],
+      )}
+    >
+      {initial}
+    </div>
+  );
+}
 
 function SearchIcon({ className }: { className?: string }) {
   return (

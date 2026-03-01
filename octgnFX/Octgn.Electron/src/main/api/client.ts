@@ -174,12 +174,16 @@ export class OctgnApiClient {
   private mapHostedGame(data: Record<string, unknown>): HostedGame {
     const hostAddress = (data.HostAddress as string) || '';
     const parts = hostAddress.split(':');
+    const hostUser = data.HostUser as Record<string, unknown> | undefined;
+    const hostUserIconUrl = (data.HostUserIconUrl as string) || '';
+    const gameIconUrl = (data.GameIconUrl as string) || '';
     return {
       id: (data.Id as string) || '',
       name: (data.Name as string) || '',
       hostUser: {
-        id: (data.HostUserId as string) || '',
-        username: (data.HostUserName as string) || '',
+        id: (hostUser?.Id as string) || '',
+        username: (hostUser?.DisplayName as string) || '',
+        iconUrl: hostUserIconUrl || undefined,
         isSubscriber: false,
       },
       gameId: (data.GameId as string) || '',
@@ -193,6 +197,7 @@ export class OctgnApiClient {
       dateCreated: (data.DateCreated as string) || '',
       playerCount: (data.PlayerCount as number) || 0,
       maxPlayers: (data.MaxPlayers as number) || 0,
+      gameIconUrl: gameIconUrl || undefined,
     };
   }
 }

@@ -35,6 +35,7 @@ export interface HostedGame {
   dateCreated: string;
   playerCount: number;
   maxPlayers: number;
+  gameIconUrl?: string;
 }
 
 export enum GameStatus {
