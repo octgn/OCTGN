@@ -257,6 +257,25 @@ describe('PlayerGroupBrowser', () => {
     expect(cardBacks.length).toBeGreaterThan(0);
   });
 
+  // ─── No groups message ─────────────────────────────────────────
+  it('does not show "No groups" when player has a hand but no side groups', () => {
+    renderBrowser({
+      players: [
+        makePlayer({
+          id: 1,
+          name: 'Alice',
+          groups: [
+            makeGroup({ id: 'g-hand', name: 'Hand', cards: [makeCard({ id: 'h1' })], visibility: GroupVisibility.Owner }),
+          ],
+        }),
+      ],
+    });
+    // Hand is visible
+    expect(screen.getByTestId('hand-zone')).toBeTruthy();
+    // "No groups" should NOT appear — the hand IS a group
+    expect(screen.queryByText('No groups')).toBeNull();
+  });
+
   // ─── Spectator mode ─────────────────────────────────────────────
   it('renders in spectator mode showing all player tabs', () => {
     renderBrowser({ isSpectator: true });

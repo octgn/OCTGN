@@ -302,12 +302,14 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
         {/* ── Scrollable content area ──────────────────────────────── */}
         <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
           {/* ── Group strip (all groups except hand) ───────────────── */}
-          <GroupStrip
-            groups={sideGroups}
-            isOwn={isOwnTab}
-            onPileClick={handlePileClick}
-            onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
-          />
+          {sideGroups.length > 0 && (
+            <GroupStrip
+              groups={sideGroups}
+              isOwn={isOwnTab}
+              onPileClick={handlePileClick}
+              onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
+            />
+          )}
 
           {/* ── Hand zone (always shown as fan for all players) ───── */}
           {handGroup && (
