@@ -100,6 +100,7 @@ export interface GameDefinition {
   cardSizes?: Record<string, CardSizeDefinition>;
   defaultCardSize?: CardSizeDefinition;
   globalPlayer?: { groups: GroupDefinition[] };
+  scriptVersion?: string;
 }
 
 export interface PlayerDefinition {
@@ -148,12 +149,18 @@ export interface CardAction {
   shortcut?: string;
   execute: string;
   batchExecute?: string;
+  showIf?: string;
+  getName?: string;
+  isDefault?: boolean;
 }
 
 export interface GroupAction {
   name: string;
   shortcut?: string;
   execute: string;
+  showIf?: string;
+  getName?: string;
+  isDefault?: boolean;
 }
 
 // Game state types
@@ -341,6 +348,8 @@ export const IPC_CHANNELS = {
   // Scripting
   SCRIPT_EVENT: 'script:event',
   SCRIPT_EXECUTE: 'script:execute',
+  SCRIPT_DIALOG_REQUEST: 'script:dialog-request',
+  SCRIPT_DIALOG_RESPONSE: 'script:dialog-response',
 
   // Game definitions
   GAMES_LIST_INSTALLED: 'games:list-installed',

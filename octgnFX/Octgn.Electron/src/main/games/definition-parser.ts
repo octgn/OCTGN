@@ -36,6 +36,9 @@ function parseActions(raw: unknown): CardAction[] {
       shortcut: attr(o, 'shortcut') || undefined,
       execute: attr(o, 'execute'),
       batchExecute: attr(o, 'batchexecute') || undefined,
+      showIf: attr(o, 'showIf') || undefined,
+      getName: attr(o, 'getName') || undefined,
+      isDefault: attr(o, 'default') === 'true' || undefined,
     };
   });
 }
@@ -49,6 +52,9 @@ function parseGroupActions(raw: unknown): GroupAction[] {
       name: attr(o, 'name'),
       shortcut: attr(o, 'shortcut') || undefined,
       execute: attr(o, 'execute'),
+      showIf: attr(o, 'showIf') || undefined,
+      getName: attr(o, 'getName') || undefined,
+      isDefault: attr(o, 'default') === 'true' || undefined,
     };
   });
 }
@@ -338,6 +344,7 @@ export function parseDefinitionXml(xml: string | Buffer): GameDefinition | null 
       cardSizes,
       defaultCardSize,
       globalPlayer,
+      scriptVersion: attr(g, 'scriptVersion') || undefined,
     };
   } catch {
     return null;
