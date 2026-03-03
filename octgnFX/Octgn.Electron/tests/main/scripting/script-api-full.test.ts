@@ -246,4 +246,32 @@ describe('ScriptApi Full Coverage (Phase 8)', () => {
       expect(api.OpenFileDlg()).toBeNull();
     });
   });
+
+  describe('Notify / Whisper / NotifyBar protocol behavior', () => {
+    it('Notify sends PrintReq protocol message to server', () => {
+      const { api, deps } = createApi();
+      api.Notify('hello world');
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith('PrintReq', { text: 'hello world' });
+    });
+
+    it('Notify also adds local chat message', () => {
+      const { api, deps } = createApi();
+      api.Notify('hello world');
+      expect(deps.addChatMessage).toHaveBeenCalledWith('hello world', true);
+    });
+
+    it('Whisper only adds local chat message, does NOT send protocol message', () => {
+      const { api, deps } = createApi();
+      api.Whisper('secret');
+      expect(deps.addChatMessage).toHaveBeenCalledWith('secret', true);
+      expect(deps.sendProtocolMessage).not.toHaveBeenCalled();
+    });
+
+    it('NotifyBar only adds local chat message, does NOT send protocol message', () => {
+      const { api, deps } = createApi();
+      api.NotifyBar('#ff0000', 'bar message');
+      expect(deps.addChatMessage).toHaveBeenCalledWith('bar message', true);
+      expect(deps.sendProtocolMessage).not.toHaveBeenCalled();
+    });
+  });
 });

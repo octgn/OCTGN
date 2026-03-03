@@ -864,10 +864,12 @@ export class GameService {
       this.broadcastState();
     });
 
-    // Print (system message)
+    // Print (system message broadcast from server, e.g. from notify())
     this.connection.on('Print', (msg: ProtocolMessage) => {
       const params = this.p(msg);
       const printPlayerId = params.player as number;
+      // Skip messages from ourselves — already added locally by Notify()
+      if (printPlayerId === this.localPlayerId) return;
       const playerColor = printPlayerId
         ? this.gameState?.players.find(p => p.id === printPlayerId)?.color ?? playerColorById(printPlayerId)
         : undefined;
@@ -1525,12 +1527,8 @@ export class GameService {
           this.connection?.sendMessage(msgType, 0, params);
         }
       },
-      addChatMessage: (message: string, isSystem: boolean) => {
-        if (isSystem) {
-          this.addSystemMessage(message);
-        } else {
-          this.sendChat(message);
-        }
+      addChatMessage: (message: string, _isSystem: boolean) => {
+        this.addSystemMessage(message);
         this.broadcastState();
       },
     };

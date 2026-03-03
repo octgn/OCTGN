@@ -324,14 +324,16 @@ describe('ScriptApi', () => {
   });
 
   describe('Notification API', () => {
-    it('Notify adds a system chat message', () => {
+    it('Notify sends PrintReq and adds local system chat message', () => {
       api.Notify('Hello everyone');
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith('PrintReq', { text: 'Hello everyone' });
       expect(deps.addChatMessage).toHaveBeenCalledWith('Hello everyone', true);
     });
 
-    it('Whisper adds a non-system chat message', () => {
+    it('Whisper adds a local-only system chat message', () => {
       api.Whisper('Secret message');
-      expect(deps.addChatMessage).toHaveBeenCalledWith('Secret message', false);
+      expect(deps.addChatMessage).toHaveBeenCalledWith('Secret message', true);
+      expect(deps.sendProtocolMessage).not.toHaveBeenCalled();
     });
   });
 

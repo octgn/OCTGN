@@ -274,12 +274,13 @@ print(p.counters['Life'].value)
       expect(deps.addChatMessage).toHaveBeenCalledWith('Hello!', true);
     });
 
-    it('whisper calls addChatMessage', async () => {
+    it('whisper calls addChatMessage as local-only', async () => {
       const { scope, deps } = createScope();
       await scope.initialize();
 
       await scope.getRuntime().execute('whisper("Secret")');
-      expect(deps.addChatMessage).toHaveBeenCalledWith('Secret', false);
+      expect(deps.addChatMessage).toHaveBeenCalledWith('Secret', true);
+      expect(deps.sendProtocolMessage).not.toHaveBeenCalled();
     });
   });
 

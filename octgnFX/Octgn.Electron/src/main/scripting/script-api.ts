@@ -479,15 +479,19 @@ export class ScriptApi {
   // ── Notification API ──
 
   Notify(message: string): void {
+    // WPF: sends PrintReq to server (broadcast to all) + prints locally
+    this.deps.sendProtocolMessage('PrintReq', { text: message });
     this.deps.addChatMessage(message, true);
   }
 
   NotifyBar(_color: string, message: string): void {
+    // WPF: local-only colored notification (no protocol message)
     this.deps.addChatMessage(message, true);
   }
 
   Whisper(message: string): void {
-    this.deps.addChatMessage(message, false);
+    // WPF: local-only private message (no protocol message)
+    this.deps.addChatMessage(message, true);
   }
 
   Mute(muted: boolean): void {
