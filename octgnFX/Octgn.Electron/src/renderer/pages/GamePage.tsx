@@ -11,13 +11,17 @@ import { parseO8dXml } from '../components/DeckLoader';
 import { useGameStore } from '../stores/game-store';
 import { useAppStore } from '../stores/app-store';
 import { useToastStore } from '../stores/toast-store';
-import type { Card, ChatMessage, Player } from '../../shared/types';
+import ContextMenu from '../components/ContextMenu';
+import type { ContextMenuItemDef } from '../components/ContextMenu';
+import { useContextMenuItems } from '../hooks/useContextMenuItems';
+import { useActionShortcuts } from '../hooks/useActionShortcuts';
+import type { Card, ChatMessage, Player, Group } from '../../shared/types';
 import { readablePlayerColor } from '../utils/player-colors';
 
-interface ContextMenu {
+interface ContextMenuState {
   x: number;
   y: number;
-  cardId: string;
+  items: ContextMenuItemDef[];
 }
 
 const GamePage: React.FC = () => {
@@ -34,6 +38,7 @@ const GamePage: React.FC = () => {
   const leaveGame = useGameStore((s) => s.leaveGame);
   const loadDeck = useGameStore((s) => s.loadDeck);
   const getDeckPaths = useGameStore((s) => s.getDeckPaths);
+  const shuffleGroup = useGameStore((s) => s.shuffleGroup);
   const navigate = useAppStore((s) => s.navigate);
   const addToast = useToastStore((s) => s.addToast);
 
@@ -42,10 +47,11 @@ const GamePage: React.FC = () => {
   const [prebuiltDecksPath, setPrebuiltDecksPath] = useState<string | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
-
   const isSpectator = gameState?.isSpectator ?? false;
+  const { buildCardMenuItems, buildGroupMenuItems, buildTableMenuItems } = useContextMenuItems();
+  useActionShortcuts(gameState, selectedCardId, isSpectator);
 
   // Subscribe to game state updates from main process
   useEffect(() => {
@@ -118,12 +124,7 @@ const GamePage: React.FC = () => {
     handleLoadDeck(prebuiltDecksPath);
   }, [prebuiltDecksPath, handleLoadDeck]);
 
-  // Close context menu on click anywhere
-  useEffect(() => {
-    const handler = () => setContextMenu(null);
-    window.addEventListener('click', handler);
-    return () => window.removeEventListener('click', handler);
-  }, []);
+  const closeContextMenu = useCallback(() => setContextMenu(null), []);
 
   const handleSendChat = useCallback(() => {
     if (!chatInput.trim()) return;
@@ -139,41 +140,31 @@ const GamePage: React.FC = () => {
   );
 
   const handleCardContextMenu = useCallback((e: React.MouseEvent, card: Card) => {
-    if (isSpectator) return; // No context menu for spectators
+    if (isSpectator || !gameState) return;
     e.preventDefault();
-    setContextMenu({ x: e.clientX, y: e.clientY, cardId: card.id });
+    const items = buildCardMenuItems(card, gameState, { flipCard, rotateCard, peekCard, moveCards });
+    setContextMenu({ x: e.clientX, y: e.clientY, items });
     setSelectedCardId(card.id);
-  }, [isSpectator]);
+  }, [isSpectator, gameState, buildCardMenuItems, flipCard, rotateCard, peekCard, moveCards]);
 
-  const allCards = useMemo(() => {
-    if (!gameState) return [];
-    const cards = [...(gameState.table.cards ?? [])];
-    for (const player of gameState.players) {
-      for (const group of player.groups) {
-        cards.push(...group.cards);
-      }
+  const handleGroupContextMenu = useCallback((e: React.MouseEvent, group: Group) => {
+    if (isSpectator || !gameState) return;
+    e.preventDefault();
+    const items = buildGroupMenuItems(group, gameState, { shuffleGroup });
+    if (items.length > 0) {
+      setContextMenu({ x: e.clientX, y: e.clientY, items });
     }
-    return cards;
-  }, [gameState]);
+  }, [isSpectator, gameState, buildGroupMenuItems, shuffleGroup]);
 
-  const handleFlipCard = useCallback(() => {
-    if (!contextMenu) return;
-    const card = allCards.find(c => c.id === contextMenu.cardId);
-    if (card) flipCard(Number(card.id), !card.faceUp);
-    setContextMenu(null);
-  }, [contextMenu, allCards, flipCard]);
+  const handleTableContextMenu = useCallback((e: React.MouseEvent) => {
+    if (isSpectator || !gameState) return;
+    e.preventDefault();
+    const items = buildTableMenuItems(gameState);
+    if (items.length > 0) {
+      setContextMenu({ x: e.clientX, y: e.clientY, items });
+    }
+  }, [isSpectator, gameState, buildTableMenuItems]);
 
-  const handleRotateCard = useCallback((degrees: number) => {
-    if (!contextMenu) return;
-    rotateCard(Number(contextMenu.cardId), degrees);
-    setContextMenu(null);
-  }, [contextMenu, rotateCard]);
-
-  const handlePeekCard = useCallback(() => {
-    if (!contextMenu) return;
-    peekCard(Number(contextMenu.cardId));
-    setContextMenu(null);
-  }, [contextMenu, peekCard]);
 
   /** Drag-drop: move card to table at (x, y) position (table-space coords) */
   const handleCardMoveToTable = useCallback(
@@ -402,6 +393,7 @@ const GamePage: React.FC = () => {
             tableHeight={gameState.table.height}
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
+            onTableContextMenu={!isSpectator ? handleTableContextMenu : undefined}
             onCardMoveToTable={handleCardMoveToTable}
             useTwoSidedTable={gameState.useTwoSidedTable}
             isSpectator={isSpectator}
@@ -417,6 +409,7 @@ const GamePage: React.FC = () => {
             selectedCardId={selectedCardId}
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
+            onGroupContextMenu={!isSpectator ? handleGroupContextMenu : undefined}
             onCardMoveToGroup={handleCardMoveToGroup}
             onReorderCard={handleReorderCard}
           />
@@ -424,28 +417,12 @@ const GamePage: React.FC = () => {
 
         {/* Context menu (non-spectator only) */}
         {!isSpectator && contextMenu && (
-          <div
-            className="fixed z-50 py-1 min-w-[160px] rounded-lg border border-octgn-border/50 bg-octgn-surface/95 backdrop-blur-md shadow-xl shadow-black/40"
-            style={{ left: contextMenu.x, top: contextMenu.y }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button onClick={handleFlipCard} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
-              Flip Card
-            </button>
-            <button onClick={() => handleRotateCard(1)} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
-              Rotate 90°
-            </button>
-            <button onClick={() => handleRotateCard(2)} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
-              Rotate 180°
-            </button>
-            <button onClick={() => handleRotateCard(0)} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
-              Reset Rotation
-            </button>
-            <div className="my-1 border-t border-octgn-border/30" />
-            <button onClick={handlePeekCard} className="w-full text-left px-3 py-1.5 text-xs text-octgn-text hover:bg-octgn-primary/20 transition-colors">
-              Peek
-            </button>
-          </div>
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            items={contextMenu.items}
+            onClose={closeContextMenu}
+          />
         )}
 
         {/* Chat panel */}

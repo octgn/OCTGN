@@ -63,6 +63,7 @@ export interface PlayerGroupBrowserProps {
   selectedCardId: string | null;
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
+  onGroupContextMenu?: (e: React.MouseEvent, group: Group) => void;
   onCardMoveToGroup: (cardId: string, groupId: string) => void;
   onReorderCard?: (cardId: string, newIndex: number) => void;
 }
@@ -78,6 +79,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
   selectedCardId,
   onCardClick,
   onCardContextMenu,
+  onGroupContextMenu,
   onCardMoveToGroup,
   onReorderCard,
 }) => {
@@ -309,6 +311,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
               groups={sideGroups}
               isOwn={isOwnTab}
               onPileClick={handlePileClick}
+              onGroupContextMenu={isOwnTab ? onGroupContextMenu : undefined}
               onCardMoveToGroup={isOwnTab ? onCardMoveToGroup : undefined}
             />
           )}

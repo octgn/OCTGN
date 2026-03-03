@@ -52,6 +52,8 @@ export interface TableDefinition {
   background?: string;
   backgroundStyle?: 'stretch' | 'tile' | 'uniform' | 'uniformToFill';
   board?: BoardDefinition;
+  cardActions: ActionMenuItem[];
+  groupActions: ActionMenuItem[];
 }
 
 export interface BoardDefinition {
@@ -116,8 +118,8 @@ export interface GroupDefinition {
   visibility: GroupVisibility;
   ordered: boolean;
   shortcut?: string;
-  cardActions: CardAction[];
-  groupActions: GroupAction[];
+  cardActions: ActionMenuItem[];
+  groupActions: ActionMenuItem[];
 }
 
 export enum GroupVisibility {
@@ -162,6 +164,13 @@ export interface GroupAction {
   getName?: string;
   isDefault?: boolean;
 }
+
+/** Discriminated union for menu items (supports nesting, separators) */
+export type ActionMenuItem =
+  | { type: 'action'; actionType: 'card'; action: CardAction }
+  | { type: 'action'; actionType: 'group'; action: GroupAction }
+  | { type: 'submenu'; name: string; showIf?: string; getName?: string; children: ActionMenuItem[] }
+  | { type: 'separator'; showIf?: string };
 
 // Game state types
 export interface Card {
@@ -253,6 +262,8 @@ export interface GameState {
   cardSize?: { width: number; height: number };
   /** Named card sizes from game definition (in mm) */
   cardSizes?: Record<string, { width: number; height: number }>;
+  /** Action definitions per group name from game definition */
+  actionDefs?: Record<string, { cardActions: ActionMenuItem[]; groupActions: ActionMenuItem[] }>;
 }
 
 export interface ChatMessage {
@@ -350,6 +361,8 @@ export const IPC_CHANNELS = {
   SCRIPT_EXECUTE: 'script:execute',
   SCRIPT_DIALOG_REQUEST: 'script:dialog-request',
   SCRIPT_DIALOG_RESPONSE: 'script:dialog-response',
+  SCRIPT_EXECUTE_ACTION: 'script:execute-action',
+  SCRIPT_EVALUATE_MENU: 'script:evaluate-menu',
 
   // Game definitions
   GAMES_LIST_INSTALLED: 'games:list-installed',

@@ -6,6 +6,7 @@ export interface GroupStripProps {
   groups: Group[];
   isOwn: boolean;
   onPileClick: (group: Group) => void;
+  onGroupContextMenu?: (e: React.MouseEvent, group: Group) => void;
   onCardMoveToGroup?: (cardId: string, groupId: string) => void;
 }
 
@@ -13,6 +14,7 @@ const GroupStrip: React.FC<GroupStripProps> = ({
   groups,
   isOwn,
   onPileClick,
+  onGroupContextMenu,
   onCardMoveToGroup,
 }) => {
   return (
@@ -31,6 +33,7 @@ const GroupStrip: React.FC<GroupStripProps> = ({
           group={group}
           isOwn={isOwn}
           onPileClick={onPileClick}
+          onGroupContextMenu={onGroupContextMenu}
           onCardMoveToGroup={onCardMoveToGroup}
         />
       ))}

@@ -254,6 +254,46 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     },
   );
 
+  // Action execution handler (for game-defined context menu actions)
+  ipcMain.handle(
+    IPC_CHANNELS.SCRIPT_EXECUTE_ACTION,
+    async (_event, request: { type: 'card' | 'group'; action: any; cardId?: number; cardIds?: number[]; groupId: number }) => {
+      const executor = gameService.getActionExecutor();
+      if (!executor) {
+        return { success: false, error: 'Script engine not initialized' };
+      }
+      if (request.type === 'card') {
+        if (request.cardIds && request.cardIds.length > 1) {
+          return executor.executeBatchCardAction(request.action, request.cardIds);
+        }
+        const cardId = request.cardId ?? request.cardIds?.[0];
+        if (cardId == null) return { success: false, error: 'No card ID provided' };
+        return executor.executeCardAction(request.action, cardId);
+      } else {
+        return executor.executeGroupAction(request.action, request.groupId);
+      }
+    },
+  );
+
+  // Menu evaluation handler (showIf/getName for game-defined actions)
+  ipcMain.handle(
+    IPC_CHANNELS.SCRIPT_EVALUATE_MENU,
+    async (_event, request: { actions: Array<{ showIf?: string; getName?: string; id: string; action: any }>; cardOrGroupId: number }) => {
+      const executor = gameService.getActionExecutor();
+      if (!executor) {
+        // No script engine — show all actions with default names
+        return request.actions.map((a) => ({ id: a.id, visible: true, name: a.action.name }));
+      }
+      const results = [];
+      for (const a of request.actions) {
+        const visible = await executor.evaluateShowIf(a.action, request.cardOrGroupId);
+        const name = await executor.evaluateGetName(a.action, request.cardOrGroupId);
+        results.push({ id: a.id, visible, name });
+      }
+      return results;
+    },
+  );
+
   // Game definitions handlers
   ipcMain.handle(IPC_CHANNELS.GAMES_LIST_INSTALLED, async () => {
     return listInstalledGames();

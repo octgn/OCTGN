@@ -66,6 +66,10 @@ const api = {
   // Scripting
   executeScript: (functionName: string, args?: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.SCRIPT_EXECUTE, functionName, args ?? ''),
+  executeAction: (request: { type: 'card' | 'group'; action: unknown; cardId?: number; cardIds?: number[]; groupId: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SCRIPT_EXECUTE_ACTION, request),
+  evaluateMenu: (request: { actions: Array<{ showIf?: string; getName?: string; id: string; action: unknown }>; cardOrGroupId: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SCRIPT_EVALUATE_MENU, request),
   onScriptEvent: (callback: (event: unknown) => void) => {
     const listener = (_event: unknown, data: unknown) => callback(data);
     ipcRenderer.on(IPC_CHANNELS.SCRIPT_EVENT, listener);

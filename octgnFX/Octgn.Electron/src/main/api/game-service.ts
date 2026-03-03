@@ -1,13 +1,16 @@
 import { BrowserWindow, app } from 'electron';
-import { writeFile, readFile, unlink } from 'fs/promises';
+import { writeFile, readFile, readdir, unlink } from 'fs/promises';
 import { join } from 'path';
 import { GameConnection } from '../protocol/connection';
 import { MessageType, type ProtocolMessage } from '../protocol/types';
-import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker, Deck, DeckSectionDef } from '../../shared/types';
+import type { GameState, ChatMessage, Player, Card, Group, Counter, Marker, Deck, DeckSectionDef, GameDefinition, ActionMenuItem } from '../../shared/types';
 import { IPC_CHANNELS, GroupVisibility } from '../../shared/types';
 import { ScriptEngine } from '../scripting/script-engine';
+import { ActionExecutor } from '../scripting/action-executor';
 import { CardResolver } from '../games/card-resolver';
 import { ImageResolver } from '../games/image-resolver';
+import { findGameDir } from '../games/game-store';
+import type { ScriptApiDeps } from '../scripting/script-api';
 import { log, logError } from '../logger';
 
 export interface SavedConnectionInfo {
@@ -62,6 +65,7 @@ export class GameService {
   private chatMessages: ChatMessage[] = [];
   private chatIdCounter: number = 0;
   private scriptEngine: ScriptEngine = new ScriptEngine();
+  private actionExecutor: ActionExecutor | null = null;
   private isSpectator: boolean = false;
   private cardResolver: CardResolver = new CardResolver();
   private imageResolver: ImageResolver = new ImageResolver();
@@ -515,6 +519,16 @@ export class GameService {
     return this.scriptEngine;
   }
 
+  getActionExecutor(): ActionExecutor | null {
+    if (!this.actionExecutor) {
+      const scope = this.scriptEngine.getScope();
+      if (scope) {
+        this.actionExecutor = new ActionExecutor(scope);
+      }
+    }
+    return this.actionExecutor;
+  }
+
   get isConnected(): boolean {
     return this.connection?.isConnected ?? false;
   }
@@ -774,6 +788,11 @@ export class GameService {
             this.initializeGlobalPlayer(gameDef);
             // Update card names and images from now-loaded definitions
             this.updateCardNamesAndImages();
+            // Build action definitions map for context menus
+            this.populateActionDefs(gameDef);
+            // Initialize Python scripting engine for game-defined actions
+            this.initializeScriptEngine(gameDef).catch((err) =>
+              logError('SCRIPT', err));
             this.broadcastState();
           }
         }).catch((err) => logError('GAME', err));
@@ -1458,6 +1477,87 @@ export class GameService {
       globalVariables: {},
     });
     log('GAME', `Initialized global player with ${globalGroups.length} shared groups`);
+  }
+
+  /**
+   * Populate actionDefs on the game state from game definition.
+   * Maps each group name to its card/group actions, plus "__table__" for table actions.
+   */
+  private populateActionDefs(gameDef: GameDefinition): void {
+    if (!this.gameState) return;
+    const defs: Record<string, { cardActions: ActionMenuItem[]; groupActions: ActionMenuItem[] }> = {};
+
+    // Player groups
+    for (const player of gameDef.players) {
+      for (const group of player.groups) {
+        defs[group.name] = { cardActions: group.cardActions, groupActions: group.groupActions };
+      }
+    }
+
+    // Shared groups
+    if (gameDef.globalPlayer?.groups) {
+      for (const group of gameDef.globalPlayer.groups) {
+        defs[group.name] = { cardActions: group.cardActions, groupActions: group.groupActions };
+      }
+    }
+
+    // Table actions
+    if (gameDef.table) {
+      defs['__table__'] = { cardActions: gameDef.table.cardActions, groupActions: gameDef.table.groupActions };
+    }
+
+    this.gameState.actionDefs = defs;
+    log('GAME', `Populated actionDefs for ${Object.keys(defs).length} groups`);
+  }
+
+  /**
+   * Initialize the Python scripting engine with the game definition.
+   * Creates ScriptApiDeps wiring, initializes the engine, and loads game scripts.
+   */
+  private async initializeScriptEngine(gameDef: GameDefinition): Promise<void> {
+    const deps: ScriptApiDeps = {
+      getGameState: () => this.gameState!,
+      getLocalPlayerId: () => this.localPlayerId,
+      getGameDefinition: () => this.cardResolver.getGameDefinition(this.currentGameId),
+      sendProtocolMessage: (type: string, params: Record<string, unknown>) => {
+        const msgType = MessageType[type as keyof typeof MessageType];
+        if (msgType != null) {
+          this.connection?.sendMessage(msgType, 0, params);
+        }
+      },
+      addChatMessage: (message: string, isSystem: boolean) => {
+        if (isSystem) {
+          this.addSystemMessage(message);
+        } else {
+          this.sendChat(message);
+        }
+        this.broadcastState();
+      },
+    };
+
+    const result = await this.scriptEngine.initialize(gameDef, deps);
+    if (!result.success) {
+      log('SCRIPT', `Failed to initialize script engine: ${result.error}`);
+      return;
+    }
+    log('SCRIPT', `Script engine initialized (version ${gameDef.scriptVersion ?? '3.1.0.2'})`);
+
+    // Load game Python scripts from the Scripts directory
+    const gameDir = await findGameDir(this.currentGameId);
+    if (!gameDir) return;
+
+    const scriptsDir = join(gameDir, 'Scripts');
+    try {
+      const files = await readdir(scriptsDir);
+      for (const file of files) {
+        if (!file.endsWith('.py')) continue;
+        const source = await readFile(join(scriptsDir, file), 'utf-8');
+        await this.scriptEngine.loadGameScript(source, file);
+        log('SCRIPT', `Loaded game script: ${file}`);
+      }
+    } catch {
+      // No Scripts directory — that's fine, some games don't have scripts
+    }
   }
 
   /**

@@ -8,6 +8,7 @@ export interface PileThumbnailProps {
   group: Group;
   isOwn: boolean;
   onPileClick: (group: Group) => void;
+  onGroupContextMenu?: (e: React.MouseEvent, group: Group) => void;
   onCardMoveToGroup?: (cardId: string, groupId: string) => void;
 }
 
@@ -15,6 +16,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   group,
   isOwn,
   onPileClick,
+  onGroupContextMenu,
   onCardMoveToGroup,
 }) => {
   const { dragState, startDrag, startTouchDrag, updateDropTarget, endDrag, isDragging } = useDragDrop();
@@ -86,6 +88,7 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
       )}
       data-drop-zone={group.id}
       onClick={() => onPileClick(group)}
+      onContextMenu={onGroupContextMenu ? (e) => { e.preventDefault(); onGroupContextMenu(e, group); } : undefined}
       onDragOver={isOwn ? handleDragOver : undefined}
       onDrop={isOwn ? handleDrop : undefined}
     >

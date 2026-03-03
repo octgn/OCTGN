@@ -1,11 +1,11 @@
 import { XMLParser } from 'fast-xml-parser';
-import type { GameDefinition, PlayerDefinition, GroupDefinition, CounterDefinition, GamePhase, CardAction, GroupAction, Variable, GroupVisibility, TableDefinition, BoardDefinition, CardSizeDefinition, DeckSectionDef } from '../../shared/types';
+import type { GameDefinition, PlayerDefinition, GroupDefinition, CounterDefinition, GamePhase, CardAction, GroupAction, Variable, GroupVisibility, TableDefinition, BoardDefinition, CardSizeDefinition, DeckSectionDef, ActionMenuItem } from '../../shared/types';
 
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '@_',
   isArray: (tagName) =>
-    ['player', 'group', 'action', 'groupaction', 'counter', 'phase', 'globalvariable', 'variable', 'size', 'gameboard', 'section'].includes(tagName.toLowerCase()),
+    ['player', 'group', 'action', 'cardaction', 'groupaction', 'cardactions', 'groupactions', 'cardseparator', 'groupseparator', 'counter', 'phase', 'globalvariable', 'variable', 'size', 'gameboard', 'section'].includes(tagName.toLowerCase()),
 });
 
 function attr(obj: Record<string, unknown>, name: string, fallback = ''): string {
@@ -26,37 +26,126 @@ function toVisibility(v: string): GroupVisibility {
   }
 }
 
-function parseActions(raw: unknown): CardAction[] {
-  if (!raw) return [];
-  const arr = Array.isArray(raw) ? raw : [raw];
-  return arr.map((a) => {
-    const o = a as Record<string, unknown>;
-    return {
-      name: attr(o, 'name'),
-      shortcut: attr(o, 'shortcut') || undefined,
-      execute: attr(o, 'execute'),
-      batchExecute: attr(o, 'batchexecute') || undefined,
-      showIf: attr(o, 'showIf') || undefined,
-      getName: attr(o, 'getName') || undefined,
-      isDefault: attr(o, 'default') === 'true' || undefined,
-    };
-  });
+function parseSingleCardAction(o: Record<string, unknown>): CardAction {
+  return {
+    name: attr(o, 'menu') || attr(o, 'name'),
+    shortcut: attr(o, 'shortcut') || undefined,
+    execute: attr(o, 'execute'),
+    batchExecute: attr(o, 'batchexecute') || undefined,
+    showIf: attr(o, 'showIf') || undefined,
+    getName: attr(o, 'getName') || undefined,
+    isDefault: attr(o, 'default').toLowerCase() === 'true' || undefined,
+  };
 }
 
-function parseGroupActions(raw: unknown): GroupAction[] {
-  if (!raw) return [];
-  const arr = Array.isArray(raw) ? raw : [raw];
-  return arr.map((a) => {
-    const o = a as Record<string, unknown>;
-    return {
-      name: attr(o, 'name'),
-      shortcut: attr(o, 'shortcut') || undefined,
-      execute: attr(o, 'execute'),
-      showIf: attr(o, 'showIf') || undefined,
-      getName: attr(o, 'getName') || undefined,
-      isDefault: attr(o, 'default') === 'true' || undefined,
-    };
-  });
+function parseSingleGroupAction(o: Record<string, unknown>): GroupAction {
+  return {
+    name: attr(o, 'menu') || attr(o, 'name'),
+    shortcut: attr(o, 'shortcut') || undefined,
+    execute: attr(o, 'execute'),
+    showIf: attr(o, 'showIf') || undefined,
+    getName: attr(o, 'getName') || undefined,
+    isDefault: attr(o, 'default').toLowerCase() === 'true' || undefined,
+  };
+}
+
+/**
+ * Recursively parse card action menu items from a group/table element.
+ * Handles: <action>/<cardaction> (leaf), <cardactions> (submenu), <cardseparator> (separator).
+ */
+function parseCardActionItems(container: Record<string, unknown>): ActionMenuItem[] {
+  const items: ActionMenuItem[] = [];
+
+  // <action> elements (legacy name for card actions)
+  const actions = container['action'];
+  if (actions) {
+    const arr = Array.isArray(actions) ? actions : [actions];
+    for (const a of arr) {
+      items.push({ type: 'action', actionType: 'card', action: parseSingleCardAction(a as Record<string, unknown>) });
+    }
+  }
+
+  // <cardaction> elements
+  const cardActions = container['cardaction'];
+  if (cardActions) {
+    const arr = Array.isArray(cardActions) ? cardActions : [cardActions];
+    for (const a of arr) {
+      items.push({ type: 'action', actionType: 'card', action: parseSingleCardAction(a as Record<string, unknown>) });
+    }
+  }
+
+  // <cardactions> elements (submenus)
+  const cardSubmenus = container['cardactions'];
+  if (cardSubmenus) {
+    const arr = Array.isArray(cardSubmenus) ? cardSubmenus : [cardSubmenus];
+    for (const sub of arr) {
+      const o = sub as Record<string, unknown>;
+      items.push({
+        type: 'submenu',
+        name: attr(o, 'menu') || attr(o, 'name'),
+        showIf: attr(o, 'showIf') || undefined,
+        getName: attr(o, 'getName') || undefined,
+        children: parseCardActionItems(o),
+      });
+    }
+  }
+
+  // <cardseparator> elements
+  const cardSeps = container['cardseparator'];
+  if (cardSeps) {
+    const arr = Array.isArray(cardSeps) ? cardSeps : [cardSeps];
+    for (const sep of arr) {
+      const o = sep as Record<string, unknown>;
+      items.push({ type: 'separator', showIf: attr(o, 'showIf') || undefined });
+    }
+  }
+
+  return items;
+}
+
+/**
+ * Recursively parse group action menu items from a group/table element.
+ * Handles: <groupaction> (leaf), <groupactions> (submenu), <groupseparator> (separator).
+ */
+function parseGroupActionItems(container: Record<string, unknown>): ActionMenuItem[] {
+  const items: ActionMenuItem[] = [];
+
+  // <groupaction> elements
+  const groupActions = container['groupaction'];
+  if (groupActions) {
+    const arr = Array.isArray(groupActions) ? groupActions : [groupActions];
+    for (const a of arr) {
+      items.push({ type: 'action', actionType: 'group', action: parseSingleGroupAction(a as Record<string, unknown>) });
+    }
+  }
+
+  // <groupactions> elements (submenus)
+  const groupSubmenus = container['groupactions'];
+  if (groupSubmenus) {
+    const arr = Array.isArray(groupSubmenus) ? groupSubmenus : [groupSubmenus];
+    for (const sub of arr) {
+      const o = sub as Record<string, unknown>;
+      items.push({
+        type: 'submenu',
+        name: attr(o, 'menu') || attr(o, 'name'),
+        showIf: attr(o, 'showIf') || undefined,
+        getName: attr(o, 'getName') || undefined,
+        children: parseGroupActionItems(o),
+      });
+    }
+  }
+
+  // <groupseparator> elements
+  const groupSeps = container['groupseparator'];
+  if (groupSeps) {
+    const arr = Array.isArray(groupSeps) ? groupSeps : [groupSeps];
+    for (const sep of arr) {
+      const o = sep as Record<string, unknown>;
+      items.push({ type: 'separator', showIf: attr(o, 'showIf') || undefined });
+    }
+  }
+
+  return items;
 }
 
 function parseGroup(raw: Record<string, unknown>): GroupDefinition {
@@ -66,8 +155,8 @@ function parseGroup(raw: Record<string, unknown>): GroupDefinition {
     visibility: toVisibility(attr(raw, 'visibility')),
     ordered: attr(raw, 'ordered') === 'true',
     shortcut: attr(raw, 'shortcut') || undefined,
-    cardActions: parseActions(raw['action']),
-    groupActions: parseGroupActions(raw['groupaction']),
+    cardActions: parseCardActionItems(raw),
+    groupActions: parseGroupActionItems(raw),
   };
 }
 
@@ -109,6 +198,8 @@ function parseTable(raw: Record<string, unknown>): TableDefinition {
     height: num(raw, 'height'),
     background,
     backgroundStyle: VALID_BG_STYLES.has(bgStyle) ? bgStyle as TableDefinition['backgroundStyle'] : undefined,
+    cardActions: parseCardActionItems(raw),
+    groupActions: parseGroupActionItems(raw),
   };
 
   // Legacy board from table attributes

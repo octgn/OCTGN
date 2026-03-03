@@ -50,6 +50,34 @@ vi.mock('@main/games/card-resolver', () => ({
   })),
 }));
 
+// Mock ScriptEngine — track initialize/loadGameScript calls
+const mockScriptInitialize = vi.fn().mockResolvedValue({ success: true });
+const mockLoadGameScript = vi.fn().mockResolvedValue({ success: true });
+const mockGetScope = vi.fn().mockReturnValue(null);
+const mockScriptIsInitialized = vi.fn().mockReturnValue(false);
+
+vi.mock('@main/scripting/script-engine', () => ({
+  ScriptEngine: vi.fn().mockImplementation(() => ({
+    initialize: mockScriptInitialize,
+    loadGameScript: mockLoadGameScript,
+    getScope: mockGetScope,
+    isInitialized: mockScriptIsInitialized,
+    handleRemoteCall: vi.fn().mockReturnValue({ success: true }),
+    getScriptEngine: vi.fn(),
+  })),
+}));
+
+// Mock findGameDir for script loading
+const mockFindGameDir = vi.fn().mockResolvedValue(null);
+vi.mock('@main/games/game-store', () => ({
+  findGameDir: (...args: unknown[]) => mockFindGameDir(...args),
+}));
+
+// Note: fs/promises readdir/readFile are NOT mocked here because vi.mock
+// with importOriginal doesn't reliably intercept named imports already bound
+// in the module under test. Script loading via readdir is tested at the
+// integration level instead.
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -2010,6 +2038,120 @@ describe('GameService', () => {
 
       const finalState = lastState();
       expect(finalState.table.cards).toHaveLength(1);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // ScriptEngine initialization
+  // -------------------------------------------------------------------------
+
+  describe('ScriptEngine initialization', () => {
+    const fakeGameDef = {
+      id: 'game-1',
+      name: 'Test Game',
+      version: '1.0',
+      description: '',
+      cardWidth: 63,
+      cardHeight: 88,
+      cardBack: '',
+      deckSections: [],
+      sharedDeckSections: [],
+      players: [{
+        name: 'Player',
+        groups: [{
+          name: 'Hand',
+          visibility: 2,
+          ordered: false,
+          cardActions: [],
+          groupActions: [],
+        }],
+        counters: [],
+        globalVariables: [],
+      }],
+      globalVariables: [],
+      phases: [],
+      table: {
+        name: 'Table',
+        width: 800,
+        height: 600,
+        cardActions: [],
+        groupActions: [],
+      },
+      scriptVersion: '3.1.0.2',
+    };
+
+    it('initializes ScriptEngine when game definition loads', async () => {
+      // Setup: mockGetGameDefinition returns a valid def after loadGame resolves
+      mockScriptInitialize.mockResolvedValue({ success: true });
+      mockGetGameDefinition.mockReturnValue(fakeGameDef);
+
+      const service = await serviceWithState();
+
+      // Wait for the async loadGame().then() to resolve
+      await vi.waitFor(() => {
+        expect(mockScriptInitialize).toHaveBeenCalledTimes(1);
+      });
+
+      // Verify initialize was called with the game definition and proper deps
+      const [gameDef, deps] = mockScriptInitialize.mock.calls[0];
+      expect(gameDef).toBe(fakeGameDef);
+      expect(deps).toHaveProperty('getGameState');
+      expect(deps).toHaveProperty('getLocalPlayerId');
+      expect(deps).toHaveProperty('getGameDefinition');
+      expect(deps).toHaveProperty('sendProtocolMessage');
+      expect(deps).toHaveProperty('addChatMessage');
+    });
+
+    it('looks for game scripts directory after initialization', async () => {
+      mockScriptInitialize.mockResolvedValue({ success: true });
+      mockGetGameDefinition.mockReturnValue(fakeGameDef);
+      mockFindGameDir.mockResolvedValue(null); // No game dir found
+
+      const service = await serviceWithState();
+
+      // Wait for findGameDir to be called — confirms the script loading path runs
+      await vi.waitFor(() => {
+        expect(mockFindGameDir).toHaveBeenCalled();
+      });
+
+      // findGameDir should be called with the current game ID
+      expect(mockFindGameDir).toHaveBeenCalledWith('gid');
+    });
+
+    it('does not crash when game directory is not found', async () => {
+      mockScriptInitialize.mockResolvedValue({ success: true });
+      mockGetGameDefinition.mockReturnValue(fakeGameDef);
+      mockFindGameDir.mockResolvedValue(null); // No game dir
+
+      const service = await serviceWithState();
+
+      // Wait for async init
+      await vi.waitFor(() => {
+        expect(mockScriptInitialize).toHaveBeenCalledTimes(1);
+      });
+
+      // ScriptEngine should still be initialized even if game dir not found
+      expect(mockScriptInitialize).toHaveBeenCalledTimes(1);
+      // loadGameScript should NOT be called since there's no game dir
+      expect(mockLoadGameScript).not.toHaveBeenCalled();
+    });
+
+    it('getActionExecutor returns an executor after initialization', async () => {
+      // After initialize, getScope should return a valid scope
+      mockScriptInitialize.mockResolvedValue({ success: true });
+      const fakeScope = { execute: vi.fn() };
+      mockGetScope.mockReturnValue(fakeScope);
+      mockScriptIsInitialized.mockReturnValue(true);
+      mockGetGameDefinition.mockReturnValue(fakeGameDef);
+
+      const service = await serviceWithState();
+
+      await vi.waitFor(() => {
+        expect(mockScriptInitialize).toHaveBeenCalledTimes(1);
+      });
+
+      const executor = service.getActionExecutor();
+      expect(executor).not.toBeNull();
     });
   });
 });

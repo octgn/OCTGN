@@ -28,6 +28,7 @@ interface GameBoardProps {
   tableHeight?: number;
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
+  onTableContextMenu?: (e: React.MouseEvent) => void;
   onCardMoveToTable: (cardId: string, x: number, y: number) => void;
   useTwoSidedTable?: boolean;
   isSpectator?: boolean;
@@ -49,6 +50,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   tableHeight,
   onCardClick,
   onCardContextMenu,
+  onTableContextMenu,
   onCardMoveToTable,
   useTwoSidedTable = false,
   isSpectator = false,
@@ -325,6 +327,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
         onMouseMove={handleTableMouseMove}
         onMouseUp={handleTableMouseUp}
         onMouseLeave={handleTableMouseLeave}
+        onContextMenu={(e) => {
+          // Only trigger table context menu if the click target is the table itself, not a card
+          if (onTableContextMenu && (e.target as HTMLElement).closest('[data-card-id]') === null) {
+            e.preventDefault();
+            onTableContextMenu(e);
+          }
+        }}
       >
         {/* Table background image */}
         {tableBackgroundUrl && (

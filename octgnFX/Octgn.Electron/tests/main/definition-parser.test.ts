@@ -349,4 +349,137 @@ describe('parseDefinitionXml — table, board, and card size parsing', () => {
       expect(def!.globalPlayer!.groups[0].name).toBe('Common');
     });
   });
+
+  describe('action parsing — menu attribute and submenus', () => {
+    it('reads display name from the "menu" attribute on cardaction elements', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <cardaction menu="Capture piece" shortcut="del" execute="kill" />
+          <cardaction menu="Promote piece" execute="promote" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.table).toBeDefined();
+      expect(def!.table!.cardActions).toHaveLength(2);
+      // The action's name field should be populated from the "menu" attribute
+      const first = def!.table!.cardActions[0];
+      expect(first.type).toBe('action');
+      if (first.type === 'action') {
+        expect(first.action.name).toBe('Capture piece');
+        expect(first.action.shortcut).toBe('del');
+        expect(first.action.execute).toBe('kill');
+      }
+      const second = def!.table!.cardActions[1];
+      if (second.type === 'action') {
+        expect(second.action.name).toBe('Promote piece');
+      }
+    });
+
+    it('reads display name from the "menu" attribute on groupaction elements', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <groupaction menu="Set-up your pieces" execute="gameSetup" />
+          <groupaction menu="Roll a die" shortcut="Ctrl+R" execute="roll20" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.table!.groupActions).toHaveLength(2);
+      const first = def!.table!.groupActions[0];
+      if (first.type === 'action') {
+        expect(first.action.name).toBe('Set-up your pieces');
+        expect(first.action.execute).toBe('gameSetup');
+      }
+      const second = def!.table!.groupActions[1];
+      if (second.type === 'action') {
+        expect(second.action.name).toBe('Roll a die');
+        expect(second.action.shortcut).toBe('Ctrl+R');
+      }
+    });
+
+    it('reads display name from "menu" attribute on action elements in groups', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" back="cards/back.png" front="cards/front.png" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false">
+      <action menu="Play Card" shortcut="Enter" execute="playCard" />
+      <action menu="Discard" shortcut="Del" execute="discard" />
+      <groupaction menu="Draw" shortcut="Ctrl+D" execute="draw" />
+    </group>
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      const hand = def!.players[0].groups[0];
+      expect(hand.cardActions).toHaveLength(2);
+      if (hand.cardActions[0].type === 'action') {
+        expect(hand.cardActions[0].action.name).toBe('Play Card');
+        expect(hand.cardActions[0].action.shortcut).toBe('Enter');
+      }
+      if (hand.cardActions[1].type === 'action') {
+        expect(hand.cardActions[1].action.name).toBe('Discard');
+      }
+      expect(hand.groupActions).toHaveLength(1);
+      if (hand.groupActions[0].type === 'action') {
+        expect(hand.groupActions[0].action.name).toBe('Draw');
+        expect(hand.groupActions[0].action.shortcut).toBe('Ctrl+D');
+      }
+    });
+
+    it('reads display name from "menu" attribute on submenu elements', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" back="cards/back.png" front="cards/front.png" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false">
+      <groupactions menu="Game Setup Automation">
+        <groupaction menu="Enable Automation" shortcut="Ctrl+A" execute="enableSetup" />
+        <groupaction menu="Disable Automation" shortcut="Ctrl+Z" execute="disableSetup" />
+      </groupactions>
+    </group>
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      const hand = def!.players[0].groups[0];
+      expect(hand.groupActions).toHaveLength(1);
+      const submenu = hand.groupActions[0];
+      expect(submenu.type).toBe('submenu');
+      if (submenu.type === 'submenu') {
+        expect(submenu.name).toBe('Game Setup Automation');
+        expect(submenu.children).toHaveLength(2);
+        if (submenu.children[0].type === 'action') {
+          expect(submenu.children[0].action.name).toBe('Enable Automation');
+        }
+        if (submenu.children[1].type === 'action') {
+          expect(submenu.children[1].action.name).toBe('Disable Automation');
+        }
+      }
+    });
+
+    it('falls back to "name" attribute when "menu" is not present', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <cardaction name="Legacy Action" execute="legacyFunc" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      const action = def!.table!.cardActions[0];
+      if (action.type === 'action') {
+        expect(action.action.name).toBe('Legacy Action');
+      }
+    });
+
+    it('reads "default" attribute on cardaction for isDefault', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <cardaction menu="Use Card" default="True" execute="useCard" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      const action = def!.table!.cardActions[0];
+      if (action.type === 'action') {
+        expect(action.action.isDefault).toBe(true);
+      }
+    });
+  });
 });
