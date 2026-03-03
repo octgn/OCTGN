@@ -5,10 +5,11 @@
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
-    "dev:main": "npm run build:preload && tsc -p tsconfig.main.json --watch",
+    "dev:main": "npm run build:preload && npm run copy:assets && tsc -p tsconfig.main.json --watch",
     "dev:renderer": "vite dev",
     "build": "npm run build:main && npm run build:renderer",
-    "build:main": "tsc -p tsconfig.main.json && npm run build:preload",
+    "build:main": "tsc -p tsconfig.main.json && npm run copy:assets && npm run build:preload",
+    "copy:assets": "node -e \"const fs=require('fs');const p=require('path');const s=p.join('src','main','scripting','versions');const d=p.join('dist','main','scripting','versions');fs.mkdirSync(d,{recursive:true});fs.readdirSync(s).forEach(f=>{if(f.endsWith('.py'))fs.copyFileSync(p.join(s,f),p.join(d,f))})\"",
     "build:preload": "esbuild src/main/preload.ts --bundle --platform=node --outfile=dist/main/preload.js --external:electron --format=cjs",
     "build:renderer": "vite build",
     "start": "electron dist/main/index.js",
