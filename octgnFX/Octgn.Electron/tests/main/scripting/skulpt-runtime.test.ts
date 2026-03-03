@@ -225,6 +225,27 @@ print(f.get())
       const r2 = await runtime.execute('print(_api.getUndef())');
       expect(r2.output).toBe('None\n');
     });
+
+    it('proxy methods that return Promises suspend and resume Python execution', async () => {
+      const api = {
+        asyncRandom: () => Promise.resolve(42),
+      };
+      runtime.injectProxy('_api', api);
+      const result = await runtime.execute('x = _api.asyncRandom()\nprint(x)');
+      expect(result.error).toBeUndefined();
+      expect(result.success).toBe(true);
+      expect(result.output).toBe('42\n');
+    });
+
+    it('proxy methods that return delayed Promises work correctly', async () => {
+      const api = {
+        delayedValue: () => new Promise<number>(resolve => setTimeout(() => resolve(7), 50)),
+      };
+      runtime.injectProxy('_api', api);
+      const result = await runtime.execute('val = _api.delayedValue()\nprint(val + 3)');
+      expect(result.success).toBe(true);
+      expect(result.output).toBe('10\n');
+    });
   });
 
   describe('hasFunction()', () => {

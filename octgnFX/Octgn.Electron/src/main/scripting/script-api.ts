@@ -34,6 +34,7 @@ export interface ScriptApiDeps {
 export class ScriptApi {
   private deps: ScriptApiDeps;
   private muted = false;
+  private pendingRandomResolve: ((value: number) => void) | null = null;
 
   constructor(deps: ScriptApiDeps) {
     this.deps = deps;
@@ -560,12 +561,31 @@ export class ScriptApi {
 
   // ── Misc API ──
 
-  Random(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  Random(min: number, max: number): number | Promise<number> {
+    if (!this.deps.sendProtocolMessage) {
+      // Fallback to local random when no protocol connection
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    // Send RandomReq to server and wait for Random response
+    this.deps.sendProtocolMessage('RandomReq', { min, max });
+    return new Promise<number>((resolve) => {
+      this.pendingRandomResolve = resolve;
+    });
+  }
+
+  /** Called when the server responds with a Random result. */
+  handleRandomResult(result: number): void {
+    if (this.pendingRandomResolve) {
+      this.pendingRandomResolve(result);
+      this.pendingRandomResolve = null;
+    }
   }
 
   RandomArray(min: number, max: number, count: number): number[] {
-    return Array.from({ length: count }, () => this.Random(min, max));
+    // WPF: RandomArray uses local random, NOT server-synchronized
+    return Array.from({ length: count }, () =>
+      Math.floor(Math.random() * (max - min + 1)) + min
+    );
   }
 
   OCTGN_Version(): string {

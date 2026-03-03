@@ -414,8 +414,28 @@ describe('ScriptApi', () => {
   });
 
   describe('Random API', () => {
-    it('Random returns a number in range', () => {
+    it('Random sends RandomReq and returns a Promise', () => {
       const result = api.Random(1, 6);
+      expect(result).toBeInstanceOf(Promise);
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith('RandomReq', { min: 1, max: 6 });
+    });
+
+    it('Random resolves when handleRandomResult is called', async () => {
+      const promise = api.Random(1, 6);
+      api.handleRandomResult(4);
+      const result = await promise;
+      expect(result).toBe(4);
+    });
+
+    it('falls back to local random when no requestRandom dep', () => {
+      // For backward compatibility / offline mode
+      const localDeps = makeDeps(makeGameState());
+      // Remove sendProtocolMessage to simulate offline
+      localDeps.sendProtocolMessage = undefined as unknown as typeof localDeps.sendProtocolMessage;
+      const localApi = new ScriptApi(localDeps);
+      const result = localApi.Random(1, 6);
+      // Should return a number directly (not a Promise) as fallback
+      expect(typeof result).toBe('number');
       expect(result).toBeGreaterThanOrEqual(1);
       expect(result).toBeLessThanOrEqual(6);
     });

@@ -216,4 +216,44 @@ def second():
       // Both should have executed (order may vary but both should be in list)
     });
   });
+
+  describe('handleRandomResult()', () => {
+    it('resolves pending Random promise from Python rnd() call', async () => {
+      const { engine, deps, gameDef } = createEngine();
+      await engine.initialize(gameDef, deps, {
+        readFile: (p: string) => {
+          if (p.includes('3.1.0.2.py')) return apiSource;
+          throw new Error(`Not found: ${p}`);
+        },
+        fileExists: (p: string) => p.includes('3.1.0.2.py'),
+      });
+
+      // Load a script that calls rnd() and stores the result
+      await engine.loadGameScript(`
+def flipcoin():
+    result = rnd(1, 2)
+    if result == 1:
+        notify("Heads!")
+    else:
+        notify("Tails!")
+`);
+
+      // Start executing flipcoin — it will suspend waiting for Random response
+      const execPromise = engine.getScope()!.callFunction('flipcoin');
+
+      // Simulate server responding with Random result
+      engine.handleRandomResult(1);
+
+      const result = await execPromise;
+      expect(result.success).toBe(true);
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith('RandomReq', { min: 1, max: 2 });
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith('PrintReq', { text: 'Heads!' });
+    });
+
+    it('does nothing when called with no pending random', () => {
+      const { engine } = createEngine();
+      // Should not throw
+      expect(() => engine.handleRandomResult(42)).not.toThrow();
+    });
+  });
 });

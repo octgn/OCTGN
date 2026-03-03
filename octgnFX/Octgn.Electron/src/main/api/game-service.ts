@@ -889,6 +889,14 @@ export class GameService {
       this.broadcastState();
     });
 
+    // Random (server response to RandomReq — resolves pending rnd() call in Python)
+    this.connection.on('Random', (msg: ProtocolMessage) => {
+      const params = this.p(msg);
+      const result = params.result as number;
+      log('GAME', `Random result: ${result}`);
+      this.scriptEngine.handleRandomResult(result);
+    });
+
     // Settings
     this.connection.on('Settings', (msg: ProtocolMessage) => {
       const params = this.p(msg);

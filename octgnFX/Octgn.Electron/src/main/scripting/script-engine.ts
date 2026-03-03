@@ -190,6 +190,7 @@ export class ScriptEngine {
 
   // Python execution components
   private scope: PythonScope | null = null;
+  private scriptApi: ScriptApi | null = null;
   private eventDispatcher: EventDispatcher | null = null;
   private _initialized = false;
 
@@ -223,6 +224,7 @@ export class ScriptEngine {
 
     if (result.success) {
       this.scope = scope;
+      this.scriptApi = api;
       this.eventDispatcher = dispatcher;
       this._initialized = true;
     }
@@ -388,6 +390,15 @@ export class ScriptEngine {
    */
   getScope(): PythonScope | null {
     return this.scope;
+  }
+
+  /**
+   * Forward a server Random result to the ScriptApi to resolve a pending rnd() call.
+   */
+  handleRandomResult(result: number): void {
+    if (this.scriptApi) {
+      this.scriptApi.handleRandomResult(result);
+    }
   }
 
   private async processQueue(): Promise<void> {

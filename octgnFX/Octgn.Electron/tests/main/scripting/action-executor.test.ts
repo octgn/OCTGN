@@ -58,7 +58,7 @@ async function createScope() {
   const api = new ScriptApi(deps);
   const scope = new PythonScope(runtime, api, '3.1.0.2', testIO);
   await scope.initialize();
-  return { scope, deps, runtime, state, addChatMessage };
+  return { scope, deps, runtime, api, state, addChatMessage };
 }
 
 describe('ActionExecutor', () => {
@@ -175,8 +175,18 @@ def doShuffle(group):
 
   describe('mute() reset between actions', () => {
     it('resets muted flag after action that calls mute() without with-statement', async () => {
-      const { scope, addChatMessage } = await createScope();
+      const { scope, api, deps, addChatMessage } = await createScope();
       const executor = new ActionExecutor(scope);
+
+      // Simulate server responding to RandomReq with a result
+      (deps.sendProtocolMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        (type: string) => {
+          if (type === 'RandomReq') {
+            // Simulate async server response
+            setTimeout(() => api.handleRandomResult(1), 10);
+          }
+        }
+      );
 
       // Mimics the real flipcoin function: calls mute() without "with", then notify()
       await scope.loadGameScript(`

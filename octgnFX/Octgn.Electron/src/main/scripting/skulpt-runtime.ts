@@ -34,7 +34,7 @@ interface SkulptGlobal {
     promiseToSuspension(p: Promise<unknown>): unknown;
     loadname(name: string, globals: Record<string, unknown>): SkulptPyObject;
   };
-  importMainWithBody(name: string, dumpJS: boolean, body: string): SkulptModule;
+  importMainWithBody(name: string, dumpJS: boolean, body: string, canSuspend?: boolean): SkulptModule;
   builtin: {
     func: new (fn: (...args: SkulptPyObject[]) => SkulptPyObject | unknown) => SkulptPyObject;
     none: { none$: SkulptPyObject };
@@ -127,7 +127,7 @@ export class SkulptRuntime {
       const rawName = filename ?? `script_${this.execCounter++}`;
       const modName = `<${rawName.replace(/\./g, '_')}>`;
       const mod = await Sk.misceval.asyncToPromise(() => {
-        return Sk.importMainWithBody(modName, false, source);
+        return Sk.importMainWithBody(modName, false, source, true);
       });
 
       // Merge new definitions into our persistent module
@@ -241,6 +241,17 @@ export class SkulptRuntime {
               const result = method(...jsArgs);
               if (result === null || result === undefined) {
                 return Sk.builtin.none.none$;
+              }
+              // If the method returns a Promise, convert to a Skulpt suspension
+              // so Python execution pauses until the Promise resolves.
+              if (result instanceof Promise) {
+                return Sk.misceval.promiseToSuspension(
+                  (result as Promise<unknown>).then(val =>
+                    val === null || val === undefined
+                      ? Sk.builtin.none.none$
+                      : Sk.ffi.remapToPy(val)
+                  )
+                );
               }
               return Sk.ffi.remapToPy(result);
             });
