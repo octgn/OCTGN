@@ -173,6 +173,62 @@ def doShuffle(group):
     });
   });
 
+  describe('mute() reset between actions', () => {
+    it('resets muted flag after action that calls mute() without with-statement', async () => {
+      const { scope, addChatMessage } = await createScope();
+      const executor = new ActionExecutor(scope);
+
+      // Mimics the real flipcoin function: calls mute() without "with", then notify()
+      await scope.loadGameScript(`
+def flipcoin(group):
+    mute()
+    n = rnd(1, 2)
+    if n == 1:
+        notify("heads")
+    else:
+        notify("tails")
+`);
+
+      const action: GroupAction = {
+        name: 'Flip a Coin',
+        execute: 'flipcoin',
+      };
+
+      const result = await executor.executeGroupAction(action, 0x01000000);
+      expect(result.success).toBe(true);
+      // notify() should have produced a chat message despite mute()
+      expect(addChatMessage).toHaveBeenCalledWith(
+        expect.stringMatching(/heads|tails/),
+        true,
+      );
+    });
+
+    it('does not leave muted flag on for subsequent actions', async () => {
+      const { scope, addChatMessage } = await createScope();
+      const executor = new ActionExecutor(scope);
+
+      await scope.loadGameScript(`
+def muteAction(group):
+    mute()
+    notify("first")
+
+def normalAction(group):
+    notify("second")
+`);
+
+      const muteAction: GroupAction = { name: 'Mute', execute: 'muteAction' };
+      const normalAction: GroupAction = { name: 'Normal', execute: 'normalAction' };
+
+      await executor.executeGroupAction(muteAction, 0x01000000);
+      addChatMessage.mockClear();
+
+      const result = await executor.executeGroupAction(normalAction, 0x01000000);
+      expect(result.success).toBe(true);
+      // Second action should NOT be affected by first action's mute()
+      expect(addChatMessage).toHaveBeenCalledWith('second', true);
+    });
+  });
+
   describe('evaluateShowIf()', () => {
     it('returns true when showIf function returns True', async () => {
       const { scope } = await createScope();

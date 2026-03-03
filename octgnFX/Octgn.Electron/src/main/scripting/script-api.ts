@@ -479,15 +479,11 @@ export class ScriptApi {
   // ── Notification API ──
 
   Notify(message: string): void {
-    if (!this.muted) {
-      this.deps.addChatMessage(message, true);
-    }
+    this.deps.addChatMessage(message, true);
   }
 
   NotifyBar(_color: string, message: string): void {
-    if (!this.muted) {
-      this.deps.addChatMessage(message, true);
-    }
+    this.deps.addChatMessage(message, true);
   }
 
   Whisper(message: string): void {

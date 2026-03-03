@@ -19,6 +19,15 @@ export class ActionExecutor {
   }
 
   /**
+   * Reset the muted flag via the Python _api proxy.
+   * Game scripts call mute() without a with-statement, leaving the flag on permanently.
+   * We reset it after each action so subsequent notify() calls work.
+   */
+  private async resetMute(): Promise<void> {
+    await this.scope.getRuntime().execute('_api.Mute(False)');
+  }
+
+  /**
    * Execute a card action's execute function with a Card argument.
    */
   async executeCardAction(action: CardAction, cardId: number): Promise<ActionResult> {
@@ -29,6 +38,7 @@ export class ActionExecutor {
 
     const expr = `${funcName}(Card(${cardId}))`;
     const result = await this.scope.getRuntime().execute(expr);
+    await this.resetMute();
     return { success: result.success, error: result.error };
   }
 
@@ -41,6 +51,7 @@ export class ActionExecutor {
       const cardList = cardIds.map(id => `Card(${id})`).join(', ');
       const expr = `${action.batchExecute}([${cardList}])`;
       const result = await this.scope.getRuntime().execute(expr);
+      await this.resetMute();
       return { success: result.success, error: result.error };
     }
 
@@ -74,6 +85,7 @@ export class ActionExecutor {
 
     const expr = `${funcName}(${groupExpr})`;
     const result = await this.scope.getRuntime().execute(expr);
+    await this.resetMute();
     return { success: result.success, error: result.error };
   }
 
