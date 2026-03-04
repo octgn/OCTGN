@@ -170,7 +170,7 @@ export class GameService {
           this.removeCard(cardIds[i]);
           card.groupId = String(groupId);
           card.faceUp = faceUp[i] ?? card.faceUp;
-          this.addCardToGroup(card, groupId);
+          this.addCardToGroup(card, groupId, indices[i]);
         }
       }
       this.broadcastState();
@@ -1098,8 +1098,9 @@ export class GameService {
       if (!this.gameState) return;
       const cardIds = params.id as number[];
       const groupId = params.group as number;
+      const indices = params.idx as number[] | undefined;
       const faceUp = params.faceUp as boolean[];
-      log('MOVE', `MoveCard response: cardIds=[${cardIds}] groupId=${groupId} faceUp=[${faceUp}]`);
+      log('MOVE', `MoveCard response: cardIds=[${cardIds}] groupId=${groupId} idx=[${indices}] faceUp=[${faceUp}]`);
 
       for (let i = 0; i < cardIds.length; i++) {
         const card = this.findCard(cardIds[i]);
@@ -1109,8 +1110,8 @@ export class GameService {
           // Update properties
           card.groupId = String(groupId);
           card.faceUp = faceUp[i] ?? card.faceUp;
-          // Add to new group
-          this.addCardToGroup(card, groupId);
+          // Add to new group at the specified index
+          this.addCardToGroup(card, groupId, indices?.[i]);
         }
       }
       this.broadcastState();
@@ -1839,7 +1840,7 @@ export class GameService {
    * WPF Group ID encoding: 0x01000000 | (Owner.Id << 16) | Def.Id
    * Special case: 0x01000000 (no owner, Def.Id=0) = Table
    */
-  private addCardToGroup(card: Card, groupId: number): void {
+  private addCardToGroup(card: Card, groupId: number, index?: number): void {
     if (!this.gameState) return;
 
     // Table: group id 0 or 0x01000000 (WPF Table.Id has no owner and Def.Id=0)
@@ -1851,7 +1852,11 @@ export class GameService {
     // Find the group across all players
     const group = this.findGroup(groupId);
     if (group) {
-      group.cards.push(card);
+      if (index !== undefined && index >= 0 && index < group.cards.length) {
+        group.cards.splice(index, 0, card);
+      } else {
+        group.cards.push(card);
+      }
       return;
     }
 

@@ -269,6 +269,46 @@ describe('GameService', () => {
         isScriptMove: true,
       });
     });
+
+    it('inserts card at the specified index in the target group (top of pile)', async () => {
+      const service = await serviceWithState();
+      // Add a player with a group containing 3 existing cards
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'Host', spectator: false }));
+
+      const state = lastState();
+      const player = state.players.find((p: any) => p.id === 1);
+      const groupId = 0x01000000 | (1 << 16) | 1;
+      player.groups = [{
+        id: String(groupId),
+        name: 'Deck',
+        cards: [
+          { id: '100', name: 'CardA', groupId: String(groupId), markers: [], properties: {}, peekingPlayers: [] },
+          { id: '101', name: 'CardB', groupId: String(groupId), markers: [], properties: {}, peekingPlayers: [] },
+          { id: '102', name: 'CardC', groupId: String(groupId), markers: [], properties: {}, peekingPlayers: [] },
+        ],
+        visibility: 2,
+        controller: 1,
+      }];
+
+      // Add a card on the table that we'll move
+      addTableCard('200');
+
+      mockSendMessage.mockClear();
+
+      // Move card 200 to the group at index 0 (top of pile)
+      service.moveCards([200], groupId, [0], [true]);
+
+      // Verify the card is at position 0 (top), not at the end (bottom)
+      const finalState = lastState();
+      const p = finalState.players.find((p: any) => p.id === 1);
+      const g = p.groups.find((g: any) => g.id === String(groupId));
+      expect(g.cards).toHaveLength(4);
+      expect(g.cards[0].id).toBe('200'); // Card should be at the TOP (index 0)
+      expect(g.cards[1].id).toBe('100'); // Original cards shifted down
+      expect(g.cards[2].id).toBe('101');
+      expect(g.cards[3].id).toBe('102');
+    });
   });
 
   describe('moveCardsAt', () => {
@@ -858,6 +898,39 @@ describe('GameService', () => {
         const group = player.groups.find((g: any) => g.id === '7');
         expect(group).toBeDefined();
         expect(group.cards[0].faceUp).toBe(true);
+      });
+
+      it('inserts card at the specified index when server echoes MoveCard with idx', async () => {
+        const service = await serviceWithState();
+        const newPlayer = getHandler('NewPlayer');
+        newPlayer(msg(MessageType.NewPlayer, { id: 1, nick: 'Host', spectator: false }));
+
+        const state = lastState();
+        const player = state.players.find((p: any) => p.id === 1);
+        const groupId = 0x01000000 | (1 << 16) | 1;
+        player.groups = [{
+          id: String(groupId),
+          name: 'Deck',
+          cards: [
+            { id: '100', name: 'CardA', groupId: String(groupId), markers: [], properties: {}, peekingPlayers: [] },
+            { id: '101', name: 'CardB', groupId: String(groupId), markers: [], properties: {}, peekingPlayers: [] },
+          ],
+          visibility: 2,
+          controller: 1,
+        }];
+        addTableCard('200');
+        mockSend.mockClear();
+
+        const handler = getHandler('MoveCard');
+        handler(msg(MessageType.MoveCard, { id: [200], group: groupId, idx: [0], faceUp: [true] }));
+
+        const finalState = lastState();
+        const p = finalState.players.find((p: any) => p.id === 1);
+        const g = p.groups.find((g: any) => g.id === String(groupId));
+        expect(g.cards).toHaveLength(3);
+        expect(g.cards[0].id).toBe('200'); // Inserted at top (index 0)
+        expect(g.cards[1].id).toBe('100');
+        expect(g.cards[2].id).toBe('101');
       });
     });
 
