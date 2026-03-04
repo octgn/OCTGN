@@ -302,11 +302,19 @@ describe('ScriptApi', () => {
       expect(api.GetGlobalVariable('missing')).toBe('');
     });
 
-    it('SetGlobalVariable sends protocol message', () => {
+    it('SetGlobalVariable sends protocol message with oldval and val', () => {
       api.SetGlobalVariable('gameMode', 'draft');
       expect(deps.sendProtocolMessage).toHaveBeenCalledWith(
         'SetGlobalVariable',
-        expect.objectContaining({ name: 'gameMode', value: 'draft' })
+        expect.objectContaining({ name: 'gameMode', oldval: 'standard', val: 'draft' })
+      );
+    });
+
+    it('SetGlobalVariable sends empty oldval for new variable', () => {
+      api.SetGlobalVariable('newVar', 'hello');
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith(
+        'SetGlobalVariable',
+        expect.objectContaining({ name: 'newVar', oldval: '', val: 'hello' })
       );
     });
 
@@ -314,11 +322,19 @@ describe('ScriptApi', () => {
       expect(api.PlayerGetGlobalVariable(1, 'score')).toBe('10');
     });
 
-    it('PlayerSetGlobalVariable sends protocol message', () => {
+    it('PlayerSetGlobalVariable sends protocol message with oldval and val', () => {
       api.PlayerSetGlobalVariable(1, 'score', '20');
       expect(deps.sendProtocolMessage).toHaveBeenCalledWith(
         'PlayerSetGlobalVariable',
-        expect.objectContaining({ player: 1, name: 'score', value: '20' })
+        expect.objectContaining({ player: 1, name: 'score', oldval: '10', val: '20' })
+      );
+    });
+
+    it('PlayerSetGlobalVariable sends empty oldval for new variable', () => {
+      api.PlayerSetGlobalVariable(1, 'newVar', 'value');
+      expect(deps.sendProtocolMessage).toHaveBeenCalledWith(
+        'PlayerSetGlobalVariable',
+        expect.objectContaining({ player: 1, name: 'newVar', oldval: '', val: 'value' })
       );
     });
   });
