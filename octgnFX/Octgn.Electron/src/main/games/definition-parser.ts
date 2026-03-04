@@ -175,7 +175,7 @@ function parseVariables(raw: unknown): Variable[] {
     const o = v as Record<string, unknown>;
     return {
       name: attr(o, 'name'),
-      defaultValue: attr(o, 'default'),
+      defaultValue: attr(o, 'value') || attr(o, 'default'),
       global: attr(o, 'global') === 'true',
     };
   });
@@ -428,7 +428,11 @@ export function parseDefinitionXml(xml: string | Buffer): GameDefinition | null 
       deckSections,
       sharedDeckSections,
       players,
-      globalVariables: parseVariables(g['globalvariable'] ?? g['variable']),
+      globalVariables: parseVariables(
+        (g['globalvariables'] as Record<string, unknown>)?.['globalvariable']
+          ?? g['globalvariable']
+          ?? g['variable']
+      ),
       phases,
       table,
       boards,

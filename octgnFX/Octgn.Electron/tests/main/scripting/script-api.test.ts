@@ -318,6 +318,19 @@ describe('ScriptApi', () => {
       );
     });
 
+    it('SetGlobalVariable updates local state immediately so subsequent Get reads new value', () => {
+      api.SetGlobalVariable('gameMode', 'draft');
+      expect(api.GetGlobalVariable('gameMode')).toBe('draft');
+    });
+
+    it('SetGlobalVariable creates globalVariables map if missing', () => {
+      const state = makeGameState({ globalVariables: undefined as unknown as Record<string, string> });
+      const d = makeDeps(state);
+      const a = new ScriptApi(d);
+      a.SetGlobalVariable('foo', 'bar');
+      expect(a.GetGlobalVariable('foo')).toBe('bar');
+    });
+
     it('PlayerGetGlobalVariable returns player variable', () => {
       expect(api.PlayerGetGlobalVariable(1, 'score')).toBe('10');
     });
@@ -336,6 +349,34 @@ describe('ScriptApi', () => {
         'PlayerSetGlobalVariable',
         expect.objectContaining({ player: 1, name: 'newVar', oldval: '', val: 'value' })
       );
+    });
+
+    it('PlayerSetGlobalVariable updates local state immediately so subsequent Get reads new value', () => {
+      api.PlayerSetGlobalVariable(1, 'score', '20');
+      expect(api.PlayerGetGlobalVariable(1, 'score')).toBe('20');
+    });
+
+    it('PlayerSetGlobalVariable toggle pattern works (sit/stand scenario)', () => {
+      // Simulate the sitstand script: read "standing", toggle it, then read again next invocation
+      const state = makeGameState({
+        players: [
+          makePlayer({ id: 1, globalVariables: { standing: '1' } }),
+        ],
+        localPlayerId: 1,
+      });
+      const d = makeDeps(state);
+      const a = new ScriptApi(d);
+
+      // First call: standing is "1", set to "0"
+      expect(a.PlayerGetGlobalVariable(1, 'standing')).toBe('1');
+      a.PlayerSetGlobalVariable(1, 'standing', '0');
+
+      // Second call (next script invocation): should read "0", set to "1"
+      expect(a.PlayerGetGlobalVariable(1, 'standing')).toBe('0');
+      a.PlayerSetGlobalVariable(1, 'standing', '1');
+
+      // Third call: should read "1" again
+      expect(a.PlayerGetGlobalVariable(1, 'standing')).toBe('1');
     });
   });
 

@@ -2154,4 +2154,202 @@ describe('GameService', () => {
       expect(executor).not.toBeNull();
     });
   });
+
+  // -------------------------------------------------------------------------
+  // Global Variable Protocol Handlers
+  // -------------------------------------------------------------------------
+
+  describe('SetGlobalVariable handler', () => {
+    it('stores the variable using the "val" field from the protocol message', async () => {
+      const service = await serviceWithState();
+      mockSend.mockClear();
+
+      const handler = getHandler('SetGlobalVariable');
+      handler(msg(MessageType.SetGlobalVariable, { name: 'dealer', oldval: '', val: '1' }));
+
+      const state = lastState();
+      expect(state.globalVariables.dealer).toBe('1');
+    });
+
+    it('overwrites an existing variable value', async () => {
+      const service = await serviceWithState();
+
+      const handler = getHandler('SetGlobalVariable');
+      handler(msg(MessageType.SetGlobalVariable, { name: 'dealer', oldval: '', val: '1' }));
+      mockSend.mockClear();
+      handler(msg(MessageType.SetGlobalVariable, { name: 'dealer', oldval: '1', val: '2' }));
+
+      const state = lastState();
+      expect(state.globalVariables.dealer).toBe('2');
+    });
+  });
+
+  describe('PlayerSetGlobalVariable handler', () => {
+    it('stores the variable using the "val" field from the protocol message', async () => {
+      const service = await serviceWithState();
+
+      // Add a player first
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+      mockSend.mockClear();
+
+      const handler = getHandler('PlayerSetGlobalVariable');
+      handler(msg(MessageType.PlayerSetGlobalVariable, { player: 10, name: 'standing', oldval: '1', val: '0' }));
+
+      const state = lastState();
+      const player = state.players.find((p: { id: number }) => p.id === 10);
+      expect(player.globalVariables.standing).toBe('0');
+    });
+
+    it('toggles a player variable correctly across multiple updates', async () => {
+      const service = await serviceWithState();
+
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+
+      const handler = getHandler('PlayerSetGlobalVariable');
+
+      // Set standing to "0" (sit)
+      handler(msg(MessageType.PlayerSetGlobalVariable, { player: 10, name: 'standing', oldval: '1', val: '0' }));
+      let state = lastState();
+      let player = state.players.find((p: { id: number }) => p.id === 10);
+      expect(player.globalVariables.standing).toBe('0');
+
+      // Set standing back to "1" (stand)
+      handler(msg(MessageType.PlayerSetGlobalVariable, { player: 10, name: 'standing', oldval: '0', val: '1' }));
+      state = lastState();
+      player = state.players.find((p: { id: number }) => p.id === 10);
+      expect(player.globalVariables.standing).toBe('1');
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Default variable initialization from game definition
+  // -------------------------------------------------------------------------
+
+  describe('variable defaults from game definition', () => {
+    async function serviceWithGameDef(gameDef: Record<string, unknown>): Promise<GameService> {
+      mockGetGameDefinition.mockReturnValue(gameDef);
+
+      const service = await joinedService();
+
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'Test' }));
+
+      // Add a player after Welcome (which resets state) but before definition loads
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+
+      await vi.waitFor(() => {
+        expect(mockGetGameDefinition).toHaveBeenCalled();
+      });
+
+      return service;
+    }
+
+    it('initializes player globalVariables from definition playerGlobalVariable defaults', async () => {
+      await serviceWithGameDef({
+        name: 'Cards',
+        id: 'game-1',
+        players: [{
+          name: 'Player',
+          groups: [{ name: 'Hand', visibility: 2 }],
+          counters: [],
+          globalVariables: [
+            { name: 'standing', defaultValue: '1', global: false },
+          ],
+        }],
+      });
+
+      const state = lastState();
+      const player = state.players.find((p: { id: number }) => p.id === 10);
+      expect(player.globalVariables.standing).toBe('1');
+    });
+
+    it('initializes game-level globalVariables from definition defaults', async () => {
+      await serviceWithGameDef({
+        name: 'Cards',
+        id: 'game-1',
+        players: [{
+          name: 'Player',
+          groups: [{ name: 'Hand', visibility: 2 }],
+          counters: [],
+          globalVariables: [],
+        }],
+        globalVariables: [
+          { name: 'dealer', defaultValue: '1', global: true },
+        ],
+      });
+
+      const state = lastState();
+      expect(state.globalVariables?.dealer).toBe('1');
+    });
+
+    it('applies player variable defaults when NewPlayer arrives after definition is loaded', async () => {
+      const gameDef = {
+        name: 'Cards',
+        id: 'game-1',
+        players: [{
+          name: 'Player',
+          groups: [{ name: 'Hand', visibility: 2 }],
+          counters: [],
+          globalVariables: [
+            { name: 'standing', defaultValue: '1', global: false },
+          ],
+        }],
+      };
+      mockGetGameDefinition.mockReturnValue(gameDef);
+
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'Test' }));
+
+      // Wait for definition to finish loading
+      await vi.waitFor(() => {
+        expect(mockGetGameDefinition).toHaveBeenCalled();
+      });
+
+      // NOW a new player joins — after definition is already loaded
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+
+      const state = lastState();
+      const player = state.players.find((p: { id: number }) => p.id === 10);
+      expect(player.globalVariables.standing).toBe('1');
+    });
+
+    it('does not overwrite player globalVariables that already have values', async () => {
+      mockGetGameDefinition.mockReturnValue({
+        name: 'Cards',
+        id: 'game-1',
+        players: [{
+          name: 'Player',
+          groups: [{ name: 'Hand', visibility: 2 }],
+          counters: [],
+          globalVariables: [
+            { name: 'standing', defaultValue: '1', global: false },
+          ],
+        }],
+      });
+
+      const service = await joinedService();
+      const welcome = getHandler('Welcome');
+      welcome(msg(MessageType.Welcome, { id: 1, gameSessionId: 'sess', gameName: 'Test' }));
+
+      // Add player after Welcome (which resets state), then set a variable before definition loads
+      const newPlayer = getHandler('NewPlayer');
+      newPlayer(msg(MessageType.NewPlayer, { id: 10, nick: 'Bob', spectator: false }));
+
+      const setVar = getHandler('PlayerSetGlobalVariable');
+      setVar(msg(MessageType.PlayerSetGlobalVariable, { player: 10, name: 'standing', oldval: '', val: '0' }));
+
+      await vi.waitFor(() => {
+        expect(mockGetGameDefinition).toHaveBeenCalled();
+      });
+
+      const state = lastState();
+      const player = state.players.find((p: { id: number }) => p.id === 10);
+      expect(player.globalVariables.standing).toBe('0');
+    });
+  });
 });

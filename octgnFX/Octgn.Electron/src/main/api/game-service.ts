@@ -784,6 +784,8 @@ export class GameService {
             }
             // Initialize player groups from game definition for players that don't have groups yet
             this.initializePlayerGroupsFromDefinition(gameDef);
+            // Initialize default variable values from game definition
+            this.initializeVariableDefaults(gameDef);
             // Initialize global player (shared groups) from game definition
             this.initializeGlobalPlayer(gameDef);
             // Update card names and images from now-loaded definitions
@@ -816,6 +818,14 @@ export class GameService {
         globalVariables: {},
       };
       this.gameState.players.push(player);
+
+      // Apply variable defaults and groups from game definition if already loaded
+      const gameDef = this.cardResolver.getGameDefinition(this.currentGameId);
+      if (gameDef && !player.isSpectator) {
+        this.initializePlayerGroupsFromDefinition(gameDef);
+        this.initializeVariableDefaults(gameDef);
+      }
+
       this.broadcastState();
     });
 
@@ -1373,7 +1383,7 @@ export class GameService {
       if (!this.gameState.globalVariables) {
         this.gameState.globalVariables = {};
       }
-      this.gameState.globalVariables[params.name as string] = params.value as string;
+      this.gameState.globalVariables[params.name as string] = params.val as string;
       this.broadcastState();
     });
 
@@ -1385,7 +1395,7 @@ export class GameService {
         (p) => p.id === (params.player as number),
       );
       if (player) {
-        player.globalVariables[params.name as string] = params.value as string;
+        player.globalVariables[params.name as string] = params.val as string;
       }
       this.broadcastState();
     });
@@ -1454,6 +1464,40 @@ export class GameService {
         controller: player.id,
       }));
       log('GAME', `Initialized ${player.groups.length} groups for player ${player.id} (${player.name})`);
+    }
+  }
+
+  /**
+   * Initialize default variable values from game definition.
+   * Player variables and game-level variables are set to their defaults
+   * only if they haven't already been set (e.g. by a protocol message).
+   */
+  private initializeVariableDefaults(gameDef: GameDefinition): void {
+    if (!this.gameState) return;
+
+    // Game-level global variables
+    if (gameDef.globalVariables?.length) {
+      if (!this.gameState.globalVariables) {
+        this.gameState.globalVariables = {};
+      }
+      for (const v of gameDef.globalVariables) {
+        if (!(v.name in this.gameState.globalVariables)) {
+          this.gameState.globalVariables[v.name] = v.defaultValue;
+        }
+      }
+    }
+
+    // Player-level global variables
+    if (gameDef.players?.length && gameDef.players[0].globalVariables?.length) {
+      const varDefs = gameDef.players[0].globalVariables;
+      for (const player of this.gameState.players) {
+        if (player.isSpectator) continue;
+        for (const v of varDefs) {
+          if (!(v.name in player.globalVariables)) {
+            player.globalVariables[v.name] = v.defaultValue;
+          }
+        }
+      }
     }
   }
 

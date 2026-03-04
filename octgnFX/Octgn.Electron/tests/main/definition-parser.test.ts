@@ -482,4 +482,45 @@ describe('parseDefinitionXml — table, board, and card size parsing', () => {
       }
     });
   });
+
+  describe('global variable parsing', () => {
+    it('parses player globalvariable with value attribute as defaultValue', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0" gameversion="0.0.0.1">
+  <card name="Default" width="63" height="88" cornerRadius="5" back="cards/back.png" front="cards/front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5" />
+  <player name="Player">
+    <globalvariable name="standing" value="1" />
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+  <table name="Table" width="640" height="480" />
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.players).toHaveLength(1);
+      expect(def!.players[0].globalVariables).toHaveLength(1);
+      expect(def!.players[0].globalVariables[0].name).toBe('standing');
+      expect(def!.players[0].globalVariables[0].defaultValue).toBe('1');
+    });
+
+    it('parses game-level globalvariable with value attribute as defaultValue', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0" gameversion="0.0.0.1">
+  <card name="Default" width="63" height="88" cornerRadius="5" back="cards/back.png" front="cards/front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5" />
+  <globalvariables>
+    <globalvariable name="dealer" value="1" />
+  </globalvariables>
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+  <table name="Table" width="640" height="480" />
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.globalVariables).toHaveLength(1);
+      expect(def!.globalVariables[0].name).toBe('dealer');
+      expect(def!.globalVariables[0].defaultValue).toBe('1');
+    });
+  });
 });

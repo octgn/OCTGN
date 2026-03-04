@@ -463,7 +463,12 @@ export class ScriptApi {
   }
 
   SetGlobalVariable(name: string, value: string): void {
-    const oldval = this.deps.getGameState().globalVariables?.[name] ?? '';
+    const state = this.deps.getGameState();
+    const oldval = state.globalVariables?.[name] ?? '';
+    if (!state.globalVariables) {
+      state.globalVariables = {};
+    }
+    state.globalVariables[name] = value;
     this.deps.sendProtocolMessage('SetGlobalVariable', { name, oldval, val: value });
   }
 
@@ -475,6 +480,9 @@ export class ScriptApi {
   PlayerSetGlobalVariable(playerId: number, name: string, value: string): void {
     const player = this.findPlayer(playerId);
     const oldval = player?.globalVariables[name] ?? '';
+    if (player) {
+      player.globalVariables[name] = value;
+    }
     this.deps.sendProtocolMessage('PlayerSetGlobalVariable', {
       player: playerId, name, oldval, val: value,
     });
