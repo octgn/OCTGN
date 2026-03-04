@@ -193,7 +193,7 @@ const PileViewer: React.FC<PileViewerProps> = ({
                     />
                   </div>
                   <span className="text-[9px] sm:text-[10px] text-octgn-text-dim text-center leading-tight line-clamp-2 w-full px-0.5 transition-colors group-hover:text-octgn-text-muted">
-                    {card.name || 'Unknown'}
+                    {card.faceUp ? (card.name || 'Unknown') : 'Face-down'}
                   </span>
                 </div>
               ))}

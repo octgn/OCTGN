@@ -168,6 +168,47 @@ describe('PileViewer', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
+  // ─── Face-down card identity leak prevention ──────────────────────
+
+  it('does NOT show real card names for face-down cards', () => {
+    const cards = [
+      makeCard({ id: 'c1', name: 'Secret Dragon', faceUp: false }),
+      makeCard({ id: 'c2', name: 'Hidden Spell', faceUp: false }),
+    ];
+    const group = makeGroup({ cards });
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose: noop,
+    });
+
+    // The real card names should NOT appear anywhere
+    expect(screen.queryByText('Secret Dragon')).toBeNull();
+    expect(screen.queryByText('Hidden Spell')).toBeNull();
+  });
+
+  it('shows real names for face-up cards but not face-down ones', () => {
+    const cards = [
+      makeCard({ id: 'c1', name: 'Visible Card', faceUp: true }),
+      makeCard({ id: 'c2', name: 'Secret Card', faceUp: false }),
+    ];
+    const group = makeGroup({ cards });
+    renderPileViewer({
+      group,
+      playerName: 'Test',
+      playerColor: '#0000ff',
+      isOwn: false,
+      onClose: noop,
+    });
+
+    // Face-up card name should be visible
+    expect(screen.getAllByText('Visible Card').length).toBeGreaterThan(0);
+    // Face-down card name should NOT be visible
+    expect(screen.queryByText('Secret Card')).toBeNull();
+  });
+
   it('calls onCardClick when a card is clicked and isOwn is true', () => {
     const onCardClick = vi.fn();
     const card = makeCard({ id: 'c1', name: 'Clickable Card' });

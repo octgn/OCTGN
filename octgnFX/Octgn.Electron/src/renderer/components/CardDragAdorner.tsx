@@ -88,7 +88,7 @@ const CardDragAdorner: React.FC = () => {
         {showPlaceholder && (
           <div className="w-full h-full bg-gradient-to-br from-gray-900/90 to-gray-700/60 flex items-center justify-center">
             <span className="text-[9px] font-semibold text-white/70 text-center leading-tight px-2 line-clamp-3">
-              {name}
+              {faceUp ? name : 'OCTGN'}
             </span>
           </div>
         )}

@@ -247,7 +247,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
                 gradient
               )}
             >
-              {/* Face-up placeholder with name */}
+              {/* Face-up placeholder with name (only show identity when face-up to prevent cheating) */}
               <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
                 <div className="w-8 h-8 mb-2 rounded-full bg-white/10 flex items-center justify-center">
                   <svg
@@ -258,15 +258,17 @@ const CardComponent: React.FC<CardComponentProps> = ({
                     <path d="M8 1l2.5 5 5.5.8-4 3.9.9 5.3L8 13.5 3.1 16l.9-5.3-4-3.9L5.5 6z" />
                   </svg>
                 </div>
-                <span className="text-[9px] font-semibold text-white/70 text-center leading-tight line-clamp-3">
-                  {card.name}
-                </span>
+                {isFlippedUp && (
+                  <span className="text-[9px] font-semibold text-white/70 text-center leading-tight line-clamp-3">
+                    {card.name}
+                  </span>
+                )}
               </div>
             </div>
           ) : (
             <img
               src={frontImageUrl}
-              alt={card.name}
+              alt={isFlippedUp ? card.name : 'Card'}
               className="w-full h-full object-fill select-none pointer-events-none"
               draggable={false}
               onError={() => setImgError(true)}
@@ -341,7 +343,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
           )}
 
           {/* Card name tooltip on face-up cards with real images */}
-          {!showFrontPlaceholder && isHovered && (
+          {isFlippedUp && !showFrontPlaceholder && isHovered && (
             <div className="absolute bottom-0 left-0 right-0 px-1.5 py-1 bg-gradient-to-t from-black/80 to-transparent">
               <span className="text-[9px] font-medium text-octgn-text/90 leading-tight line-clamp-1">
                 {card.name}

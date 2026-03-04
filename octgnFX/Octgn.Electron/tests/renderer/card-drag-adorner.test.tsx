@@ -299,6 +299,70 @@ describe('CardDragAdorner', () => {
     expect(adorner.style.position).toBe('fixed');
   });
 
+  // ─── Face-down card identity leak prevention ──────────────────────
+
+  it('does NOT reveal card name in placeholder when face-down without cardBackUrl', () => {
+    renderWithDragControl({
+      cardInfo: {
+        imageUrl: 'octgn-asset://card/secret-dragon.png',
+        name: 'Secret Dragon',
+        width: 100,
+        height: 140,
+        faceUp: false,
+        // No cardBackUrl — falls through to placeholder
+      },
+    });
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    // The card name should NOT appear anywhere in the adorner
+    expect(screen.queryByText('Secret Dragon')).toBeNull();
+  });
+
+  it('does NOT reveal card name in placeholder when face-down with empty cardBackUrl', () => {
+    renderWithDragControl({
+      cardInfo: {
+        imageUrl: 'octgn-asset://card/hidden-spell.png',
+        name: 'Hidden Spell',
+        width: 100,
+        height: 140,
+        faceUp: false,
+        cardBackUrl: '',
+      },
+    });
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    // The card name should NOT appear anywhere in the adorner
+    expect(screen.queryByText('Hidden Spell')).toBeNull();
+  });
+
+  it('does NOT show front card image when face-down without cardBackUrl', () => {
+    renderWithDragControl({
+      cardInfo: {
+        imageUrl: 'octgn-asset://card/secret-dragon.png',
+        name: 'Secret Dragon',
+        width: 100,
+        height: 140,
+        faceUp: false,
+      },
+    });
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    // Should NOT render an img with the front image
+    expect(screen.queryByAltText('Secret Dragon')).toBeNull();
+    // Should show a generic face-down indicator instead
+    const adorner = screen.getByTestId('card-drag-adorner');
+    expect(adorner.textContent).not.toContain('Secret Dragon');
+  });
+
   it('maintains card aspect ratio in adorner dimensions', () => {
     renderWithDragControl({
       cardInfo: {
