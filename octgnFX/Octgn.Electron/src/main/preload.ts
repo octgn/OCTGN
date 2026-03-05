@@ -89,6 +89,9 @@ const api = {
     return () => ipcRenderer.removeListener(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);
   },
 
+  // Game window management
+  closeGameWindow: () => ipcRenderer.invoke(IPC_CHANNELS.CLOSE_GAME_WINDOW),
+
   // Feeds
   listFeeds: () => ipcRenderer.invoke(IPC_CHANNELS.FEEDS_LIST),
   addFeed: (name: string, url: string, username?: string, password?: string) =>

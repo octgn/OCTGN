@@ -30,6 +30,7 @@ Object.defineProperty(globalThis, 'window', {
 
 // Import AFTER mock setup
 import { useLobbyStore } from '@renderer/stores/lobby-store';
+import { useAppStore } from '@renderer/stores/app-store';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -194,6 +195,15 @@ describe('useLobbyStore', () => {
       await useLobbyStore.getState().joinGame('game-abc');
 
       expect(useLobbyStore.getState().error).toBe('Failed to join game');
+    });
+
+    it('should NOT navigate to game page after successful join — game opens in separate window', async () => {
+      mockOctgn.joinGame.mockResolvedValue({ success: true, windowId: 1 });
+      useAppStore.setState({ currentPage: 'lobby' });
+
+      await useLobbyStore.getState().joinGame('game-abc');
+
+      expect(useAppStore.getState().currentPage).toBe('lobby');
     });
   });
 

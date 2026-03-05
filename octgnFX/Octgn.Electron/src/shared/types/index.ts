@@ -385,4 +385,7 @@ export const IPC_CHANNELS = {
 
   // Game assets
   GAME_RESOLVE_ASSET: 'game:resolve-asset',
+
+  // Game window management
+  CLOSE_GAME_WINDOW: 'app:close-game-window',
 } as const;

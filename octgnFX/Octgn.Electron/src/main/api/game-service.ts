@@ -1,4 +1,4 @@
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, type WebContents } from 'electron';
 import { writeFile, readFile, readdir, unlink } from 'fs/promises';
 import { join } from 'path';
 import { GameConnection } from '../protocol/connection';
@@ -73,6 +73,7 @@ export class GameService {
   private pendingBoardName: string | undefined;
   private nextCardUniqueId: number = 1;
   private joinParams: { host: string; port: number; nickname: string; userId: string; gameVersion: string; password: string } | null = null;
+  private targetWebContents: WebContents | null = null;
 
   /**
    * Join a game server and start receiving state updates.
@@ -1729,11 +1730,25 @@ export class GameService {
     }
   }
 
+  /**
+   * Set the target WebContents for state broadcasts.
+   * When set, broadcastState sends only to this window.
+   * When null, falls back to all windows (legacy behavior).
+   */
+  setTargetWebContents(wc: WebContents | null): void {
+    this.targetWebContents = wc;
+  }
+
   private broadcastState(): void {
     if (!this.gameState) return;
-    const windows = BrowserWindow.getAllWindows();
-    for (const win of windows) {
-      win.webContents.send(IPC_CHANNELS.GAME_STATE_UPDATE, this.gameState);
+    if (this.targetWebContents && !this.targetWebContents.isDestroyed()) {
+      this.targetWebContents.send(IPC_CHANNELS.GAME_STATE_UPDATE, this.gameState);
+    } else if (!this.targetWebContents) {
+      // Legacy fallback: broadcast to all windows
+      const windows = BrowserWindow.getAllWindows();
+      for (const win of windows) {
+        win.webContents.send(IPC_CHANNELS.GAME_STATE_UPDATE, this.gameState);
+      }
     }
   }
 

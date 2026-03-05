@@ -3,6 +3,7 @@ import { readFile } from 'fs/promises';
 import { IPC_CHANNELS, type Deck } from '../../shared/types';
 import { OctgnApiClient } from '../api/client';
 import { GameService, type SavedConnectionInfo } from '../api/game-service';
+import { GameWindowManager } from '../game-window-manager';
 import { listInstalledGames, uninstallGame, getUserDecksDir, getPrebuiltDecksDir } from '../games/game-store';
 import { fetchAvailableGames } from '../games/game-feed';
 import { installGame } from '../games/game-installer';
@@ -13,10 +14,10 @@ import { setImageResolver } from '../asset-protocol';
 import { log, logError } from '../logger';
 
 const apiClient = new OctgnApiClient();
-const gameService = new GameService();
+const gameWindowManager = new GameWindowManager();
 
-// Wire the GameService's ImageResolver to the asset protocol handler
-setImageResolver(gameService.getImageResolver());
+// Wire the shared ImageResolver to the asset protocol handler
+setImageResolver(gameWindowManager.getImageResolver());
 
 export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Auth handlers
@@ -46,10 +47,11 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     return apiClient.getSessionAsLoginResult();
   });
 
-  ipcMain.handle(IPC_CHANNELS.GET_APP_STATE, async () => {
+  ipcMain.handle(IPC_CHANNELS.GET_APP_STATE, async (event) => {
+    const service = gameWindowManager.getServiceForEvent(event);
     return {
       session: apiClient.getSessionAsLoginResult(),
-      gameState: gameService.getState(),
+      gameState: service?.getState() ?? null,
     };
   });
 
@@ -64,7 +66,7 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
 
   ipcMain.handle(IPC_CHANNELS.JOIN_GAME, async (_event, gameId: string, password?: string, spectator?: boolean) => {
     log('JOIN', `JOIN_GAME called: gameId=${gameId} spectator=${spectator}`);
-    // Get game details to find host:port, then connect via GameService
+    // Get game details to find host:port, then open a game window
     const games = await apiClient.getHostedGames();
     log('JOIN', `Got ${games.length} games from API`);
     const game = games.find((g) => g.id === gameId);
@@ -77,32 +79,37 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     if (!session) {
       return { success: false, error: 'Not logged in' };
     }
-    log('JOIN', `Calling gameService.joinGame(${game.hostAddress}, ${game.port}, ${session.username}, spectator=${spectator})`);
-    return gameService.joinGame(
-      game.hostAddress,
-      game.port,
-      session.username,
-      session.userId,
-      game.gameId,
-      game.gameVersion,
-      password ?? '',
-      spectator ?? false,
-    );
+    log('JOIN', `Creating game window for ${game.hostAddress}:${game.port} as ${session.username} spectator=${spectator}`);
+    return gameWindowManager.createGameWindow({
+      host: game.hostAddress,
+      port: game.port,
+      nickname: session.username,
+      userId: session.userId,
+      gameId: game.gameId,
+      gameVersion: game.gameVersion,
+      password: password ?? '',
+      spectator: spectator ?? false,
+    });
   });
 
-  ipcMain.handle(IPC_CHANNELS.LEAVE_GAME, async () => {
-    return gameService.leaveGame();
+  ipcMain.handle(IPC_CHANNELS.LEAVE_GAME, async (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      await gameWindowManager.closeGameWindow(win.id);
+    }
   });
 
-  // Game handlers - now wired to GameService
-  ipcMain.handle(IPC_CHANNELS.GAME_ACTION, async (_event, action: Record<string, unknown>) => {
+  // Game handlers - routed to the correct GameService via sender
+  ipcMain.handle(IPC_CHANNELS.GAME_ACTION, async (event, action: Record<string, unknown>) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    if (!service) return;
     const type = action.type as string;
     if (type === 'moveCards' || type === 'moveCardsAt') {
       log('IPC', `GAME_ACTION: ${type} ${JSON.stringify(action)}`);
     }
     switch (type) {
       case 'moveCards':
-        gameService.moveCards(
+        service.moveCards(
           action.cardIds as number[],
           action.groupId as number,
           action.indices as number[],
@@ -110,7 +117,7 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
         );
         break;
       case 'moveCardsAt':
-        gameService.moveCardsAt(
+        service.moveCardsAt(
           action.cardIds as number[],
           action.x as number[],
           action.y as number[],
@@ -119,32 +126,32 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
         );
         break;
       case 'nextTurn':
-        gameService.nextTurn();
+        service.nextTurn();
         break;
       case 'flipCard':
-        gameService.flipCard(action.cardId as number, action.faceUp as boolean);
+        service.flipCard(action.cardId as number, action.faceUp as boolean);
         break;
       case 'rotateCard':
-        gameService.rotateCard(action.cardId as number, action.rotation as number);
+        service.rotateCard(action.cardId as number, action.rotation as number);
         break;
       case 'setCounter':
-        gameService.setCounter(action.counterId as number, action.value as number);
+        service.setCounter(action.counterId as number, action.value as number);
         break;
       case 'peekCard':
-        gameService.peekCard(action.cardId as number);
+        service.peekCard(action.cardId as number);
         break;
       case 'targetCard':
-        gameService.targetCard(
+        service.targetCard(
           action.cardId as number,
           action.playerId as number,
           action.active as boolean,
         );
         break;
       case 'highlightCard':
-        gameService.highlightCard(action.cardId as number, action.color as string);
+        service.highlightCard(action.cardId as number, action.color as string);
         break;
       case 'addMarker':
-        gameService.addMarker(
+        service.addMarker(
           action.cardId as number,
           action.markerId as string,
           action.markerName as string,
@@ -152,7 +159,7 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
         );
         break;
       case 'removeMarker':
-        gameService.removeMarker(
+        service.removeMarker(
           action.cardId as number,
           action.markerId as string,
           action.markerName as string,
@@ -160,33 +167,39 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
         );
         break;
       case 'shuffleGroup':
-        gameService.shuffleGroup(action.groupId as number);
+        service.shuffleGroup(action.groupId as number);
         break;
     }
   });
 
-  ipcMain.handle(IPC_CHANNELS.GAME_CHAT, async (_event, message: string) => {
-    gameService.sendChat(message);
+  ipcMain.handle(IPC_CHANNELS.GAME_CHAT, async (event, message: string) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    service?.sendChat(message);
   });
 
-  ipcMain.handle(IPC_CHANNELS.GAME_SETTINGS, async (_event, twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean) => {
-    gameService.sendSettings(twoSidedTable, allowSpectators, muteSpectators, allowCardList);
+  ipcMain.handle(IPC_CHANNELS.GAME_SETTINGS, async (event, twoSidedTable: boolean, allowSpectators: boolean, muteSpectators: boolean, allowCardList: boolean) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    service?.sendSettings(twoSidedTable, allowSpectators, muteSpectators, allowCardList);
   });
 
-  ipcMain.handle(IPC_CHANNELS.GAME_PLAYER_SETTINGS, async (_event, playerId: number, invertedTable: boolean, spectator: boolean) => {
-    gameService.sendPlayerSettings(playerId, invertedTable, spectator);
+  ipcMain.handle(IPC_CHANNELS.GAME_PLAYER_SETTINGS, async (event, playerId: number, invertedTable: boolean, spectator: boolean) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    service?.sendPlayerSettings(playerId, invertedTable, spectator);
   });
 
-  ipcMain.handle(IPC_CHANNELS.GAME_BOOT_PLAYER, async (_event, playerId: number, reason: string) => {
-    gameService.bootPlayer(playerId, reason ?? '');
+  ipcMain.handle(IPC_CHANNELS.GAME_BOOT_PLAYER, async (event, playerId: number, reason: string) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    service?.bootPlayer(playerId, reason ?? '');
   });
 
-  ipcMain.handle(IPC_CHANNELS.GAME_START, async () => {
-    gameService.startGame();
+  ipcMain.handle(IPC_CHANNELS.GAME_START, async (event) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    service?.startGame();
   });
 
-  ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (_event, deck: Deck) => {
-    gameService.loadDeckFromFile(deck);
+  ipcMain.handle(IPC_CHANNELS.LOAD_DECK, async (event, deck: Deck) => {
+    const service = gameWindowManager.getServiceForEvent(event);
+    service?.loadDeckFromFile(deck);
   });
 
   // File dialog handler
@@ -238,7 +251,16 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     }
   });
 
-  ipcMain.handle(IPC_CHANNELS.APP_QUIT, () => {
+  ipcMain.handle(IPC_CHANNELS.APP_QUIT, async (event) => {
+    const sender = BrowserWindow.fromWebContents(event.sender);
+    const isGameWindow = sender && gameWindowManager.has(sender.id);
+    if (isGameWindow) {
+      // Game window close — just close this game window, don't quit the app
+      await gameWindowManager.closeGameWindow(sender.id);
+      return;
+    }
+    // Main window close = quit app (close all game windows too)
+    await gameWindowManager.closeAll();
     app.quit();
   });
 
@@ -246,19 +268,30 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
     return app.getVersion();
   });
 
+  // Close game window handler
+  ipcMain.handle(IPC_CHANNELS.CLOSE_GAME_WINDOW, async (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      await gameWindowManager.closeGameWindow(win.id);
+    }
+  });
+
   // Script execution handler
   ipcMain.handle(
     IPC_CHANNELS.SCRIPT_EXECUTE,
-    async (_event, functionName: string, args: string = '') => {
-      gameService.executeScript(functionName, args);
+    async (event, functionName: string, args: string = '') => {
+      const service = gameWindowManager.getServiceForEvent(event);
+      service?.executeScript(functionName, args);
     },
   );
 
   // Action execution handler (for game-defined context menu actions)
   ipcMain.handle(
     IPC_CHANNELS.SCRIPT_EXECUTE_ACTION,
-    async (_event, request: { type: 'card' | 'group'; action: any; cardId?: number; cardIds?: number[]; groupId: number }) => {
-      const executor = gameService.getActionExecutor();
+    async (event, request: { type: 'card' | 'group'; action: any; cardId?: number; cardIds?: number[]; groupId: number }) => {
+      const service = gameWindowManager.getServiceForEvent(event);
+      if (!service) return { success: false, error: 'No game service for this window' };
+      const executor = service.getActionExecutor();
       if (!executor) {
         return { success: false, error: 'Script engine not initialized' };
       }
@@ -278,8 +311,12 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   // Menu evaluation handler (showIf/getName for game-defined actions)
   ipcMain.handle(
     IPC_CHANNELS.SCRIPT_EVALUATE_MENU,
-    async (_event, request: { actions: Array<{ showIf?: string; getName?: string; id: string; action: any }>; cardOrGroupId: number }) => {
-      const executor = gameService.getActionExecutor();
+    async (event, request: { actions: Array<{ showIf?: string; getName?: string; id: string; action: any }>; cardOrGroupId: number }) => {
+      const service = gameWindowManager.getServiceForEvent(event);
+      if (!service) {
+        return request.actions.map((a) => ({ id: a.id, visible: true, name: a.action.name }));
+      }
+      const executor = service.getActionExecutor();
       if (!executor) {
         // No script engine — show all actions with default names
         return request.actions.map((a) => ({ id: a.id, visible: true, name: a.action.name }));
@@ -370,12 +407,14 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
   GameService.loadConnectionInfo().then(async (info: SavedConnectionInfo | null) => {
     if (info) {
       log('RECONNECT', `Found recent connection info, attempting reconnection to ${info.host}:${info.port}`);
-      const result = await gameService.reconnectGame(info);
+      const reconnectService = new GameService();
+      const result = await reconnectService.reconnectGame(info);
       if (result.success) {
-        log('RECONNECT', 'Game reconnection successful');
+        log('RECONNECT', 'Game reconnection successful, creating game window');
+        await gameWindowManager.adoptService(reconnectService);
       } else {
         log('RECONNECT', `Game reconnection failed: ${result.error}`);
-        await gameService.clearConnectionInfo();
+        await reconnectService.clearConnectionInfo();
       }
     }
   }).catch((err) => {

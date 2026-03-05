@@ -118,7 +118,7 @@ describe('App initialization', () => {
     });
   });
 
-  it('should navigate to game and subscribe when session and gameState exist', async () => {
+  it('should navigate to lobby (not game) when session and gameState exist — games open in separate windows', async () => {
     const gameState = makeGameState();
     mockOctgn.getAppState.mockResolvedValue({
       session: {
@@ -132,13 +132,11 @@ describe('App initialization', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(useAppStore.getState().currentPage).toBe('game');
+      expect(useAppStore.getState().currentPage).toBe('lobby');
     });
 
     // Auth should be restored
     expect(useAuthStore.getState().user?.username).toBe('alice');
-    // Should have subscribed to game state updates
-    expect(mockOctgn.onGameStateUpdate).toHaveBeenCalled();
   });
 
   it('should stay on login when no session exists', async () => {

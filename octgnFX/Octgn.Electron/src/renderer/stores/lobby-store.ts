@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import type { HostedGame } from '../../shared/types';
-import { useAppStore } from './app-store';
 
 interface LobbyFilter {
   searchText: string;
@@ -95,11 +94,8 @@ export const useLobbyStore = create<LobbyStore>()((set, get) => ({
   joinGame: async (gameId, password?, spectator?) => {
     set({ isLoading: true, error: null });
     try {
-      const result = await window.octgn.joinGame(gameId, password, spectator);
+      await window.octgn.joinGame(gameId, password, spectator);
       set({ isLoading: false });
-      if (result && result.success) {
-        useAppStore.getState().navigate('game');
-      }
     } catch (err) {
       set({
         isLoading: false,

@@ -24,7 +24,11 @@ interface ContextMenuState {
   items: ContextMenuItemDef[];
 }
 
-const GamePage: React.FC = () => {
+interface GamePageProps {
+  isGameWindow?: boolean;
+}
+
+const GamePage: React.FC<GamePageProps> = ({ isGameWindow }) => {
   const gameState = useGameStore((s) => s.gameState);
   const sendChat = useGameStore((s) => s.sendChat);
   const flipCard = useGameStore((s) => s.flipCard);
@@ -284,9 +288,13 @@ const GamePage: React.FC = () => {
   );
 
   const handleLeave = useCallback(async () => {
-    await leaveGame();
-    navigate('lobby');
-  }, [leaveGame, navigate]);
+    if (isGameWindow) {
+      window.octgn.closeGameWindow();
+    } else {
+      await leaveGame();
+      navigate('lobby');
+    }
+  }, [leaveGame, navigate, isGameWindow]);
 
   const tableCards: Card[] = gameState?.table.cards ?? [];
 
@@ -299,8 +307,14 @@ const GamePage: React.FC = () => {
         <div className="text-center animate-in">
           <div className="w-8 h-8 border-2 border-octgn-primary/30 border-t-octgn-primary rounded-full animate-spin mx-auto mb-4" />
           <p className="font-display text-lg text-octgn-text-muted">Connecting to game...</p>
-          <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('lobby')}>
-            Return to Lobby
+          <Button variant="ghost" size="sm" className="mt-4" onClick={() => {
+            if (isGameWindow) {
+              window.octgn.closeGameWindow();
+            } else {
+              navigate('lobby');
+            }
+          }}>
+            {isGameWindow ? 'Close Window' : 'Return to Lobby'}
           </Button>
         </div>
       </div>
@@ -309,7 +323,7 @@ const GamePage: React.FC = () => {
 
   // Show pre-game lobby when game hasn't started yet
   if (!gameState.isStarted) {
-    return <PreGameLobby gameState={gameState} />;
+    return <PreGameLobby gameState={gameState} isGameWindow={isGameWindow} />;
   }
 
   return (

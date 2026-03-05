@@ -9,9 +9,10 @@ import { readablePlayerColor } from '../utils/player-colors';
 
 interface PreGameLobbyProps {
   gameState: GameState;
+  isGameWindow?: boolean;
 }
 
-const PreGameLobby: React.FC<PreGameLobbyProps> = ({ gameState }) => {
+const PreGameLobby: React.FC<PreGameLobbyProps> = ({ gameState, isGameWindow }) => {
   const sendChat = useGameStore((s) => s.sendChat);
   const updateSettings = useGameStore((s) => s.updateSettings);
   const updatePlayerSettings = useGameStore((s) => s.updatePlayerSettings);
@@ -40,9 +41,13 @@ const PreGameLobby: React.FC<PreGameLobbyProps> = ({ gameState }) => {
   }, [chatInput, sendChat]);
 
   const handleLeave = useCallback(async () => {
-    await leaveGame();
-    navigate('lobby');
-  }, [leaveGame, navigate]);
+    if (isGameWindow) {
+      window.octgn.closeGameWindow();
+    } else {
+      await leaveGame();
+      navigate('lobby');
+    }
+  }, [leaveGame, navigate, isGameWindow]);
 
   const handleToggleSide = useCallback((player: Player) => {
     const newSide = !player.invertedTable;

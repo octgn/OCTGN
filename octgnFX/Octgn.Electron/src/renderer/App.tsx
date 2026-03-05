@@ -11,8 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import GamesPage from './pages/GamesPage';
 import { useAppStore } from './stores/app-store';
 import { useAuthStore } from './stores/auth-store';
-import { useGameStore } from './stores/game-store';
-import type { LoginResult, GameState } from '../shared/types';
+import type { LoginResult } from '../shared/types';
 
 type Page = 'login' | 'lobby' | 'game' | 'deck-builder' | 'settings' | 'profile' | 'games';
 
@@ -26,7 +25,7 @@ const App: React.FC = () => {
 
     const init = async () => {
       try {
-        const appState: { session: LoginResult; gameState: GameState | null } =
+        const appState: { session: LoginResult } =
           await window.octgn.getAppState();
 
         if (cancelled) return;
@@ -37,21 +36,7 @@ const App: React.FC = () => {
             user: appState.session.user,
             session: appState.session.session,
           });
-
-          if (appState.gameState) {
-            // Restore game state and navigate to game
-            useGameStore.setState({
-              gameState: appState.gameState,
-              isConnected: true,
-            });
-            navigate('game');
-            // Subscribe to ongoing updates
-            const unsub = useGameStore.getState().subscribe();
-            // Store cleanup in case component unmounts (unlikely for App)
-            return unsub;
-          } else {
-            navigate('lobby');
-          }
+          navigate('lobby');
         }
         // else: no session, stay on login page
       } catch {
