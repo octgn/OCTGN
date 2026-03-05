@@ -259,57 +259,28 @@ const GameBoard: React.FC<GameBoardProps> = ({
     (e: React.MouseEvent) => {
       if (isPanning) {
         handlePanMove(e.clientX, e.clientY);
-        return;
       }
-      if (marquee) {
-        const dx = e.clientX - marquee.screenStartX;
-        const dy = e.clientY - marquee.screenStartY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const pos = screenToTableSpace(e.clientX, e.clientY);
-        setMarquee((prev) => prev ? {
-          ...prev,
-          endX: pos.x,
-          endY: pos.y,
-          active: prev.active || dist > MARQUEE_THRESHOLD,
-        } : null);
-      }
+      // Marquee mousemove is handled by window-level listener
     },
-    [isPanning, handlePanMove, marquee, screenToTableSpace]
+    [isPanning, handlePanMove]
   );
 
   const handleTableMouseUp = useCallback(
     (e: React.MouseEvent) => {
       if (e.button === 1 || (e.button === 0 && isPanning)) {
         handlePanEnd();
-        return;
       }
-      if (marquee) {
-        if (marquee.active) {
-          // Finalize marquee selection
-          const rect = computeMarqueeRect(marquee.startX, marquee.startY, marquee.endX, marquee.endY);
-          const ids = findCardsInMarquee(tableCards, rect);
-          onSelectionChange?.(new Set(ids));
-        } else {
-          // Click on empty area without dragging: clear selection
-          const target = e.target as HTMLElement;
-          if (!target.closest('[data-card-id]') && !target.closest('.octgn-card-wrapper')) {
-            onSelectionChange?.(new Set());
-          }
-        }
-        setMarquee(null);
-      }
+      // Marquee mouseup is handled by window-level listener
     },
-    [isPanning, handlePanEnd, marquee, tableCards, onSelectionChange]
+    [isPanning, handlePanEnd]
   );
 
   const handleTableMouseLeave = useCallback(() => {
     if (isPanning) handlePanEnd();
-    if (marquee) setMarquee(null);
-  }, [isPanning, handlePanEnd, marquee]);
+    // Don't cancel marquee on mouse leave — window listeners handle it
+  }, [isPanning, handlePanEnd]);
 
-  // ─── Touch marquee selection ────────────────────────────────────────
-  // Use native event listeners (not React synthetic) so we can use { passive: false }
-  // to allow preventDefault() for blocking scroll during marquee drag.
+  // ─── Refs for marquee listeners (shared by mouse window + touch handlers) ──
   const touchMarqueeRef = useRef<{ id: number; startX: number; startY: number } | null>(null);
   const marqueeRef = useRef(marquee);
   marqueeRef.current = marquee;
@@ -319,6 +290,56 @@ const GameBoard: React.FC<GameBoardProps> = ({
   tableCardsRef.current = tableCards;
   const onSelectionChangeRef = useRef(onSelectionChange);
   onSelectionChangeRef.current = onSelectionChange;
+
+  // ─── Window-level listeners for marquee (track mouse outside table) ──
+  useEffect(() => {
+    if (!marquee) return;
+
+    const handleWindowMouseMove = (e: MouseEvent) => {
+      const pos = screenToTableSpaceRef.current(e.clientX, e.clientY);
+      setMarquee((prev) => {
+        if (!prev) return null;
+        const dx = e.clientX - prev.screenStartX;
+        const dy = e.clientY - prev.screenStartY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        return {
+          ...prev,
+          endX: pos.x,
+          endY: pos.y,
+          active: prev.active || dist > MARQUEE_THRESHOLD,
+        };
+      });
+    };
+
+    const handleWindowMouseUp = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      const prev = marqueeRef.current;
+      setMarquee(null);
+      if (!prev) return;
+      if (prev.active) {
+        const rect = computeMarqueeRect(prev.startX, prev.startY, prev.endX, prev.endY);
+        const ids = findCardsInMarquee(tableCardsRef.current, rect);
+        onSelectionChangeRef.current?.(new Set(ids));
+      } else {
+        // Click on empty area without dragging: clear selection
+        const target = e.target as HTMLElement;
+        if (!target.closest('[data-card-id]') && !target.closest('.octgn-card-wrapper')) {
+          onSelectionChangeRef.current?.(new Set());
+        }
+      }
+    };
+
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    window.addEventListener('mouseup', handleWindowMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
+    };
+  }, [!!marquee]); // only re-attach when marquee starts/stops
+
+  // ─── Touch marquee selection ────────────────────────────────────────
+  // Use native event listeners (not React synthetic) so we can use { passive: false }
+  // to allow preventDefault() for blocking scroll during marquee drag.
 
   const handleTableTouchStart = useCallback(
     (e: React.TouchEvent) => {

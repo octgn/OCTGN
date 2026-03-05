@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, cleanup } from '@testing-library/react';
+import { render, cleanup, fireEvent, act } from '@testing-library/react';
 import React from 'react';
 
 // ---------------------------------------------------------------------------
@@ -355,5 +355,102 @@ describe('GameBoard — Two-Sided Table', () => {
     const inner = container.querySelector('.octgn-card-inner') as HTMLElement;
     expect(inner).toBeInTheDocument();
     expect(inner.style.transform).not.toContain('scale(-1, -1)');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Marquee selection — mouse leave during drag
+// ---------------------------------------------------------------------------
+
+describe('GameBoard — Marquee survives mouse leave', () => {
+  afterEach(() => cleanup());
+
+  function getTableDiv(container: HTMLElement) {
+    return container.querySelector('[data-drop-zone="table"]') as HTMLElement;
+  }
+
+  it('should NOT cancel marquee when mouse leaves the table during active drag', () => {
+    const onSelectionChange = vi.fn();
+    const { container } = renderBoard({ onSelectionChange });
+
+    const table = getTableDiv(container);
+
+    // Start marquee: mousedown on the table
+    fireEvent.mouseDown(table, { button: 0, clientX: 50, clientY: 50 });
+
+    // Move past threshold to activate marquee
+    fireEvent.mouseMove(table, { clientX: 60, clientY: 60 });
+
+    // Marquee should be visible
+    const marqueeBefore = container.querySelector('[data-testid="marquee-selection"]');
+    expect(marqueeBefore).toBeInTheDocument();
+
+    // Mouse leaves the table
+    fireEvent.mouseLeave(table);
+
+    // Marquee should still be visible after mouse leave
+    const marqueeAfter = container.querySelector('[data-testid="marquee-selection"]');
+    expect(marqueeAfter).toBeInTheDocument();
+  });
+
+  it('should finalize selection when mouseup fires on window after leaving table', () => {
+    const card = makeCard({ id: 'c1', position: { x: 0, y: 0 }, size: { width: 100, height: 140 } });
+    const onSelectionChange = vi.fn();
+    const { container } = renderBoard({ tableCards: [card], onSelectionChange });
+
+    const table = getTableDiv(container);
+
+    // Start marquee
+    fireEvent.mouseDown(table, { button: 0, clientX: 50, clientY: 50 });
+    // Move past threshold
+    fireEvent.mouseMove(table, { clientX: 60, clientY: 60 });
+
+    // Mouse leaves table
+    fireEvent.mouseLeave(table);
+
+    // Mouseup on window (outside table) should finalize
+    act(() => {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 0, clientX: 200, clientY: 200, bubbles: true }));
+    });
+
+    // Marquee should be cleared
+    const marqueeAfter = container.querySelector('[data-testid="marquee-selection"]');
+    expect(marqueeAfter).not.toBeInTheDocument();
+
+    // Selection callback should have been called
+    expect(onSelectionChange).toHaveBeenCalled();
+  });
+
+  it('should continue tracking mouse position via window mousemove after leaving table', () => {
+    const onSelectionChange = vi.fn();
+    const { container } = renderBoard({ onSelectionChange });
+
+    const table = getTableDiv(container);
+
+    // Start marquee
+    fireEvent.mouseDown(table, { button: 0, clientX: 50, clientY: 50 });
+    // Move past threshold
+    fireEvent.mouseMove(table, { clientX: 60, clientY: 60 });
+
+    // Confirm marquee is active
+    expect(container.querySelector('[data-testid="marquee-selection"]')).toBeInTheDocument();
+
+    // Mouse leaves table
+    fireEvent.mouseLeave(table);
+
+    // Move on window (outside table) — marquee should still be present
+    act(() => {
+      window.dispatchEvent(new MouseEvent('mousemove', { clientX: 200, clientY: 200, bubbles: true }));
+    });
+
+    // Marquee should still be visible (tracked via window listener)
+    expect(container.querySelector('[data-testid="marquee-selection"]')).toBeInTheDocument();
+
+    // Finalize with mouseup on window
+    act(() => {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 0, clientX: 200, clientY: 200, bubbles: true }));
+    });
+
+    expect(onSelectionChange).toHaveBeenCalled();
   });
 });
