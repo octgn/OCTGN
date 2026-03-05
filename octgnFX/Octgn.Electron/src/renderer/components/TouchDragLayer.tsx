@@ -22,9 +22,9 @@ export interface TouchDropHandler {
 interface TouchDragLayerProps {
   children: React.ReactNode;
   /** Called when a touch drag drops onto the table zone */
-  onTableDrop?: (cardId: string, x: number, y: number) => void;
+  onTableDrop?: (cardId: string, x: number, y: number, allCardIds?: string[], relativePositions?: { relativeX: number; relativeY: number }[]) => void;
   /** Called when a touch drag drops onto a group zone */
-  onGroupDrop?: (cardId: string, groupId: string, sourceZone: string | null) => void;
+  onGroupDrop?: (cardId: string, groupId: string, sourceZone: string | null, allCardIds?: string[]) => void;
 }
 
 const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
@@ -64,6 +64,7 @@ const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
       e.preventDefault();
 
       const cardId = dragState.draggingCardId;
+      const allCardIds = dragState.draggingCardIds;
       const zone = dragState.dropTargetZone;
       const sourceZone = dragState.sourceZone;
       const { x, y } = dragState.mousePosition;
@@ -71,9 +72,12 @@ const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
 
       if (cardId && zone) {
         if (zone === 'table' && onTableDrop) {
-          onTableDrop(cardId, x - grabOffset.x, y - grabOffset.y);
+          const relativePositions = dragState.draggingCards.length > 0
+            ? dragState.draggingCards.map((c) => ({ relativeX: c.relativeX, relativeY: c.relativeY }))
+            : undefined;
+          onTableDrop(cardId, x - grabOffset.x, y - grabOffset.y, allCardIds, relativePositions);
         } else if (zone !== 'table' && onGroupDrop) {
-          onGroupDrop(cardId, zone, sourceZone);
+          onGroupDrop(cardId, zone, sourceZone, allCardIds);
         }
       }
 

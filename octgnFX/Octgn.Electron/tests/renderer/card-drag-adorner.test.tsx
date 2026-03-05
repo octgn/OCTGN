@@ -11,7 +11,7 @@ import React from 'react';
   gameChat: vi.fn(), loadDeck: vi.fn(), openFileDialog: vi.fn(),
 };
 
-import { DragDropProvider, useDragDrop } from '@renderer/components/DragDropContext';
+import { DragDropProvider, useDragDrop, type DraggingCardData } from '@renderer/components/DragDropContext';
 import CardDragAdorner from '@renderer/components/CardDragAdorner';
 import TouchDragLayer from '@renderer/components/TouchDragLayer';
 
@@ -20,7 +20,12 @@ import TouchDragLayer from '@renderer/components/TouchDragLayer';
 // ---------------------------------------------------------------------------
 
 /** Renders the adorner inside a DragDropProvider with a button that triggers drag */
-function renderWithDragControl(props: { cardInfo?: DragCardInfo; grabOffset?: { x: number; y: number } } = {}) {
+function renderWithDragControl(props: {
+  cardInfo?: DragCardInfo;
+  grabOffset?: { x: number; y: number };
+  draggingCards?: DraggingCardData[];
+  allCardIds?: string[];
+} = {}) {
   const cardInfo: DragCardInfo = props.cardInfo ?? {
     imageUrl: 'octgn-asset://card/test.png',
     name: 'Dragon Knight',
@@ -40,7 +45,7 @@ function renderWithDragControl(props: { cardInfo?: DragCardInfo; grabOffset?: { 
         data-testid="start-drag"
         onClick={() => {
           // Simulate starting a drag with card info and grab offset
-          ctx.startTouchDrag('card-1', 'table', 400, 300, cardInfo, grabOffset);
+          ctx.startTouchDrag('card-1', 'table', 400, 300, cardInfo, grabOffset, props.allCardIds, props.draggingCards);
         }}
       />
     );
@@ -484,6 +489,59 @@ describe('CardDragAdorner', () => {
     expect(adorner.textContent).not.toContain('Secret Dragon');
   });
 
+  // ─── Multi-card adorner: renders all cards at relative positions ────
+
+  it('renders multiple cards when draggingCards has entries', () => {
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'Card A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 80, relativeY: 30, info: { imageUrl: 'b.png', name: 'Card B', width: 100, height: 140, faceUp: true } },
+      { id: 'card-3', relativeX: -40, relativeY: 60, info: { imageUrl: 'c.png', name: 'Card C', width: 100, height: 140, faceUp: true } },
+    ];
+
+    renderWithDragControl({
+      draggingCards,
+      allCardIds: ['card-1', 'card-2', 'card-3'],
+    });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+
+    // Each card should have its own adorner element
+    expect(screen.getByTestId('adorner-card-card-1')).toBeTruthy();
+    expect(screen.getByTestId('adorner-card-card-2')).toBeTruthy();
+    expect(screen.getByTestId('adorner-card-card-3')).toBeTruthy();
+  });
+
+  it('does not show count badge for multi-card drag with draggingCards', () => {
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 50, relativeY: 0, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    renderWithDragControl({ draggingCards, allCardIds: ['card-1', 'card-2'] });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+
+    // No count badge — cards are shown individually
+    expect(screen.queryByTestId('multi-card-badge')).toBeNull();
+  });
+
+  it('positions multi-card adorner cards using relative offsets', () => {
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 120, relativeY: -50, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    renderWithDragControl({ draggingCards, allCardIds: ['card-1', 'card-2'], grabOffset: { x: 50, y: 70 } });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+
+    const card2 = screen.getByTestId('adorner-card-card-2');
+    // Card 2 should be offset from card 1 by (120, -50) scaled by adornerScale
+    const style = card2.style;
+    expect(style.left).toBeTruthy();
+    expect(style.top).toBeTruthy();
+  });
+
   it('maintains card aspect ratio in adorner dimensions', () => {
     renderWithDragControl({
       cardInfo: {
@@ -510,6 +568,142 @@ describe('CardDragAdorner', () => {
     expect(Math.abs(ratio - expectedRatio)).toBeLessThan(0.1);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Multi-card drag with relative positions
+// ---------------------------------------------------------------------------
+
+describe('DragDropContext — draggingCards with relative positions', () => {
+  afterEach(cleanup);
+
+  it('stores draggingCards array when startTouchDrag is called with card positions', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return (
+        <div data-testid="cards-count">{ctx.dragState.draggingCards.length}</div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    const cards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 50, relativeY: 30, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300, cards[0].info, { x: 25, y: 35 }, ['card-1', 'card-2'], cards);
+    });
+
+    expect(screen.getByTestId('cards-count').textContent).toBe('2');
+  });
+
+  it('stores relative positions for each dragging card', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      const cards = ctx.dragState.draggingCards;
+      return (
+        <div data-testid="positions">
+          {cards.map((c) => `${c.id}:${c.relativeX},${c.relativeY}`).join('|')}
+        </div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    const cards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 80, relativeY: -20, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+      { id: 'card-3', relativeX: -30, relativeY: 50, info: { imageUrl: 'c.png', name: 'C', width: 100, height: 140, faceUp: true } },
+    ];
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300, cards[0].info, { x: 0, y: 0 }, ['card-1', 'card-2', 'card-3'], cards);
+    });
+
+    expect(screen.getByTestId('positions').textContent).toBe('card-1:0,0|card-2:80,-20|card-3:-30,50');
+  });
+
+  it('defaults to empty draggingCards when not provided', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return (
+        <div data-testid="cards-count">{ctx.dragState.draggingCards.length}</div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+
+    expect(screen.getByTestId('cards-count').textContent).toBe('0');
+  });
+
+  it('clears draggingCards when drag ends', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return (
+        <div data-testid="cards-count">{ctx.dragState.draggingCards.length}</div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    const cards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+    ];
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300, undefined, undefined, ['card-1'], cards);
+    });
+
+    expect(screen.getByTestId('cards-count').textContent).toBe('1');
+
+    act(() => {
+      dragActions!.endDrag();
+    });
+
+    expect(screen.getByTestId('cards-count').textContent).toBe('0');
+  });
+});
+
+// Type for tests — matches what will be added to DragDropContext
+type DraggingCardData = {
+  id: string;
+  relativeX: number;
+  relativeY: number;
+  info: DragCardInfo;
+};
 
 // ---------------------------------------------------------------------------
 // Touch drop position offset tests
@@ -554,7 +748,7 @@ describe('TouchDragLayer — drop position accounts for grab offset', () => {
     });
 
     // The drop coordinates should be offset: (500-30, 400-40) = (470, 360)
-    expect(onTableDrop).toHaveBeenCalledWith('card-1', 470, 360);
+    expect(onTableDrop).toHaveBeenCalledWith('card-1', 470, 360, ['card-1'], undefined);
   });
 
   it('passes unmodified coordinates when grabOffset is (0,0)', () => {
@@ -591,6 +785,6 @@ describe('TouchDragLayer — drop position accounts for grab offset', () => {
     });
 
     // With (0,0) offset, coordinates should pass through unchanged
-    expect(onTableDrop).toHaveBeenCalledWith('card-1', 500, 400);
+    expect(onTableDrop).toHaveBeenCalledWith('card-1', 500, 400, ['card-1'], undefined);
   });
 });

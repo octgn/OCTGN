@@ -88,7 +88,7 @@ function renderBrowser(props: Partial<React.ComponentProps<typeof PlayerGroupBro
     ],
     localPlayerId: 1,
     isSpectator: false,
-    selectedCardId: null,
+    selectedCardIds: new Set<string>(),
     onCardClick: noop,
     onCardContextMenu: noop,
     onCardMoveToGroup: noop,

@@ -1,11 +1,12 @@
 import React, { useCallback, useRef, useMemo, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import CardComponent from './CardComponent';
-import { useDragDrop, cardToDragInfo } from './DragDropContext';
+import { useDragDrop, cardToDragInfo, type DraggingCardData } from './DragDropContext';
 import { useTableTransform } from '../hooks/useTableTransform';
 import { calculateTableScale } from '../utils/table-scaling';
 import type { Card } from '../../shared/types';
 import { isInInvertedZone } from '../../shared/table-utils';
+import { computeMarqueeRect, findCardsInMarquee } from '../utils/marquee-selection';
 
 // ─── Zone identifiers ────────────────────────────────────────────────
 const ZONE_TABLE = 'table';
@@ -16,7 +17,7 @@ export type ScreenToTableCoordsFn = (screenX: number, screenY: number) => { x: n
 
 interface GameBoardProps {
   tableCards: Card[];
-  selectedCardId: string | null;
+  selectedCardIds: Set<string>;
   boardImageUrl?: string;
   boardX?: number;
   boardY?: number;
@@ -26,10 +27,11 @@ interface GameBoardProps {
   tableBackgroundUrl?: string;
   tableWidth?: number;
   tableHeight?: number;
-  onCardClick: (card: Card) => void;
+  onCardClick: (card: Card, e?: React.MouseEvent) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onTableContextMenu?: (e: React.MouseEvent) => void;
-  onCardMoveToTable: (cardId: string, x: number, y: number) => void;
+  onCardMoveToTable: (cardIds: string[], x: number, y: number, relativePositions?: { relativeX: number; relativeY: number }[]) => void;
+  onSelectionChange?: (cardIds: Set<string>) => void;
   useTwoSidedTable?: boolean;
   isSpectator?: boolean;
   /** Ref that receives a function to convert screen coords to table coords */
@@ -38,7 +40,7 @@ interface GameBoardProps {
 
 const GameBoard: React.FC<GameBoardProps> = ({
   tableCards,
-  selectedCardId,
+  selectedCardIds,
   boardImageUrl,
   boardX = 0,
   boardY = 0,
@@ -52,12 +54,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onCardContextMenu,
   onTableContextMenu,
   onCardMoveToTable,
+  onSelectionChange,
   useTwoSidedTable = false,
   isSpectator = false,
   screenToTableCoordsRef,
 }) => {
   const tableRef = useRef<HTMLDivElement>(null);
-  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging, recentlyDroppedCardId, clearRecentlyDropped } =
+  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging, recentlyDroppedCardId, recentlyDroppedCardIds, clearRecentlyDropped } =
     useDragDrop();
 
   // When a dropped card's position changes in the DOM, wait for the paint
@@ -197,6 +200,31 @@ const GameBoard: React.FC<GameBoardProps> = ({
     };
   }, [handlePanEnd]);
 
+  // ─── Marquee (box) selection ──────────────────────────────────────────
+  const [marquee, setMarquee] = useState<{
+    startX: number; startY: number; // table-space start
+    endX: number; endY: number;     // table-space current
+    screenStartX: number; screenStartY: number; // screen start (for threshold)
+    active: boolean; // true once threshold exceeded
+  } | null>(null);
+
+  // Minimum drag distance (in screen pixels) before marquee starts
+  const MARQUEE_THRESHOLD = 5;
+
+  /** Convert screen coords to table-space coords for marquee */
+  const screenToTableSpace = useCallback((screenX: number, screenY: number) => {
+    const contentPos = screenToTable(screenX, screenY);
+    let x = contentPos.x;
+    let y = contentPos.y;
+    if (hasTableDimensions && baseScale.scale !== 0) {
+      x = (x - baseScale.offsetX) / baseScale.scale;
+      y = (y - baseScale.offsetY) / baseScale.scale;
+      x -= (tableWidth ?? 0) / 2;
+      y -= (tableHeight ?? 0) / 2;
+    }
+    return { x, y };
+  }, [screenToTable, hasTableDimensions, baseScale, tableWidth, tableHeight]);
+
   // ─── Pan via mouse (middle-click or space+left-click) ────────────────
   const handleTableMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -208,32 +236,159 @@ const GameBoard: React.FC<GameBoardProps> = ({
       if (e.button === 0 && spaceDownRef.current) {
         e.preventDefault();
         handlePanStart(e.clientX, e.clientY);
+        return;
+      }
+      // Left-click on empty table area: start marquee selection
+      if (e.button === 0 && !isSpectator) {
+        const target = e.target as HTMLElement;
+        // Only start marquee if clicking on the table (not on a card)
+        if (target.closest('[data-card-id]') || target.closest('.octgn-card-wrapper')) return;
+        const pos = screenToTableSpace(e.clientX, e.clientY);
+        setMarquee({
+          startX: pos.x, startY: pos.y,
+          endX: pos.x, endY: pos.y,
+          screenStartX: e.clientX, screenStartY: e.clientY,
+          active: false,
+        });
       }
     },
-    [handlePanStart]
+    [handlePanStart, isSpectator, screenToTableSpace]
   );
 
   const handleTableMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (isPanning) {
         handlePanMove(e.clientX, e.clientY);
+        return;
+      }
+      if (marquee) {
+        const dx = e.clientX - marquee.screenStartX;
+        const dy = e.clientY - marquee.screenStartY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const pos = screenToTableSpace(e.clientX, e.clientY);
+        setMarquee((prev) => prev ? {
+          ...prev,
+          endX: pos.x,
+          endY: pos.y,
+          active: prev.active || dist > MARQUEE_THRESHOLD,
+        } : null);
       }
     },
-    [isPanning, handlePanMove]
+    [isPanning, handlePanMove, marquee, screenToTableSpace]
   );
 
   const handleTableMouseUp = useCallback(
     (e: React.MouseEvent) => {
       if (e.button === 1 || (e.button === 0 && isPanning)) {
         handlePanEnd();
+        return;
+      }
+      if (marquee) {
+        if (marquee.active) {
+          // Finalize marquee selection
+          const rect = computeMarqueeRect(marquee.startX, marquee.startY, marquee.endX, marquee.endY);
+          const ids = findCardsInMarquee(tableCards, rect);
+          onSelectionChange?.(new Set(ids));
+        } else {
+          // Click on empty area without dragging: clear selection
+          const target = e.target as HTMLElement;
+          if (!target.closest('[data-card-id]') && !target.closest('.octgn-card-wrapper')) {
+            onSelectionChange?.(new Set());
+          }
+        }
+        setMarquee(null);
       }
     },
-    [isPanning, handlePanEnd]
+    [isPanning, handlePanEnd, marquee, tableCards, onSelectionChange]
   );
 
   const handleTableMouseLeave = useCallback(() => {
     if (isPanning) handlePanEnd();
-  }, [isPanning, handlePanEnd]);
+    if (marquee) setMarquee(null);
+  }, [isPanning, handlePanEnd, marquee]);
+
+  // ─── Touch marquee selection ────────────────────────────────────────
+  // Use native event listeners (not React synthetic) so we can use { passive: false }
+  // to allow preventDefault() for blocking scroll during marquee drag.
+  const touchMarqueeRef = useRef<{ id: number; startX: number; startY: number } | null>(null);
+  const marqueeRef = useRef(marquee);
+  marqueeRef.current = marquee;
+  const screenToTableSpaceRef = useRef(screenToTableSpace);
+  screenToTableSpaceRef.current = screenToTableSpace;
+  const tableCardsRef = useRef(tableCards);
+  tableCardsRef.current = tableCards;
+  const onSelectionChangeRef = useRef(onSelectionChange);
+  onSelectionChangeRef.current = onSelectionChange;
+
+  const handleTableTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (isSpectator || e.touches.length !== 1) return;
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-card-id]') || target.closest('.octgn-card-wrapper')) return;
+      const touch = e.touches[0];
+      const pos = screenToTableSpaceRef.current(touch.clientX, touch.clientY);
+      touchMarqueeRef.current = { id: touch.identifier, startX: touch.clientX, startY: touch.clientY };
+      setMarquee({
+        startX: pos.x, startY: pos.y,
+        endX: pos.x, endY: pos.y,
+        screenStartX: touch.clientX, screenStartY: touch.clientY,
+        active: false,
+      });
+    },
+    [isSpectator]
+  );
+
+  // Attach native touchmove/touchend on the table element for marquee (passive: false)
+  useEffect(() => {
+    const el = tableRef.current;
+    if (!el) return;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const m = marqueeRef.current;
+      if (!m || !touchMarqueeRef.current) return;
+      const touch = Array.from(e.touches).find((t) => t.identifier === touchMarqueeRef.current!.id);
+      if (!touch) return;
+      const dx = touch.clientX - m.screenStartX;
+      const dy = touch.clientY - m.screenStartY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > MARQUEE_THRESHOLD) {
+        e.preventDefault(); // Block scroll during active marquee
+      }
+      const pos = screenToTableSpaceRef.current(touch.clientX, touch.clientY);
+      setMarquee((prev) => prev ? {
+        ...prev,
+        endX: pos.x,
+        endY: pos.y,
+        active: prev.active || dist > MARQUEE_THRESHOLD,
+      } : null);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const m = marqueeRef.current;
+      if (!m || !touchMarqueeRef.current) return;
+      const stillDown = Array.from(e.touches).some((t) => t.identifier === touchMarqueeRef.current!.id);
+      if (stillDown) return;
+
+      if (m.active) {
+        const rect = computeMarqueeRect(m.startX, m.startY, m.endX, m.endY);
+        const ids = findCardsInMarquee(tableCardsRef.current, rect);
+        onSelectionChangeRef.current?.(new Set(ids));
+      } else {
+        onSelectionChangeRef.current?.(new Set());
+      }
+      setMarquee(null);
+      touchMarqueeRef.current = null;
+    };
+
+    el.addEventListener('touchmove', handleTouchMove, { passive: false });
+    el.addEventListener('touchend', handleTouchEnd, { passive: false });
+    el.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+    return () => {
+      el.removeEventListener('touchmove', handleTouchMove);
+      el.removeEventListener('touchend', handleTouchEnd);
+      el.removeEventListener('touchcancel', handleTouchEnd);
+    };
+  }, []); // stable — uses refs for all mutable state
 
   // ─── Table zone drag handlers ──────────────────────────────────────
   const handleTableDragOver = useCallback(
@@ -268,7 +423,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
         y -= (tableHeight ?? 0) / 2;
       }
 
-      onCardMoveToTable(cardId, x, y);
+      // Move all dragged cards (multi-select support)
+      const allIds = dragState.draggingCardIds.length > 0 ? dragState.draggingCardIds : [cardId];
+      // Pass relative positions so cards maintain their layout
+      const relativePositions = dragState.draggingCards.length > 0
+        ? dragState.draggingCards.map((c) => ({ relativeX: c.relativeX, relativeY: c.relativeY }))
+        : undefined;
+      onCardMoveToTable(allIds, x, y, relativePositions);
       endDrag();
     },
     [onCardMoveToTable, endDrag, isSpectator, screenToTable, hasTableDimensions, baseScale, tableWidth, tableHeight, dragState]
@@ -284,12 +445,36 @@ const GameBoard: React.FC<GameBoardProps> = ({
   );
 
   // ─── Card event wrappers ───────────────────────────────────────────
+  /** Build DraggingCardData[] for multi-card drags with relative positions */
+  const buildDraggingCards = useCallback(
+    (primaryCard: Card, allIds: string[]): DraggingCardData[] => {
+      if (allIds.length <= 1) return [];
+      const primaryPos = primaryCard.position;
+      return allIds.map((id) => {
+        const c = tableCards.find((tc) => tc.id === id);
+        if (!c) return { id, relativeX: 0, relativeY: 0, info: cardToDragInfo(primaryCard) };
+        return {
+          id,
+          relativeX: c.position.x - primaryPos.x,
+          relativeY: c.position.y - primaryPos.y,
+          info: cardToDragInfo(c),
+        };
+      });
+    },
+    [tableCards]
+  );
+
   const handleCardDragStart = useCallback(
     (card: Card, e: React.DragEvent) => {
       if (isSpectator) return;
-      startDrag(card.id, ZONE_TABLE, e, cardToDragInfo(card));
+      // If the dragged card is part of a multi-selection, drag all selected cards
+      const allIds = selectedCardIds.has(card.id) && selectedCardIds.size > 1
+        ? Array.from(selectedCardIds)
+        : [card.id];
+      const draggingCards = buildDraggingCards(card, allIds);
+      startDrag(card.id, ZONE_TABLE, e, cardToDragInfo(card), allIds, draggingCards);
     },
-    [startDrag, isSpectator]
+    [startDrag, isSpectator, selectedCardIds, buildDraggingCards]
   );
 
   const handleCardDragEnd = useCallback(() => {
@@ -299,9 +484,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const handleCardTouchDragStart = useCallback(
     (card: Card, x: number, y: number, grabOffset: { x: number; y: number }) => {
       if (isSpectator) return;
-      startTouchDrag(card.id, ZONE_TABLE, x, y, cardToDragInfo(card), grabOffset);
+      const allIds = selectedCardIds.has(card.id) && selectedCardIds.size > 1
+        ? Array.from(selectedCardIds)
+        : [card.id];
+      const draggingCards = buildDraggingCards(card, allIds);
+      startTouchDrag(card.id, ZONE_TABLE, x, y, cardToDragInfo(card), grabOffset, allIds, draggingCards);
     },
-    [startTouchDrag, isSpectator]
+    [startTouchDrag, isSpectator, selectedCardIds, buildDraggingCards]
   );
 
   // Zoom percentage for display
@@ -320,7 +509,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
           !isSpectator && isDragging &&
             dragState.dropTargetZone !== ZONE_TABLE &&
             'bg-transparent',
-          isPanning && 'cursor-grabbing'
+          isPanning && 'cursor-grabbing',
+          marquee?.active && 'cursor-crosshair'
         )}
         data-drop-zone={ZONE_TABLE}
         onDragOver={handleTableDragOver}
@@ -330,6 +520,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         onMouseMove={handleTableMouseMove}
         onMouseUp={handleTableMouseUp}
         onMouseLeave={handleTableMouseLeave}
+        onTouchStart={handleTableTouchStart}
         onContextMenu={(e) => {
           // Only trigger table context menu if the click target is the table itself, not a card
           if (onTableContextMenu && (e.target as HTMLElement).closest('[data-card-id]') === null) {
@@ -450,20 +641,21 @@ const GameBoard: React.FC<GameBoardProps> = ({
             {tableCards.map((card) => (
               <div
                 key={card.id}
+                data-card-id={card.id}
                 className={clsx(
                   'absolute',
-                  recentlyDroppedCardId === card.id
+                  (recentlyDroppedCardId === card.id || recentlyDroppedCardIds.includes(card.id))
                     ? '' // Skip transition — adorner already provided visual continuity
                     : 'transition-all duration-500 ease-out',
                   !isSpectator && isDragging &&
-                    dragState.draggingCardId === card.id &&
+                    dragState.draggingCardIds.includes(card.id) &&
                     'opacity-30 scale-95'
                 )}
                 style={{ left: card.position.x, top: card.position.y }}
               >
                 <CardComponent
                   card={card}
-                  selected={card.id === selectedCardId}
+                  selected={selectedCardIds.has(card.id)}
                   interactive={!isSpectator}
                   invertedZone={useTwoSidedTable && isInInvertedZone(card.position.y, card.size.height)}
                   onClick={onCardClick}
@@ -491,6 +683,57 @@ const GameBoard: React.FC<GameBoardProps> = ({
               </div>
             )}
           </div>
+
+          {/* Marquee selection rectangle */}
+          {marquee?.active && (() => {
+            const rect = computeMarqueeRect(marquee.startX, marquee.startY, marquee.endX, marquee.endY);
+            return (
+              <div
+                data-testid="marquee-selection"
+                className="pointer-events-none"
+                style={{
+                  position: 'absolute',
+                  left: `${rect.x}px`,
+                  top: `${rect.y}px`,
+                  width: `${rect.width}px`,
+                  height: `${rect.height}px`,
+                  borderRadius: '2px',
+                  backgroundColor: 'rgba(59, 130, 246, 0.06)',
+                  zIndex: 50,
+                }}
+              >
+                {/* Animated marching-ants border */}
+                <div
+                  className="absolute inset-0 rounded-sm"
+                  style={{
+                    border: '1.5px dashed rgba(59, 130, 246, 0.6)',
+                    animation: 'marquee-march 0.4s linear infinite',
+                  }}
+                />
+                {/* Inner glow border */}
+                <div
+                  className="absolute inset-0 rounded-sm"
+                  style={{
+                    boxShadow: '0 0 8px rgba(59, 130, 246, 0.15), inset 0 0 8px rgba(59, 130, 246, 0.05)',
+                  }}
+                />
+                {/* Corner accents */}
+                <div className="absolute -top-px -left-px w-2.5 h-2.5 border-t-2 border-l-2 border-blue-400/90 rounded-tl-sm" />
+                <div className="absolute -top-px -right-px w-2.5 h-2.5 border-t-2 border-r-2 border-blue-400/90 rounded-tr-sm" />
+                <div className="absolute -bottom-px -left-px w-2.5 h-2.5 border-b-2 border-l-2 border-blue-400/90 rounded-bl-sm" />
+                <div className="absolute -bottom-px -right-px w-2.5 h-2.5 border-b-2 border-r-2 border-blue-400/90 rounded-br-sm" />
+
+                <style>{`
+                  @keyframes marquee-march {
+                    0% { stroke-dashoffset: 0; border-color: rgba(59, 130, 246, 0.6); }
+                    50% { border-color: rgba(59, 130, 246, 0.8); }
+                    100% { stroke-dashoffset: 12; border-color: rgba(59, 130, 246, 0.6); }
+                  }
+                `}</style>
+              </div>
+            );
+          })()}
+
           </div>{/* close origin-shift */}
         </div>{/* close base-scale-container */}
         </div>{/* close transform-container */}

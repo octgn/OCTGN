@@ -61,9 +61,16 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
     (e: React.DragEvent) => {
       if (!isOwn || !onCardMoveToGroup) return;
       e.preventDefault();
-      const cardId = e.dataTransfer.getData('application/octgn-card');
-      if (!cardId) return;
-      onCardMoveToGroup(cardId, group.id);
+      // Support multi-card drop
+      const cardsJson = e.dataTransfer.getData('application/octgn-cards');
+      const cardIds: string[] = cardsJson ? JSON.parse(cardsJson) : [];
+      if (cardIds.length === 0) {
+        const cardId = e.dataTransfer.getData('application/octgn-card');
+        if (cardId) cardIds.push(cardId);
+      }
+      for (const id of cardIds) {
+        onCardMoveToGroup(id, group.id);
+      }
       endDrag();
     },
     [isOwn, onCardMoveToGroup, endDrag, group.id],

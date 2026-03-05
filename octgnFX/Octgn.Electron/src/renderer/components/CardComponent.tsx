@@ -57,7 +57,7 @@ export interface CardComponentProps {
   invertedZone?: boolean;
   className?: string;
   style?: React.CSSProperties;
-  onClick?: (card: CardType) => void;
+  onClick?: (card: CardType, e?: React.MouseEvent) => void;
   onDoubleClick?: (card: CardType) => void;
   onContextMenu?: (card: CardType, e: React.MouseEvent) => void;
   onDragStart?: (card: CardType, e: React.DragEvent) => void;
@@ -105,7 +105,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
   const showBackPlaceholder = !backImageUrl;
   const gradient = useMemo(() => getGradientForCard(card), [card]);
 
-  const handleClick = useCallback(() => onClick?.(card), [onClick, card]);
+  const handleClick = useCallback((e: React.MouseEvent) => onClick?.(card, e), [onClick, card]);
   const handleDoubleClick = useCallback(
     () => onDoubleClick?.(card),
     [onDoubleClick, card]

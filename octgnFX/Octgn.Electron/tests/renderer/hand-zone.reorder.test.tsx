@@ -33,7 +33,7 @@ function renderHand(cards: Card[], overrides: Partial<React.ComponentProps<typeo
   const props = {
     cards,
     handGroupId: 'hand-1',
-    selectedCardId: null,
+    selectedCardIds: new Set<string>(),
     interactive: true,
     onCardClick: noop,
     onCardContextMenu: noop,

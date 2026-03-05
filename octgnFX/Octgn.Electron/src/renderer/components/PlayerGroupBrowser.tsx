@@ -60,7 +60,7 @@ export interface PlayerGroupBrowserProps {
   localPlayerId: number;
   globalGroups?: Group[];
   isSpectator: boolean;
-  selectedCardId: string | null;
+  selectedCardIds: Set<string>;
   onCardClick: (card: Card) => void;
   onCardContextMenu: (e: React.MouseEvent, card: Card) => void;
   onGroupContextMenu?: (e: React.MouseEvent, group: Group) => void;
@@ -76,7 +76,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
   localPlayerId,
   globalGroups,
   isSpectator,
-  selectedCardId,
+  selectedCardIds,
   onCardClick,
   onCardContextMenu,
   onGroupContextMenu,
@@ -321,7 +321,7 @@ const PlayerGroupBrowser: React.FC<PlayerGroupBrowserProps> = ({
             <HandZone
               cards={handGroup.cards}
               handGroupId={handGroup.id}
-              selectedCardId={selectedCardId}
+              selectedCardIds={selectedCardIds}
               interactive={isOwnTab}
               onCardClick={onCardClick}
               onCardContextMenu={onCardContextMenu}

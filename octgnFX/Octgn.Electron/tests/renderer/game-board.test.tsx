@@ -61,12 +61,10 @@ function renderBoard(props: Partial<React.ComponentProps<typeof GameBoard>> = {}
     <DragDropProvider>
       <GameBoard
         tableCards={[]}
-        handCards={[]}
-        selectedCardId={null}
+        selectedCardIds={new Set<string>()}
         onCardClick={noop}
         onCardContextMenu={noop}
         onCardMoveToTable={noop}
-        onCardMoveToGroup={noop}
         {...props}
       />
     </DragDropProvider>,

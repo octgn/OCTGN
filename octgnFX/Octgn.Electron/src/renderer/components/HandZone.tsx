@@ -80,7 +80,7 @@ function spreadOffset(
 export interface HandZoneProps {
   cards: Card[];
   handGroupId: string;
-  selectedCardId: string | null;
+  selectedCardIds: Set<string>;
   /** Whether the user can interact with these cards (drag, click, context menu) */
   interactive: boolean;
   onCardClick: (card: Card) => void;
@@ -93,7 +93,7 @@ export interface HandZoneProps {
 const HandZone: React.FC<HandZoneProps> = ({
   cards,
   handGroupId,
-  selectedCardId,
+  selectedCardIds,
   interactive,
   onCardClick,
   onCardContextMenu,
@@ -150,7 +150,13 @@ const HandZone: React.FC<HandZoneProps> = ({
         const adjustedIdx = oldIndex < idx ? idx - 1 : idx;
         onReorderCard(cardId, adjustedIdx);
       } else {
-        onCardMoveToGroup(cardId, handGroupId);
+        // Support multi-card drop into hand
+        const cardsJson = e.dataTransfer.getData('application/octgn-cards');
+        const cardIds: string[] = cardsJson ? JSON.parse(cardsJson) : [];
+        if (cardIds.length === 0) cardIds.push(cardId);
+        for (const id of cardIds) {
+          onCardMoveToGroup(id, handGroupId);
+        }
       }
       setInsertIndex(null);
       endDrag();
@@ -403,7 +409,7 @@ const HandZone: React.FC<HandZoneProps> = ({
               >
                 <CardComponent
                   card={card}
-                  selected={interactive && card.id === selectedCardId}
+                  selected={interactive && selectedCardIds.has(card.id)}
                   onClick={interactive ? onCardClick : undefined}
                   onDragStart={interactive ? handleCardDragStart : undefined}
                   onDragEnd={interactive ? handleCardDragEnd : undefined}

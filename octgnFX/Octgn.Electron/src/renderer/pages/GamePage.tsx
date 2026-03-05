@@ -46,12 +46,28 @@ const GamePage: React.FC = () => {
   const [deckLoading, setDeckLoading] = useState<'user' | 'prebuilt' | false>(false);
   const [prebuiltDecksPath, setPrebuiltDecksPath] = useState<string | null>(null);
   const [chatInput, setChatInput] = useState('');
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isSpectator = gameState?.isSpectator ?? false;
   const { buildCardMenuItems, buildGroupMenuItems, buildTableMenuItems } = useContextMenuItems();
-  useActionShortcuts(gameState, selectedCardId, isSpectator);
+  // For shortcuts, use the first selected card (if any)
+  const firstSelectedCardId = useMemo(() => {
+    const iter = selectedCardIds.values().next();
+    return iter.done ? null : iter.value;
+  }, [selectedCardIds]);
+  useActionShortcuts(gameState, firstSelectedCardId, isSpectator);
+
+  // Escape key clears selection
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedCardIds.size > 0) {
+        setSelectedCardIds(new Set());
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [selectedCardIds.size]);
 
   // Subscribe to game state updates from main process
   useEffect(() => {
@@ -133,10 +149,21 @@ const GamePage: React.FC = () => {
   }, [chatInput, sendChat]);
 
   const handleCardClick = useCallback(
-    (card: Card) => {
-      setSelectedCardId(card.id === selectedCardId ? null : card.id);
+    (card: Card, e?: React.MouseEvent) => {
+      setSelectedCardIds((prev) => {
+        if (e?.ctrlKey || e?.metaKey) {
+          // Ctrl+click: toggle individual card in selection
+          const next = new Set(prev);
+          if (next.has(card.id)) next.delete(card.id);
+          else next.add(card.id);
+          return next;
+        }
+        // Regular click: select only this card (or deselect if already sole selection)
+        if (prev.size === 1 && prev.has(card.id)) return new Set();
+        return new Set([card.id]);
+      });
     },
-    [selectedCardId]
+    []
   );
 
   const handleCardContextMenu = useCallback((e: React.MouseEvent, card: Card) => {
@@ -144,8 +171,15 @@ const GamePage: React.FC = () => {
     e.preventDefault();
     const items = buildCardMenuItems(card, gameState, { flipCard, rotateCard, peekCard, moveCards });
     setContextMenu({ x: e.clientX, y: e.clientY, items });
-    setSelectedCardId(card.id);
-  }, [isSpectator, gameState, buildCardMenuItems, flipCard, rotateCard, peekCard, moveCards]);
+    if (!selectedCardIds.has(card.id)) {
+      setSelectedCardIds(new Set([card.id]));
+    }
+  }, [isSpectator, gameState, selectedCardIds, buildCardMenuItems, flipCard, rotateCard, peekCard, moveCards]);
+
+  /** Marquee selection or click-on-empty deselects all */
+  const handleSelectionChange = useCallback((cardIds: Set<string>) => {
+    setSelectedCardIds(cardIds);
+  }, []);
 
   const handleGroupContextMenu = useCallback((e: React.MouseEvent, group: Group) => {
     if (isSpectator || !gameState) return;
@@ -166,17 +200,27 @@ const GamePage: React.FC = () => {
   }, [isSpectator, gameState, buildTableMenuItems]);
 
 
-  /** Drag-drop: move card to table at (x, y) position (table-space coords) */
+  /** Drag-drop: move card(s) to table at (x, y) position (table-space coords).
+   *  When relativePositions are provided, cards maintain their original layout.
+   *  Otherwise falls back to a small fan offset. */
   const handleCardMoveToTable = useCallback(
-    (cardId: string, x: number, y: number) => {
+    (cardIds: string[], x: number, y: number, relativePositions?: { relativeX: number; relativeY: number }[]) => {
       if (isSpectator) return;
-      moveCardsAt(
-        [Number(cardId)],
-        [x],
-        [y],
-        [0],
-        [true]
-      );
+      const numIds = cardIds.map(Number);
+      let xs: number[];
+      let ys: number[];
+      if (relativePositions && relativePositions.length === cardIds.length) {
+        // Preserve original relative layout
+        xs = relativePositions.map((p) => x + p.relativeX);
+        ys = relativePositions.map((p) => y + p.relativeY);
+      } else {
+        // Fallback: small fan offset
+        xs = numIds.map((_, i) => x + i * 15);
+        ys = numIds.map((_, i) => y + i * 8);
+      }
+      const indices = numIds.map(() => 0);
+      const faceUps = numIds.map(() => true);
+      moveCardsAt(numIds, xs, ys, indices, faceUps);
     },
     [moveCardsAt, isSpectator]
   );
@@ -214,23 +258,27 @@ const GamePage: React.FC = () => {
 
   /** Touch drag: drop card on table using screen coordinates */
   const handleTouchTableDrop = useCallback(
-    (cardId: string, screenX: number, screenY: number) => {
+    (cardId: string, screenX: number, screenY: number, allCardIds?: string[], relativePositions?: { relativeX: number; relativeY: number }[]) => {
       if (isSpectator) return;
       const convert = screenToTableCoordsRef.current;
       if (!convert) return;
       const { x, y } = convert(screenX, screenY);
-      handleCardMoveToTable(cardId, x, y);
+      const ids = allCardIds && allCardIds.length > 0 ? allCardIds : [cardId];
+      handleCardMoveToTable(ids, x, y, relativePositions);
     },
     [isSpectator, handleCardMoveToTable]
   );
 
   /** Touch drag: drop card on a group */
   const handleTouchGroupDrop = useCallback(
-    (cardId: string, groupId: string, sourceZone: string | null) => {
+    (cardId: string, groupId: string, sourceZone: string | null, allCardIds?: string[]) => {
       if (isSpectator) return;
       // Same-zone hand drops are handled by HandZone's touch reorder effect
       if (sourceZone === groupId) return;
-      handleCardMoveToGroup(cardId, groupId);
+      const ids = allCardIds && allCardIds.length > 0 ? allCardIds : [cardId];
+      for (const id of ids) {
+        handleCardMoveToGroup(id, groupId);
+      }
     },
     [isSpectator, handleCardMoveToGroup]
   );
@@ -381,7 +429,7 @@ const GamePage: React.FC = () => {
           {/* Game Board — table area only */}
           <GameBoard
             tableCards={tableCards}
-            selectedCardId={selectedCardId}
+            selectedCardIds={selectedCardIds}
             boardImageUrl={gameState.table.board?.imageUrl}
             boardX={gameState.table.board?.x}
             boardY={gameState.table.board?.y}
@@ -395,6 +443,7 @@ const GamePage: React.FC = () => {
             onCardContextMenu={handleCardContextMenu}
             onTableContextMenu={!isSpectator ? handleTableContextMenu : undefined}
             onCardMoveToTable={handleCardMoveToTable}
+            onSelectionChange={handleSelectionChange}
             useTwoSidedTable={gameState.useTwoSidedTable}
             isSpectator={isSpectator}
             screenToTableCoordsRef={screenToTableCoordsRef}
@@ -406,7 +455,7 @@ const GamePage: React.FC = () => {
             localPlayerId={gameState.localPlayerId}
             globalGroups={gameState.players.find((p) => p.id === 0)?.groups}
             isSpectator={isSpectator}
-            selectedCardId={selectedCardId}
+            selectedCardIds={selectedCardIds}
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
             onGroupContextMenu={!isSpectator ? handleGroupContextMenu : undefined}
