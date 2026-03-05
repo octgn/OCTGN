@@ -89,6 +89,15 @@ const api = {
     return () => ipcRenderer.removeListener(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);
   },
 
+  // Script dialogs
+  onDialogRequest: (callback: (request: { requestId: string; type: string; params: Record<string, unknown> }) => void) => {
+    const listener = (_event: unknown, data: { requestId: string; type: string; params: Record<string, unknown> }) => callback(data);
+    ipcRenderer.on(IPC_CHANNELS.SCRIPT_DIALOG_REQUEST, listener);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.SCRIPT_DIALOG_REQUEST, listener);
+  },
+  sendDialogResponse: (requestId: string, result: unknown) =>
+    ipcRenderer.send(IPC_CHANNELS.SCRIPT_DIALOG_RESPONSE, { requestId, result }),
+
   // Game window management
   closeGameWindow: () => ipcRenderer.invoke(IPC_CHANNELS.CLOSE_GAME_WINDOW),
 

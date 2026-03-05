@@ -26,9 +26,12 @@ export interface ScriptApiDeps {
   getGameDefinition: () => GameDefinition | undefined;
   sendProtocolMessage: (type: string, params: Record<string, unknown>) => void;
   addChatMessage: (message: string, isSystem: boolean) => void;
-  /** Synchronous dialog callback. Skulpt v1.2.0 doesn't support async suspensions
-   *  in compiled Python, so dialogs must resolve synchronously. */
+  /** Synchronous dialog callback (legacy). */
   requestDialogSync?: (type: string, params: Record<string, unknown>) => unknown;
+  /** Async dialog callback. Returns a Promise that Skulpt's proxy layer automatically
+   *  converts to a suspension via promiseToSuspension, pausing Python execution
+   *  until the dialog resolves. Preferred over requestDialogSync when available. */
+  requestDialog?: (type: string, params: Record<string, unknown>) => Promise<unknown>;
 }
 
 export class ScriptApi {
@@ -698,9 +701,18 @@ export class ScriptApi {
     // TODO: implement per-game settings storage
   }
 
-  // ── Placeholder APIs (implemented in later phases) ──
+  // ── Dialog APIs ──
+  // When requestDialog (async) is available, methods return Promises.
+  // Skulpt's proxy layer automatically converts Promise returns to suspensions
+  // via promiseToSuspension, pausing Python execution until the dialog resolves.
+  // Falls back to requestDialogSync (legacy) or default values.
 
-  Confirm(message: string): boolean {
+  Confirm(message: string): boolean | Promise<boolean> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('confirm', { message })
+        .then(result => !!result)
+        .catch(() => true);
+    }
     if (!this.deps.requestDialogSync) return true;
     try {
       return !!this.deps.requestDialogSync('confirm', { message });
@@ -709,7 +721,12 @@ export class ScriptApi {
     }
   }
 
-  AskInteger(question: string, defaultAnswer: number): number {
+  AskInteger(question: string, defaultAnswer: number): number | Promise<number | null> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('askInteger', { question, defaultAnswer })
+        .then(result => result === null ? null : (typeof result === 'number' ? result : defaultAnswer))
+        .catch(() => defaultAnswer);
+    }
     if (!this.deps.requestDialogSync) return defaultAnswer;
     try {
       const result = this.deps.requestDialogSync('askInteger', { question, defaultAnswer });
@@ -719,7 +736,12 @@ export class ScriptApi {
     }
   }
 
-  AskString(question: string, defaultAnswer: string): string {
+  AskString(question: string, defaultAnswer: string): string | Promise<string | null> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('askString', { question, defaultAnswer })
+        .then(result => result === null ? null : (typeof result === 'string' ? result : defaultAnswer))
+        .catch(() => defaultAnswer);
+    }
     if (!this.deps.requestDialogSync) return defaultAnswer;
     try {
       const result = this.deps.requestDialogSync('askString', { question, defaultAnswer });
@@ -729,7 +751,12 @@ export class ScriptApi {
     }
   }
 
-  AskChoice(question: string, choices: string[], colors: string[], buttons: string[]): number {
+  AskChoice(question: string, choices: string[], colors: string[], buttons: string[]): number | Promise<number> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('askChoice', { question, choices, colors, buttons })
+        .then(result => typeof result === 'number' ? result : -1)
+        .catch(() => -1);
+    }
     if (!this.deps.requestDialogSync) return -1;
     try {
       const result = this.deps.requestDialogSync('askChoice', { question, choices, colors, buttons });
@@ -739,7 +766,12 @@ export class ScriptApi {
     }
   }
 
-  AskMarker(): unknown {
+  AskMarker(): unknown | Promise<unknown> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('askMarker', {})
+        .then(result => result ?? null)
+        .catch(() => null);
+    }
     if (!this.deps.requestDialogSync) return null;
     try {
       return this.deps.requestDialogSync('askMarker', {}) ?? null;
@@ -748,7 +780,12 @@ export class ScriptApi {
     }
   }
 
-  AskCard(dict: Record<string, string[]>, operator: string | null, title: string): unknown {
+  AskCard(dict: Record<string, string[]>, operator: string | null, title: string): unknown | Promise<unknown> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('askCard', { properties: dict, operator, title })
+        .then(result => result ?? null)
+        .catch(() => null);
+    }
     if (!this.deps.requestDialogSync) return null;
     try {
       return this.deps.requestDialogSync('askCard', { properties: dict, operator, title }) ?? null;
@@ -757,7 +794,12 @@ export class ScriptApi {
     }
   }
 
-  QueryCard(dict: Record<string, string[]>, exact: boolean): string[] {
+  QueryCard(dict: Record<string, string[]>, exact: boolean): string[] | Promise<string[]> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('queryCard', { properties: dict, exact })
+        .then(result => Array.isArray(result) ? result : [])
+        .catch(() => []);
+    }
     if (!this.deps.requestDialogSync) return [];
     try {
       const result = this.deps.requestDialogSync('queryCard', { properties: dict, exact });
@@ -767,7 +809,12 @@ export class ScriptApi {
     }
   }
 
-  SelectMultiCard(): unknown {
+  SelectMultiCard(): unknown | Promise<unknown> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('selectMultiCard', {})
+        .then(result => result ?? null)
+        .catch(() => null);
+    }
     if (!this.deps.requestDialogSync) return null;
     try {
       return this.deps.requestDialogSync('selectMultiCard', {}) ?? null;
@@ -790,29 +837,51 @@ export class ScriptApi {
     this.deps.sendProtocolMessage('ScriptPlaySound', { name });
   }
 
-  Web_Read(url: string, timeout: number): { Item1: string; Item2: number } {
-    if (!this.deps.requestDialogSync) return { Item1: '', Item2: 0 };
+  Web_Read(url: string, timeout: number): { Item1: string; Item2: number } | Promise<{ Item1: string; Item2: number }> {
+    const defaultResult = { Item1: '', Item2: 0 };
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('webRead', { url, timeout })
+        .then(result => {
+          if (result && typeof result === 'object' && 'Item1' in result) {
+            return result as { Item1: string; Item2: number };
+          }
+          return defaultResult;
+        })
+        .catch(() => defaultResult);
+    }
+    if (!this.deps.requestDialogSync) return defaultResult;
     try {
       const result = this.deps.requestDialogSync('webRead', { url, timeout });
       if (result && typeof result === 'object' && 'Item1' in result) {
         return result as { Item1: string; Item2: number };
       }
-      return { Item1: '', Item2: 0 };
+      return defaultResult;
     } catch {
-      return { Item1: '', Item2: 0 };
+      return defaultResult;
     }
   }
 
-  Web_Post(url: string, data: string, timeout: number): { Item1: string; Item2: number } {
-    if (!this.deps.requestDialogSync) return { Item1: '', Item2: 0 };
+  Web_Post(url: string, data: string, timeout: number): { Item1: string; Item2: number } | Promise<{ Item1: string; Item2: number }> {
+    const defaultResult = { Item1: '', Item2: 0 };
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('webPost', { url, data, timeout })
+        .then(result => {
+          if (result && typeof result === 'object' && 'Item1' in result) {
+            return result as { Item1: string; Item2: number };
+          }
+          return defaultResult;
+        })
+        .catch(() => defaultResult);
+    }
+    if (!this.deps.requestDialogSync) return defaultResult;
     try {
       const result = this.deps.requestDialogSync('webPost', { url, data, timeout });
       if (result && typeof result === 'object' && 'Item1' in result) {
         return result as { Item1: string; Item2: number };
       }
-      return { Item1: '', Item2: 0 };
+      return defaultResult;
     } catch {
-      return { Item1: '', Item2: 0 };
+      return defaultResult;
     }
   }
 
@@ -827,7 +896,10 @@ export class ScriptApi {
   ChooseCardPackage(): null { return null; }
   GenerateCardsFromPackage(_model: unknown): string[] { return []; }
 
-  SaveFileDlg(): unknown {
+  SaveFileDlg(): unknown | Promise<unknown> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('saveFile', {}).then(r => r ?? null).catch(() => null);
+    }
     if (!this.deps.requestDialogSync) return null;
     try {
       return this.deps.requestDialogSync('saveFile', {}) ?? null;
@@ -836,7 +908,10 @@ export class ScriptApi {
     }
   }
 
-  OpenFileDlg(): unknown {
+  OpenFileDlg(): unknown | Promise<unknown> {
+    if (this.deps.requestDialog) {
+      return this.deps.requestDialog('openFile', {}).then(r => r ?? null).catch(() => null);
+    }
     if (!this.deps.requestDialogSync) return null;
     try {
       return this.deps.requestDialogSync('openFile', {}) ?? null;

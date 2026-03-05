@@ -1,4 +1,5 @@
 import { BrowserWindow, app, type WebContents } from 'electron';
+import { createDialogBridge } from './dialog-bridge';
 import { writeFile, readFile, readdir, unlink } from 'fs/promises';
 import { join } from 'path';
 import { GameConnection } from '../protocol/connection';
@@ -1585,6 +1586,9 @@ export class GameService {
         this.addSystemMessage(message);
         this.broadcastState();
       },
+      requestDialog: this.targetWebContents
+        ? createDialogBridge(this.targetWebContents)
+        : undefined,
     };
 
     const result = await this.scriptEngine.initialize(gameDef, deps);

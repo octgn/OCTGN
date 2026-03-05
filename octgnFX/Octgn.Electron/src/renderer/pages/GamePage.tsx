@@ -13,6 +13,8 @@ import { useAppStore } from '../stores/app-store';
 import { useToastStore } from '../stores/toast-store';
 import ContextMenu from '../components/ContextMenu';
 import type { ContextMenuItemDef } from '../components/ContextMenu';
+import ScriptDialog from '../components/ScriptDialog';
+import type { DialogRequest } from '../components/ScriptDialog';
 import { useContextMenuItems } from '../hooks/useContextMenuItems';
 import { useActionShortcuts } from '../hooks/useActionShortcuts';
 import type { Card, ChatMessage, Player, Group } from '../../shared/types';
@@ -52,6 +54,7 @@ const GamePage: React.FC<GamePageProps> = ({ isGameWindow }) => {
   const [chatInput, setChatInput] = useState('');
   const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [dialogRequest, setDialogRequest] = useState<DialogRequest | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isSpectator = gameState?.isSpectator ?? false;
   const { buildCardMenuItems, buildGroupMenuItems, buildTableMenuItems } = useContextMenuItems();
@@ -78,6 +81,20 @@ const GamePage: React.FC<GamePageProps> = ({ isGameWindow }) => {
     const unsubscribe = subscribe();
     return unsubscribe;
   }, [subscribe]);
+
+  // Listen for script dialog requests from main process
+  useEffect(() => {
+    if (!window.octgn.onDialogRequest) return;
+    const unsubscribe = window.octgn.onDialogRequest((request) => {
+      setDialogRequest(request);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleDialogRespond = useCallback((requestId: string, result: unknown) => {
+    setDialogRequest(null);
+    window.octgn.sendDialogResponse?.(requestId, result);
+  }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -485,6 +502,14 @@ const GamePage: React.FC<GamePageProps> = ({ isGameWindow }) => {
             y={contextMenu.y}
             items={contextMenu.items}
             onClose={closeContextMenu}
+          />
+        )}
+
+        {/* Script dialog (from Python askInteger, confirm, etc.) */}
+        {dialogRequest && (
+          <ScriptDialog
+            request={dialogRequest}
+            onRespond={handleDialogRespond}
           />
         )}
 
