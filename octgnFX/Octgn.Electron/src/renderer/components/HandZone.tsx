@@ -176,11 +176,11 @@ const HandZone: React.FC<HandZoneProps> = ({
   }, [endDrag]);
 
   const handleCardTouchDragStart = useCallback(
-    (card: Card, x: number, y: number) => {
+    (card: Card, x: number, y: number, grabOffset: { x: number; y: number }) => {
       if (!interactive) return;
       // Set ref synchronously so useEffect can detect same-zone touch drag
       localDragRef.current = { cardId: card.id, sourceZone: handGroupId };
-      startTouchDrag(card.id, handGroupId, x, y, cardToDragInfo(card));
+      startTouchDrag(card.id, handGroupId, x, y, cardToDragInfo(card), grabOffset);
     },
     [interactive, startTouchDrag, handGroupId],
   );

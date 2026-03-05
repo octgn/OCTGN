@@ -54,8 +54,8 @@ const PileViewer: React.FC<PileViewerProps> = ({
   }, [endDrag, onClose]);
 
   const handleCardTouchDragStart = useCallback(
-    (card: Card, x: number, y: number) => {
-      startTouchDrag(card.id, `pile:${group.id}`, x, y, cardToDragInfo(card));
+    (card: Card, x: number, y: number, grabOffset: { x: number; y: number }) => {
+      startTouchDrag(card.id, `pile:${group.id}`, x, y, cardToDragInfo(card), grabOffset);
       setDraggingFromPile(true);
       wasTouchDragging.current = true;
     },

@@ -62,7 +62,7 @@ export interface CardComponentProps {
   onContextMenu?: (card: CardType, e: React.MouseEvent) => void;
   onDragStart?: (card: CardType, e: React.DragEvent) => void;
   onDragEnd?: (card: CardType, e: React.DragEvent) => void;
-  onTouchDragStart?: (card: CardType, x: number, y: number) => void;
+  onTouchDragStart?: (card: CardType, x: number, y: number, grabOffset: { x: number; y: number }) => void;
 }
 
 const CardComponent: React.FC<CardComponentProps> = ({
@@ -133,12 +133,13 @@ const CardComponent: React.FC<CardComponentProps> = ({
   );
 
   // Touch-based drag: touchstart initiates, touchmove/touchend handled globally
-  const touchStartRef = useRef<{ x: number; y: number; id: number } | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number; id: number; rect: DOMRect } | null>(null);
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
       if (!onTouchDragStart || e.touches.length !== 1) return;
       const touch = e.touches[0];
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY, id: touch.identifier };
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY, id: touch.identifier, rect };
     },
     [onTouchDragStart]
   );
@@ -152,7 +153,12 @@ const CardComponent: React.FC<CardComponentProps> = ({
       // Require a small drag threshold (8px) before starting
       if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
         e.preventDefault();
-        onTouchDragStart(card, touch.clientX, touch.clientY);
+        const { rect } = touchStartRef.current;
+        const grabOffset = {
+          x: touchStartRef.current.x - rect.left,
+          y: touchStartRef.current.y - rect.top,
+        };
+        onTouchDragStart(card, touch.clientX, touch.clientY, grabOffset);
         touchStartRef.current = null; // Only fire once
       }
     },

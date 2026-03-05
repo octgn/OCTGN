@@ -15,6 +15,7 @@ const CardDragAdorner: React.FC = () => {
 
   const { imageUrl, name, width, height, faceUp, cardBackUrl } = dragState.cardInfo;
   const { x, y } = dragState.mousePosition;
+  const { grabOffset } = dragState;
 
   // Scale the adorner to a comfortable drag size (slightly smaller than original)
   const adornerScale = 0.85;
@@ -32,9 +33,8 @@ const CardDragAdorner: React.FC = () => {
         position: 'fixed',
         left: 0,
         top: 0,
-        // Translate so the card is centered under cursor, offset slightly down-right
-        // for a natural "picked up" feel
-        transform: `translate(${x - adornerWidth / 2}px, ${y - adornerHeight / 2}px) rotate(3deg)`,
+        // Position adorner so cursor stays at the same relative grab point on the card
+        transform: `translate(${x - grabOffset.x * adornerScale}px, ${y - grabOffset.y * adornerScale}px) rotate(3deg)`,
         width: `${adornerWidth}px`,
         height: `${adornerHeight}px`,
         pointerEvents: 'none',

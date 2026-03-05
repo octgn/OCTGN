@@ -67,10 +67,11 @@ const TouchDragLayer: React.FC<TouchDragLayerProps> = ({
       const zone = dragState.dropTargetZone;
       const sourceZone = dragState.sourceZone;
       const { x, y } = dragState.mousePosition;
+      const { grabOffset } = dragState;
 
       if (cardId && zone) {
         if (zone === 'table' && onTableDrop) {
-          onTableDrop(cardId, x, y);
+          onTableDrop(cardId, x - grabOffset.x, y - grabOffset.y);
         } else if (zone !== 'table' && onGroupDrop) {
           onGroupDrop(cardId, zone, sourceZone);
         }

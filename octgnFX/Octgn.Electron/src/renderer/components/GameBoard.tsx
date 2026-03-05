@@ -254,7 +254,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
       const cardId = e.dataTransfer.getData('application/octgn-card');
       if (!cardId || !tableRef.current) return;
 
-      const contentPos = screenToTable(e.clientX, e.clientY);
+      // Offset by grabOffset so the card drops where the adorner was,
+      // not with top-left at cursor position
+      const { grabOffset } = dragState;
+      const contentPos = screenToTable(e.clientX - grabOffset.x, e.clientY - grabOffset.y);
 
       let x = contentPos.x;
       let y = contentPos.y;
@@ -268,7 +271,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
       onCardMoveToTable(cardId, x, y);
       endDrag();
     },
-    [onCardMoveToTable, endDrag, isSpectator, screenToTable, hasTableDimensions, baseScale, tableWidth, tableHeight]
+    [onCardMoveToTable, endDrag, isSpectator, screenToTable, hasTableDimensions, baseScale, tableWidth, tableHeight, dragState]
   );
 
   const handleTableDragLeave = useCallback(
@@ -294,9 +297,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
   }, [endDrag]);
 
   const handleCardTouchDragStart = useCallback(
-    (card: Card, x: number, y: number) => {
+    (card: Card, x: number, y: number, grabOffset: { x: number; y: number }) => {
       if (isSpectator) return;
-      startTouchDrag(card.id, ZONE_TABLE, x, y, cardToDragInfo(card));
+      startTouchDrag(card.id, ZONE_TABLE, x, y, cardToDragInfo(card), grabOffset);
     },
     [startTouchDrag, isSpectator]
   );

@@ -13,13 +13,14 @@ import React from 'react';
 
 import { DragDropProvider, useDragDrop } from '@renderer/components/DragDropContext';
 import CardDragAdorner from '@renderer/components/CardDragAdorner';
+import TouchDragLayer from '@renderer/components/TouchDragLayer';
 
 // ---------------------------------------------------------------------------
 // Helper to trigger drag state from inside the provider
 // ---------------------------------------------------------------------------
 
 /** Renders the adorner inside a DragDropProvider with a button that triggers drag */
-function renderWithDragControl(props: { cardInfo?: DragCardInfo } = {}) {
+function renderWithDragControl(props: { cardInfo?: DragCardInfo; grabOffset?: { x: number; y: number } } = {}) {
   const cardInfo: DragCardInfo = props.cardInfo ?? {
     imageUrl: 'octgn-asset://card/test.png',
     name: 'Dragon Knight',
@@ -27,6 +28,7 @@ function renderWithDragControl(props: { cardInfo?: DragCardInfo } = {}) {
     height: 140,
     faceUp: true,
   };
+  const grabOffset = props.grabOffset ?? { x: 50, y: 70 }; // default: center of 100x140
 
   let dragActions: ReturnType<typeof useDragDrop> | null = null;
 
@@ -37,8 +39,8 @@ function renderWithDragControl(props: { cardInfo?: DragCardInfo } = {}) {
       <button
         data-testid="start-drag"
         onClick={() => {
-          // Simulate starting a drag with card info
-          ctx.startTouchDrag('card-1', 'table', 400, 300, cardInfo);
+          // Simulate starting a drag with card info and grab offset
+          ctx.startTouchDrag('card-1', 'table', 400, 300, cardInfo, grabOffset);
         }}
       />
     );
@@ -130,6 +132,91 @@ describe('DragDropContext — recentlyDroppedCardId', () => {
   });
 });
 
+describe('DragDropContext — grabOffset', () => {
+  afterEach(cleanup);
+
+  it('stores grabOffset when startTouchDrag is called with offset', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return (
+        <div data-testid="offset">
+          {ctx.dragState.grabOffset?.x},{ctx.dragState.grabOffset?.y}
+        </div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300, undefined, { x: 25, y: 35 });
+    });
+
+    expect(screen.getByTestId('offset').textContent).toBe('25,35');
+  });
+
+  it('defaults grabOffset to {0,0} when not provided', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return (
+        <div data-testid="offset">
+          {ctx.dragState.grabOffset.x},{ctx.dragState.grabOffset.y}
+        </div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+
+    expect(screen.getByTestId('offset').textContent).toBe('0,0');
+  });
+
+  it('resets grabOffset when drag ends', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return (
+        <div data-testid="offset">
+          {ctx.dragState.grabOffset.x},{ctx.dragState.grabOffset.y}
+        </div>
+      );
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300, undefined, { x: 25, y: 35 });
+    });
+    act(() => {
+      dragActions!.endDrag();
+    });
+
+    expect(screen.getByTestId('offset').textContent).toBe('0,0');
+  });
+});
+
 describe('CardDragAdorner', () => {
   afterEach(cleanup);
 
@@ -168,32 +255,66 @@ describe('CardDragAdorner', () => {
     expect(screen.queryByTestId('card-drag-adorner')).toBeNull();
   });
 
-  // ─── Positioning ────────────────────────────────────────────────────
+  // ─── Positioning (grab offset) ─────────────────────────────────────
 
-  it('positions at the mouse/touch coordinates (centered under cursor)', () => {
-    renderWithDragControl();
+  it('positions adorner using grab offset, not centered on cursor', () => {
+    // Grab offset (30, 20) means user grabbed 30px from left, 20px from top of the card
+    renderWithDragControl({ grabOffset: { x: 30, y: 20 } });
 
     act(() => {
       screen.getByTestId('start-drag').click();
     });
 
     const adorner = screen.getByTestId('card-drag-adorner');
-    // Adorner is centered under the cursor with a scale factor applied,
-    // so the translate values are offset by half the adorner dimensions
-    expect(adorner.style.transform).toContain('translate(');
-    expect(adorner.style.transform).toContain('px');
-    // Verify it's in the ballpark of (400, 300) — accounting for centering offset
-    const match = adorner.style.transform.match(/translate\(([.\d]+)px,\s*([.\d]+)px\)/);
+    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
     expect(match).toBeTruthy();
     const tx = parseFloat(match![1]);
     const ty = parseFloat(match![2]);
-    // x offset: 400 - (100*0.85/2) = 357.5, y offset: 300 - (140*0.85/2) = 240.5
-    expect(tx).toBeCloseTo(357.5, 0);
-    expect(ty).toBeCloseTo(240.5, 0);
+    // Adorner top-left = cursor - grabOffset * adornerScale
+    // adornerScale = 0.85
+    // x: 400 - 30*0.85 = 374.5, y: 300 - 20*0.85 = 283
+    expect(tx).toBeCloseTo(374.5, 0);
+    expect(ty).toBeCloseTo(283, 0);
   });
 
-  it('updates position when mouse moves', () => {
-    const { getDragActions } = renderWithDragControl();
+  it('positions adorner at cursor top-left when grab offset is (0,0)', () => {
+    // Grabbing from the exact top-left corner
+    renderWithDragControl({ grabOffset: { x: 0, y: 0 } });
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    const adorner = screen.getByTestId('card-drag-adorner');
+    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
+    expect(match).toBeTruthy();
+    const tx = parseFloat(match![1]);
+    const ty = parseFloat(match![2]);
+    // With (0,0) offset, adorner top-left is exactly at cursor position
+    expect(tx).toBeCloseTo(400, 0);
+    expect(ty).toBeCloseTo(300, 0);
+  });
+
+  it('positions adorner correctly when grabbed from bottom-right corner', () => {
+    // Grab from bottom-right of a 100x140 card
+    renderWithDragControl({ grabOffset: { x: 100, y: 140 } });
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    const adorner = screen.getByTestId('card-drag-adorner');
+    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
+    expect(match).toBeTruthy();
+    const tx = parseFloat(match![1]);
+    const ty = parseFloat(match![2]);
+    // x: 400 - 100*0.85 = 315, y: 300 - 140*0.85 = 181
+    expect(tx).toBeCloseTo(315, 0);
+    expect(ty).toBeCloseTo(181, 0);
+  });
+
+  it('maintains grab offset when mouse moves', () => {
+    const { getDragActions } = renderWithDragControl({ grabOffset: { x: 30, y: 20 } });
 
     act(() => {
       screen.getByTestId('start-drag').click();
@@ -204,13 +325,13 @@ describe('CardDragAdorner', () => {
     });
 
     const adorner = screen.getByTestId('card-drag-adorner');
-    const match = adorner.style.transform.match(/translate\(([.\d]+)px,\s*([.\d]+)px\)/);
+    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
     expect(match).toBeTruthy();
     const tx = parseFloat(match![1]);
     const ty = parseFloat(match![2]);
-    // x offset: 600 - 42.5 = 557.5, y offset: 450 - 59.5 = 390.5
-    expect(tx).toBeCloseTo(557.5, 0);
-    expect(ty).toBeCloseTo(390.5, 0);
+    // x: 600 - 30*0.85 = 574.5, y: 450 - 20*0.85 = 433
+    expect(tx).toBeCloseTo(574.5, 0);
+    expect(ty).toBeCloseTo(433, 0);
   });
 
   // ─── Card Image ─────────────────────────────────────────────────────
@@ -387,5 +508,89 @@ describe('CardDragAdorner', () => {
     const ratio = width / height;
     const expectedRatio = 100 / 140;
     expect(Math.abs(ratio - expectedRatio)).toBeLessThan(0.1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Touch drop position offset tests
+// ---------------------------------------------------------------------------
+
+describe('TouchDragLayer — drop position accounts for grab offset', () => {
+  afterEach(cleanup);
+
+  it('subtracts grabOffset from touch drop coordinates for table drops', () => {
+    const onTableDrop = vi.fn();
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function DragController() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return null;
+    }
+
+    render(
+      <DragDropProvider>
+        <TouchDragLayer onTableDrop={onTableDrop}>
+          <DragController />
+          <div data-drop-zone="table" data-testid="table" style={{ width: 800, height: 600 }} />
+        </TouchDragLayer>
+      </DragDropProvider>,
+    );
+
+    // Start touch drag with grab offset (30, 40) — user grabbed 30px from left, 40px from top
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'hand', 500, 400, undefined, { x: 30, y: 40 });
+    });
+
+    // Simulate touch moving to position and hovering over table
+    act(() => {
+      dragActions!.updateMousePosition(500, 400);
+      dragActions!.updateDropTarget('table');
+    });
+
+    // Simulate touchend by dispatching the event
+    act(() => {
+      document.dispatchEvent(new TouchEvent('touchend', { cancelable: true }));
+    });
+
+    // The drop coordinates should be offset: (500-30, 400-40) = (470, 360)
+    expect(onTableDrop).toHaveBeenCalledWith('card-1', 470, 360);
+  });
+
+  it('passes unmodified coordinates when grabOffset is (0,0)', () => {
+    const onTableDrop = vi.fn();
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function DragController() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return null;
+    }
+
+    render(
+      <DragDropProvider>
+        <TouchDragLayer onTableDrop={onTableDrop}>
+          <DragController />
+          <div data-drop-zone="table" style={{ width: 800, height: 600 }} />
+        </TouchDragLayer>
+      </DragDropProvider>,
+    );
+
+    // Start drag with default (0,0) offset
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'hand', 500, 400);
+    });
+
+    act(() => {
+      dragActions!.updateMousePosition(500, 400);
+      dragActions!.updateDropTarget('table');
+    });
+
+    act(() => {
+      document.dispatchEvent(new TouchEvent('touchend', { cancelable: true }));
+    });
+
+    // With (0,0) offset, coordinates should pass through unchanged
+    expect(onTableDrop).toHaveBeenCalledWith('card-1', 500, 400);
   });
 });

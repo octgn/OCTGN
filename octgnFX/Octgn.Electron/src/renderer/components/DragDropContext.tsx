@@ -31,6 +31,8 @@ export interface DragState {
   isTouchDrag: boolean;
   /** Visual info about the dragged card for the adorner */
   cardInfo: DragCardInfo | null;
+  /** Offset from the card's top-left corner where the user grabbed */
+  grabOffset: { x: number; y: number };
 }
 
 interface DragDropContextValue {
@@ -38,7 +40,7 @@ interface DragDropContextValue {
   /** Call when a card drag begins (HTML5 drag) */
   startDrag: (cardId: string, sourceZone: string, e: React.DragEvent, cardInfo?: DragCardInfo) => void;
   /** Call when a touch drag begins */
-  startTouchDrag: (cardId: string, sourceZone: string, x: number, y: number, cardInfo?: DragCardInfo) => void;
+  startTouchDrag: (cardId: string, sourceZone: string, x: number, y: number, cardInfo?: DragCardInfo, grabOffset?: { x: number; y: number }) => void;
   /** Call while dragging over a valid zone to update drop target */
   updateDropTarget: (zone: string | null) => void;
   /** Update the cursor position (used by dragOver/touchMove handlers) */
@@ -60,6 +62,7 @@ const initialState: DragState = {
   dropTargetZone: null,
   isTouchDrag: false,
   cardInfo: null,
+  grabOffset: { x: 0, y: 0 },
 };
 
 const DragDropCtx = createContext<DragDropContextValue | null>(null);
@@ -88,6 +91,10 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
       e.dataTransfer.setDragImage(ghost, 0, 0);
       requestAnimationFrame(() => document.body.removeChild(ghost));
 
+      // Compute grab offset from the card element's bounding rect
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const grabOffset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+
       setDragState({
         draggingCardId: cardId,
         sourceZone,
@@ -95,13 +102,14 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
         dropTargetZone: null,
         isTouchDrag: false,
         cardInfo: cardInfo ?? null,
+        grabOffset,
       });
     },
     []
   );
 
   const startTouchDrag = useCallback(
-    (cardId: string, sourceZone: string, x: number, y: number, cardInfo?: DragCardInfo) => {
+    (cardId: string, sourceZone: string, x: number, y: number, cardInfo?: DragCardInfo, grabOffset?: { x: number; y: number }) => {
       setDragState({
         draggingCardId: cardId,
         sourceZone,
@@ -109,6 +117,7 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
         dropTargetZone: null,
         isTouchDrag: true,
         cardInfo: cardInfo ?? null,
+        grabOffset: grabOffset ?? { x: 0, y: 0 },
       });
     },
     []

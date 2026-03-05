@@ -40,9 +40,9 @@ const PileThumbnail: React.FC<PileThumbnailProps> = ({
   }, [endDrag]);
 
   const handleTopCardTouchDragStart = useCallback(
-    (card: Card, x: number, y: number) => {
+    (card: Card, x: number, y: number, grabOffset: { x: number; y: number }) => {
       if (!isOwn) return;
-      startTouchDrag(card.id, `pile:${group.id}`, x, y, cardToDragInfo(card));
+      startTouchDrag(card.id, `pile:${group.id}`, x, y, cardToDragInfo(card), grabOffset);
     },
     [isOwn, startTouchDrag, group.id],
   );
