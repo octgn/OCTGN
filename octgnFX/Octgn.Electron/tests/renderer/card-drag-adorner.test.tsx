@@ -271,15 +271,11 @@ describe('CardDragAdorner', () => {
     });
 
     const adorner = screen.getByTestId('card-drag-adorner');
-    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
-    expect(match).toBeTruthy();
-    const tx = parseFloat(match![1]);
-    const ty = parseFloat(match![2]);
     // Adorner top-left = cursor - grabOffset * adornerScale
     // adornerScale = 0.85
     // x: 400 - 30*0.85 = 374.5, y: 300 - 20*0.85 = 283
-    expect(tx).toBeCloseTo(374.5, 0);
-    expect(ty).toBeCloseTo(283, 0);
+    expect(parseFloat(adorner.style.left)).toBeCloseTo(374.5, 0);
+    expect(parseFloat(adorner.style.top)).toBeCloseTo(283, 0);
   });
 
   it('positions adorner at cursor top-left when grab offset is (0,0)', () => {
@@ -291,13 +287,9 @@ describe('CardDragAdorner', () => {
     });
 
     const adorner = screen.getByTestId('card-drag-adorner');
-    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
-    expect(match).toBeTruthy();
-    const tx = parseFloat(match![1]);
-    const ty = parseFloat(match![2]);
     // With (0,0) offset, adorner top-left is exactly at cursor position
-    expect(tx).toBeCloseTo(400, 0);
-    expect(ty).toBeCloseTo(300, 0);
+    expect(parseFloat(adorner.style.left)).toBeCloseTo(400, 0);
+    expect(parseFloat(adorner.style.top)).toBeCloseTo(300, 0);
   });
 
   it('positions adorner correctly when grabbed from bottom-right corner', () => {
@@ -309,13 +301,9 @@ describe('CardDragAdorner', () => {
     });
 
     const adorner = screen.getByTestId('card-drag-adorner');
-    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
-    expect(match).toBeTruthy();
-    const tx = parseFloat(match![1]);
-    const ty = parseFloat(match![2]);
     // x: 400 - 100*0.85 = 315, y: 300 - 140*0.85 = 181
-    expect(tx).toBeCloseTo(315, 0);
-    expect(ty).toBeCloseTo(181, 0);
+    expect(parseFloat(adorner.style.left)).toBeCloseTo(315, 0);
+    expect(parseFloat(adorner.style.top)).toBeCloseTo(181, 0);
   });
 
   it('maintains grab offset when mouse moves', () => {
@@ -330,13 +318,9 @@ describe('CardDragAdorner', () => {
     });
 
     const adorner = screen.getByTestId('card-drag-adorner');
-    const match = adorner.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
-    expect(match).toBeTruthy();
-    const tx = parseFloat(match![1]);
-    const ty = parseFloat(match![2]);
     // x: 600 - 30*0.85 = 574.5, y: 450 - 20*0.85 = 433
-    expect(tx).toBeCloseTo(574.5, 0);
-    expect(ty).toBeCloseTo(433, 0);
+    expect(parseFloat(adorner.style.left)).toBeCloseTo(574.5, 0);
+    expect(parseFloat(adorner.style.top)).toBeCloseTo(433, 0);
   });
 
   // ─── Card Image ─────────────────────────────────────────────────────
@@ -694,6 +678,348 @@ describe('DragDropContext — draggingCards with relative positions', () => {
     });
 
     expect(screen.getByTestId('cards-count').textContent).toBe('0');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DragDropContext — isOverInvertedZone
+// ---------------------------------------------------------------------------
+
+describe('DragDropContext — isOverInvertedZone', () => {
+  afterEach(cleanup);
+
+  it('defaults isOverInvertedZone to false', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="inverted">{String(ctx.dragState.isOverInvertedZone)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    expect(screen.getByTestId('inverted').textContent).toBe('false');
+  });
+
+  it('updates isOverInvertedZone via updateInvertedZone', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="inverted">{String(ctx.dragState.isOverInvertedZone)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+
+    act(() => {
+      dragActions!.updateInvertedZone(true);
+    });
+
+    expect(screen.getByTestId('inverted').textContent).toBe('true');
+  });
+
+  it('resets isOverInvertedZone when drag ends', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="inverted">{String(ctx.dragState.isOverInvertedZone)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+    act(() => {
+      dragActions!.updateInvertedZone(true);
+    });
+    expect(screen.getByTestId('inverted').textContent).toBe('true');
+
+    act(() => {
+      dragActions!.endDrag();
+    });
+    expect(screen.getByTestId('inverted').textContent).toBe('false');
+  });
+
+  it('keeps isOverInvertedZone as false when updateInvertedZone(false) called while already false', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="inverted">{String(ctx.dragState.isOverInvertedZone)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+
+    act(() => {
+      dragActions!.updateInvertedZone(false);
+    });
+
+    expect(screen.getByTestId('inverted').textContent).toBe('false');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DragDropContext — tableMidlineScreenY
+// ---------------------------------------------------------------------------
+
+describe('DragDropContext — tableMidlineScreenY', () => {
+  afterEach(cleanup);
+
+  it('defaults tableMidlineScreenY to null', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="midline">{String(ctx.dragState.tableMidlineScreenY)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    expect(screen.getByTestId('midline').textContent).toBe('null');
+  });
+
+  it('updates tableMidlineScreenY via setTableMidlineScreenY', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="midline">{String(ctx.dragState.tableMidlineScreenY)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+
+    act(() => {
+      dragActions!.setTableMidlineScreenY(450);
+    });
+
+    expect(screen.getByTestId('midline').textContent).toBe('450');
+  });
+
+  it('resets tableMidlineScreenY when drag ends', () => {
+    let dragActions: ReturnType<typeof useDragDrop> | null = null;
+
+    function Inspector() {
+      const ctx = useDragDrop();
+      dragActions = ctx;
+      return <div data-testid="midline">{String(ctx.dragState.tableMidlineScreenY)}</div>;
+    }
+
+    render(
+      <DragDropProvider>
+        <Inspector />
+      </DragDropProvider>,
+    );
+
+    act(() => {
+      dragActions!.startTouchDrag('card-1', 'table', 400, 300);
+    });
+    act(() => {
+      dragActions!.setTableMidlineScreenY(450);
+    });
+    expect(screen.getByTestId('midline').textContent).toBe('450');
+
+    act(() => {
+      dragActions!.endDrag();
+    });
+    expect(screen.getByTestId('midline').textContent).toBe('null');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CardDragAdorner — inverted zone flipping
+// ---------------------------------------------------------------------------
+
+describe('CardDragAdorner — inverted zone flipping', () => {
+  afterEach(cleanup);
+
+  it('applies 180deg rotation to single card adorner when isOverInvertedZone is true', () => {
+    const { getDragActions } = renderWithDragControl();
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    act(() => {
+      getDragActions().updateInvertedZone(true);
+    });
+
+    const adorner = screen.getByTestId('card-drag-adorner');
+    // Should contain rotate(183deg) — 180 + original 3deg tilt
+    expect(adorner.style.transform).toContain('rotate(183deg)');
+  });
+
+  it('uses normal 3deg rotation when isOverInvertedZone is false', () => {
+    const { getDragActions } = renderWithDragControl();
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    const adorner = screen.getByTestId('card-drag-adorner');
+    expect(adorner.style.transform).toContain('rotate(3deg)');
+    expect(adorner.style.transform).not.toContain('rotate(183deg)');
+  });
+
+  it('flips only multi-card adorner cards whose center is above tableMidlineScreenY', () => {
+    // Card 1: relativeY=0, Card 2: relativeY=200 (well below card 1)
+    // With cursor at (400,300), grabOffset (50,70):
+    //   baseY = 300 - 70*0.85 = 240.5
+    //   card1 Y = 240.5, center = 240.5 + 140*0.85/2 = 300
+    //   card2 Y = 240.5 + 200*0.85 = 410.5, center = 410.5 + 59.5 = 470
+    // midlineScreenY = 350 → card1 center(300) < 350 = inverted, card2 center(470) > 350 = normal
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 80, relativeY: 200, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    const { getDragActions } = renderWithDragControl({
+      draggingCards,
+      allCardIds: ['card-1', 'card-2'],
+    });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+    act(() => { getDragActions().setTableMidlineScreenY(350); });
+
+    const card1 = screen.getByTestId('adorner-card-card-1');
+    const card2 = screen.getByTestId('adorner-card-card-2');
+    // Card 1 (center above midline) should be flipped
+    expect(card1.style.transform).toContain('rotate(182deg)');
+    // Card 2 (center below midline) should NOT be flipped
+    expect(card2.style.transform).toContain('rotate(2deg)');
+    expect(card2.style.transform).not.toContain('rotate(182deg)');
+  });
+
+  it('flips all multi-card adorner cards when all are above midline', () => {
+    // Both cards close together, both above midline at 500
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 80, relativeY: 30, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    const { getDragActions } = renderWithDragControl({
+      draggingCards,
+      allCardIds: ['card-1', 'card-2'],
+    });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+    act(() => { getDragActions().setTableMidlineScreenY(500); });
+
+    expect(screen.getByTestId('adorner-card-card-1').style.transform).toContain('rotate(182deg)');
+    expect(screen.getByTestId('adorner-card-card-2').style.transform).toContain('rotate(182deg)');
+  });
+
+  it('flips no multi-card adorner cards when all are below midline', () => {
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 80, relativeY: 30, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    const { getDragActions } = renderWithDragControl({
+      draggingCards,
+      allCardIds: ['card-1', 'card-2'],
+    });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+    // Midline well above all cards
+    act(() => { getDragActions().setTableMidlineScreenY(100); });
+
+    expect(screen.getByTestId('adorner-card-card-1').style.transform).toContain('rotate(2deg)');
+    expect(screen.getByTestId('adorner-card-card-2').style.transform).toContain('rotate(2deg)');
+  });
+
+  it('does not flip multi-card adorner cards when tableMidlineScreenY is null', () => {
+    const draggingCards: DraggingCardData[] = [
+      { id: 'card-1', relativeX: 0, relativeY: 0, info: { imageUrl: 'a.png', name: 'A', width: 100, height: 140, faceUp: true } },
+      { id: 'card-2', relativeX: 80, relativeY: 30, info: { imageUrl: 'b.png', name: 'B', width: 100, height: 140, faceUp: true } },
+    ];
+
+    renderWithDragControl({
+      draggingCards,
+      allCardIds: ['card-1', 'card-2'],
+    });
+
+    act(() => { screen.getByTestId('start-drag').click(); });
+    // No setTableMidlineScreenY call — stays null
+
+    expect(screen.getByTestId('adorner-card-card-1').style.transform).toContain('rotate(2deg)');
+    expect(screen.getByTestId('adorner-card-card-2').style.transform).toContain('rotate(2deg)');
+  });
+
+  it('reverts to normal rotation when isOverInvertedZone changes back to false', () => {
+    const { getDragActions } = renderWithDragControl();
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    act(() => {
+      getDragActions().updateInvertedZone(true);
+    });
+
+    expect(screen.getByTestId('card-drag-adorner').style.transform).toContain('rotate(183deg)');
+
+    act(() => {
+      getDragActions().updateInvertedZone(false);
+    });
+
+    expect(screen.getByTestId('card-drag-adorner').style.transform).toContain('rotate(3deg)');
+    expect(screen.getByTestId('card-drag-adorner').style.transform).not.toContain('rotate(183deg)');
+  });
+
+  it('adorner has a CSS transition for smooth flipping', () => {
+    const { getDragActions } = renderWithDragControl();
+
+    act(() => {
+      screen.getByTestId('start-drag').click();
+    });
+
+    const adorner = screen.getByTestId('card-drag-adorner');
+    // Should have a transition on transform for smooth flip animation
+    expect(adorner.style.transition).toContain('transform');
   });
 });
 

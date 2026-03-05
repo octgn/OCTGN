@@ -60,7 +60,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   screenToTableCoordsRef,
 }) => {
   const tableRef = useRef<HTMLDivElement>(null);
-  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, endDrag, isDragging, recentlyDroppedCardId, recentlyDroppedCardIds, clearRecentlyDropped } =
+  const { dragState, startDrag, startTouchDrag, updateDropTarget, updateMousePosition, updateInvertedZone, setTableMidlineScreenY, endDrag, isDragging, recentlyDroppedCardId, recentlyDroppedCardIds, clearRecentlyDropped } =
     useDragDrop();
 
   // When a dropped card's position changes in the DOM, wait for the paint
@@ -398,8 +398,21 @@ const GameBoard: React.FC<GameBoardProps> = ({
       e.dataTransfer.dropEffect = 'move';
       updateDropTarget(ZONE_TABLE);
       updateMousePosition(e.clientX, e.clientY);
+
+      // Update inverted zone for two-sided table mode
+      if (useTwoSidedTable) {
+        const pos = screenToTableSpace(e.clientX, e.clientY);
+        updateInvertedZone(pos.y < 0);
+
+        // Compute screen Y of the table midline (table Y=0) for per-card flip
+        const pos2 = screenToTableSpace(e.clientX, e.clientY + 1);
+        const scale = pos2.y - pos.y; // table units per screen pixel
+        if (scale !== 0) {
+          setTableMidlineScreenY(e.clientY - pos.y / scale);
+        }
+      }
     },
-    [updateDropTarget, updateMousePosition, isSpectator]
+    [updateDropTarget, updateMousePosition, updateInvertedZone, setTableMidlineScreenY, isSpectator, useTwoSidedTable, screenToTableSpace]
   );
 
   const handleTableDrop = useCallback(
@@ -439,9 +452,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
     (e: React.DragEvent) => {
       if (!tableRef.current?.contains(e.relatedTarget as Node)) {
         updateDropTarget(null);
+        if (useTwoSidedTable) {
+          updateInvertedZone(false);
+          setTableMidlineScreenY(null);
+        }
       }
     },
-    [updateDropTarget]
+    [updateDropTarget, updateInvertedZone, setTableMidlineScreenY, useTwoSidedTable]
   );
 
   // ─── Card event wrappers ───────────────────────────────────────────

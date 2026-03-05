@@ -48,6 +48,10 @@ export interface DragState {
   grabOffset: { x: number; y: number };
   /** All cards being dragged with their relative positions (for multi-card adorner) */
   draggingCards: DraggingCardData[];
+  /** Whether the drag cursor is currently over the inverted (opponent) zone in two-sided table mode */
+  isOverInvertedZone: boolean;
+  /** Screen Y coordinate of the table midline (for per-card flip in multi-card drags) */
+  tableMidlineScreenY: number | null;
 }
 
 interface DragDropContextValue {
@@ -60,6 +64,10 @@ interface DragDropContextValue {
   updateDropTarget: (zone: string | null) => void;
   /** Update the cursor position (used by dragOver/touchMove handlers) */
   updateMousePosition: (x: number, y: number) => void;
+  /** Update whether the drag is over the inverted zone (opponent half) */
+  updateInvertedZone: (inverted: boolean) => void;
+  /** Set the screen Y coordinate of the table midline (for per-card multi-card flip) */
+  setTableMidlineScreenY: (y: number | null) => void;
   /** Call when the drag ends (drop or cancel) */
   endDrag: () => void;
   /** Whether any card is currently being dragged */
@@ -82,6 +90,8 @@ const initialState: DragState = {
   cardInfo: null,
   grabOffset: { x: 0, y: 0 },
   draggingCards: [],
+  isOverInvertedZone: false,
+  tableMidlineScreenY: null,
 };
 
 const DragDropCtx = createContext<DragDropContextValue | null>(null);
@@ -162,6 +172,20 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
     setDragState((prev) => ({ ...prev, mousePosition: { x, y } }));
   }, []);
 
+  const updateInvertedZone = useCallback((inverted: boolean) => {
+    setDragState((prev) => {
+      if (prev.isOverInvertedZone === inverted) return prev;
+      return { ...prev, isOverInvertedZone: inverted };
+    });
+  }, []);
+
+  const setTableMidlineScreenY = useCallback((y: number | null) => {
+    setDragState((prev) => {
+      if (prev.tableMidlineScreenY === y) return prev;
+      return { ...prev, tableMidlineScreenY: y };
+    });
+  }, []);
+
   const endDrag = useCallback(() => {
     const droppedId = dragStateRef.current.draggingCardId;
     const droppedIds = dragStateRef.current.draggingCardIds;
@@ -201,6 +225,8 @@ export const DragDropProvider: React.FC<{ children: ReactNode }> = ({
         startTouchDrag,
         updateDropTarget,
         updateMousePosition,
+        updateInvertedZone,
+        setTableMidlineScreenY,
         endDrag,
         isDragging,
         recentlyDroppedCardId,

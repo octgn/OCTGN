@@ -15,7 +15,7 @@ const CardDragAdorner: React.FC = () => {
   if (!isDragging || !dragState.cardInfo) return null;
 
   const { x, y } = dragState.mousePosition;
-  const { grabOffset } = dragState;
+  const { grabOffset, isOverInvertedZone, tableMidlineScreenY } = dragState;
   const hasMultiCards = dragState.draggingCards.length > 1;
 
   // Scale the adorner to a comfortable drag size (slightly smaller than original)
@@ -28,6 +28,7 @@ const CardDragAdorner: React.FC = () => {
       cursorY={y}
       grabOffset={grabOffset}
       adornerScale={adornerScale}
+      tableMidlineScreenY={tableMidlineScreenY}
     />;
   }
 
@@ -37,6 +38,7 @@ const CardDragAdorner: React.FC = () => {
     cursorY={y}
     grabOffset={grabOffset}
     adornerScale={adornerScale}
+    inverted={isOverInvertedZone}
   />;
 };
 
@@ -47,7 +49,8 @@ const SingleCardAdorner: React.FC<{
   cursorY: number;
   grabOffset: { x: number; y: number };
   adornerScale: number;
-}> = ({ cardInfo, cursorX, cursorY, grabOffset, adornerScale }) => {
+  inverted: boolean;
+}> = ({ cardInfo, cursorX, cursorY, grabOffset, adornerScale, inverted }) => {
   const { imageUrl, name, width, height, faceUp, cardBackUrl } = cardInfo;
   const adornerWidth = width * adornerScale;
   const adornerHeight = height * adornerScale;
@@ -56,27 +59,37 @@ const SingleCardAdorner: React.FC<{
   const showBack = !faceUp && cardBackUrl;
   const showPlaceholder = !showFront && !showBack;
 
+  // Position via left/top (instant, no transition).
+  // Rotation via transform (transitioned for smooth flip).
+  const posX = cursorX - grabOffset.x * adornerScale;
+  const posY = cursorY - grabOffset.y * adornerScale;
+
   return (
     <div
       data-testid="card-drag-adorner"
       style={{
         position: 'fixed',
-        left: 0,
-        top: 0,
-        transform: `translate(${cursorX - grabOffset.x * adornerScale}px, ${cursorY - grabOffset.y * adornerScale}px) rotate(3deg)`,
+        left: `${posX}px`,
+        top: `${posY}px`,
+        transform: `rotate(${inverted ? 183 : 3}deg)`,
         width: `${adornerWidth}px`,
         height: `${adornerHeight}px`,
         pointerEvents: 'none',
         zIndex: 99999,
         willChange: 'transform',
+        transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}
     >
-      {/* Outer glow ring */}
+      {/* Outer glow ring — shifts warm when inverted */}
       <div
-        className="absolute -inset-3 rounded-xl opacity-60"
+        className="absolute -inset-3 rounded-xl"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(59,130,246,0.35) 0%, rgba(139,92,246,0.15) 50%, transparent 70%)',
+          background: inverted
+            ? 'radial-gradient(ellipse at center, rgba(251,146,60,0.4) 0%, rgba(239,68,68,0.18) 50%, transparent 70%)'
+            : 'radial-gradient(ellipse at center, rgba(59,130,246,0.35) 0%, rgba(139,92,246,0.15) 50%, transparent 70%)',
           filter: 'blur(8px)',
+          opacity: inverted ? 0.75 : 0.6,
+          transition: 'background 0.3s ease, opacity 0.3s ease',
           animation: 'adorner-pulse 1.5s ease-in-out infinite alternate',
         }}
       />
@@ -86,13 +99,22 @@ const SingleCardAdorner: React.FC<{
         className="relative w-full h-full overflow-hidden"
         style={{
           borderRadius: '4px',
-          boxShadow: [
-            '0 20px 40px rgba(0,0,0,0.55)',
-            '0 8px 16px rgba(0,0,0,0.35)',
-            '0 0 0 1px rgba(255,255,255,0.12)',
-            '0 0 24px rgba(59,130,246,0.25)',
-            '0 0 48px rgba(139,92,246,0.12)',
-          ].join(', '),
+          boxShadow: inverted
+            ? [
+                '0 20px 40px rgba(0,0,0,0.55)',
+                '0 8px 16px rgba(0,0,0,0.35)',
+                '0 0 0 1px rgba(251,146,60,0.2)',
+                '0 0 24px rgba(251,146,60,0.3)',
+                '0 0 48px rgba(239,68,68,0.12)',
+              ].join(', ')
+            : [
+                '0 20px 40px rgba(0,0,0,0.55)',
+                '0 8px 16px rgba(0,0,0,0.35)',
+                '0 0 0 1px rgba(255,255,255,0.12)',
+                '0 0 24px rgba(59,130,246,0.25)',
+                '0 0 48px rgba(139,92,246,0.12)',
+              ].join(', '),
+          transition: 'box-shadow 0.3s ease',
         }}
       >
         {showFront && (
@@ -148,7 +170,8 @@ const MultiCardAdorner: React.FC<{
   cursorY: number;
   grabOffset: { x: number; y: number };
   adornerScale: number;
-}> = ({ cards, cursorX, cursorY, grabOffset, adornerScale }) => {
+  tableMidlineScreenY: number | null;
+}> = ({ cards, cursorX, cursorY, grabOffset, adornerScale, tableMidlineScreenY }) => {
   // The primary card (relativeX=0, relativeY=0) anchors to cursor - grabOffset
   const baseX = cursorX - grabOffset.x * adornerScale;
   const baseY = cursorY - grabOffset.y * adornerScale;
@@ -167,7 +190,7 @@ const MultiCardAdorner: React.FC<{
     >
       {/* Ambient glow for the group */}
       <div
-        className="absolute opacity-50"
+        className="absolute"
         style={{
           left: `${baseX - 20}px`,
           top: `${baseY - 20}px`,
@@ -175,6 +198,7 @@ const MultiCardAdorner: React.FC<{
           height: '200px',
           background: 'radial-gradient(ellipse at center, rgba(251,191,36,0.3) 0%, rgba(59,130,246,0.15) 40%, transparent 70%)',
           filter: 'blur(16px)',
+          opacity: 0.5,
           animation: 'adorner-pulse 1.5s ease-in-out infinite alternate',
         }}
       />
@@ -185,6 +209,10 @@ const MultiCardAdorner: React.FC<{
         const { info } = card;
         const w = info.width * adornerScale;
         const h = info.height * adornerScale;
+
+        // Per-card inversion: card center Y above midline → inverted
+        const cardCenterY = cardY + h / 2;
+        const cardInverted = tableMidlineScreenY !== null && cardCenterY < tableMidlineScreenY;
 
         const showFront = info.faceUp && info.imageUrl;
         const showBack = !info.faceUp && info.cardBackUrl;
@@ -200,15 +228,20 @@ const MultiCardAdorner: React.FC<{
               top: `${cardY}px`,
               width: `${w}px`,
               height: `${h}px`,
-              transform: 'rotate(2deg)',
+              transform: `rotate(${cardInverted ? 182 : 2}deg)`,
+              transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           >
             {/* Per-card glow */}
             <div
-              className="absolute -inset-2 rounded-lg opacity-40"
+              className="absolute -inset-2 rounded-lg"
               style={{
-                background: 'radial-gradient(ellipse at center, rgba(251,191,36,0.25) 0%, transparent 70%)',
+                background: cardInverted
+                  ? 'radial-gradient(ellipse at center, rgba(251,146,60,0.3) 0%, transparent 70%)'
+                  : 'radial-gradient(ellipse at center, rgba(251,191,36,0.25) 0%, transparent 70%)',
                 filter: 'blur(6px)',
+                opacity: 0.4,
+                transition: 'background 0.3s ease',
               }}
             />
 
@@ -216,12 +249,20 @@ const MultiCardAdorner: React.FC<{
               className="relative w-full h-full overflow-hidden"
               style={{
                 borderRadius: '4px',
-                boxShadow: [
-                  '0 12px 28px rgba(0,0,0,0.5)',
-                  '0 4px 10px rgba(0,0,0,0.3)',
-                  '0 0 0 1px rgba(255,255,255,0.1)',
-                  '0 0 16px rgba(251,191,36,0.2)',
-                ].join(', '),
+                boxShadow: cardInverted
+                  ? [
+                      '0 12px 28px rgba(0,0,0,0.5)',
+                      '0 4px 10px rgba(0,0,0,0.3)',
+                      '0 0 0 1px rgba(251,146,60,0.15)',
+                      '0 0 16px rgba(251,146,60,0.25)',
+                    ].join(', ')
+                  : [
+                      '0 12px 28px rgba(0,0,0,0.5)',
+                      '0 4px 10px rgba(0,0,0,0.3)',
+                      '0 0 0 1px rgba(255,255,255,0.1)',
+                      '0 0 16px rgba(251,191,36,0.2)',
+                    ].join(', '),
+                transition: 'box-shadow 0.3s ease',
               }}
             >
               {showFront && (
