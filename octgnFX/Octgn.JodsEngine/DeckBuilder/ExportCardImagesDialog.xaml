@@ -1,100 +1,110 @@
-<Window x:Class="Octgn.DeckBuilder.ExportCardImagesDialog"
+<controls:DecorableWindow x:Class="Octgn.DeckBuilder.ExportCardImagesDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Export Card Images" 
-        Height="500" 
-        Width="600"
+        xmlns:controls="clr-namespace:Octgn.Controls"
+        Title="Export Card Images"
+        Height="520"
+        Width="540"
         MinHeight="400"
-        MinWidth="500"
-        WindowStartupLocation="CenterOwner"
-        Style="{StaticResource Window}">
-    
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <!-- Header -->
-        <TextBlock Grid.Row="0" 
-                   Text="Select card images to export:" 
-                   FontSize="14" 
-                   FontWeight="Bold" 
-                   Margin="0,0,0,10"/>
-        
-        <!-- Selection Controls -->
-        <StackPanel Grid.Row="1" 
-                     Orientation="Horizontal" 
-                     Margin="0,0,0,10">
-            <Button Content="Select All" 
-                     Click="SelectAll_Click" 
-                     Width="80" 
-                     Margin="0,0,10,0"/>
-            <Button Content="Select None" 
-                     Click="SelectNone_Click" 
-                     Width="80"/>
-        </StackPanel>
-        
-        <!-- Card List -->
-        <Border Grid.Row="2" 
-                BorderBrush="Gray" 
-                BorderThickness="1" 
-                Margin="0,0,0,10">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="CardImagesList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsSelected}" 
-                                      Margin="5,2">
-                                <CheckBox.Content>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding CardName}" 
-                                                   FontWeight="Bold"/>
-                                        <TextBlock Text=" ("/>
-                                        <TextBlock Text="{Binding SetName}"/>
-                                        <TextBlock Text=")"/>
-                                    </StackPanel>
-                                </CheckBox.Content>
-                            </CheckBox>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Border>
-        
-        <!-- Selection Count -->
-        <TextBlock Grid.Row="3" 
-                   x:Name="SelectionCount" 
-                   Text="0 cards selected" 
-                   FontStyle="Italic" 
-                   Margin="0,0,0,10"/>
-        
-        <!-- Buttons -->
-        <StackPanel Grid.Row="4" 
-                     Orientation="Horizontal" 
-                     HorizontalAlignment="Right">
-            <Button Content="Export as .o8c" 
-                     Click="ExportO8c_Click" 
-                     Width="120" 
-                     Margin="0,0,10,0">
-                <Button.ToolTip>
-                    Export as Card Image Pack (.o8c)
-                </Button.ToolTip>
-            </Button>
-            <Button Content="Export as ZIP" 
-                     Click="ExportZip_Click" 
-                     Width="120" 
-                     Margin="0,0,10,0">
-                <Button.ToolTip>
-                    Export as ZIP with game/set/card names
-                </Button.ToolTip>
-            </Button>
-            <Button Content="Cancel" 
-                     Click="Cancel_Click" 
-                     Width="80"/>
-        </StackPanel>
-    </Grid>
-</Window>
+        MinWidth="460"
+        CanResize="True"
+        MinMaxButtonVisibility="Collapsed"
+        MinimizeButtonVisibility="Collapsed"
+        WindowIcon="pack://application:,,,/Octgn.JodsEngine;component/Resources/Icon.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Border Style="{StaticResource DarkPanel}" Padding="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <TextBlock Grid.Row="0"
+                       Text="Select card images to export:"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Margin="0,2,0,8"/>
+
+            <!-- Selection Controls -->
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,8">
+                <Button Content="Select All"
+                        Click="SelectAll_Click"
+                        Style="{StaticResource FlatDarkButtonStyle}"
+                        Height="24"
+                        Padding="12,0"/>
+                <Grid Width="6"/>
+                <Button Content="Select None"
+                        Click="SelectNone_Click"
+                        Style="{StaticResource FlatDarkButtonStyle}"
+                        Height="24"
+                        Padding="12,0"/>
+            </StackPanel>
+
+            <!-- Card List -->
+            <ListBox Grid.Row="2"
+                     x:Name="CardImagesList"
+                     SelectionMode="Extended"
+                     Margin="0,0,0,8"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     PreviewKeyDown="CardImagesList_PreviewKeyDown">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected}" Margin="2,3"
+                                          Checked="CheckBox_Changed" Unchecked="CheckBox_Changed">
+                            <CheckBox.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding CardName}" FontWeight="SemiBold"/>
+                                    <TextBlock Text=" ("/>
+                                    <TextBlock Text="{Binding SetName}" Opacity="0.7"/>
+                                    <TextBlock Text=")"/>
+                                </StackPanel>
+                            </CheckBox.Content>
+                        </CheckBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Selection Count -->
+            <TextBlock Grid.Row="3"
+                       x:Name="SelectionCount"
+                       Text="0 cards selected"
+                       FontStyle="Italic"
+                       Opacity="0.7"
+                       Margin="0,0,0,10"/>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="4"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Content="Export as .o8c"
+                        Click="ExportO8c_Click"
+                        Style="{StaticResource FlatDarkGreenButtonStyle}"
+                        Height="28"
+                        Padding="14,0">
+                    <Button.ToolTip>Export as Card Image Pack (.o8c)</Button.ToolTip>
+                </Button>
+                <Grid Width="6"/>
+                <Button Content="Export as ZIP"
+                        Click="ExportZip_Click"
+                        Style="{StaticResource FlatDarkGreenButtonStyle}"
+                        Height="28"
+                        Padding="14,0">
+                    <Button.ToolTip>Export as ZIP with game/set/card names</Button.ToolTip>
+                </Button>
+                <Grid Width="6"/>
+                <Button Content="Cancel"
+                        Click="Cancel_Click"
+                        Style="{StaticResource FlatDarkButtonStyle}"
+                        Height="28"
+                        Padding="14,0"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</controls:DecorableWindow>
