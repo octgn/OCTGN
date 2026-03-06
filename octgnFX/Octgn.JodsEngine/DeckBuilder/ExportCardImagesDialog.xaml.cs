@@ -4,75 +4,74 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Win32;
+using Octgn.Controls;
 using Octgn.DataNew.Entities;
-using Octgn.DataNew;
+using Octgn.Core.DataExtensionMethods;
 
 namespace Octgn.DeckBuilder
 {
     /// <summary>
     /// Dialog for exporting card images to o8c or zip format
     /// </summary>
-    public partial class ExportCardImagesDialog : Window
+    public partial class ExportCardImagesDialog : DecorableWindow
     {
         private readonly Game _game;
-        private readonly Deck _deck;
+        private readonly IDeck _deck;
         private List<CardImageItem> _cardImages;
 
-        public ExportCardImagesDialog(Game game, Deck deck)
+        public ExportCardImagesDialog(Game game, IDeck deck)
         {
             InitializeComponent();
             _game = game;
             _deck = deck;
             LoadCardImages();
+            Loaded += (s, args) =>
+            {
+                CardImagesList.Focus();
+                if (CardImagesList.Items.Count > 0)
+                {
+                    CardImagesList.SelectedIndex = 0;
+                }
+            };
         }
 
         private void LoadCardImages()
         {
             _cardImages = new List<CardImageItem>();
-            
+
             // Get all cards from deck sections
-            var allCards = new List<Card>();
-            
-            if (_deck.DeckSections != null)
+            var allCards = new List<IMultiCard>();
+
+            if (_deck.Sections != null)
             {
-                foreach (var section in _deck.DeckSections)
+                foreach (var section in _deck.Sections)
                 {
                     if (section.Cards != null)
                     {
-                        allCards.AddRange(section.Cards.Select(c => c.Card));
-                    }
-                }
-            }
-            
-            if (_deck.DeckSharedSections != null)
-            {
-                foreach (var section in _deck.DeckSharedSections)
-                {
-                    if (section.Cards != null)
-                    {
-                        allCards.AddRange(section.Cards.Select(c => c.Card));
+                        allCards.AddRange(section.Cards);
                     }
                 }
             }
 
-            // Remove duplicates and filter out proxy images
+            // Remove duplicates
             var uniqueCards = allCards.GroupBy(c => c.Id).Select(g => g.First()).ToList();
-            
+
             foreach (var card in uniqueCards)
             {
                 var imagePath = GetCardImagePath(card);
                 if (!string.IsNullOrEmpty(imagePath) && File.Exists(imagePath))
                 {
-                    // Check if it's a proxy image (skip if it is)
                     if (!IsProxyImage(imagePath))
                     {
+                        var set = card.GetSet();
                         _cardImages.Add(new CardImageItem
                         {
                             Card = card,
                             ImagePath = imagePath,
                             IsSelected = true,
-                            SetName = card.Set?.Name ?? "Unknown",
+                            SetName = set?.Name ?? "Unknown",
                             CardName = card.Name
                         });
                     }
@@ -84,16 +83,11 @@ namespace Octgn.DeckBuilder
             UpdateSelectionCount();
         }
 
-        private string GetCardImagePath(Card card)
+        private string GetCardImagePath(ICard card)
         {
             try
             {
-                var imageUri = card.GetImageUri();
-                if (imageUri == null) return null;
-
-                // Convert URI to local file path
-                var localPath = imageUri.LocalPath;
-                return localPath;
+                return card.GetPicture();
             }
             catch
             {
@@ -103,10 +97,28 @@ namespace Octgn.DeckBuilder
 
         private bool IsProxyImage(string imagePath)
         {
-            // Check if the image is a proxy image
-            // Proxy images typically have specific naming or location patterns
             var fileName = Path.GetFileNameWithoutExtension(imagePath);
-            return fileName.Contains("proxy", StringComparison.OrdinalIgnoreCase);
+            return fileName.IndexOf("proxy", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void CardImagesList_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                var item = CardImagesList.SelectedItem as CardImageItem;
+                if (item != null)
+                {
+                    item.IsSelected = !item.IsSelected;
+                    UpdateSelectionCount();
+                }
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                DialogResult = false;
+                Close();
+                e.Handled = true;
+            }
         }
 
         private void SelectAll_Click(object sender, RoutedEventArgs e)
@@ -115,7 +127,7 @@ namespace Octgn.DeckBuilder
             {
                 item.IsSelected = true;
             }
-            CardImagesList.Items.Refresh();
+
             UpdateSelectionCount();
         }
 
@@ -125,7 +137,7 @@ namespace Octgn.DeckBuilder
             {
                 item.IsSelected = false;
             }
-            CardImagesList.Items.Refresh();
+
             UpdateSelectionCount();
         }
 
@@ -134,7 +146,7 @@ namespace Octgn.DeckBuilder
             var selectedCards = _cardImages.Where(c => c.IsSelected).ToList();
             if (!selectedCards.Any())
             {
-                MessageBox.Show("Please select at least one card to export.", "No Cards Selected", 
+                MessageBox.Show("Please select at least one card to export.", "No Cards Selected",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -152,14 +164,14 @@ namespace Octgn.DeckBuilder
             try
             {
                 ExportToO8c(selectedCards, sfd.FileName);
-                MessageBox.Show($"Successfully exported {selectedCards.Count} card images to {sfd.FileName}", 
+                MessageBox.Show($"Successfully exported {selectedCards.Count} card images to {sfd.FileName}",
                     "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error exporting images: {ex.Message}", "Export Error", 
+                MessageBox.Show($"Error exporting images: {ex.Message}", "Export Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -169,7 +181,7 @@ namespace Octgn.DeckBuilder
             var selectedCards = _cardImages.Where(c => c.IsSelected).ToList();
             if (!selectedCards.Any())
             {
-                MessageBox.Show("Please select at least one card to export.", "No Cards Selected", 
+                MessageBox.Show("Please select at least one card to export.", "No Cards Selected",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -187,28 +199,30 @@ namespace Octgn.DeckBuilder
             try
             {
                 ExportToZip(selectedCards, sfd.FileName);
-                MessageBox.Show($"Successfully exported {selectedCards.Count} card images to {sfd.FileName}", 
+                MessageBox.Show($"Successfully exported {selectedCards.Count} card images to {sfd.FileName}",
                     "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error exporting images: {ex.Message}", "Export Error", 
+                MessageBox.Show($"Error exporting images: {ex.Message}", "Export Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ExportToO8c(List<CardImageItem> cards, string filename)
         {
+            // o8c format: {gameGuid}/Sets/{setGuid}/Cards/{imageFilename}
+            if (File.Exists(filename)) File.Delete(filename);
             using (var archive = ZipFile.Open(filename, ZipArchiveMode.Create))
             {
                 foreach (var card in cards)
                 {
-                    var setDir = SafeFileName(card.SetName);
-                    var cardFileName = SafeFileName(card.CardName) + ".png";
-                    var entryName = $"{setDir}/{cardFileName}";
-                    
+                    var set = card.Card.GetSet();
+                    var imageFileName = Path.GetFileName(card.ImagePath);
+                    var entryName = $"{_game.Id}/Sets/{set.Id}/Cards/{imageFileName}";
+
                     archive.CreateEntryFromFile(card.ImagePath, entryName, CompressionLevel.Optimal);
                 }
             }
@@ -216,16 +230,19 @@ namespace Octgn.DeckBuilder
 
         private void ExportToZip(List<CardImageItem> cards, string filename)
         {
+            // Zip format uses human-readable names for sharing outside OCTGN
+            if (File.Exists(filename)) File.Delete(filename);
             using (var archive = ZipFile.Open(filename, ZipArchiveMode.Create))
             {
                 foreach (var card in cards)
                 {
-                    // Use game/set/card names instead of GUIDs
                     var gameDir = SafeFileName(_game.Name);
-                    var setDir = SafeFileName(card.SetName);
-                    var cardFileName = SafeFileName(card.CardName) + ".png";
+                    var set = card.Card.GetSet();
+                    var setDir = SafeFileName(set?.Name ?? "Unknown");
+                    var ext = Path.GetExtension(card.ImagePath);
+                    var cardFileName = SafeFileName(card.CardName) + ext;
                     var entryName = $"{gameDir}/{setDir}/{cardFileName}";
-                    
+
                     archive.CreateEntryFromFile(card.ImagePath, entryName, CompressionLevel.Optimal);
                 }
             }
@@ -233,10 +250,14 @@ namespace Octgn.DeckBuilder
 
         private string SafeFileName(string name)
         {
-            // Remove invalid characters from filename
             var invalidChars = Path.GetInvalidFileNameChars();
             var safe = new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
             return string.IsNullOrWhiteSpace(safe) ? "Unknown" : safe;
+        }
+
+        private void CheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectionCount();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -252,12 +273,23 @@ namespace Octgn.DeckBuilder
         }
     }
 
-    public class CardImageItem
+    public class CardImageItem : System.ComponentModel.INotifyPropertyChanged
     {
-        public Card Card { get; set; }
+        public ICard Card { get; set; }
         public string ImagePath { get; set; }
-        public bool IsSelected { get; set; }
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected == value) return;
+                _isSelected = value;
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(IsSelected)));
+            }
+        }
         public string SetName { get; set; }
         public string CardName { get; set; }
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
     }
 }
