@@ -219,9 +219,9 @@ namespace Octgn.DeckBuilder
             {
                 foreach (var card in cards)
                 {
-                    var set = card.Card.GetSet();
+                    var setId = card.Card.GetSet()?.Id ?? card.Card.SetId;
                     var imageFileName = Path.GetFileName(card.ImagePath);
-                    var entryName = $"{_game.Id}/Sets/{set.Id}/Cards/{imageFileName}";
+                    var entryName = $"{_game.Id}/Sets/{setId}/Cards/{imageFileName}";
 
                     archive.CreateEntryFromFile(card.ImagePath, entryName, CompressionLevel.Optimal);
                 }

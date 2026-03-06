@@ -50,7 +50,7 @@
             <!-- Card List -->
             <ListBox Grid.Row="2"
                      x:Name="CardImagesList"
-                     SelectionMode="Extended"
+                     SelectionMode="Single"
                      Margin="0,0,0,8"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      PreviewKeyDown="CardImagesList_PreviewKeyDown">
