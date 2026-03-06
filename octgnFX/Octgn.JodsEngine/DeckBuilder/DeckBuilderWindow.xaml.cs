@@ -1331,6 +1331,16 @@ namespace Octgn.DeckBuilder
             dlg.ShowDialog();
         }
 
+        private void ExportCardImagesClicked(object sender, RoutedEventArgs e)
+        {
+            if (Game == null) return;
+            if (Deck == null) return;
+
+            // Show export dialog
+            var exportDialog = new ExportCardImagesDialog(Game, Deck);
+            exportDialog.ShowDialog();
+        }
+
         private void ChangeSleeve(object sender, RequestNavigateEventArgs e)
         {
             if (SubscriptionModule.Get().IsSubscribed == false)
