@@ -1,0 +1,102 @@
+appId: ai.octgn.electron
+productName: OCTGN
+copyright: Copyright © 2026 OCTGN Community
+
+directories:
+  output: release
+  buildResources: electron/assets
+
+files:
+  - dist/**/*
+  - package.json
+  - "!**/*.map"
+  - "!**/*.ts"
+  - "!src/**/*"
+  - "!node_modules/.cache/**/*"
+  - "!node_modules/typescript/**/*"
+  - "!node_modules/@types/**/*"
+
+extraResources:
+  - from: electron/assets
+    to: assets
+    filter:
+      - "**/*"
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+    - target: portable
+      arch:
+        - x64
+  icon: electron/assets/icon.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: electron/assets/icon.ico
+  uninstallerIcon: electron/assets/icon.ico
+  installerHeaderIcon: electron/assets/icon.ico
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: OCTGN
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  icon: electron/assets/icon.icns
+  category: public.app-category.games
+  hardenedRuntime: true
+  gatekeeperAssess: false
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+        - arm64
+    - target: tar.gz
+      arch:
+        - x64
+  icon: electron/assets/icons
+  category: Game
+  maintainer: OCTGN Community
+  desktop:
+    Name: OCTGN
+    Comment: Online Card and Tabletop Gaming Network
+    Categories: Game;CardGame;
+
+dmg:
+  background: electron/assets/dmg-background.png
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 140
+      y: 180
+      type: file
+    - x: 400
+      y: 180
+      type: link
+      path: /Applications
+
+appImage:
+  systemIntegration: ask
+
+publish:
+  provider: github
+  owner: octgn
+  repo: OCTGN
+  releaseType: draft
