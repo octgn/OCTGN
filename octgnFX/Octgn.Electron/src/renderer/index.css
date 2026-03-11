@@ -1,0 +1,358 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base Layer ─────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --glow-blue: rgba(59, 130, 246, 0.6);
+    --glow-violet: rgba(139, 92, 246, 0.6);
+    --glow-red: rgba(239, 68, 68, 0.5);
+    --glow-gold: rgba(251, 191, 36, 0.5);
+    --glass-bg: rgba(17, 24, 39, 0.65);
+    --glass-border: rgba(55, 65, 81, 0.45);
+  }
+
+  body {
+    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    background-color: #0a0e17;
+    color: #f9fafb;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Orbitron', monospace;
+  }
+}
+
+/* ── Glass Morphism ─────────────────────────────────────────────────── */
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-heavy {
+    background: rgba(17, 24, 39, 0.82);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(55, 65, 81, 0.55);
+  }
+
+  .glass-light {
+    background: rgba(31, 41, 55, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(55, 65, 81, 0.3);
+  }
+}
+
+/* ── Glow Effects ───────────────────────────────────────────────────── */
+@layer components {
+  .glow-blue {
+    box-shadow: 0 0 12px var(--glow-blue), inset 0 0 12px rgba(59, 130, 246, 0.08);
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 12px var(--glow-violet), inset 0 0 12px rgba(139, 92, 246, 0.08);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 12px var(--glow-red);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 12px var(--glow-gold);
+  }
+
+  .glow-text-blue {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.7), 0 0 30px rgba(59, 130, 246, 0.3);
+  }
+
+  .glow-text-violet {
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.7), 0 0 30px rgba(139, 92, 246, 0.3);
+  }
+}
+
+/* ── Animated Gradient Background ───────────────────────────────────── */
+@layer components {
+  .animated-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animated-bg::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(59, 130, 246, 0.06) 0deg,
+      rgba(139, 92, 246, 0.08) 90deg,
+      rgba(16, 185, 129, 0.04) 180deg,
+      rgba(59, 130, 246, 0.06) 270deg,
+      rgba(139, 92, 246, 0.08) 360deg
+    );
+    animation: bg-rotate 25s linear infinite;
+    z-index: 0;
+  }
+
+  .animated-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes bg-rotate {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Mesh gradient orbs */
+  .mesh-gradient {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mesh-gradient::before,
+  .mesh-gradient::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .mesh-gradient::before {
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    right: -100px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.25), transparent 70%);
+    animation: mesh-drift-1 20s ease-in-out infinite alternate;
+  }
+
+  .mesh-gradient::after {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    left: -100px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent 70%);
+    animation: mesh-drift-2 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes mesh-drift-1 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, 40px) scale(1.1); }
+    100% { transform: translate(30px, -30px) scale(0.95); }
+  }
+
+  @keyframes mesh-drift-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -30px) scale(1.15); }
+    100% { transform: translate(-40px, 20px) scale(0.9); }
+  }
+}
+
+/* ── Card Glow ──────────────────────────────────────────────────────── */
+@layer components {
+  .card-glow {
+    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card-glow:hover {
+    box-shadow:
+      0 0 15px rgba(59, 130, 246, 0.5),
+      0 0 40px rgba(59, 130, 246, 0.25),
+      0 0 80px rgba(139, 92, 246, 0.15);
+    transform: translateY(-6px) scale(1.04);
+  }
+
+  .card-glow-selected {
+    box-shadow:
+      0 0 10px rgba(251, 191, 36, 0.5),
+      0 0 30px rgba(251, 191, 36, 0.3),
+      0 0 60px rgba(251, 191, 36, 0.15);
+  }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 14, 23, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(55, 65, 81, 0.7);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.9);
+}
+
+/* ── Focus Outlines ─────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+}
+
+/* ── Login Transition Overlay ───────────────────────────────────────── */
+@layer components {
+  /* Hexagonal spinner ring */
+  .login-spinner {
+    --spinner-size: 120px;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    position: relative;
+  }
+
+  .login-spinner::before,
+  .login-spinner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid transparent;
+  }
+
+  .login-spinner::before {
+    border-top-color: #3b82f6;
+    border-right-color: #3b82f6;
+    animation: spinner-rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+
+  .login-spinner::after {
+    inset: 10px;
+    border-bottom-color: #8b5cf6;
+    border-left-color: #8b5cf6;
+    animation: spinner-rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+  }
+
+  @keyframes spinner-rotate {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Pulsing ring behind the spinner */
+  .login-pulse-ring {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    animation: pulse-ring 2s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  }
+
+  .login-pulse-ring:nth-child(2) {
+    animation-delay: 0.6s;
+  }
+
+  .login-pulse-ring:nth-child(3) {
+    animation-delay: 1.2s;
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  /* Particle trail effect */
+  .login-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 8px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.4);
+    animation: orbit-particle 3s linear infinite;
+  }
+
+  .login-particle:nth-child(2) {
+    animation-duration: 2.4s;
+    background: #8b5cf6;
+    box-shadow: 0 0 8px #8b5cf6, 0 0 20px rgba(139, 92, 246, 0.4);
+    animation-delay: -0.8s;
+  }
+
+  .login-particle:nth-child(3) {
+    animation-duration: 4s;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981, 0 0 20px rgba(16, 185, 129, 0.4);
+    animation-delay: -1.5s;
+  }
+
+  @keyframes orbit-particle {
+    0%   { transform: rotate(0deg) translateX(80px) rotate(0deg) scale(1); opacity: 1; }
+    50%  { opacity: 0.6; transform: rotate(180deg) translateX(80px) rotate(-180deg) scale(1.5); }
+    100% { transform: rotate(360deg) translateX(80px) rotate(-360deg) scale(1); opacity: 1; }
+  }
+
+  /* Success burst animation */
+  .login-success-burst {
+    animation: success-burst 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+
+  @keyframes success-burst {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.3); opacity: 0.8; }
+    100% { transform: scale(40); opacity: 0; }
+  }
+
+  /* Overlay fade transitions */
+  .login-overlay-enter {
+    animation: overlay-enter 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .login-overlay-exit {
+    animation: overlay-exit 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  @keyframes overlay-enter {
+    0%   { opacity: 0; backdrop-filter: blur(0); }
+    100% { opacity: 1; backdrop-filter: blur(20px); }
+  }
+
+  @keyframes overlay-exit {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Form slide-out on login */
+  .login-form-exit {
+    animation: form-exit 0.4s cubic-bezier(0.55, 0, 1, 0.45) both;
+  }
+
+  @keyframes form-exit {
+    0%   { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-30px) scale(0.95); opacity: 0; }
+  }
+}
+
+/* ── Utility Animations ─────────────────────────────────────────────── */
+@layer utilities {
+  .animate-in {
+    animation: slide-up 0.4s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .transition-gpu {
+    transition-property: transform, opacity, box-shadow;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    transition-duration: 300ms;
+    will-change: transform, opacity;
+  }
+
+  .drag-region {
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+
+  .no-drag {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+}
