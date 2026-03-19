@@ -3,6 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using FakeItEasy;
 using NUnit.Framework;
@@ -182,5 +183,70 @@ namespace Octgn.Test.Core
                 FeedProvider.SingletonContext = curFeedProvider;
             }
         }
+
+        #region GetRepoFeeds
+        [Test]
+        public void GetRepoFeeds_ReturnsOnlyRepoTypeFeeds() {
+            var curFeedProvider = FeedProvider.Instance;
+            try {
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo( () => fakeFeedProvider.AllFeeds ).Returns( new List<NamedUrl> {
+                    new NamedUrl( "NuGet Feed", "https://myget.org/F/test/", null, null, FeedType.NuGet ),
+                    new NamedUrl( "Repo Feed", "https://raw.githubusercontent.com/octgn/community/main/index.json", null, null, FeedType.RepoIndex ),
+                    new NamedUrl( "Direct Repo", "octgn/Basic-Game", null, null, FeedType.DirectRepo ),
+                } );
+                FeedProvider.SingletonContext = fakeFeedProvider;
+
+                var feeds = (GameFeedManager.Get() as GameFeedManager).GetRepoFeeds();
+
+                Assert.AreEqual( 2, feeds.Count() );
+            } finally {
+                FeedProvider.SingletonContext = curFeedProvider;
+            }
+        }
+
+        [Test]
+        public void GetRepoFeeds_ExcludesNuGetFeeds() {
+            var curFeedProvider = FeedProvider.Instance;
+            try {
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo( () => fakeFeedProvider.AllFeeds ).Returns( new List<NamedUrl> {
+                    new NamedUrl( "OCTGN Official", "https://myget.org/F/octgn/", null, null, FeedType.NuGet ),
+                    new NamedUrl( "Community", "https://myget.org/F/community/", null, null, FeedType.NuGet ),
+                } );
+                FeedProvider.SingletonContext = fakeFeedProvider;
+
+                var feeds = (GameFeedManager.Get() as GameFeedManager).GetRepoFeeds();
+
+                Assert.AreEqual( 0, feeds.Count() );
+            } finally {
+                FeedProvider.SingletonContext = curFeedProvider;
+            }
+        }
+
+        [Test]
+        public void GetRepoFeeds_IncludesRepoIndexAndDirectRepo() {
+            var curFeedProvider = FeedProvider.Instance;
+            try {
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo( () => fakeFeedProvider.AllFeeds ).Returns( new List<NamedUrl> {
+                    new NamedUrl( "NuGet Feed", "https://myget.org/F/test/", null, null, FeedType.NuGet ),
+                    new NamedUrl( "Repo Index", "https://raw.githubusercontent.com/octgn/community/main/index.json", null, null, FeedType.RepoIndex ),
+                    new NamedUrl( "Direct Repo", "octgn/Basic-Game", null, null, FeedType.DirectRepo ),
+                } );
+                FeedProvider.SingletonContext = fakeFeedProvider;
+
+                var feeds = (GameFeedManager.Get() as GameFeedManager).GetRepoFeeds();
+                var feedList = feeds.ToList();
+
+                Assert.AreEqual( 2, feedList.Count );
+                Assert.IsTrue( feedList.Any( f => f.FeedType == FeedType.RepoIndex ) );
+                Assert.IsTrue( feedList.Any( f => f.FeedType == FeedType.DirectRepo ) );
+                Assert.IsFalse( feedList.Any( f => f.FeedType == FeedType.NuGet ) );
+            } finally {
+                FeedProvider.SingletonContext = curFeedProvider;
+            }
+        }
+        #endregion GetRepoFeeds
     }
 }
