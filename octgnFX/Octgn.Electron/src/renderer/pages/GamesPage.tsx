@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 import Button from '../components/Button';
 import AppSidebar from '../components/AppSidebar';
 import { useDefinitionsStore } from '../stores/definitions-store';
+import type { GameUpdate } from '../stores/definitions-store';
 import type { GameDefinition, AvailableGame, GameFeed } from '../../shared/types';
 
 type Tab = 'installed' | 'available';
@@ -14,21 +15,38 @@ const GamesPage: React.FC = () => {
 
   const {
     installedGames, availableGames, feeds, installProgress,
+    updates, isCheckingUpdates,
     isLoadingInstalled, isLoadingAvailable,
-    loadInstalled, fetchAvailable, install, uninstall,
+    loadInstalled, fetchAvailable, install, uninstall, checkForUpdates,
     loadFeeds, addFeed, addDirectRepo, addRepoFeed, removeFeed, setFeedEnabled,
   } = useDefinitionsStore();
+
+  // Auto-check for updates once available games are loaded
+  const hasCheckedUpdates = useRef(false);
+  useEffect(() => {
+    if (availableGames.length > 0 && installedGames.length > 0 && !hasCheckedUpdates.current) {
+      hasCheckedUpdates.current = true;
+      checkForUpdates();
+    }
+  }, [availableGames, installedGames, checkForUpdates]);
 
   useEffect(() => {
     loadInstalled();
     loadFeeds();
   }, [loadInstalled, loadFeeds]);
 
+  // Fetch available games on mount so update checks can run
+  useEffect(() => {
+    if (availableGames.length === 0) fetchAvailable();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleTabChange = (t: Tab) => {
     setSearch('');
     setTab(t);
     if (t === 'available' && availableGames.length === 0) fetchAvailable();
   };
+
+  const updateCount = updates.length;
 
   const enabledCount = feeds.filter((f) => f.enabled).length;
 
@@ -59,6 +77,11 @@ const GamesPage: React.FC = () => {
                 {t === 'installed' && installedGames.length > 0 && (
                   <span className="ml-1.5 text-[10px] bg-octgn-primary/20 text-octgn-primary rounded-full px-1.5 py-0.5">
                     {installedGames.length}
+                  </span>
+                )}
+                {t === 'installed' && updateCount > 0 && (
+                  <span className="ml-1 text-[10px] bg-emerald-500/20 text-emerald-400 rounded-full px-1.5 py-0.5 font-semibold animate-pulse">
+                    {updateCount} {updateCount === 1 ? 'update' : 'updates'}
                   </span>
                 )}
               </button>
@@ -121,7 +144,10 @@ const GamesPage: React.FC = () => {
                 games={installedGames}
                 search={search}
                 isLoading={isLoadingInstalled}
+                updates={updates}
+                isCheckingUpdates={isCheckingUpdates}
                 onUninstall={uninstall}
+                onUpdate={install}
               />
             )}
             {tab === 'available' && (
@@ -164,13 +190,21 @@ const GamesPage: React.FC = () => {
 /* ── Installed Tab ─────────────────────────────────────────────────── */
 
 function InstalledTab({
-  games, search, isLoading, onUninstall,
+  games, search, isLoading, updates, isCheckingUpdates, onUninstall, onUpdate,
 }: {
   games: GameDefinition[];
   search: string;
   isLoading: boolean;
+  updates: GameUpdate[];
+  isCheckingUpdates: boolean;
   onUninstall: (id: string) => void;
+  onUpdate: (id: string, downloadUrl: string) => void;
 }) {
+  const updateMap = useMemo(
+    () => new Map(updates.map((u) => [u.gameId, u])),
+    [updates]
+  );
+
   const filtered = useMemo(
     () =>
       search
@@ -179,7 +213,17 @@ function InstalledTab({
     [games, search]
   );
 
-  if (isLoading) return <LoadingState message="Scanning for installed games…" />;
+  // Sort: games with updates first
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      const aHas = updateMap.has(a.id) ? 0 : 1;
+      const bHas = updateMap.has(b.id) ? 0 : 1;
+      if (aHas !== bHas) return aHas - bHas;
+      return a.name.localeCompare(b.name);
+    });
+  }, [filtered, updateMap]);
+
+  if (isLoading) return <LoadingState message="Scanning for installed games..." />;
 
   if (games.length === 0) {
     return (
@@ -197,27 +241,72 @@ function InstalledTab({
 
   return (
     <div className="p-4 space-y-2">
-      {filtered.map((g) => (
-        <div
-          key={g.id}
-          className="flex items-center gap-4 px-4 py-3 rounded-xl bg-octgn-surface/60 border border-octgn-border/30 hover:border-octgn-border/60 transition-all"
-        >
-          <GameIcon name={g.name} />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-octgn-text truncate">{g.name}</p>
-            <p className="text-xs text-octgn-text-dim mt-0.5 truncate">
-              v{g.version}
-              {g.description ? <> · <span className="text-octgn-text-muted">{g.description}</span></> : null}
-            </p>
+      {/* Update summary banner */}
+      {updates.length > 0 && !search && (
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-emerald-500/8 border border-emerald-500/20 mb-1">
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/15">
+            <UpArrowIcon className="w-3.5 h-3.5 text-emerald-400" />
           </div>
-          <button
-            onClick={() => onUninstall(g.id)}
-            className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg text-octgn-danger border border-octgn-danger/30 hover:bg-octgn-danger/10 transition-all"
-          >
-            Uninstall
-          </button>
+          <p className="text-xs text-emerald-300/90 font-medium">
+            {updates.length} {updates.length === 1 ? 'game has' : 'games have'} an update available
+          </p>
+          {isCheckingUpdates && (
+            <span className="ml-auto flex items-center gap-1.5 text-[10px] text-octgn-text-dim">
+              <span className="w-2.5 h-2.5 border border-emerald-500/40 border-t-emerald-400 rounded-full animate-spin inline-block" />
+              Checking...
+            </span>
+          )}
         </div>
-      ))}
+      )}
+
+      {sorted.map((g) => {
+        const update = updateMap.get(g.id);
+        return (
+          <div
+            key={g.id}
+            className={clsx(
+              'flex items-center gap-4 px-4 py-3 rounded-xl bg-octgn-surface/60 border transition-all',
+              update
+                ? 'border-emerald-500/25 hover:border-emerald-500/40'
+                : 'border-octgn-border/30 hover:border-octgn-border/60'
+            )}
+          >
+            <GameIcon name={g.name} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-octgn-text truncate">{g.name}</p>
+                {update && (
+                  <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">
+                    <UpArrowIcon className="w-2.5 h-2.5" />
+                    v{update.availableVersion}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-octgn-text-dim mt-0.5 truncate">
+                v{g.version}
+                {update && <span className="text-octgn-text-dim/60"> → v{update.availableVersion}</span>}
+                {g.description ? <> · <span className="text-octgn-text-muted">{g.description}</span></> : null}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {update && (
+                <button
+                  onClick={() => onUpdate(g.id, update.downloadUrl)}
+                  className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-500/25 hover:border-emerald-500/40 transition-all"
+                >
+                  Update
+                </button>
+              )}
+              <button
+                onClick={() => onUninstall(g.id)}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg text-octgn-danger border border-octgn-danger/30 hover:bg-octgn-danger/10 transition-all"
+              >
+                Uninstall
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -325,6 +414,8 @@ function GameCard({
   progress?: { phase: string; percent: number; error?: string };
   onInstall: () => void;
 }) {
+  const [changelogOpen, setChangelogOpen] = useState(false);
+
   return (
     <div className="flex flex-col rounded-xl bg-octgn-surface/60 border border-octgn-border/30 hover:border-octgn-border/60 transition-all overflow-hidden">
       {/* Card body */}
@@ -340,19 +431,57 @@ function GameCard({
               {game.description}
             </p>
           )}
+          {/* Repo source link */}
+          {game.sourceType === 'repo' && game.sourceInfo && (
+            <p className="mt-1.5 inline-flex items-center gap-1 text-[10px] text-emerald-400/80 hover:text-emerald-400 transition-colors cursor-default">
+              <GitHubMiniIcon />
+              <span>{game.sourceInfo}</span>
+            </p>
+          )}
         </div>
       </div>
+
+      {/* Changelog expandable (repo games only) */}
+      {game.sourceType === 'repo' && game.changelog && (
+        <div className="px-4 pb-1">
+          <button
+            onClick={() => setChangelogOpen(!changelogOpen)}
+            className="flex items-center gap-1.5 text-[10px] text-octgn-text-dim hover:text-octgn-text-muted transition-colors"
+          >
+            <svg
+              className={clsx('w-2.5 h-2.5 transition-transform duration-150', changelogOpen && 'rotate-90')}
+              viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+            >
+              <path d="M3 1.5l4 3.5-4 3.5" />
+            </svg>
+            Changelog
+            {game.versionDate && (
+              <span className="text-octgn-text-dim/60 ml-1">· {game.versionDate}</span>
+            )}
+          </button>
+          {changelogOpen && (
+            <div className="mt-1.5 mb-1 px-3 py-2 rounded-lg bg-black/15 border border-octgn-border/15 max-h-24 overflow-y-auto">
+              <p className="text-[11px] text-octgn-text-muted leading-relaxed whitespace-pre-wrap">
+                {game.changelog}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Version date for repo games without changelog */}
+      {game.sourceType === 'repo' && !game.changelog && game.versionDate && (
+        <div className="px-4 pb-1">
+          <p className="text-[10px] text-octgn-text-dim/60">
+            Updated {game.versionDate}
+          </p>
+        </div>
+      )}
 
       {/* Card footer */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-t border-octgn-border/20 bg-black/10">
         <span className="text-[10px] text-octgn-text-dim flex-1 flex items-center gap-1.5 flex-wrap">
           <span>v{game.version}</span>
-          {game.sourceType === 'repo' && game.sourceInfo && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-medium border border-emerald-500/20">
-              <GitHubMiniIcon />
-              {game.sourceInfo}
-            </span>
-          )}
           {game.downloadCount ? (
             <span className="text-octgn-text-dim">{formatCount(game.downloadCount)} dl</span>
           ) : null}
@@ -368,7 +497,7 @@ function GameCard({
               />
             </div>
             <span className="text-[10px] text-octgn-text-dim capitalize whitespace-nowrap">
-              {progress.phase}…
+              {progress.phase}...
             </span>
           </div>
         )}
@@ -739,6 +868,15 @@ function GitHubMiniIcon() {
   return (
     <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="currentColor">
       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+    </svg>
+  );
+}
+
+function UpArrowIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 12V3" />
+      <path d="M3 6l4-4 4 4" />
     </svg>
   );
 }
