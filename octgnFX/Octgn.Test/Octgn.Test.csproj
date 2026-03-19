@@ -130,6 +130,7 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Core\GameFeedManagerTests.cs" />
+    <Compile Include="Core\GameManifestPackageAdapterTests.cs" />
     <Compile Include="Core\RepoFeedManagerTests.cs" />
     <Compile Include="Core\Models\GameManifestTests.cs" />
     <Compile Include="Core\Models\FeedIndexTests.cs" />

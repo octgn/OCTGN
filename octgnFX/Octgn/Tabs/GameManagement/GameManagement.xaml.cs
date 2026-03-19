@@ -122,10 +122,10 @@ namespace Octgn.Tabs.GameManagement
 					packs = Feeds
 						.Where( x => x != Selected )
 						.AsParallel()
-						.SelectMany( feed => GameFeedManager.Get().GetPackages( feed ) )
+						.SelectMany( feed => GetPackagesForFeed( feed ) )
 					;
 				} else {
-					packs = GameFeedManager.Get().GetPackages( Selected );
+					packs = GetPackagesForFeed( Selected );
 				}
 				List<FeedGameViewModel> games = packs.Where( x => x.IsAbsoluteLatestVersion )
 					.OrderBy( x => x.Title )
@@ -174,6 +174,18 @@ namespace Octgn.Tabs.GameManagement
 				Log.Warn( "GameManagement fetch url error " + url, e );
 			}
 			Dispatcher.Invoke( new Action( () => { this.ButtonsEnabled = true; } ) );
+		}
+
+		/// <summary>
+		/// Returns packages from the appropriate source based on feed type.
+		/// NuGet feeds use GetPackages; repo feeds use GetRepoPackages.
+		/// </summary>
+		private IEnumerable<IPackage> GetPackagesForFeed( NamedUrl feed ) {
+			if( feed == null ) return Enumerable.Empty<IPackage>();
+			if( feed.FeedType == FeedType.RepoIndex || feed.FeedType == FeedType.DirectRepo ) {
+				return GameFeedManager.Get().GetRepoPackages( feed );
+			}
+			return GameFeedManager.Get().GetPackages( feed );
 		}
 
 		#region Events
@@ -368,7 +380,12 @@ namespace Octgn.Tabs.GameManagement
 					this.ProcessTask(
 					() => {
 						try {
-							GameManager.Get().InstallGame( model.Package );
+							if( model.Package is Octgn.Core.GameManifestPackageAdapter repoAdapter ) {
+								var gfm = GameFeedManager.Get() as Octgn.Core.GameFeedManager;
+								gfm.InstallRepoGameAsync( repoAdapter.Manifest ).GetAwaiter().GetResult();
+							} else {
+								GameManager.Get().InstallGame( model.Package );
+							}
 						} catch(UnauthorizedAccessException) {
 							TopMostMessageBox.Show(
 								"Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",

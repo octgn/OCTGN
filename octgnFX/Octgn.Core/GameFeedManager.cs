@@ -35,6 +35,7 @@ namespace Octgn.Core
         void RemoveFeed( string name );
         FeedValidationResult ValidateFeedUrl( string url, string username, string password );
         IEnumerable<IPackage> GetPackages( NamedUrl url );
+        IEnumerable<IPackage> GetRepoPackages( NamedUrl url );
         void ExtractPackage( string directory, IPackage package, Action<int, int> onProgressUpdate = null );
         void AddToLocalFeed( string file );
         event EventHandler OnUpdateFeedList;
@@ -335,6 +336,50 @@ namespace Octgn.Core
 
             } finally {
                 Log.InfoFormat( "Finished" );
+            }
+        }
+
+        /// <summary>
+        /// Gets games from a single repo-type feed, wrapped as IPackage for UI compatibility.
+        /// Returns an empty list for NuGet feeds.
+        /// </summary>
+        public IEnumerable<IPackage> GetRepoPackages( NamedUrl url ) {
+            try {
+                if( url == null ) {
+                    Log.Info( "Getting repo packages for null NamedUrl" );
+                    return new List<IPackage>();
+                }
+                if( url.FeedType != FeedType.RepoIndex && url.FeedType != FeedType.DirectRepo ) {
+                    Log.InfoFormat( "Skipping non-repo feed {0}:{1} (type={2})", url.Name, url.Url, url.FeedType );
+                    return new List<IPackage>();
+                }
+                if( string.IsNullOrEmpty( url.Url ) ) {
+                    Log.InfoFormat( "Skipping repo feed with empty URL {0}", url.Name );
+                    return new List<IPackage>();
+                }
+
+                Log.InfoFormat( "Getting repo packages for feed {0}:{1}", url.Name, url.Url );
+                var repoManager = new RepoFeedManager();
+                var manifests = new List<GameManifest>();
+
+                if( url.FeedType == FeedType.RepoIndex ) {
+                    manifests = repoManager.FetchGamesFromFeedAsync( url.Url )
+                        .ConfigureAwait( false ).GetAwaiter().GetResult();
+                } else if( url.FeedType == FeedType.DirectRepo ) {
+                    var (owner, repo) = RepoFeedManager.NormalizeRepoUrl( url.Url );
+                    var manifest = repoManager.FetchManifestAsync( owner, repo, "main" )
+                        .ConfigureAwait( false ).GetAwaiter().GetResult();
+                    if( manifest != null )
+                        manifests.Add( manifest );
+                }
+
+                Log.InfoFormat( "Found {0} repo packages for feed {1}:{2}", manifests.Count, url.Name, url.Url );
+                return manifests.Select( m => (IPackage)new GameManifestPackageAdapter( m ) ).ToList();
+            } catch( Exception ex ) {
+                Log.WarnFormat( "Error getting repo packages for {0}: {1}", url?.Name, ex.Message );
+                return new List<IPackage>();
+            } finally {
+                Log.Info( "Finished" );
             }
         }
 

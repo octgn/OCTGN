@@ -248,5 +248,63 @@ namespace Octgn.Test.Core
             }
         }
         #endregion GetRepoFeeds
+
+        #region GetRepoPackages
+        [Test]
+        public void GetRepoPackages_NullUrl_ReturnsEmpty() {
+            var result = GameFeedManager.Get().GetRepoPackages( null );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetRepoPackages_NuGetFeed_ReturnsEmpty() {
+            var nugetFeed = new NamedUrl( "NuGet Feed", "https://myget.org/F/test/", null, null, FeedType.NuGet );
+            var result = GameFeedManager.Get().GetRepoPackages( nugetFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetRepoPackages_EmptyUrl_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Repo Feed", "", null, null, FeedType.RepoIndex );
+            var result = GameFeedManager.Get().GetRepoPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetRepoPackages_NullUrl_RepoIndex_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Repo Feed", null, null, null, FeedType.RepoIndex );
+            var result = GameFeedManager.Get().GetRepoPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+        #endregion GetRepoPackages
+
+        #region GetPackages
+        [Test]
+        public void GetPackages_NullUrl_ReturnsEmpty() {
+            var result = GameFeedManager.Get().GetPackages( null );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetPackages_RepoIndexFeed_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Repo Feed", "https://example.com/index.json", null, null, FeedType.RepoIndex );
+            var result = GameFeedManager.Get().GetPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetPackages_DirectRepoFeed_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Direct Repo", "octgn/MyGame", null, null, FeedType.DirectRepo );
+            var result = GameFeedManager.Get().GetPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+        #endregion GetPackages
     }
 }

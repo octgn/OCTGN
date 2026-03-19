@@ -86,6 +86,7 @@
     <Compile Include="DiscordIntegration\DiscordGameSdk\StoreManager.cs" />
     <Compile Include="EmptyPackage.cs" />
     <Compile Include="GameFeedManager.cs" />
+    <Compile Include="GameManifestPackageAdapter.cs" />
     <Compile Include="Models\FeedIndex.cs" />
     <Compile Include="Models\GameManifest.cs" />
     <Compile Include="RepoFeedManager.cs" />
