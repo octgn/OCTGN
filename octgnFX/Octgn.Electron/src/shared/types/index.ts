@@ -303,6 +303,8 @@ export interface GameFeed {
   isBuiltIn: boolean;
   username?: string;
   password?: string;
+  feedType: 'nuget' | 'repo-index' | 'direct-repo';
+  branch?: string;
 }
 
 export interface AvailableGame {
@@ -315,6 +317,48 @@ export interface AvailableGame {
   downloadUrl: string;
   iconUrl?: string;
   downloadCount?: number;
+  sourceType?: 'repo' | 'nuget' | 'local';
+  sourceInfo?: string;
+  versionDate?: string;
+  changelog?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Repo-based game distribution types (shared between main & renderer)
+// ---------------------------------------------------------------------------
+
+export interface GameManifest {
+  guid: string;
+  name: string;
+  version: string;
+  versionDate: string;
+  description: string;
+  authors: string[];
+  gamePath: string;
+  minimumOctgnVersion?: string;
+  tags?: string[];
+  changelog?: string;
+  iconUrl?: string;
+}
+
+export interface FeedIndex {
+  name: string;
+  games: FeedGameEntry[];
+}
+
+export interface FeedGameEntry {
+  guid: string;
+  name: string;
+  repo: string;
+  branch: string;
+  manifestPath?: string;
+}
+
+export interface RepoGameSource {
+  sourceType: 'repo' | 'nuget' | 'local';
+  sourceName: string;
+  repoUrl?: string;
+  branch?: string;
 }
 
 export interface InstallProgress {
@@ -388,4 +432,15 @@ export const IPC_CHANNELS = {
 
   // Game window management
   CLOSE_GAME_WINDOW: 'app:close-game-window',
+
+  // Repo-based feeds
+  REPO_FEEDS_ADD_REPO: 'repo-feeds:add-repo',
+  REPO_FEEDS_ADD_FEED: 'repo-feeds:add-feed',
+  REPO_FEEDS_FETCH_MANIFEST: 'repo-feeds:fetch-manifest',
+
+  // Update checking
+  GAMES_CHECK_UPDATES: 'games:check-updates',
+
+  // Repo-based game install
+  GAMES_INSTALL_FROM_REPO: 'games:install-from-repo',
 } as const;

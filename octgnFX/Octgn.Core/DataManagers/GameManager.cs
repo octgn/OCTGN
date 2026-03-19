@@ -561,6 +561,11 @@ namespace Octgn.Core.DataManagers
             this.OnGameListChanged();
         }
 
+        public void FireGameListChanged()
+        {
+            OnGameListChanged();
+        }
+
         protected virtual void OnGameListChanged()
         {
             var handler = this.GameListChanged;

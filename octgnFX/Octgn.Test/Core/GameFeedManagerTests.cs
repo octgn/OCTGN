@@ -3,6 +3,7 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using FakeItEasy;
 using NUnit.Framework;
@@ -182,5 +183,128 @@ namespace Octgn.Test.Core
                 FeedProvider.SingletonContext = curFeedProvider;
             }
         }
+
+        #region GetRepoFeeds
+        [Test]
+        public void GetRepoFeeds_ReturnsOnlyRepoTypeFeeds() {
+            var curFeedProvider = FeedProvider.Instance;
+            try {
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo( () => fakeFeedProvider.AllFeeds ).Returns( new List<NamedUrl> {
+                    new NamedUrl( "NuGet Feed", "https://myget.org/F/test/", null, null, FeedType.NuGet ),
+                    new NamedUrl( "Repo Feed", "https://raw.githubusercontent.com/octgn/community/main/index.json", null, null, FeedType.RepoIndex ),
+                    new NamedUrl( "Direct Repo", "octgn/Basic-Game", null, null, FeedType.DirectRepo ),
+                } );
+                FeedProvider.SingletonContext = fakeFeedProvider;
+
+                var feeds = (GameFeedManager.Get() as GameFeedManager).GetRepoFeeds();
+
+                Assert.AreEqual( 2, feeds.Count() );
+            } finally {
+                FeedProvider.SingletonContext = curFeedProvider;
+            }
+        }
+
+        [Test]
+        public void GetRepoFeeds_ExcludesNuGetFeeds() {
+            var curFeedProvider = FeedProvider.Instance;
+            try {
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo( () => fakeFeedProvider.AllFeeds ).Returns( new List<NamedUrl> {
+                    new NamedUrl( "OCTGN Official", "https://myget.org/F/octgn/", null, null, FeedType.NuGet ),
+                    new NamedUrl( "Community", "https://myget.org/F/community/", null, null, FeedType.NuGet ),
+                } );
+                FeedProvider.SingletonContext = fakeFeedProvider;
+
+                var feeds = (GameFeedManager.Get() as GameFeedManager).GetRepoFeeds();
+
+                Assert.AreEqual( 0, feeds.Count() );
+            } finally {
+                FeedProvider.SingletonContext = curFeedProvider;
+            }
+        }
+
+        [Test]
+        public void GetRepoFeeds_IncludesRepoIndexAndDirectRepo() {
+            var curFeedProvider = FeedProvider.Instance;
+            try {
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo( () => fakeFeedProvider.AllFeeds ).Returns( new List<NamedUrl> {
+                    new NamedUrl( "NuGet Feed", "https://myget.org/F/test/", null, null, FeedType.NuGet ),
+                    new NamedUrl( "Repo Index", "https://raw.githubusercontent.com/octgn/community/main/index.json", null, null, FeedType.RepoIndex ),
+                    new NamedUrl( "Direct Repo", "octgn/Basic-Game", null, null, FeedType.DirectRepo ),
+                } );
+                FeedProvider.SingletonContext = fakeFeedProvider;
+
+                var feeds = (GameFeedManager.Get() as GameFeedManager).GetRepoFeeds();
+                var feedList = feeds.ToList();
+
+                Assert.AreEqual( 2, feedList.Count );
+                Assert.IsTrue( feedList.Any( f => f.FeedType == FeedType.RepoIndex ) );
+                Assert.IsTrue( feedList.Any( f => f.FeedType == FeedType.DirectRepo ) );
+                Assert.IsFalse( feedList.Any( f => f.FeedType == FeedType.NuGet ) );
+            } finally {
+                FeedProvider.SingletonContext = curFeedProvider;
+            }
+        }
+        #endregion GetRepoFeeds
+
+        #region GetRepoPackages
+        [Test]
+        public void GetRepoPackages_NullUrl_ReturnsEmpty() {
+            var result = GameFeedManager.Get().GetRepoPackages( null );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetRepoPackages_NuGetFeed_ReturnsEmpty() {
+            var nugetFeed = new NamedUrl( "NuGet Feed", "https://myget.org/F/test/", null, null, FeedType.NuGet );
+            var result = GameFeedManager.Get().GetRepoPackages( nugetFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetRepoPackages_EmptyUrl_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Repo Feed", "", null, null, FeedType.RepoIndex );
+            var result = GameFeedManager.Get().GetRepoPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetRepoPackages_NullUrl_RepoIndex_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Repo Feed", null, null, null, FeedType.RepoIndex );
+            var result = GameFeedManager.Get().GetRepoPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+        #endregion GetRepoPackages
+
+        #region GetPackages
+        [Test]
+        public void GetPackages_NullUrl_ReturnsEmpty() {
+            var result = GameFeedManager.Get().GetPackages( null );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetPackages_RepoIndexFeed_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Repo Feed", "https://example.com/index.json", null, null, FeedType.RepoIndex );
+            var result = GameFeedManager.Get().GetPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+
+        [Test]
+        public void GetPackages_DirectRepoFeed_ReturnsEmpty() {
+            var repoFeed = new NamedUrl( "Direct Repo", "octgn/MyGame", null, null, FeedType.DirectRepo );
+            var result = GameFeedManager.Get().GetPackages( repoFeed );
+            Assert.IsNotNull( result );
+            Assert.AreEqual( 0, result.Count() );
+        }
+        #endregion GetPackages
     }
 }

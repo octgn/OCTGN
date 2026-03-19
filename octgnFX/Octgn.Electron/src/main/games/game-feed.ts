@@ -185,7 +185,7 @@ async function fetchAllFromFeed(feedDef: GameFeed): Promise<AvailableGame[]> {
 }
 
 export async function fetchAvailableGames(feeds: GameFeed[]): Promise<AvailableGame[]> {
-  const enabled = feeds.filter((f) => f.enabled && f.url);
+  const enabled = feeds.filter((f) => f.enabled && f.url && (!f.feedType || f.feedType === 'nuget'));
   const results = await Promise.allSettled(enabled.map(fetchAllFromFeed));
 
   const all: AvailableGame[] = [];

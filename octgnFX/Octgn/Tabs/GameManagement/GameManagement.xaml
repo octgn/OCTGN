@@ -133,7 +133,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" Style="{StaticResource Title}" FontSize="17"/>
-                        <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
+                        <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id,Mode=OneWay}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
                         <TextBlock Text="Game Site" Style="{StaticResource Url}" PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}"/>
                     </StackPanel>
                 </Border>
@@ -162,7 +162,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Vertical" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
                             <TextBlock Text="Description: " Style="{StaticResource Title}"/>
-                            <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Text="{Binding Description}" FontSize="12" />
+                            <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Text="{Binding Description,Mode=OneWay}" FontSize="12" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
                             <TextBlock Text="Tags: "  Style="{StaticResource Title}"/>
