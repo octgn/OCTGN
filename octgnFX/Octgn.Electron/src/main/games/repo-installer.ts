@@ -3,7 +3,7 @@
  * Similar to game-installer.ts but for repo-based distribution.
  */
 import { mkdir, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { join, resolve, relative } from 'path';
 import AdmZip from 'adm-zip';
 import { parseDefinitionXml } from './definition-parser';
 import { getInstallDir } from './game-store';
@@ -83,10 +83,16 @@ export async function installFromRepo(
     const installDir = getInstallDir(gameId);
     await mkdir(installDir, { recursive: true });
 
-    // Extract matching entries
+    // Extract matching entries (with zip-slip protection)
     for (const entry of matchingEntries) {
       const relativePath = entry.entryName.slice(prefix.length);
-      const destPath = join(installDir, ...relativePath.split('/'));
+      const destPath = resolve(installDir, ...relativePath.split('/'));
+
+      // Guard against zip-slip: ensure extracted path stays within installDir
+      const rel = relative(installDir, destPath);
+      if (rel.startsWith('..') || resolve(destPath) !== destPath) {
+        throw new Error(`Zip entry escapes install directory: ${entry.entryName}`);
+      }
 
       await mkdir(join(destPath, '..'), { recursive: true });
       await writeFile(destPath, entry.getData());

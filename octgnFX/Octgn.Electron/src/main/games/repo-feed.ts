@@ -34,6 +34,8 @@ export async function fetchManifest(
     if (!data.name) missing.push('name');
     if (!data.version) missing.push('version');
     if (!data.gamePath) missing.push('gamePath');
+    if (!data.description) missing.push('description');
+    if (!Array.isArray(data.authors) || data.authors.length === 0) missing.push('authors');
 
     if (missing.length > 0) {
       return { error: `Invalid manifest from ${owner}/${repo}: missing required fields: ${missing.join(', ')}` };
