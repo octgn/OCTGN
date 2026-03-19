@@ -86,6 +86,9 @@
     <Compile Include="DiscordIntegration\DiscordGameSdk\StoreManager.cs" />
     <Compile Include="EmptyPackage.cs" />
     <Compile Include="GameFeedManager.cs" />
+    <Compile Include="Models\FeedIndex.cs" />
+    <Compile Include="Models\GameManifest.cs" />
+    <Compile Include="RepoFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Messenger.cs" />
     <Compile Include="Play\GameMessageDispatcher.cs" />
@@ -143,6 +146,7 @@
       <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.Web.XmlTransform, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Xdt.3.1.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>

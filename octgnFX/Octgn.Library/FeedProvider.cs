@@ -75,6 +75,7 @@ namespace Octgn.Library
                 new NamedUrl("Community Games", Config.Instance.Paths.CommunityFeedPath, null, null),
                 new NamedUrl("The Spoils", Config.Instance.Paths.SpoilsFeedPath, null, null),
                 new NamedUrl("Local (Developers)", Config.Instance.Paths.LocalFeedPath, null, null),
+                new NamedUrl("OCTGN Community (GitHub)", "https://raw.githubusercontent.com/octgn/octgn-community-feed/main/index.json", null, null, FeedType.RepoIndex),
             };
         }
 
@@ -117,21 +118,30 @@ namespace Octgn.Library
                     .Replace( "\r", "" )
                     .Split( new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries )
                     .Where( x => !String.IsNullOrWhiteSpace( x.Trim() ) )
-                    .Select( x => x.Split( new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries ) )
+                    .Select( x => x.Split( new[] { (char)1 } ) )
                     .Select( x => {
-                        if( x.Length != 2 && x.Length != 4 )
-                            return null;
+                        // Legacy formats: 2 fields (name+url) or 4 fields (name+url+user+pass)
+                        // New format: 5 fields (name+url+user+pass+feedType)
                         if( x.Length == 2 ) {
                             return new NamedUrl( x[0].Trim(), x[1].Trim(), null, null );
                         }
                         if( x.Length == 4 ) {
                             return new NamedUrl( x[0].Trim(), x[1].Trim(), x[2].Trim(), x[3].Trim() );
                         }
+                        if( x.Length == 5 ) {
+                            FeedType feedType;
+                            if( !Enum.TryParse( x[4].Trim(), true, out feedType ) )
+                                feedType = FeedType.NuGet;
+                            return new NamedUrl( x[0].Trim(), x[1].Trim(), x[2].Trim(), x[3].Trim(), feedType );
+                        }
                         return null;
                     } )
                     .Where( x => x != null ).ToList();
 
-                lines.ForEach( line => line.Url = CorrectMyGetFeed( line.Url ) );
+                lines.ForEach( line => {
+                    if( line.FeedType == FeedType.NuGet && !string.IsNullOrEmpty( line.Url ) )
+                        line.Url = CorrectMyGetFeed( line.Url );
+                } );
 
                 return lines;
             }
@@ -141,14 +151,18 @@ namespace Octgn.Library
             List<NamedUrl> lines = feeds.ToList();
 
             // correct myGet URLS -- correct them both here before the check to make sure we don't get an http and https version of the same.
-            lines.ForEach( line => line.Url = CorrectMyGetFeed( line.Url ) );
+            lines.ForEach( line => {
+                if( line.FeedType == FeedType.NuGet && !string.IsNullOrEmpty( line.Url ) )
+                    line.Url = CorrectMyGetFeed( line.Url );
+            } );
 
             Stream stream = null;
             while( !X.Instance.File.OpenFile( Config.Instance.Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays( 1 ), out stream ) ) {
                 Thread.Sleep( 10 );
             }
             using( StreamWriter sr = new StreamWriter( stream ) ) {
-                lines.ForEach( line => sr.WriteLine( line.Name + (char)1 + line.Url + (char)1 + line.Username + (char)1 + line.Password ) );
+                lines.ForEach( line => sr.WriteLine(
+                    line.Name + (char)1 + line.Url + (char)1 + line.Username + (char)1 + line.Password + (char)1 + line.FeedType.ToString() ) );
             }
         }
 
