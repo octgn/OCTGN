@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Xml.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -217,10 +216,6 @@ namespace Octgn.Core
                 // Copy files
                 CopyDirectoryContents( gameSourcePath, destPath );
 
-                // OCTGN expects set directories to be named by GUID, but repos use human-readable names.
-                // Rename any set directory whose name doesn't match its set.xml id attribute.
-                RenameSetDirectoriesToGuids( destPath );
-
                 Log.InfoFormat( "Game {0} installed successfully from {1}/{2}", gameId, owner, repo );
             }
             catch( Exception ex )
@@ -259,53 +254,6 @@ namespace Octgn.Core
             {
                 var destSubDir = Path.Combine( destDir, Path.GetFileName( dir ) );
                 CopyDirectoryContents( dir, destSubDir );
-            }
-        }
-
-        /// <summary>
-        /// Renames set directories from human-readable names to their GUID (read from set.xml).
-        /// OCTGN's data layer expects GameDatabase/{gameId}/Sets/{setGuid}/set.xml.
-        /// Repos typically use GameDatabase/{gameId}/Sets/{SetName}/set.xml.
-        /// </summary>
-        internal static void RenameSetDirectoriesToGuids( string gameInstallPath )
-        {
-            var setsDir = Path.Combine( gameInstallPath, "Sets" );
-            if( !Directory.Exists( setsDir ) ) return;
-
-            foreach( var setDir in Directory.GetDirectories( setsDir ) )
-            {
-                var setXml = Path.Combine( setDir, "set.xml" );
-                if( !File.Exists( setXml ) ) continue;
-
-                try
-                {
-                    var doc = XDocument.Load( setXml );
-                    var idAttr = doc.Root?.Attribute( "id" );
-                    if( idAttr == null ) continue;
-
-                    var setId = idAttr.Value;
-                    var dirName = Path.GetFileName( setDir );
-
-                    // Already named by GUID — skip
-                    if( string.Equals( dirName, setId, StringComparison.OrdinalIgnoreCase ) ) continue;
-
-                    var targetDir = Path.Combine( setsDir, setId );
-                    if( Directory.Exists( targetDir ) )
-                    {
-                        Log.WarnFormat( "Set GUID directory already exists, merging: {0}", targetDir );
-                        CopyDirectoryContents( setDir, targetDir );
-                        Directory.Delete( setDir, true );
-                    }
-                    else
-                    {
-                        Directory.Move( setDir, targetDir );
-                    }
-                    Log.InfoFormat( "Renamed set directory '{0}' to '{1}'", dirName, setId );
-                }
-                catch( Exception ex )
-                {
-                    Log.WarnFormat( "Failed to rename set directory {0}: {1}", setDir, ex.Message );
-                }
             }
         }
     }
