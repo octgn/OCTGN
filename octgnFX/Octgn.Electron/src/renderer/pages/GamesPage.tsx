@@ -16,7 +16,7 @@ const GamesPage: React.FC = () => {
     installedGames, availableGames, feeds, installProgress,
     isLoadingInstalled, isLoadingAvailable,
     loadInstalled, fetchAvailable, install, uninstall,
-    loadFeeds, addFeed, removeFeed, setFeedEnabled,
+    loadFeeds, addFeed, addDirectRepo, addRepoFeed, removeFeed, setFeedEnabled,
   } = useDefinitionsStore();
 
   useEffect(() => {
@@ -148,7 +148,9 @@ const GamesPage: React.FC = () => {
                 feeds={feeds}
                 onToggle={setFeedEnabled}
                 onRemove={removeFeed}
-                onAdd={addFeed}
+                onAddNuget={addFeed}
+                onAddRepoFeed={addRepoFeed}
+                onAddDirectRepo={addDirectRepo}
                 onClose={() => setShowFeeds(false)}
               />
             </>
@@ -343,10 +345,16 @@ function GameCard({
 
       {/* Card footer */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-t border-octgn-border/20 bg-black/10">
-        <span className="text-[10px] text-octgn-text-dim flex-1">
-          v{game.version}
+        <span className="text-[10px] text-octgn-text-dim flex-1 flex items-center gap-1.5 flex-wrap">
+          <span>v{game.version}</span>
+          {game.sourceType === 'repo' && game.sourceInfo && (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-medium border border-emerald-500/20">
+              <GitHubMiniIcon />
+              {game.sourceInfo}
+            </span>
+          )}
           {game.downloadCount ? (
-            <> · <span className="text-octgn-text-dim">{formatCount(game.downloadCount)} downloads</span></>
+            <span className="text-octgn-text-dim">{formatCount(game.downloadCount)} dl</span>
           ) : null}
         </span>
 
@@ -394,34 +402,81 @@ function GameCard({
 
 /* ── Feeds Panel ───────────────────────────────────────────────────── */
 
+type AddFeedType = 'nuget' | 'github' | 'repo';
+
+const FEED_TYPE_BADGE: Record<string, { label: string; color: string; border: string; bg: string }> = {
+  'nuget': { label: 'NuGet', color: 'text-blue-400', border: 'border-blue-500/25', bg: 'bg-blue-500/10' },
+  'repo-index': { label: 'GitHub', color: 'text-emerald-400', border: 'border-emerald-500/25', bg: 'bg-emerald-500/10' },
+  'direct-repo': { label: 'Repo', color: 'text-amber-400', border: 'border-amber-500/25', bg: 'bg-amber-500/10' },
+};
+
+function FeedTypeBadge({ feedType }: { feedType: string }) {
+  const style = FEED_TYPE_BADGE[feedType] ?? FEED_TYPE_BADGE['nuget'];
+  return (
+    <span className={clsx('inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold border', style.color, style.border, style.bg)}>
+      {style.label}
+    </span>
+  );
+}
+
 function FeedsPanel({
-  feeds, onToggle, onRemove, onAdd, onClose,
+  feeds, onToggle, onRemove, onAddNuget, onAddRepoFeed, onAddDirectRepo, onClose,
 }: {
   feeds: GameFeed[];
   onToggle: (name: string, enabled: boolean) => void;
   onRemove: (name: string) => void;
-  onAdd: (name: string, url: string) => Promise<{ success: boolean; error?: string }>;
+  onAddNuget: (name: string, url: string) => Promise<{ success: boolean; error?: string }>;
+  onAddRepoFeed: (name: string, indexUrl: string) => Promise<{ success: boolean; error?: string }>;
+  onAddDirectRepo: (name: string, repoUrl: string, branch?: string) => Promise<{ success: boolean; error?: string }>;
   onClose: () => void;
 }) {
   const [addName, setAddName] = useState('');
   const [addUrl, setAddUrl] = useState('');
+  const [addBranch, setAddBranch] = useState('');
   const [addError, setAddError] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [addType, setAddType] = useState<AddFeedType>('nuget');
   const nameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (showAdd) nameRef.current?.focus();
   }, [showAdd]);
 
+  const resetAddForm = () => {
+    setAddName(''); setAddUrl(''); setAddBranch(''); setAddError(''); setShowAdd(false);
+  };
+
   const handleAdd = async () => {
-    if (!addName.trim() || !addUrl.trim()) { setAddError('Name and URL are required'); return; }
+    if (!addName.trim()) { setAddError('Name is required'); return; }
+    if (!addUrl.trim()) { setAddError('URL is required'); return; }
     setIsAdding(true); setAddError('');
-    const result = await onAdd(addName.trim(), addUrl.trim());
+
+    let result: { success: boolean; error?: string };
+    if (addType === 'nuget') {
+      result = await onAddNuget(addName.trim(), addUrl.trim());
+    } else if (addType === 'github') {
+      result = await onAddRepoFeed(addName.trim(), addUrl.trim());
+    } else {
+      result = await onAddDirectRepo(addName.trim(), addUrl.trim(), addBranch.trim() || undefined);
+    }
+
     setIsAdding(false);
-    if (result.success) { setAddName(''); setAddUrl(''); setShowAdd(false); }
+    if (result.success) resetAddForm();
     else setAddError(result.error ?? 'Failed to add feed');
   };
+
+  const urlPlaceholder = addType === 'nuget'
+    ? 'https://www.myget.org/F/myfeed/'
+    : addType === 'github'
+      ? 'https://raw.githubusercontent.com/org/repo/main/index.json'
+      : 'owner/repo or https://github.com/owner/repo';
+
+  const addTypeOptions: { key: AddFeedType; label: string }[] = [
+    { key: 'nuget', label: 'NuGet' },
+    { key: 'github', label: 'GitHub' },
+    { key: 'repo', label: 'Repo' },
+  ];
 
   return (
     <div className="relative z-20 w-72 shrink-0 flex flex-col border-l border-octgn-border/30 bg-octgn-bg/95 backdrop-blur-sm">
@@ -481,11 +536,14 @@ function FeedsPanel({
             </button>
 
             <div className="flex-1 min-w-0">
-              <p className={clsx('text-xs font-medium truncate', feed.enabled ? 'text-octgn-text' : 'text-octgn-text-dim')}>
-                {feed.name}
-              </p>
-              <p className="text-[10px] text-octgn-text-dim truncate">
-                {feed.isBuiltIn ? 'Built-in' : new URL(feed.url).hostname}
+              <div className="flex items-center gap-1.5">
+                <p className={clsx('text-xs font-medium truncate', feed.enabled ? 'text-octgn-text' : 'text-octgn-text-dim')}>
+                  {feed.name}
+                </p>
+                <FeedTypeBadge feedType={feed.feedType} />
+              </div>
+              <p className="text-[10px] text-octgn-text-dim truncate mt-0.5">
+                {feed.isBuiltIn ? 'Built-in' : (() => { try { return new URL(feed.url).hostname; } catch { return feed.url; } })()}
               </p>
             </div>
 
@@ -508,6 +566,24 @@ function FeedsPanel({
       <div className="p-3 border-t border-octgn-border/20">
         {showAdd ? (
           <div className="space-y-2">
+            {/* Feed type selector */}
+            <div className="flex gap-0.5 bg-octgn-surface rounded-lg p-0.5">
+              {addTypeOptions.map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => { setAddType(opt.key); setAddUrl(''); setAddBranch(''); setAddError(''); }}
+                  className={clsx(
+                    'flex-1 px-2 py-1.5 rounded-md text-[10px] font-semibold transition-all duration-150',
+                    addType === opt.key
+                      ? 'bg-octgn-primary/20 text-octgn-primary'
+                      : 'text-octgn-text-dim hover:text-octgn-text'
+                  )}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
             <input
               ref={nameRef}
               value={addName}
@@ -518,10 +594,19 @@ function FeedsPanel({
             <input
               value={addUrl}
               onChange={(e) => setAddUrl(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-              placeholder="https://www.myget.org/F/myfeed/"
+              onKeyDown={(e) => e.key === 'Enter' && addType !== 'repo' && handleAdd()}
+              placeholder={urlPlaceholder}
               className="w-full h-8 px-3 text-xs rounded-lg bg-octgn-surface border border-octgn-border/50 text-octgn-text placeholder-octgn-text-dim outline-none focus:border-octgn-primary/50 transition-all"
             />
+            {addType === 'repo' && (
+              <input
+                value={addBranch}
+                onChange={(e) => setAddBranch(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+                placeholder="Branch (default: main)"
+                className="w-full h-8 px-3 text-xs rounded-lg bg-octgn-surface border border-octgn-border/50 text-octgn-text placeholder-octgn-text-dim outline-none focus:border-octgn-primary/50 transition-all"
+              />
+            )}
             {addError && <p className="text-[10px] text-octgn-danger">{addError}</p>}
             <div className="flex gap-2">
               <button
@@ -529,10 +614,10 @@ function FeedsPanel({
                 disabled={isAdding}
                 className="flex-1 h-8 text-xs font-semibold rounded-lg bg-octgn-primary text-white hover:bg-octgn-primary/80 disabled:opacity-50 transition-all"
               >
-                {isAdding ? 'Adding…' : 'Add Feed'}
+                {isAdding ? 'Adding...' : addType === 'nuget' ? 'Add Feed' : addType === 'github' ? 'Add Index' : 'Add Repo'}
               </button>
               <button
-                onClick={() => { setShowAdd(false); setAddError(''); }}
+                onClick={resetAddForm}
                 className="h-8 px-3 text-xs rounded-lg text-octgn-text-muted hover:text-octgn-text hover:bg-white/5 transition-all"
               >
                 Cancel
@@ -646,6 +731,14 @@ function FeedsIcon() {
       <circle cx="3" cy="13" r="1.5" fill="currentColor" stroke="none" />
       <path d="M1.5 8.5A5 5 0 0 1 7.5 13.5" />
       <path d="M1.5 4A9.5 9.5 0 0 1 12 14.5" />
+    </svg>
+  );
+}
+
+function GitHubMiniIcon() {
+  return (
+    <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
     </svg>
   );
 }

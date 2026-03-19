@@ -17,8 +17,11 @@ interface DefinitionsState {
 
   loadFeeds: () => Promise<void>;
   addFeed: (name: string, url: string, username?: string, password?: string) => Promise<{ success: boolean; error?: string }>;
+  addDirectRepo: (name: string, repoUrl: string, branch?: string) => Promise<{ success: boolean; error?: string }>;
+  addRepoFeed: (name: string, indexUrl: string) => Promise<{ success: boolean; error?: string }>;
   removeFeed: (name: string) => Promise<void>;
   setFeedEnabled: (name: string, enabled: boolean) => Promise<void>;
+  installFromRepo: (owner: string, repo: string, branch: string, gamePath: string, gameId: string) => Promise<void>;
 }
 
 // Monotonically incrementing sequence number — only the latest fetch wins.
@@ -108,6 +111,18 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
       return result;
     },
 
+    addDirectRepo: async (name, repoUrl, branch) => {
+      const result = (await window.octgn.addDirectRepo(name, repoUrl, branch)) as { success: boolean; error?: string };
+      if (result.success) await get().loadFeeds();
+      return result;
+    },
+
+    addRepoFeed: async (name, indexUrl) => {
+      const result = (await window.octgn.addRepoFeed(name, indexUrl)) as { success: boolean; error?: string };
+      if (result.success) await get().loadFeeds();
+      return result;
+    },
+
     removeFeed: async (name) => {
       await window.octgn.removeFeed(name);
       await get().loadFeeds();
@@ -122,6 +137,16 @@ export const useDefinitionsStore = create<DefinitionsState>((set, get) => {
       await window.octgn.setFeedEnabled(name, enabled);
       // Re-fetch available games — race-safe because fetchAvailable uses a sequence counter
       get().fetchAvailable();
+    },
+
+    installFromRepo: async (owner, repo, branch, gamePath, gameId) => {
+      set((s) => ({
+        installProgress: {
+          ...s.installProgress,
+          [gameId]: { gameId, phase: 'downloading', percent: 0 },
+        },
+      }));
+      await window.octgn.installFromRepo(owner, repo, branch, gamePath, gameId);
     },
   };
 });
