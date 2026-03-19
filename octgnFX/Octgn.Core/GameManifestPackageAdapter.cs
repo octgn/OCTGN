@@ -50,7 +50,18 @@ namespace Octgn.Core
 
         public IEnumerable<string> Owners => Enumerable.Empty<string>();
 
-        public Uri IconUrl => null;
+        public Uri IconUrl
+        {
+            get
+            {
+                if( !string.IsNullOrWhiteSpace( Manifest.IconUrl ) )
+                {
+                    try { return new Uri( Manifest.IconUrl ); }
+                    catch { /* fall through */ }
+                }
+                return null;
+            }
+        }
 
         public Uri LicenseUrl => null;
 

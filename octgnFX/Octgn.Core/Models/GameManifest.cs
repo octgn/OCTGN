@@ -12,6 +12,7 @@ namespace Octgn.Core.Models
         public string GamePath { get; set; }
         public string[] Tags { get; set; }
         public string Changelog { get; set; }
+        public string IconUrl { get; set; }
 
         // Populated when fetched from a feed index
         public string RepoOwner { get; set; }

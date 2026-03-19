@@ -338,6 +338,7 @@ export interface GameManifest {
   minimumOctgnVersion?: string;
   tags?: string[];
   changelog?: string;
+  iconUrl?: string;
 }
 
 export interface FeedIndex {
