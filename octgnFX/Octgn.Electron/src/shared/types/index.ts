@@ -303,6 +303,8 @@ export interface GameFeed {
   isBuiltIn: boolean;
   username?: string;
   password?: string;
+  feedType: 'nuget' | 'repo-index' | 'direct-repo';
+  branch?: string;
 }
 
 export interface AvailableGame {
