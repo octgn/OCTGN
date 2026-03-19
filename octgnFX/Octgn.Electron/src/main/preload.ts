@@ -83,6 +83,7 @@ const api = {
     ipcRenderer.invoke(IPC_CHANNELS.GAMES_INSTALL, gameId, downloadUrl),
   uninstallGame: (gameId: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.GAMES_UNINSTALL, gameId),
+  checkForUpdates: () => ipcRenderer.invoke(IPC_CHANNELS.GAMES_CHECK_UPDATES),
   onInstallProgress: (callback: (progress: unknown) => void) => {
     const listener = (_event: unknown, data: unknown) => callback(data);
     ipcRenderer.on(IPC_CHANNELS.GAMES_INSTALL_PROGRESS, listener);

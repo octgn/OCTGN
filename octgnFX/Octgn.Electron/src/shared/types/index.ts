@@ -319,6 +319,8 @@ export interface AvailableGame {
   downloadCount?: number;
   sourceType?: 'repo' | 'nuget' | 'local';
   sourceInfo?: string;
+  versionDate?: string;
+  changelog?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -434,6 +436,9 @@ export const IPC_CHANNELS = {
   REPO_FEEDS_ADD_REPO: 'repo-feeds:add-repo',
   REPO_FEEDS_ADD_FEED: 'repo-feeds:add-feed',
   REPO_FEEDS_FETCH_MANIFEST: 'repo-feeds:fetch-manifest',
+
+  // Update checking
+  GAMES_CHECK_UPDATES: 'games:check-updates',
 
   // Repo-based game install
   GAMES_INSTALL_FROM_REPO: 'games:install-from-repo',

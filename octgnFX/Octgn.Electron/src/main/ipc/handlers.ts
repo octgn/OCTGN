@@ -13,6 +13,7 @@ import { fetchManifest, fetchFeedIndex, normalizeRepoUrl } from '../games/repo-f
 import { mergeWithLegacy } from '../games/source-resolver';
 import { installFromRepo } from '../games/repo-installer';
 import { constructZipballUrl } from '../games/repo-feed-types';
+import { checkForUpdates } from '../games/update-checker';
 import { saveCredentials, loadCredentials, clearCredentials } from '../auth/credential-store';
 import { setImageResolver } from '../asset-protocol';
 import { log, logError } from '../logger';
@@ -350,6 +351,14 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
       const repoIndexFeeds = feeds.filter(f => f.feedType === 'repo-index' && f.enabled);
       const directRepoFeeds = feeds.filter(f => f.feedType === 'direct-repo' && f.enabled);
 
+      log('GAMES', `Fetching from ${nugetFeeds.length} NuGet, ${repoIndexFeeds.length} repo index, ${directRepoFeeds.length} direct repo feeds`);
+      if (repoIndexFeeds.length > 0) {
+        log('GAMES', `Repo index feeds: ${repoIndexFeeds.map(f => f.name).join(', ')}`);
+      }
+      if (directRepoFeeds.length > 0) {
+        log('GAMES', `Direct repo feeds: ${directRepoFeeds.map(f => f.name).join(', ')}`);
+      }
+
       // Fetch from all sources in parallel
       const settledResults = await Promise.allSettled([
         fetchAvailableGames(nugetFeeds),
@@ -442,6 +451,109 @@ export function setupIpcHandlers(ipcMain: IpcMain): void {
 
   ipcMain.handle(IPC_CHANNELS.GAMES_UNINSTALL, async (_event, gameId: string) => {
     return uninstallGame(gameId);
+  });
+
+  // Update checking
+  ipcMain.handle(IPC_CHANNELS.GAMES_CHECK_UPDATES, async () => {
+    try {
+      log('UPDATES', 'Checking for game updates...');
+      const installed = await listInstalledGames();
+      log('UPDATES', `Found ${installed.length} installed games`);
+
+      const feeds = await listFeeds();
+
+      // Split feeds by type
+      const nugetFeeds = feeds.filter(f => (f.feedType === 'nuget' || !f.feedType) && f.enabled);
+      const repoIndexFeeds = feeds.filter(f => f.feedType === 'repo-index' && f.enabled);
+      const directRepoFeeds = feeds.filter(f => f.feedType === 'direct-repo' && f.enabled);
+
+      log('UPDATES', `Fetching from ${nugetFeeds.length} NuGet, ${repoIndexFeeds.length} repo index, ${directRepoFeeds.length} direct repo feeds`);
+      if (repoIndexFeeds.length > 0) {
+        log('UPDATES', `Repo index feeds: ${repoIndexFeeds.map(f => f.name).join(', ')}`);
+      }
+      if (directRepoFeeds.length > 0) {
+        log('UPDATES', `Direct repo feeds: ${directRepoFeeds.map(f => f.name).join(', ')}`);
+      }
+
+      // Fetch from all sources in parallel
+      const settledResults = await Promise.allSettled([
+        fetchAvailableGames(nugetFeeds),
+        ...repoIndexFeeds.map(f => fetchFeedIndex(f.url)),
+        ...directRepoFeeds.map(f => {
+          const { owner, repo } = normalizeRepoUrl(f.url);
+          return fetchManifest(owner, repo, f.branch || 'main');
+        }),
+      ]);
+
+      // Extract NuGet games
+      const nugetResult = settledResults[0];
+      const nugetGames = nugetResult.status === 'fulfilled' ? nugetResult.value : [];
+      if (nugetResult.status === 'rejected') {
+        logError('UPDATES', `NuGet fetch failed: ${nugetResult.reason}`);
+      }
+
+      // Collect repo games from feed index results
+      const repoGames: import('../../shared/types').AvailableGame[] = [];
+      const repoOffset = 1;
+      for (let i = 0; i < repoIndexFeeds.length; i++) {
+        const result = settledResults[repoOffset + i];
+        if (result.status === 'fulfilled') {
+          const feedResult = result.value as { games: import('../../shared/types').AvailableGame[]; errors: string[] };
+          repoGames.push(...feedResult.games);
+          for (const err of feedResult.errors) {
+            log('UPDATES', `Repo index warning (${repoIndexFeeds[i].name}): ${err}`);
+          }
+        } else {
+          logError('UPDATES', `Repo index feed "${repoIndexFeeds[i].name}" failed: ${result.reason}`);
+        }
+      }
+
+      // Collect repo games from direct repo results
+      const directOffset = repoOffset + repoIndexFeeds.length;
+      for (let i = 0; i < directRepoFeeds.length; i++) {
+        const result = settledResults[directOffset + i];
+        if (result.status === 'fulfilled') {
+          const manifestResult = result.value as { manifest?: import('../../shared/types').GameManifest; error?: string };
+          if (manifestResult.manifest) {
+            const m = manifestResult.manifest;
+            const feed = directRepoFeeds[i];
+            const { owner, repo } = normalizeRepoUrl(feed.url);
+            repoGames.push({
+              id: m.guid,
+              name: m.name,
+              version: m.version,
+              description: m.description,
+              authors: m.authors.join(', '),
+              tags: (m.tags || []).join(' '),
+              downloadUrl: constructZipballUrl(owner, repo, feed.branch || 'main'),
+              sourceType: 'repo',
+              sourceInfo: `${owner}/${repo}`,
+            });
+          } else if (manifestResult.error) {
+            log('UPDATES', `Direct repo "${directRepoFeeds[i].name}" warning: ${manifestResult.error}`);
+          }
+        } else {
+          logError('UPDATES', `Direct repo "${directRepoFeeds[i].name}" failed: ${result.reason}`);
+        }
+      }
+
+      // Merge repo games with NuGet games (repo takes priority for same GUID)
+      const merged = repoGames.length > 0
+        ? mergeWithLegacy(repoGames, nugetGames)
+        : nugetGames;
+
+      log('UPDATES', `Available: ${merged.length} games (${repoGames.length} repo + ${nugetGames.length} nuget)`);
+
+      const updates = checkForUpdates(installed, merged);
+      log('UPDATES', `Found ${updates.length} game update(s)`);
+      for (const u of updates) {
+        log('UPDATES', `  ${u.gameName}: ${u.installedVersion} → ${u.availableVersion} [${u.sourceType}]`);
+      }
+      return updates;
+    } catch (err) {
+      logError('UPDATES', err);
+      throw err;
+    }
   });
 
   // Repo-based game install
