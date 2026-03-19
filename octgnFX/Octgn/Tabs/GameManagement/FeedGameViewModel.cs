@@ -61,9 +61,8 @@
         {
             get
             {
-                return Package == null
-                           ? new Uri("pack://application:,,,/Octgn;Component/Resources/FileIcons/Game.ico")
-                           : Package.IconUrl;
+                return Package?.IconUrl
+                           ?? new Uri("pack://application:,,,/Octgn;Component/Resources/FileIcons/Game.ico");
             }
         }
         public String Authors
