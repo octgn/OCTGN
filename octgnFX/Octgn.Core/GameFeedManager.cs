@@ -321,6 +321,12 @@ namespace Octgn.Core
                     Log.Info( "Getting packages for null NamedUrl" );
                     return new List<IPackage>();
                 }
+                // Only NuGet feeds can be queried via PackageRepositoryFactory.
+                // Repo-index and direct-repo feeds are handled by RepoFeedManager.
+                if( url.FeedType != FeedType.NuGet ) {
+                    Log.InfoFormat( "Skipping non-NuGet feed {0}:{1} (type={2})", url.Name, url.Url, url.FeedType );
+                    return new List<IPackage>();
+                }
                 Log.InfoFormat( "Getting packages for feed {0}:{1}", url.Name, url.Url );
                 var ret = new List<IPackage>();
                 ret = PackageRepositoryFactory.Default.CreateRepository( url.Url ).GetPackages().ToList();

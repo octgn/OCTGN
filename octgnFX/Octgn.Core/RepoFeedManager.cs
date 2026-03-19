@@ -23,15 +23,23 @@ namespace Octgn.Core
 
         private static readonly HttpClient _httpClient;
 
+        private static readonly HttpClient _apiClient;
+
         static RepoFeedManager()
         {
             // .NET 4.7 defaults to older TLS; GitHub requires TLS 1.2+
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
+            // General client for raw content (manifests, feed indexes)
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.UserAgent.Add(
                 new ProductInfoHeaderValue( "OCTGN", "1.0" ) );
-            _httpClient.DefaultRequestHeaders.Accept.Add(
+
+            // API client with GitHub API accept header (for zipball downloads)
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.UserAgent.Add(
+                new ProductInfoHeaderValue( "OCTGN", "1.0" ) );
+            _apiClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue( "application/vnd.github+json" ) );
         }
 
@@ -170,8 +178,8 @@ namespace Octgn.Core
 
             try
             {
-                // Download the zipball
-                using( var response = await _httpClient.GetAsync( zipUrl, HttpCompletionOption.ResponseHeadersRead ).ConfigureAwait( false ) )
+                // Download the zipball (use API client with GitHub Accept header)
+                using( var response = await _apiClient.GetAsync( zipUrl, HttpCompletionOption.ResponseHeadersRead ).ConfigureAwait( false ) )
                 {
                     response.EnsureSuccessStatusCode();
                     using( var fs = new FileStream( tempZip, FileMode.Create, FileAccess.Write, FileShare.None ) )
