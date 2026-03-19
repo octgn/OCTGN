@@ -315,6 +315,45 @@ export interface AvailableGame {
   downloadUrl: string;
   iconUrl?: string;
   downloadCount?: number;
+  sourceType?: 'repo' | 'nuget' | 'local';
+  sourceInfo?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Repo-based game distribution types (shared between main & renderer)
+// ---------------------------------------------------------------------------
+
+export interface GameManifest {
+  guid: string;
+  name: string;
+  version: string;
+  versionDate: string;
+  description: string;
+  authors: string[];
+  gamePath: string;
+  minimumOctgnVersion?: string;
+  tags?: string[];
+  changelog?: string;
+}
+
+export interface FeedIndex {
+  name: string;
+  games: FeedGameEntry[];
+}
+
+export interface FeedGameEntry {
+  guid: string;
+  name: string;
+  repo: string;
+  branch: string;
+  manifestPath?: string;
+}
+
+export interface RepoGameSource {
+  sourceType: 'repo' | 'nuget' | 'local';
+  sourceName: string;
+  repoUrl?: string;
+  branch?: string;
 }
 
 export interface InstallProgress {
@@ -388,4 +427,13 @@ export const IPC_CHANNELS = {
 
   // Game window management
   CLOSE_GAME_WINDOW: 'app:close-game-window',
+
+  // Repo-based feeds
+  REPO_FEEDS_LIST_SOURCES: 'repo-feeds:list-sources',
+  REPO_FEEDS_ADD_REPO: 'repo-feeds:add-repo',
+  REPO_FEEDS_ADD_FEED: 'repo-feeds:add-feed',
+  REPO_FEEDS_REMOVE_SOURCE: 'repo-feeds:remove-source',
+  REPO_FEEDS_SET_ENABLED: 'repo-feeds:set-enabled',
+  REPO_FEEDS_REFRESH: 'repo-feeds:refresh',
+  REPO_FEEDS_LIST_AVAILABLE: 'repo-feeds:list-available',
 } as const;
