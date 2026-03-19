@@ -133,7 +133,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" Style="{StaticResource Title}" FontSize="17"/>
-                        <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
+                        <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id,Mode=OneWay}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
                         <TextBlock Text="Game Site" Style="{StaticResource Url}" PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}"/>
                     </StackPanel>
                 </Border>
