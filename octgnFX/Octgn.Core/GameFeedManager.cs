@@ -542,6 +542,9 @@ namespace Octgn.Core
 
             onProgressUpdate( 1, 1 );
             Log.InfoFormat( "Repo game {0} ({1}) installed successfully", manifest.Name, manifest.Guid );
+
+            // Notify the game manager so the UI refreshes (matches NuGet install behavior)
+            DataManagers.GameManager.Get().FireGameListChanged();
         }
 
         /// <summary>

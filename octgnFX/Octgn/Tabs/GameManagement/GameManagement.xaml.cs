@@ -346,9 +346,9 @@ namespace Octgn.Tabs.GameManagement
 			installuninstallprocessing = true;
 			try {
 				var button = e.Source as Button;
-				if(button == null || button.DataContext == null) return;
+				if(button == null || button.DataContext == null) { installuninstallprocessing = false; return; }
 				var model = button.DataContext as FeedGameViewModel;
-				if(model == null) return;
+				if(model == null) { installuninstallprocessing = false; return; }
 				if(model.Installed) {
 					var game = GameManager.Get().GetById( model.Id );
 					if(game != null) {
