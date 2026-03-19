@@ -2,45 +2,15 @@
  * Types and validation for GitHub repo-based game distribution.
  *
  * Defines:
- * - GameManifest schema (octgn-manifest.json)
- * - FeedIndex schema (index.json)
  * - GameSource model with priority-based source types
  * - Validation and URL construction helpers
+ *
+ * Core types (GameManifest, FeedIndex, FeedGameEntry, RepoGameSource)
+ * are defined in shared/types and re-exported here for convenience.
  */
 
-// ---------------------------------------------------------------------------
-// Game Manifest — lives in each game repo as octgn-manifest.json
-// ---------------------------------------------------------------------------
-
-export interface GameManifest {
-  guid: string;
-  name: string;
-  version: string;
-  versionDate: string;
-  description: string;
-  authors: string[];
-  gamePath: string;
-  minimumOctgnVersion?: string;
-  tags?: string[];
-  changelog?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Feed Index — lives in a feed repo as index.json
-// ---------------------------------------------------------------------------
-
-export interface FeedIndex {
-  name: string;
-  games: FeedGameEntry[];
-}
-
-export interface FeedGameEntry {
-  guid: string;
-  name: string;
-  repo: string;
-  branch: string;
-  manifestPath?: string;
-}
+// Re-export shared types so existing imports from this module still work
+export type { GameManifest, FeedIndex, FeedGameEntry, RepoGameSource } from '../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Internal source model — unified across all distribution types
@@ -97,17 +67,6 @@ export type GameSource =
   | UserFeedSource
   | BuiltInFeedSource
   | LegacyNuGetSource;
-
-// ---------------------------------------------------------------------------
-// Renderer-facing source info (safe to expose via IPC)
-// ---------------------------------------------------------------------------
-
-export interface RepoGameSource {
-  sourceType: 'repo' | 'nuget' | 'local';
-  sourceName: string;
-  repoUrl?: string;
-  branch?: string;
-}
 
 // ---------------------------------------------------------------------------
 // Validation helpers

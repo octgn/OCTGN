@@ -431,13 +431,8 @@ export const IPC_CHANNELS = {
   CLOSE_GAME_WINDOW: 'app:close-game-window',
 
   // Repo-based feeds
-  REPO_FEEDS_LIST_SOURCES: 'repo-feeds:list-sources',
   REPO_FEEDS_ADD_REPO: 'repo-feeds:add-repo',
   REPO_FEEDS_ADD_FEED: 'repo-feeds:add-feed',
-  REPO_FEEDS_REMOVE_SOURCE: 'repo-feeds:remove-source',
-  REPO_FEEDS_SET_ENABLED: 'repo-feeds:set-enabled',
-  REPO_FEEDS_REFRESH: 'repo-feeds:refresh',
-  REPO_FEEDS_LIST_AVAILABLE: 'repo-feeds:list-available',
   REPO_FEEDS_FETCH_MANIFEST: 'repo-feeds:fetch-manifest',
 
   // Repo-based game install
