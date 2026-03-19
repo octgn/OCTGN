@@ -108,6 +108,16 @@ const api = {
   removeFeed: (name: string) => ipcRenderer.invoke(IPC_CHANNELS.FEEDS_REMOVE, name),
   setFeedEnabled: (name: string, enabled: boolean) =>
     ipcRenderer.invoke(IPC_CHANNELS.FEEDS_SET_ENABLED, name, enabled),
+
+  // Repo feeds
+  addDirectRepo: (name: string, repoUrl: string, branch?: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPO_FEEDS_ADD_REPO, name, repoUrl, branch),
+  addRepoFeed: (name: string, indexUrl: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPO_FEEDS_ADD_FEED, name, indexUrl),
+  fetchManifest: (owner: string, repo: string, branch: string, manifestPath?: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPO_FEEDS_FETCH_MANIFEST, owner, repo, branch, manifestPath),
+  installFromRepo: (owner: string, repo: string, branch: string, gamePath: string, gameId: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GAMES_INSTALL_FROM_REPO, owner, repo, branch, gamePath, gameId),
 };
 
 contextBridge.exposeInMainWorld('octgn', api);

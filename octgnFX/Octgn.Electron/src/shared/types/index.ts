@@ -438,4 +438,8 @@ export const IPC_CHANNELS = {
   REPO_FEEDS_SET_ENABLED: 'repo-feeds:set-enabled',
   REPO_FEEDS_REFRESH: 'repo-feeds:refresh',
   REPO_FEEDS_LIST_AVAILABLE: 'repo-feeds:list-available',
+  REPO_FEEDS_FETCH_MANIFEST: 'repo-feeds:fetch-manifest',
+
+  // Repo-based game install
+  GAMES_INSTALL_FROM_REPO: 'games:install-from-repo',
 } as const;
