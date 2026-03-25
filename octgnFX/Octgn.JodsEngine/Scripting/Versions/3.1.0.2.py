@@ -447,7 +447,8 @@ class Group(NamedObject):
 	def removeViewer(self, player): _api.GroupRemoveViewer(self._id, player._id)
 	@property
 	def controller(self):
-		return Player(_api.GroupController(self._id))
+		cid = _api.GroupController(self._id)
+		return Player(cid) if cid != -1 else None
 	@controller.setter
 	def controller(self, player):
 		_api.GroupSetController(self._id, player._id)
