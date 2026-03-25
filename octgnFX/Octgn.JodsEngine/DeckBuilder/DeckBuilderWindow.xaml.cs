@@ -1396,22 +1396,27 @@ namespace Octgn.DeckBuilder
         }
         private static void SortDataGrid(DataGrid dataGrid, int columnIndex = 0, ListSortDirection sortDirection = ListSortDirection.Ascending)
         {
-            dataGrid.Items.SortDescriptions.Clear();
-
-            foreach (var col in dataGrid.Columns)
+            // Defer sorting to avoid InvalidOperationException when called during
+            // an AddNew or EditItem transaction on the DataGrid's item collection.
+            dataGrid.Dispatcher.BeginInvoke(new Action(() =>
             {
-                col.SortDirection = null;
-            }
+                dataGrid.Items.SortDescriptions.Clear();
 
-            if (columnIndex != -1) // -1 clears any existing sort
-            {
-                var column = dataGrid.Columns[columnIndex];
+                foreach (var col in dataGrid.Columns)
+                {
+                    col.SortDirection = null;
+                }
 
-                dataGrid.Items.SortDescriptions.Add(new SortDescription(column.SortMemberPath, sortDirection));
-                column.SortDirection = sortDirection;
-            }
+                if (columnIndex != -1) // -1 clears any existing sort
+                {
+                    var column = dataGrid.Columns[columnIndex];
 
-            dataGrid.Items.Refresh();
+                    dataGrid.Items.SortDescriptions.Add(new SortDescription(column.SortMemberPath, sortDirection));
+                    column.SortDirection = sortDirection;
+                }
+
+                dataGrid.Items.Refresh();
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
