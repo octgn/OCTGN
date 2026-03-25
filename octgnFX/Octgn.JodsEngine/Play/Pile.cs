@@ -152,6 +152,7 @@ namespace Octgn.Play
                     continue;
                 }
                 cur.SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
+                cur.PeekingPlayers.Clear();
             }
             if (broke)
             {
@@ -179,6 +180,11 @@ namespace Octgn.Play
                 Card temp = cards[r];
                 cards[r] = cards[i];
                 cards[i] = temp;
+            }
+            // Clear peeks on all cards after shuffling
+            foreach (var card in cards)
+            {
+                card.PeekingPlayers.Clear();
             }
             OnShuffled();
         }
