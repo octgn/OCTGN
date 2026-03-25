@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -10,6 +11,10 @@ namespace Octgn.Launcher
 
         [STAThread]
         static void Main() {
+            // Fix #1765: Use invariant culture to avoid issues with non-standard regional settings
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
             Log.Info("Starting");
 
             CancellationTokenSource cts = null;
