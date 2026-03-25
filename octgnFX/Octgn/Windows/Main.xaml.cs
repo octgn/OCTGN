@@ -26,6 +26,8 @@ namespace Octgn.Windows
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private bool _isClosing = false;
+
         public ConnectionStatus ConnectionStatus => Program.LobbyClient.Status;
 
         /// <summary>
@@ -55,6 +57,7 @@ namespace Octgn.Windows
         private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
             try {
+                if (_isClosing) return;
                 OnPropertyChanged(nameof(ConnectionStatus));
 
                 await Dispatcher.InvokeAsync(async ()=> {
@@ -69,6 +72,7 @@ namespace Octgn.Windows
         private async void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
         {
             try {
+                if (_isClosing) return;
                 OnPropertyChanged(nameof(ConnectionStatus));
 
                 await Dispatcher.InvokeAsync(() => {
@@ -81,6 +85,7 @@ namespace Octgn.Windows
 
         private async void LobbyClient_Connecting(object sender, ConnectingEventArgs e) {
             try {
+                if (_isClosing) return;
                 OnPropertyChanged(nameof(ConnectionStatus));
 
                 await Dispatcher.InvokeAsync(() => {
@@ -155,6 +160,7 @@ namespace Octgn.Windows
         /// </param>
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
+            _isClosing = true;
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Connecting -= LobbyClient_Connecting;
