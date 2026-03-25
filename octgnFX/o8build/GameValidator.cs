@@ -467,9 +467,19 @@
 
             if (game.card.property != null && game.card.property.Any())
             {
+                var reservedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "name", "id", "alternate", "size", "type", "set"
+                };
+
                 List<string> props = new List<string>();
                 foreach (var prop in game.card.property)
                 {
+                    if (reservedNames.Contains(prop.name))
+                    {
+                        throw new UserMessageException("Property '{0}' is a reserved name and cannot be used in file: {1}", prop.name, Path.Combine(Directory.FullName, "defintion.xml"));
+                    }
+
                     if (!props.Contains(prop.name))
                     {
                         props.Add(prop.name);
