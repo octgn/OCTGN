@@ -40,6 +40,7 @@ namespace Octgn.DeckBuilder
         private Game _game;
         private ObservableSection _section;
         private bool _unsaved;
+        private bool _isLoading;
         private string selection = null;
         private Guid set_id;
 
@@ -102,20 +103,29 @@ namespace Octgn.DeckBuilder
         {
             if (deck != null)
             {
-                if (deck is MetaDeck)
+                _isLoading = true;
+                try
                 {
-                    this._deckFilename = (deck as MetaDeck).Path;
+                    if (deck is MetaDeck)
+                    {
+                        this._deckFilename = (deck as MetaDeck).Path;
+                    }
+                    var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
+                    if (g != null)
+                    {
+                        Game = g;
+                        Deck = deck.AsObservable();
+                        SleeveImage = deck.Sleeve.GetImage();
+                    }
+                    else
+                    {
+                        TopMostMessageBox.Show($"The game required by the deck is not installed. Please install it first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-                var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
-                if (g != null)
+                finally
                 {
-                    Game = g;
-                    Deck = deck.AsObservable();
-                    SleeveImage = deck.Sleeve.GetImage();
-                }
-                else
-                {
-                    TopMostMessageBox.Show($"The game required by the deck is not installed. Please install it first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _isLoading = false;
+                    _unsaved = false;
                 }
             }
         }
@@ -1314,6 +1324,7 @@ namespace Octgn.DeckBuilder
 
         private void NotesTextChanged(object sender, TextChangedEventArgs e)
         {
+            if (_isLoading) return;
             _unsaved = true;
             Deck.Notes = (sender as TextBox).Text;
         }
