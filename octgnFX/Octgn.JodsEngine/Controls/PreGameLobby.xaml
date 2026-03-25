@@ -93,7 +93,6 @@
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">
                                     <Binding Path="Name" />
-                                    <!--<Binding Path="DisconnectPercent" />-->
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>

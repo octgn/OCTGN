@@ -155,18 +155,6 @@
                     <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </WrapPanel.Resources>
-            <Border>
-                <Grid>
-                    <TextBlock Text="DC Percent" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#66808080"/>
-                    <TextBlock FontSize="24" Foreground="Yellow" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0}%">
-                                <Binding Path="Model.DisconnectPercent" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                </Grid>
-            </Border>
             <Border Visibility="{Binding Path=Model.IsSubscribed,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid>
                     <TextBlock Text="Subscription" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#66808080"/>
