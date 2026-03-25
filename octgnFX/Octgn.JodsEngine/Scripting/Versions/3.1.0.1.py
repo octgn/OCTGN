@@ -371,8 +371,12 @@ class Table(Group):
 class Pile(Group):
   def __init__(self, id, name, player):
     Group.__init__(self, id, name, player)
-  def top(self, count = None): return self[0] if count == None else self[:count]
-  def bottom(self, count = None): return self[-1] if count == None else self[-count:]
+  def top(self, count = None):
+    if len(self) == 0: return None
+    return self[0] if count == None else self[:count]
+  def bottom(self, count = None):
+    if len(self) == 0: return None
+    return self[-1] if count == None else self[-count:]
   def shuffle(self): _api.GroupShuffle(self._id)
   @property
   def collapsed(self): return _api.GroupGetCollapsed(self._id)
