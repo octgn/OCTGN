@@ -1259,7 +1259,7 @@ namespace Octgn.DeckBuilder
         private void LoadSearchClick(object sender, RoutedEventArgs e)
         {
             var submodule = SubscriptionModule.Get();
-            if ((submodule.IsSubscribed ?? false) == false)
+            if (submodule == null || (submodule.IsSubscribed ?? false) == false)
             {
                 var res =
                     TopMostMessageBox.Show(
@@ -1270,10 +1270,14 @@ namespace Octgn.DeckBuilder
                         MessageBoxImage.Exclamation);
                 if (res == MessageBoxResult.Yes)
                 {
-                    var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
-                    if (url != null)
+                    var sm = SubscriptionModule.Get();
+                    if (sm != null)
                     {
-                        Program.LaunchUrl(url);
+                        var url = sm.GetSubscribeUrl(new SubType() { Description = "", Name = "" });
+                        if (url != null)
+                        {
+                            Program.LaunchUrl(url);
+                        }
                     }
                 }
                 return;
