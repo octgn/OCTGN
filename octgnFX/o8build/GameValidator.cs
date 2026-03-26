@@ -477,7 +477,7 @@
                 {
                     if (reservedNames.Contains(prop.name))
                     {
-                        throw new UserMessageException("Property '{0}' is a reserved name and cannot be used in file: {1}", prop.name, Path.Combine(Directory.FullName, "defintion.xml"));
+                        throw new UserMessageException("Property '{0}' is a reserved name and cannot be used in file: {1}", prop.name, Path.Combine(Directory.FullName, "definition.xml"));
                     }
 
                     if (!props.Contains(prop.name))
@@ -486,7 +486,7 @@
                     }
                     else
                     {
-                        throw new UserMessageException("Duplicate property defined named {0} in file: {1}", prop.name, Path.Combine(Directory.FullName, "defintion.xml"));
+                        throw new UserMessageException("Duplicate property defined named {0} in file: {1}", prop.name, Path.Combine(Directory.FullName, "definition.xml"));
                     }
                 }
                 props.Clear();
