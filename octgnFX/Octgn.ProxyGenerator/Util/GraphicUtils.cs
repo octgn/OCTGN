@@ -57,14 +57,26 @@ namespace Octgn.ProxyGenerator.Util
             {
                 using (Matrix matrix = new Matrix())
                 {
-
                     matrix.Scale(-1, 1, MatrixOrder.Append);
                     path.Transform(matrix);
                 }
                 using (Matrix matrix = new Matrix())
                 {
                     float min = path.PathPoints.Min(p => p.X);
-                    matrix.Translate(((-min)+section.location.x), 0);
+                    // Calculate proper translation based on horizontal alignment
+                    float translateX = -min + section.location.x;
+                    if (section.wordwrap != null && section.wordwrap.align != null)
+                    {
+                        if (section.wordwrap.align == "center")
+                        {
+                            translateX = -min + (section.location.x + section.wordwrap.width / 2);
+                        }
+                        else if (section.wordwrap.align == "far")
+                        {
+                            translateX = -min + (section.location.x + section.wordwrap.width);
+                        }
+                    }
+                    matrix.Translate(translateX, 0);
                     path.Transform(matrix);
                 }
             }
