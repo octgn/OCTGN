@@ -12,6 +12,8 @@ namespace Octgn.DataNew.Entities
         public string Id { get; set; }
         public string Name { get; set; }
         public string Source { get; set; }
+        public bool ShowCount { get; set; }
+        public bool CanDrag { get; set; }
 
         public string ModelString()
         {
@@ -35,6 +37,8 @@ namespace Octgn.DataNew.Entities
             ret.Id = this.Id;
             ret.Name = this.Name.Clone() as string;
             ret.Source = Source;
+            ret.ShowCount = ShowCount;
+            ret.CanDrag = CanDrag;
             return ret;
         }
     }
