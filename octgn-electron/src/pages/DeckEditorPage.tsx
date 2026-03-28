@@ -44,10 +44,6 @@ export default function DeckEditorPage() {
   // Recent decks
   const [recentDecks, setRecentDecks] = useState<Array<{ name: string; path: string }>>([]);
 
-  // Sort mode for card database
-  type SortMode = 'alphabetical' | 'releaseDate';
-  const [sortMode, setSortMode] = useState<SortMode>('alphabetical');
-
   // Load installed games and select first
   useEffect(() => {
     if (installedGames.length > 0 && !selectedGameId) {
@@ -106,50 +102,17 @@ export default function DeckEditorPage() {
     loadRecentDecks();
   }, []);
 
-  // Search and sort cards
+  // Search cards
   const filteredCards = useMemo(() => {
-    let cards = cardDatabase;
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      cards = cards.filter(
-        (card) =>
-          card.name.toLowerCase().includes(term) ||
-          card.set.toLowerCase().includes(term) ||
-          Object.values(card.properties).some((v) => v.toLowerCase().includes(term))
-      );
-    }
-
-    if (sortMode === 'releaseDate') {
-      // Sort by set name first to group, then by card name within each set
-      // Sets are ordered alphabetically (release date ordering happens at display time
-      // since CardDatabaseCard doesn't carry set-level releaseDate — that lives in SetInfo).
-      // For the card-level view, we group by set name.
-      cards = [...cards].sort((a, b) => {
-        const setCompare = a.set.localeCompare(b.set);
-        if (setCompare !== 0) return setCompare;
-        return a.name.localeCompare(b.name);
-      });
-    } else {
-      // Alphabetical by card name
-      cards = [...cards].sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    // Limit to 20 results when no search term
-    if (!searchTerm.trim()) return cards.slice(0, 20);
-    return cards;
-  }, [cardDatabase, searchTerm, sortMode]);
-
-  // Group cards by set when sorting by release date (for visual separators)
-  const groupedCards = useMemo(() => {
-    if (sortMode !== 'releaseDate') return null;
-    const groups = new Map<string, typeof filteredCards>();
-    for (const card of filteredCards) {
-      const existing = groups.get(card.set) || [];
-      existing.push(card);
-      groups.set(card.set, existing);
-    }
-    return groups;
-  }, [filteredCards, sortMode]);
+    if (!searchTerm.trim()) return cardDatabase.slice(0, 20);
+    const term = searchTerm.toLowerCase();
+    return cardDatabase.filter(
+      (card) =>
+        card.name.toLowerCase().includes(term) ||
+        card.set.toLowerCase().includes(term) ||
+        Object.values(card.properties).some((v) => v.toLowerCase().includes(term))
+    );
+  }, [cardDatabase, searchTerm]);
 
   // Calculate totals
   const sectionTotals = useMemo(() => {
@@ -378,31 +341,6 @@ export default function DeckEditorPage() {
           />
         </div>
 
-        {/* Sort Toggle */}
-        <div className="px-4 pt-3 pb-2 border-b border-octgn-accent flex items-center gap-2">
-          <span className="text-xs text-gray-400 whitespace-nowrap">Sort:</span>
-          <button
-            onClick={() => setSortMode('alphabetical')}
-            className={`text-xs px-2 py-1 rounded transition-colors ${
-              sortMode === 'alphabetical'
-                ? 'bg-octgn-highlight text-white'
-                : 'bg-octgn-accent/50 text-gray-300 hover:bg-octgn-accent'
-            }`}
-          >
-            A-Z
-          </button>
-          <button
-            onClick={() => setSortMode('releaseDate')}
-            className={`text-xs px-2 py-1 rounded transition-colors ${
-              sortMode === 'releaseDate'
-                ? 'bg-octgn-highlight text-white'
-                : 'bg-octgn-accent/50 text-gray-300 hover:bg-octgn-accent'
-            }`}
-          >
-            By Set
-          </button>
-        </div>
-
         {/* Card List */}
         <div className="flex-1 overflow-y-auto p-2">
           {databaseLoading ? (
@@ -413,46 +351,7 @@ export default function DeckEditorPage() {
             </div>
           ) : filteredCards.length === 0 ? (
             <div className="text-center py-8 text-gray-400">No cards found</div>
-          ) : groupedCards ? (
-            // Grouped by set (release date sort mode)
-            <div className="space-y-1">
-              {Array.from(groupedCards.entries()).map(([setName, cards]) => (
-                <div key={setName}>
-                  <div className="px-2 py-1 text-xs font-semibold text-octgn-highlight bg-octgn-accent/30 rounded mt-2 mb-1 sticky top-0">
-                    {setName}
-                    <span className="text-gray-500 ml-2 font-normal">({cards.length})</span>
-                  </div>
-                  {cards.map((card) => (
-                    <div
-                      key={card.id}
-                      className="flex items-center justify-between p-2 rounded hover:bg-octgn-accent/50 cursor-pointer group"
-                      onClick={() => addCard(card)}
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        setZoomCard(card);
-                      }}
-                    >
-                      <div>
-                        <p className="text-white text-sm">{card.name}</p>
-                      </div>
-                      <div className="opacity-0 group-hover:opacity-100 flex space-x-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            addCard(card, 4);
-                          }}
-                          className="px-2 py-1 bg-octgn-highlight rounded text-xs text-white"
-                        >
-                          +4
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
           ) : (
-            // Flat alphabetical list (default)
             <div className="space-y-1">
               {filteredCards.map((card) => (
                 <div
