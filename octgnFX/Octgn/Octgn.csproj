@@ -63,9 +63,14 @@
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj" />
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj" />
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj" />
+    <ProjectReference Include="..\Octgn.LogExporter\Octgn.LogExporter.csproj" />
+    <ProjectReference Include="..\Octgn.Online.StandAloneServer\Octgn.Online.StandAloneServer.csproj" />
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj" />
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj" />
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj" />
+    <ProjectReference Include="..\Octgn.Tools.O8buildgui\Octgn.Tools.O8buildgui.csproj" />
+    <ProjectReference Include="..\Octgn.Tools.Proxytest\Octgn.Tools.Proxytest.csproj" />
+    <ProjectReference Include="..\Octide\Octide.csproj" />
     <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj" />
   </ItemGroup>
 

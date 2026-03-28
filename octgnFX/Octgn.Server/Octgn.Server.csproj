@@ -30,6 +30,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Protocol.xml" />
+    <None Include="BinaryParser.tt" />
+    <None Include="BinaryStubs.tt" />
+    <None Include="Broadcaster.tt" />
+    <None Include="IClientCalls.tt" />
   </ItemGroup>
 
   <ItemGroup>

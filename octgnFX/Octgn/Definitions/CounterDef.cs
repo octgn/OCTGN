@@ -22,8 +22,7 @@ namespace Octgn.Definitions
             get
             {
                 if (_icon == null) return null;
-                // TODO: Fix this to get the correct game installation path
-                return _icon;
+                return Path.Combine(Program.GameEngine.Definition.GetInstallPath() , _icon);
             }
             private set { _icon = value; }
         }
