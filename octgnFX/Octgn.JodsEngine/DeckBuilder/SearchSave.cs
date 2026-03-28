@@ -56,7 +56,7 @@
             sf.Multiselect = true;
             if ((bool)sf.ShowDialog())
             {
-                return sf.FileNames.Select(x => Load(x));
+                return sf.FileNames.Select(x => Load(x)).Where(x => x != null);
             }
             return null;
         }
