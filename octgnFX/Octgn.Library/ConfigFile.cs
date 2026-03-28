@@ -83,6 +83,27 @@
             }
             else if (typeof(T).IsIntegerType(true))
                 ConfigData[key] = val.ToString();
+            else if (val is System.Collections.IDictionary dict)
+            {
+                // Convert dictionary-like types (e.g. Python dictionaries) to Hashtable
+                // to ensure valid JSON serialization via JsonConvert.SerializeObject
+                var ht = new Hashtable();
+                foreach (System.Collections.DictionaryEntry entry in dict)
+                {
+                    if (entry.Value is System.Collections.IDictionary innerDict)
+                    {
+                        var innerHt = new Hashtable();
+                        foreach (System.Collections.DictionaryEntry innerEntry in innerDict)
+                            innerHt[innerEntry.Key.ToString()] = innerEntry.Value;
+                        ht[entry.Key.ToString()] = innerHt;
+                    }
+                    else
+                    {
+                        ht[entry.Key.ToString()] = entry.Value;
+                    }
+                }
+                ConfigData[key] = ht;
+            }
             else
                 ConfigData[key] = val;
         }
