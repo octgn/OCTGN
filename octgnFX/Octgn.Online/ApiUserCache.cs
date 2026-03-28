@@ -66,7 +66,8 @@ namespace Octgn.Online
                 {
                     return UserCache[user];
                 }
-                UserCache.Add(user,null);
+                // Don't cache null values - let the background refresh handle new users
+                // This prevents returning null immediately when user data might be available soon
                 return null;
             }
         }
