@@ -83,3 +83,4 @@ _TeamCity.OCTGN
 /octgnFX/Octgn.Desktop/Packages/octgn.packages.joodsengine/engine
 *TestResults.xml
 *TestResult.xml
+octgn-electron/node_modules/

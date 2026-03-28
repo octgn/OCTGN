@@ -27,6 +27,8 @@ namespace Octgn.DeckBuilder
     using Octgn.DataNew.Entities;
     using Octgn.Utils.Converters;
 
+using System.Data;
+
     public partial class SearchControl : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -70,6 +72,24 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public bool SortByReleaseDate
+        {
+            get
+            {
+                return Prefs.SortSetsByReleaseDate;
+            }
+            set
+            {
+                if (value != Prefs.SortSetsByReleaseDate)
+                {
+                    Prefs.SortSetsByReleaseDate = value;
+                    OnPropertyChanged("SortByReleaseDate");
+                    ApplySortOrder();
+                    RefreshSearch(null, null);
+                }
+            }
+        }
+
         public SearchControl(DataNew.Entities.Game game, DeckBuilderWindow deckWindow)
         {
             _deckWindow = deckWindow;
@@ -97,6 +117,7 @@ namespace Octgn.DeckBuilder
             this.Loaded += loadedEvent;
 
             UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
+            ApplySortOrder();
             FileName = "";
             UpdateCount();
         }
@@ -170,6 +191,7 @@ namespace Octgn.DeckBuilder
 
             }
             this.UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
+            ApplySortOrder();
             UpdateCount();
         }
 
@@ -516,6 +538,7 @@ namespace Octgn.DeckBuilder
             }
 
             _CurrentView.RowFilter = filterString;
+            ApplySortOrder();
             if (e != null)
                 e.Handled = true;
             //((Button)sender).IsEnabled = true;
@@ -548,6 +571,23 @@ namespace Octgn.DeckBuilder
             foreach (DataRow row in view.Table.Rows)
             {
                 _CurrentView.Table.ImportRow(row);
+            }
+        }
+
+        private void ApplySortOrder()
+        {
+            if (_CurrentView == null) return;
+
+            if (Prefs.SortSetsByReleaseDate)
+            {
+                // Sort by SetReleaseDate ascending, then by Name ascending
+                // Sets without a release date (DateTime.MinValue) sort to the end
+                _CurrentView.Sort = "SetReleaseDate ASC, Name ASC";
+            }
+            else
+            {
+                // Default: no explicit sort (alphabetical by Name from DataGrid default)
+                _CurrentView.Sort = "Name ASC";
             }
         }
         private bool dragActive = false;

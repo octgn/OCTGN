@@ -648,6 +648,12 @@ namespace Octgn.Core
             set { Config.Instance.WriteValue("ShowAltsInDeckEditor", value); }
         }
 
+        public static bool SortSetsByReleaseDate
+        {
+            get { return Config.Instance.ReadValue("SortSetsByReleaseDate", false); }
+            set { Config.Instance.WriteValue("SortSetsByReleaseDate", value); }
+        }
+
         public static bool InGameChatTextShadows {
             get { return Config.Instance.ReadValue("InGameChatTextShadows", false); }
             set { Config.Instance.WriteValue("InGameChatTextShadows", value); }

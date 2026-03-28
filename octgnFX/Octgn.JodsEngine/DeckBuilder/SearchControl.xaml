@@ -68,6 +68,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
@@ -75,10 +76,12 @@
                             Click="ToggleFilterVisibility" IsDefault="False" x:Name="ShowFilterToggleButton" Grid.Column="0" />
                     <CheckBox Content="Show Alternates" Margin="1,10,10,1" Foreground="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontWeight="Bold"
                               IsChecked="{Binding ElementName=self,Path=ShowAlternates}" x:Name="ShowAltToggleButton" Grid.Column="1" />
+                    <CheckBox Content="Sort Sets by Release" Margin="1,10,10,1" Foreground="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontWeight="Bold"
+                              IsChecked="{Binding ElementName=self,Path=SortByReleaseDate}" x:Name="SortReleaseToggleButton" Grid.Column="2" />
                     <TextBlock x:Name="ResultCount" TextAlignment="Right" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontWeight="Bold" Foreground="Black" 
-                               Grid.Column="2" TextWrapping="WrapWithOverflow" Text="0 Results" />
+                               Grid.Column="3" TextWrapping="WrapWithOverflow" Text="0 Results" />
                     <Button Content="Search" FontSize="14" Width="80" Margin="10,10,1,1" Style="{StaticResource FlatDarkGreenButtonStyle}" 
-                            Click="RefreshSearch" IsDefault="True" x:Name="SearchButton" Grid.Column="3" />
+                            Click="RefreshSearch" IsDefault="True" x:Name="SearchButton" Grid.Column="4" />
                 </Grid>
             </StackPanel>
         </Border>
@@ -107,15 +110,8 @@
             </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name, Mode=OneTime}" Header="Name" Width="Auto" />
-                <DataGridTextColumn Binding="{Binding SetName, Mode=OneTime}" Header="Set" Width="Auto" >
-                    <!--<DataGridTextColumn.Binding>
-            <MultiBinding Converter="{StaticResource SetConverter}">
-              <Binding Path="set_id" />
-              <Binding Path="Game"
-                       RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type deck:SearchControl}}" />
-            </MultiBinding>
-          </DataGridTextColumn.Binding>-->
-                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding SetName, Mode=OneTime}" Header="Set" Width="Auto" />
+                <DataGridTextColumn Binding="{Binding SetReleaseDate, Mode=OneTime}" Header="Release" Width="Auto" Visibility="Collapsed" SortDirection="Ascending" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
