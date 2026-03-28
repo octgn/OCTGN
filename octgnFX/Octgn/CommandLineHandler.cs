@@ -110,7 +110,7 @@ namespace Octgn
 
                 if (deckPath != null || editorOnly)
                 {
-                    return new DeckEditorLauncher(deckPath, true);
+                    return new DeckEditorLauncher(deckPath, false);
                 }
             }
             catch (Exception e)
