@@ -801,10 +801,10 @@ namespace Octgn.Scripting.Versions
             Group group = Group.Find(groupId);
 
             if (card.Controller != Player.LocalPlayer)
-                Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
-
-            if (group.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, group.Name));
+
+            if (group.Controller != Player.LocalPlayer && !(group is Table))
+                Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {2}.", Player.LocalPlayer.Name, card.Name, group.Name));
 
             if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
