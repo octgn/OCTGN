@@ -41,6 +41,7 @@ export interface SetInfo {
   name: string;
   gameId: string;
   cards: CardInfo[];
+  releaseDate?: Date;
 }
 
 /**
@@ -166,11 +167,14 @@ export function parseCardSet(xml: string): SetInfo {
     throw new Error('Invalid card set: missing set element');
   }
 
+  const releaseDateAttr = setEl.getAttribute('releasedate');
+
   const set: SetInfo = {
     id: setEl.getAttribute('id') || '',
     name: setEl.getAttribute('name') || '',
     gameId: setEl.getAttribute('gameId') || '',
     cards: [],
+    releaseDate: releaseDateAttr ? new Date(releaseDateAttr) : undefined,
   };
 
   setEl.querySelectorAll('cards > card').forEach((cardEl) => {
