@@ -465,6 +465,13 @@ namespace Octgn.Core.DataManagers
                         {
                             Directory.CreateDirectory(targetDir);
                         }
+                        // Clean up any leftover temp files from a previous failed extraction
+                        var tmpPath = targetPath + ".tmp";
+                        if (File.Exists(tmpPath))
+                        {
+                            try { File.Delete(tmpPath); }
+                            catch (IOException) { /* ignore if still locked */ }
+                        }
                         entry.ExtractToFile(targetPath, true);
                         Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.ImageDirectoryFull, entry.FullName, testGuid);
                         ret = true;
