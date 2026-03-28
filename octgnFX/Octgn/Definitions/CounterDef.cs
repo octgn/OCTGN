@@ -22,7 +22,7 @@ namespace Octgn.Definitions
             get
             {
                 if (_icon == null) return null;
-                return Path.Combine(Program.GameEngine.Definition.GetInstallPath() , _icon);
+                return Path.Combine(Program.GameEngine.Definition.GetInstallPath(), _icon);
             }
             private set { _icon = value; }
         }
