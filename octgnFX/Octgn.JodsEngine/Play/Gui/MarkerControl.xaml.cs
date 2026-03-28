@@ -79,8 +79,11 @@ namespace Octgn.Play.Gui
         {
             base.OnMouseLeftButtonDown(e);
             e.Handled = true;
-            _isMouseDown = true;
-            _mousePt = Mouse.GetPosition(this);
+            if ((DataContext as Marker).Model?.CanDrag == true)
+            {
+                _isMouseDown = true;
+                _mousePt = Mouse.GetPosition(this);
+            }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -92,9 +95,9 @@ namespace Octgn.Play.Gui
             {
                 // Check if the button was pressed over the marker, and was not release on another control in the meantime 
                 // (possible if the cursor is near the border of the marker)
-                if (_isMouseDown && Mouse.LeftButton == MouseButtonState.Pressed &&
-                    // Check if has moved enough to start a drag and drop
-                    (Math.Abs(pt.X - _mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                if (_isMouseDown && Mouse.LeftButton == MouseButtonState.Pressed && ((DataContext as Marker).Model?.CanDrag == true) &&
+                        // Check if has moved enough to start a drag and drop
+                        (Math.Abs(pt.X - _mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
                      Math.Abs(pt.Y - _mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
                 {
                     e.Handled = true;

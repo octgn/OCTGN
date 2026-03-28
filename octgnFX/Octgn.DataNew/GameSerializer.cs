@@ -356,7 +356,9 @@ namespace Octgn.DataNew
                     {
                         Name = m.name,
                         Source = AbsolutePath(root_dir, m.src),
-                        Id = m.id
+                        Id = m.id,
+                        ShowCount = bool.Parse(m.showCount.ToString()),
+                        CanDrag = bool.Parse(m.canDrag.ToString())
                     };
                     ret.Markers.Add(marker.Id, marker);
                 }
@@ -1078,7 +1080,9 @@ namespace Octgn.DataNew
                     {
                         name = m.Name,
                         src = PathRelativeToGame(game, m.Source),
-                        id = m.Id
+                        id = m.Id,
+                        showCount = m.ShowCount ? boolean.True : boolean.False,
+                        canDrag = m.CanDrag ? boolean.True : boolean.False,
                     };
                     markersList.Add(marker);
                 }

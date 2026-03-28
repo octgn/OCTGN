@@ -1,1 +1,3 @@
-
+Added showCount and canDrag arguments to game markers
+showCount displays the number of markers on a card (defaults true)
+canDrag allows the player to drag-drop the marker to move or remove it  (defaults true)
