@@ -290,7 +290,8 @@ class Group(NamedObject):
   def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
   @property
   def controller(self):
-    return Player(_api.GroupController(self._id))
+    cid = _api.GroupController(self._id)
+    return Player(cid) if cid != -1 else None
   def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)

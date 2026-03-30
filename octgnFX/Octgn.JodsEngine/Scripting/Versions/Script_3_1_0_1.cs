@@ -299,7 +299,9 @@ namespace Octgn.Scripting.Versions
         }
         public int GroupController(int id)
         {
-            return Group.Find(id).Controller.Id;
+            var group = Group.Find(id);
+            var controller = group.Controller;
+            return controller != null ? controller.Id : -1;
         }
 
         public bool IsTableBackgroundFlipped()
