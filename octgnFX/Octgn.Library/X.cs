@@ -149,6 +149,10 @@ namespace Octgn.Library
                 {
                     Log.Warn("Could not acquire lock on file " + path, e);
                 }
+                catch (UnauthorizedAccessException e)
+                {
+                    Log.Warn("Could not open file (access denied or read-only) " + path, e);
+                }
             }
             Log.WarnFormat("Timed out reading file {0}", path);
             stream = null;
