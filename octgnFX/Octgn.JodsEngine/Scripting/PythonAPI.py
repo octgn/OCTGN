@@ -216,6 +216,9 @@ class Card(object):
   def switchTo(self, alt = ""): 
     _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
+    # Prevent moving cards to table (use moveToTable method instead)
+    if group._id == 0x01000000:  # Table ID
+        raise ValueError("Cannot move card to table. Use moveToTable(x, y) method instead.")
     _api.CardMoveTo(self._id, group._id, index)
   def moveToBottom(self, pile):
     self.moveTo(pile, len(pile))
@@ -290,7 +293,8 @@ class Group(NamedObject):
   def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
   @property
   def controller(self):
-    return Player(_api.GroupController(self._id))
+    controllerId = _api.GroupController(self._id)
+    return Player(controllerId) if controllerId is not None else None
   def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
