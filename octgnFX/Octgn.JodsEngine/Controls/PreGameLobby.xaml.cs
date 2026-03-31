@@ -220,9 +220,12 @@ namespace Octgn.Controls
             // At start the global items belong to the player with the lowest id
             if (Player.GlobalPlayer != null)
             {
-                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
-                foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
-                    group.Controller = host;
+                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).FirstOrDefault();
+                if (host != null)
+                {
+                    foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
+                        group.Controller = host;
+                }
             }
             if (callStartGame)
             {
