@@ -216,6 +216,9 @@ class Card(object):
   def switchTo(self, alt = ""): 
     _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
+    # Prevent moving cards to table (use moveToTable method instead)
+    if group._id == 0x01000000:  # Table ID
+        raise ValueError("Cannot move card to table. Use moveToTable(x, y) method instead.")
     _api.CardMoveTo(self._id, group._id, index)
   def moveToBottom(self, pile):
     self.moveTo(pile, len(pile))
