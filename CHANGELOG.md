@@ -1,3 +1,5 @@
+#3.4.444.0
+
 #3.4.443.0
 + Added showCount and canDrag arguments to game markers
 + showCount displays the number of markers on a card (defaults true)
@@ -4149,6 +4151,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
