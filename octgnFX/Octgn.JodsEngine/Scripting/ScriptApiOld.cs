@@ -454,6 +454,10 @@
 //        {
 //            Card card = Card.Find(cardId);
 
+//            // Block moving cards to table since users don't control the table
+//            Program.GameMess.Warning(String.Format("{0} Can't move {1} to Table because users don't control the table.", Player.LocalPlayer.Name, card.Name));
+//            return;
+
 //            if (card.Controller != Player.LocalPlayer)
 //                Program.GameMess.Warning(String.Format("{0} Can't move {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
