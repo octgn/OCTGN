@@ -193,7 +193,7 @@ class Card(object):
   @property
   def controller(self): 
     controller_id = _api.CardController(self._id)
-    return Player(controller_id) if controller_id else None
+    return Player(controller_id) if controller_id is not None else None
   def setController(self, player): _api.SetController(self._id, player._id)
   @property
   def group(self): return eval(_api.GroupCtor(_api.CardGroup(self._id)))
@@ -293,7 +293,7 @@ class Group(NamedObject):
   @property
   def controller(self):
     controller_id = _api.GroupController(self._id)
-    return Player(controller_id) if controller_id else None
+    return Player(controller_id) if controller_id is not None else None
   def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
