@@ -90,15 +90,14 @@ namespace Octgn.Core.DataExtensionMethods
                 {
                     uri = new Uri(files.First());
                 }
+                else
+                {
+                    uri = new System.Uri(Path.Combine(set.ProxyPackUri, imageUri + ".png"));
+                    card.GenerateProxyImage(set, uri.LocalPath);
+                }
             }
             else
                 uri = new Uri(files.First());
-
-            if (uri == null)
-            {
-                uri = new System.Uri(Path.Combine(set.ProxyPackUri, imageUri + ".png"));
-                card.GenerateProxyImage(set, uri.LocalPath);
-            }
             return uri.LocalPath;
         }
 
