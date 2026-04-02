@@ -1,0 +1,455 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   OCTGN ELECTRON - SLICK AS FUCK THEME
+   Matching original OCTGN WPF aesthetic
+   ============================================ */
+
+:root {
+  /* Core OCTGN colors */
+  --color-dark: #171717;
+  --color-primary: #333333;
+  --color-accent: #4a4a4a;
+  --color-highlight: #9370DB;
+  --color-blue: #6886D4;
+  
+  /* Glass effect */
+  --glass-bg: rgba(51, 51, 51, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  
+  /* Animations */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  @apply h-full m-0 p-0;
+}
+
+body {
+  @apply bg-octgn-dark text-white font-sans antialiased;
+  background-image: 
+    radial-gradient(ellipse at top, rgba(147, 112, 219, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(104, 134, 212, 0.03) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Custom scrollbar - slick as fuck */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-octgn-dark rounded;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-octgn-accent rounded;
+  transition: background var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-octgn-highlight;
+}
+
+/* ============================================
+   LAYER COMPONENTS
+   ============================================ */
+
+@layer components {
+  /* Main button - glassmorphism style */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    @apply bg-gradient-to-b from-white/10 to-black/10;
+    @apply border border-white/10;
+    @apply backdrop-blur-sm;
+    @apply hover:from-white/15 hover:to-black/5;
+    @apply active:from-black/10 active:to-white/5;
+    @apply focus:outline-none focus:ring-2 focus:ring-octgn-highlight/50;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-primary {
+    @apply btn;
+    @apply bg-gradient-to-br from-octgn-highlight to-octgn-blue;
+    @apply border-octgn-highlight/50;
+    @apply hover:from-octgn-highlight-hover hover:to-octgn-blue-hover;
+    @apply shadow-glow-sm hover:shadow-glow;
+    @apply text-white font-semibold;
+  }
+
+  .btn-secondary {
+    @apply btn;
+    @apply bg-octgn-primary border-octgn-accent;
+    @apply hover:bg-octgn-primary-hover hover:border-octgn-accent-hover;
+  }
+
+  .btn-danger {
+    @apply btn;
+    @apply bg-gradient-to-br from-octgn-error to-red-700;
+    @apply border-octgn-error/50;
+    @apply hover:from-red-500 hover:to-red-600;
+  }
+
+  .btn-ghost {
+    @apply btn;
+    @apply bg-transparent border-transparent;
+    @apply hover:bg-white/5 hover:border-white/10;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+
+  /* Input fields - sleek */
+  .input {
+    @apply px-3 py-2 rounded-lg;
+    @apply bg-octgn-dark border border-octgn-accent;
+    @apply text-white placeholder-gray-500;
+    @apply transition-all duration-200;
+    @apply focus:outline-none focus:border-octgn-highlight focus:ring-2 focus:ring-octgn-highlight/20;
+    @apply hover:border-octgn-accent-hover;
+  }
+
+  /* Glass panel - frosted glass effect */
+  .glass {
+    @apply backdrop-blur-md;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-md;
+    background: rgba(23, 23, 23, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Cards - with depth and shine */
+  .card {
+    @apply rounded-xl overflow-hidden;
+    @apply bg-octgn-primary border border-octgn-accent/50;
+    @apply shadow-card hover:shadow-card-hover;
+    @apply transition-all duration-300;
+  }
+
+  .card-glow {
+    @apply card;
+    @apply border-octgn-highlight/30;
+    @apply shadow-glow-sm hover:shadow-glow;
+  }
+
+  /* Menu items */
+  .menu-item {
+    @apply px-4 py-2 rounded-lg cursor-pointer;
+    @apply transition-all duration-150;
+    @apply hover:bg-white/5;
+    @apply active:bg-white/10;
+  }
+
+  .menu-item-active {
+    @apply menu-item;
+    @apply bg-octgn-highlight/20;
+    @apply border-l-2 border-octgn-highlight;
+  }
+
+  /* Sidebar navigation */
+  .nav-item {
+    @apply flex items-center space-x-3 px-4 py-3 rounded-lg;
+    @apply text-gray-400 transition-all duration-200;
+    @apply hover:text-white hover:bg-white/5;
+  }
+
+  .nav-item-active {
+    @apply nav-item;
+    @apply text-white bg-octgn-highlight/20;
+    @apply border-r-2 border-octgn-highlight;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge bg-octgn-highlight/20 text-octgn-highlight;
+  }
+
+  .badge-success {
+    @apply badge bg-octgn-success/20 text-octgn-success;
+  }
+
+  .badge-warning {
+    @apply badge bg-octgn-warning/20 text-octgn-warning;
+  }
+
+  .badge-error {
+    @apply badge bg-octgn-error/20 text-octgn-error;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-online {
+    @apply status-dot bg-octgn-success animate-pulse;
+    box-shadow: 0 0 8px rgba(80, 200, 120, 0.5);
+  }
+
+  .status-offline {
+    @apply status-dot bg-gray-500;
+  }
+
+  .status-connecting {
+    @apply status-dot bg-octgn-warning animate-pulse;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+@layer utilities {
+  /* Text gradient - slick */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-octgn-highlight to-octgn-blue;
+  }
+
+  /* Glow effect */
+  .glow {
+    box-shadow: 0 0 20px rgba(147, 112, 219, 0.3);
+  }
+
+  .glow-hover:hover {
+    box-shadow: 0 0 30px rgba(147, 112, 219, 0.5);
+  }
+
+  /* Shine effect on hover */
+  .shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .shine:hover::before {
+    left: 100%;
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-octgn-highlight/50 focus:ring-offset-2 focus:ring-offset-octgn-dark;
+  }
+
+  /* Dragging styles */
+  .dragging {
+    @apply opacity-50 cursor-grabbing;
+  }
+
+  /* Selection styles */
+  .selected {
+    @apply ring-2 ring-octgn-highlight ring-offset-2 ring-offset-octgn-dark;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Card hover lift effect */
+.hover-lift {
+  @apply transition-transform duration-200;
+}
+
+.hover-lift:hover {
+  @apply -translate-y-1;
+}
+
+/* Pulse glow animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(147, 112, 219, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(147, 112, 219, 0.6);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   CARD-SPECIFIC STYLES
+   ============================================ */
+
+.game-card {
+  @apply relative rounded-xl overflow-hidden cursor-pointer;
+  @apply bg-octgn-primary border-2 border-octgn-accent/30;
+  @apply transition-all duration-200;
+  @apply shadow-card;
+  aspect-ratio: 2.5 / 3.5;
+}
+
+.game-card:hover {
+  @apply -translate-y-1 border-octgn-highlight/50;
+  @apply shadow-card-hover;
+  z-index: 10;
+}
+
+.game-card-selected {
+  @apply game-card;
+  @apply border-octgn-highlight ring-2 ring-octgn-highlight/50;
+}
+
+.game-card-face-down {
+  @apply game-card;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      #1a1a1a,
+      #1a1a1a 10px,
+      #252525 10px,
+      #252525 20px
+    );
+}
+
+/* Card marker styles */
+.card-marker {
+  @apply absolute w-6 h-6 rounded-full;
+  @apply bg-octgn-highlight text-white text-xs font-bold;
+  @apply flex items-center justify-center;
+  @apply shadow-lg;
+}
+
+/* ============================================
+   TABLE STYLES
+   ============================================ */
+
+.game-table {
+  @apply w-full h-full;
+  background: 
+    radial-gradient(ellipse at center, rgba(147, 112, 219, 0.03) 0%, transparent 70%),
+    linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+}
+
+.table-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ============================================
+   CHAT STYLES
+   ============================================ */
+
+.chat-message {
+  @apply py-2 px-3 rounded-lg;
+  @apply hover:bg-white/5 transition-colors;
+}
+
+.chat-message-own {
+  @apply bg-octgn-highlight/10;
+}
+
+.chat-timestamp {
+  @apply text-xs text-gray-500;
+}
+
+/* ============================================
+   TOOLTIP STYLES
+   ============================================ */
+
+.tooltip {
+  @apply glass px-3 py-2 rounded-lg text-sm;
+  @apply animate-fade-in;
+  z-index: 1000;
+}
+
+/* ============================================
+   MODAL STYLES
+   ============================================ */
+
+.modal-backdrop {
+  @apply fixed inset-0 bg-black/70 backdrop-blur-sm;
+  @apply flex items-center justify-center;
+  z-index: 100;
+}
+
+.modal-content {
+  @apply glass rounded-2xl p-6 max-w-lg w-full mx-4;
+  @apply animate-slide-up;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.skeleton {
+  @apply bg-octgn-accent/50 rounded animate-pulse;
+}
+
+/* ============================================
+   SELECTION BOX
+   ============================================ */
+
+.selection-box {
+  @apply border-2 border-octgn-highlight bg-octgn-highlight/10;
+  pointer-events: none;
+}
