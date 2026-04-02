@@ -190,7 +190,24 @@ namespace Octgn.Scripting.Controls
             var img = sender as Image;
             if (img == null) return;
             var model = img.DataContext as DataNew.Entities.Card;
-            if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
+            if (model == null) return;
+            var cardSize = model.Size;
+            if (cardSize == null || cardSize.CornerRadius <= 0)
+            {
+                ImageUtils.GetCardImage(model, x => img.Source = x);
+                return;
+            }
+            img.Clip = new RectangleGeometry();
+            SizeChangedEventHandler onSizeChanged = null;
+            onSizeChanged = (_, __) =>
+            {
+                var clipRect = (RectangleGeometry)img.Clip;
+                clipRect.Rect = new Rect(img.ActualWidth, img.ActualHeight);
+                clipRect.RadiusX = clipRect.RadiusY = cardSize.CornerRadius * img.ActualHeight / cardSize.Height;
+                img.SizeChanged -= onSizeChanged;
+            };
+            img.SizeChanged += onSizeChanged;
+            ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
