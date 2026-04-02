@@ -14,7 +14,7 @@ namespace Octgn.DeckBuilder
         {
             base.Name = "Set";
             base.Type = 0;
-            _allSets = allSets.OrderBy(s => s.Name).ToList();
+            _allSets = allSets.OrderBy(s => s.ReleaseDate).ToList();
         }
 
         public IList<Set> Sets
