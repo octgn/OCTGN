@@ -124,11 +124,12 @@ namespace Octgn.Core.DataExtensionMethods
         {
             DataTable table = new DataTable();
 
-            var values = new object[game.CardProperties.Count + 6];
-            var defaultValues = new object[game.CardProperties.Count + 6];
+            var values = new object[game.CardProperties.Count + 7];
+            var defaultValues = new object[game.CardProperties.Count + 7];
             var indices = new Dictionary<PropertyDef, int>();
             var setCache = new Dictionary<Guid, string>();
-            var i = 6;
+            var setReleaseCache = new Dictionary<Guid, DateTime>();
+            var i = 7;
             table.Columns.Add("Name", typeof(string));
             defaultValues[0] = "";
             table.Columns.Add("SetName", typeof(string));
@@ -141,6 +142,8 @@ namespace Octgn.Core.DataExtensionMethods
             defaultValues[4] = "";
             table.Columns.Add("Alternates", typeof(string));
             defaultValues[5] = "";
+            table.Columns.Add("SetReleaseDate", typeof(DateTime));
+            defaultValues[6] = DateTime.MinValue;
             foreach (var prop in game.CardProperties.Values)
             {
                 switch (prop.Type)
@@ -174,16 +177,21 @@ namespace Octgn.Core.DataExtensionMethods
 
             foreach (Card item in cards)
             {
-                for (i = 6; i < values.Length; i++)
+                for (i = 7; i < values.Length; i++)
                 {
                     values[i] = defaultValues[i];
                 }
                 if (!setCache.ContainsKey(item.SetId))
-                    setCache.Add(item.SetId, item.GetSet().Name);
+                {
+                    var set = item.GetSet();
+                    setCache.Add(item.SetId, set.Name);
+                    setReleaseCache.Add(item.SetId, set.ReleaseDate);
+                }
                 values[1] = setCache[item.SetId];
                 values[2] = item.SetId;
                 values[3] = item.GetImageUri();
                 values[4] = item.Id;
+                values[6] = setReleaseCache[item.SetId];
                 foreach (var alt in item.PropertySets)
                 {
                     values[5] = alt.Value.Type;
