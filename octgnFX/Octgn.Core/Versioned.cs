@@ -97,6 +97,11 @@ namespace Octgn.Scripting
             VersionMetaData prevLive = null;
 			foreach (var v in _versionData)
 			{
+                if (v.Value.Mode == ReleaseMode.Test)
+                {
+                    v.Value.DeleteDate = DateTime.MaxValue;
+                    continue;
+                }
 				if (latestLive == null && v.Value.Mode == ReleaseMode.Live)
 				{
                     v.Value.DeleteDate = DateTime.MaxValue;
@@ -105,17 +110,12 @@ namespace Octgn.Scripting
 				    continue;
 				}
                 // the version directly below the most recent version should not expire (we will always allow at least 2 API versions at any given time)
-                if (prevLive.Version == version)
+                if (prevLive == latestLive)
                 {
                     v.Value.DeleteDate = DateTime.MaxValue;
                     prevLive = v.Value;
                     continue;
                 }
-                if (v.Value.Mode == ReleaseMode.Test)
-				{
-				    v.Value.DeleteDate = DateTime.MaxValue;
-				    continue;
-				}
                 // It should actually use the release b4 it
                 v.Value.DeleteDate = prevLive.ReleaseDate.AddMonths(6);
                 prevLive = v.Value;
