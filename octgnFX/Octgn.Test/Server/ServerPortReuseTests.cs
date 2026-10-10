@@ -23,6 +23,9 @@ namespace Octgn.Test.Server
             {
                 server.Dispose();
                 server.Context.State.Players.Dispose();
+                ((IDisposable)typeof(Octgn.Server.Server)
+                    .GetField("_broadcaster", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetValue(server)).Dispose();
             }
             foreach (var listener in _owners) listener.Stop();
             _servers.Clear();
@@ -182,6 +185,50 @@ namespace Octgn.Test.Server
             server.Dispose();
             var restarted = CreateServer(port);
             Assert.AreEqual(port, ((IPEndPoint)Listener(restarted).LocalEndpoint).Port);
+        }
+
+        [TestCase("held-open")]
+        [TestCase("client-first")]
+        [TestCase("reset")]
+        public void Server_RestartWithPreviousConnectionUsesOwnedPortRange(string closeState)
+        {
+            var port = ReservePorts(2);
+            _owners[_owners.Count - 1].Stop();
+            _owners[_owners.Count - 2].Stop();
+            var server = CreateServer(port);
+            var accept = Listener(server).AcceptTcpClientAsync();
+            using (var client = new TcpClient())
+            {
+                client.Connect(IPAddress.Loopback, port);
+                Assert.IsTrue(accept.Wait(1000), "Owned connection must be accepted.");
+                using (var accepted = accept.Result)
+                {
+                    if (closeState == "client-first")
+                    {
+                        client.Close();
+                        accepted.ReceiveTimeout = 1000;
+                        Assert.AreEqual(-1, accepted.GetStream().ReadByte());
+                        accepted.Close();
+                    }
+                    else if (closeState == "reset")
+                    {
+                        accepted.Client.LingerState = new LingerOption(true, 0);
+                        accepted.Close();
+                        client.Close();
+                    }
+                    server.Dispose();
+                    var restarted = CreateServer(port);
+                    TestContext.Progress.WriteLine("Close state {0}: preferred {1}, selected {2}",
+                        closeState, port, restarted.Context.Game.Port);
+                    // Windows may retain exclusive ownership while an accepted socket
+                    // remains alive. The adjacent port is deliberately available;
+                    // bounded fallback is an accepted result in that state.
+                    Assert.That(restarted.Context.Game.Port, Is.InRange(port, port + 1));
+                    Assert.AreEqual(restarted.Context.Game.Port,
+                        ((IPEndPoint)Listener(restarted).LocalEndpoint).Port);
+                    Assert.IsTrue(Listener(restarted).ExclusiveAddressUse);
+                }
+            }
         }
 
         [Test]
