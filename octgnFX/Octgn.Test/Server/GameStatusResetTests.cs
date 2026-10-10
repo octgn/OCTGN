@@ -226,6 +226,8 @@ namespace Octgn.Test.Server
                 {
                     foreach (var socket in _sockets.Values)
                         socket.Disconnect();
+                    foreach (var client in _clients)
+                        client.Close();
                 }
                 finally
                 {
