@@ -10,10 +10,21 @@
     <Description>Shared library for online access in OCTGN.</Description>
     <PackageProjectUrl>http://www.octgn.net</PackageProjectUrl>
     <PackageIconUrl>http://www.octgn.net/icon.ico</PackageIconUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Product>Octgn.Online</Product>
   </PropertyGroup>
-  <ItemGroup>
+  <PropertyGroup Condition="'$(UseReleasedCommunication)' == 'true'">
+    <!-- Package builds use separate output folders; exclude existing local build artifacts. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);bin/**;obj/**</DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseReleasedCommunication)' != 'true'">
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(UseReleasedCommunication)' == 'true'">
+    <PackageReference Include="Octgn.Communication" Version="3.0.150" />
+  </ItemGroup>
+  <Target Name="RequireReleasedCommunicationForPack" BeforeTargets="GenerateNuspec"
+          Condition="'$(UseReleasedCommunication)' != 'true'">
+    <Error Text="Pack Octgn.Online with scripts/Pack-Online.ps1, or set UseReleasedCommunication=true in an isolated package build. Normal client builds use the Communication project and cannot produce a publishable package." />
+  </Target>
 </Project>
