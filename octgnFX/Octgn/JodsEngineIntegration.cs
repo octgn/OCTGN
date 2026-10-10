@@ -71,7 +71,7 @@ namespace Octgn
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
-                HostAddress = $"0.0.0.0:{(hostPort > 0 ? hostPort.Value : Prefs.LastLocalHostedGamePort)}",
+                HostAddress = $"0.0.0.0:{Prefs.LastLocalHostedGamePort}",
                 OctgnVersion = typeof(Server.Server).Assembly.GetName().Version.ToString(),
                 Spectators = true,
                 DateCreated = DateTimeOffset.Now,

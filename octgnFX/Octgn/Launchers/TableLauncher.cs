@@ -32,7 +32,6 @@ namespace Octgn.Launchers
                 this.Shutdown = true;
                 Program.Exit();
             }
-
         }
     }
 }

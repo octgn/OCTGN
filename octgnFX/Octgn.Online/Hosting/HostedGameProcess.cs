@@ -57,8 +57,10 @@ namespace Octgn.Library
         }
 
         private void Start(string readyPipe) {
-            if (Interlocked.Exchange(ref _started, 1) != 0) throw new InvalidOperationException("Server already started.");
-            if (readyPipe != null) _process.StartInfo.Arguments += " -ready-pipe=" + readyPipe;
+            if (readyPipe != null) {
+                if (Interlocked.Exchange(ref _started, 1) != 0) throw new InvalidOperationException("Server already started.");
+                _process.StartInfo.Arguments += " -ready-pipe=" + readyPipe;
+            }
             Log.Info($"Starting {_process.StartInfo.FileName} {_process.StartInfo.Arguments}");
             _process.Start();
             HostedGame.ProcessId = _process.Id;
