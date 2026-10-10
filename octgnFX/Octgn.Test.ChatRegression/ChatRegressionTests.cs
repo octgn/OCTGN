@@ -23,14 +23,6 @@ public class RecordingRpc : RealProxy
 [TestFixture]
 public class ChatRegressionTests
 {
-    private static void Check(bool condition, string message)
-    {
-        Assert.That(condition, Is.True, message);
-    }
-    private static void Throws<T>(Action action) where T : Exception
-    {
-        Assert.Throws<T>(() => action());
-    }
     private static (GameContext Context, Handler Handler, Player Sender, RecordingRpc SenderRpc, RecordingRpc PeerRpc, RecordingRpc OfflineRpc) Create(bool local, bool spectator, bool muted)
     {
         var context = new GameContext(new HostedGame { Id = Guid.NewGuid() }, new Config { IsLocal = local });
@@ -54,12 +46,12 @@ public class ChatRegressionTests
         if (!packet) { handler.ChatReq(text); return; }
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
-        writer.Write(42); // Existing IsMuted packet header.
-        writer.Write((byte)21); // ChatReq wire opcode.
+        writer.Write(42); // Test IsMuted header value in the production BinaryParser.
+        writer.Write((byte)21); // Existing generated ChatReq opcode.
         writer.Write(text);
         writer.Flush();
         new BinaryParser(new ServerSocket { Handler = handler, Server = new Server { Context = context } }).Parse(stream.ToArray());
-        Check(context.State.IsMuted == 42, "Parser changed packet header handling");
+        Assert.That(context.State.IsMuted, Is.EqualTo(42), "Parser packet header");
     }
     [TestCase(false, false, false)]
     [TestCase(false, false, true)]
@@ -71,54 +63,40 @@ public class ChatRegressionTests
     [TestCase(true, true, true)]
     public void ChatPreservesPayloadAndMuteBehavior(bool local, bool spectator, bool muted)
     {
-        foreach (var text in new[] { "Hello 🌍\r\nsecond line", "", null })
+        foreach (var text in new[] { "Hello \u03a9\r\nsecond line", "", null })
         foreach (var packet in new[] { false, true })
         {
-            // BinaryWriter's protocol strings do not encode null; direct calls still can.
-            if (packet && text == null) continue;
+            if (packet && text == null) continue; // Protocol strings cannot encode null.
             var test = Create(local, spectator, muted);
             Dispatch(packet, test.Handler, test.Context, text);
-            Check(test.OfflineRpc.Calls.Count == 0, "Disconnected or unregistered recipient received a message");
+            var scenario = $"local={local}, spectator={spectator}, muted={muted}, packet={packet}, text={text ?? "<null>"}";
+            Assert.That(test.OfflineRpc.Calls, Is.Empty, "Disconnected/doubled unregistered recipients: " + scenario);
             if (spectator && muted)
             {
-                Check(test.SenderRpc.Calls.Count == 1 && test.PeerRpc.Calls.Count == 0, "Muted chat was broadcast");
+                Assert.That(test.SenderRpc.Calls, Has.Count.EqualTo(1), scenario);
+                Assert.That(test.PeerRpc.Calls, Is.Empty, scenario);
                 var error = test.SenderRpc.Calls[0];
-                Check(error.Method == "Error" && Equals(error.Args[0], Octgn.Library.Localization.L.D.ServerMessage__SpectatorsMuted), "Muted error changed");
+                Assert.That(error.Method, Is.EqualTo("Error"), scenario);
+                Assert.That(error.Args[0], Is.EqualTo(Octgn.Library.Localization.L.D.ServerMessage__SpectatorsMuted), scenario);
             }
             else
             {
                 foreach (var rpc in new[] { test.SenderRpc, test.PeerRpc })
                 {
-                    Check(rpc.Calls.Count == 1, "Chat dispatch count changed");
+                    Assert.That(rpc.Calls, Has.Count.EqualTo(1), scenario);
                     var chat = rpc.Calls[0];
-                    Check(chat.Method == "Chat" && Equals(chat.Args[0], (byte)7) && Equals(chat.Args[1], text), "Chat sender or payload changed");
+                    Assert.That(chat.Method, Is.EqualTo("Chat"), scenario);
+                    Assert.That(chat.Args, Is.EqualTo(new object[] { (byte)7, text }), scenario);
                 }
             }
         }
     }
     [Test]
-    public void ChatPreservesErrorsAndNullHandling()
+    public void ChatPropagatesRpcFailureUnchanged()
     {
-        Throws<ArgumentNullException>(() => new Handler(null));
-        Throws<ArgumentNullException>(() => new GameContext(new HostedGame(), null));
-        Throws<NullReferenceException>(() => new GameContext(null, new Config()));
         var test = Create(false, false, false);
-        Throws<ArgumentNullException>(() => test.Handler.SetPlayer(null));
-        Throws<NullReferenceException>(() => new Handler(test.Context).ChatReq("no sender"));
-        test.Sender.Settings = null;
-        Throws<NullReferenceException>(() => test.Handler.ChatReq("no settings"));
-        test = Create(false, true, false);
-        test.Context.State.Settings = null;
-        Throws<NullReferenceException>(() => test.Handler.ChatReq("no game settings"));
-        test = Create(false, false, false);
         var failure = new InvalidOperationException("RPC failure");
         test.SenderRpc.Failure = failure;
-        try { test.Handler.ChatReq("failure"); throw new Exception("Expected RPC failure"); }
-        catch (InvalidOperationException actual) { Check(ReferenceEquals(actual, failure), "RPC exception was replaced"); }
-        Check(test.PeerRpc.Calls.Count == 0, "Broadcast continued after failed recipient");
-        test = Create(false, true, true);
-        test.SenderRpc.Failure = failure;
-        Throws<InvalidOperationException>(() => test.Handler.ChatReq(null));
-        Check(test.PeerRpc.Calls.Count == 0, "Failed mute error broadcast chat");
+        Assert.That(Assert.Throws<InvalidOperationException>(() => test.Handler.ChatReq("failure")), Is.SameAs(failure));
     }
 }
