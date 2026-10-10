@@ -1,0 +1,33 @@
+<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Octgn.Test.ChatRegression</AssemblyName>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <HandlerSource Condition="'$(HandlerSource)' == ''">../Octgn.Server/Handler.cs</HandlerSource>
+    <NUnitFrameworkPath Condition="'$(NUnitFrameworkPath)' == ''">../../packages/NUnit.3.13.3/lib/net45/nunit.framework.dll</NUnitFrameworkPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="nunit.framework"><HintPath>$(NUnitFrameworkPath)</HintPath></Reference>
+    <Compile Include="../../Version.cs" Link="Version.cs" />
+    <Compile Include="ChatRegressionTests.cs" />
+    <Compile Include="TestDoubles.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(HandlerSource)" Link="Server/Handler.cs" />
+    <Compile Include="../Octgn.Server/Broadcaster.cs" Link="Server/Broadcaster.cs" />
+    <Compile Include="../Octgn.Server/BinaryParser.cs" Link="Server/BinaryParser.cs" />
+    <Compile Include="../Octgn.Server/IClientCalls.cs" Link="Server/IClientCalls.cs" />
+    <Compile Include="../Octgn.Server/CardOrientation.cs" Link="Server/CardOrientation.cs" />
+    <Compile Include="../Octgn.Server/Config.cs" Link="Server/Config.cs" />
+    <Compile Include="../Octgn.Server/GameContext.cs" Link="Server/GameContext.cs" />
+    <Compile Include="../Octgn.Server/GameState.cs" Link="Server/GameState.cs" />
+    <Compile Include="../Octgn.Server/PlayerSettings.cs" Link="Server/PlayerSettings.cs" />
+    <Compile Include="../Octgn.Online/Api/Models/GameMessage.cs" Link="Api/GameMessage.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
