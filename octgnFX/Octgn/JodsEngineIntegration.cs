@@ -97,13 +97,6 @@ namespace Octgn
         }
 
         public Task<bool> JoinGame(HostedGameViewModel hostedGameViewModel, string username, bool spectate) {
-            User user;
-            if (Program.LobbyClient.User != null) {
-                user = Program.LobbyClient.User;
-            } else {
-                user = new User(Guid.NewGuid().ToString(), Prefs.Username);
-            }
-
             var hostedGame = hostedGameViewModel.HostedGame;
 
             DebugValidate(hostedGame, false);
