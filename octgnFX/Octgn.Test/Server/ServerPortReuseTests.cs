@@ -132,6 +132,16 @@ namespace Octgn.Test.Server
         }
 
         [Test]
+        public void Server_UsesLastCandidateWhenFirstNinePortsAreUnavailable()
+        {
+            var port = ReservePorts(10);
+            _owners[_owners.Count - 1].Stop();
+            var server = CreateServer(port);
+            Assert.AreEqual(port + 9, server.Context.Game.Port);
+            Assert.AreEqual(port + 9, ((IPEndPoint)Listener(server).LocalEndpoint).Port);
+        }
+
+        [Test]
         public void Server_FallsBackWhenOccupiedOwnerEnabledReuseAddress()
         {
             var port = ReservePorts(2, true);
