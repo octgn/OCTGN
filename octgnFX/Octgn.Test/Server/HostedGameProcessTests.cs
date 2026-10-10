@@ -62,12 +62,16 @@ namespace Octgn.Test.Server
             }
         }
 
-        [Test]
-        public async Task ReadyPipe_DisposalEndsPendingConnectionWait()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task ReadyPipe_DisposalEndsPendingWait(bool connected)
         {
-            using (var pipe = new NamedPipeServerStream(Guid.NewGuid().ToString("N"), PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous))
+            var name = Guid.NewGuid().ToString("N");
+            using (var pipe = new NamedPipeServerStream(name, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous))
+            using (var client = new NamedPipeClientStream(".", name, PipeDirection.Out, PipeOptions.Asynchronous))
             {
                 var read = Read(pipe, 5000);
+                if (connected) await client.ConnectAsync(1000);
                 pipe.Dispose();
                 Assert.AreSame(read, await Task.WhenAny(read, Task.Delay(1000)));
                 Assert.CatchAsync(async () => await read);
