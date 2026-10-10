@@ -1,4 +1,4 @@
-#requires -Version 7.0
+#requires -Version 7.3
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$OutputDirectory,
@@ -8,6 +8,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+$PSNativeCommandArgumentPassing = 'Standard'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $project = Join-Path $repositoryRoot 'octgnFX/Octgn.Online/Octgn.Online.csproj'
 [xml]$projectXml = Get-Content -Raw -LiteralPath $project

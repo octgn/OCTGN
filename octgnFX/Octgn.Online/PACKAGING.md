@@ -9,7 +9,7 @@ would leave a mismatched compiled assembly reference when CI stamps all projects
 Changing every local build to the package also creates duplicate unsigned
 Communication assemblies for SDK consumers that reference the source project.
 
-From the repository root, with PowerShell 7 or newer and the .NET 8 SDK and runtime:
+From the repository root, with PowerShell 7.3 or newer and the .NET 8 SDK and runtime:
 
 ```powershell
 ./scripts/Pack-Online.ps1 -OutputDirectory ./package-check/run-001 -Version <new-version>
