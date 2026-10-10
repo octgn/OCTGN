@@ -11,6 +11,7 @@
     <PackageProjectUrl>http://www.octgn.net</PackageProjectUrl>
     <PackageIconUrl>http://www.octgn.net/icon.ico</PackageIconUrl>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <ReleasedCommunicationVersion>3.0.150</ReleasedCommunicationVersion>
     <Product>Octgn.Online</Product>
   </PropertyGroup>
   <PropertyGroup Condition="'$(UseReleasedCommunication)' == 'true'">
@@ -21,7 +22,7 @@
     <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseReleasedCommunication)' == 'true'">
-    <PackageReference Include="Octgn.Communication" Version="3.0.150" />
+    <PackageReference Include="Octgn.Communication" Version="$(ReleasedCommunicationVersion)" />
   </ItemGroup>
   <Target Name="RequireReleasedCommunicationForPack" BeforeTargets="GenerateNuspec"
           Condition="'$(UseReleasedCommunication)' != 'true'">

@@ -9,10 +9,10 @@ would leave a mismatched compiled assembly reference when CI stamps all projects
 Changing every local build to the package also creates duplicate unsigned
 Communication assemblies for SDK consumers that reference the source project.
 
-From the repository root, with PowerShell and .NET 8 or newer:
+From the repository root, with PowerShell 7 or newer and the .NET 8 SDK and runtime:
 
 ```powershell
-./scripts/Pack-Online.ps1 -OutputDirectory ./package-check/run-001 -Version 3.4.445.0
+./scripts/Pack-Online.ps1 -OutputDirectory ./package-check/run-001 -Version <new-version>
 ```
 
 Choose a new output directory for each run. The script puts its build output,
@@ -24,8 +24,10 @@ Communication assembly agree, plus shared DTO and hosted-game serialization.
 No OCTGN service is contacted and nothing is uploaded.
 
 `-PackageSource` can select another package feed for an offline or controlled test.
-The default is the public NuGet v3 feed. `-Version` defaults to the Online project's
-current version; a real release must choose a new package version.
+The default is the public NuGet v3 feed. `-Version` is required; replace
+`<new-version>` with an unpublished package version before running the command.
+Compatibility with the released Communication package is checked by this release
+step; the normal client/server build uses source and does not exercise this mode.
 
 For a custom packaging pipeline, `UseReleasedCommunication=true` selects the
 released dependency. Apply it only to an isolated Online package build, with

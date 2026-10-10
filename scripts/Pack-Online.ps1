@@ -1,7 +1,8 @@
+#requires -Version 7.0
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$OutputDirectory,
-    [ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?$')][string]$Version,
+    [Parameter(Mandatory = $true)][ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?$')][string]$Version,
     [string]$PackageSource = 'https://api.nuget.org/v3/index.json'
 )
 
@@ -10,7 +11,8 @@ Set-StrictMode -Version Latest
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $project = Join-Path $repositoryRoot 'octgnFX/Octgn.Online/Octgn.Online.csproj'
 [xml]$projectXml = Get-Content -Raw -LiteralPath $project
-if (-not $Version) { $Version = [string]$projectXml.Project.PropertyGroup[0].Version }
+$communicationVersion = [string]$projectXml.Project.PropertyGroup[0].ReleasedCommunicationVersion
+$communicationAssemblyVersion = [Version]::Parse($communicationVersion + '.0')
 if (-not [IO.Path]::IsPathRooted($OutputDirectory)) {
     $OutputDirectory = Join-Path (Get-Location).ProviderPath $OutputDirectory
 }
@@ -29,7 +31,9 @@ $consumerRoot = Join-Path $outputRoot 'consumer'
 New-Item -ItemType Directory -Path $buildRoot, $consumerRoot | Out-Null
 $intermediateRoot = (Join-Path $buildRoot 'obj') + [IO.Path]::DirectorySeparatorChar
 $binaryRoot = (Join-Path $buildRoot 'bin') + [IO.Path]::DirectorySeparatorChar
+$auditProperties = @()
 if ($PackageSource -notmatch '^[a-z][a-z0-9+.-]*://') {
+    $auditProperties = @('-p:NuGetAudit=false')
     if (-not [IO.Path]::IsPathRooted($PackageSource)) {
         $PackageSource = Join-Path (Get-Location).ProviderPath $PackageSource
     }
@@ -51,8 +55,8 @@ $properties = @(
     '-p:UseReleasedCommunication=true',
     "-p:Version=$Version", "-p:AssemblyVersion=$Version", "-p:FileVersion=$Version",
     "-p:BaseIntermediateOutputPath=$intermediateRoot", "-p:MSBuildProjectExtensionsPath=$intermediateRoot",
-    "-p:BaseOutputPath=$binaryRoot", '-p:GeneratePackageOnBuild=false', '-p:UseSharedCompilation=false', '-p:NuGetAudit=false'
-)
+    "-p:BaseOutputPath=$binaryRoot", '-p:GeneratePackageOnBuild=false', '-p:UseSharedCompilation=false'
+) + $auditProperties
 Invoke-Dotnet (@('restore', $project, '--packages', $cacheRoot, '--configfile', $restoreConfig) + $properties) 'restore.log'
 Invoke-Dotnet (@('pack', $project, '--no-restore', '-m:1', '-o', $packageRoot) + $properties) 'pack.log'
 
@@ -66,8 +70,8 @@ try {
     try { [xml]$nuspec = $reader.ReadToEnd() } finally { $reader.Dispose() }
 } finally { $archive.Dispose() }
 $communication = @($nuspec.package.metadata.dependencies.group.dependency | Where-Object id -eq 'Octgn.Communication')
-if ($communication.Count -ne 1 -or $communication[0].version -ne '3.0.150') {
-    throw 'The package must depend on published Octgn.Communication 3.0.150, independently of the release version.'
+if ($communication.Count -ne 1 -or $communication[0].version -ne $communicationVersion) {
+    throw "The package must depend on published Octgn.Communication $communicationVersion, independently of the release version."
 }
 $packageVersion = [string]$nuspec.package.metadata.version
 $nuspec.OuterXml | Set-Content -LiteralPath (Join-Path $outputRoot 'Octgn.Online.nuspec') -Encoding UTF8
@@ -100,7 +104,7 @@ using Octgn.Online;
 using Octgn.Online.Hosting;
 using Octgn.Site.Api.Models;
 
-var expected = new Version(3, 0, 150, 0);
+var expected = new Version("__COMMUNICATION_ASSEMBLY_VERSION__");
 var reference = typeof(HostedGame).Assembly.GetReferencedAssemblies().Single(name => name.Name == "Octgn.Communication");
 if (reference.Version != expected || typeof(User).Assembly.GetName().Version != expected)
     throw new Exception("Package metadata, compiled reference, and loaded Communication assembly must agree.");
@@ -114,9 +118,9 @@ if (JsonConvert.DeserializeObject<ApiUser>(JsonConvert.SerializeObject(apiUser))
     throw new Exception("Shared API DTO round trip failed.");
 if (!DefaultHandshaker.Validate("session", "user", "device", out _))
     throw new Exception("Handshake validation failed.");
-Console.WriteLine("PASS: nuspec/compiled/loaded Communication 3.0.150 agree; HostedGame/User and API DTO round trips; handshake validation.");
-'@ | Set-Content -LiteralPath (Join-Path $consumerRoot 'Program.cs') -Encoding UTF8
-Invoke-Dotnet @('restore', $consumerProject, '--packages', (Join-Path $outputRoot 'consumer-cache'), '--configfile', $consumerConfig, '-p:NuGetAudit=false') 'consumer-restore.log'
+Console.WriteLine("PASS: nuspec/compiled/loaded Communication " + expected + " agree; HostedGame/User and API DTO round trips; handshake validation.");
+'@.Replace('__COMMUNICATION_ASSEMBLY_VERSION__', $communicationAssemblyVersion.ToString()) | Set-Content -LiteralPath (Join-Path $consumerRoot 'Program.cs') -Encoding UTF8
+Invoke-Dotnet (@('restore', $consumerProject, '--packages', (Join-Path $outputRoot 'consumer-cache'), '--configfile', $consumerConfig) + $auditProperties) 'consumer-restore.log'
 $assets = Get-Content -Raw -LiteralPath (Join-Path $consumerRoot 'obj/project.assets.json') | ConvertFrom-Json
 if (@($assets.libraries.PSObject.Properties | Where-Object { $_.Value.type -eq 'project' }).Count -ne 0) {
     throw 'The downstream consumer must restore packages only, without project substitutions.'
