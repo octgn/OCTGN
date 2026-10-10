@@ -152,6 +152,7 @@ namespace Octgn.Library
                 catch (UnauthorizedAccessException e)
                 {
                     Log.Warn("Could not open file (access denied or read-only) " + path, e);
+                    throw;
                 }
             }
             Log.WarnFormat("Timed out reading file {0}", path);
