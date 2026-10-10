@@ -130,8 +130,8 @@
 
             try
             {
-                FileStream.SetLength(0);
                 var configString = JsonConvert.SerializeObject(ConfigData, Formatting.Indented);
+                FileStream.SetLength(0);
 
                 var sw = new StreamWriter(FileStream);
                 sw.Write(configString);

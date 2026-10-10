@@ -148,7 +148,7 @@ namespace Octgn.Server
             Shutdown();
         }
 
-        private void Shutdown() {
+        private void Shutdown(bool waitForListener = true) {
             try {
                 if (_calledShutdown) return;
                 _calledShutdown = true;
@@ -159,7 +159,9 @@ namespace Octgn.Server
 
                 _broadcaster.StopBroadcasting();
 
-                _listenTask.Wait();
+                // No listener task exists until the first connection is accepted.
+                // The listener's own error path must also avoid joining itself.
+                if (waitForListener) _listenTask?.Wait();
 
                 OnStop?.Invoke(this, null);
             } catch (Exception ex) {
@@ -174,7 +176,7 @@ namespace Octgn.Server
                 }
             } catch (Exception ex) when (!_calledShutdown) {
                 Signal.Exception(ex);
-                Shutdown();
+                Shutdown(waitForListener: false);
             } catch (Exception ex) {
                 Log.Warn($"{nameof(Listen)}", ex);
             }
