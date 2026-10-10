@@ -8,19 +8,35 @@ using Octgn.Library;
 
 namespace Octgn.Test.Library
 {
-    [TestFixture]
+    [TestFixture, NonParallelizable]
     public class ConfigFileSaveTests
     {
         private const string OriginalJson = "{\"existing\":\"preserve me\",\"count\":7}";
         private string _path;
+        private IX _originalContext;
 
         [SetUp]
         public void SetUp()
         {
+            _originalContext = X.SingletonContext;
+            X.SingletonContext = new X();
             var directory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "config-save-owned-files");
             Directory.CreateDirectory(directory);
             _path = Path.Combine(directory, Guid.NewGuid().ToString("N") + ".json");
             File.WriteAllBytes(_path, Encoding.UTF8.GetBytes(OriginalJson));
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            try
+            {
+                if (_path != null && File.Exists(_path)) File.Delete(_path);
+            }
+            finally
+            {
+                X.SingletonContext = _originalContext;
+            }
         }
 
         [TestCase("getter")]
