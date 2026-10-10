@@ -49,6 +49,45 @@ namespace Octgn.Online.Api.Test
         }
 
         [Test]
+        public async Task InvalidCharsetFallsBackToUtf8()
+        {
+            using var response = new HttpResponseMessage(HttpStatusCode.BadGateway) {
+                Content = new ByteArrayContent(Encoding.UTF8.GetBytes("\u00e9chec"))
+            };
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain") { CharSet = "not-a-real-charset" };
+            var exception = await ApiClientException.FromResponseAsync(response);
+            Assert.That(exception.ResponseBody, Is.EqualTo("\u00e9chec"));
+            Assert.That(exception.ResponseBodyReadException, Is.Null);
+        }
+
+        [TestCase(12)]
+        [TestCase(10000)]
+        public async Task SeekableResponseBodyRemainsReadableFromItsOriginalPosition(int length)
+        {
+            var body = new string('x', length);
+            using var response = new HttpResponseMessage(HttpStatusCode.BadGateway) { Content = new StringContent(body) };
+            var stream = await response.Content.ReadAsStreamAsync();
+            var position = stream.Position;
+            var exception = await ApiClientException.FromResponseAsync(response);
+            Assert.That(exception.ResponseBody, Is.EqualTo(body.Substring(0, Math.Min(length, 4096))));
+            Assert.That(stream.Position, Is.EqualTo(position));
+            using var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, leaveOpen: true);
+            Assert.That(await reader.ReadToEndAsync(), Is.EqualTo(body));
+        }
+
+        [Test]
+        public async Task MalformedRelativeAuthorityDoesNotReplaceHttpFailure()
+        {
+            using var response = new HttpResponseMessage(HttpStatusCode.BadGateway) {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri("///x?secret", UriKind.Relative))
+            };
+            var exception = await ApiClientException.FromResponseAsync(response);
+            Assert.That(exception.StatusCode, Is.EqualTo(HttpStatusCode.BadGateway));
+            Assert.That(exception.RequestUri, Is.Null);
+            Assert.That(exception.ToString(), Does.Not.Contain("secret"));
+        }
+
+        [Test]
         public async Task HandlesMissingContentAndRequest()
         {
             using var response = new HttpResponseMessage(HttpStatusCode.NotFound);
@@ -96,9 +135,9 @@ namespace Octgn.Online.Api.Test
         public async Task DecodesDeclaredCharset()
         {
             using var response = new HttpResponseMessage(HttpStatusCode.BadRequest) {
-                Content = new StringContent("échec", Encoding.Unicode)
+                Content = new StringContent("\u00e9chec", Encoding.Unicode)
             };
-            Assert.That((await ApiClientException.FromResponseAsync(response)).ResponseBody, Is.EqualTo("échec"));
+            Assert.That((await ApiClientException.FromResponseAsync(response)).ResponseBody, Is.EqualTo("\u00e9chec"));
         }
 
         [Test]
@@ -192,7 +231,7 @@ namespace Octgn.Online.Api.Test
             public override long Position { get => BytesRead; set => throw new NotSupportedException(); }
             public override int Read(byte[] buffer, int offset, int count)
             {
-                Array.Fill(buffer, (byte)'x', offset, count);
+                for (var i = offset; i < offset + count; i++) buffer[i] = (byte)'x';
                 BytesRead += count;
                 return count;
             }

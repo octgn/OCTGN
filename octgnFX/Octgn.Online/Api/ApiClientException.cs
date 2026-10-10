@@ -15,7 +15,7 @@ namespace Octgn.Site.Api
         public HttpStatusCode? StatusCode { get; private set; }
         public HttpMethod RequestMethod { get; private set; }
 
-        /// <summary>The request URI without user information, query string, or fragment.</summary>
+        /// <summary>The request URI without user information, query string, or fragment. Path identifiers are retained.</summary>
         public Uri RequestUri { get; private set; }
 
         /// <summary>A bounded response excerpt. Treat this as potentially sensitive server data.</summary>
@@ -45,7 +45,7 @@ namespace Octgn.Site.Api
             return Task.Run(() => FromResponseAsync(message)).GetAwaiter().GetResult();
         }
 
-        /// <summary>Creates safe request diagnostics and a bounded, opt-in response excerpt.</summary>
+        /// <summary>Creates request diagnostics and a bounded, opt-in response excerpt. Seekable content retains its position; nonseekable content is consumed.</summary>
         public static async Task<ApiClientException> FromResponseAsync(HttpResponseMessage message) {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
@@ -63,18 +63,27 @@ namespace Octgn.Site.Api
                     var stream = await message.Content.ReadAsStreamAsync().ConfigureAwait(false);
                     var encoding = Encoding.UTF8;
                     var charset = message.Content.Headers.ContentType?.CharSet;
-                    if (!string.IsNullOrEmpty(charset)) encoding = Encoding.GetEncoding(charset.Trim('"'));
+                    if (!string.IsNullOrEmpty(charset)) {
+                        try { encoding = Encoding.GetEncoding(charset.Trim('"')); }
+                        catch (ArgumentException) { encoding = Encoding.UTF8; }
+                        catch (NotSupportedException) { encoding = Encoding.UTF8; }
+                    }
 
-                    using (var reader = new StreamReader(stream, encoding, true, 1024, leaveOpen: true)) {
-                        var buffer = new char[MaximumResponseBodyLength + 1];
-                        var count = 0;
-                        while (count < buffer.Length) {
-                            var read = await reader.ReadAsync(buffer, count, buffer.Length - count).ConfigureAwait(false);
-                            if (read == 0) break;
-                            count += read;
+                    var position = stream.CanSeek ? (long?)stream.Position : null;
+                    try {
+                        using (var reader = new StreamReader(stream, encoding, true, 1024, leaveOpen: true)) {
+                            var buffer = new char[MaximumResponseBodyLength + 1];
+                            var count = 0;
+                            while (count < buffer.Length) {
+                                var read = await reader.ReadAsync(buffer, count, buffer.Length - count).ConfigureAwait(false);
+                                if (read == 0) break;
+                                count += read;
+                            }
+                            truncated = count > MaximumResponseBodyLength;
+                            body = new string(buffer, 0, Math.Min(count, MaximumResponseBodyLength));
                         }
-                        truncated = count > MaximumResponseBodyLength;
-                        body = new string(buffer, 0, Math.Min(count, MaximumResponseBodyLength));
+                    } finally {
+                        if (position.HasValue) stream.Position = position.Value;
                     }
                 } catch (Exception ex) {
                     // A body read failure must not replace the original HTTP status failure.
@@ -100,7 +109,9 @@ namespace Octgn.Site.Api
                 return new Uri(uri.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped));
             }
             if (uri.OriginalString.StartsWith("//", StringComparison.Ordinal)) {
-                var absoluteUri = SanitizeUri(new Uri("http:" + uri.OriginalString));
+                Uri parsedUri;
+                if (!Uri.TryCreate("http:" + uri.OriginalString, UriKind.Absolute, out parsedUri)) return null;
+                var absoluteUri = SanitizeUri(parsedUri);
                 return new Uri(absoluteUri.GetComponents(UriComponents.HostAndPort | UriComponents.Path, UriFormat.UriEscaped).Insert(0, "//"), UriKind.Relative);
             }
             return new Uri(uri.OriginalString.Split('?', '#')[0], UriKind.Relative);
