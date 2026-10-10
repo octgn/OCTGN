@@ -1,129 +1,200 @@
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Runtime.Serialization;
 using NUnit.Framework;
-using Octgn.Server;
 using Octgn.Online.Hosting;
+using Octgn.Server;
 
 namespace Octgn.Test.Server
 {
-    [TestFixture]
+    [TestFixture, NonParallelizable, Timeout(5000)]
     public class ServerPortReuseTests
     {
-        [Test]
-        public async Task Server_CanReusePortImmediatelyAfterShutdown()
+        private readonly List<Octgn.Server.Server> _servers = new List<Octgn.Server.Server>();
+        private readonly List<TcpListener> _owners = new List<TcpListener>();
+
+        [TearDown]
+        public void Cleanup()
         {
-            // Arrange
-            var config = new Config { IsLocal = true };
-            var port = 12345; // Use a specific port for this test
-            var hostedGame = new HostedGame
+            foreach (var server in _servers)
             {
-                Id = Guid.NewGuid(),
-                HostAddress = $"0.0.0.0:{port}",
+                server.Dispose();
+                server.Context.State.Players.Dispose();
+            }
+            foreach (var listener in _owners) listener.Stop();
+            _servers.Clear();
+            _owners.Clear();
+        }
+
+        private static TcpListener Listener(Octgn.Server.Server server)
+        {
+            return (TcpListener)typeof(Octgn.Server.Server)
+                .GetField("_tcp", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(server);
+        }
+
+        private Octgn.Server.Server CreateServer(int port, bool local = true)
+        {
+            var game = new HostedGame {
+                Id = Guid.NewGuid(), HostAddress = $"127.0.0.1:{port}",
                 Status = HostedGameStatus.StartedHosting
             };
+            var server = new Octgn.Server.Server(new Config { IsLocal = local }, game, 21234, local);
+            _servers.Add(server);
+            return server;
+        }
 
-            // Act & Assert - Create and dispose server multiple times rapidly
-            for (int i = 0; i < 3; i++)
+        // Reserve an OS-selected contiguous range. All owner sockets and all client
+        // connections in this fixture use loopback; Server.Start is never called,
+        // because it starts UDP multicast broadcasting before awaiting a client.
+        private int ReservePorts(int count, bool reuse = false)
+        {
+            for (var attempt = 0; attempt < 30; attempt++)
             {
-                Octgn.Server.Server server = null;
+                var range = new List<TcpListener>();
                 try
                 {
-                    // This should not throw SocketException: Address already in use
-                    server = new Octgn.Server.Server(config, hostedGame, 21234, true); // Enable local_server mode
-                    await server.Start();
-                    
-                    // Verify server is actually bound to the expected port
-                    Assert.AreEqual(port, hostedGame.Port, $"Server should bind to port {port} on iteration {i + 1}");
+                    var first = new TcpListener(IPAddress.Loopback, 0);
+                    range.Add(first);
+                    if (reuse) first.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    else first.ExclusiveAddressUse = true;
+                    first.Start();
+                    var port = ((IPEndPoint)first.LocalEndpoint).Port;
+                    if (port + count > IPEndPoint.MaxPort) continue;
+                    for (var offset = 1; offset < count; offset++)
+                    {
+                        var listener = new TcpListener(IPAddress.Loopback, port + offset);
+                        range.Add(listener);
+                        listener.ExclusiveAddressUse = true;
+                        listener.Start();
+                    }
+                    _owners.AddRange(range);
+                    return port;
                 }
+                catch (SocketException) { }
                 finally
                 {
-                    server?.Dispose();
+                    foreach (var listener in range)
+                        if (!_owners.Contains(listener)) listener.Stop();
                 }
-                
-                // Small delay to ensure proper cleanup
-                await Task.Delay(100);
+            }
+            Assert.Fail("Could not reserve an owned contiguous loopback port range.");
+            return 0;
+        }
+
+        private int FreePort()
+        {
+            var port = ReservePorts(1);
+            _owners[_owners.Count - 1].Stop();
+            return port;
+        }
+
+        [Test]
+        public void Server_OwnsPreferredPortFromConstructionUntilDispose()
+        {
+            var port = FreePort();
+            var server = CreateServer(port);
+            var listener = Listener(server);
+            Assert.AreEqual(port, ((IPEndPoint)listener.LocalEndpoint).Port);
+            Assert.IsTrue(listener.ExclusiveAddressUse);
+            var competitor = new TcpListener(IPAddress.Loopback, port);
+            try
+            {
+                competitor.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                Assert.Throws<SocketException>(() => competitor.Start(), "A second listener must not share the advertised port.");
+            }
+            finally { competitor.Stop(); }
+        }
+
+        [Test]
+        public void Server_CanReusePortImmediatelyAfterShutdown()
+        {
+            var port = FreePort();
+            for (var iteration = 0; iteration < 3; iteration++)
+            {
+                var server = CreateServer(port);
+                Assert.AreEqual(port, ((IPEndPoint)Listener(server).LocalEndpoint).Port);
+                server.Dispose(); // Also covers shutdown before Server.Start.
             }
         }
 
         [Test]
-        public async Task Server_FindsAlternativePortWhenPreferredIsUnavailable()
+        public void Server_FindsAlternativePortWhenPreferredIsUnavailable()
         {
-            // Arrange
-            var config = new Config { IsLocal = true };
-            var preferredPort = 12346;
-            var hostedGame1 = new HostedGame
+            var port = ReservePorts(2);
+            _owners[_owners.Count - 1].Stop(); // Release only the next port.
+            var server = CreateServer(port);
+            Assert.AreEqual(port + 1, server.Context.Game.Port);
+            Assert.AreEqual("127.0.0.1", server.Context.Game.Host);
+            Assert.AreEqual(port + 1, ((IPEndPoint)Listener(server).LocalEndpoint).Port);
+        }
+
+        [Test]
+        public void Server_FallsBackWhenOccupiedOwnerEnabledReuseAddress()
+        {
+            var port = ReservePorts(2, true);
+            _owners[_owners.Count - 1].Stop();
+            var server = CreateServer(port);
+            Assert.AreEqual(port + 1, server.Context.Game.Port);
+            Assert.IsTrue(Listener(server).ExclusiveAddressUse);
+        }
+
+        [Test]
+        public void Server_StartingBoundListenerAgainPreservesOwnership()
+        {
+            var port = FreePort();
+            var server = CreateServer(port);
+            var listener = Listener(server);
+            var socket = listener.Server;
+            listener.Start(); // Same call that Server.Start makes before accepting.
+            Assert.AreSame(socket, listener.Server);
+            Assert.AreEqual(port, ((IPEndPoint)listener.LocalEndpoint).Port);
+            Assert.IsTrue(listener.ExclusiveAddressUse);
+        }
+
+        [Test]
+        public void Server_CanReusePortAfterAcceptedConnectionCloses()
+        {
+            var port = FreePort();
+            var server = CreateServer(port);
+            var listener = Listener(server);
+            var accept = listener.AcceptTcpClientAsync();
+            using (var client = new TcpClient())
             {
-                Id = Guid.NewGuid(),
-                HostAddress = $"0.0.0.0:{preferredPort}",
-                Status = HostedGameStatus.StartedHosting
-            };
-            var hostedGame2 = new HostedGame
-            {
-                Id = Guid.NewGuid(),
-                HostAddress = $"0.0.0.0:{preferredPort}", // Same port as first server
-                Status = HostedGameStatus.StartedHosting
-            };
-
-            Octgn.Server.Server server1 = null;
-            Octgn.Server.Server server2 = null;
-
-            try
-            {
-                // Act - Create first server on preferred port
-                server1 = new Octgn.Server.Server(config, hostedGame1, 21234, true); // Enable local_server mode
-                await server1.Start();
-                
-                // Verify first server uses preferred port
-                Assert.AreEqual(preferredPort, hostedGame1.Port);
-
-                // Create second server - should find alternative port
-                server2 = new Octgn.Server.Server(config, hostedGame2, 21234, true); // Enable local_server mode
-                await server2.Start();
-
-                // Assert - Second server should use a different port
-                Assert.AreNotEqual(preferredPort, hostedGame2.Port, 
-                    "Second server should use different port when preferred is busy");
-                Assert.AreEqual(preferredPort + 1, hostedGame2.Port, 
-                    "Second server should use next available port");
+                client.Connect(IPAddress.Loopback, port);
+                Assert.IsTrue(accept.Wait(1000), "The retained listener must accept an owned loopback connection.");
+                using (var accepted = accept.Result) accepted.Close();
+                client.ReceiveTimeout = 1000;
+                Assert.AreEqual(-1, client.GetStream().ReadByte());
             }
-            finally
-            {
-                server1?.Dispose();
-                server2?.Dispose();
-            }
+            server.Dispose();
+            var restarted = CreateServer(port);
+            Assert.AreEqual(port, ((IPEndPoint)Listener(restarted).LocalEndpoint).Port);
         }
 
         [Test]
         public void Server_ThrowsExceptionWhenNoPortsAvailable()
         {
-            // This test would require binding to many ports to exhaust the range
-            // For now, we'll test the basic case where the method exists and works
-            var config = new Config { IsLocal = true };
-            var hostedGame = new HostedGame
-            {
-                Id = Guid.NewGuid(),
-                HostAddress = "0.0.0.0:12347",
-                Status = HostedGameStatus.StartedHosting
-            };
-
-            // Should not throw for a valid port
-            Assert.DoesNotThrow(() => new Octgn.Server.Server(config, hostedGame, 21234, true)); // Enable local_server mode
+            var port = ReservePorts(10);
+            var game = new HostedGame { HostAddress = $"127.0.0.1:{port}" };
+            // Invoke only the binding helper so a deliberately failing constructor
+            // does not create unrelated PlayerCollection timers that cannot be disposed.
+            var server = (Octgn.Server.Server)FormatterServices.GetUninitializedObject(typeof(Octgn.Server.Server));
+            var helper = typeof(Octgn.Server.Server).GetMethod("CreateTcpListenerWithPortReuse", BindingFlags.Instance | BindingFlags.NonPublic);
+            var exception = Assert.Throws<TargetInvocationException>(() => helper.Invoke(server, new object[] { game }));
+            Assert.IsInstanceOf<InvalidOperationException>(exception.InnerException);
+            StringAssert.Contains("10 ports", exception.InnerException.Message);
+            Assert.AreEqual(port, game.Port);
         }
 
         [Test]
         public void Server_DefaultBehavior_UsesOriginalTcpListener()
         {
-            // Test that the default behavior (local_server = false) uses original TcpListener
-            var config = new Config { IsLocal = false };
-            var hostedGame = new HostedGame
-            {
-                Id = Guid.NewGuid(),
-                HostAddress = "0.0.0.0:12348",
-                Status = HostedGameStatus.StartedHosting
-            };
-
-            // Should create server with default behavior (no socket reuse)
-            Assert.DoesNotThrow(() => new Octgn.Server.Server(config, hostedGame, 21234)); // Default: local_server = false
+            var server = CreateServer(FreePort(), false);
+            Assert.IsFalse(Listener(server).ExclusiveAddressUse);
+            Assert.AreEqual(0, (int)Listener(server).Server.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress));
         }
     }
 }
