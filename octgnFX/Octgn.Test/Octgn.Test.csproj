@@ -130,6 +130,7 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Core\GameFeedManagerTests.cs" />
+    <Compile Include="Library\ConfigFileSaveTests.cs" />
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
     <Compile Include="Library\XFileOpenTests.cs" />
     <Compile Include="Library\Networking\GameBroadcastingTests.cs" />
