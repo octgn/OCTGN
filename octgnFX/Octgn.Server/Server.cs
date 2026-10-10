@@ -31,9 +31,9 @@ namespace Octgn.Server
         private TcpListener CreateTcpListenerWithPortReuse(HostedGame game) {
             int preferredPort = game.Port;
             int currentPort = preferredPort;
-            const int maxPortAttempts = 10;
+            const int maxPortAttempts = Octgn.Library.HostedGameProcess.LocalPortAttempts;
             
-            for (int attempt = 0; attempt < maxPortAttempts; attempt++) {
+            for (int attempt = 0; attempt < maxPortAttempts && currentPort <= IPEndPoint.MaxPort; attempt++) {
                 TcpListener listener = null;
                 try {
                     var endpoint = new IPEndPoint(IPAddress.Any, currentPort);
