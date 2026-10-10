@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Octgn.Scripting;
@@ -16,6 +17,8 @@ namespace Octgn.Test.OctgnApp.Scripting
         private MockCodeExecutor _mockCodeExecutor;
         private string _lastExecutedFunction;
         private string _lastExecutedArguments;
+        private HashSet<string> _availableFunctions;
+        private int _executionCount;
 
         [SetUp]
         public void SetUp()
@@ -36,17 +39,18 @@ namespace Octgn.Test.OctgnApp.Scripting
             Prefs.EnableGameSandboxing = true;
             
             // Create mock function validator that allows common test functions
-            var mockFunctionValidator = new MockFunctionValidator(functionName => 
+            _availableFunctions = new HashSet<string>(StringComparer.Ordinal)
             {
-                // Allow common OCTGN game functions that would be available during normal gameplay
-                var allowedFunctions = new[] { "whisper", "notify", "setActivePlayer", "playSound", "testFunction" };
-                return allowedFunctions.Contains(functionName);
-            });
+                "whisper", "notify", "setActivePlayer", "playSound", "testFunction"
+            };
+            var mockFunctionValidator = new MockFunctionValidator(_availableFunctions.Contains);
+            ClearExecutionCapture();
             
             // Create mock code executor that captures what gets executed for verification
             _mockCodeExecutor = new MockCodeExecutor((functionName, arguments) => 
             {
                 // Capture the executed function and arguments for verification
+                _executionCount++;
                 _lastExecutedFunction = functionName;
                 _lastExecutedArguments = arguments;
                 System.Diagnostics.Debug.WriteLine($"Mock execution: {functionName}({arguments})");
@@ -78,6 +82,7 @@ namespace Octgn.Test.OctgnApp.Scripting
         /// </summary>
         private void ClearExecutionCapture()
         {
+            _executionCount = 0;
             _lastExecutedFunction = null;
             _lastExecutedArguments = null;
         }
@@ -2086,17 +2091,16 @@ namespace Octgn.Test.OctgnApp.Scripting
         }
 
         [Test]
-        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksWebGet()
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_RejectsUnavailableWebGet()
         {
-            // Note: webGet is not an actual OCTGN web function, but we test it to show it's NOT blocked
-            // Arrange
-            var function = "webGet";
-            var args = "\"http://evil.com\"";
+            // A name outside the blacklist must still exist in the current scope.
+            var ex = Assert.Throws<ScriptSecurityException>(() =>
+                _engine.ExecuteFunctionSecureNoFormat("webGet", "\"http://example.com\""));
 
-            // Act & Assert - This should NOT be blocked since webGet is not a real web function
-            Assert.DoesNotThrow(() => 
-                _engine.ExecuteFunctionSecureNoFormat(function, args),
-                "webGet is not a real OCTGN web function so should not be blocked");
+            Assert.That(ex.SecurityReason, Contains.Substring("Function does not exist in current scope"));
+            Assert.That(_executionCount, Is.Zero);
+            Assert.That(_lastExecutedFunction, Is.Null);
+            Assert.That(_lastExecutedArguments, Is.Null);
         }
 
         [Test]
@@ -2113,50 +2117,63 @@ namespace Octgn.Test.OctgnApp.Scripting
             Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"));
         }
 
-        [Test]
-        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksActualWebFunctions()
+        [TestCase("webPost")]
+        [TestCase("WebPost")]
+        [TestCase("WEBPOST")]
+        [TestCase("wEbPoSt")]
+        [TestCase("webRead")]
+        [TestCase("WebRead")]
+        [TestCase("WEBREAD")]
+        [TestCase("wEbReAd")]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_BlocksActualWebFunctions(string webFunction)
         {
-            // Test that only the actual OCTGN web functions are blocked
-            var actualWebFunctions = new[]
-            {
-                "webPost",
-                "webRead"
-            };
+            // Availability must not override the case-insensitive blacklist.
+            _availableFunctions.Add(webFunction);
+            var ex = Assert.Throws<ScriptSecurityException>(() =>
+                _engine.ExecuteFunctionSecureNoFormat(webFunction, "\"http://example.com\""),
+                $"Actual web function '{webFunction}' should be blocked");
 
-            foreach (var webFunction in actualWebFunctions)
-            {
-                // Act & Assert - These should be blocked
-                var ex = Assert.Throws<ScriptSecurityException>(() => 
-                    _engine.ExecuteFunctionSecureNoFormat(webFunction, "\"http://example.com\""),
-                    $"Actual web function '{webFunction}' should be blocked");
-                
-                Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"),
-                    $"Security exception for '{webFunction}' should mention dangerous function");
-            }
+            Assert.That(ex.SecurityReason, Contains.Substring("Dangerous function name"),
+                $"Security exception for '{webFunction}' should mention dangerous function");
+            Assert.That(_executionCount, Is.Zero);
+            Assert.That(_lastExecutedFunction, Is.Null);
+            Assert.That(_lastExecutedArguments, Is.Null);
         }
 
-        [Test]
-        public void ExecuteFunctionSecureNoFormat_WebFunctions_AllowsNonWebFunctions()
+        [TestCase("webGet")]
+        [TestCase("website")]
+        [TestCase("webApi")]
+        [TestCase("webSocket")]
+        [TestCase("webService")]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_AllowsNonWebFunctions(string nonWebFunction)
         {
-            // Test that functions starting with "web" but not actual web functions are allowed
-            var nonWebFunctions = new[]
-            {
-                "webGet",      // Not a real OCTGN function
-                "website",     // Not a real OCTGN function  
-                "webApi",      // Not a real OCTGN function
-                "webSocket",   // Not a real OCTGN function
-                "webService",  // Not a real OCTGN function
-                "WebPost",     // Case variation - not exact match
-                "WEBREAD"      // Case variation - not exact match
-            };
+            // These harmless test functions are available only for this test case.
+            _availableFunctions.Add(nonWebFunction);
+            const string args = "\"http://example.com\"";
 
-            foreach (var nonWebFunction in nonWebFunctions)
-            {
-                // Act & Assert - These should NOT be blocked
-                Assert.DoesNotThrow(() => 
-                    _engine.ExecuteFunctionSecureNoFormat(nonWebFunction, "\"http://example.com\""),
-                    $"Non-web function '{nonWebFunction}' should not be blocked");
-            }
+            Assert.DoesNotThrow(() =>
+                _engine.ExecuteFunctionSecureNoFormat(nonWebFunction, args),
+                $"Registered non-web function '{nonWebFunction}' should not be blocked");
+            Assert.That(_lastExecutedFunction, Is.EqualTo(nonWebFunction));
+            Assert.That(_lastExecutedArguments, Is.EqualTo(args));
+            Assert.That(_executionCount, Is.EqualTo(1));
+        }
+
+        [TestCase("website")]
+        [TestCase("webApi")]
+        [TestCase("webSocket")]
+        [TestCase("webService")]
+        [TestCase("unknownFunction")]
+        [TestCase("Whisper")]
+        public void ExecuteFunctionSecureNoFormat_WebFunctions_RejectsUnavailableFunctions(string function)
+        {
+            var ex = Assert.Throws<ScriptSecurityException>(() =>
+                _engine.ExecuteFunctionSecureNoFormat(function, "\"http://example.com\""));
+
+            Assert.That(ex.SecurityReason, Contains.Substring("Function does not exist in current scope"));
+            Assert.That(_executionCount, Is.Zero);
+            Assert.That(_lastExecutedFunction, Is.Null);
+            Assert.That(_lastExecutedArguments, Is.Null);
         }
 
         [Test]
