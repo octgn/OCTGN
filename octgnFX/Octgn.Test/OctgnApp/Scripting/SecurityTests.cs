@@ -1942,14 +1942,17 @@ namespace Octgn.Test.OctgnApp.Scripting
         [Test]
         public void ExecuteFunctionSecureNoFormat_ReportedMultilineImportExploit_IsBlocked()
         {
+            _availableFunctions.Add("remoteCall");
             // This tests the specific exploit with multiline import and System namespace access
             var exploit = @"""
                 import System
                 System.IO.File.Delete(r""C:\\Test\\test.txt"")#
                 """;
             
-            Assert.Throws<ScriptSecurityException>(() => 
+            var error = Assert.Throws<ScriptSecurityException>(() =>
                 _engine.ExecuteFunctionSecureNoFormat("remoteCall", exploit));
+            StringAssert.Contains("Invalid argument detected", error.SecurityReason);
+            Assert.AreEqual(0, _executionCount);
         }
 
         [Test]
