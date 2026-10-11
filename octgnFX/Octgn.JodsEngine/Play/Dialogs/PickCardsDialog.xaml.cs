@@ -145,10 +145,9 @@ namespace Octgn.Play.Dialogs
                     }));
                     this.StopListenningForFilterValueChanges();
 
-                    // Batch card additions to prevent UI thread congestion when deck panel is full
+                    // Build the observable cards off the UI thread; they are added to the pool in one Dispatcher call below
                     var cardsToAdd = new List<ObservableMultiCard>();
                     int totalCards = deck.Sections.Sum(s => s.Cards.Sum(c => c.Quantity));
-                    ProgressBarLoading.Maximum = totalCards;
                     
                     foreach (Section section in deck.Sections)
                     {
@@ -162,7 +161,7 @@ namespace Octgn.Play.Dialogs
                         }
                     }
                     
-                    // Batch add all cards in a single Dispatcher call to improve performance
+                    // Add all cards to the pool in a single Dispatcher call
                     Dispatcher.Invoke(new Action(() =>
                     {
                         foreach (var card in cardsToAdd)
