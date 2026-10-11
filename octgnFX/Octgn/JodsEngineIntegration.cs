@@ -25,7 +25,7 @@ namespace Octgn
     {
         private readonly static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Task<bool> HostGame(HostedGame hostedGame, HostedGameSource source, string username, string password) {
+        public async Task<bool> HostGame(HostedGame hostedGame, HostedGameSource source, string username, string password) {
             DebugValidate(hostedGame, true);
 
             //duct-tape fix for a game server bug where online-hosted games lose the chosen password
@@ -38,20 +38,20 @@ namespace Octgn
                 args += "-x ";
 
             if (source == HostedGameSource.Lan) {
-                new HostedGameProcess(
+                await new HostedGameProcess(
                     hostedGame,
                     X.Instance.Debug,
                     true
-                ).Start();
+                ).StartAsync();
             }
 
             args += $"-u \"{username}\" ";
             args += "-k \"" + HostedGame.Serialize(hostedGame) + "\"";
 
-            return LaunchJodsEngine(args);
+            return await LaunchJodsEngine(args);
         }
 
-        public Task<bool> HostGame(int? hostPort, Guid? gameId)
+        public async Task<bool> HostGame(int? hostPort, Guid? gameId)
         {
             if (gameId == null)
                 throw new UserMessageException("Cannot launch jodsengine from command line: Game GUID is missing.");
@@ -81,11 +81,11 @@ namespace Octgn
             var args = "-h ";
             if (CommandLineHandler.Instance.DevMode)
                 args += "-x ";
-            new HostedGameProcess(hostedGame, X.Instance.Debug, true).Start();
+            await new HostedGameProcess(hostedGame, X.Instance.Debug, true).StartAsync();
             args += $"-u \"{Prefs.Nickname}\" ";
             args += "-k \"" + HostedGame.Serialize(hostedGame) + "\"";
 
-            return LaunchJodsEngine(args);
+            return await LaunchJodsEngine(args);
         }
 
         public Task<bool> LaunchDeckEditor(string deckPath = null) {
@@ -97,13 +97,6 @@ namespace Octgn
         }
 
         public Task<bool> JoinGame(HostedGameViewModel hostedGameViewModel, string username, bool spectate) {
-            User user;
-            if (Program.LobbyClient.User != null) {
-                user = Program.LobbyClient.User;
-            } else {
-                user = new User(Guid.NewGuid().ToString(), Prefs.Username);
-            }
-
             var hostedGame = hostedGameViewModel.HostedGame;
 
             DebugValidate(hostedGame, false);
@@ -112,12 +105,6 @@ namespace Octgn
 
             if (CommandLineHandler.Instance.DevMode)
                 args += "-x ";
-
-            new HostedGameProcess(
-                hostedGame,
-                X.Instance.Debug,
-                true
-            ).Start();
 
             args += $"-u \"{username}\" ";
             if (spectate) {

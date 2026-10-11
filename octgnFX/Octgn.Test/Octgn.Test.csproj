@@ -130,16 +130,21 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Core\GameFeedManagerTests.cs" />
+    <Compile Include="Library\ConfigFileSaveTests.cs" />
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
+    <Compile Include="Library\XFileOpenTests.cs" />
     <Compile Include="Library\Networking\GameBroadcastingTests.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
     <Compile Include="OctgnApp\Scripting\RemoteCallValidUseCasesTests.cs" />
     <Compile Include="OctgnApp\Scripting\SecurityTests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />
+    <Compile Include="OctgnApp\Scripting\VersionRegistrationTests.cs" />
     <Compile Include="PlayGround.cs" />
     <Compile Include="Server\GameStatusResetTests.cs" />
     <Compile Include="Server\ServerPortReuseTests.cs" />
+    <Compile Include="Server\HostedGameProcessTests.cs" />
+    <Compile Include="Server\ServerShutdownTests.cs" />
     <Compile Include="Utils\HttpEcho.cs" />
     <Compile Include="VersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

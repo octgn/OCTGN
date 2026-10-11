@@ -278,7 +278,6 @@ namespace Octgn.Tabs.Profile
         private bool isSubscribed;
         private bool isMe;
         private bool canChangeIcon;
-        private int disconnectPercent;
         private String _totalTimePlayed;
         private String _averageGameTime;
         private int _level;
@@ -405,23 +404,6 @@ namespace Octgn.Tabs.Profile
             }
         }
 
-        public int DisconnectPercent
-        {
-            get
-            {
-                return this.disconnectPercent;
-            }
-            set
-            {
-                if (value.Equals(this.disconnectPercent))
-                {
-                    return;
-                }
-                this.disconnectPercent = value;
-                this.OnPropertyChanged("DisconnectPercent");
-            }
-        }
-
         public int Level
         {
             get { return _level; }
@@ -494,7 +476,6 @@ namespace Octgn.Tabs.Profile
             UserIcon = user.IconUrl;
             UserSubscription = user.Tier;
             IsSubscribed = user.IsSubscribed;
-            DisconnectPercent = user.DisconnectPercent;
 			if(user.Experience == null)
 				user.Experience = new List<ApiUserExperience>();
 			Experiences.Add(new UserExperienceViewModel(user));

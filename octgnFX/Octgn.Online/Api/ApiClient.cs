@@ -46,7 +46,7 @@ namespace Octgn.Site.Api
             var resp = await client.PostAsJsonAsync("api/user/fromuserids", userIds, cancellationToken);
 
             if (!resp.IsSuccessStatusCode)
-                throw ApiClientException.FromResponse(resp);
+                throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
 
             return await resp.Content.ReadAsAsync<ApiUser[]>();
         }
@@ -86,7 +86,7 @@ namespace Octgn.Site.Api
             var resp = await client.PostAsJsonAsync("api/sessions", data);
 
             if (!resp.IsSuccessStatusCode)
-                throw ApiClientException.FromResponse(resp);
+                throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
 
             var result = await resp.Content.ReadAsAsync<CreateSessionResult>();
 
@@ -99,7 +99,7 @@ namespace Octgn.Site.Api
             var resp = await Client.PostAsJsonAsync(url, sessionId);
 
             if (!resp.IsSuccessStatusCode)
-                throw ApiClientException.FromResponse(resp);
+                throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
         }
 
         public async Task<bool> ValidateSession(string userId, string deviceId, string sessionId, CancellationToken cancellationToken = default(CancellationToken)) {
@@ -110,7 +110,7 @@ namespace Octgn.Site.Api
             if (resp.StatusCode == HttpStatusCode.NotFound) return false;
 
             if (!resp.IsSuccessStatusCode)
-                throw ApiClientException.FromResponse(resp);
+                throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
 
             var result = await resp.Content.ReadAsAsync<string>();
 
@@ -155,7 +155,7 @@ namespace Octgn.Site.Api
                     + HttpUtility.UrlEncode(password));
 
             if (!resp.IsSuccessStatusCode)
-                throw ApiClientException.FromResponse(resp);
+                throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
 
             return await resp.Content.ReadAsAsync<bool>();
         }
@@ -201,8 +201,7 @@ namespace Octgn.Site.Api
             var client = Client;
             var resp = client.GetAsync("api/shareddeck/" + username).Result;
             if (!resp.IsSuccessStatusCode) {
-                var content = resp.Content.ReadAsStringAsync().Result;
-                throw new ApiClientException("GetUsersSharedDecks bad status code {resp.StatusCode}\n{content}");
+                throw ApiClientException.FromResponse(resp);
             }
             var ret = resp.Content.ReadAsAsync<IEnumerable<SharedDeckInfo>>().Result.ToList();
             return ret;
@@ -224,8 +223,7 @@ namespace Octgn.Site.Api
             var url = string.Format(urlFormat, end, accessKey);
             var resp = client.PostAsync(url, new StringContent(message)).Result;
             if (!resp.IsSuccessStatusCode) {
-                var content = resp.Content.ReadAsStringAsync().Result;
-                throw new ApiClientException("UsersFromUsername bad status code {resp.StatusCode}\n{content}");
+                throw ApiClientException.FromResponse(resp);
             }
         }
 
@@ -247,7 +245,7 @@ namespace Octgn.Site.Api
             };
             var resp = await client.PutAsJsonAsync("api/game", model);
             if(!resp.IsSuccessStatusCode)
-                throw ApiClientException.FromResponse(resp);
+                throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<HostedGame>> GetGameList() {
@@ -256,7 +254,7 @@ namespace Octgn.Site.Api
             if (resp.IsSuccessStatusCode) {
                 return await resp.Content.ReadAsAsync<IEnumerable<HostedGame>>(); ;
             }
-            throw ApiClientException.FromResponse(resp);
+            throw await ApiClientException.FromResponseAsync(resp).ConfigureAwait(false);
         }
 
         public bool GameMessage(string apiKey, GameMessage message) {

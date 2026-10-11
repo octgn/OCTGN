@@ -379,6 +379,16 @@ namespace Octgn.Core.DataManagers
                         {
                             continue;
                         }
+
+                        // Skip Windows system/hidden files that may be included in zips
+                        var fileName = Path.GetFileName(e.FullName);
+                        if (fileName.Equals("desktop.ini", StringComparison.OrdinalIgnoreCase)
+                            || fileName.Equals("Thumbs.db", StringComparison.OrdinalIgnoreCase)
+                            || fileName.StartsWith("._", StringComparison.OrdinalIgnoreCase))
+                        {
+                            Log.InfoFormat("Skipping system file {0} in {1}", e.FullName, filename);
+                            continue;
+                        }
                         bool extracted = extract(e, out gameGuid, gameGuid);
                         if (!extracted)
                         {

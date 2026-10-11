@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Octgn.Library;
+using System.Globalization;
 using System.Windows.Markup;
 using System.Windows.Threading;
 using Octgn.Core.Util;
@@ -31,6 +32,11 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Fix #1765: Use invariant culture to avoid issues with non-standard regional settings
+            // (e.g. comma as decimal separator, different date formats)
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
             Thread.CurrentThread.Name = "MAIN";
 
             // Need this to load Octgn.Core for the logger
