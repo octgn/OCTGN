@@ -207,6 +207,39 @@ namespace Octgn.Controls
                 if (calledStart) return;
                 calledStart = true;
             }
+
+            Dispatcher.VerifyAccess();
+
+            // Validate that we have at least one non-global player before starting.
+            // If AllExceptGlobal is empty, the game is in a broken state - starting
+            // would just cause failures downstream (e.g. no controller for global groups).
+            if (!Player.AllExceptGlobal.Any())
+            {
+                Log.ErrorFormat(
+                    "Cannot start game: no active players found. " +
+                    "All={0}, Spectators={1}, GlobalPlayer={2}, LocalPlayer={3}, IsHost={4}",
+                    Player.All.Count,
+                    Player.Spectators.Count,
+                    Player.GlobalPlayer != null ? Player.GlobalPlayer.Name : "(null)",
+                    Player.LocalPlayer != null ? $"{Player.LocalPlayer.Name} (Spectator={Player.LocalPlayer.Spectator})" : "(null)",
+                    Program.IsHost);
+
+                lock (this) { calledStart = false; }
+                this.IsEnabled = true;
+
+                TopMostMessageBox.Show(
+                    "Unable to start the game because no active players were found.\n\n" +
+                    "This is unexpected and usually resolves on retry.\n" +
+                    "Please try again, or leave and re-host the game.\n\n" +
+                    "If this keeps happening, you can export your logs using\n" +
+                    "the OCTGN Log Explorer (in your Start menu) and share them\n" +
+                    "in #octgn-helpdesk on our Discord: https://discord.gg/Yn3Jrpj",
+                    "Cannot Start Game",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
             // Reset the InvertedTable flags if they were set and they are not used
             if (!Program.GameSettings.UseTwoSidedTable)
                 foreach (Player player in Player.AllExceptGlobal)
