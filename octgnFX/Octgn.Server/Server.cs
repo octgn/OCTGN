@@ -25,25 +25,26 @@ namespace Octgn.Server
         private readonly TcpListener _tcp; // Underlying windows socket
 
         /// <summary>
-        /// Creates a TcpListener with SO_REUSEADDR option and fallback port selection
-        /// to handle port binding conflicts when quickly restarting LAN games.
+        /// Binds a LAN listener exclusively, trying the next port if it is occupied.
+        /// The successful listener remains bound until the server shuts down.
         /// </summary>
         private TcpListener CreateTcpListenerWithPortReuse(HostedGame game) {
             int preferredPort = game.Port;
             int currentPort = preferredPort;
-            const int maxPortAttempts = 10;
+            const int maxPortAttempts = Octgn.Library.HostedGameProcess.LocalPortAttempts;
             
-            for (int attempt = 0; attempt < maxPortAttempts; attempt++) {
+            for (int attempt = 0; attempt < maxPortAttempts && currentPort <= IPEndPoint.MaxPort; attempt++) {
+                TcpListener listener = null;
                 try {
                     var endpoint = new IPEndPoint(IPAddress.Any, currentPort);
-                    var listener = new TcpListener(endpoint);
+                    listener = new TcpListener(endpoint);
                     
-                    // Enable SO_REUSEADDR to allow immediate port reuse
-                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    // SO_REUSEADDR can permit duplicate binds on Windows. Exclusive
+                    // ownership makes an occupied port fail before it is advertised.
+                    listener.ExclusiveAddressUse = true;
                     
-                    // Test if we can bind to this port
+                    // Keep this socket bound; Stop would replace it and drop its options.
                     listener.Start();
-                    listener.Stop();
                     
                     // Update the game's host address if we had to use a different port
                     if (currentPort != preferredPort) {
@@ -56,9 +57,11 @@ namespace Octgn.Server
                     return listener;
                     
                 } catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse) {
+                    listener?.Stop();
                     Log.InfoFormat("Port {0} is busy (attempt {1}/{2}), trying next port...", currentPort, attempt + 1, maxPortAttempts);
                     currentPort++;
                 } catch (SocketException ex) {
+                    listener?.Stop();
                     Log.ErrorFormat("Failed to bind to port {0}: {1}", currentPort, ex.Message);
                     throw;
                 }

@@ -143,6 +143,7 @@
     <Compile Include="PlayGround.cs" />
     <Compile Include="Server\GameStatusResetTests.cs" />
     <Compile Include="Server\ServerPortReuseTests.cs" />
+    <Compile Include="Server\HostedGameProcessTests.cs" />
     <Compile Include="Server\ServerShutdownTests.cs" />
     <Compile Include="Utils\HttpEcho.cs" />
     <Compile Include="VersionTest.cs" />
