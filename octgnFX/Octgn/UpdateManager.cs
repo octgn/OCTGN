@@ -212,10 +212,15 @@ namespace Octgn
         {
             get
             {
+    #if DEBUG
+                // Don't update when running a debug build
+                return false;
+#else
                 if (System.Diagnostics.Debugger.IsAttached) {
                     // Don't update when running debugger
                     return false;
                 }
+#endif
                 var iu = IsUpToDate ?? true;
                 if (IsFaulted) return false;
                 return iu == false;

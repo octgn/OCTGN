@@ -293,11 +293,6 @@ namespace Octgn.Windows
             win.ShowDialog();
         }
 
-        private void MenuAndroidAppClick(object sender, RoutedEventArgs e)
-        {
-            Program.LaunchUrl("https://play.google.com/store/apps/details?id=com.octgn.app");
-        }
-
         private void MenuDonateClick(object sender, RoutedEventArgs e) {
             Program.LaunchUrl("http://octgn.net/Home/Donate");
         }

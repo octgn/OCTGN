@@ -384,7 +384,13 @@ namespace Octgn.Play
                 Viewers.Add(Owner);
             }
             else
+            {
                 visibility = Def.Visibility;
+                if (Def.Visibility == GroupVisibility.Everybody)
+                {
+                    Viewers.AddRange(Player.All);
+                }
+            }
             OnCardsChanged();
         }
 

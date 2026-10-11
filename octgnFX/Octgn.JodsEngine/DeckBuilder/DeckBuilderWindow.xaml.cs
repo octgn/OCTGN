@@ -1331,6 +1331,16 @@ namespace Octgn.DeckBuilder
             dlg.ShowDialog();
         }
 
+        private void ExportCardImagesClicked(object sender, RoutedEventArgs e)
+        {
+            if (Game == null) return;
+            if (Deck == null) return;
+
+            // Show export dialog
+            var exportDialog = new ExportCardImagesDialog(Game, Deck);
+            exportDialog.ShowDialog();
+        }
+
         private void ChangeSleeve(object sender, RequestNavigateEventArgs e)
         {
             if (SubscriptionModule.Get().IsSubscribed == false)
@@ -1386,6 +1396,17 @@ namespace Octgn.DeckBuilder
         }
         private static void SortDataGrid(DataGrid dataGrid, int columnIndex = 0, ListSortDirection sortDirection = ListSortDirection.Ascending)
         {
+            // Commit any pending AddNew or EditItem transaction before sorting
+            // to avoid System.InvalidOperationException
+            var editableItems = dataGrid.Items as IEditableCollectionView;
+            if (editableItems != null)
+            {
+                if (editableItems.IsAddingNew)
+                    editableItems.CommitNew();
+                if (editableItems.IsEditingItem)
+                    editableItems.CommitEdit();
+            }
+
             dataGrid.Items.SortDescriptions.Clear();
 
             foreach (var col in dataGrid.Columns)

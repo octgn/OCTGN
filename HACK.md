@@ -1,7 +1,7 @@
 Contribute!
 -------------------------------------------------
 * To get started, Join us on <a href="https://discord.gg/Yn3Jrpj">Discord</a>
-* Sign the Contributor License Agreement https://www.clahub.com/agreements/octgn/OCTGN
+* By contributing you agree that your code may be used freely within the OCTGN project
 * *HELP US CODE:*
   * Create a github account (https://github.com/signup/free)
   * Setup git locally (https://help.github.com/win-set-up-git/)

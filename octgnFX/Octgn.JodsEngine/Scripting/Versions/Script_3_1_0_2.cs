@@ -1457,6 +1457,7 @@ namespace Octgn.Scripting.Versions
 				request.Timeout = (timeout == 0) ? request.Timeout : timeout;
 				request.UserAgent = "OCTGN_" + Const.OctgnVersion.ToString() + "/" + Program.GameEngine.Definition.Name + "_" + Program.GameEngine.Definition.Version.ToString();
 				request.Method = data == null ? "GET" : "POST";
+				request.Accept = "*/*";
 
 	            if (data != null) {
 					var byteArray = Encoding.UTF8.GetBytes(data);

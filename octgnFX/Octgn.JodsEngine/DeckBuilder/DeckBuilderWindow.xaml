@@ -102,6 +102,9 @@
                 <MenuItem Header="Always Show Proxy" Command="gui:Commands.AlwaysShowProxy" IsChecked="{Binding AlwaysShowProxy, ElementName=self, Mode=OneWay}"/>
                 <MenuItem Header="Hide Result Counter" IsCheckable="True" IsChecked="{Binding hideResultCount, ElementName=self, Mode=TwoWay}" />
             </MenuItem>
+            <MenuItem Header="Share">
+                <MenuItem Header="Card Images..." Click="ExportCardImagesClicked" />
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="View Keyboard Shortcuts" Click="showShortcutsClick" />
             </MenuItem>
