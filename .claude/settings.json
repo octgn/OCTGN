@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash F:/Source/OCTGN/.claude/hooks/lint-and-test.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,526 @@
+import { describe, it, expect } from 'vitest';
+import { parseDefinitionXml } from '@main/games/definition-parser';
+
+describe('parseDefinitionXml — table, board, and card size parsing', () => {
+  const minimalGame = (inner: string) => `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0" gameversion="0.0.0.1">
+  <card name="Default" width="63" height="88" cornerRadius="5" back="cards/back.png" front="cards/front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+  ${inner}
+</game>`;
+
+  describe('table parsing', () => {
+    it('parses table with just width and height', () => {
+      const xml = minimalGame(`<table name="Table" width="640" height="480" />`);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.table).toBeDefined();
+      expect(def!.table!.name).toBe('Table');
+      expect(def!.table!.width).toBe(640);
+      expect(def!.table!.height).toBe(480);
+      expect(def!.table!.background).toBeUndefined();
+      expect(def!.table!.backgroundStyle).toBeUndefined();
+    });
+
+    it('parses table with background and backgroundStyle', () => {
+      const xml = minimalGame(
+        `<table name="Table" width="800" height="600" background="images/bg.png" backgroundStyle="tile" />`
+      );
+      const def = parseDefinitionXml(xml);
+      expect(def!.table!.background).toBe('images/bg.png');
+      expect(def!.table!.backgroundStyle).toBe('tile');
+    });
+
+    it('parses all backgroundStyle values', () => {
+      for (const style of ['stretch', 'tile', 'uniform', 'uniformToFill'] as const) {
+        const xml = minimalGame(
+          `<table name="T" width="100" height="100" backgroundStyle="${style}" />`
+        );
+        const def = parseDefinitionXml(xml);
+        expect(def!.table!.backgroundStyle).toBe(style);
+      }
+    });
+
+    it('handles missing table element gracefully', () => {
+      const xml = minimalGame('');
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.table).toBeUndefined();
+    });
+
+    it('defaults table dimensions to 0 when attributes are missing', () => {
+      const xml = minimalGame(`<table name="T" />`);
+      const def = parseDefinitionXml(xml);
+      expect(def!.table!.width).toBe(0);
+      expect(def!.table!.height).toBe(0);
+    });
+  });
+
+  describe('board parsing — legacy boardPosition on table', () => {
+    it('parses board from table board + boardPosition attributes', () => {
+      const xml = minimalGame(
+        `<table name="Table" width="640" height="480" board="images/board.png" boardPosition="10,20,300,200" />`
+      );
+      const def = parseDefinitionXml(xml);
+      expect(def!.table!.board).toBeDefined();
+      expect(def!.table!.board!.name).toBe('Default');
+      expect(def!.table!.board!.source).toBe('images/board.png');
+      expect(def!.table!.board!.x).toBe(10);
+      expect(def!.table!.board!.y).toBe(20);
+      expect(def!.table!.board!.width).toBe(300);
+      expect(def!.table!.board!.height).toBe(200);
+    });
+
+    it('does not set board when boardPosition is missing', () => {
+      const xml = minimalGame(
+        `<table name="Table" width="640" height="480" board="images/board.png" />`
+      );
+      const def = parseDefinitionXml(xml);
+      expect(def!.table!.board).toBeUndefined();
+    });
+  });
+
+  describe('gameboards parsing', () => {
+    it('parses a default gameboard from gameboards element', () => {
+      const xml = minimalGame(
+        `<table name="Table" width="640" height="480" />
+         <gameboards name="Main Board" src="boards/main.png" x="0" y="0" width="500" height="400" />`
+      );
+      const def = parseDefinitionXml(xml);
+      expect(def!.boards).toBeDefined();
+      expect(def!.boards!.length).toBeGreaterThanOrEqual(1);
+      expect(def!.boards![0]).toEqual({
+        name: 'Main Board',
+        source: 'boards/main.png',
+        x: 0,
+        y: 0,
+        width: 500,
+        height: 400,
+      });
+    });
+
+    it('parses additional gameboard children', () => {
+      const xml = minimalGame(
+        `<table name="Table" width="640" height="480" />
+         <gameboards name="Default" src="boards/default.png" x="0" y="0" width="500" height="400">
+           <gameboard name="Alt Board" src="boards/alt.png" x="10" y="20" width="300" height="250" />
+           <gameboard name="Night" src="boards/night.png" x="5" y="5" width="500" height="400" />
+         </gameboards>`
+      );
+      const def = parseDefinitionXml(xml);
+      expect(def!.boards).toBeDefined();
+      // Default + 2 children
+      expect(def!.boards!.length).toBe(3);
+      expect(def!.boards![0].name).toBe('Default');
+      expect(def!.boards![1].name).toBe('Alt Board');
+      expect(def!.boards![1].source).toBe('boards/alt.png');
+      expect(def!.boards![2].name).toBe('Night');
+    });
+
+    it('returns empty boards array when no gameboards element exists and no legacy board', () => {
+      const xml = minimalGame(`<table name="Table" width="640" height="480" />`);
+      const def = parseDefinitionXml(xml);
+      // No gameboards element and no legacy board → no boards
+      expect(def!.boards).toBeUndefined();
+    });
+  });
+
+  describe('card size parsing', () => {
+    it('parses default card size from card element', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" cornerRadius="5"
+        back="cards/back.png" front="cards/front.png"
+        backWidth="65" backHeight="90" backCornerRadius="6" />
+  <table name="T" width="100" height="100" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def!.defaultCardSize).toBeDefined();
+      expect(def!.defaultCardSize!.name).toBe('Default');
+      expect(def!.defaultCardSize!.width).toBe(63);
+      expect(def!.defaultCardSize!.height).toBe(88);
+      expect(def!.defaultCardSize!.cornerRadius).toBe(5);
+      expect(def!.defaultCardSize!.back).toBe('cards/back.png');
+      expect(def!.defaultCardSize!.front).toBe('cards/front.png');
+      expect(def!.defaultCardSize!.backWidth).toBe(65);
+      expect(def!.defaultCardSize!.backHeight).toBe(90);
+      expect(def!.defaultCardSize!.backCornerRadius).toBe(6);
+    });
+
+    it('defaults backWidth/backHeight/backCornerRadius to front values when negative', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" cornerRadius="5"
+        back="back.png" front="front.png"
+        backWidth="-1" backHeight="-1" backCornerRadius="-1" />
+  <table name="T" width="100" height="100" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def!.defaultCardSize!.backWidth).toBe(63);
+      expect(def!.defaultCardSize!.backHeight).toBe(88);
+      expect(def!.defaultCardSize!.backCornerRadius).toBe(5);
+    });
+
+    it('defaults backWidth/backHeight/backCornerRadius to front values when missing', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" cornerRadius="5"
+        back="back.png" front="front.png" />
+  <table name="T" width="100" height="100" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def!.defaultCardSize!.backWidth).toBe(63);
+      expect(def!.defaultCardSize!.backHeight).toBe(88);
+      expect(def!.defaultCardSize!.backCornerRadius).toBe(5);
+    });
+
+    it('parses alternative card sizes from card > size children', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" cornerRadius="5"
+        back="back.png" front="front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5">
+    <size name="Small" width="40" height="56" cornerRadius="3"
+          back="small/back.png" front="small/front.png"
+          backWidth="40" backHeight="56" backCornerRadius="3" />
+    <size name="Large" width="90" height="126" cornerRadius="8"
+          back="large/back.png" front="large/front.png"
+          backWidth="-1" backHeight="-1" backCornerRadius="-1" />
+  </card>
+  <table name="T" width="100" height="100" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def!.cardSizes).toBeDefined();
+      expect(Object.keys(def!.cardSizes!)).toHaveLength(2);
+      expect(def!.cardSizes!['Small']).toBeDefined();
+      expect(def!.cardSizes!['Small'].width).toBe(40);
+      expect(def!.cardSizes!['Small'].height).toBe(56);
+      expect(def!.cardSizes!['Large']).toBeDefined();
+      // negative back dimensions should fall back to front
+      expect(def!.cardSizes!['Large'].backWidth).toBe(90);
+      expect(def!.cardSizes!['Large'].backHeight).toBe(126);
+      expect(def!.cardSizes!['Large'].backCornerRadius).toBe(8);
+    });
+
+    it('handles card element with no size children', () => {
+      const xml = minimalGame(`<table name="T" width="100" height="100" />`);
+      const def = parseDefinitionXml(xml);
+      expect(def!.defaultCardSize).toBeDefined();
+      expect(def!.cardSizes).toEqual({});
+    });
+  });
+
+  describe('backward compatibility', () => {
+    it('still populates legacy cardWidth, cardHeight, cardBack fields', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" cornerRadius="5"
+        back="cards/back.png" front="cards/front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5" />
+  <table name="T" width="100" height="100" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def!.cardWidth).toBe(63);
+      expect(def!.cardHeight).toBe(88);
+      expect(def!.cardBack).toBe('cards/back.png');
+    });
+  });
+
+  describe('deck section parsing', () => {
+    it('parses <deck> element with section children', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <deck>
+          <section name="Starting" group="Starting" />
+          <section name="Life Deck" group="Life Deck" />
+        </deck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.deckSections).toHaveLength(2);
+      expect(def!.deckSections[0]).toEqual({ name: 'Starting', group: 'Starting', shared: false });
+      expect(def!.deckSections[1]).toEqual({ name: 'Life Deck', group: 'Life Deck', shared: false });
+    });
+
+    it('parses <sharedDeck> element with section children', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <sharedDeck>
+          <section name="Shared Pile" group="Shared" />
+        </sharedDeck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.sharedDeckSections).toHaveLength(1);
+      expect(def!.sharedDeckSections[0]).toEqual({ name: 'Shared Pile', group: 'Shared', shared: true });
+    });
+
+    it('defaults group to section name when group attribute is missing', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <deck>
+          <section name="Hand" />
+        </deck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.deckSections).toHaveLength(1);
+      expect(def!.deckSections[0]).toEqual({ name: 'Hand', group: 'Hand', shared: false });
+    });
+
+    it('falls back to player groups when no <deck> element exists', () => {
+      const xml = minimalGame(`<table name="T" width="100" height="100" />`);
+      const def = parseDefinitionXml(xml);
+      // minimalGame has one player group: "Hand"
+      expect(def!.deckSections).toHaveLength(1);
+      expect(def!.deckSections[0]).toEqual({ name: 'Hand', group: 'Hand', shared: false });
+    });
+
+    it('returns empty sharedDeckSections when no <sharedDeck> element exists', () => {
+      const xml = minimalGame(`<table name="T" width="100" height="100" />`);
+      const def = parseDefinitionXml(xml);
+      expect(def!.sharedDeckSections).toEqual([]);
+    });
+
+    it('handles section with different name and group', () => {
+      const xml = minimalGame(`
+        <table name="T" width="100" height="100" />
+        <deck>
+          <section name="Main Deck" group="Library" />
+          <section name="Side Board" group="Sideboard Pile" />
+        </deck>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.deckSections).toHaveLength(2);
+      expect(def!.deckSections[0]).toEqual({ name: 'Main Deck', group: 'Library', shared: false });
+      expect(def!.deckSections[1]).toEqual({ name: 'Side Board', group: 'Sideboard Pile', shared: false });
+    });
+  });
+
+  describe('globalPlayer (shared element) parsing', () => {
+    it('parses groups from the <shared> element', () => {
+      const xml = minimalGame(`
+        <shared>
+          <group name="Shared Library" visibility="everybody" ordered="false" />
+          <group name="Tokens" visibility="everybody" ordered="false" />
+        </shared>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.globalPlayer).toBeDefined();
+      expect(def!.globalPlayer!.groups).toHaveLength(2);
+      expect(def!.globalPlayer!.groups[0].name).toBe('Shared Library');
+      expect(def!.globalPlayer!.groups[1].name).toBe('Tokens');
+    });
+
+    it('returns undefined globalPlayer when no <shared> element exists', () => {
+      const xml = minimalGame('');
+      const def = parseDefinitionXml(xml);
+      expect(def!.globalPlayer).toBeUndefined();
+    });
+
+    it('parses counters from the <shared> element', () => {
+      const xml = minimalGame(`
+        <shared>
+          <counter name="Shared Pool" icon="pool.png" default="0" />
+          <group name="Common" visibility="everybody" ordered="false" />
+        </shared>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.globalPlayer).toBeDefined();
+      expect(def!.globalPlayer!.groups).toHaveLength(1);
+      expect(def!.globalPlayer!.groups[0].name).toBe('Common');
+    });
+  });
+
+  describe('action parsing — menu attribute and submenus', () => {
+    it('reads display name from the "menu" attribute on cardaction elements', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <cardaction menu="Capture piece" shortcut="del" execute="kill" />
+          <cardaction menu="Promote piece" execute="promote" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.table).toBeDefined();
+      expect(def!.table!.cardActions).toHaveLength(2);
+      // The action's name field should be populated from the "menu" attribute
+      const first = def!.table!.cardActions[0];
+      expect(first.type).toBe('action');
+      if (first.type === 'action') {
+        expect(first.action.name).toBe('Capture piece');
+        expect(first.action.shortcut).toBe('del');
+        expect(first.action.execute).toBe('kill');
+      }
+      const second = def!.table!.cardActions[1];
+      if (second.type === 'action') {
+        expect(second.action.name).toBe('Promote piece');
+      }
+    });
+
+    it('reads display name from the "menu" attribute on groupaction elements', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <groupaction menu="Set-up your pieces" execute="gameSetup" />
+          <groupaction menu="Roll a die" shortcut="Ctrl+R" execute="roll20" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      expect(def!.table!.groupActions).toHaveLength(2);
+      const first = def!.table!.groupActions[0];
+      if (first.type === 'action') {
+        expect(first.action.name).toBe('Set-up your pieces');
+        expect(first.action.execute).toBe('gameSetup');
+      }
+      const second = def!.table!.groupActions[1];
+      if (second.type === 'action') {
+        expect(second.action.name).toBe('Roll a die');
+        expect(second.action.shortcut).toBe('Ctrl+R');
+      }
+    });
+
+    it('reads display name from "menu" attribute on action elements in groups', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" back="cards/back.png" front="cards/front.png" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false">
+      <action menu="Play Card" shortcut="Enter" execute="playCard" />
+      <action menu="Discard" shortcut="Del" execute="discard" />
+      <groupaction menu="Draw" shortcut="Ctrl+D" execute="draw" />
+    </group>
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      const hand = def!.players[0].groups[0];
+      expect(hand.cardActions).toHaveLength(2);
+      if (hand.cardActions[0].type === 'action') {
+        expect(hand.cardActions[0].action.name).toBe('Play Card');
+        expect(hand.cardActions[0].action.shortcut).toBe('Enter');
+      }
+      if (hand.cardActions[1].type === 'action') {
+        expect(hand.cardActions[1].action.name).toBe('Discard');
+      }
+      expect(hand.groupActions).toHaveLength(1);
+      if (hand.groupActions[0].type === 'action') {
+        expect(hand.groupActions[0].action.name).toBe('Draw');
+        expect(hand.groupActions[0].action.shortcut).toBe('Ctrl+D');
+      }
+    });
+
+    it('reads display name from "menu" attribute on submenu elements', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0">
+  <card name="Default" width="63" height="88" back="cards/back.png" front="cards/front.png" />
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false">
+      <groupactions menu="Game Setup Automation">
+        <groupaction menu="Enable Automation" shortcut="Ctrl+A" execute="enableSetup" />
+        <groupaction menu="Disable Automation" shortcut="Ctrl+Z" execute="disableSetup" />
+      </groupactions>
+    </group>
+  </player>
+</game>`;
+      const def = parseDefinitionXml(xml);
+      const hand = def!.players[0].groups[0];
+      expect(hand.groupActions).toHaveLength(1);
+      const submenu = hand.groupActions[0];
+      expect(submenu.type).toBe('submenu');
+      if (submenu.type === 'submenu') {
+        expect(submenu.name).toBe('Game Setup Automation');
+        expect(submenu.children).toHaveLength(2);
+        if (submenu.children[0].type === 'action') {
+          expect(submenu.children[0].action.name).toBe('Enable Automation');
+        }
+        if (submenu.children[1].type === 'action') {
+          expect(submenu.children[1].action.name).toBe('Disable Automation');
+        }
+      }
+    });
+
+    it('falls back to "name" attribute when "menu" is not present', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <cardaction name="Legacy Action" execute="legacyFunc" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      const action = def!.table!.cardActions[0];
+      if (action.type === 'action') {
+        expect(action.action.name).toBe('Legacy Action');
+      }
+    });
+
+    it('reads "default" attribute on cardaction for isDefault', () => {
+      const xml = minimalGame(`
+        <table name="Table" width="640" height="480">
+          <cardaction menu="Use Card" default="True" execute="useCard" />
+        </table>
+      `);
+      const def = parseDefinitionXml(xml);
+      const action = def!.table!.cardActions[0];
+      if (action.type === 'action') {
+        expect(action.action.isDefault).toBe(true);
+      }
+    });
+  });
+
+  describe('global variable parsing', () => {
+    it('parses player globalvariable with value attribute as defaultValue', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0" gameversion="0.0.0.1">
+  <card name="Default" width="63" height="88" cornerRadius="5" back="cards/back.png" front="cards/front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5" />
+  <player name="Player">
+    <globalvariable name="standing" value="1" />
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+  <table name="Table" width="640" height="480" />
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.players).toHaveLength(1);
+      expect(def!.players[0].globalVariables).toHaveLength(1);
+      expect(def!.players[0].globalVariables[0].name).toBe('standing');
+      expect(def!.players[0].globalVariables[0].defaultValue).toBe('1');
+    });
+
+    it('parses game-level globalvariable with value attribute as defaultValue', () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<game id="abc-123" name="Test Game" version="1.0.0" gameversion="0.0.0.1">
+  <card name="Default" width="63" height="88" cornerRadius="5" back="cards/back.png" front="cards/front.png"
+        backWidth="63" backHeight="88" backCornerRadius="5" />
+  <globalvariables>
+    <globalvariable name="dealer" value="1" />
+  </globalvariables>
+  <player name="Player">
+    <group name="Hand" visibility="owner" ordered="false" />
+  </player>
+  <table name="Table" width="640" height="480" />
+</game>`;
+      const def = parseDefinitionXml(xml);
+      expect(def).not.toBeNull();
+      expect(def!.globalVariables).toHaveLength(1);
+      expect(def!.globalVariables[0].name).toBe('dealer');
+      expect(def!.globalVariables[0].defaultValue).toBe('1');
+    });
+  });
+});
