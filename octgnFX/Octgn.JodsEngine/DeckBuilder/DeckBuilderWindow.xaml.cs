@@ -40,6 +40,7 @@ namespace Octgn.DeckBuilder
         private Game _game;
         private ObservableSection _section;
         private bool _unsaved;
+        private string _shownNotes;
         private string selection = null;
         private Guid set_id;
 
@@ -250,6 +251,7 @@ namespace Octgn.DeckBuilder
                 if (_deck == value) return;
                 _deck = value;
                 _unsaved = false;
+                _shownNotes = value.Notes;
                 ActiveSection = value.Sections.FirstOrDefault() as ObservableSection;
                 OnPropertyChanged("Deck");
                 OnPropertyChanged("DeckSections");
@@ -1314,8 +1316,14 @@ namespace Octgn.DeckBuilder
 
         private void NotesTextChanged(object sender, TextChangedEventArgs e)
         {
+            var tb = (TextBox)sender;
+            if (Deck == null) return;
+            // Deck swaps re-raise TextChanged with the notes the Deck setter recorded; any other text is an edit, typed or programmatic
+            var typed = tb.Text.Replace("\r\n", "\n");
+            if (typed == (_shownNotes ?? "").Replace("\r\n", "\n")) return;
+            _shownNotes = tb.Text;
             _unsaved = true;
-            Deck.Notes = (sender as TextBox).Text;
+            Deck.Notes = tb.Text;
         }
 
         private void ImportImagesClicked(object sender, RoutedEventArgs e)
