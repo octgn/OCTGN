@@ -293,7 +293,7 @@ class Group(NamedObject):
   @property
   def controller(self):
     controller_id = _api.GroupController(self._id)
-    return Player(controller_id) if controller_id is not None else None
+    return Player(controller_id) if controller_id is not None and controller_id != -1 else None
   def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
