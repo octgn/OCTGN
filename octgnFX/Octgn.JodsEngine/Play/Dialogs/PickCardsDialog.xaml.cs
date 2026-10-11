@@ -145,6 +145,10 @@ namespace Octgn.Play.Dialogs
                     }));
                     this.StopListenningForFilterValueChanges();
 
+                    // Build the observable cards off the UI thread; they are added to the pool in one Dispatcher call below
+                    var cardsToAdd = new List<ObservableMultiCard>();
+                    int totalCards = deck.Sections.Sum(s => s.Cards.Sum(c => c.Quantity));
+                    
                     foreach (Section section in deck.Sections)
                     {
                         foreach (IMultiCard c in section.Cards)
@@ -152,15 +156,26 @@ namespace Octgn.Play.Dialogs
                             for (int i = 0; i < c.Quantity; i++)
                             {
                                 ObservableMultiCard oc = c.ToMultiCard(1).AsObservable();
-                                Dispatcher.Invoke(new Action(() => { this.CardPool.Add(oc); }));
-                                Dispatcher.Invoke(new Action(() =>
-                                {
-                                    ProgressBarLoading.IsIndeterminate = false;
-                                    ProgressBarLoading.Value += 1;
-                                }));
+                                cardsToAdd.Add(oc);
                             }
                         }
                     }
+                    
+                    // Add all cards to the pool in a single Dispatcher call
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        foreach (var card in cardsToAdd)
+                        {
+                            this.CardPool.Add(card);
+                        }
+                    }));
+                    
+                    // Update progress bar after all cards are added
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        ProgressBarLoading.IsIndeterminate = false;
+                        ProgressBarLoading.Value = totalCards;
+                    }));
 
                     Dispatcher.Invoke(
                         new Action(() =>
