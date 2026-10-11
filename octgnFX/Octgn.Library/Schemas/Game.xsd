@@ -450,6 +450,20 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
+                  <xs:attribute name="canDrag" type="boolean" default="True" >
+                    <xs:annotation>
+                      <xs:documentation>
+                        Allows the marker to be drag and dropped to other cards.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="showCount" type="boolean" default="True" >
+                    <xs:annotation>
+                      <xs:documentation>
+                        Include editable marker quantity next to the marker image.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>

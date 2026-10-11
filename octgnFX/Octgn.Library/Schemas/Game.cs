@@ -1162,22 +1162,6 @@ public partial class pile : group {
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3062.0")]
 [System.SerializableAttribute()]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public enum pileProtectionState {
-    
-    /// <remarks/>
-    @false,
-    
-    /// <remarks/>
-    @true,
-    
-    /// <remarks/>
-    ask,
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3062.0")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public enum pileViewState {
     
     /// <remarks/>
@@ -1188,6 +1172,22 @@ public enum pileViewState {
     
     /// <remarks/>
     pile,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3062.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum pileProtectionState {
+    
+    /// <remarks/>
+    @false,
+    
+    /// <remarks/>
+    @true,
+    
+    /// <remarks/>
+    ask,
 }
 
 /// <remarks/>
@@ -1982,6 +1982,15 @@ public partial class gameMarker {
     
     private string idField;
     
+    private boolean canDragField;
+    
+    private boolean showCountField;
+    
+    public gameMarker() {
+        this.canDragField = boolean.True;
+        this.showCountField = boolean.True;
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string src {
@@ -2012,6 +2021,30 @@ public partial class gameMarker {
         }
         set {
             this.idField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean canDrag {
+        get {
+            return this.canDragField;
+        }
+        set {
+            this.canDragField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean showCount {
+        get {
+            return this.showCountField;
+        }
+        set {
+            this.showCountField = value;
         }
     }
 }

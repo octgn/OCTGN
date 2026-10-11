@@ -504,7 +504,7 @@ namespace Octgn.Networking
             WriteReplayAction(player.Id);
             // Ignore cards moved by the local player (already done, for responsiveness)
             var cards = card.Select(Card.Find).Where(x=>x != null).ToArray();
-            if (!IsLocalPlayer(player))
+            if (!IsLocalPlayer(player) && cards.Length > 0)
                 new MoveCards(player, cards, to, idx, faceUp, isScriptMove).Do();
         }
 
@@ -721,6 +721,7 @@ namespace Octgn.Networking
         public void Peek(Player player, Card card)
         {
             WriteReplayAction(player.Id);
+            if (IsLocalPlayer(player)) return;
             if (!card.PeekingPlayers.Contains(player))
                 card.PeekingPlayers.Add(player);
             if (!IsLocalPlayer(player))
@@ -1194,7 +1195,7 @@ namespace Octgn.Networking
         {
             WriteReplayAction(player.Id);
             Program.GameMess.PlayerEvent(player, "deletes {0}", card);
-            if (!IsLocalPlayer(player))
+            if (!IsLocalPlayer(player) && card.Group != null)
                 card.Group.Remove(card);
         }
 

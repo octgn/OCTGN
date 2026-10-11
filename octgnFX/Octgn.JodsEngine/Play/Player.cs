@@ -157,7 +157,6 @@ namespace Octgn.Play
         private bool _ready;
         private bool _spectator;
         private bool _subscriber;
-        private int _disconnectPercent;
         private string _userIcon;
 
         private PlayerState state;
@@ -272,17 +271,6 @@ namespace Octgn.Play
         }
 
         public string UserId { get; }
-
-        public int DisconnectPercent
-        {
-            get { return _disconnectPercent; }
-            set
-            {
-                if (_disconnectPercent == value) return;
-                _disconnectPercent = value;
-                OnPropertyChanged("DisconnectPercent");
-            }
-        }
 
         public string UserIcon
         {
@@ -444,7 +432,6 @@ namespace Octgn.Play
 
                             var apiUser = await c.UserFromUserId(userId);
                             if (apiUser != null) {
-                                this.DisconnectPercent = apiUser.DisconnectPercent;
                                 this.UserIcon = apiUser.IconUrl;
                             }
                         } catch (Exception e) {

@@ -191,7 +191,9 @@ class Card(object):
   @property
   def owner(self): return Player(_api.CardOwner(self._id))
   @property
-  def controller(self): return Player(_api.CardController(self._id))
+  def controller(self): 
+    controller_id = _api.CardController(self._id)
+    return Player(controller_id) if controller_id is not None else None
   def setController(self, player): _api.SetController(self._id, player._id)
   @property
   def group(self): return eval(_api.GroupCtor(_api.CardGroup(self._id)))
@@ -290,7 +292,8 @@ class Group(NamedObject):
   def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
   @property
   def controller(self):
-    return Player(_api.GroupController(self._id))
+    controller_id = _api.GroupController(self._id)
+    return Player(controller_id) if controller_id is not None else None
   def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
@@ -334,8 +337,12 @@ class Hand(Group):
 class Pile(Group):
   def __init__(self, id, name, player):
     Group.__init__(self, id, name, player)
-  def top(self, count = None): return self[0] if count == None else self[:count]
-  def bottom(self, count = None): return self[-1] if count == None else self[-count:]
+  def top(self, count = None):
+    if len(self) == 0: return None
+    return self[0] if count == None else self[:count]
+  def bottom(self, count = None):
+    if len(self) == 0: return None
+    return self[-1] if count == None else self[-count:]
   def shuffle(self): _api.GroupShuffle(self._id)
 
 class Counter(NamedObject):

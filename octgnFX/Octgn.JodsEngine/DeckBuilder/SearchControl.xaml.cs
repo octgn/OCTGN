@@ -27,10 +27,13 @@ namespace Octgn.DeckBuilder
     using Octgn.DataNew.Entities;
     using Octgn.Utils.Converters;
 
+using System.Data;
+
     public partial class SearchControl : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
+        private bool _sortByReleaseDate = Prefs.SortSetsByReleaseDate;
         private DeckBuilderWindow _deckWindow;
 
         public string NumMod
@@ -70,6 +73,24 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public bool SortByReleaseDate
+        {
+            get
+            {
+                return _sortByReleaseDate;
+            }
+            set
+            {
+                if (value != _sortByReleaseDate)
+                {
+                    _sortByReleaseDate = value;
+                    Prefs.SortSetsByReleaseDate = value;
+                    OnPropertyChanged("SortByReleaseDate");
+                    ApplySortOrder();
+                }
+            }
+        }
+
         public SearchControl(DataNew.Entities.Game game, DeckBuilderWindow deckWindow)
         {
             _deckWindow = deckWindow;
@@ -97,6 +118,7 @@ namespace Octgn.DeckBuilder
             this.Loaded += loadedEvent;
 
             UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
+            ApplySortOrder();
             FileName = "";
             UpdateCount();
         }
@@ -170,6 +192,7 @@ namespace Octgn.DeckBuilder
 
             }
             this.UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
+            ApplySortOrder();
             UpdateCount();
         }
 
@@ -550,6 +573,52 @@ namespace Octgn.DeckBuilder
                 _CurrentView.Table.ImportRow(row);
             }
         }
+
+        private void ApplySortOrder()
+        {
+            if (_CurrentView == null) return;
+
+            var view = CollectionViewSource.GetDefaultView(_CurrentView);
+            var releaseColumn = _CurrentView.Table.GetReleaseSortColumn();
+            // Header arrows only follow header clicks, so clear them when we install or remove our own ordering
+            var ownsOrder = view.CanSort && (_sortByReleaseDate || IsReleaseSort(view.SortDescriptions, releaseColumn));
+            ApplyReleaseSort(view, _sortByReleaseDate, releaseColumn);
+            if (!ownsOrder) return;
+
+            foreach (var column in resultsGrid.Columns)
+            {
+                column.SortDirection = null;
+            }
+        }
+        internal static void ApplyReleaseSort(ICollectionView view, bool sortByRelease, string releaseColumn)
+        {
+            if (!view.CanSort || releaseColumn == null) return;
+
+            var sorts = view.SortDescriptions;
+            if (sortByRelease)
+            {
+                // Unknown release dates are stored as DateTime.MaxValue (see ToDataTable), so they sort last
+                using (view.DeferRefresh())
+                {
+                    sorts.Clear();
+                    sorts.Add(new SortDescription(releaseColumn, ListSortDirection.Ascending));
+                    sorts.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                }
+            }
+            else if (IsReleaseSort(sorts, releaseColumn))
+            {
+                // Only undo our own ordering; a header-click sort chosen since then is left alone
+                sorts.Clear();
+            }
+        }
+
+        private static bool IsReleaseSort(SortDescriptionCollection sorts, string releaseColumn)
+        {
+            return releaseColumn != null && sorts.Count == 2
+                && sorts[0].PropertyName == releaseColumn && sorts[0].Direction == ListSortDirection.Ascending
+                && sorts[1].PropertyName == "Name" && sorts[1].Direction == ListSortDirection.Ascending;
+        }
+
         private bool dragActive = false;
 
         private string fileName;
