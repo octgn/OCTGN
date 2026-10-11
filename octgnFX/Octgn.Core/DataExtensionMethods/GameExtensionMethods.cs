@@ -143,7 +143,7 @@ namespace Octgn.Core.DataExtensionMethods
             table.Columns.Add("Alternates", typeof(string));
             defaultValues[5] = "";
             table.Columns.Add("SetReleaseDate", typeof(DateTime));
-            defaultValues[6] = DateTime.MinValue;
+            defaultValues[6] = DateTime.MaxValue;
             foreach (var prop in game.CardProperties.Values)
             {
                 switch (prop.Type)
@@ -185,7 +185,8 @@ namespace Octgn.Core.DataExtensionMethods
                 {
                     var set = item.GetSet();
                     setCache.Add(item.SetId, set.Name);
-                    setReleaseCache.Add(item.SetId, set.ReleaseDate);
+                    // An unset release date is stored as DateTime.MinValue; map it past every real date so ascending sorts put those sets last
+                    setReleaseCache.Add(item.SetId, set.ReleaseDate == DateTime.MinValue ? DateTime.MaxValue : set.ReleaseDate);
                 }
                 values[1] = setCache[item.SetId];
                 values[2] = item.SetId;

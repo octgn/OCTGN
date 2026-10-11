@@ -33,6 +33,7 @@ using System.Data;
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
+        private bool _sortByReleaseDate = Prefs.SortSetsByReleaseDate;
         private DeckBuilderWindow _deckWindow;
 
         public string NumMod
@@ -76,16 +77,16 @@ using System.Data;
         {
             get
             {
-                return Prefs.SortSetsByReleaseDate;
+                return _sortByReleaseDate;
             }
             set
             {
-                if (value != Prefs.SortSetsByReleaseDate)
+                if (value != _sortByReleaseDate)
                 {
+                    _sortByReleaseDate = value;
                     Prefs.SortSetsByReleaseDate = value;
                     OnPropertyChanged("SortByReleaseDate");
                     ApplySortOrder();
-                    RefreshSearch(null, null);
                 }
             }
         }
@@ -538,7 +539,6 @@ using System.Data;
             }
 
             _CurrentView.RowFilter = filterString;
-            ApplySortOrder();
             if (e != null)
                 e.Handled = true;
             //((Button)sender).IsEnabled = true;
@@ -578,18 +578,37 @@ using System.Data;
         {
             if (_CurrentView == null) return;
 
-            if (Prefs.SortSetsByReleaseDate)
+            ApplyReleaseSort(CollectionViewSource.GetDefaultView(_CurrentView), _sortByReleaseDate);
+        }
+        internal static void ApplyReleaseSort(ICollectionView view, bool sortByRelease)
+        {
+            if (!view.CanSort) return;
+
+            var sorts = view.SortDescriptions;
+            if (sortByRelease)
             {
-                // Sort by SetReleaseDate ascending, then by Name ascending
-                // Sets without a release date (DateTime.MinValue) sort to the end
-                _CurrentView.Sort = "SetReleaseDate ASC, Name ASC";
+                // Unknown release dates are stored as DateTime.MaxValue (see ToDataTable), so they sort last
+                using (view.DeferRefresh())
+                {
+                    sorts.Clear();
+                    sorts.Add(new SortDescription("SetReleaseDate", ListSortDirection.Ascending));
+                    sorts.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                }
             }
-            else
+            else if (IsReleaseSort(sorts))
             {
-                // Default: no explicit sort (alphabetical by Name from DataGrid default)
-                _CurrentView.Sort = "Name ASC";
+                // Only undo our own ordering; a header-click sort chosen since then is left alone
+                sorts.Clear();
             }
         }
+
+        private static bool IsReleaseSort(SortDescriptionCollection sorts)
+        {
+            return sorts.Count == 2
+                && sorts[0].PropertyName == "SetReleaseDate" && sorts[0].Direction == ListSortDirection.Ascending
+                && sorts[1].PropertyName == "Name" && sorts[1].Direction == ListSortDirection.Ascending;
+        }
+
         private bool dragActive = false;
 
         private string fileName;
