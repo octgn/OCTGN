@@ -233,7 +233,61 @@ namespace Octgn.Scripting.Controls
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = Card.Find((int)img.DataContext).Type.Model;
+            ReloadPicture(img);
+        }
+
+        private void PictureDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // Reassigned/recycled container: reload only once loaded, otherwise Loaded does it.
+            var img = sender as Image;
+            if (img != null && img.IsLoaded) ReloadPicture(img);
+        }
+
+        private void PictureSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var img = sender as Image;
+            if (img == null) return;
+            var model = FindModel(img);
+            if (model == null) img.Source = null;
+            UpdateClip(img, model);
+        }
+
+        // Live lookup, never cached: Play.Card.Type.Model is the displayed front definition.
+        private static DataNew.Entities.Card FindModel(Image img)
+        {
+            if (!(img.DataContext is int)) return null;
+            var card = Card.Find((int)img.DataContext);
+            if (card == null || card.Type == null) return null;
+            return card.Type.Model;
+        }
+
+        // Same scaling as CardDlg/CardControl: definition CornerRadius * rendered height / definition height.
+        // Reads the live Type.Model.Size, because Play.Card.Size can stay stale after SetModel.
+        private static void UpdateClip(Image img, DataNew.Entities.Card model)
+        {
+            var cardSize = model == null ? null : model.Size;
+            var width = img.ActualWidth;
+            var height = img.ActualHeight;
+            if (cardSize == null || cardSize.CornerRadius <= 0 || cardSize.Height <= 0
+                || !(width > 0) || !(height > 0) || double.IsInfinity(width) || double.IsInfinity(height))
+            {
+                img.Clip = null;
+                return;
+            }
+            var radius = cardSize.CornerRadius * height / cardSize.Height;
+            if (!(radius > 0) || double.IsInfinity(radius))
+            {
+                img.Clip = null;
+                return;
+            }
+            img.Clip = new RectangleGeometry(new Rect(0, 0, width, height), radius, radius);
+        }
+
+        private static void ReloadPicture(Image img)
+        {
+            var model = FindModel(img);
+            if (model == null) img.Source = null;
+            UpdateClip(img, model);
             if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
