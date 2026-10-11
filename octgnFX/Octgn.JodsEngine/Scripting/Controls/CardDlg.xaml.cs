@@ -191,23 +191,31 @@ namespace Octgn.Scripting.Controls
             if (img == null) return;
             var model = img.DataContext as DataNew.Entities.Card;
             if (model == null) return;
-            var cardSize = model.Size;
-            if (cardSize == null || cardSize.CornerRadius <= 0)
+            UpdateClip(img);
+            ImageUtils.GetCardImage(model, x => img.Source = x);
+        }
+
+        private void PictureSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var img = sender as Image;
+            if (img != null) UpdateClip(img);
+        }
+
+        // Same scaling as CardControl: definition CornerRadius * rendered height / definition height.
+        // Everything is read from the live image, so repeated Loaded and resizes never use stale sizes.
+        private static void UpdateClip(Image img)
+        {
+            var cardSize = (img.DataContext as DataNew.Entities.Card)?.Size;
+            var width = img.ActualWidth;
+            var height = img.ActualHeight;
+            if (cardSize == null || cardSize.CornerRadius <= 0 || cardSize.Height <= 0
+                || !(width > 0) || !(height > 0) || double.IsInfinity(width) || double.IsInfinity(height))
             {
-                ImageUtils.GetCardImage(model, x => img.Source = x);
+                img.Clip = null;
                 return;
             }
-            img.Clip = new RectangleGeometry();
-            SizeChangedEventHandler onSizeChanged = null;
-            onSizeChanged = (_, __) =>
-            {
-                var clipRect = (RectangleGeometry)img.Clip;
-                clipRect.Rect = new Rect(img.ActualWidth, img.ActualHeight);
-                clipRect.RadiusX = clipRect.RadiusY = cardSize.CornerRadius * img.ActualHeight / cardSize.Height;
-                img.SizeChanged -= onSizeChanged;
-            };
-            img.SizeChanged += onSizeChanged;
-            ImageUtils.GetCardImage(model, x => img.Source = x);
+            var radius = cardSize.CornerRadius * height / cardSize.Height;
+            img.Clip = new RectangleGeometry(new Rect(0, 0, width, height), radius, radius);
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
