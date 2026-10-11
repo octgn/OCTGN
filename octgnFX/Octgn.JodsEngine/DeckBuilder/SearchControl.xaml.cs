@@ -579,9 +579,10 @@ using System.Data;
             if (_CurrentView == null) return;
 
             var view = CollectionViewSource.GetDefaultView(_CurrentView);
+            var releaseColumn = _CurrentView.Table.GetReleaseSortColumn();
             // Header arrows only follow header clicks, so clear them when we install or remove our own ordering
-            var ownsOrder = view.CanSort && (_sortByReleaseDate || IsReleaseSort(view.SortDescriptions));
-            ApplyReleaseSort(view, _sortByReleaseDate);
+            var ownsOrder = view.CanSort && (_sortByReleaseDate || IsReleaseSort(view.SortDescriptions, releaseColumn));
+            ApplyReleaseSort(view, _sortByReleaseDate, releaseColumn);
             if (!ownsOrder) return;
 
             foreach (var column in resultsGrid.Columns)
@@ -589,9 +590,9 @@ using System.Data;
                 column.SortDirection = null;
             }
         }
-        internal static void ApplyReleaseSort(ICollectionView view, bool sortByRelease)
+        internal static void ApplyReleaseSort(ICollectionView view, bool sortByRelease, string releaseColumn)
         {
-            if (!view.CanSort) return;
+            if (!view.CanSort || releaseColumn == null) return;
 
             var sorts = view.SortDescriptions;
             if (sortByRelease)
@@ -600,21 +601,21 @@ using System.Data;
                 using (view.DeferRefresh())
                 {
                     sorts.Clear();
-                    sorts.Add(new SortDescription("SetReleaseDate", ListSortDirection.Ascending));
+                    sorts.Add(new SortDescription(releaseColumn, ListSortDirection.Ascending));
                     sorts.Add(new SortDescription("Name", ListSortDirection.Ascending));
                 }
             }
-            else if (IsReleaseSort(sorts))
+            else if (IsReleaseSort(sorts, releaseColumn))
             {
                 // Only undo our own ordering; a header-click sort chosen since then is left alone
                 sorts.Clear();
             }
         }
 
-        private static bool IsReleaseSort(SortDescriptionCollection sorts)
+        private static bool IsReleaseSort(SortDescriptionCollection sorts, string releaseColumn)
         {
-            return sorts.Count == 2
-                && sorts[0].PropertyName == "SetReleaseDate" && sorts[0].Direction == ListSortDirection.Ascending
+            return releaseColumn != null && sorts.Count == 2
+                && sorts[0].PropertyName == releaseColumn && sorts[0].Direction == ListSortDirection.Ascending
                 && sorts[1].PropertyName == "Name" && sorts[1].Direction == ListSortDirection.Ascending;
         }
 

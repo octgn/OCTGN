@@ -111,7 +111,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name, Mode=OneTime}" Header="Name" Width="Auto" />
                 <DataGridTextColumn Binding="{Binding SetName, Mode=OneTime}" Header="Set" Width="Auto" />
-                <DataGridTextColumn Binding="{Binding SetReleaseDate, Mode=OneTime}" Header="Release" Width="Auto" Visibility="Collapsed" />
+
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
