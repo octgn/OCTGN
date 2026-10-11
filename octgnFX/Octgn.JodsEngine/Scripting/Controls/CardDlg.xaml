@@ -5,7 +5,7 @@
 
   <Window.Resources>
     <DataTemplate x:Key="CardTemplate">
-      <Image HorizontalAlignment="Center" Loaded="SetPicture" />
+      <Image HorizontalAlignment="Center" Loaded="SetPicture" SizeChanged="PictureSizeChanged" />
     </DataTemplate>
 
     <Style x:Key="WrapListBox" TargetType="{x:Type ListBox}" BasedOn="{StaticResource PanelListBox}">
