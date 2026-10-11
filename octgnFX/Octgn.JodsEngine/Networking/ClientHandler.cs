@@ -101,6 +101,49 @@ namespace Octgn.Networking
             });
         }
 
+        /// <summary>
+        /// Checks if there are any pending index change actions queued for a card
+        /// This helps prevent race conditions when creating cards and immediately sending them to back
+        /// </summary>
+        private bool HasPendingIndexChange(Card card)
+        {
+            // Check if there are any queued actions that modify card index
+            if (Program.GameEngine.ActionQueue != null)
+            {
+                var queue = Program.GameEngine.ActionQueue as System.Collections.ICollection;
+                if (queue != null)
+                {
+                    foreach (var action in queue)
+                    {
+                        // Look for actions that would change the card's index
+                        var type = action.GetType();
+                        if (type.Name.Contains("MoveToTable") || type.Name.Contains("SetCardIndex"))
+                        {
+                            // Try to get the card ID from the action
+                            try
+                            {
+                                var cardProperty = type.GetProperty("Card") ?? type.GetProperty("card");
+                                if (cardProperty != null)
+                                {
+                                    var actionCard = cardProperty.GetValue(action);
+                                    if (actionCard != null && actionCard.Equals(card))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                // If we can't inspect the action, assume there might be a pending change
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public void Binary()
         {
         }
@@ -458,8 +501,10 @@ namespace Octgn.Networking
             WriteReplayAction(owner.Id);
             var table = Program.GameEngine.Table;
             // Bring cards created by oneself to top, for z-order consistency
+            // But skip if this is part of a table.create + sendToBack sequence to avoid race condition
             if (IsLocalPlayer(owner))
             {
+                bool hasImmediateIndexChange = false;
                 for (var i = id.Length - 1; i >= 0; --i)
                 {
                     var card = Card.Find(id[i]);
@@ -468,7 +513,17 @@ namespace Octgn.Networking
                         Program.GameMess.Warning("[CreateCardAt] Card not found.");
                         return;
                     }
-                    table.SetCardIndex(card, table.Count + i - id.Length);
+                    
+                    // Check if there's a queued index change action for this card
+                    // If so, don't override it with our default top positioning
+                    if (!HasPendingIndexChange(card))
+                    {
+                        table.SetCardIndex(card, table.Count + i - id.Length);
+                    }
+                    else
+                    {
+                        hasImmediateIndexChange = true;
+                    }
                 }
             }
             else
