@@ -480,6 +480,9 @@ namespace Octgn.Core
             {
                 if (settings[propName] is T)
                     return (T)settings[propName];
+                // Fix #968: If the stored value exists but has a different type than T,
+                // return the default without overwriting the stored value.
+                return def;
             }
             SetGameSetting(game, propName, def);
             return def;
@@ -646,6 +649,12 @@ namespace Octgn.Core
         {
             get { return Config.Instance.ReadValue("ShowAltsInDeckEditor", false); }
             set { Config.Instance.WriteValue("ShowAltsInDeckEditor", value); }
+        }
+
+        public static bool SortSetsByReleaseDate
+        {
+            get { return Config.Instance.ReadValue("SortSetsByReleaseDate", false); }
+            set { Config.Instance.WriteValue("SortSetsByReleaseDate", value); }
         }
 
         public static bool InGameChatTextShadows {

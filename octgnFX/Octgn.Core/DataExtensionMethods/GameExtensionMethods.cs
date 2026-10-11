@@ -124,11 +124,12 @@ namespace Octgn.Core.DataExtensionMethods
         {
             DataTable table = new DataTable();
 
-            var values = new object[game.CardProperties.Count + 6];
-            var defaultValues = new object[game.CardProperties.Count + 6];
+            var values = new object[game.CardProperties.Count + 7];
+            var defaultValues = new object[game.CardProperties.Count + 7];
             var indices = new Dictionary<PropertyDef, int>();
             var setCache = new Dictionary<Guid, string>();
-            var i = 6;
+            var setReleaseCache = new Dictionary<Guid, DateTime>();
+            var i = 7;
             table.Columns.Add("Name", typeof(string));
             defaultValues[0] = "";
             table.Columns.Add("SetName", typeof(string));
@@ -141,6 +142,10 @@ namespace Octgn.Core.DataExtensionMethods
             defaultValues[4] = "";
             table.Columns.Add("Alternates", typeof(string));
             defaultValues[5] = "";
+            var releaseSortColumn = GetReleaseSortColumnName(table, game);
+            table.Columns.Add(releaseSortColumn, typeof(DateTime));
+            table.ExtendedProperties[ReleaseSortColumnKey] = releaseSortColumn;
+            defaultValues[6] = DateTime.MaxValue;
             foreach (var prop in game.CardProperties.Values)
             {
                 switch (prop.Type)
@@ -174,16 +179,22 @@ namespace Octgn.Core.DataExtensionMethods
 
             foreach (Card item in cards)
             {
-                for (i = 6; i < values.Length; i++)
+                for (i = 7; i < values.Length; i++)
                 {
                     values[i] = defaultValues[i];
                 }
                 if (!setCache.ContainsKey(item.SetId))
-                    setCache.Add(item.SetId, item.GetSet().Name);
+                {
+                    var set = item.GetSet();
+                    setCache.Add(item.SetId, set.Name);
+                    // An unset release date is stored as DateTime.MinValue; map it past every real date so ascending sorts put those sets last
+                    setReleaseCache.Add(item.SetId, set.ReleaseDate == DateTime.MinValue ? DateTime.MaxValue : set.ReleaseDate);
+                }
                 values[1] = setCache[item.SetId];
                 values[2] = item.SetId;
                 values[3] = item.GetImageUri();
                 values[4] = item.Id;
+                values[6] = setReleaseCache[item.SetId];
                 foreach (var alt in item.PropertySets)
                 {
                     values[5] = alt.Value.Type;
@@ -207,6 +218,36 @@ namespace Octgn.Core.DataExtensionMethods
                 }
             }
             return table;
+        }
+
+        /// <summary>
+        /// Extended property key under which ToDataTable records the name of its internal set release date sort column.
+        /// </summary>
+        public const string ReleaseSortColumnKey = "Octgn.ReleaseSortColumn";
+
+        /// <summary>
+        /// Gets the name of the internal set release date column ToDataTable added to the table, or null if it has none.
+        /// The name is chosen per game so it can never alias a card property; sort on this instead of a fixed name.
+        /// </summary>
+        public static string GetReleaseSortColumn(this DataTable table)
+        {
+            return table == null ? null : table.ExtendedProperties[ReleaseSortColumnKey] as string;
+        }
+
+        private static string GetReleaseSortColumnName(DataTable table, Game game)
+        {
+            // Property names are free-form (Game.xsd) so none can be reserved; step past any name DataTable would treat as the same column
+            var taken = new List<string> { "Name", "SetName", "set_id", "img_uri", "id", "Alternates" };
+            taken.AddRange(game.CardProperties.Values.Select(p => p.Name));
+            const System.Globalization.CompareOptions options = System.Globalization.CompareOptions.IgnoreCase
+                | System.Globalization.CompareOptions.IgnoreKanaType | System.Globalization.CompareOptions.IgnoreWidth;
+            var compare = table.Locale.CompareInfo;
+            var name = "OctgnSetReleaseSort";
+            for (var n = 1; taken.Any(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase) || compare.Compare(x, name, options) == 0); n++)
+            {
+                name = "OctgnSetReleaseSort_" + n;
+            }
+            return name;
         }
 
         public static ProxyDefinition GetCardProxyDef(this Game game)

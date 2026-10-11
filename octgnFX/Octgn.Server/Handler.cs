@@ -110,15 +110,6 @@ namespace Octgn.Server
                 return;
             }
             _context.Broadcaster.Chat(_player.Id, text);
-            if (_context.Config.IsLocal != false) return;
-            var mess = new GameMessage();
-            // don't send if we join our own room...that'd be annoying
-            //if (_player.Nick.Equals(_context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
-            mess.Message = string.Format("{0} has left your game", _player.Nick);
-            mess.Sent = DateTime.Now;
-            mess.SessionId = _context.Game.Id;
-            mess.Type = GameMessageType.Chat;
-            //new Octgn.Site.Api.ApiClient().GameMessage(_context.ApiKey, mess);
         }
 
         public void PrintReq(string text) {

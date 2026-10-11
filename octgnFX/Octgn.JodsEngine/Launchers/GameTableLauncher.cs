@@ -93,7 +93,8 @@ namespace Octgn.Launchers
 
             // We don't use a userid here becuase we're doing a local game.
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
-            hs.Start();
+            await hs.StartAsync();
+            HostPort = hg.Port;
 
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             Program.IsHost = true;

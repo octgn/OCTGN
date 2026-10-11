@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>DeckSharing.Tests</AssemblyName>
+    <RootNamespace>DeckSharing.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
+    <!-- Override on the command line with -p:PackageRoot=<absolute packages dir>. -->
+    <PackageRoot Condition="'$(PackageRoot)' == ''">../../packages</PackageRoot>
+    <!-- Override with -p:ShareSource=<file> to run the tests against another copy (e.g. the baseline). -->
+    <ShareSource Condition="'$(ShareSource)' == ''">../../octgnFX/Octgn/Extentions/DeckExtensionMethods.cs</ShareSource>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>$(PackageRoot)/NUnit.3.13.3/lib/net45/nunit.framework.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(ShareSource)" Link="Linked/DeckExtensionMethods.cs" />
+    <Compile Include="../../octgnFX/Octgn.Library/Exceptions/UserMessageException.cs" Link="Linked/UserMessageException.cs" />
+    <Compile Include="../../octgnFX/Octgn.Online/Api/Models/SharedDeckUploadResult.cs" Link="Linked/SharedDeckUploadResult.cs" />
+  </ItemGroup>
+
+</Project>
