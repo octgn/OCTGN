@@ -22,6 +22,8 @@ namespace Octgn.Scripting.Controls
 
             Title = title;
             promptLbl.Text = prompt;
+            promptLbl.Margin = new Thickness(10, 5, 10, 5);
+            
             int count = 0;
             foreach (string button in customButtons)
             {
@@ -29,12 +31,12 @@ namespace Octgn.Scripting.Controls
                 string buttonName = count.ToString();
                 TextBlock buttonText = new TextBlock();
                 buttonText.TextWrapping = TextWrapping.Wrap;
-                buttonText.Margin = new Thickness(10, 5, 10, 5);
+                buttonText.Margin = new Thickness(8, 3, 8, 3);
                 buttonText.Text = button;
                 Button customButton = new Button();
                 customButton.HorizontalAlignment = HorizontalAlignment.Center;
-                customButton.Margin = new Thickness(8);
-                customButton.MinWidth = 50;
+                customButton.Margin = new Thickness(5);
+                customButton.MinWidth = 40;
                 customButton.Content = buttonText;
                 customButton.Click += Button_Click;
                 customButton.Uid = buttonName;
@@ -46,11 +48,11 @@ namespace Octgn.Scripting.Controls
                 count += 1;
                 string buttonName = count.ToString();
                 TextBlock buttonText = new TextBlock();
-                buttonText.Margin = new Thickness(10, 5, 10, 5);
+                buttonText.Margin = new Thickness(8, 3, 8, 3);
                 buttonText.TextWrapping = TextWrapping.Wrap;
                 buttonText.Text = choice;
                 Button button = new Button();
-                button.Margin = new Thickness(5, 1, 5, 1);
+                button.Margin = new Thickness(3, 1, 3, 1);
                 button.Content = buttonText;
                 if (colors[count - 1] != "None")
                 {
@@ -66,30 +68,25 @@ namespace Octgn.Scripting.Controls
 
         private void CenterWindowInsideOwner()
         {
-            if (Owner != null)
-            {
-                double windowWidth = this.ActualWidth;
-                double windowHeight = this.ActualHeight;
-                var ownerPosition = new System.Drawing.Point((int)Owner.Left, (int)Owner.Top);
-                var ownerScreen = System.Windows.Forms.Screen.FromPoint(ownerPosition);
-                var screenBounds = ownerScreen.Bounds;
-
-                if (Owner.WindowState == WindowState.Maximized)
-                {
-                    this.Left = screenBounds.X + (screenBounds.Width - windowWidth) / 2;
-                    this.Top = screenBounds.Y + (screenBounds.Height - windowHeight) / 2;
-                }
-                else
-                {
-                    double ownerLeft = Owner.Left;
-                    double ownerTop = Owner.Top;
-                    double ownerWidth = Owner.ActualWidth;
-                    double ownerHeight = Owner.ActualHeight;
-
-                    this.Left = ownerLeft + (ownerWidth - windowWidth) / 2;
-                    this.Top = ownerTop + (ownerHeight - windowHeight) / 2;
-                }
-            }
+            // Position dialog at mouse cursor instead of centering in owner
+            var helper = new System.Windows.Interop.WindowInteropHelper(this);
+            var mousePosition = System.Windows.Forms.Control.MousePosition;
+            
+            this.Left = mousePosition.X - (this.ActualWidth / 2);
+            this.Top = mousePosition.Y - (this.ActualHeight / 2);
+            
+            // Ensure dialog stays within screen bounds
+            var screen = System.Windows.Forms.Screen.FromPoint(mousePosition);
+            var workingArea = screen.WorkingArea;
+            
+            if (this.Left < workingArea.Left)
+                this.Left = workingArea.Left;
+            if (this.Top < workingArea.Top)
+                this.Top = workingArea.Top;
+            if (this.Right > workingArea.Right)
+                this.Left = workingArea.Right - this.ActualWidth;
+            if (this.Bottom > workingArea.Bottom)
+                this.Top = workingArea.Bottom - this.ActualHeight;
         }
 
         public int? GetChoice()
