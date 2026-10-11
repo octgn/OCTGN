@@ -136,6 +136,7 @@
     <Compile Include="Library\Networking\GameBroadcastingTests.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
+    <Compile Include="OctgnApp\Play\PeekShuffleTests.cs" />
     <Compile Include="OctgnApp\Scripting\RemoteCallValidUseCasesTests.cs" />
     <Compile Include="OctgnApp\Scripting\SecurityTests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />

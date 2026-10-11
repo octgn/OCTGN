@@ -721,6 +721,7 @@ namespace Octgn.Networking
         public void Peek(Player player, Card card)
         {
             WriteReplayAction(player.Id);
+            if (IsLocalPlayer(player)) return;
             if (!card.PeekingPlayers.Contains(player))
                 card.PeekingPlayers.Add(player);
             if (!IsLocalPlayer(player))
