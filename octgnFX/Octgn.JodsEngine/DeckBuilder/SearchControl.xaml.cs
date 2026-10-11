@@ -578,7 +578,16 @@ using System.Data;
         {
             if (_CurrentView == null) return;
 
-            ApplyReleaseSort(CollectionViewSource.GetDefaultView(_CurrentView), _sortByReleaseDate);
+            var view = CollectionViewSource.GetDefaultView(_CurrentView);
+            // Header arrows only follow header clicks, so clear them when we install or remove our own ordering
+            var ownsOrder = view.CanSort && (_sortByReleaseDate || IsReleaseSort(view.SortDescriptions));
+            ApplyReleaseSort(view, _sortByReleaseDate);
+            if (!ownsOrder) return;
+
+            foreach (var column in resultsGrid.Columns)
+            {
+                column.SortDirection = null;
+            }
         }
         internal static void ApplyReleaseSort(ICollectionView view, bool sortByRelease)
         {
