@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Online", "Online", "{7E00BB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.Test", "octgnFX\Octgn.Online.Test\Octgn.Online.Test.csproj", "{950138E6-C355-4858-B074-BADDC9CE3665}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Octgn.Online.Api.Test", "octgnFX\Octgn.Online.Api.Test\Octgn.Online.Api.Test.csproj", "{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.StandAloneServer", "octgnFX\Octgn.Online.StandAloneServer\Octgn.Online.StandAloneServer.csproj", "{1C18709A-9E93-426D-AE10-9E73721FDDE1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{10133113-4503-4510-AA75-D9931ADBF9CA}"
@@ -250,6 +252,24 @@ Global
 		{950138E6-C355-4858-B074-BADDC9CE3665}.Release|ARM.ActiveCfg = Release|Any CPU
 		{950138E6-C355-4858-B074-BADDC9CE3665}.Release|x64.ActiveCfg = Release|Any CPU
 		{950138E6-C355-4858-B074-BADDC9CE3665}.Release|x86.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|Any CPU.Build.0 = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|ARM.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|ARM.Build.0 = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|x64.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|x64.Build.0 = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|x86.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release_Test|x86.Build.0 = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release|ARM.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release|x64.ActiveCfg = Release|Any CPU
+		{53E4B1CA-867E-4EA7-BEAA-266EB58FD0DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{1C18709A-9E93-426D-AE10-9E73721FDDE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C18709A-9E93-426D-AE10-9E73721FDDE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C18709A-9E93-426D-AE10-9E73721FDDE1}.Debug|ARM.ActiveCfg = Debug|Any CPU

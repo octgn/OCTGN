@@ -65,7 +65,7 @@ namespace Octgn.ProxyGenerator.Util
                     float min = path.PathPoints.Min(p => p.X);
                     // Calculate proper translation based on horizontal alignment
                     float translateX = -min + section.location.x;
-                    if (section.wordwrap != null && section.wordwrap.align != null)
+                    if (section.wordwrap.align != null)
                     {
                         if (section.wordwrap.align == "center")
                         {

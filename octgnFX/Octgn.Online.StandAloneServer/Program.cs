@@ -9,6 +9,7 @@ using Octgn.Online.Hosting;
 using Octgn.Server;
 using System.Configuration;
 using Octgn.Communication;
+using Octgn.Library;
 using Octgn.Utils;
 using System.Threading.Tasks;
 using Octgn.WindowsDesktopUtilities;
@@ -26,6 +27,7 @@ namespace Octgn.Online.StandAloneServer
         internal static OptionSet Options;
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal static int BroadcastPort = 21234;
+        private static string ReadyPipe;
 
         private static Config _config;
         static void Main(string[] args) {
@@ -50,6 +52,7 @@ namespace Octgn.Online.StandAloneServer
                     program.Run(args).Wait();
                 }
             } catch (Exception ex) {
+                if (ReadyPipe != null) Environment.ExitCode = 1;
                 Log.Error($"{nameof(Main)}", ex);
             } finally {
                 Log.Info("Shutting down");
@@ -69,7 +72,12 @@ namespace Octgn.Online.StandAloneServer
             _server = new Octgn.Server.Server(_config, HostedGame, BroadcastPort, Local);
             _server.OnStop += Server_OnStop;
 
-            await _server.Start();
+            var start = _server.Start();
+            if (ReadyPipe != null) {
+                if (start.IsCompleted) await start;
+                await HostedGameProcess.ReportReadyAsync(ReadyPipe, _server.Context.Game.Port);
+            }
+            await start;
             await base.OnStart(args);
         }
 
@@ -134,6 +142,7 @@ namespace Octgn.Online.StandAloneServer
                     })
                 .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostAddress = x)
                 .Add("broadcastport=", "Port it broadcasts on", x => BroadcastPort = int.Parse(x))
+                .Add("ready-pipe=", "Local startup response pipe", x => ReadyPipe = Guid.ParseExact(x, "N").ToString("N"))
                 .Add("spectators", "Allow spectators?", x => HostedGame.Spectators = true);
 
             try {
