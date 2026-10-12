@@ -285,7 +285,7 @@
                 </Trigger.ExitActions>
             </Trigger>
             <Trigger Property="IsKeyboardFocused" Value="True">
-                <Setter TargetName="Bd" Property="BorderBrush" Value="#CCFFFFFF" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="#FFFF4D4D" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="Root" Property="Opacity" Value="0.4" />
