@@ -21,20 +21,21 @@
                             </wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
 
 
+                            <!-- Track ring behind the progress wedge -->
                             <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Stroke="Transparent" Opacity="1.5" Fill="Transparent"
-                       StrokeThickness="10">
+                       Stroke="#FF2A2A30" Fill="Transparent"
+                       StrokeThickness="6.5">
                             </Ellipse>
 
                             <wpfCircularProgressBar:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
                               RotationAngle="-1" WedgeAngle="{Binding Angle}"
                               Radius="{Binding Radius}" InnerRadius="{Binding InnerRadius}"
-                              Fill="PowderBlue" Opacity="0.7"/>
+                              Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
 
                             <Grid util:GridUtils.RowDefinitions="*,2*,*" util:GridUtils.ColumnDefinitions="*,2*,*">
                                 <Viewbox Grid.Row="1" Grid.Column="1">
-                                    <TextBlock Text="{Binding Percent, StringFormat=0%}"  Foreground="White" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Percent, StringFormat=0%}"  Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Viewbox>
                             </Grid>
                         </Grid>
@@ -43,65 +44,55 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="32,26,32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="ListBoxBoards" Grid.Row="1"
-                 Background="Transparent" 
-                 HorizontalContentAlignment="Stretch" 
-                 HorizontalAlignment="Stretch"
-				 ItemsSource="{Binding Boards}"
-                 >
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="challengeBoards:BoardViewModel">
-                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" MinHeight="45" Background="Transparent">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="64"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="100*"/>
-                            <ColumnDefinition Width="150"/>
-                        </Grid.ColumnDefinitions>
-                        <!--<Image Source="{Binding Path=ThumbnailPreviewUrl}"/>-->
-                        <ProgressBar Style="{StaticResource CircularProgressBarStyle}" 
-                                     Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
-                        <StackPanel Grid.Column="2" Margin="5,0,5,0">
-                            <StackPanel.Resources>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Margin" Value="0,3,0,0"/>
-                                </Style>
-                            </StackPanel.Resources>
-                            <TextBlock DataContext="{Binding}" Text="{Binding Name}" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
-                            <TextBlock DataContext="{Binding}" Text="{Binding Owner.Name}" TextWrapping="Wrap" FontSize="10" Foreground="DeepSkyBlue"></TextBlock>
-                            <!--<Grid Margin="5,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"/>
-                                    <ColumnDefinition Width="100*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="../../Resources/viewers.png" Height="16" Width="16"/>
-                                <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
-                            </Grid>-->
-                        </StackPanel>
-                        <Border Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Button Content="More Info" Style="{StaticResource FlatDarkButtonStyle}" Padding="20 5" Click="ButtonBase_OnClick"/>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-
-            </ListBox.ItemTemplate>
-            <!--<challengeBoards:BoardViewModel Name="League cavern of souls - khans of Tarkir" BoardId="2133" 
-                                            Created="7/8/2014 11:06 AM" End="7/4/2015 12:00 AM" PercentComplete="18">
-                <challengeBoards:BoardViewModel.Owner>
-                    <challengeBoards:CompetitorModel CompetitorId="5095" Name="jasmintondreau"/>
-                </challengeBoards:BoardViewModel.Owner>
-            </challengeBoards:BoardViewModel>-->
-        </ListBox>
-        <StackPanel Grid.Row="1" Grid.Column="0">
-            <Border x:Name="NoBoardsMessage" Padding="10" Background="Khaki" BorderBrush="Olive" BorderThickness="1" Visibility="Collapsed">
-                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Center">
-            There don't seem to be any boards right now, check back later.
-                </TextBlock>
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Challenge Board" Style="{StaticResource HeadingText}" FontSize="26" />
+            <TextBlock Text="Community ladders and leagues. See who's leading and how far each board has run." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+        </StackPanel>
+        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="6" Margin="0,18,0,0">
+            <ListBox x:Name="ListBoxBoards"
+                     Background="Transparent" BorderThickness="0"
+                     HorizontalContentAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     ItemContainerStyle="{StaticResource CardListItem}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding Boards}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="challengeBoards:BoardViewModel">
+                        <Grid Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" MinHeight="52" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="52"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Width="52" Height="52"
+                                         Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                    <TextBlock Text="{Binding Owner.Name}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Grid.Column="3" Style="{StaticResource SecondaryButton}" Height="34" VerticalAlignment="Center" Click="ButtonBase_OnClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="View board" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="10" VerticalAlignment="Center" Margin="8,1,0,0" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+        <StackPanel Grid.Row="1" Margin="0,18,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border x:Name="NoBoardsMessage" Style="{StaticResource Card}" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" Text="There don't seem to be any boards right now, check back later." />
             </Border>
         </StackPanel>
     </Grid>

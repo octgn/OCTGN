@@ -52,7 +52,7 @@
         </ControlTemplate.Resources>
         <Grid x:Name="Grid">
             <Border x:Name="Background" Background="#00FFFFFF" BorderBrush="Transparent" BorderThickness="0" />
-            <Border x:Name="HoverBackground" Background="{DynamicResource AccentBrush}" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
+            <Border x:Name="HoverBackground" Background="#FF2A2A30" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
             <Border x:Name="PressedBackground" Background="#40000000" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
         </Grid>
@@ -85,7 +85,7 @@
             </Trigger>
             <Trigger Property="Tag" Value="CLOSE">
                 <Setter Property="CornerRadius" Value="0,5,0,0" TargetName="HoverBackground" />
-                <Setter Property="Background" Value="#FFE81123" TargetName="HoverBackground" />
+                <Setter Property="Background" Value="#FFE00000" TargetName="HoverBackground" />
                 <Setter Property="CornerRadius" Value="0,5,0,0" TargetName="PressedBackground" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="true" />

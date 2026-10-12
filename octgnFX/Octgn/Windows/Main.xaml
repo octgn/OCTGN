@@ -17,78 +17,70 @@
         MinHeight="600" MinWidth="800" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100*" MinWidth="560"/>
-            <!--<ColumnDefinition Width="0"/>
-            <ColumnDefinition Width="235" />-->
-            <ColumnDefinition Width="0"/>
-            <ColumnDefinition Width="0" />
-        </Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="100*"/>
-			<RowDefinition Height="5"/>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="5"/>
-		</Grid.RowDefinitions>
-		<Menu Grid.ColumnSpan="4" Grid.Row="0">
-            <MenuItem x:Name="menuOptions" Header="_Options" Click="MenuOptionsClick">
-            </MenuItem>
-            <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" MinWidth="137" Click="MenuHelpClick"/>
-                <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" MinWidth="137" Click="MenuDiagClick"/>
-                <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" MinWidth="137" Click="MenuAboutClick"/>
-            </MenuItem>
-            <MenuItem Header="Open _Source">
-            <MenuItem.Icon>
-                <Image Source="../Resources/github.png" Width="16"/>
-            </MenuItem.Icon>
-                <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
-                <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="Su_bscribe" Click="MenuSubscribeClick" Foreground="#ffff45" FontWeight="Bold">
-            </MenuItem>
-            <MenuItem Header="Do_nate" Click="MenuDonateClick" Foreground="#FFA500" FontWeight="Bold">
-            </MenuItem>
-        </Menu>
-        <Border Grid.Column="2">
-        </Border>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
-			<Controls:UpdateBar/>
-		</StackPanel>
-        <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
-        <TabControl x:Name="TabControlMain" Grid.Row="2" Style="{StaticResource MainTab}">
-            <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent" Style="{StaticResource MainTabItem}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Controls:UpdateBar/>
+        </StackPanel>
+        <TabControl x:Name="TabControlMain" Grid.Row="1" Style="{StaticResource NavRail}">
+            <TabItem x:Name="TabMain" Header="Home" Tag="&#xE80F;" Style="{StaticResource NavRailItem}">
                 <login:LoginTab></login:LoginTab>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Game Lobby" Style="{StaticResource MainTabItem}">
+            <TabItem x:Name="TabCustomGames" Header="Game Lobby" Tag="&#xE7FC;" Style="{StaticResource NavRailItem}">
                 <playtab:PlayTab x:Name="TabCustomGamesList"></playtab:PlayTab>
             </TabItem>
-            <TabItem x:Name="TabItemHistory" Header="Game History" Style="{StaticResource MainTabItem}">
+            <TabItem x:Name="TabItemHistory" Header="Game History" Tag="&#xE81C;" Style="{StaticResource NavRailItem}">
                 <historytab:GameHistoryTab x:Name="TabHistory"/>
             </TabItem>
-            <TabItem x:Name="TabWatch" Header="Twitch.tv" Style="{StaticResource MainTabItem}">
+            <TabItem x:Name="TabWatch" Header="Twitch.tv" Tag="&#xE714;" Style="{StaticResource NavRailItem}">
                 <watch:WatchList/>
             </TabItem>
-            <TabItem Header="Games Manager" IsEnabled="true" Style="{StaticResource MainTabItem}">
+            <TabItem Header="Games Manager" Tag="&#xE8F1;" IsEnabled="true" Style="{StaticResource NavRailItem}">
                 <gameManagement:GameManagement></gameManagement:GameManagement>
             </TabItem>
-            <TabItem Header="Challenge Board" x:Name="ChallengeBoardTab" Style="{StaticResource MainTabItem}">
+            <TabItem Header="Challenge Board" Tag="&#xE7C1;" x:Name="ChallengeBoardTab" Style="{StaticResource NavRailItem}">
                 <challengeBoards:ChallengeBoards/>
             </TabItem>
-            <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab" Style="{StaticResource MainTabItem}">
+            <TabItem Header="Profile" Tag="&#xE77B;" IsEnabled="false" x:Name="ProfileTab" Style="{StaticResource NavRailItem}">
                 <profile:UserProfilePage x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
+            <TabControl.Tag>
+            <!-- Utilities and connection status live at the foot of the navigation sidebar -->
+            <StackPanel>
+                <Border Height="1" Background="{DynamicResource HairlineBrush}" Margin="4,0,4,10" />
+                <Menu Style="{StaticResource SidebarMenu}">
+                    <MenuItem x:Name="menuOptions" Header="_Options" ToolTip="Options" Tag="&#xE713;" Click="MenuOptionsClick" Style="{StaticResource SidebarMenuItem}"/>
+                    <MenuItem Header="_Deck Editor" ToolTip="Deck Editor" Tag="&#xE70F;" Click="MenuDeckEditorClick" Style="{StaticResource SidebarMenuItem}"/>
+                    <MenuItem Header="_Help" ToolTip="Help" Tag="&#xE897;" Style="{StaticResource SidebarMenuItem}">
+                        <MenuItem x:Name="menuHelp" Header="Get _Help Online" MinWidth="170" Click="MenuHelpClick"/>
+                        <MenuItem x:Name="menuDiag" Header="_Diagnostics" MinWidth="170" Click="MenuDiagClick"/>
+                        <MenuItem x:Name="menuAbout" Header="_About" MinWidth="170" Click="MenuAboutClick"/>
+                    </MenuItem>
+                    <MenuItem Header="Open _Source" ToolTip="Open Source" Tag="&#xE943;" Style="{StaticResource SidebarMenuItem}">
+                        <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
+                        <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Su_bscribe" ToolTip="Subscribe" Tag="&#xE735;" Click="MenuSubscribeClick" Foreground="#FFF5C451" Style="{StaticResource SidebarMenuItem}"/>
+                    <MenuItem Header="Do_nate" ToolTip="Donate" Tag="&#xEB52;" Click="MenuDonateClick" Foreground="#FFFF5A5A" Style="{StaticResource SidebarMenuItem}"/>
+                </Menu>
+                <Border Style="{StaticResource StatusPill}" Margin="4,12,4,0" HorizontalAlignment="Stretch">
+                    <Border.Resources>
+                        <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter"/>
+                    </Border.Resources>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Margin="0,0,10,0" VerticalAlignment="Center"
+                                 Fill="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}">
+                        </Ellipse>
+                        <Label VerticalAlignment="Center" Padding="0" FontSize="12"
+                               Content="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            </TabControl.Tag>
         </TabControl>
-        <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" Background="Transparent" HorizontalAlignment="Right">
-            <Border Padding="5,0,5,0" CornerRadius="5" Background="#dd333333" Visibility="Visible">
-                <Border.Resources>
-                    <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter"/>
-                </Border.Resources>
-                <Label VerticalAlignment="Center" Margin="5" Content="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}" Foreground="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}"/>
-            </Border>
-        </StackPanel>
+
     </Grid>
 </Controls:DecorableWindow>

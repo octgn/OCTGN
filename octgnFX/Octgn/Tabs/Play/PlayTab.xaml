@@ -21,53 +21,69 @@
                            Height="16" Width="16" Margin="0"/>
         </DataTemplate>
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="32,26,32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition MinHeight="100" Height="*"/>
-            <RowDefinition Height="Auto" />
-            <RowDefinition MinHeight="100" Height="2*" />
+            <RowDefinition MinHeight="120" Height="*"/>
+            <RowDefinition Height="14" />
+            <RowDefinition MinHeight="120" Height="*" />
         </Grid.RowDefinitions>
-        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="8" Panel.ZIndex="10" Margin="0 -34 0 0"></Border>
-        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" IsEnabled="{Binding LoadingGame, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" Grid.Row="0">
-            <DockPanel>
-                <Border DockPanel.Dock="Right" Height="35">
-                    <Border Padding="5,0,5,0" CornerRadius="5" Background="#dd333333" Visibility="Visible">
-                        <Grid Margin="10 1 10 5">
-                            <Label HorizontalAlignment="Center" FontSize="8"
-                                   Content="{Binding GameCount, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" />
-                            <Label Content="Games" FontSize="12" FontWeight="Bold" Margin="0 15 0 0"/>
-                        </Grid>
-                    </Border>
-                </Border>
-                <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                    <!--<Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
-                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List">&#10227;</Button>-->
-                    <Button Click="ButtonHostClick" Content="Host Game" MinWidth="80" Height="34" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                    <Button Click="ButtonJoinClick" Content="Join Game" MinWidth="80" Height="34" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
-                        IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}"/>
-                    <Button Click="ButtonJoinOfflineGame" Content="Connect To A Game" MinWidth="80" Padding="5,0"
-                        Height="34" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}" />
-                    <Button Click="ButtonKillGame" Content="Kill Game" MinWidth="80" Padding="5,0"
-                        Height="34" Margin="0,0,5,0" Style="{StaticResource FlatDarkRedButtonStyle}"
-                        Visibility="{Binding ElementName=Me,Path=ShowKillGameButton,Converter={StaticResource BooleanToVisibilityConverter}}"
-                            />
+        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="8" Panel.ZIndex="10" Margin="-32,-26,-32,-24"></Border>
 
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding ElementName=Me, Path=HideUninstalledGames}" Margin="10 0 5 0">
-                        <CheckBox.Content>
-                            <TextBlock Text="Only Show Installed Games" Style="{StaticResource PanelText}"  />
-                        </CheckBox.Content>
-                    </CheckBox>
-                </WrapPanel>
-            </DockPanel>
-        </Border>
-        <ProgressBar Grid.Row="1" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0" Foreground="CornflowerBlue">
+        <!-- Page header: title on the left, actions on the right -->
+        <DockPanel x:Name="BorderButtons" Grid.Row="0" IsEnabled="{Binding LoadingGame, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Click="ButtonKillGame" Style="{StaticResource FlatDarkRedButtonStyle}" Height="38" Margin="0,0,10,0"
+                        Visibility="{Binding ElementName=Me,Path=ShowKillGameButton,Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE711;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Kill Game" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Click="ButtonJoinOfflineGame" Style="{StaticResource SecondaryButton}" Height="38" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE71B;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Connect to a game" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Click="ButtonJoinClick" Style="{StaticResource SecondaryButton}" Height="38" Margin="0,0,10,0"
+                        IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Join" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Click="ButtonHostClick" Style="{StaticResource PrimaryButton}" Height="38">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Host a game" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Game Lobby" Style="{StaticResource HeadingText}" FontSize="26" />
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <Border Background="#1FFF0000" BorderBrush="#40FF0000" BorderThickness="1" CornerRadius="10" Padding="8,2" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="6" Height="6" Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#FFFF8080" VerticalAlignment="Center">
+                                <Run Text="{Binding GameCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" />
+                                <Run Text="games" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding ElementName=Me, Path=HideUninstalledGames}" Margin="16,0,0,0"
+                              Foreground="{DynamicResource MutedTextBrush}" Content="Only show installed games" />
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+
+        <ProgressBar Grid.Row="1" Height="3" Margin="0,14,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0">
             <ProgressBar.Style>
-                <Style TargetType="{x:Type ProgressBar}">
+                <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}">
                     <Style.Resources>
                         <Storyboard x:Key="InitialRefreshDelayAnimation">
                             <DoubleAnimation From="200" To="0" Storyboard.TargetProperty="Value" Duration="{x:Static local:PlayTab.InitialRefreshDelay}" />
@@ -108,120 +124,155 @@
             </ProgressBar.Style>
         </ProgressBar>
 
-        <Border Style="{StaticResource ButtonBarPanel}" Grid.Row="2" Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" >
-            <TextBlock Style="{StaticResource PanelText}" Foreground="GreenYellow"
-                   Text="You are not logged in to OCTGN.  Only games hosted on your Local Area Network (LAN) will be listed here.  Log in to view games hosted online." />
+        <!-- Shown until the user signs in -->
+        <Border Grid.Row="2" Margin="0,16,0,0" Background="#14FFFFFF" BorderBrush="#FF2A2A30" BorderThickness="1" CornerRadius="10" Padding="14,12"
+                Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Border DockPanel.Dock="Left" Width="30" Height="30" CornerRadius="15" Background="#26FF0000" Margin="0,0,12,0" VerticalAlignment="Top">
+                    <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="You're browsing offline" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextBrush}" />
+                    <TextBlock Style="{StaticResource BodyMutedText}" FontSize="12.5" Margin="0,2,0,0"
+                               Text="Only games hosted on your local network are listed. Sign in on the Home tab to see games hosted online." />
+                </StackPanel>
+            </DockPanel>
         </Border>
-        <TextBlock Grid.Row="3" Text="Games Awaiting Players (join to play): " Style="{StaticResource PanelText}" Margin="2" />
-        <ListView x:Name="HostingGamesList" Grid.Row="4"
-                  SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
-                  Background="#aa333333"
-                  AlternationCount="1"
-                  SelectionMode="Single"
-                  utils:GridViewSort.AutoSort="True"
-                  ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" >
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Status}" Value="GameInProgress">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="StoppedHosting">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding CanPlay}" Value="False" />
-                                <Condition Binding="{Binding ElementName=Me, Path=HideUninstalledGames}" Value="True"/>
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </MultiDataTrigger.Setters>
-                        </MultiDataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="35"></GridViewColumn>
-                    <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
-                    <GridViewColumn Header="User"
-                                    utils:GridViewSort.PropertyName="UserName"
-                                    DisplayMemberBinding="{Binding Path=UserName}" Width="100"></GridViewColumn>
-                    <GridViewColumn Header="Game"
-                                    utils:GridViewSort.PropertyName="GameName"
-                                    DisplayMemberBinding="{Binding Path=GameName}" Width="220"></GridViewColumn>
-                    <GridViewColumn Header="Name"
-                                    utils:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}" Width="300"></GridViewColumn>
-                    <GridViewColumn Header="RunTime"
-                                    utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=RunTime}" Width="70"></GridViewColumn>
-                    <GridViewColumn Header="Source"
-                                    utils:GridViewSort.PropertyName="Source"
-                                    DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <TextBlock Grid.Row="5" Text="Games in Progress (join to spectate): " Style="{StaticResource PanelText}" Margin="2" />
-        <GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="5" VerticalAlignment="Top"  ResizeDirection="Rows"  ResizeBehavior="PreviousAndNext"/>
-        <ListView x:Name="SpectatingGamesList" Grid.Row="6"
-                  SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
-                  Background="#aa333333"
-                  AlternationCount="1"
-                  SelectionMode="Single"
-                  utils:GridViewSort.AutoSort="True"
-                  ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" >
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="35"></GridViewColumn>
-                    <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
-                    <GridViewColumn Header="User"
-                                    utils:GridViewSort.PropertyName="UserName"
-                                    DisplayMemberBinding="{Binding Path=UserName}" Width="100"></GridViewColumn>
-                    <GridViewColumn Header="Game"
-                                    utils:GridViewSort.PropertyName="GameName"
-                                    DisplayMemberBinding="{Binding Path=GameName}" Width="220"></GridViewColumn>
-                    <GridViewColumn Header="Name"
-                                    utils:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}" Width="300"></GridViewColumn>
-                    <GridViewColumn Header="RunTime"
-                                    utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=RunTime}" Width="70"></GridViewColumn>
-                    <GridViewColumn Header="Source"
-                                    utils:GridViewSort.PropertyName="Source"
-                                    DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
-                </GridView>
-            </ListView.View>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Status}" Value="StartedHosting">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="StoppedHosting">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding CanPlay}" Value="False" />
-                                <Condition Binding="{Binding ElementName=Me, Path=HideUninstalledGames}" Value="True"/>
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </MultiDataTrigger.Setters>
-                        </MultiDataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
-        <!--<TextBlock x:Name="RefreshMessage" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
-                   Foreground="White" Background="{x:Null}" FontSize="20">
-            Press the orange refresh button to fetch the game list.
-        </TextBlock>-->
+
+        <!-- Open tables -->
+        <Border Grid.Row="4" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="18,14,18,6">
+                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="OPEN TABLES" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
+                    <TextBlock Text="  ·  waiting for players, double-click to join" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
+                </StackPanel>
+                <ListView x:Name="HostingGamesList" Grid.Row="1"
+                          SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
+                          AlternationCount="1"
+                          SelectionMode="Single"
+                          utils:GridViewSort.AutoSort="True"
+                          ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" >
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource TableRow}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="GameInProgress">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="StoppedHosting">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding CanPlay}" Value="False" />
+                                        <Condition Binding="{Binding ElementName=Me, Path=HideUninstalledGames}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.Setters>
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </MultiDataTrigger.Setters>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="35"></GridViewColumn>
+                            <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
+                            <GridViewColumn Header="User"
+                                            utils:GridViewSort.PropertyName="UserName"
+                                            DisplayMemberBinding="{Binding Path=UserName}" Width="100"></GridViewColumn>
+                            <GridViewColumn Header="Game"
+                                            utils:GridViewSort.PropertyName="GameName"
+                                            DisplayMemberBinding="{Binding Path=GameName}" Width="220"></GridViewColumn>
+                            <GridViewColumn Header="Name"
+                                            utils:GridViewSort.PropertyName="Name"
+                                            DisplayMemberBinding="{Binding Path=Name}" Width="300"></GridViewColumn>
+                            <GridViewColumn Header="RunTime"
+                                            utils:GridViewSort.PropertyName="StartTime"
+                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="70"></GridViewColumn>
+                            <GridViewColumn Header="Source"
+                                            utils:GridViewSort.PropertyName="Source"
+                                            DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </Border>
+
+        <GridSplitter Grid.Row="5" Height="14" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Transparent"
+                      ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Cursor="SizeNS" />
+        <Border Grid.Row="5" Width="40" Height="4" CornerRadius="2" Background="#FF2E2E35" IsHitTestVisible="False" VerticalAlignment="Center" />
+
+        <!-- Games in progress -->
+        <Border Grid.Row="6" Style="{StaticResource Card}" Padding="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="18,14,18,6">
+                    <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="IN PROGRESS" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
+                    <TextBlock Text="  ·  double-click to spectate" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
+                </StackPanel>
+                <ListView x:Name="SpectatingGamesList" Grid.Row="1"
+                          SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
+                          AlternationCount="1"
+                          SelectionMode="Single"
+                          utils:GridViewSort.AutoSort="True"
+                          ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="35"></GridViewColumn>
+                            <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
+                            <GridViewColumn Header="User"
+                                            utils:GridViewSort.PropertyName="UserName"
+                                            DisplayMemberBinding="{Binding Path=UserName}" Width="100"></GridViewColumn>
+                            <GridViewColumn Header="Game"
+                                            utils:GridViewSort.PropertyName="GameName"
+                                            DisplayMemberBinding="{Binding Path=GameName}" Width="220"></GridViewColumn>
+                            <GridViewColumn Header="Name"
+                                            utils:GridViewSort.PropertyName="Name"
+                                            DisplayMemberBinding="{Binding Path=Name}" Width="300"></GridViewColumn>
+                            <GridViewColumn Header="RunTime"
+                                            utils:GridViewSort.PropertyName="StartTime"
+                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="70"></GridViewColumn>
+                            <GridViewColumn Header="Source"
+                                            utils:GridViewSort.PropertyName="Source"
+                                            DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource TableRow}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="StartedHosting">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="StoppedHosting">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding CanPlay}" Value="False" />
+                                        <Condition Binding="{Binding ElementName=Me, Path=HideUninstalledGames}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.Setters>
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </MultiDataTrigger.Setters>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

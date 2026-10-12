@@ -265,7 +265,7 @@ namespace Octgn.Controls
             }
             MainContainer.BorderThickness = new Thickness(0);
             MainContainer.BorderBrush = Brushes.Transparent;
-            MainContainer.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"))) { Stretch = Stretch.Fill };
+            MainContainer.Background = DefaultBackground();
 
             SetWindowPosition();
 
@@ -403,10 +403,21 @@ namespace Octgn.Controls
                 }
                 else
                 {
-                    ib = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"))) { Stretch = Stretch.Fill };
+                    MainContainer.Background = DefaultBackground();
+                    return;
                 }
                 MainContainer.Background = ib;
             }));
+        }
+
+        /// <summary>
+        /// The themed app background, falling back to the classic brushed-metal image.
+        /// </summary>
+        private static Brush DefaultBackground()
+        {
+            if (Application.Current?.TryFindResource("AppBackgroundBrush") is Brush themed)
+                return themed;
+            return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"))) { Stretch = Stretch.Fill };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)

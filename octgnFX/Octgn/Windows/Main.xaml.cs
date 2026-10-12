@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Octgn.Annotations;
 using Octgn.Core;
 using Octgn.Core.DataManagers;
@@ -95,6 +97,31 @@ namespace Octgn.Windows
         {
             TabCustomGamesList.VisibleChanged(TabCustomGames.IsSelected);
             TabHistory.VisibleChanged(TabItemHistory.IsSelected);
+
+            // Inner lists bubble SelectionChanged too; only animate real page switches
+            if (selectionChangedEventArgs.OriginalSource == TabControlMain)
+                AnimatePageIn();
+        }
+
+        /// <summary>
+        /// Fades and slides the newly selected page into place.
+        /// </summary>
+        private void AnimatePageIn()
+        {
+            if (!SystemParameters.ClientAreaAnimation) return;
+
+            if (!(TabControlMain.Template?.FindName("PART_SelectedContentHost", TabControlMain) is FrameworkElement host)) return;
+
+            var slide = host.RenderTransform as TranslateTransform;
+            if (slide == null) {
+                slide = new TranslateTransform();
+                host.RenderTransform = slide;
+            }
+
+            var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+            var duration = new Duration(TimeSpan.FromMilliseconds(260));
+            host.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, duration) { EasingFunction = ease, FillBehavior = FillBehavior.Stop });
+            slide.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(14, 0, duration) { EasingFunction = ease, FillBehavior = FillBehavior.Stop });
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)

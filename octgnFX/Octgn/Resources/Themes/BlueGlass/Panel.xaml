@@ -3,24 +3,24 @@
 
   <!-- Frosted slate panels: dark and translucent so the white panel text stays readable over any background -->
   <LinearGradientBrush x:Key="GlassPanelBrush" StartPoint="0,0" EndPoint="1,1">
-    <GradientStop Color="#E62A303B" Offset="0" />
-    <GradientStop Color="#E61F232B" Offset="0.6" />
-    <GradientStop Color="#E61B1E25" Offset="1" />
+    <GradientStop Color="#F01D1D22" Offset="0" />
+    <GradientStop Color="#F017171B" Offset="0.6" />
+    <GradientStop Color="#F0141417" Offset="1" />
   </LinearGradientBrush>
 
   <LinearGradientBrush x:Key="DarkGlassPanelBrush" StartPoint="0,0" EndPoint="1,1">
-    <GradientStop Color="#CC1F232B" Offset="0" />
-    <GradientStop Color="#CC16181D" Offset="1" />
+    <GradientStop Color="#CC1A1A1E" Offset="0" />
+    <GradientStop Color="#CC111114" Offset="1" />
   </LinearGradientBrush>
 
   <LinearGradientBrush x:Key="DarkGlassPanelBrush2" StartPoint="0,0" EndPoint="1,0">
-    <GradientStop Color="#FF2563EB" Offset="0" />
-    <GradientStop Color="#FF3D8BFF" Offset="1" />
+    <GradientStop Color="#FFC80000" Offset="0" />
+    <GradientStop Color="#FFFF0000" Offset="1" />
   </LinearGradientBrush>
 
   <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Key="GlassPanelBorder">
-    <GradientStop Color="#40FFFFFF" Offset="0" />
-    <GradientStop Color="#14FFFFFF" Offset="1" />
+    <GradientStop Color="#26FFFFFF" Offset="0" />
+    <GradientStop Color="#0DFFFFFF" Offset="1" />
   </LinearGradientBrush>
 
   <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" x:Key="ControlFillBrush">
@@ -112,7 +112,7 @@
     <Setter Property="TextDecorations" Value="{x:Null}" />
     <Style.Triggers>
       <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Foreground" Value="#FF6EA8FF" />
+        <Setter Property="Foreground" Value="#FFFF5A5A" />
       </Trigger>
     </Style.Triggers>
   </Style>

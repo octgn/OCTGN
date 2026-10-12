@@ -12,69 +12,80 @@
   mc:Ignorable="d"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <!-- Main Colors: a flat slate palette with a single blue accent -->
+    <!-- Main Colors: neutral charcoal surfaces with the logo's red as the single accent -->
 
-    <Color x:Key="AccentColor">#FF3D8BFF</Color>
-    <Color x:Key="AccentHoverColor">#FF6AA6FF</Color>
-    <Color x:Key="AccentDeepColor">#FF2563EB</Color>
+    <Color x:Key="AccentColor">#FFFF0000</Color>
+    <Color x:Key="AccentHoverColor">#FFFF3B3B</Color>
+    <Color x:Key="AccentDeepColor">#FFC80000</Color>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
-    <SolidColorBrush x:Key="AccentSoftBrush" Color="#333D8BFF" />
+    <SolidColorBrush x:Key="AccentDeepBrush" Color="{StaticResource AccentDeepColor}" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#2EFF0000" />
 
-    <Color x:Key="MainColor">#FF2E3440</Color>
-    <Color x:Key="HoverColor">#FF3B4352</Color>
-    <Color x:Key="TransHoverColor">#553B4352</Color>
-    <Color x:Key="DefaultColor">#FF3D8BFF</Color>
-    <SolidColorBrush x:Key="LightBrush" Color="#FF1F232B" />
-    <SolidColorBrush x:Key="ShadeBrush" Color="#FF272C36" />
+    <Color x:Key="MainColor">#FF26262B</Color>
+    <Color x:Key="HoverColor">#FF323238</Color>
+    <Color x:Key="TransHoverColor">#55323238</Color>
+    <Color x:Key="DefaultColor">#FFFF0000</Color>
+    <SolidColorBrush x:Key="LightBrush" Color="#FF16161A" />
+    <SolidColorBrush x:Key="ShadeBrush" Color="#FF1E1E22" />
 
-    <Color x:Key="TopGradientSelectColor">#FF3D8BFF</Color>
-    <Color x:Key="BottomGradientSelectColor">#FF2563EB</Color>
+    <Color x:Key="TopGradientSelectColor">#FFB80F12</Color>
+    <Color x:Key="BottomGradientSelectColor">#FF8E0B0E</Color>
 
     <Color x:Key="BlackColor">#FF000000</Color>
     <Color x:Key="WhiteColor">#FFFFFFFF</Color>
     <!-- Text drawn on top of the accent-coloured selection -->
     <Color x:Key="SelectedForegroundColor">#FFFFFFFF</Color>
-    <Color x:Key="MutedTextColor">#FF8B93A3</Color>
+    <Color x:Key="MutedTextColor">#FF9A9AA3</Color>
 
-    <SolidColorBrush x:Key="TextBrush" Color="#FFE8EAEE" />
+    <SolidColorBrush x:Key="TextBrush" Color="#FFF2F2F4" />
     <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}" />
+    <SolidColorBrush x:Key="FaintTextBrush" Color="#FF6B6B74" />
     <SolidColorBrush x:Key="NormalBrush" Color="{StaticResource MainColor}" />
-    <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF3A4150" />
+    <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF34343B" />
     <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}" />
     <SolidColorBrush x:Key="TransHoverBrush" Color="{StaticResource TransHoverColor}" />
-    <SolidColorBrush x:Key="GlyphBrush" Color="#FFC3C9D4" />
+    <SolidColorBrush x:Key="GlyphBrush" Color="#FFC9C9CF" />
+
+    <!-- Surfaces, from the window background up to raised cards -->
+    <SolidColorBrush x:Key="SurfaceBaseBrush" Color="#FF0C0C0E" />
+    <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="#FF111114" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FF17171B" />
+    <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#FF1F1F24" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF29292F" />
+    <SolidColorBrush x:Key="HairlineBrush" Color="#FF26262C" />
 
     <SolidColorBrush x:Key="PressedBrush" Color="#40000000" />
 
-    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FF1F232B" />
-    <SolidColorBrush x:Key="TransControlBackgroundBrush" Color="#CC1F232B" />
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FF16161A" />
+    <SolidColorBrush x:Key="TransControlBackgroundBrush" Color="#CC16161A" />
 
-    <LinearGradientBrush x:Key="SelectedBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="{StaticResource TopGradientSelectColor}" Offset="0" />
-        <GradientStop Color="{StaticResource BottomGradientSelectColor}" Offset="1" />
+    <!-- Selection: a red glow that fades out to the right instead of a solid block -->
+    <LinearGradientBrush x:Key="SelectedBackgroundBrush" EndPoint="1,0" StartPoint="0,0">
+        <GradientStop Color="#B3D10A0E" Offset="0" />
+        <GradientStop Color="#4DD10A0E" Offset="1" />
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FF2A303B" />
+    <SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FF1F1F24" />
 
-    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF7D8594" />
-    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#FF262A32" />
-    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#FF323844" />
-    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FF16181D" />
+    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF6B6B74" />
+    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#FF1C1C20" />
+    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#FF2A2A30" />
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FF0C0C0E" />
 
     <!-- EXPRESSION COMMON VALUES -->
 
     <!-- Formerly a hard "glass" split highlight; now a soft top sheen -->
     <LinearGradientBrush x:Key="ShineBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#14FFFFFF" Offset="0" />
+        <GradientStop Color="#0FFFFFFF" Offset="0" />
         <GradientStop Color="#00FFFFFF" Offset="0.6" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="HoverShineBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#1FFFFFFF" Offset="0" />
-        <GradientStop Color="#08FFFFFF" Offset="1" />
+        <GradientStop Color="#1AFFFFFF" Offset="0" />
+        <GradientStop Color="#06FFFFFF" Offset="1" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="MenuItemHover" Color="#FF3B4352"/>
+    <SolidColorBrush x:Key="MenuItemHover" Color="#FF29292F"/>
 
     <LinearGradientBrush x:Key="PressedBorderBrush" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="{StaticResource AccentDeepColor}" Offset="0.0" />
@@ -82,17 +93,19 @@
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="DefaultedBorderBrush" Color="{StaticResource DefaultColor}" />
-    <SolidColorBrush x:Key="SolidBorderBrush" Color="#FF3A4150" />
+    <SolidColorBrush x:Key="SolidBorderBrush" Color="#FF34343B" />
 
     <!-- Shared easing used by the control animations below -->
     <CubicEase x:Key="EaseOut" EasingMode="EaseOut" />
     <BackEase x:Key="EaseOutBack" EasingMode="EaseOut" Amplitude="0.4" />
 
     <Style TargetType="{x:Type Hyperlink}">
-        <Setter Property="Foreground" Value="#FF6EA8FF"/>
+        <Setter Property="Foreground" Value="#FFFF5A5A"/>
+        <Setter Property="TextDecorations" Value="{x:Null}"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="#FF9CC3FF"/>
+                <Setter Property="Foreground" Value="#FFFF8A8A"/>
+                <Setter Property="TextDecorations" Value="Underline"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -1981,7 +1994,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="#FF1F232B" />
+        <Setter Property="Background" Value="#FF1F1F24" />
         <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
@@ -2290,10 +2303,10 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Grid.LayoutTransform>
-                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0.9" Background="#DD1F232B">
+                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0.9" Background="#00000000">
                             <!--<Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
-                                    <GradientStop Color="#7F3B4352" Offset="0" />
+                                    <GradientStop Color="#FF29292F" Offset="0" />
                                     <GradientStop Color="#19FFFFFF" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>-->
@@ -2302,8 +2315,8 @@
                         <Border x:Name="HoverBorder" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
-                                    <GradientStop Color="#7F3B4352" Offset="0" />
-                                    <GradientStop Color="#7F3B4352" Offset="1" />
+                                    <GradientStop Color="#FF29292F" Offset="0" />
+                                    <GradientStop Color="#FF29292F" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>
@@ -2419,7 +2432,7 @@
                             <RowDefinition Height="Auto" x:Name="RowDefinition0" />
                             <RowDefinition Height="*" x:Name="RowDefinition1" />
                         </Grid.RowDefinitions>
-                        <Border x:Name="border" BorderThickness="0 0 0 1" BorderBrush="{DynamicResource NormalBorderBrush}" Background="#FF1B1E25">
+                        <Border x:Name="border" BorderThickness="0 0 0 1" BorderBrush="{DynamicResource NormalBorderBrush}" Background="#FF111114">
                             <TabPanel x:Name="HeaderPanel" IsItemsHost="true" Panel.ZIndex="1" KeyboardNavigation.TabIndex="1" RenderTransformOrigin="0.5,0.5" Width="Auto" Height="Auto">
                                 <TabPanel.LayoutTransform>
                                     <TransformGroup>
@@ -2564,14 +2577,14 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Grid.LayoutTransform>
-                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0.9" Background="#DD1F232B">
+                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0.9" Background="#00000000">
                         </Border>
                         <Border x:Name="SelectedBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0" Background="{DynamicResource SelectedTabBackgroundBrush}"/>
                         <Border x:Name="HoverBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
-                                    <GradientStop Color="#7F3B4352" Offset="0" />
-                                    <GradientStop Color="#7F3B4352" Offset="1" />
+                                    <GradientStop Color="#FF29292F" Offset="0" />
+                                    <GradientStop Color="#FF29292F" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>

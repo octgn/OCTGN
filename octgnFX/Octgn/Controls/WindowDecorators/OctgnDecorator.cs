@@ -140,15 +140,7 @@ namespace Octgn.Controls.WindowDecorators
 
         private void AddTitleBar()
         {
-            // Accent tint on the left that fades into the slate title bar
-            var titleBackground = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 0),
-                EndPoint = new Point(1, 0)
-            };
-            titleBackground.GradientStops.Add(new GradientStop(Color.FromArgb(110, 61, 139, 255), 0));
-            titleBackground.GradientStops.Add(new GradientStop(Color.FromArgb(200, 31, 35, 43), 0.45));
-            titleBackground.GradientStops.Add(new GradientStop(Color.FromArgb(200, 31, 35, 43), 1));
+            var titleBackground = new SolidColorBrush(Color.FromArgb(235, 14, 14, 17));
             titleBackground.Freeze();
 
             var titleBorder = new Border
@@ -171,6 +163,9 @@ namespace Octgn.Controls.WindowDecorators
             IconImage = new Image
             {
                 Stretch = Stretch.Uniform,
+                Width = 22,
+                Height = 22,
+                Margin = new Thickness(6, 0, 0, 0),
                 Source = Decorated.Icon,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -193,25 +188,17 @@ namespace Octgn.Controls.WindowDecorators
 
             var titleLabel = new TextBlock
             {
-                FontSize = 17,
+                FontSize = 15,
                 VerticalAlignment = VerticalAlignment.Center,
                 Foreground = new SolidColorBrush(Color.FromRgb(240, 243, 248)),
                 FontWeight = FontWeights.SemiBold,
                 DataContext = Decorated,
-                Effect = new DropShadowEffect()
-                {
-                    BlurRadius = 5,
-                    Color = Color.FromRgb(64, 64, 64),
-                    Direction = 0,
-                    Opacity = .9,
-                    ShadowDepth = 0,
-                    RenderingBias = RenderingBias.Performance
-                }
+
             };
             titleLabel.SetBinding(TextBlock.TextProperty, new Binding("Title") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
 
             titlePanel.Children.Add(IconImage);
-            titlePanel.Children.Add(new Border { Width = 20 });
+            titlePanel.Children.Add(new Border { Width = 12 });
             titlePanel.Children.Add(titleLabel);
         }
 
@@ -220,7 +207,7 @@ namespace Octgn.Controls.WindowDecorators
             var controlsPanel = new StackPanel { Orientation = Orientation.Horizontal };
             var controlsBorder = new Border
             {
-                Background = new SolidColorBrush(Color.FromArgb(200, 31, 35, 43)),
+                Background = new SolidColorBrush(Color.FromArgb(235, 14, 14, 17)),
                 CornerRadius = new CornerRadius(0, 5, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Child = controlsPanel

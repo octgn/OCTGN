@@ -11,58 +11,60 @@
              x:Name="Me">
     <UserControl.Resources>
         <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}"
-               BasedOn="{StaticResource {x:Type ListViewItem}}">
+               BasedOn="{StaticResource TableRow}">
             <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="32,26,32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="497*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
-            <DockPanel>
-                <Button Click="ButtonNextClick" Width="35" Height="30" Margin="0,0,0,0" FontSize="35" Padding="0 -16 0 0"
-                        Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonNext"
-                        DockPanel.Dock="Right"
-                        IsEnabled="{Binding NextPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Delete">&#59230;</Button>
-                <Button Click="ButtonPrevClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
-                        Style="{StaticResource FlatDarkGreenButtonStyle}" x:Name="ButtonPrev"
-                        DockPanel.Dock="Right"
-                        IsEnabled="{Binding PrevPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Delete">&#59229;</Button>
-                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,10,0">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="Page: {0:N0} of {1:N0}">
-                            <Binding ElementName="Me" Path="Page" />
-                            <Binding ElementName="Me" Path="PageCount" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
 
-                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -18 0 0"
-                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
-                        DockPanel.Dock="Left"
-                        HorizontalAlignment="Left"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh">&#10227;</Button>
-                <Button Click="ButtonDeleteClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
-                        Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonDelete"
-                        DockPanel.Dock="Left"
-                        HorizontalAlignment="Left"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Delete"
-                        IsEnabled="{Binding IsHistorySelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">&#59177;</Button>
-            </DockPanel>
-        </Border>
-        <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0" Foreground="CornflowerBlue">
+        <DockPanel x:Name="BorderButtons" Grid.Row="0">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Click="ButtonRefreshClick" x:Name="ButtonRefresh" Style="{StaticResource SecondaryButton}" Width="38" Height="38" Padding="0" Margin="0,0,10,0" ToolTip="Refresh">
+                    <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                </Button>
+                <Button Click="ButtonDeleteClick" x:Name="ButtonDelete" Style="{StaticResource FlatDarkRedButtonStyle}" Width="38" Height="38" Padding="0" Margin="0,0,22,0" ToolTip="Delete selected"
+                        IsEnabled="{Binding IsHistorySelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">
+                    <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                </Button>
+                <Border Background="#FF17171B" BorderBrush="#FF26262C" BorderThickness="1" CornerRadius="10" Padding="4" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Click="ButtonPrevClick" x:Name="ButtonPrev" Style="{StaticResource GhostButton}" Width="30" Height="30" MinHeight="0" Padding="0" ToolTip="Previous page"
+                                IsEnabled="{Binding PrevPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">
+                            <TextBlock Text="&#xE76B;" FontFamily="{StaticResource IconFont}" FontSize="11" />
+                        </Button>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Page {0:N0} of {1:N0}">
+                                    <Binding ElementName="Me" Path="Page" />
+                                    <Binding ElementName="Me" Path="PageCount" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <Button Click="ButtonNextClick" x:Name="ButtonNext" Style="{StaticResource GhostButton}" Width="30" Height="30" MinHeight="0" Padding="0" ToolTip="Next page"
+                                IsEnabled="{Binding NextPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">
+                            <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="11" />
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Game History" Style="{StaticResource HeadingText}" FontSize="26" />
+                <TextBlock Text="Games you've played. Double-click one to open its replay and log." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <ProgressBar Grid.Row="1" Grid.Column="0" Height="3" Margin="0,14,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0">
             <ProgressBar.Style>
-                <Style TargetType="{x:Type ProgressBar}">
+                <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}">
                     <Style.Resources>
                         <Storyboard x:Key="InitialRefreshDelayAnimation">
                             <DoubleAnimation From="200" To="0" Storyboard.TargetProperty="Value" Duration="{x:Static local:GameHistoryTab.InitialRefreshDelay}" />
@@ -102,31 +104,53 @@
                 </Style>
             </ProgressBar.Style>
         </ProgressBar>
-        <ListView x:Name="ListViewHistoryList" Grid.Row="2"
-                  SelectionChanged="ListViewHistoryList_SelectionChanged"
-                  ItemsSource="{Binding GameHistories, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
-                  ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                  utils:GridViewSort.AutoSort="True"
-                  Grid.RowSpan="3"
-                  SelectionMode="Extended" HorizontalContentAlignment="Left"
-                  AlternationCount="1">
-            <ListView.View>
-                <GridView>
-                    <GridView.ColumnHeaderContainerStyle>
-                        <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
-                            <Setter Property="HorizontalContentAlignment" Value="Left" />
-                        </Style>
-                    </GridView.ColumnHeaderContainerStyle>
-                    <GridViewColumn Header="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}" Width="200"></GridViewColumn>
-                    <GridViewColumn Header="Game"
-                                    DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
-                    <GridViewColumn Header="Start Time"
-                                    DisplayMemberBinding="{Binding Path=DateStarted, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
-                    <GridViewColumn Header="Run Time"
-                                    DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+
+        <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="18,14,18,6">
+                    <TextBlock Text="&#xE81C;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="PAST GAMES" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
+                </StackPanel>
+                <ListView x:Name="ListViewHistoryList" Grid.Row="1" Margin="0,4,0,6"
+                          SelectionChanged="ListViewHistoryList_SelectionChanged"
+                          ItemsSource="{Binding GameHistories, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
+                          ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                          utils:GridViewSort.AutoSort="True"
+                          SelectionMode="Extended" HorizontalContentAlignment="Left"
+                          AlternationCount="1">
+                    <ListView.View>
+                        <GridView>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+                            <GridViewColumn Header="Name"
+                                            DisplayMemberBinding="{Binding Path=Name}" Width="200"></GridViewColumn>
+                            <GridViewColumn Header="Game"
+                                            DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
+                            <GridViewColumn Header="Start Time"
+                                            DisplayMemberBinding="{Binding Path=DateStarted, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
+                            <GridViewColumn Header="Run Time"
+                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="Auto"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <!-- Empty state -->
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"
+                            Visibility="{Binding HasItems, ElementName=ListViewHistoryList, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                    <Grid Width="72" Height="72" HorizontalAlignment="Center">
+                        <Ellipse Fill="#14FF0000" Stroke="#33FF0000" StrokeThickness="1" />
+                        <TextBlock Text="&#xE81C;" FontFamily="{StaticResource IconFont}" FontSize="28" Foreground="#FFFF5A5A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <TextBlock Text="No games yet" FontFamily="{StaticResource DisplayFont}" FontSize="16" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,16,0,4" />
+                    <TextBlock Text="Games you play will show up here so you can revisit them." Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

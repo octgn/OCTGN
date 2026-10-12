@@ -6,167 +6,227 @@
              xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
              xmlns:networking="clr-namespace:Octgn.Library.Networking;assembly=Octgn.Library"
              x:Name="Me"
-             mc:Ignorable="d" d:DesignHeight="453" d:DesignWidth="662"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1000"
              >
-    <Grid DataContext="{Binding ElementName=Me}">
+    <UserControl.Resources>
+        <Style x:Key="FactLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource FaintTextBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="FactValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="FactRow" TargetType="DockPanel">
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid DataContext="{Binding ElementName=Me}" Margin="32,26,32,24">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
-        <Border Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="{StaticResource TransControlBackgroundBrush}"
-                Background="PapayaWhip" Padding="10,2,10,2" Canvas.ZIndex="-1"
-                Visibility="{Binding ElementName=Me,Path=NoGamesInstalled,Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock>You have no games installed! Click 'Install' below on the selected game to get started.</TextBlock>
-        </Border>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <Border Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource ButtonBarPanel}">
-            <WrapPanel>
-                <WrapPanel IsEnabled="{Binding ButtonsEnabled}">
-                    <ComboBox MinWidth="150" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}" Margin="0 0 5 0">
+
+        <!-- Header -->
+        <DockPanel Grid.ColumnSpan="3" Grid.Row="0">
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,18,0,0">
+                <StackPanel Orientation="Horizontal" IsEnabled="{Binding ButtonsEnabled}">
+                    <ComboBox MinWidth="200" Height="38" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}"
+                              Margin="0,0,10,0" VerticalContentAlignment="Center" ToolTip="Game feed">
                         <ComboBox.ItemTemplate>
                             <DataTemplate DataType="networking:NamedUrl">
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Button Click="ButtonAddClick" Content="Add Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                    <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Content="Remove Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                    <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
-                </WrapPanel>
-                <WrapPanel>
-                    <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                </WrapPanel>
-                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -16 0 0"
-                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh List">&#10227;</Button>
-            </WrapPanel>
-        </Border>
-        <ListBox x:Name="ListBoxGames" Grid.Column="1" Grid.Row="2" Background="Transparent" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="5" Height="64" HorizontalAlignment="Stretch" DataContext="{Binding}" Background="Transparent">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="64"/>
-                            <ColumnDefinition Width="100*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{Binding Path=ImageUri}" RenderOptions.BitmapScalingMode="HighQuality" ImageFailed="Image_ImageFailed" />
-                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                            <StackPanel.Resources>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Margin" Value="0,3,0,0"/>
-                                </Style>
-                            </StackPanel.Resources>
-                            <TextBlock DataContext="{Binding}" Text="{Binding Package.Title}" FontWeight="Bold"></TextBlock>
-                            <TextBlock DataContext="{Binding}" Text="{Binding Package.Description}" TextWrapping="Wrap"></TextBlock>
+                    <Button Click="ButtonAddClick" Style="{StaticResource SecondaryButton}" Height="38" Margin="0,0,10,0" ToolTip="Add a game feed">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
+                            <TextBlock Text="Feed" VerticalAlignment="Center" />
                         </StackPanel>
-                        <Grid Grid.Column="2" Width="Auto">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="50*"/>
-                                <RowDefinition Height="50*"/>
-                            </Grid.RowDefinitions>
-                            <Button Width="100" x:Name="ButtonInstallUninstall" DataContext="{Binding}"
+                    </Button>
+                    <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Style="{StaticResource SecondaryButton}" Height="38" Width="38" Padding="0"
+                            Margin="0,0,10,0" ToolTip="Remove the selected game feed">
+                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                    </Button>
+                </StackPanel>
+                <Button Click="ButtonAddo8cClick" Style="{StaticResource SecondaryButton}" Height="38" Margin="0,0,10,0" ToolTip="Add image packs (.o8c)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xEB9F;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Image packs" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Click="ButtonRefreshClick" x:Name="ButtonRefresh" Style="{StaticResource SecondaryButton}" Height="38" Width="38" Padding="0" ToolTip="Refresh list">
+                    <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                </Button>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Games Manager" Style="{StaticResource HeadingText}" FontSize="26" />
+                <TextBlock Text="Browse game feeds and install the games you want to play." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Shown until the first game is installed -->
+        <Border Grid.ColumnSpan="3" Grid.Row="1" Margin="0,16,0,0" Background="#14FFFFFF" BorderBrush="#FF2A2A30" BorderThickness="1" CornerRadius="10" Padding="14,10"
+                Visibility="{Binding ElementName=Me,Path=NoGamesInstalled,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <Border Width="28" Height="28" CornerRadius="14" Background="#26FF0000" Margin="0,0,12,0">
+                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock VerticalAlignment="Center" FontSize="13" Foreground="{DynamicResource MutedTextBrush}">
+                    <Run Text="No games installed yet." Foreground="{DynamicResource TextBrush}" FontWeight="SemiBold" />
+                    <Run Text=" Pick a game below and press Install to get started." />
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Game list -->
+        <Border Grid.Column="1" Grid.Row="2" Style="{StaticResource Card}" Padding="6" Margin="0,16,16,0">
+            <ListBox x:Name="ListBoxGames" Background="Transparent" BorderThickness="0" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}"
+                     HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ItemContainerStyle="{StaticResource CardListItem}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="64" HorizontalAlignment="Stretch" DataContext="{Binding}" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="64"/>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="56" Height="56" CornerRadius="10" Background="#FF0F0F12" BorderBrush="#FF2A2A30" BorderThickness="1" HorizontalAlignment="Left">
+                                <Image Source="{Binding Path=ImageUri}" RenderOptions.BitmapScalingMode="HighQuality" ImageFailed="Image_ImageFailed" Stretch="UniformToFill">
+                                    <Image.Clip>
+                                        <RectangleGeometry Rect="0,0,54,54" RadiusX="9" RadiusY="9" />
+                                    </Image.Clip>
+                                </Image>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="10,0,12,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Package.Title}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" />
+                                    <Border Margin="10,0,0,0" CornerRadius="9" Padding="7,1" Background="#1F4ADE80" BorderBrush="#404ADE80" BorderThickness="1" VerticalAlignment="Center"
+                                            Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="9" Foreground="#FF6EE7A0" VerticalAlignment="Center" Margin="0,1,5,0" />
+                                            <TextBlock Text="Installed" FontSize="11" FontWeight="SemiBold" Foreground="#FF6EE7A0" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{Binding Package.Description}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="36" Margin="0,4,0,0"
+                                           FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}" />
+                            </StackPanel>
+                            <Button Grid.Column="2" MinWidth="104" Height="34" x:Name="ButtonInstallUninstall" DataContext="{Binding}" VerticalAlignment="Center"
                                     Content="{Binding InstallButtonText}"
                                     Click="ButtonInstallUninstallClick"
                                     IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
                                 <Button.Style>
-                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}">
+                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource SecondaryButton}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="False">
                                                 <Setter Property="Button.Visibility" Value="Collapsed"></Setter>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Path=Installed}" Value="True">
-                                                <Setter Property="Background" Value="Red"></Setter>
+                                                <Setter Property="Foreground" Value="#FFFF8A8A" />
+                                                <Setter Property="Background" Value="#26FF0000" />
+                                                <Setter Property="BorderBrush" Value="#4DFF0000" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Path=Installed}" Value="False">
-                                                <Setter Property="Background" Value="Green"></Setter>
+                                                <Setter Property="Foreground" Value="White" />
+                                                <Setter Property="Background" Value="{StaticResource AccentGradientBrush}" />
+                                                <Setter Property="BorderBrush" Value="#33FFFFFF" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Image Grid.Row="1" Source="../../Resources/Icons/Ok.png" Stretch="Uniform" Margin="5" HorizontalAlignment="Right" DataContext="{Binding}" Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}"></Image>
                         </Grid>
-                    </Grid>
-                </DataTemplate>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
 
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <Border Background="#CC333333" Grid.Column="2" Grid.Row="2" Margin="5,0,0,0">
+        <!-- Details for the selected game -->
+        <Border Grid.Column="2" Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0" ClipToBounds="True">
             <Grid Visibility="{Binding ElementName=Me,Path=IsGameSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.Resources>
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Margin" Value="0,2,0,0"/>
-                    </Style>
-                    <Style x:Key="Standard" TargetType="{x:Type TextBlock}">
-                        <Setter Property="Foreground" Value="WhiteSmoke"></Setter>
-                        <Setter Property="FontSize" Value="12"></Setter>
-                        <Setter Property="TextWrapping" Value="Wrap"></Setter>
-                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                    </Style>
-                    <Style x:Key="Url" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource Standard}">
-                        <Setter Property="Foreground" Value="DodgerBlue"></Setter>
-                        <Setter Property="Cursor" Value="Hand"></Setter>
-                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                    </Style>
-                    <Style x:Key="Title" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource Standard}">
-                        <Setter Property="FontWeight" Value="ExtraBold"></Setter>
-                        <Setter Property="FontSize" Value="14"></Setter>
-                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                    </Style>
-                </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="100*"/>
                 </Grid.RowDefinitions>
-                <Border Style="{StaticResource DarkPanel}" Grid.Row="0">
-                    <StackPanel>
-                        <StackPanel.Resources>
-                            <Style TargetType="{x:Type StackPanel}">
-                                <Setter Property="Margin" Value="0,2,0,0"/>
-                            </Style>
-                        </StackPanel.Resources>
-                        <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" Style="{StaticResource Title}" FontSize="17"/>
-                        <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
-                        <TextBlock Text="Game Site" Style="{StaticResource Url}" PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}"/>
+                <!-- Cover art with the title over a dark fade -->
+                <Grid Height="150">
+                    <Grid.Clip>
+                        <RectangleGeometry Rect="0,0,298,150" RadiusX="11" RadiusY="11" />
+                    </Grid.Clip>
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <ImageBrush ImageSource="{Binding ElementName=Me,Path=SelectedGame.ImageUri}" Stretch="UniformToFill" Opacity="0.55" />
+                        </Rectangle.Fill>
+                        <Rectangle.Effect>
+                            <BlurEffect Radius="6" />
+                        </Rectangle.Effect>
+                    </Rectangle>
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#33000000" Offset="0" />
+                                <GradientStop Color="#F017171B" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <StackPanel VerticalAlignment="Bottom" Margin="20,0,20,14">
+                        <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" FontFamily="{StaticResource DisplayFont}"
+                                   FontSize="19" Foreground="White" TextWrapping="Wrap">
+                            <TextBlock.Effect>
+                                <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.8" />
+                            </TextBlock.Effect>
+                        </TextBlock>
+                        <TextBlock Text="Visit game site" Margin="0,4,0,0" FontSize="12.5" Foreground="#FFFF6B6B" Cursor="Hand"
+                                   PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}" />
                     </StackPanel>
-                </Border>
-                <ScrollViewer Margin="4,0,4,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                </Grid>
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="20,6,16,16">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
-                            <TextBlock Text="Created By: " Style="{StaticResource Title}"/>
-                            <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource Standard}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="Version: " Style="{StaticResource Title}"/>
-                            <TextBlock Text="{Binding Version}" Style="{StaticResource Standard}"/>
-                        </StackPanel>
-                        <!-- OMG OMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOM -->
-                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
-                            <TextBlock Text="Installed Version: " Style="{StaticResource Title}"/>
-                            <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource Standard}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="Last Published: "  Style="{StaticResource Title}"/>
-                            <TextBlock Text="{Binding Published.LocalDateTime}" Style="{StaticResource Standard}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
-                            <TextBlock Text="Downloads: " Style="{StaticResource Title}"/>
-                            <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource Standard}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="Description: " Style="{StaticResource Title}"/>
-                            <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Text="{Binding Description}" FontSize="12" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="Tags: "  Style="{StaticResource Title}"/>
-                            <TextBlock Text="{Binding Tags}" Style="{StaticResource Standard}"/>
+                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                            <TextBlock Text="Created by" Style="{StaticResource FactLabel}" />
+                            <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource FactValue}" />
+                        </DockPanel>
+                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="Version" Style="{StaticResource FactLabel}" />
+                            <TextBlock Text="{Binding Version}" Style="{StaticResource FactValue}" />
+                        </DockPanel>
+                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                            <TextBlock Text="Installed version" Style="{StaticResource FactLabel}" />
+                            <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource FactValue}" />
+                        </DockPanel>
+                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="Last published" Style="{StaticResource FactLabel}" />
+                            <TextBlock Text="{Binding Published.LocalDateTime, StringFormat='{}{0:MMM d, yyyy}'}" Style="{StaticResource FactValue}" />
+                        </DockPanel>
+                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
+                            <TextBlock Text="Downloads" Style="{StaticResource FactLabel}" />
+                            <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource FactValue}" />
+                        </DockPanel>
+                        <Border Height="1" Background="{DynamicResource HairlineBrush}" Margin="0,4,0,14" />
+                        <StackPanel DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="ABOUT" Style="{StaticResource EyebrowText}" Margin="0,0,0,6" />
+                            <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Background="Transparent" Padding="0"
+                                     Foreground="{DynamicResource MutedTextBrush}" Text="{Binding Description}" FontSize="12.5" />
+                            <TextBlock Text="TAGS" Style="{StaticResource EyebrowText}" Margin="0,14,0,6" />
+                            <TextBlock Text="{Binding Tags}" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" />
+                            <TextBlock Text="ID" Style="{StaticResource EyebrowText}" Margin="0,14,0,4" />
+                            <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="11" IsReadOnly="True" BorderThickness="0" Background="Transparent"
+                                     Padding="0" Foreground="{DynamicResource FaintTextBrush}" FontFamily="Consolas" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

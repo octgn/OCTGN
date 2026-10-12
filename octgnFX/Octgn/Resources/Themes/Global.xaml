@@ -66,17 +66,17 @@
                             <Rectangle x:Name="Indicator" RadiusX="4" RadiusY="4">
                                 <Rectangle.Fill>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#FF2563EB" Offset="0"/>
-                                        <GradientStop Color="#FF3D8BFF" Offset="1"/>
+                                        <GradientStop Color="#FFC80000" Offset="0"/>
+                                        <GradientStop Color="#FFFF0000" Offset="1"/>
                                     </LinearGradientBrush>
                                 </Rectangle.Fill>
                             </Rectangle>
                             <Rectangle x:Name="Animation" RadiusX="4" RadiusY="4" RenderTransformOrigin="0.5,0.5">
                                 <Rectangle.Fill>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#003D8BFF" Offset="0"/>
-                                        <GradientStop Color="#CC6AA6FF" Offset="0.5"/>
-                                        <GradientStop Color="#003D8BFF" Offset="1"/>
+                                        <GradientStop Color="#00FF0000" Offset="0"/>
+                                        <GradientStop Color="#CCFF5A5A" Offset="0.5"/>
+                                        <GradientStop Color="#00FF0000" Offset="1"/>
                                     </LinearGradientBrush>
                                 </Rectangle.Fill>
                                 <Rectangle.RenderTransform>
