@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using Microsoft.Windows.Shell;
@@ -100,14 +101,59 @@ namespace Octgn.Controls.WindowDecorators
 
             AddWindowControls();
 
+            AnimateContentIn();
+
             Decorated.PropertyChanged += DecoratedOnPropertyChanged;
+        }
+
+        /// <summary>
+        /// Fades and slides the window contents in the first time the window is shown.
+        /// Skipped when the user has turned off client area animations in Windows.
+        /// </summary>
+        private void AnimateContentIn()
+        {
+            if (!SystemParameters.ClientAreaAnimation)
+                return;
+
+            var slide = new TranslateTransform();
+            ContentArea.RenderTransform = slide;
+
+            RoutedEventHandler onLoaded = null;
+            onLoaded = (sender, args) =>
+            {
+                Decorated.Loaded -= onLoaded;
+
+                var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+                var duration = new Duration(TimeSpan.FromMilliseconds(320));
+
+                ContentArea.BeginAnimation(UIElement.OpacityProperty,
+                    new DoubleAnimation(0, 1, duration) { EasingFunction = ease, FillBehavior = FillBehavior.Stop });
+                slide.BeginAnimation(TranslateTransform.YProperty,
+                    new DoubleAnimation(12, 0, duration) { EasingFunction = ease, FillBehavior = FillBehavior.Stop });
+            };
+
+            if (Decorated.IsLoaded)
+                onLoaded(Decorated, null);
+            else
+                Decorated.Loaded += onLoaded;
         }
 
         private void AddTitleBar()
         {
+            // Accent tint on the left that fades into the slate title bar
+            var titleBackground = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(1, 0)
+            };
+            titleBackground.GradientStops.Add(new GradientStop(Color.FromArgb(110, 61, 139, 255), 0));
+            titleBackground.GradientStops.Add(new GradientStop(Color.FromArgb(200, 31, 35, 43), 0.45));
+            titleBackground.GradientStops.Add(new GradientStop(Color.FromArgb(200, 31, 35, 43), 1));
+            titleBackground.Freeze();
+
             var titleBorder = new Border
             {
-                Background = new SolidColorBrush(Color.FromArgb(100, 255, 255, 255)),
+                Background = titleBackground,
                 CornerRadius = new CornerRadius(5, 0, 0, 0),
                 Padding = new Thickness(5, 2, 5, 2),
                 HorizontalAlignment = HorizontalAlignment.Stretch
@@ -147,10 +193,10 @@ namespace Octgn.Controls.WindowDecorators
 
             var titleLabel = new TextBlock
             {
-                FontSize = 20,
+                FontSize = 17,
                 VerticalAlignment = VerticalAlignment.Center,
-                Foreground = new SolidColorBrush(Color.FromRgb(248, 248, 248)),
-                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Color.FromRgb(240, 243, 248)),
+                FontWeight = FontWeights.SemiBold,
                 DataContext = Decorated,
                 Effect = new DropShadowEffect()
                 {
@@ -174,7 +220,7 @@ namespace Octgn.Controls.WindowDecorators
             var controlsPanel = new StackPanel { Orientation = Orientation.Horizontal };
             var controlsBorder = new Border
             {
-                Background = new SolidColorBrush(Color.FromArgb(200, 64, 64, 64)),
+                Background = new SolidColorBrush(Color.FromArgb(200, 31, 35, 43)),
                 CornerRadius = new CornerRadius(0, 5, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Child = controlsPanel

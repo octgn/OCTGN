@@ -32,9 +32,9 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
     <Style TargetType="{x:Type ProgressBar}">
-        <Setter Property="Foreground" Value="#A30093FF"/>
-        <Setter Property="Background" Value="#FFE6E6E6"/>
-        <Setter Property="BorderBrush" Value="#FFBCBCBC"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource LightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -59,16 +59,26 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}"/>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="4"/>
                         <!--<Rectangle x:Name="PART_Track"/>-->
-                        <Border x:Name="PART_Track" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1" CornerRadius="0,0,0,0" Background="{DynamicResource LightBrush}">
-                            <Border.BitmapEffect>
-                                <OuterGlowBitmapEffect Opacity=".5" GlowColor="{DynamicResource WhiteColor}" GlowSize="3" />
-                            </Border.BitmapEffect>
-                        </Border>
+                        <Border x:Name="PART_Track" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4" Background="{TemplateBinding Background}" />
                         <Grid x:Name="PART_Indicator" ClipToBounds="True" HorizontalAlignment="Left">
-                            <Rectangle x:Name="Indicator" Fill="#A30093FF"/>
-                            <Rectangle x:Name="Animation" Fill="#B2FFFFFF" RenderTransformOrigin="0.5,0.5">
+                            <Rectangle x:Name="Indicator" RadiusX="4" RadiusY="4">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#FF2563EB" Offset="0"/>
+                                        <GradientStop Color="#FF3D8BFF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle x:Name="Animation" RadiusX="4" RadiusY="4" RenderTransformOrigin="0.5,0.5">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#003D8BFF" Offset="0"/>
+                                        <GradientStop Color="#CC6AA6FF" Offset="0.5"/>
+                                        <GradientStop Color="#003D8BFF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
                                 <Rectangle.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
@@ -90,6 +100,8 @@
                         </Trigger>
                         <Trigger Property="IsIndeterminate" Value="True">
                             <Setter Property="Visibility" TargetName="Indicator" Value="Collapsed"/>
+                        </Trigger>                        <Trigger Property="IsIndeterminate" Value="False">
+                            <Setter Property="Visibility" TargetName="Animation" Value="Collapsed"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

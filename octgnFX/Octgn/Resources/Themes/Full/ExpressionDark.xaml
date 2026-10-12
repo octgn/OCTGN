@@ -12,77 +12,89 @@
   mc:Ignorable="d"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-    <!-- Main Colors -->
+    <!-- Main Colors: a flat slate palette with a single blue accent -->
 
-    <Color x:Key="MainColor">#FF595959</Color>
-    <Color x:Key="HoverColor">#FF393939</Color>
-    <Color x:Key="TransHoverColor">#55393939</Color>
-    <Color x:Key="DefaultColor">#FF9BB1C5</Color>
-    <SolidColorBrush x:Key="LightBrush" Color="#FF333333" />
-    <SolidColorBrush x:Key="ShadeBrush" Color="#FF434343" />
+    <Color x:Key="AccentColor">#FF3D8BFF</Color>
+    <Color x:Key="AccentHoverColor">#FF6AA6FF</Color>
+    <Color x:Key="AccentDeepColor">#FF2563EB</Color>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#333D8BFF" />
 
-    <Color x:Key="TopGradientSelectColor">#FFEFEFEF</Color>
-    <Color x:Key="BottomGradientSelectColor">#FF737373</Color>
+    <Color x:Key="MainColor">#FF2E3440</Color>
+    <Color x:Key="HoverColor">#FF3B4352</Color>
+    <Color x:Key="TransHoverColor">#553B4352</Color>
+    <Color x:Key="DefaultColor">#FF3D8BFF</Color>
+    <SolidColorBrush x:Key="LightBrush" Color="#FF1F232B" />
+    <SolidColorBrush x:Key="ShadeBrush" Color="#FF272C36" />
+
+    <Color x:Key="TopGradientSelectColor">#FF3D8BFF</Color>
+    <Color x:Key="BottomGradientSelectColor">#FF2563EB</Color>
 
     <Color x:Key="BlackColor">#FF000000</Color>
     <Color x:Key="WhiteColor">#FFFFFFFF</Color>
+    <!-- Text drawn on top of the accent-coloured selection -->
+    <Color x:Key="SelectedForegroundColor">#FFFFFFFF</Color>
+    <Color x:Key="MutedTextColor">#FF8B93A3</Color>
 
-    <SolidColorBrush x:Key="TextBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="TextBrush" Color="#FFE8EAEE" />
+    <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}" />
     <SolidColorBrush x:Key="NormalBrush" Color="{StaticResource MainColor}" />
-    <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF333333" />
+    <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF3A4150" />
     <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}" />
     <SolidColorBrush x:Key="TransHoverBrush" Color="{StaticResource TransHoverColor}" />
-    <SolidColorBrush x:Key="GlyphBrush" Color="#FFD1D1D1" />
+    <SolidColorBrush x:Key="GlyphBrush" Color="#FFC3C9D4" />
 
-    <LinearGradientBrush x:Key="PressedBrush" EndPoint="0.5,0.971" StartPoint="0.5,0.042">
-        <GradientStop Color="#4C000000" Offset="0" />
-        <GradientStop Color="#26FFFFFF" Offset="1" />
-        <GradientStop Color="#4C000000" Offset="0.467" />
-        <GradientStop Color="#26FFFFFF" Offset="0.479" />
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="PressedBrush" Color="#40000000" />
 
-    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FF333333" />
-    <SolidColorBrush x:Key="TransControlBackgroundBrush" Color="#77333333" />
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FF1F232B" />
+    <SolidColorBrush x:Key="TransControlBackgroundBrush" Color="#CC1F232B" />
 
     <LinearGradientBrush x:Key="SelectedBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="{StaticResource TopGradientSelectColor}" Offset="0" />
-        <GradientStop Color="{StaticResource TopGradientSelectColor}" Offset="1" />
+        <GradientStop Color="{StaticResource BottomGradientSelectColor}" Offset="1" />
     </LinearGradientBrush>
+    <SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FF2A303B" />
 
-    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="WhiteSmoke" />
-    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#FF787878" />
-    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#AAA" />
-    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FF595959" />
+    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF7D8594" />
+    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#FF262A32" />
+    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#FF323844" />
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FF16181D" />
 
     <!-- EXPRESSION COMMON VALUES -->
 
-    <LinearGradientBrush x:Key="ShineBrush" EndPoint="0.5,0.971" StartPoint="0.5,0.042">
-        <GradientStop Color="#59FFFFFF" Offset="0" />
-        <GradientStop Color="#00FFFFFF" Offset="1" />
-        <GradientStop Color="#26FFFFFF" Offset="0.467" />
-        <GradientStop Color="#00FFFFFF" Offset="0.475" />
+    <!-- Formerly a hard "glass" split highlight; now a soft top sheen -->
+    <LinearGradientBrush x:Key="ShineBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#14FFFFFF" Offset="0" />
+        <GradientStop Color="#00FFFFFF" Offset="0.6" />
     </LinearGradientBrush>
 
-    <LinearGradientBrush x:Key="HoverShineBrush" EndPoint="0.5,0.971" StartPoint="0.5,0.042">
-        <GradientStop Color="#4CFFFFFF" Offset="0" />
-        <GradientStop Color="#26FFFFFF" Offset="1" />
-        <GradientStop Color="#26FFFFFF" Offset="0.467" />
-        <GradientStop Color="#00FFFFFF" Offset="0.475" />
-        <GradientStop Color="#00FFFFFF" Offset="0.856" />
+    <LinearGradientBrush x:Key="HoverShineBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#1FFFFFFF" Offset="0" />
+        <GradientStop Color="#08FFFFFF" Offset="1" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="MenuItemHover" Color="DimGray"/>
+    <SolidColorBrush x:Key="MenuItemHover" Color="#FF3B4352"/>
 
     <LinearGradientBrush x:Key="PressedBorderBrush" EndPoint="0,1" StartPoint="0,0">
-        <GradientStop Color="#444" Offset="0.0" />
-        <GradientStop Color="#888" Offset="1.0" />
+        <GradientStop Color="{StaticResource AccentDeepColor}" Offset="0.0" />
+        <GradientStop Color="{StaticResource AccentColor}" Offset="1.0" />
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="DefaultedBorderBrush" Color="{StaticResource DefaultColor}" />
-    <SolidColorBrush x:Key="SolidBorderBrush" Color="#888" />
+    <SolidColorBrush x:Key="SolidBorderBrush" Color="#FF3A4150" />
+
+    <!-- Shared easing used by the control animations below -->
+    <CubicEase x:Key="EaseOut" EasingMode="EaseOut" />
+    <BackEase x:Key="EaseOutBack" EasingMode="EaseOut" Amplitude="0.4" />
 
     <Style TargetType="{x:Type Hyperlink}">
-        <Setter Property="Foreground" Value="CornflowerBlue"/>
+        <Setter Property="Foreground" Value="#FF6EA8FF"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="#FF9CC3FF"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="NuclearButtonFocusVisual">
@@ -127,15 +139,19 @@
             <Storyboard x:Key="PressedOn">
 
                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="1" />
                 </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="0.96" Duration="0:0:0.08" EasingFunction="{StaticResource EaseOut}" />
+                <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="0.96" Duration="0:0:0.08" EasingFunction="{StaticResource EaseOut}" />
 
             </Storyboard>
             <Storyboard x:Key="PressedOff">
 
                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.2500000" Value="0" />
                 </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.25" EasingFunction="{StaticResource EaseOutBack}" />
+                <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.25" EasingFunction="{StaticResource EaseOutBack}" />
 
             </Storyboard>
             <Storyboard x:Key="FocusedOn">
@@ -150,14 +166,17 @@
             </Storyboard>
 
         </ControlTemplate.Resources>
-        <Grid x:Name="Grid">
-            <Border x:Name="Background" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" />
-            <Border x:Name="HoverBorder" Opacity="0" Background="{StaticResource HoverBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" />
-            <Border x:Name="HoverShineBorder" Opacity="0" Background="{StaticResource HoverShineBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" />
-            <Border x:Name="PressedBorder" Opacity="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Background="{StaticResource PressedBrush}" />
-            <Border x:Name="ShineBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Background="{StaticResource ShineBrush}" Opacity="1" />
+        <Grid x:Name="Grid" RenderTransformOrigin="0.5,0.5">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="PressScale" ScaleX="1" ScaleY="1" />
+            </Grid.RenderTransform>
+            <Border x:Name="Background" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" />
+            <Border x:Name="HoverBorder" Opacity="0" Background="{StaticResource HoverBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" />
+            <Border x:Name="HoverShineBorder" Opacity="0" Background="{StaticResource HoverShineBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" />
+            <Border x:Name="PressedBorder" Opacity="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Background="{StaticResource PressedBrush}" />
+            <Border x:Name="ShineBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Background="{StaticResource ShineBrush}" Opacity="1" />
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
-            <Border x:Name="FocusVisualElement" IsHitTestVisible="false" BorderBrush="{StaticResource HoverShineBrush}" BorderThickness="1" CornerRadius="3,3,3,3" Margin="1,1,1,1" Opacity="0" />
+            <Border x:Name="FocusVisualElement" IsHitTestVisible="false" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5" CornerRadius="4" Margin="0" Opacity="0" />
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsDefault" Value="True">
@@ -838,11 +857,11 @@
                         </Storyboard>
                     </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="true" Margin="1,1,1,1" HorizontalAlignment="Stretch" Visibility="{TemplateBinding Visibility}">
-                        <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
-                        <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
-                        <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="1" RadiusY="1"/>
+                        <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="3" RadiusY="3"/>
+                        <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="3" RadiusY="3"/>
+                        <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="3" RadiusY="3"/>
                         <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="5,2,0,2" x:Name="contentPresenter" />
-                        <Rectangle x:Name="FocusVisualElement" Stroke="{StaticResource HoverShineBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0"/>
+                        <Rectangle x:Name="FocusVisualElement" Stroke="{StaticResource HoverShineBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
@@ -896,7 +915,7 @@
             <Trigger Property="Selector.IsSelected" Value="True">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}" />
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -950,11 +969,11 @@
                         </Storyboard>
                     </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="true" HorizontalAlignment="Stretch" Visibility="{TemplateBinding Visibility}">
-                        <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
-                        <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
-                        <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="1" RadiusY="1"/>
+                        <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="3" RadiusY="3"/>
+                        <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="3" RadiusY="3"/>
+                        <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="3" RadiusY="3"/>
                         <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="contentPresenter" />
-                        <Rectangle x:Name="FocusVisualElement" Stroke="{StaticResource HoverShineBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0"/>
+                        <Rectangle x:Name="FocusVisualElement" Stroke="{StaticResource HoverShineBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
@@ -1008,7 +1027,7 @@
             <Trigger Property="Selector.IsSelected" Value="True">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}" />
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -1066,11 +1085,11 @@
                                 <ColumnDefinition Width="19" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                            <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                            <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                            <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                            <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
+                            <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                            <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                            <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                            <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                            <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
                             <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" />
                             <Path Visibility="Collapsed" HorizontalAlignment="Center" x:Name="Down_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 4 L 4 0 L 8 4 Z" />
                             <ContentPresenter SnapsToDevicePixels="True" HorizontalAlignment="Left" Margin="4,2,0,2" VerticalAlignment="Center" Grid.Column="1" RecognizesAccessKey="True" />
@@ -1153,11 +1172,11 @@
                                         </TransformGroup.Children>
                                     </TransformGroup>
                                 </Grid.LayoutTransform>
-                                <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                                <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                                <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                                <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                                <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                                <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                                <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
                                 <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" />
                                 <Path Visibility="Collapsed" HorizontalAlignment="Center" x:Name="Down_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 4 L 4 0 L 8 4 Z" />
                             </Grid>
@@ -1250,11 +1269,11 @@
                                         </TransformGroup.Children>
                                     </TransformGroup>
                                 </Grid.LayoutTransform>
-                                <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                                <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                                <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                                <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                                <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                                <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                                <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
                                 <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" />
                                 <Path Visibility="Collapsed" HorizontalAlignment="Center" x:Name="Down_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 4 L 4 0 L 8 4 Z" />
                             </Grid>
@@ -1337,11 +1356,11 @@
                                         </TransformGroup.Children>
                                     </TransformGroup>
                                 </Grid.LayoutTransform>
-                                <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                                <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                                <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                                <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
-                                <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="Rectangle" Fill="{DynamicResource NormalBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                                <Rectangle Margin="2,2,2,2" x:Name="ShineRectangle" Fill="{DynamicResource ShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
+                                <Rectangle Margin="2,2,2,2" x:Name="HoverRectangle" Fill="{DynamicResource HoverBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="HoverShineRectangle" Fill="{DynamicResource HoverShineBrush}" Stroke="{DynamicResource NormalBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
+                                <Rectangle Margin="2,2,2,2" x:Name="PressedRectangle" Fill="{DynamicResource PressedBrush}" Stroke="{DynamicResource PressedBorderBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" Opacity="0" />
                                 <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" />
                                 <Path Visibility="Collapsed" HorizontalAlignment="Center" x:Name="Down_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 4 L 4 0 L 8 4 Z" />
                             </Grid>
@@ -1570,15 +1589,15 @@
 
                     </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="true" Margin="0 0 0 0" Background="Transparent">
-                        <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="Transparent" RadiusX="1" RadiusY="1"/>
-                        <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="#3D0000" RadiusX="1" RadiusY="1" />
-                        <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="#3D0000" RadiusX="1" RadiusY="1" >
+                        <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="Transparent" RadiusX="3" RadiusY="3"/>
+                        <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="#3D0000" RadiusX="3" RadiusY="3" />
+                        <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="#3D0000" RadiusX="3" RadiusY="3" >
                             <Rectangle.Effect>
                                 <DropShadowEffect BlurRadius="5" Color="#3D0000" Direction="0" ShadowDepth="0"/>
                             </Rectangle.Effect>
                         </Rectangle>
                         <ContentPresenter Margin="5 6 30 8" x:Name="contentPresenter" VerticalAlignment="Center" />
-                        <Rectangle x:Name="FocusVisualElement" Visibility="Collapsed" Stroke="{DynamicResource HoverShineBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" />
+                        <Rectangle x:Name="FocusVisualElement" Visibility="Collapsed" Stroke="{DynamicResource HoverShineBrush}" StrokeThickness="1" RadiusX="3" RadiusY="3" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
@@ -1962,7 +1981,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="#333333" />
+        <Setter Property="Background" Value="#FF1F232B" />
         <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
@@ -2164,7 +2183,7 @@
                                 </TransformGroup>
                             </Border.LayoutTransform>
                             <!--<Border.BorderBrush>
-                                <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                                <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}"/>
                             </Border.BorderBrush>-->
                         </Border>
                     </Grid>
@@ -2271,10 +2290,10 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Grid.LayoutTransform>
-                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0.9" Background="#DD333333">
+                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0.9" Background="#DD1F232B">
                             <!--<Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
-                                    <GradientStop Color="#7F595959" Offset="0" />
+                                    <GradientStop Color="#7F3B4352" Offset="0" />
                                     <GradientStop Color="#19FFFFFF" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>-->
@@ -2283,8 +2302,8 @@
                         <Border x:Name="HoverBorder" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
-                                    <GradientStop Color="#7F595959" Offset="0" />
-                                    <GradientStop Color="#7F595959" Offset="1" />
+                                    <GradientStop Color="#7F3B4352" Offset="0" />
+                                    <GradientStop Color="#7F3B4352" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>
@@ -2381,7 +2400,7 @@
             <Trigger Property="Selector.IsSelected" Value="True">
                 <Setter Property="Foreground" >
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -2400,7 +2419,7 @@
                             <RowDefinition Height="Auto" x:Name="RowDefinition0" />
                             <RowDefinition Height="*" x:Name="RowDefinition1" />
                         </Grid.RowDefinitions>
-                        <Border x:Name="border" BorderThickness="0 0 0 2" BorderBrush="{DynamicResource SelectedBackgroundBrush}" Background="#333333">
+                        <Border x:Name="border" BorderThickness="0 0 0 1" BorderBrush="{DynamicResource NormalBorderBrush}" Background="#FF1B1E25">
                             <TabPanel x:Name="HeaderPanel" IsItemsHost="true" Panel.ZIndex="1" KeyboardNavigation.TabIndex="1" RenderTransformOrigin="0.5,0.5" Width="Auto" Height="Auto">
                                 <TabPanel.LayoutTransform>
                                     <TransformGroup>
@@ -2434,7 +2453,7 @@
                                 </TransformGroup>
                             </Border.LayoutTransform>
                             <!--<Border.BorderBrush>
-                                <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                                <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}"/>
                             </Border.BorderBrush>-->
                         </Border>
                     </Grid>
@@ -2525,14 +2544,18 @@
                             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
                                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
                             </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimation Storyboard.TargetName="UnderlineScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.3" EasingFunction="{StaticResource EaseOutBack}"/>
+                            <DoubleAnimation Storyboard.TargetName="Underline" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15"/>
                         </Storyboard>
                         <Storyboard x:Key="SelectedOff">
                             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
                                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
                             </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimation Storyboard.TargetName="UnderlineScale" Storyboard.TargetProperty="ScaleX" To="0" Duration="0:0:0.2" EasingFunction="{StaticResource EaseOut}"/>
+                            <DoubleAnimation Storyboard.TargetName="Underline" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
                         </Storyboard>
                     </ControlTemplate.Resources>
-                    <Grid x:Name="grid" Margin="0,2,6,0">
+                    <Grid x:Name="grid" Margin="0,2,4,0">
                         <Grid.LayoutTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -2541,19 +2564,26 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Grid.LayoutTransform>
-                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0.9" Background="#DD333333">
+                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0.9" Background="#DD1F232B">
                         </Border>
-                        <Border x:Name="SelectedBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0" Background="{DynamicResource SelectedBackgroundBrush}"/>
+                        <Border x:Name="SelectedBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0" Background="{DynamicResource SelectedTabBackgroundBrush}"/>
                         <Border x:Name="HoverBorder" BorderBrush="{x:Null}" CornerRadius="4,4,0,0" Opacity="0">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
-                                    <GradientStop Color="#7F595959" Offset="0" />
-                                    <GradientStop Color="#7F595959" Offset="1" />
+                                    <GradientStop Color="#7F3B4352" Offset="0" />
+                                    <GradientStop Color="#7F3B4352" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>
                         <Border Padding="10 5 10 8">
                             <ContentPresenter x:Name="ContentSite" RecognizesAccessKey="True" ContentSource="Header" d:LayoutOverrides="Width, Height" HorizontalAlignment="Center" Margin="6,1,6,1" VerticalAlignment="Center" />
+                        </Border>
+                        <!-- Accent underline that grows out from the centre when the tab is selected -->
+                        <Border x:Name="Underline" Height="3" VerticalAlignment="Bottom" Margin="8,0,8,0" CornerRadius="1.5"
+                                Background="{DynamicResource AccentBrush}" Opacity="0" IsHitTestVisible="False" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="UnderlineScale" ScaleX="0" ScaleY="1" />
+                            </Border.RenderTransform>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -2629,7 +2659,7 @@
                                 <Condition Property="IsMouseOver" Value="True" SourceName="grid" />
                                 <Condition Property="Selector.IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="border" Value="{DynamicResource SelectedBackgroundBrush}" />
+                            <Setter Property="Background" TargetName="border" Value="{DynamicResource SelectedTabBackgroundBrush}" />
                             <Setter Property="Opacity" TargetName="border" Value="0.9" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
@@ -2645,7 +2675,7 @@
             <Trigger Property="Selector.IsSelected" Value="True">
                 <Setter Property="Foreground" >
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -2825,7 +2855,7 @@
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -3064,7 +3094,7 @@
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}" />
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -3269,9 +3299,9 @@
                     <Border SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" x:Name="border">
 
                         <Grid Margin="2,0,2,0">
-                            <Rectangle x:Name="Background" IsHitTestVisible="True" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
-                            <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
-                            <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="1" RadiusY="1"/>
+                            <Rectangle x:Name="Background" IsHitTestVisible="True" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="3" RadiusY="3"/>
+                            <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="3" RadiusY="3"/>
+                            <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="3" RadiusY="3"/>
                             <GridViewRowPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="0,2,0,2" VerticalAlignment="Stretch" />
                         </Grid>
 
@@ -3327,7 +3357,7 @@
             <Trigger Property="Selector.IsSelected" Value="True">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource BlackColor}" />
+                        <SolidColorBrush Color="{DynamicResource SelectedForegroundColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -3482,7 +3512,7 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{DynamicResource TopGradientSelectColor}" />
+                        <SolidColorBrush Color="{DynamicResource MutedTextColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>

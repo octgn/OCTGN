@@ -1,42 +1,26 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <LinearGradientBrush x:Key="GlassPanelBrush" EndPoint="0,0" StartPoint="1,0">
-    <LinearGradientBrush.Transform>
-      <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
-    </LinearGradientBrush.Transform>
-    <GradientStop Color="#96EEEEEE" Offset="0.558" />
-    <GradientStop Color="#84FFFFFF" Offset="1" />
-    <GradientStop Color="#B0F8F8F8" Offset="0" />
-    <GradientStop Color="#93EEEEEE" Offset="0.154" />
-    <GradientStop Color="#A6FFFFFF" Offset="0.351" />
+  <!-- Frosted slate panels: dark and translucent so the white panel text stays readable over any background -->
+  <LinearGradientBrush x:Key="GlassPanelBrush" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#E62A303B" Offset="0" />
+    <GradientStop Color="#E61F232B" Offset="0.6" />
+    <GradientStop Color="#E61B1E25" Offset="1" />
   </LinearGradientBrush>
 
-  <LinearGradientBrush x:Key="DarkGlassPanelBrush" EndPoint="0,0" StartPoint="1,0">
-    <LinearGradientBrush.Transform>
-      <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
-    </LinearGradientBrush.Transform>
-    <GradientStop Color="#969D9D9D" Offset="0.558" />
-    <GradientStop Color="#84C4C4C4" Offset="1" />
-    <GradientStop Color="#B0B6B6B6" Offset="0" />
-    <GradientStop Color="#93919191" Offset="0.154" />
-    <GradientStop Color="#A6B6B6B6" Offset="0.351" />
+  <LinearGradientBrush x:Key="DarkGlassPanelBrush" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#CC1F232B" Offset="0" />
+    <GradientStop Color="#CC16181D" Offset="1" />
   </LinearGradientBrush>
 
-  <LinearGradientBrush x:Key="DarkGlassPanelBrush2" EndPoint="0,0" StartPoint="1,0">
-    <LinearGradientBrush.Transform>
-      <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
-    </LinearGradientBrush.Transform>
-    <GradientStop Color="#FF9D9D9D" Offset="0.558" />
-    <GradientStop Color="#FFC4C4C4" Offset="1" />
-    <GradientStop Color="#FFB6B6B6" Offset="0" />
-    <GradientStop Color="#FF919191" Offset="0.154" />
-    <GradientStop Color="#FFB6B6B6" Offset="0.351" />
+  <LinearGradientBrush x:Key="DarkGlassPanelBrush2" StartPoint="0,0" EndPoint="1,0">
+    <GradientStop Color="#FF2563EB" Offset="0" />
+    <GradientStop Color="#FF3D8BFF" Offset="1" />
   </LinearGradientBrush>
 
   <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Key="GlassPanelBorder">
-    <GradientStop Color="#80888888" Offset="1" />
-    <GradientStop Color="#B3E8E8E8" Offset="0" />
+    <GradientStop Color="#40FFFFFF" Offset="0" />
+    <GradientStop Color="#14FFFFFF" Offset="1" />
   </LinearGradientBrush>
 
   <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" x:Key="ControlFillBrush">
@@ -128,7 +112,7 @@
     <Setter Property="TextDecorations" Value="{x:Null}" />
     <Style.Triggers>
       <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Foreground" Value="Red" />
+        <Setter Property="Foreground" Value="#FF6EA8FF" />
       </Trigger>
     </Style.Triggers>
   </Style>
@@ -136,7 +120,7 @@
   <Style TargetType="Border" x:Key="Panel">
     <Setter Property="Background" Value="{StaticResource GlassPanelBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource GlassPanelBorder}" />
-    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="CornerRadius" Value="8" />
     <Setter Property="BorderThickness" Value="1" />
     <Style.Resources>
       <!--<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">

@@ -52,8 +52,8 @@
         </ControlTemplate.Resources>
         <Grid x:Name="Grid">
             <Border x:Name="Background" Background="#00FFFFFF" BorderBrush="Transparent" BorderThickness="0" />
-            <Border x:Name="HoverBackground" Background="#FF1E90FF" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
-            <Border x:Name="PressedBackground" Background="#55AAAAAA" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
+            <Border x:Name="HoverBackground" Background="{DynamicResource AccentBrush}" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
+            <Border x:Name="PressedBackground" Background="#40000000" BorderBrush="Transparent" BorderThickness="0" Opacity="0" />
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
         </Grid>
         <ControlTemplate.Triggers>

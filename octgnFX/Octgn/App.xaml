@@ -42,6 +42,8 @@
         </ResourceDictionary>
         <ResourceDictionary Source="/Controls/ControlTemplates/UserListItem.xaml">
         </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/Modern.xaml">
+        </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
