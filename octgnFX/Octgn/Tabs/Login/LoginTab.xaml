@@ -7,10 +7,15 @@
       d:DesignHeight="640" d:DesignWidth="1100"
       DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <UserControl.Resources>
+        <CubicEase x:Key="EaseOut" EasingMode="EaseOut" />
+
+        <!-- Secondary text that still clears WCAG AA on the card surfaces (#8E8E98 on #18181C is about 5.5:1) -->
+        <SolidColorBrush x:Key="SubtleTextBrush" Color="#FF8E8E98" />
+
         <Style x:Key="LinkLabel" TargetType="Label">
             <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="Cursor" Value="Hand" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -22,37 +27,148 @@
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
-            <Setter Property="Margin" Value="2,0,0,8" />
+            <Setter Property="Margin" Value="2,0,0,6" />
+        </Style>
+        <!-- Glyph shown inside a text field; turns red while the field has focus -->
+        <Style x:Key="FieldIcon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="14,0,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Foreground" Value="{StaticResource SubtleTextBrush}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource AncestorType=Grid}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
         <Style x:Key="CommunityChip" TargetType="Border">
-            <Setter Property="Background" Value="#CC17171B" />
-            <Setter Property="BorderBrush" Value="#FF2A2A30" />
+            <Setter Property="Background" Value="#FF1B1B20" />
+            <Setter Property="BorderBrush" Value="#FF2E2E35" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="15" />
-            <Setter Property="Padding" Value="12,6" />
-            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="8,8" />
+            <Setter Property="Margin" Value="4,0" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF26262C" />
+                    <Setter Property="BorderBrush" Value="#FF4A4A53" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Hyperlink">
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="TextDecorations" Value="{x:Null}" />
+        </Style>
+        <!-- Signed-in highlight tiles -->
+        <Style x:Key="TileIcon" TargetType="Border">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="#1FFF0000" />
+            <Setter Property="BorderBrush" Value="#33FF3B3B" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
 
+    <!-- Entrance: fade and rise, staggered 50-60ms. Everything is fully visible if the storyboard never runs. -->
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeroChip" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.00" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.28" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TfChip" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.00" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.36" Value="0" EasingFunction="{StaticResource EaseOut}" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeroTitle" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.05" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.33" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TfTitle" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="14" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.05" Value="14" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.41" Value="0" EasingFunction="{StaticResource EaseOut}" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeroBody" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.10" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.38" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TfBody" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="14" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.10" Value="14" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.46" Value="0" EasingFunction="{StaticResource EaseOut}" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftCardHost" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.16" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.44" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TfCard" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="16" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.16" Value="16" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.52" Value="0" EasingFunction="{StaticResource EaseOut}" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NewsCard" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.22" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.50" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TfNews" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="16" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.22" Value="16" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.58" Value="0" EasingFunction="{StaticResource EaseOut}" />
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
     <Viewbox Stretch="Uniform" StretchDirection="Both" MaxWidth="1500" MaxHeight="960" Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-    <Grid x:Name="MainGrid" Width="820" Height="470">
+    <Grid x:Name="MainGrid" Width="740" Height="540">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MaxWidth="460" />
-            <ColumnDefinition Width="48" />
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="28" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
+        <!-- Soft ember behind the headline (one flat radial fill, no blur) -->
+        <Ellipse Grid.ColumnSpan="3" Width="560" Height="340" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-140,-110,0,0" IsHitTestVisible="False">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#26FF1A1A" Offset="0" />
+                    <GradientStop Color="#00FF1A1A" Offset="1" />
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
 
         <!-- Left: brand, pitch and sign in -->
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0" VerticalAlignment="Center">
         <StackPanel>
-            <Border HorizontalAlignment="Left" Background="#1FFF0000" BorderBrush="#40FF3B3B" BorderThickness="1" CornerRadius="12" Padding="10,3" Margin="0,0,0,12">
+            <Border x:Name="HeroChip" HorizontalAlignment="Left" Background="#1FFF0000" BorderBrush="#40FF3B3B" BorderThickness="1" CornerRadius="12" Padding="10,3" Margin="0,0,0,12">
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="TfChip" />
+                </Border.RenderTransform>
                 <StackPanel Orientation="Horizontal">
                     <Ellipse Width="6" Height="6" Fill="#FFFF4D4D" VerticalAlignment="Center" Margin="0,0,8,0" />
                     <TextBlock Text="Online card &amp; tabletop gaming" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFB3B3" />
                 </StackPanel>
             </Border>
-            <TextBlock FontFamily="{StaticResource DisplayFont}" FontSize="30" LineHeight="36" LineStackingStrategy="BlockLineHeight"
+            <TextBlock x:Name="HeroTitle" FontFamily="{StaticResource DisplayFont}" FontSize="34" LineHeight="40" LineStackingStrategy="BlockLineHeight"
                        Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="TfTitle" />
+                </TextBlock.RenderTransform>
                 <Run Text="Every card game." />
                 <LineBreak />
                 <Run Text="One table.">
@@ -64,120 +180,222 @@
                     </Run.Foreground>
                 </Run>
             </TextBlock>
-            <TextBlock Style="{StaticResource BodyMutedText}" FontSize="13.5" Margin="0,8,0,16" MaxWidth="420" HorizontalAlignment="Left"
-                       Text="Host, join and spectate games with players around the world, using the games and decks you love." />
+            <TextBlock x:Name="HeroBody" Style="{StaticResource BodyMutedText}" FontSize="14" LineHeight="20" LineStackingStrategy="BlockLineHeight"
+                       Margin="0,8,0,20" MaxWidth="380" HorizontalAlignment="Left"
+                       Text="Host, join and spectate games with players around the world, using the games and decks you love.">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="TfBody" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
 
-            <Border Style="{StaticResource Card}" Padding="22,16"
-                    Visibility="{Binding LoginVM.LoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="32" ShadowDepth="8" Direction="270" Opacity="0.55" Color="Black" />
-                </Border.Effect>
-                <StackPanel IsEnabled="{Binding LoginVM.NotBusy}">
-                    <TextBlock x:Name="textBlock1" Text="Sign in" Style="{StaticResource HeadingText}" FontSize="17" Margin="0,0,0,10" />
+            <Grid x:Name="LeftCardHost">
+                <Grid.RenderTransform>
+                    <TranslateTransform x:Name="TfCard" />
+                </Grid.RenderTransform>
 
-                    <Border Background="#26FF0000" BorderBrush="#66FF0000" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,16"
-                            Visibility="{Binding LoginVM.HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE783;" FontFamily="{StaticResource IconFont}" Foreground="#FFFF6B6B" FontSize="14" VerticalAlignment="Top" Margin="0,2,10,0" />
-                            <TextBlock Style="{x:Null}" Text="{Binding LoginVM.ErrorString}" Foreground="#FFFFB3B3" FontSize="13" TextWrapping="Wrap" MaxWidth="320" />
+                <!-- Signed out: sign-in card -->
+                <Border Style="{StaticResource Card}" Padding="22,20" CornerRadius="14"
+                        Visibility="{Binding LoginVM.LoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="28" ShadowDepth="8" Direction="270" Opacity="0.5" Color="Black" />
+                    </Border.Effect>
+                    <Grid>
+                        <!-- Hairline of brand colour along the top edge -->
+                        <Border Height="1" VerticalAlignment="Top" Margin="-6,-20,-6,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#00FF3B3B" Offset="0" />
+                                    <GradientStop Color="#99FF3B3B" Offset="0.5" />
+                                    <GradientStop Color="#00FF3B3B" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <StackPanel IsEnabled="{Binding LoginVM.NotBusy}">
+                            <TextBlock x:Name="textBlock1" Text="Sign in" Style="{StaticResource HeadingText}" FontSize="18" Margin="0,0,0,14" />
+
+                            <Border Background="#26FF0000" BorderBrush="#66FF0000" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,14"
+                                    Visibility="{Binding LoginVM.HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE783;" FontFamily="{StaticResource IconFont}" Foreground="#FFFF6B6B" FontSize="14" VerticalAlignment="Top" Margin="0,2,10,0" />
+                                    <TextBlock Style="{x:Null}" Text="{Binding LoginVM.ErrorString}" Foreground="#FFFFB3B3" FontSize="13" TextWrapping="Wrap" MaxWidth="300" />
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Text="Email or username" Style="{StaticResource FieldLabel}" />
+                            <Grid>
+                                <TextBox Height="40" FontSize="14" Padding="40,0,12,0"
+                                         Text="{Binding LoginVM.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource FieldIcon}" Text="&#xE77B;" />
+                            </Grid>
+
+                            <TextBlock Text="Password" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                            <Grid>
+                                <PasswordBox Height="40" FontSize="14" Padding="40,0,12,0" KeyUp="PasswordBox1KeyUp"
+                                             utils:PasswordBoxAssistant.BindPassword="true"
+                                             utils:PasswordBoxAssistant.BoundPassword="{Binding LoginVM.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Style="{StaticResource FieldIcon}" Text="&#xE72E;" />
+                            </Grid>
+
+                            <Button x:Name="button1" Click="Button1Click" Style="{StaticResource PrimaryButton}" Height="42" Margin="0,18,0,0" FontSize="14">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Sign in" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xE72A;" FontFamily="{StaticResource IconFont}" FontSize="12" Margin="10,1,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Border BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,1,0,0" Margin="0,16,0,0" Padding="0,10,0,0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Label x:Name="labelRegister" Style="{StaticResource LinkLabel}" Content="Create an account" />
+                                    <TextBlock Text="&#xB7;" Foreground="{StaticResource SubtleTextBrush}" Margin="10,0" VerticalAlignment="Center" />
+                                    <Label x:Name="labelForgot" Style="{StaticResource LinkLabel}" Content="Forgot password?" />
+                                    <Label x:Name="labelSubscribe" Style="{StaticResource LinkLabel}" Content="Subscribe" Visibility="Collapsed" />
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
-                    </Border>
+                    </Grid>
+                </Border>
 
-                    <TextBlock Text="Email or username" Style="{StaticResource FieldLabel}" />
-                    <TextBox Height="38" FontSize="14" Padding="12,0"
-                             Text="{Binding LoginVM.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <TextBlock Text="Password" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
-                    <PasswordBox Height="38" FontSize="14" Padding="12,0" KeyUp="PasswordBox1KeyUp"
-                                 utils:PasswordBoxAssistant.BindPassword="true"
-                                 utils:PasswordBoxAssistant.BoundPassword="{Binding LoginVM.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <Button x:Name="button1" Click="Button1Click" Style="{StaticResource PrimaryButton}" Height="40" Margin="0,16,0,0" FontSize="14">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Sign in" VerticalAlignment="Center" />
-                            <TextBlock Text="&#xE72A;" FontFamily="{StaticResource IconFont}" FontSize="12" Margin="10,1,0,0" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
-                        <Label x:Name="labelRegister" Style="{StaticResource LinkLabel}" Content="Create an account" />
-                        <TextBlock Text="·" Foreground="{DynamicResource FaintTextBrush}" Margin="10,0" VerticalAlignment="Center" />
-                        <Label x:Name="labelForgot" Style="{StaticResource LinkLabel}" Content="Forgot password?" />
-                        <Label x:Name="labelSubscribe" Style="{StaticResource LinkLabel}" Content="Subscribe" Visibility="Collapsed" />
+                <!-- Signed in: what you can do next (informational) -->
+                <Border Style="{StaticResource Card}" Padding="20,16" CornerRadius="14"
+                        Visibility="{Binding LoginVM.LoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="28" ShadowDepth="8" Direction="270" Opacity="0.5" Color="Black" />
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="JUMP IN" Style="{StaticResource EyebrowText}" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,0,12" />
+                        <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource TileIcon}">
+                                <TextBlock Text="&#xE7FC;" FontFamily="{StaticResource IconFont}" FontSize="16" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Join or host a game" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" />
+                                <TextBlock Text="Open tables are waiting in Game Lobby." FontSize="13" Foreground="{DynamicResource MutedTextBrush}" Margin="0,2,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource TileIcon}">
+                                <TextBlock Text="&#xE8F1;" FontFamily="{StaticResource IconFont}" FontSize="16" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Install your games" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" />
+                                <TextBlock Text="Add and update games in Games Manager." FontSize="13" Foreground="{DynamicResource MutedTextBrush}" Margin="0,2,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource TileIcon}">
+                                <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="16" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Watch live games" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" />
+                                <TextBlock Text="Spectate any table, or replay from History." FontSize="13" Foreground="{DynamicResource MutedTextBrush}" Margin="0,2,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
+            </Grid>
         </StackPanel>
         </ScrollViewer>
 
-        <!-- Right: community and news -->
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <!-- Right: news and community -->
+        <Border x:Name="NewsCard" Grid.Column="2" Style="{StaticResource Card}" Padding="0" CornerRadius="14">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="TfNews" />
+            </Border.RenderTransform>
+            <Grid x:Name="border3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Border x:Name="border3" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource Card}" Padding="0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Border BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,0,1" Padding="24,14,16,14">
-                        <DockPanel>
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                                <Border Style="{StaticResource CommunityChip}">
-                                    <TextBlock FontSize="12">
-                                        <Run Text="&#xE8BD;" FontFamily="{StaticResource IconFont}" Foreground="#FF8B9BFF" />
-                                        <Hyperlink NavigateUri="https://discord.gg/Yn3Jrpj" RequestNavigate="Hyperlink_RequestNavigate">Discord</Hyperlink>
-                                    </TextBlock>
-                                </Border>
-                                <Border Style="{StaticResource CommunityChip}" Margin="0">
-                                    <TextBlock FontSize="12">
-                                        <Run Text="&#xE789;" FontFamily="{StaticResource IconFont}" Foreground="#FF6CC4FF" />
-                                        <Hyperlink NavigateUri="https://twitter.com/octgn_official" RequestNavigate="Hyperlink_RequestNavigate">Twitter</Hyperlink>
-                                    </TextBlock>
-                                </Border>
-                            </StackPanel>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0">
-                                <Ellipse.Effect>
-                                    <DropShadowEffect Color="Red" BlurRadius="8" ShadowDepth="0" Opacity="1" />
-                                </Ellipse.Effect>
-                            </Ellipse>
-                            <TextBlock Text="LATEST NEWS" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
-                        </StackPanel>
-                        </DockPanel>
-                    </Border>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,4,16,12">
-                        <ItemsControl ItemsSource="{Binding LoginVM.News.Items}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:NewsItemViewModel}">
-                                    <Grid Margin="0,0,0,0">
+                <Border BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,0,1" Padding="20,0" Height="52">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <Ellipse.Effect>
+                                <DropShadowEffect Color="Red" BlurRadius="8" ShadowDepth="0" Opacity="0.9" />
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <TextBlock Text="LATEST NEWS" Style="{StaticResource EyebrowText}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="10,6,6,6">
+                    <ItemsControl ItemsSource="{Binding LoginVM.News.Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:NewsItemViewModel}">
+                                <Grid x:Name="Root" Background="Transparent">
+                                    <Border x:Name="Hover" CornerRadius="8" Background="{DynamicResource SurfaceHoverBrush}" Opacity="0" Margin="0,2" />
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="22" />
+                                            <ColumnDefinition Width="20" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="1" HorizontalAlignment="Center" Background="{DynamicResource HairlineBrush}" Margin="0,18,0,-2" />
-                                        <Ellipse Width="9" Height="9" VerticalAlignment="Top" Margin="0,18,0,0" Fill="#FF17171B" Stroke="#FFFF4D4D" StrokeThickness="2" HorizontalAlignment="Center" />
-                                        <StackPanel Grid.Column="1" Margin="8,12,0,18">
-                                            <TextBlock FontSize="14" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" LineHeight="21"
+                                        <Border Width="1" HorizontalAlignment="Center" Background="{DynamicResource HairlineBrush}" Margin="0,22,0,-4" />
+                                        <Ellipse x:Name="Dot" Width="9" Height="9" VerticalAlignment="Top" Margin="0,18,0,0" Fill="#FF17171B" Stroke="#FFFF4D4D" StrokeThickness="2" HorizontalAlignment="Center" />
+                                        <StackPanel Grid.Column="1" Margin="8,12,10,14">
+                                            <TextBlock FontSize="13.5" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" LineHeight="20" LineStackingStrategy="BlockLineHeight"
                                                        utils:TextBlockExtension.FormattedText="{Binding Path=Message}"
                                                        Text="{Binding Path=Message}" />
-                                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                                <TextBlock Text="&#xE823;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
-                                                <TextBlock Margin="7,0,0,0" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center"
+                                            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                                <TextBlock Text="&#xE823;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{StaticResource SubtleTextBrush}" VerticalAlignment="Center" />
+                                                <TextBlock Margin="6,0,0,0" FontSize="12" Foreground="{StaticResource SubtleTextBrush}" VerticalAlignment="Center"
                                                            Text="{Binding Path=Time.LocalDateTime, StringFormat='{}{0:MMMM d, yyyy}'}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </Grid>
-            </Border>
-        </Grid>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="Root" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Dot" Property="Fill" Value="#FFFF4D4D" />
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
+                                        <Trigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.ExitActions>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,1,0,0" Padding="16,12">
+                    <UniformGrid Columns="2" Margin="-4,0">
+                        <Border Style="{StaticResource CommunityChip}">
+                            <TextBlock FontSize="13" HorizontalAlignment="Center">
+                                <Hyperlink NavigateUri="https://discord.gg/Yn3Jrpj" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="&#xE8BD;" FontFamily="{StaticResource IconFont}" Foreground="#FF8B9BFF" /><Run Text="  Discord" /></Hyperlink>
+                            </TextBlock>
+                        </Border>
+                        <Border Style="{StaticResource CommunityChip}">
+                            <TextBlock FontSize="13" HorizontalAlignment="Center">
+                                <Hyperlink NavigateUri="https://twitter.com/octgn_official" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="&#xE789;" FontFamily="{StaticResource IconFont}" Foreground="#FF6CC4FF" /><Run Text="  Twitter" /></Hyperlink>
+                            </TextBlock>
+                        </Border>
+                    </UniformGrid>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
     </Viewbox>
 </UserControl>

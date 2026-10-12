@@ -20,8 +20,8 @@
             <Border Grid.Row="1" Grid.RowSpan="2" Panel.ZIndex="-1">
                 <controls:GameSelector x:Name="GameSelector">
                     <controls:GameSelector.Effect>
-                        <DropShadowEffect BlurRadius="50" ShadowDepth="0" Opacity="1"
-                                          Color="White" RenderingBias="Performance"/>
+                        <DropShadowEffect BlurRadius="28" ShadowDepth="10" Direction="270" Opacity="0.7"
+                                          Color="Black" RenderingBias="Performance"/>
                     </controls:GameSelector.Effect>
                 </controls:GameSelector>
             </Border>
@@ -178,7 +178,7 @@
                         </StackPanel>
                         <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False" Height="40" Padding="12 0"/>
                         <TextBlock Text="Game" Style="{StaticResource EyebrowText}" Margin="2 14 0 6" />
-                        <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" Height="40" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>
+                        <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" Height="40" DisplayMemberPath="Name" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>
                         <StackPanel x:Name="StackPanelIsLocalGame" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Margin="0 34 0 0">
                             <CheckBox x:Name="CheckBoxIsLocalGame" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked" Visibility="Visible"/>
                             <Label x:Name="LabelIsLocalGame" Content="Host Game on LAN" />

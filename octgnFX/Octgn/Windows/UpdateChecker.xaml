@@ -9,24 +9,25 @@
         SizeToContent="Height"
         x:Name="self">
 
-    <Border BorderBrush="Silver" BorderThickness="1" Name="border1">
+    <Border BorderBrush="#FF2A2A31" BorderThickness="1" Name="border1" Background="#FF0C0C0E">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="100*"/>
-                <RowDefinition Height="29" />
-                <!--<RowDefinition Height="100*" />-->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="3" />
             </Grid.RowDefinitions>
             <Image Source="{Binding ElementName=self,Path=AdSource}" Stretch="Uniform" HorizontalAlignment="Stretch"/>
-            <Border Background="{StaticResource TransControlBackgroundBrush}" Grid.Row="1">
-                <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." 
-                           Margin="5" Name="lblStatus" VerticalAlignment="Center" 
-                           HorizontalAlignment="Center" TextWrapping="Wrap"/>
+            <Border Grid.Row="1" Background="#FF141418" BorderBrush="#FF26262C" BorderThickness="0,1,0,0" Padding="18,14">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#FFFF4D4D" VerticalAlignment="Center" Margin="0,1,12,0" />
+                    <TextBlock Foreground="#FFF2F2F4" FontSize="13.5" FontWeight="SemiBold" Text="Checking for updates..."
+                               Name="lblStatus" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
             </Border>
-            <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="2" MouseDoubleClick="ProgressBarMouseDoubleClick"/>
-            <ScrollViewer Grid.Row="0" x:Name="LogItemsScroller" Visibility="Collapsed">
+            <ProgressBar Height="3" Name="progressBar1" IsIndeterminate="True" Grid.Row="2" MouseDoubleClick="ProgressBarMouseDoubleClick"/>
+            <ScrollViewer Grid.Row="0" Grid.RowSpan="2" x:Name="LogItemsScroller" Visibility="Collapsed">
                 <StackPanel x:Name="LogItems">
-                    
+
                 </StackPanel>
             </ScrollViewer>
         </Grid>

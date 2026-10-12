@@ -1,61 +1,319 @@
 ﻿<UserControl x:Class="Octgn.Tabs.Watch.WatchList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="870"
              x:Name="self" DataContext="{Binding ElementName=self}">
-    <Grid>
+    <UserControl.Resources>
+        <!-- Stream card: fades and rises in (staggered), lifts and brightens on hover, red glow when selected -->
+        <Style x:Key="StreamCard" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Width" Value="344" />
+            <Setter Property="Height" Value="96" />
+            <Setter Property="Margin" Value="0,0,12,12" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Grid x:Name="Root">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="Enter" />
+                            </Grid.RenderTransform>
+                            <Grid x:Name="Inner">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="Lift" />
+                                </Grid.RenderTransform>
+                                <Border x:Name="Face" CornerRadius="12" BorderThickness="1" BorderBrush="#FF2C2C33">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FF1F1F25" Offset="0" />
+                                            <GradientStop Color="#FF18181C" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border x:Name="Hover" CornerRadius="12" BorderThickness="1" BorderBrush="#66FF4D4D" Background="#0DFFFFFF" Opacity="0" />
+                                <Border x:Name="Selected" CornerRadius="12" BorderThickness="1" BorderBrush="#99FF0000" Background="{StaticResource SelectionGlowBrush}" Opacity="0" />
+                                <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                            <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="-2" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                            <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Selected" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Selected" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="0">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.28" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.28" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="1">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.035" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.315" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.035" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.315" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="2">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.07" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.07" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="3">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.105" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.385" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.105" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.385" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="4">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.14" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.14" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="5">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.175" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.455" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.175" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.455" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderBlock" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderShift" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid Margin="32,26,32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="ListBoxStreams" Grid.Row="1"
-                 Background="Transparent" 
-                 HorizontalContentAlignment="Stretch" 
+
+        <!-- Header -->
+        <StackPanel x:Name="HeaderBlock" Grid.Row="0">
+            <StackPanel.RenderTransform>
+                <TranslateTransform x:Name="HeaderShift" />
+            </StackPanel.RenderTransform>
+            <TextBlock Text="Twitch.tv" Style="{StaticResource HeadingText}" FontSize="26" />
+            <TextBlock Text="Live OCTGN streams. Double-click a stream to watch it in your browser." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+        </StackPanel>
+
+        <!-- Streams -->
+        <ListBox x:Name="ListBoxStreams" Grid.Row="1" Margin="0,20,0,0"
+                 Style="{StaticResource WrapListBoxStyle}"
+                 Background="Transparent" BorderThickness="0"
+                 HorizontalContentAlignment="Stretch"
                  HorizontalAlignment="Stretch"
+                 AlternationCount="6"
                  ItemsSource="{Binding Streams}"
                  SelectedItem="{Binding Path=Selected, Mode=TwoWay}"
+                 ItemContainerStyle="{StaticResource StreamCard}"
                  MouseDoubleClick="ListBoxStreams_OnMouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" Background="Transparent">
+                    <Grid DataContext="{Binding}" Background="Transparent">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="112"/>
+                            <ColumnDefinition Width="12"/>
                             <ColumnDefinition Width="100*"/>
                         </Grid.ColumnDefinitions>
-                        <Image Source="{Binding Path=ThumbnailPreviewUrl}"/>
-                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                            <StackPanel.Resources>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Margin" Value="0,3,0,0"/>
-                                </Style>
-                            </StackPanel.Resources>
-                            <TextBlock DataContext="{Binding}" Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
-                            <TextBlock DataContext="{Binding}" Text="{Binding ChannelOwner}" TextWrapping="Wrap" FontSize="10" Foreground="DeepSkyBlue"></TextBlock>
-                            <Grid Margin="5,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"/>
-                                    <ColumnDefinition Width="100*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="&#xE7B3;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#FF9A9AA3" VerticalAlignment="Top" Margin="0,1,0,0"/>
-                                <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
+
+                        <!-- Preview thumbnail with a LIVE tag -->
+                        <Border Width="112" Height="64" CornerRadius="8" Background="#FF0F0F12" BorderBrush="#26FFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                            <Border.Clip>
+                                <RectangleGeometry Rect="0,0,112,64" RadiusX="8" RadiusY="8" />
+                            </Border.Clip>
+                            <Grid>
+                                <Image Source="{Binding Path=ThumbnailPreviewUrl}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
+                                <Border HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6" CornerRadius="4" Padding="5,1" Background="#F0D41313">
+                                    <TextBlock Text="LIVE" FontSize="11" FontWeight="Bold" Foreground="White" />
+                                </Border>
                             </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"
+                                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="38" ToolTip="{Binding Title}" />
+                            <DockPanel Margin="0,6,0,0">
+                                <Border DockPanel.Dock="Right" CornerRadius="10" Padding="8,2" Margin="8,0,0,0" Background="#FF26262C" ToolTip="Viewers">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                        <TextBlock Text="{Binding ViewerCount}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Text="{Binding ChannelOwner}" FontSize="13" Foreground="#FFFF8A8A" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            </DockPanel>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
-
             </ListBox.ItemTemplate>
-            <!--<watch:StreamModel ChannelOwner="NiteOfMisfortune" ChannelUrl="http://www.twitch.tv/niteofmisfortune" Id="6470043616" 
+            <!--<watch:StreamModel ChannelOwner="NiteOfMisfortune" ChannelUrl="http://www.twitch.tv/niteofmisfortune" Id="6470043616"
                            ThumbnailPreviewUrl="http://static-cdn.jtvnw.net/previews-ttv/live_user_niteofmisfortune-64x64.jpg"
                            Title="Testing out Dark Side Decks for Star Wars LCG game."
                            ViewerCount="5"/>-->
         </ListBox>
-        <TextBlock x:Name="NoStreamsMessage" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                   Grid.Row="1" Visibility="Collapsed" FontSize="20">
-            There don't seem to be any streams right now, check back later.
-        </TextBlock>
+
+        <!-- Empty / offline state: shown whenever the list has no streams (also when Twitch can't be reached) -->
+        <Border x:Name="NoStreamsMessage" Grid.Row="1" Margin="0,20,0,0" Padding="32,40"
+                VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Card}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=ListBoxStreams,Path=HasItems}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+            <StackPanel>
+                <Border Width="56" Height="56" CornerRadius="28" Background="#26FF0000" HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="22" Foreground="#FFFF8A8A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="No one is streaming right now" Style="{StaticResource HeadingText}" FontSize="18" HorizontalAlignment="Center" Margin="0,16,0,0" />
+                <TextBlock Style="{StaticResource BodyMutedText}" TextAlignment="Center" Margin="0,6,0,0"
+                           Text="Live OCTGN streams from Twitch.tv show up here. If you're offline or Twitch can't be reached this list stays empty and checks again every minute." />
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

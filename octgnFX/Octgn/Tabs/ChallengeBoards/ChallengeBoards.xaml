@@ -1,12 +1,12 @@
 ﻿<UserControl x:Class="Octgn.Tabs.ChallengeBoards.ChallengeBoards"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
              xmlns:wpfCircularProgressBar="clr-namespace:WpfCircularProgressBar;assembly=WpfCircularProgressBar"
              xmlns:util="clr-namespace:Util;assembly=WpfCircularProgressBar"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="self" DataContext="{Binding ElementName=self}">
     <UserControl.Resources>
@@ -17,7 +17,7 @@
                         <Grid x:Name="LayoutRoot">
                             <!-- attach the view model -->
                             <wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
-                                <wpfCircularProgressBar:CircularProgressBarViewModel HoleSizeFactor="0.75"/>
+                                <wpfCircularProgressBar:CircularProgressBarViewModel HoleSizeFactor="0.78"/>
                             </wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
 
 
@@ -25,13 +25,13 @@
                             <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
                        Stroke="#FF2A2A30" Fill="Transparent"
-                       StrokeThickness="6.5">
+                       StrokeThickness="5">
                             </Ellipse>
 
                             <wpfCircularProgressBar:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
                               RotationAngle="-1" WedgeAngle="{Binding Angle}"
                               Radius="{Binding Radius}" InnerRadius="{Binding InnerRadius}"
-                              Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
+                              Fill="{DynamicResource AccentBrush}" Opacity="0.95"/>
 
                             <Grid util:GridUtils.RowDefinitions="*,2*,*" util:GridUtils.ColumnDefinitions="*,2*,*">
                                 <Viewbox Grid.Row="1" Grid.Column="1">
@@ -43,61 +43,309 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Slim linear progress hint under each card -->
+        <Style x:Key="LinearProgressStyle" TargetType="ProgressBar">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="100" />
+            <Setter Property="Height" Value="4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border x:Name="PART_Track" CornerRadius="2" Background="#FF2A2A30" />
+                            <Border x:Name="PART_Indicator" CornerRadius="2" HorizontalAlignment="Left" Background="{StaticResource AccentGradientBrush}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Board card: fades and rises in (staggered), lifts and brightens on hover -->
+        <Style x:Key="BoardCard" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Width" Value="316" />
+            <Setter Property="Margin" Value="0,0,12,12" />
+            <Setter Property="Padding" Value="16,14" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Grid x:Name="Root">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="Enter" />
+                            </Grid.RenderTransform>
+                            <Grid x:Name="Inner">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="Lift" />
+                                </Grid.RenderTransform>
+                                <Border x:Name="Face" CornerRadius="12" BorderThickness="1" BorderBrush="#FF2C2C33">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FF1F1F25" Offset="0" />
+                                            <GradientStop Color="#FF18181C" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border x:Name="Hover" CornerRadius="12" BorderThickness="1" BorderBrush="#66FF4D4D" Background="#0DFFFFFF" Opacity="0" />
+                                <ContentPresenter Margin="{TemplateBinding Padding}" />
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                            <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="-2" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                            <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="0">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.28" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.28" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="1">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.035" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.315" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.035" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.315" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="2">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.07" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.07" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="3">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.105" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.385" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.105" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.385" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="4">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.14" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.14" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="5">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.175" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.455" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.175" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.455" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderBlock" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderShift" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
     <Grid Margin="32,26,32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
-            <TextBlock Text="Challenge Board" Style="{StaticResource HeadingText}" FontSize="26" />
-            <TextBlock Text="Community ladders and leagues. See who's leading and how far each board has run." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
-        </StackPanel>
-        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="14,14,6,6" Margin="0,18,0,0">
-            <ListBox x:Name="ListBoxBoards" Style="{StaticResource WrapListBoxStyle}"
-                     Background="Transparent" BorderThickness="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding Boards}">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource CardListItem}">
-                        <Setter Property="Width" Value="316" />
-                        <Setter Property="Margin" Value="0,0,12,12" />
-                        <Setter Property="Padding" Value="0" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="challengeBoards:BoardViewModel">
-                        <Border CornerRadius="12" Background="#FF1C1C21" BorderBrush="#FF2C2C33" BorderThickness="1" Padding="14,12">
-                        <Grid DataContext="{Binding}" Background="Transparent">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="52"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition Width="100*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Width="52" Height="52"
-                                         Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
-                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
-                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                    <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                    <TextBlock Text="{Binding Owner.Name}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="120" />
-                                </StackPanel>
-                                <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" Margin="0,2,0,0" />
-                            </StackPanel>
-                            <Button Grid.Column="3" Style="{StaticResource GhostButton}" Width="34" Height="34" MinHeight="0" Padding="0" VerticalAlignment="Center"
+
+        <!-- Header -->
+        <DockPanel x:Name="HeaderBlock" Grid.Row="0">
+            <DockPanel.RenderTransform>
+                <TranslateTransform x:Name="HeaderShift" />
+            </DockPanel.RenderTransform>
+            <Border DockPanel.Dock="Right" VerticalAlignment="Top" Margin="16,6,0,0" CornerRadius="12" Padding="10,3" Background="#14FFFFFF" BorderBrush="#FF2A2A30" BorderThickness="1">
+                <TextBlock Text="{Binding ElementName=ListBoxBoards,Path=Items.Count,StringFormat='{}{0} boards'}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource MutedTextBrush}" />
+            </Border>
+            <StackPanel>
+                <TextBlock Text="Challenge Board" Style="{StaticResource HeadingText}" FontSize="26" />
+                <TextBlock Text="Community ladders and leagues. See who's leading and how far each board has run." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Boards -->
+        <ListBox x:Name="ListBoxBoards" Grid.Row="1" Style="{StaticResource WrapListBoxStyle}" Margin="0,20,0,0"
+                 Background="Transparent" BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 AlternationCount="6"
+                 ItemsSource="{Binding Boards}"
+                 ItemContainerStyle="{StaticResource BoardCard}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="challengeBoards:BoardViewModel">
+                    <Grid DataContext="{Binding}" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="100*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Width="56" Height="56" VerticalAlignment="Top"
+                                     Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
+
+                        <DockPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Width="32" Height="32" MinHeight="0" Padding="0" Margin="8,0,0,0" VerticalAlignment="Center"
                                     ToolTip="View board" Click="ButtonBase_OnClick">
                                 <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="12" />
                             </Button>
-                        </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>        <StackPanel Grid.Row="1" Margin="0,18,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Border x:Name="NoBoardsMessage" Style="{StaticResource Card}" Visibility="Collapsed">
-                <TextBlock Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" Text="There don't seem to be any boards right now, check back later." />
-            </Border>
-        </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="15" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
+                                <DockPanel Margin="0,4,0,0">
+                                    <TextBlock DockPanel.Dock="Left" Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                    <TextBlock Text="{Binding Owner.Name}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                </DockPanel>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,14,0,0">
+                            <ProgressBar Style="{StaticResource LinearProgressStyle}" Value="{Binding Path=PercentComplete}" />
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="&#xE787;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Empty / offline state: hidden as soon as the list has boards -->
+        <Border x:Name="NoBoardsMessage" Grid.Row="1" Margin="0,20,0,0" Padding="32,40"
+                VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Card}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=ListBoxBoards,Path=HasItems}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+            <StackPanel>
+                <Border Width="56" Height="56" CornerRadius="28" Background="#26FF0000" HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="22" Foreground="#FFFF8A8A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="No boards to show yet" Style="{StaticResource HeadingText}" FontSize="18" HorizontalAlignment="Center" Margin="0,16,0,0" />
+                <TextBlock Style="{StaticResource BodyMutedText}" TextAlignment="Center" Margin="0,6,0,0"
+                           Text="Boards load from challengeboards.net. If this stays empty the site may be unreachable, so check back in a few minutes." />
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

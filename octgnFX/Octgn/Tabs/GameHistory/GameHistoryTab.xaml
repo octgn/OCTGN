@@ -10,12 +10,118 @@
              d:DesignHeight="600" d:DesignWidth="870"
              x:Name="Me">
     <UserControl.Resources>
-        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}"
-               BasedOn="{StaticResource TableRow}">
+        <!-- History row: soft hover, red-glow selection with marker, 120-180ms transitions -->
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
             <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="Margin" Value="6,1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Grid>
+                            <Border x:Name="Hover" CornerRadius="8" Background="{DynamicResource SurfaceHoverBrush}" Opacity="0" />
+                            <Border x:Name="Selected" CornerRadius="8" Background="{StaticResource SelectionGlowBrush}"
+                                    BorderBrush="#40FF0000" BorderThickness="1" Opacity="0" />
+                            <Border x:Name="Marker" Width="3" HorizontalAlignment="Left" Margin="0,10" CornerRadius="1.5"
+                                    Background="{DynamicResource AccentBrush}" Opacity="0" />
+                            <GridViewRowPresenter Margin="4,0" VerticalAlignment="Center" Columns="{TemplateBinding GridView.ColumnCollection}"
+                                                  Content="{TemplateBinding Content}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsSelected" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiTrigger.EnterActions>
+                                <MultiTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiTrigger.ExitActions>
+                            </MultiTrigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Selected" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15" />
+                                            <DoubleAnimation Storyboard.TargetName="Marker" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Selected" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                            <DoubleAnimation Storyboard.TargetName="Marker" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
+
+        <DataTemplate x:Key="HistoryNameTemplate">
+            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" VerticalAlignment="Center">
+                <Border Width="28" Height="28" CornerRadius="7" Background="#14FF0000" BorderBrush="#26FF0000" BorderThickness="1" Margin="0,0,10,0">
+                    <TextBlock Text="&#xE7FC;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="{Binding Path=Name}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"
+                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="HistoryGameTemplate">
+            <TextBlock Text="{Binding Path=GameName}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}"
+                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,10,0" />
+        </DataTemplate>
+        <DataTemplate x:Key="HistoryStartTemplate">
+            <TextBlock Text="{Binding Path=DateStarted, StringFormat='{}{0:f}'}" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}"
+                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,10,0" />
+        </DataTemplate>
+        <DataTemplate x:Key="HistoryRunTimeTemplate">
+            <TextBlock Text="{Binding Path=RunTime}" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}"
+                       VerticalAlignment="Center" Margin="0,0,10,0" />
+        </DataTemplate>
     </UserControl.Resources>
-    <Grid Margin="32,26,32,24">
+
+    <UserControl.Triggers>
+        <!-- Staggered entrance: fade + 12px slide up, ease-out -->
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="BorderButtons" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" />
+                    <DoubleAnimation Storyboard.TargetName="HeaderSlide" Storyboard.TargetProperty="Y" From="12" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="HistoryCard" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.35" BeginTime="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetName="CardSlide" Storyboard.TargetProperty="Y" From="12" To="0" Duration="0:0:0.35" BeginTime="0:0:0.1">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid Margin="32,24,32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -26,22 +132,29 @@
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
 
+        <!-- Header: title + hint on the left; refresh, delete and pager on the right -->
         <DockPanel x:Name="BorderButtons" Grid.Row="0">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Click="ButtonRefreshClick" x:Name="ButtonRefresh" Style="{StaticResource SecondaryButton}" Width="38" Height="38" Padding="0" Margin="0,0,10,0" ToolTip="Refresh">
+            <DockPanel.RenderTransform>
+                <TranslateTransform x:Name="HeaderSlide" />
+            </DockPanel.RenderTransform>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                <Button Click="ButtonRefreshClick" x:Name="ButtonRefresh" Style="{StaticResource SecondaryButton}" Width="36" Height="36" Padding="0" Margin="0,0,8,0" ToolTip="Refresh">
                     <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="13" />
                 </Button>
-                <Button Click="ButtonDeleteClick" x:Name="ButtonDelete" Style="{StaticResource FlatDarkRedButtonStyle}" Width="38" Height="38" Padding="0" Margin="0,0,22,0" ToolTip="Delete selected"
+                <Button Click="ButtonDeleteClick" x:Name="ButtonDelete" Style="{StaticResource FlatDarkRedButtonStyle}" Height="36" Padding="12,0" Margin="0,0,16,0" ToolTip="Delete the selected games"
                         IsEnabled="{Binding IsHistorySelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">
-                    <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                </Button>
-                <Border Background="#FF17171B" BorderBrush="#FF26262C" BorderThickness="1" CornerRadius="10" Padding="4" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
-                        <Button Click="ButtonPrevClick" x:Name="ButtonPrev" Style="{StaticResource GhostButton}" Width="30" Height="30" MinHeight="0" Padding="0" ToolTip="Previous page"
+                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Delete" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Border Background="#FF17171B" BorderBrush="#FF26262C" BorderThickness="1" CornerRadius="10" Padding="3" VerticalAlignment="Center" Height="36">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Click="ButtonPrevClick" x:Name="ButtonPrev" Style="{StaticResource GhostButton}" Width="28" Height="28" MinHeight="0" Padding="0" ToolTip="Previous page"
                                 IsEnabled="{Binding PrevPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">
                             <TextBlock Text="&#xE76B;" FontFamily="{StaticResource IconFont}" FontSize="11" />
                         </Button>
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}">
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" MinWidth="76" Margin="6,0" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="Page {0:N0} of {1:N0}">
                                     <Binding ElementName="Me" Path="Page" />
@@ -49,7 +162,7 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                        <Button Click="ButtonNextClick" x:Name="ButtonNext" Style="{StaticResource GhostButton}" Width="30" Height="30" MinHeight="0" Padding="0" ToolTip="Next page"
+                        <Button Click="ButtonNextClick" x:Name="ButtonNext" Style="{StaticResource GhostButton}" Width="28" Height="28" MinHeight="0" Padding="0" ToolTip="Next page"
                                 IsEnabled="{Binding NextPageAvailable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}">
                             <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="11" />
                         </Button>
@@ -57,12 +170,12 @@
                 </Border>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Game History" Style="{StaticResource HeadingText}" FontSize="26" />
-                <TextBlock Text="Games you've played. Double-click one to open its replay and log." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+                <TextBlock Text="Game History" Style="{StaticResource HeadingText}" FontSize="24" />
+                <TextBlock Text="Double-click a game to open its replay and log." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
             </StackPanel>
         </DockPanel>
 
-        <ProgressBar Grid.Row="1" Grid.Column="0" Height="2" Opacity="0.55" Margin="0,14,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0">
+        <ProgressBar Grid.Row="1" Grid.Column="0" Height="2" Opacity="0.55" Margin="0,12,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingHistoryList}" Maximum="200" Minimum="0">
             <ProgressBar.Style>
                 <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}">
                     <Style.Resources>
@@ -105,17 +218,21 @@
             </ProgressBar.Style>
         </ProgressBar>
 
-        <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0">
+        <Border x:Name="HistoryCard" Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,12,0,0">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="CardSlide" />
+            </Border.RenderTransform>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Margin="18,14,18,6">
+                <StackPanel Orientation="Horizontal" Margin="16,12,16,4">
                     <TextBlock Text="&#xE81C;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBlock Text="PAST GAMES" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
+                    <TextBlock Text="Select several with Ctrl or Shift to delete them together." FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="12,0,0,0" />
                 </StackPanel>
-                <ListView x:Name="ListViewHistoryList" Grid.Row="1" utils:GridViewStretch.StretchColumn="0" Margin="0,4,0,6"
+                <ListView x:Name="ListViewHistoryList" Grid.Row="1" utils:GridViewStretch.StretchColumn="0" Margin="0,0,0,6"
                           SelectionChanged="ListViewHistoryList_SelectionChanged"
                           ItemsSource="{Binding GameHistories, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameHistoryTab}}}"
                           ItemContainerStyle="{StaticResource ListViewItemStyle}"
@@ -130,25 +247,25 @@
                                 </Style>
                             </GridView.ColumnHeaderContainerStyle>
                             <GridViewColumn Header="Name"
-                                            DisplayMemberBinding="{Binding Path=Name}" Width="240"></GridViewColumn>
+                                            CellTemplate="{StaticResource HistoryNameTemplate}" Width="260"></GridViewColumn>
                             <GridViewColumn Header="Game"
-                                            DisplayMemberBinding="{Binding Path=GameName}" Width="200"></GridViewColumn>
-                            <GridViewColumn Header="Start Time"
-                                            DisplayMemberBinding="{Binding Path=DateStarted, StringFormat='{}{0:f}'}" Width="220"></GridViewColumn>
-                            <GridViewColumn Header="Run Time"
-                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="120"></GridViewColumn>
+                                            CellTemplate="{StaticResource HistoryGameTemplate}" Width="190"></GridViewColumn>
+                            <GridViewColumn Header="Started"
+                                            CellTemplate="{StaticResource HistoryStartTemplate}" Width="210"></GridViewColumn>
+                            <GridViewColumn Header="Run time"
+                                            CellTemplate="{StaticResource HistoryRunTimeTemplate}" Width="100"></GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
                 <!-- Empty state -->
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,0,0,12"
                             Visibility="{Binding HasItems, ElementName=ListViewHistoryList, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
-                    <Grid Width="72" Height="72" HorizontalAlignment="Center">
+                    <Grid Width="64" Height="64" HorizontalAlignment="Center">
                         <Ellipse Fill="#14FF0000" Stroke="#33FF0000" StrokeThickness="1" />
-                        <TextBlock Text="&#xE81C;" FontFamily="{StaticResource IconFont}" FontSize="28" Foreground="#FFFF5A5A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Text="&#xE81C;" FontFamily="{StaticResource IconFont}" FontSize="26" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
-                    <TextBlock Text="No games yet" FontFamily="{StaticResource DisplayFont}" FontSize="16" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,16,0,4" />
-                    <TextBlock Text="Games you play will show up here so you can revisit them." Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" />
+                    <TextBlock Text="No games yet" FontFamily="{StaticResource DisplayFont}" FontSize="16" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,14,0,4" />
+                    <TextBlock Text="Games you play will show up here so you can revisit them." Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" TextAlignment="Center" />
                 </StackPanel>
             </Grid>
         </Border>

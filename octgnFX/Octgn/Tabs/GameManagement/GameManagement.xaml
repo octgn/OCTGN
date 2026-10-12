@@ -9,81 +9,346 @@
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1000"
              >
     <UserControl.Resources>
+        <!-- Facts in the details panel -->
         <Style x:Key="FactLabel" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="{DynamicResource FaintTextBrush}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="FactValue" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
             <Setter Property="TextAlignment" Value="Right" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="12,0,0,0" />
         </Style>
         <Style x:Key="FactRow" TargetType="DockPanel">
             <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
+        <Style x:Key="SectionLabel" TargetType="TextBlock" BasedOn="{StaticResource EyebrowText}">
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+
+        <!-- Cover-art tile: fades and rises in (staggered by column), lifts on hover, red ring when selected -->
+        <Style x:Key="GameTile" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Grid x:Name="Root" Background="Transparent">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="Enter" />
+                            </Grid.RenderTransform>
+                            <Grid x:Name="Inner">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="Lift" />
+                                </Grid.RenderTransform>
+                                <Border x:Name="Ring" CornerRadius="13" Margin="-4,-4,-4,0" Height="128" VerticalAlignment="Top"
+                                        BorderThickness="2" BorderBrush="{DynamicResource AccentBrush}" Opacity="0">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Red" BlurRadius="16" ShadowDepth="0" Opacity="0.5" />
+                                    </Border.Effect>
+                                </Border>
+                                <ContentPresenter />
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="-3" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut" />
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Ring" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Ring" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.18" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="0">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.28" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.28" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="1">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.035" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.315" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.035" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.315" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="2">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.07" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.07" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="3">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.105" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.385" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.105" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.385" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="4">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.14" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.14" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+<DataTrigger Binding="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" Value="5">
+    <DataTrigger.EnterActions>
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.175" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.455" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Enter" Storyboard.TargetProperty="Y">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.175" Value="12" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.455" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </BeginStoryboard>
+    </DataTrigger.EnterActions>
+</DataTrigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Install / uninstall button used on the tile and in the details panel -->
+        <Style x:Key="InstallButton" TargetType="{x:Type Button}" BasedOn="{StaticResource SecondaryButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=Installed}" Value="True">
+                    <Setter Property="Foreground" Value="#FFFF9A9A" />
+                    <Setter Property="Background" Value="#F0261416" />
+                    <Setter Property="BorderBrush" Value="#66FF0000" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Installed}" Value="False">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="{StaticResource AccentGradientBrush}" />
+                    <Setter Property="BorderBrush" Value="#33FFFFFF" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <!-- Page entrance: header, toolbar and cards fade up one after another -->
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderBlock" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderShift" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ToolbarBar" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.04" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.34" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ToolbarShift" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.04" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.34" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LibraryCard" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.08" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.38" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LibraryShift" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.08" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.38" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsCard" Storyboard.TargetProperty="Opacity">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.12" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="1"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsShift" Storyboard.TargetProperty="Y">
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="12" />
+                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.12" Value="12" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="0"><EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction></EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
 
     <Grid DataContext="{Binding ElementName=Me}" Margin="32,26,32,24">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="*" MinWidth="396"/>
+            <ColumnDefinition Width="0.5*" MinWidth="256" MaxWidth="400"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
-        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
+        <Border x:Name="DialogPlaceHolder" Grid.RowSpan="4" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
 
         <!-- Header -->
-        <DockPanel Grid.ColumnSpan="3" Grid.Row="0">
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,18,0,0">
-                <StackPanel Orientation="Horizontal" IsEnabled="{Binding ButtonsEnabled}">
-                    <ComboBox MinWidth="200" Height="38" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}"
-                              Margin="0,0,10,0" VerticalContentAlignment="Center" ToolTip="Game feed">
+        <StackPanel x:Name="HeaderBlock" Grid.ColumnSpan="3" Grid.Row="0">
+            <StackPanel.RenderTransform>
+                <TranslateTransform x:Name="HeaderShift" />
+            </StackPanel.RenderTransform>
+            <TextBlock Text="Games Manager" Style="{StaticResource HeadingText}" FontSize="26" />
+            <TextBlock Text="Browse game feeds and install the games you want to play." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+        </StackPanel>
+
+        <!-- Toolbar: feed picker on the left, utilities on the right -->
+        <DockPanel x:Name="ToolbarBar" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,16,0,0" LastChildFill="False">
+            <DockPanel.RenderTransform>
+                <TranslateTransform x:Name="ToolbarShift" />
+            </DockPanel.RenderTransform>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Click="ButtonAddo8cClick" Style="{StaticResource SecondaryButton}" Height="36" Margin="0,0,8,0" ToolTip="Add image packs (.o8c)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xEB9F;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Image packs" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Click="ButtonRefreshClick" x:Name="ButtonRefresh" Style="{StaticResource SecondaryButton}" Height="36" Width="36" Padding="0" ToolTip="Refresh list">
+                    <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                </Button>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" IsEnabled="{Binding ButtonsEnabled}">
+                <Grid Margin="0,0,8,0">
+                    <ComboBox MinWidth="232" Height="36" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}"
+                              Padding="38,0,34,0" VerticalContentAlignment="Center" ToolTip="Game feed">
                         <ComboBox.ItemTemplate>
                             <DataTemplate DataType="networking:NamedUrl">
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Button Click="ButtonAddClick" Style="{StaticResource SecondaryButton}" Height="38" Margin="0,0,10,0" ToolTip="Add a game feed">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
-                            <TextBlock Text="Feed" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Style="{StaticResource SecondaryButton}" Height="38" Width="38" Padding="0"
-                            Margin="0,0,10,0" ToolTip="Remove the selected game feed">
-                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                    </Button>
-                </StackPanel>
-                <Button Click="ButtonAddo8cClick" Style="{StaticResource SecondaryButton}" Height="38" Margin="0,0,10,0" ToolTip="Add image packs (.o8c)">
+                    <TextBlock Text="&#xE774;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource MutedTextBrush}"
+                               HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0" IsHitTestVisible="False" />
+                </Grid>
+                <Button Click="ButtonAddClick" Style="{StaticResource SecondaryButton}" Height="36" Margin="0,0,8,0" ToolTip="Add a game feed">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xEB9F;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
-                        <TextBlock Text="Image packs" VerticalAlignment="Center" />
+                        <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Feed" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Click="ButtonRefreshClick" x:Name="ButtonRefresh" Style="{StaticResource SecondaryButton}" Height="38" Width="38" Padding="0" ToolTip="Refresh list">
-                    <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Style="{StaticResource SecondaryButton}" Height="36" Width="36" Padding="0"
+                        ToolTip="Remove the selected game feed">
+                    <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
                 </Button>
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Games Manager" Style="{StaticResource HeadingText}" FontSize="26" />
-                <TextBlock Text="Browse game feeds and install the games you want to play." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
             </StackPanel>
         </DockPanel>
 
         <!-- Shown until the first game is installed -->
-        <Border Grid.ColumnSpan="3" Grid.Row="1" Margin="0,16,0,0" Background="#14FFFFFF" BorderBrush="#FF2A2A30" BorderThickness="1" CornerRadius="10" Padding="14,10"
+        <Border Grid.ColumnSpan="3" Grid.Row="2" Margin="0,12,0,0" Background="#14FFFFFF" BorderBrush="#FF2A2A30" BorderThickness="1" CornerRadius="10" Padding="12,8"
                 Visibility="{Binding ElementName=Me,Path=NoGamesInstalled,Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Orientation="Horizontal">
-                <Border Width="28" Height="28" CornerRadius="14" Background="#26FF0000" Margin="0,0,12,0">
-                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Width="24" Height="24" CornerRadius="12" Background="#26FF0000" Margin="0,0,12,0">
+                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="#FFFF8A8A" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <TextBlock VerticalAlignment="Center" FontSize="13" Foreground="{DynamicResource MutedTextBrush}">
                     <Run Text="No games installed yet." Foreground="{DynamicResource TextBrush}" FontWeight="SemiBold" />
@@ -93,143 +358,239 @@
         </Border>
 
         <!-- Game library: cover-art tiles -->
-        <Border Grid.Column="1" Grid.Row="2" Style="{StaticResource Card}" Padding="10" Margin="0,16,16,0">
-            <ListBox x:Name="ListBoxGames" Style="{StaticResource WrapListBoxStyle}" Background="Transparent" BorderThickness="0"
-                     ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}"
-                     ItemContainerStyle="{StaticResource TileListItem}" Padding="6,6,0,0">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Width="116" DataContext="{Binding}" Background="Transparent">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="116" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Border CornerRadius="10" Background="#FF0F0F12" BorderBrush="#FF2A2A30" BorderThickness="1" ClipToBounds="True">
-                                <Grid>
-                                    <Image Source="{Binding Path=ImageUri}" RenderOptions.BitmapScalingMode="HighQuality" ImageFailed="Image_ImageFailed" Stretch="UniformToFill" />
-                                    <Rectangle VerticalAlignment="Bottom" Height="56">
-                                        <Rectangle.Fill>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                <GradientStop Color="#00000000" Offset="0" />
-                                                <GradientStop Color="#CC000000" Offset="1" />
-                                            </LinearGradientBrush>
-                                        </Rectangle.Fill>
-                                    </Rectangle>
-                                    <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8" CornerRadius="9" Padding="7,2" Background="#E6143D26" BorderBrush="#664ADE80" BorderThickness="1"
-                                            Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="9" Foreground="#FF6EE7A0" VerticalAlignment="Center" Margin="0,1,5,0" />
-                                            <TextBlock Text="Installed" FontSize="11" FontWeight="SemiBold" Foreground="#FF6EE7A0" />
-                                        </StackPanel>
-                                    </Border>
-                                    <!-- Install / uninstall, shown on the selected tile -->
-                                    <Button x:Name="ButtonInstallUninstall" DataContext="{Binding}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="8" Height="32"
-                                            Content="{Binding InstallButtonText}"
-                                            Click="ButtonInstallUninstallClick"
-                                            IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
-                                        <Button.Style>
-                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource SecondaryButton}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="False">
-                                                        <Setter Property="Button.Visibility" Value="Collapsed"></Setter>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Path=Installed}" Value="True">
-                                                        <Setter Property="Foreground" Value="#FFFF8A8A" />
-                                                        <Setter Property="Background" Value="#F0261416" />
-                                                        <Setter Property="BorderBrush" Value="#66FF0000" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Path=Installed}" Value="False">
-                                                        <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{StaticResource AccentGradientBrush}" />
-                                                        <Setter Property="BorderBrush" Value="#33FFFFFF" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                </Grid>
-                            </Border>
-                            <TextBlock Grid.Row="1" Text="{Binding Package.Title}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextBrush}"
-                                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="34" Margin="2,7,2,0" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <Border x:Name="LibraryCard" Grid.Column="1" Grid.Row="3" Style="{StaticResource Card}" Padding="8" Margin="0,16,16,0">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="LibraryShift" />
+            </Border.RenderTransform>
+            <Grid>
+                <!-- Empty / loading state: visible only while the feed has no games -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ListBoxGames,Path=HasItems}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <Border Width="56" Height="56" CornerRadius="28" Background="#26FF0000" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE8F1;" FontFamily="{StaticResource IconFont}" FontSize="22" Foreground="#FFFF8A8A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="No games to show" Style="{StaticResource HeadingText}" FontSize="17" HorizontalAlignment="Center" Margin="0,16,0,0" />
+                    <TextBlock Text="This feed is empty or still loading. Pick another feed, add one, or press refresh."
+                               Style="{StaticResource BodyMutedText}" TextAlignment="Center" MaxWidth="300" Margin="0,6,0,0" />
+                </StackPanel>
+
+                <ListBox x:Name="ListBoxGames" Style="{StaticResource WrapListBoxStyle}" Background="Transparent" BorderThickness="0"
+                         ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}"
+                         AlternationCount="6"
+                         ItemContainerStyle="{StaticResource GameTile}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="120" Height="120" Background="#FF0F0F12" ToolTip="{Binding Package.Title}">
+                                <Grid.Clip>
+                                    <RectangleGeometry Rect="0,0,120,120" RadiusX="10" RadiusY="10" />
+                                </Grid.Clip>
+                                <Image x:Name="Art" Source="{Binding Path=ImageUri}" RenderOptions.BitmapScalingMode="HighQuality" ImageFailed="Image_ImageFailed"
+                                       Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                                    <Image.RenderTransform>
+                                        <ScaleTransform x:Name="ArtScale" />
+                                    </Image.RenderTransform>
+                                </Image>
+                                <!-- Title over a dark fade -->
+                                <Rectangle VerticalAlignment="Bottom" Height="76" IsHitTestVisible="False">
+                                    <Rectangle.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#00000000" Offset="0" />
+                                            <GradientStop Color="#E6000000" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <TextBlock Text="{Binding Package.Title}" FontWeight="SemiBold" FontSize="13" Foreground="White" TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis" MaxHeight="36" VerticalAlignment="Bottom" Margin="8,0,8,8" IsHitTestVisible="False" />
+                                <!-- Installed badge -->
+                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8" Width="22" Height="22" CornerRadius="11"
+                                        Background="#F0143D26" BorderBrush="#994ADE80" BorderThickness="1" ToolTip="Installed"
+                                        Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="10" Foreground="#FF6EE7A0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <!-- Install / uninstall, shown on hover and on the selected tile -->
+                                <Button x:Name="ButtonInstallUninstall" DataContext="{Binding}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="8" Height="26" MinHeight="0" Padding="10,0"
+                                        FontSize="12" Content="{Binding InstallButtonText}"
+                                        Click="ButtonInstallUninstallClick"
+                                        IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource InstallButton}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsMouseOver,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                                <!-- Hairline edge so dark covers keep their shape -->
+                                <Border CornerRadius="10" BorderBrush="#26FFFFFF" BorderThickness="1" IsHitTestVisible="False" />
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsMouseOver,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="ArtScale" Storyboard.TargetProperty="ScaleX" To="1.08" Duration="0:0:0.18">
+                                                    <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                                <DoubleAnimation Storyboard.TargetName="ArtScale" Storyboard.TargetProperty="ScaleY" To="1.08" Duration="0:0:0.18">
+                                                    <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="ArtScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.18" />
+                                                <DoubleAnimation Storyboard.TargetName="ArtScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.18" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Border>
+
         <!-- Details for the selected game -->
-        <Border Grid.Column="2" Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0" ClipToBounds="True">
-            <Grid Visibility="{Binding ElementName=Me,Path=IsGameSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="100*"/>
-                </Grid.RowDefinitions>
-                <!-- Cover art with the title over a dark fade -->
-                <Grid Height="150">
-                    <Grid.Clip>
-                        <RectangleGeometry Rect="0,0,268,150" RadiusX="11" RadiusY="11" />
-                    </Grid.Clip>
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <ImageBrush ImageSource="{Binding ElementName=Me,Path=SelectedGame.ImageUri}" Stretch="UniformToFill" Opacity="0.55" />
-                        </Rectangle.Fill>
-                        <Rectangle.Effect>
-                            <BlurEffect Radius="6" />
-                        </Rectangle.Effect>
-                    </Rectangle>
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#33000000" Offset="0" />
-                                <GradientStop Color="#F017171B" Offset="1" />
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <StackPanel VerticalAlignment="Bottom" Margin="20,0,20,14">
-                        <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" FontFamily="{StaticResource DisplayFont}"
-                                   FontSize="19" Foreground="White" TextWrapping="Wrap">
-                            <TextBlock.Effect>
-                                <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.8" />
-                            </TextBlock.Effect>
-                        </TextBlock>
-                        <TextBlock Text="Visit game site" Margin="0,4,0,0" FontSize="12.5" Foreground="#FFFF6B6B" Cursor="Hand"
-                                   PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}" />
-                    </StackPanel>
-                </Grid>
-                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="20,6,16,16">
-                    <StackPanel>
-                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
-                            <TextBlock Text="Created by" Style="{StaticResource FactLabel}" />
-                            <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource FactValue}" />
-                        </DockPanel>
-                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="Version" Style="{StaticResource FactLabel}" />
-                            <TextBlock Text="{Binding Version}" Style="{StaticResource FactValue}" />
-                        </DockPanel>
-                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
-                            <TextBlock Text="Installed version" Style="{StaticResource FactLabel}" />
-                            <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource FactValue}" />
-                        </DockPanel>
-                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="Last published" Style="{StaticResource FactLabel}" />
-                            <TextBlock Text="{Binding Published.LocalDateTime, StringFormat='{}{0:MMM d, yyyy}'}" Style="{StaticResource FactValue}" />
-                        </DockPanel>
-                        <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
-                            <TextBlock Text="Downloads" Style="{StaticResource FactLabel}" />
-                            <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource FactValue}" />
-                        </DockPanel>
-                        <Border Height="1" Background="{DynamicResource HairlineBrush}" Margin="0,4,0,14" />
-                        <StackPanel DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                            <TextBlock Text="ABOUT" Style="{StaticResource EyebrowText}" Margin="0,0,0,6" />
-                            <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Background="Transparent" Padding="0"
-                                     Foreground="{DynamicResource MutedTextBrush}" Text="{Binding Description}" FontSize="12.5" />
-                            <TextBlock Text="TAGS" Style="{StaticResource EyebrowText}" Margin="0,14,0,6" />
-                            <TextBlock Text="{Binding Tags}" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" />
-                            <TextBlock Text="ID" Style="{StaticResource EyebrowText}" Margin="0,14,0,4" />
-                            <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="11" IsReadOnly="True" BorderThickness="0" Background="Transparent"
-                                     Padding="0" Foreground="{DynamicResource FaintTextBrush}" FontFamily="Consolas" />
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
+        <Border x:Name="DetailsCard" Grid.Column="2" Grid.Row="3" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="DetailsShift" />
+            </Border.RenderTransform>
+            <Grid>
+                <!-- Nothing selected -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24">
+                    <Border Width="48" Height="48" CornerRadius="24" Background="#14FFFFFF" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE8FD;" FontFamily="{StaticResource IconFont}" FontSize="20" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="Select a game" Style="{StaticResource HeadingText}" FontSize="16" HorizontalAlignment="Center" Margin="0,14,0,0" />
+                    <TextBlock Text="Pick a cover to see its details and install it." Style="{StaticResource BodyMutedText}" TextAlignment="Center" Margin="0,4,0,0" />
+                </StackPanel>
+
+                <Border CornerRadius="11" Visibility="{Binding ElementName=Me,Path=IsGameSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#FF1E1E24" Offset="0" />
+                            <GradientStop Color="#FF16161A" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="100*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Cover art with the title over a dark fade -->
+                        <Border Height="168" CornerRadius="11,11,0,0">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding ElementName=Me,Path=SelectedGame.ImageUri}" Stretch="UniformToFill" />
+                            </Border.Background>
+                            <Grid>
+                                <Border CornerRadius="11,11,0,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#40000000" Offset="0" />
+                                            <GradientStop Color="#99101013" Offset="0.5" />
+                                            <GradientStop Color="#FF1B1B20" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16" CornerRadius="11" Padding="9,3" Background="#F0143D26" BorderBrush="#994ADE80" BorderThickness="1"
+                                        Visibility="{Binding ElementName=Me,Path=SelectedGame.Installed,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="10" Foreground="#FF6EE7A0" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                        <TextBlock Text="Installed" FontSize="12" FontWeight="SemiBold" Foreground="#FF6EE7A0" />
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel VerticalAlignment="Bottom" Margin="20,0,20,14">
+                                    <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" FontFamily="{StaticResource DisplayFont}"
+                                               FontSize="20" Foreground="White" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="52">
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.8" />
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0" Cursor="Hand">
+                                        <TextBlock Text="&#xE71B;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="#FFFF9A9A" VerticalAlignment="Center" Margin="0,1,6,0" IsHitTestVisible="False" />
+                                        <TextBlock Text="Visit game site" FontSize="13" Foreground="#FFFF9A9A" Cursor="Hand"
+                                                   PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="TextDecorations" Value="Underline" />
+                                                            <Setter Property="Foreground" Value="White" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Facts -->
+                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="20,16,14,8">
+                            <StackPanel>
+                                <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                                    <TextBlock Text="Created by" Style="{StaticResource FactLabel}" />
+                                    <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource FactValue}" />
+                                </DockPanel>
+                                <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                                    <TextBlock Text="Version" Style="{StaticResource FactLabel}" />
+                                    <TextBlock Text="{Binding Version}" Style="{StaticResource FactValue}" />
+                                </DockPanel>
+                                <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                                    <TextBlock Text="Installed version" Style="{StaticResource FactLabel}" />
+                                    <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource FactValue}" />
+                                </DockPanel>
+                                <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                                    <TextBlock Text="Last published" Style="{StaticResource FactLabel}" />
+                                    <TextBlock Text="{Binding Published.LocalDateTime, StringFormat='{}{0:MMM d, yyyy}'}" Style="{StaticResource FactValue}" />
+                                </DockPanel>
+                                <DockPanel Style="{StaticResource FactRow}" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
+                                    <TextBlock Text="Downloads" Style="{StaticResource FactLabel}" />
+                                    <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource FactValue}" />
+                                </DockPanel>
+                                <Border Height="1" Background="{DynamicResource HairlineBrush}" Margin="0,4,0,14" />
+                                <StackPanel DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                                    <TextBlock Text="ABOUT" Style="{StaticResource SectionLabel}" />
+                                    <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Background="Transparent" Padding="0"
+                                             Foreground="{DynamicResource MutedTextBrush}" Text="{Binding Description}" FontSize="13" />
+                                    <TextBlock Text="TAGS" Style="{StaticResource SectionLabel}" Margin="0,16,0,6" />
+                                    <TextBlock Text="{Binding Tags}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" />
+                                    <TextBlock Text="ID" Style="{StaticResource SectionLabel}" Margin="0,16,0,4" />
+                                    <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="12" IsReadOnly="True" BorderThickness="0" Background="Transparent"
+                                             Padding="0" Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas" />
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Main call to action -->
+                        <Border Grid.Row="2" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,1,0,0" Padding="16" CornerRadius="0,0,11,11" Background="#FF141417">
+                            <Button DataContext="{Binding ElementName=Me,Path=SelectedGame}" Height="40" FontSize="14" Style="{StaticResource InstallButton}"
+                                    Content="{Binding InstallButtonText}"
+                                    Click="ButtonInstallUninstallClick"
+                                    IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}" />
+                        </Border>
+                    </Grid>
+                </Border>
             </Grid>
         </Border>
     </Grid>
