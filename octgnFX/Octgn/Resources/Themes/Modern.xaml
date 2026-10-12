@@ -931,7 +931,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
-                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <Grid Width="20" Height="20" VerticalAlignment="Center">
                             <Border x:Name="Box" CornerRadius="6" Background="#FF111114" BorderBrush="#FF4A4A53" BorderThickness="1" />
                             <Border x:Name="Fill" CornerRadius="6" Background="{StaticResource AccentGradientBrush}" Opacity="0" />
@@ -939,8 +943,8 @@
                                   StrokeEndLineCap="Round" StrokeLineJoin="Round" Opacity="0" />
                             <Rectangle x:Name="Dash" Width="8" Height="2" RadiusX="1" RadiusY="1" Fill="White" Opacity="0" />
                         </Grid>
-                        <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center" RecognizesAccessKey="True" />
-                    </StackPanel>
+                        <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Box" Property="BorderBrush" Value="#FF7A7A85" />

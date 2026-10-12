@@ -22,7 +22,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
                             </Grid.RowDefinitions>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="600" Padding="0,0,6,0">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500" Padding="0,0,6,0">
                             <StackPanel Margin="0,14,0,6">
                                 <TextBlock Text="STORAGE" Style="{StaticResource EyebrowText}" Margin="2,0,0,8" />
                                 <Border Style="{StaticResource Card}" Padding="16" CornerRadius="10" Margin="0,0,0,14">
@@ -112,16 +112,12 @@
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
                             </Grid.RowDefinitions>
                             <StackPanel>
-                                <GroupBox Header="In Game Chat">
-                                    <StackPanel>
-                                        <Grid Height="8"/>
-                                        <CheckBox x:Name="CheckBox_InGameChat_TextShadows">
-                                            <TextBlock Foreground="White">Apply shadows to chat text.</TextBlock>
-                                        </CheckBox>
-
-                                        <Grid Height="6"/>
-                                    </StackPanel>
-                                </GroupBox>
+                                <TextBlock Text="IN GAME CHAT" Style="{StaticResource EyebrowText}" Margin="2,16,0,8" />
+                                <Border Style="{StaticResource Card}" Padding="16,12" CornerRadius="10">
+                                    <CheckBox x:Name="CheckBox_InGameChat_TextShadows" Margin="0">
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">Apply shadows to chat text</TextBlock>
+                                    </CheckBox>
+                                </Border>
                                 <Grid Height="6"/>
                                 <GroupBox Header="Octgn Chat" Visibility="Collapsed">
                                     <StackPanel>
@@ -215,7 +211,7 @@
                                 </CheckBox>
                                 <Grid Height="6"/>
                                 <CheckBox x:Name="CheckBoxIgnoreSSLCertificates">
-                                    <TextBlock Foreground="White">Ignore SSL Certificate Checking (use only when experiencing consistant feed errors)
+                                    <TextBlock Foreground="White" TextWrapping="Wrap">Ignore SSL Certificate Checking (use only when experiencing consistent feed errors)
                                         <Bold Foreground="#FFFF0000">*</Bold>
                                     </TextBlock>
                                 </CheckBox>
