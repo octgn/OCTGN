@@ -202,10 +202,10 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,40,0,0">
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,34,0,0">
                     
-                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="26" Foreground="#FF3A3A42" HorizontalAlignment="Center" />
-                    <TextBlock Text="No open tables right now" FontFamily="{StaticResource DisplayFont}" FontSize="14" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" Margin="0,8,0,2" />
+                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="20" Foreground="#FF3A3A42" HorizontalAlignment="Center" />
+                    <TextBlock Text="No open tables right now" FontFamily="{StaticResource DisplayFont}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
                     <TextBlock Text="Host a game and others can join you." FontSize="12" Foreground="{DynamicResource FaintTextBrush}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
@@ -278,10 +278,10 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,40,0,0">
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,34,0,0">
                     
-                    <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="26" Foreground="#FF3A3A42" HorizontalAlignment="Center" />
-                    <TextBlock Text="Nothing to spectate yet" FontFamily="{StaticResource DisplayFont}" FontSize="14" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" Margin="0,8,0,2" />
+                    <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="20" Foreground="#FF3A3A42" HorizontalAlignment="Center" />
+                    <TextBlock Text="Nothing to spectate yet" FontFamily="{StaticResource DisplayFont}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
                     <TextBlock Text="Games in progress will appear here." FontSize="12" Foreground="{DynamicResource FaintTextBrush}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
