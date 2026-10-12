@@ -77,6 +77,9 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                     <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
                                     <TextBlock Text="{Binding Owner.Name}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Text="·" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="10,0" />
+                                    <TextBlock Text="&#xE787;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                    <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </StackPanel>
                             <Button Grid.Column="3" Style="{StaticResource SecondaryButton}" Height="34" VerticalAlignment="Center" Click="ButtonBase_OnClick">

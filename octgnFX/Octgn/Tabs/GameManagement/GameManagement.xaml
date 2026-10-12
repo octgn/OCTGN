@@ -30,7 +30,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="270"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -92,70 +92,70 @@
             </StackPanel>
         </Border>
 
-        <!-- Game list -->
-        <Border Grid.Column="1" Grid.Row="2" Style="{StaticResource Card}" Padding="6" Margin="0,16,16,0">
-            <ListBox x:Name="ListBoxGames" Background="Transparent" BorderThickness="0" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}"
-                     HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ItemContainerStyle="{StaticResource CardListItem}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <!-- Game library: cover-art tiles -->
+        <Border Grid.Column="1" Grid.Row="2" Style="{StaticResource Card}" Padding="10" Margin="0,16,16,0">
+            <ListBox x:Name="ListBoxGames" Style="{StaticResource WrapListBoxStyle}" Background="Transparent" BorderThickness="0"
+                     ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}"
+                     ItemContainerStyle="{StaticResource TileListItem}" Padding="6,6,0,0">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Height="64" HorizontalAlignment="Stretch" DataContext="{Binding}" Background="Transparent">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="64"/>
-                                <ColumnDefinition Width="100*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="56" Height="56" CornerRadius="10" Background="#FF0F0F12" BorderBrush="#FF2A2A30" BorderThickness="1" HorizontalAlignment="Left">
-                                <Image Source="{Binding Path=ImageUri}" RenderOptions.BitmapScalingMode="HighQuality" ImageFailed="Image_ImageFailed" Stretch="UniformToFill">
-                                    <Image.Clip>
-                                        <RectangleGeometry Rect="0,0,54,54" RadiusX="9" RadiusY="9" />
-                                    </Image.Clip>
-                                </Image>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="10,0,12,0" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Package.Title}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" />
-                                    <Border Margin="10,0,0,0" CornerRadius="9" Padding="7,1" Background="#1F4ADE80" BorderBrush="#404ADE80" BorderThickness="1" VerticalAlignment="Center"
+                        <Grid Width="116" DataContext="{Binding}" Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="116" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Border CornerRadius="10" Background="#FF0F0F12" BorderBrush="#FF2A2A30" BorderThickness="1" ClipToBounds="True">
+                                <Grid>
+                                    <Image Source="{Binding Path=ImageUri}" RenderOptions.BitmapScalingMode="HighQuality" ImageFailed="Image_ImageFailed" Stretch="UniformToFill" />
+                                    <Rectangle VerticalAlignment="Bottom" Height="56">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#00000000" Offset="0" />
+                                                <GradientStop Color="#CC000000" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8" CornerRadius="9" Padding="7,2" Background="#E6143D26" BorderBrush="#664ADE80" BorderThickness="1"
                                             Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="9" Foreground="#FF6EE7A0" VerticalAlignment="Center" Margin="0,1,5,0" />
                                             <TextBlock Text="Installed" FontSize="11" FontWeight="SemiBold" Foreground="#FF6EE7A0" />
                                         </StackPanel>
                                     </Border>
-                                </StackPanel>
-                                <TextBlock Text="{Binding Package.Description}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="36" Margin="0,4,0,0"
-                                           FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}" />
-                            </StackPanel>
-                            <Button Grid.Column="2" MinWidth="104" Height="34" x:Name="ButtonInstallUninstall" DataContext="{Binding}" VerticalAlignment="Center"
-                                    Content="{Binding InstallButtonText}"
-                                    Click="ButtonInstallUninstallClick"
-                                    IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
-                                <Button.Style>
-                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource SecondaryButton}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="False">
-                                                <Setter Property="Button.Visibility" Value="Collapsed"></Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Path=Installed}" Value="True">
-                                                <Setter Property="Foreground" Value="#FFFF8A8A" />
-                                                <Setter Property="Background" Value="#26FF0000" />
-                                                <Setter Property="BorderBrush" Value="#4DFF0000" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Path=Installed}" Value="False">
-                                                <Setter Property="Foreground" Value="White" />
-                                                <Setter Property="Background" Value="{StaticResource AccentGradientBrush}" />
-                                                <Setter Property="BorderBrush" Value="#33FFFFFF" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                                    <!-- Install / uninstall, shown on the selected tile -->
+                                    <Button x:Name="ButtonInstallUninstall" DataContext="{Binding}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="8" Height="32"
+                                            Content="{Binding InstallButtonText}"
+                                            Click="ButtonInstallUninstallClick"
+                                            IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
+                                        <Button.Style>
+                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource SecondaryButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="False">
+                                                        <Setter Property="Button.Visibility" Value="Collapsed"></Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Path=Installed}" Value="True">
+                                                        <Setter Property="Foreground" Value="#FFFF8A8A" />
+                                                        <Setter Property="Background" Value="#F0261416" />
+                                                        <Setter Property="BorderBrush" Value="#66FF0000" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Path=Installed}" Value="False">
+                                                        <Setter Property="Foreground" Value="White" />
+                                                        <Setter Property="Background" Value="{StaticResource AccentGradientBrush}" />
+                                                        <Setter Property="BorderBrush" Value="#33FFFFFF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                            <TextBlock Grid.Row="1" Text="{Binding Package.Title}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextBrush}"
+                                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="34" Margin="2,7,2,0" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Border>
-
         <!-- Details for the selected game -->
         <Border Grid.Column="2" Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,16,0,0" ClipToBounds="True">
             <Grid Visibility="{Binding ElementName=Me,Path=IsGameSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -166,7 +166,7 @@
                 <!-- Cover art with the title over a dark fade -->
                 <Grid Height="150">
                     <Grid.Clip>
-                        <RectangleGeometry Rect="0,0,298,150" RadiusX="11" RadiusY="11" />
+                        <RectangleGeometry Rect="0,0,268,150" RadiusX="11" RadiusY="11" />
                     </Grid.Clip>
                     <Rectangle>
                         <Rectangle.Fill>

@@ -42,21 +42,37 @@
         </Grid.ColumnDefinitions>
 
         <!-- Left: brand, pitch and sign in -->
-        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-            <TextBlock Text="ONLINE CARD &amp; TABLETOP GAMING NETWORK" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource AccentBrush}" Margin="2,0,0,12" />
-            <TextBlock FontFamily="{StaticResource DisplayFont}" FontSize="34" LineHeight="40" LineStackingStrategy="BlockLineHeight"
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0" VerticalAlignment="Center">
+        <StackPanel>
+            <Border HorizontalAlignment="Left" Background="#1FFF0000" BorderBrush="#40FF3B3B" BorderThickness="1" CornerRadius="12" Padding="10,3" Margin="0,0,0,12">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse Width="6" Height="6" Fill="#FFFF4D4D" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBlock Text="Online card &amp; tabletop gaming" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFB3B3" />
+                </StackPanel>
+            </Border>
+            <TextBlock FontFamily="{StaticResource DisplayFont}" FontSize="30" LineHeight="36" LineStackingStrategy="BlockLineHeight"
                        Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap">
                 <Run Text="Every card game." />
                 <LineBreak />
-                <Run Text="One table." Foreground="{DynamicResource AccentBrush}" />
+                <Run Text="One table.">
+                    <Run.Foreground>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#FFFF3B3B" Offset="0" />
+                            <GradientStop Color="#FFFF8A5C" Offset="1" />
+                        </LinearGradientBrush>
+                    </Run.Foreground>
+                </Run>
             </TextBlock>
-            <TextBlock Style="{StaticResource BodyMutedText}" FontSize="14" Margin="0,10,0,22" MaxWidth="420" HorizontalAlignment="Left"
+            <TextBlock Style="{StaticResource BodyMutedText}" FontSize="13.5" Margin="0,8,0,16" MaxWidth="420" HorizontalAlignment="Left"
                        Text="Host, join and spectate games with players around the world, using the games and decks you love." />
 
-            <Border Style="{StaticResource Card}" Padding="24,20"
+            <Border Style="{StaticResource Card}" Padding="22,16"
                     Visibility="{Binding LoginVM.LoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="32" ShadowDepth="8" Direction="270" Opacity="0.55" Color="Black" />
+                </Border.Effect>
                 <StackPanel IsEnabled="{Binding LoginVM.NotBusy}">
-                    <TextBlock x:Name="textBlock1" Text="Sign in" Style="{StaticResource HeadingText}" FontSize="18" Margin="0,0,0,14" />
+                    <TextBlock x:Name="textBlock1" Text="Sign in" Style="{StaticResource HeadingText}" FontSize="17" Margin="0,0,0,10" />
 
                     <Border Background="#26FF0000" BorderBrush="#66FF0000" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,16"
                             Visibility="{Binding LoginVM.HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -67,22 +83,22 @@
                     </Border>
 
                     <TextBlock Text="Email or username" Style="{StaticResource FieldLabel}" />
-                    <TextBox Height="40" FontSize="14" Padding="12,0"
+                    <TextBox Height="38" FontSize="14" Padding="12,0"
                              Text="{Binding LoginVM.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Text="Password" Style="{StaticResource FieldLabel}" Margin="2,14,0,8" />
-                    <PasswordBox Height="40" FontSize="14" Padding="12,0" KeyUp="PasswordBox1KeyUp"
+                    <TextBlock Text="Password" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
+                    <PasswordBox Height="38" FontSize="14" Padding="12,0" KeyUp="PasswordBox1KeyUp"
                                  utils:PasswordBoxAssistant.BindPassword="true"
                                  utils:PasswordBoxAssistant.BoundPassword="{Binding LoginVM.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <Button x:Name="button1" Click="Button1Click" Style="{StaticResource PrimaryButton}" Height="42" Margin="0,18,0,0" FontSize="14">
+                    <Button x:Name="button1" Click="Button1Click" Style="{StaticResource PrimaryButton}" Height="40" Margin="0,16,0,0" FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Sign in" VerticalAlignment="Center" />
                             <TextBlock Text="&#xE72A;" FontFamily="{StaticResource IconFont}" FontSize="12" Margin="10,1,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
                         <Label x:Name="labelRegister" Style="{StaticResource LinkLabel}" Content="Create an account" />
                         <TextBlock Text="·" Foreground="{DynamicResource FaintTextBrush}" Margin="10,0" VerticalAlignment="Center" />
                         <Label x:Name="labelForgot" Style="{StaticResource LinkLabel}" Content="Forgot password?" />
@@ -91,6 +107,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
+        </ScrollViewer>
 
         <!-- Right: community and news -->
         <Grid Grid.Column="2">
@@ -135,18 +152,24 @@
                         <ItemsControl ItemsSource="{Binding LoginVM.News.Items}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type local:NewsItemViewModel}">
-                                    <Border BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,0,1" Padding="0,16">
-                                        <StackPanel>
+                                    <Grid Margin="0,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="22" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="1" HorizontalAlignment="Center" Background="{DynamicResource HairlineBrush}" Margin="0,18,0,-2" />
+                                        <Ellipse Width="9" Height="9" VerticalAlignment="Top" Margin="0,18,0,0" Fill="#FF17171B" Stroke="#FFFF4D4D" StrokeThickness="2" HorizontalAlignment="Center" />
+                                        <StackPanel Grid.Column="1" Margin="8,12,0,18">
                                             <TextBlock FontSize="14" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" LineHeight="21"
                                                        utils:TextBlockExtension.FormattedText="{Binding Path=Message}"
                                                        Text="{Binding Path=Message}" />
                                             <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                                <TextBlock Text="&#xE787;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
+                                                <TextBlock Text="&#xE823;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
                                                 <TextBlock Margin="7,0,0,0" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center"
                                                            Text="{Binding Path=Time.LocalDateTime, StringFormat='{}{0:MMMM d, yyyy}'}" />
                                             </StackPanel>
                                         </StackPanel>
-                                    </Border>
+                                    </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

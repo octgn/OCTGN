@@ -81,8 +81,22 @@
 
     <!-- ===== Cards ===== -->
     <Style x:Key="Card" TargetType="Border">
-        <Setter Property="Background" Value="#E617171B" />
-        <Setter Property="BorderBrush" Value="#FF26262C" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#F01E1E24" Offset="0" />
+                    <GradientStop Color="#F016161A" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FF34343C" Offset="0" />
+                    <GradientStop Color="#FF222228" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="24" />
@@ -859,6 +873,52 @@
                 </Setter>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- Selectable cover-art tile: lifts slightly on hover, red ring when selected -->
+    <Style x:Key="TileListItem" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Margin" Value="0,0,8,12" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Grid RenderTransformOrigin="0.5,0.5" Background="Transparent">
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="Lift" />
+                        </Grid.RenderTransform>
+                        <Border x:Name="Ring" CornerRadius="13" Margin="-4,-4,-4,0" Height="124" VerticalAlignment="Top" BorderThickness="2" BorderBrush="{DynamicResource AccentBrush}" Opacity="0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Red" BlurRadius="16" ShadowDepth="0" Opacity="0.5" />
+                            </Border.Effect>
+                        </Border>
+                        <ContentPresenter Margin="{TemplateBinding Padding}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="-3" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Lift" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Ring" Property="Opacity" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>
