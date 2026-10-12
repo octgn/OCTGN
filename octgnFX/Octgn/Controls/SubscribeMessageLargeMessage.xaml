@@ -70,25 +70,25 @@
             <LineBreak/>
             <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">Features You'll Get as a Subscriber:</TextBlock></InlineUIContainer>
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Window Skins
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Chat Images
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Custom Game Backgrounds
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Custom User Icon
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Password Protected Games
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Save/Load Filters in the Deck Editor
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Ellipse Width="8" Height="8" Fill="#FFFF4D4D"/></BulletDecorator.Bullet></BulletDecorator>
             Replace Card Images in the Deck Editor
             <LineBreak/>
                 </TextBlock>

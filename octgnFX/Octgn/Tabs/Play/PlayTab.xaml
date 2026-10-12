@@ -10,9 +10,7 @@
              x:Name="Me">
     <UserControl.Resources>
         <DataTemplate x:Key="IconTemplate">
-                <Image Source="/OCTGN;component/Resources/lock.png"
-                           Stretch="UniformToFill"
-                           Height="16"
+                <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="13" Foreground="#FF9A9AA3" VerticalAlignment="Center"
                            Visibility="{Binding Path=HasPassword,Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </DataTemplate>
         <DataTemplate x:Key="UserIconTemplate">

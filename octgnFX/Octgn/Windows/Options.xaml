@@ -3,7 +3,7 @@
         xmlns:controls="clr-namespace:Octgn.Controls" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" x:Class="Octgn.Windows.Options"
-        Title="OCTGN Options" WindowIcon="/OCTGN;component/Resources/Icons/setting_tools.png"
+        Title="OCTGN Options" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
         VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SizeToContent="Height" VerticalAlignment="Top"
         WindowStartupLocation="CenterOwner" Width="537.424" d:DesignHeight="452" >
     <Border Background="#F0111114" CornerRadius="0,0,8,8" Padding="10,6,10,16">

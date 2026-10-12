@@ -227,11 +227,7 @@ namespace Octgn.Controls.WindowDecorators
                 ToolTip = "Minimize",
                 Width = 40,
                 Style = buttonStyle,
-                Content = new Image
-                {
-                    Stretch = Stretch.None,
-                    Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minimize.png"))
-                }
+                Content = CaptionGlyph("\uE921")
             };
             AutomationProperties.SetName(WindowMinimizeButton, "Minimize");
             WindowChrome.SetIsHitTestVisibleInChrome(WindowMinimizeButton, true);
@@ -246,11 +242,7 @@ namespace Octgn.Controls.WindowDecorators
                 ToolTip = "Maximize/Restore",
                 Width = 40,
                 Style = buttonStyle,
-                Content = new Image
-                {
-                    Stretch = Stretch.None,
-                    Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minmax.png"))
-                }
+                Content = CaptionGlyph("\uE922")
             };
             var binding = new Binding("WindowState")
             {
@@ -264,6 +256,10 @@ namespace Octgn.Controls.WindowDecorators
             {
                 Decorated.WindowState = (Decorated.WindowState == WindowState.Maximized) ? WindowState.Normal : WindowState.Maximized;
             };
+            Decorated.StateChanged += (sender, args) =>
+            {
+                WindowResizeButton.Content = CaptionGlyph(Decorated.WindowState == WindowState.Maximized ? "\uE923" : "\uE922");
+            };
             controlsPanel.Children.Add(WindowResizeButton);
 
             WindowCloseButton = new Button
@@ -272,11 +268,7 @@ namespace Octgn.Controls.WindowDecorators
                 Width = 40,
                 Style = buttonStyle,
                 Tag = "CLOSE",
-                Content = new Image
-                {
-                    Stretch = Stretch.None,
-                    Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/closewindow.png"))
-                }
+                Content = CaptionGlyph("\uE8BB")
             };
             AutomationProperties.SetName(WindowCloseButton, "Close");
             WindowChrome.SetIsHitTestVisibleInChrome(WindowCloseButton, true);
@@ -285,6 +277,22 @@ namespace Octgn.Controls.WindowDecorators
                 Decorated.Close();
             };
             controlsPanel.Children.Add(WindowCloseButton);
+        }
+
+        /// <summary>
+        /// A caption button glyph from the Segoe MDL2 icon font, matching the icons used in the rest of the client.
+        /// </summary>
+        private static TextBlock CaptionGlyph(string glyph)
+        {
+            return new TextBlock
+            {
+                Text = glyph,
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontSize = 10,
+                Foreground = new SolidColorBrush(Color.FromRgb(240, 243, 248)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
         }
 
         public override bool Undo()

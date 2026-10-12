@@ -14,11 +14,11 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="100*"/>
             </Grid.ColumnDefinitions>
-            <Image Source="../Resources/Icons/Reset.png"/>
+            <TextBlock Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFFF5A5A"/>
             <StackPanel Orientation="Horizontal" Grid.Column="2">
                 <TextBlock VerticalAlignment="Center" Text="{Binding Message}"/>
                 <TextBlock VerticalAlignment="Center" Text=" Click"/>
-                <TextBlock VerticalAlignment="Center" Text=" Restart " Foreground="SteelBlue" Cursor="Hand" MouseLeftButtonUp="RestartClick"/>
+                <TextBlock VerticalAlignment="Center" Text=" Restart " Foreground="#FFFF5A5A" Cursor="Hand" MouseLeftButtonUp="RestartClick"/>
                 <TextBlock VerticalAlignment="Center" Text=" to install it, or the update will install automatically the next time you start up OCTGN."/>
             </StackPanel>
 

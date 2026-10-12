@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:octgn="clr-namespace:Octgn"
         Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden" MinimizeButtonVisibility="Hidden"
-        WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight"
+        WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" SizeToContent="WidthAndHeight"
         Width="596" Height="325">
     <Grid Width="596" Height="325" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>

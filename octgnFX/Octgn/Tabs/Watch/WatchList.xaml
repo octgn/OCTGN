@@ -40,7 +40,7 @@
                                     <ColumnDefinition Width="20"/>
                                     <ColumnDefinition Width="100*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image Source="../../Resources/viewers.png" Height="16" Width="16"/>
+                                <TextBlock Text="&#xE7B3;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#FF9A9AA3" VerticalAlignment="Top" Margin="0,1,0,0"/>
                                 <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
                             </Grid>
                         </StackPanel>

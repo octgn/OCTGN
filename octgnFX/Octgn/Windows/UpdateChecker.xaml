@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:Controls="clr-namespace:Octgn.Controls"
         Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="Auto" Width="500"
-        WindowStartupLocation="CenterScreen" WindowIcon="/OCTGN;component/Resources/Icons/Reset.png" 
+        WindowStartupLocation="CenterScreen" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" 
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="True" Topmost="False" 
         Closing="Window_Closing" CloseButtonVisibility="Collapsed" MinimizeButtonVisibility="Collapsed"
         SizeToContent="Height"

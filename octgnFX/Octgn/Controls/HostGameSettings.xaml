@@ -107,13 +107,12 @@
                             <ColumnDefinition Width="40"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontFamily="{StaticResource Entypo}"
-                                   Text="⚠"
-                                   FontSize="32"
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE7BA;"
+                                   FontSize="18" Foreground="White"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
-                                   Grid.Column="0"
-                                   Margin="0 -16 0 0"/>
+                                   Grid.Column="0"/>
                         <Border Background="#AAFF0048" Grid.Column="1">
                             <TextBlock Foreground="White" Padding="10 5 80 5"
                                        FontSize="12"
