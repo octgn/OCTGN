@@ -10,7 +10,19 @@
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="self" DataContext="{Binding ElementName=self}">
     <UserControl.Resources>
+        <!-- Caption: the one small-text style (12.5px, muted) -->
+        <Style x:Key="CaptionText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Effect" Value="{x:Null}" />
+        </Style>
+
+        <!-- Progress ring: neutral while running, green once the board is complete. The ring colour comes from Foreground. -->
         <Style TargetType="ProgressBar" x:Key="CircularProgressBarStyle">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="100" />
+            <Setter Property="Foreground" Value="#FFC9C9D1" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
@@ -19,7 +31,6 @@
                             <wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
                                 <wpfCircularProgressBar:CircularProgressBarViewModel HoleSizeFactor="0.78"/>
                             </wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
-
 
                             <!-- Track ring behind the progress wedge -->
                             <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
@@ -31,7 +42,7 @@
                             <wpfCircularProgressBar:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
                               RotationAngle="-1" WedgeAngle="{Binding Angle}"
                               Radius="{Binding Radius}" InnerRadius="{Binding InnerRadius}"
-                              Fill="{DynamicResource AccentBrush}" Opacity="0.95"/>
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" Opacity="0.95"/>
 
                             <Grid util:GridUtils.RowDefinitions="*,2*,*" util:GridUtils.ColumnDefinitions="*,2*,*">
                                 <Viewbox Grid.Row="1" Grid.Column="1">
@@ -42,23 +53,12 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
-
-        <!-- Slim linear progress hint under each card -->
-        <Style x:Key="LinearProgressStyle" TargetType="ProgressBar">
-            <Setter Property="Minimum" Value="0" />
-            <Setter Property="Maximum" Value="100" />
-            <Setter Property="Height" Value="4" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ProgressBar">
-                        <Grid>
-                            <Border x:Name="PART_Track" CornerRadius="2" Background="#FF2A2A30" />
-                            <Border x:Name="PART_Indicator" CornerRadius="2" HorizontalAlignment="Left" Background="{StaticResource AccentGradientBrush}" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Style.Triggers>
+                <!-- Value is clamped to Maximum, so >= 100 percent lands here -->
+                <Trigger Property="Value" Value="100">
+                    <Setter Property="Foreground" Value="#FF4ADE80" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <!-- Board card: fades and rises in (staggered), lifts and brightens on hover -->
@@ -87,7 +87,7 @@
                                         </LinearGradientBrush>
                                     </Border.Background>
                                 </Border>
-                                <Border x:Name="Hover" CornerRadius="12" BorderThickness="1" BorderBrush="#66FF4D4D" Background="#0DFFFFFF" Opacity="0" />
+                                <Border x:Name="Hover" CornerRadius="12" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#0DFFFFFF" Opacity="0" />
                                 <ContentPresenter Margin="{TemplateBinding Padding}" />
                             </Grid>
                         </Grid>
@@ -251,27 +251,34 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <DockPanel x:Name="HeaderBlock" Grid.Row="0">
-            <DockPanel.RenderTransform>
+        <!-- Page header: title + subtitle left, actions right and centred on the title block -->
+        <Grid x:Name="HeaderBlock" Grid.Row="0" Height="64">
+            <Grid.RenderTransform>
                 <TranslateTransform x:Name="HeaderShift" />
-            </DockPanel.RenderTransform>
-            <Border DockPanel.Dock="Right" VerticalAlignment="Top" Margin="16,6,0,0" CornerRadius="12" Padding="10,3" Background="#14FFFFFF" BorderBrush="#FF2A2A30" BorderThickness="1">
-                <TextBlock Text="{Binding ElementName=ListBoxBoards,Path=Items.Count,StringFormat='{}{0} boards'}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource MutedTextBrush}" />
-            </Border>
-            <StackPanel>
-                <TextBlock Text="Challenge Board" Style="{StaticResource HeadingText}" FontSize="26" />
-                <TextBlock Text="Community ladders and leagues. See who's leading and how far each board has run." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
+            </Grid.RenderTransform>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                <TextBlock Text="Challenge Board" FontFamily="{StaticResource DisplayFont}" FontSize="26" Foreground="{DynamicResource TextBrush}" />
+                <TextBlock Text="Community ladders and leagues. See who's leading and how far each board has run." FontSize="13" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0" />
             </StackPanel>
-        </DockPanel>
+            <Border HorizontalAlignment="Right" VerticalAlignment="Center" Margin="16,0,0,0" CornerRadius="12" Padding="10,3" Background="#14FFFFFF" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="1">
+                <TextBlock Text="{Binding ElementName=ListBoxBoards,Path=Items.Count,StringFormat='{}{0} boards'}" Style="{StaticResource CaptionText}" FontWeight="SemiBold" TextWrapping="NoWrap" />
+            </Border>
+        </Grid>
 
-        <!-- Boards -->
-        <ListBox x:Name="ListBoxBoards" Grid.Row="1" Style="{StaticResource WrapListBoxStyle}" Margin="0,20,0,0"
+        <!-- Boards: bottom edge fades so it is clear the list scrolls -->
+        <ListBox x:Name="ListBoxBoards" Grid.Row="1" Style="{StaticResource WrapListBoxStyle}" Margin="0,24,0,0"
                  Background="Transparent" BorderThickness="0"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  AlternationCount="6"
                  ItemsSource="{Binding Boards}"
                  ItemContainerStyle="{StaticResource BoardCard}">
+            <ListBox.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FF000000" Offset="0" />
+                    <GradientStop Color="#FF000000" Offset="0.92" />
+                    <GradientStop Color="#1A000000" Offset="1" />
+                </LinearGradientBrush>
+            </ListBox.OpacityMask>
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="challengeBoards:BoardViewModel">
                     <Grid DataContext="{Binding}" Background="Transparent">
@@ -280,15 +287,12 @@
                             <ColumnDefinition Width="16"/>
                             <ColumnDefinition Width="100*"/>
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
 
-                        <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Width="56" Height="56" VerticalAlignment="Top"
-                                     Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
+                        <!-- Progress ring: neutral while running, green when complete -->
+                        <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Width="56" Height="56" VerticalAlignment="Center"
+                                     Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Column="0"/>
 
-                        <DockPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">
+                        <DockPanel Grid.Column="2" VerticalAlignment="Center">
                             <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Width="32" Height="32" MinHeight="0" Padding="0" Margin="8,0,0,0" VerticalAlignment="Center"
                                     ToolTip="View board" Click="ButtonBase_OnClick">
                                 <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="12" />
@@ -297,36 +301,43 @@
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="15" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
                                 <DockPanel Margin="0,4,0,0">
                                     <TextBlock DockPanel.Dock="Left" Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                    <TextBlock Text="{Binding Owner.Name}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Owner.Name}" Style="{StaticResource CaptionText}" TextWrapping="NoWrap" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                </DockPanel>
+                                <DockPanel Margin="0,4,0,0">
+                                    <TextBlock DockPanel.Dock="Left" Text="&#xE787;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
+                                    <TextBlock DockPanel.Dock="Right" Text="Complete" Margin="8,0,0,0" FontSize="12.5" FontWeight="SemiBold" Foreground="#FF6EE7A0" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ElementName=Progress,Path=Value}" Value="100">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" Style="{StaticResource CaptionText}" TextWrapping="NoWrap" VerticalAlignment="Center" />
                                 </DockPanel>
                             </StackPanel>
                         </DockPanel>
-
-                        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,14,0,0">
-                            <ProgressBar Style="{StaticResource LinearProgressStyle}" Value="{Binding Path=PercentComplete}" />
-                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                <TextBlock Text="&#xE787;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- Empty / offline state: hidden as soon as the list has boards -->
-        <Border x:Name="NoBoardsMessage" Grid.Row="1" Margin="0,20,0,0" Padding="32,40"
-                VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
-            <Border.Style>
-                <Style TargetType="Border" BasedOn="{StaticResource Card}">
+        <!-- Empty / offline state: upper third, hidden as soon as the list has boards -->
+        <StackPanel x:Name="NoBoardsMessage" Grid.Row="1" Margin="0,64,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" MaxWidth="420">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=ListBoxBoards,Path=HasItems}" Value="True">
                             <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Border.Style>
-            <Border.Triggers>
+            </StackPanel.Style>
+            <StackPanel.Triggers>
                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                     <BeginStoryboard>
                         <Storyboard>
@@ -337,15 +348,13 @@
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
-            </Border.Triggers>
-            <StackPanel>
-                <Border Width="56" Height="56" CornerRadius="28" Background="#26FF0000" HorizontalAlignment="Center">
-                    <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="22" Foreground="#FFFF8A8A" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-                <TextBlock Text="No boards to show yet" Style="{StaticResource HeadingText}" FontSize="18" HorizontalAlignment="Center" Margin="0,16,0,0" />
-                <TextBlock Style="{StaticResource BodyMutedText}" TextAlignment="Center" Margin="0,6,0,0"
-                           Text="Boards load from challengeboards.net. If this stays empty the site may be unreachable, so check back in a few minutes." />
-            </StackPanel>
-        </Border>
+            </StackPanel.Triggers>
+            <Border Width="48" Height="48" CornerRadius="24" Background="#14FFFFFF" HorizontalAlignment="Center">
+                <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="20" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Text="No boards to show yet" Style="{StaticResource HeadingText}" FontSize="17" HorizontalAlignment="Center" Margin="0,14,0,0" />
+            <TextBlock Style="{StaticResource CaptionText}" TextAlignment="Center" Margin="0,6,0,0"
+                       Text="Boards load from challengeboards.net. If this stays empty the site may be unreachable, so check back in a few minutes." />
+        </StackPanel>
     </Grid>
 </UserControl>

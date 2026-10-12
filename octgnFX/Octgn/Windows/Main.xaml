@@ -34,22 +34,20 @@
             <TabItem x:Name="TabItemHistory" Header="Game History" Tag="&#xE81C;" Style="{StaticResource NavRailItem}">
                 <historytab:GameHistoryTab x:Name="TabHistory"/>
             </TabItem>
-            <TabItem x:Name="TabWatch" Header="Twitch.tv" Tag="&#xE714;" Style="{StaticResource NavRailItem}">
-                <watch:WatchList/>
-            </TabItem>
             <TabItem Header="Games Manager" Tag="&#xE8F1;" IsEnabled="true" Style="{StaticResource NavRailItem}">
                 <gameManagement:GameManagement></gameManagement:GameManagement>
             </TabItem>
             <TabItem Header="Challenge Board" Tag="&#xE7C1;" x:Name="ChallengeBoardTab" Style="{StaticResource NavRailItem}">
                 <challengeBoards:ChallengeBoards/>
             </TabItem>
-            <TabItem Header="Profile" Tag="&#xE77B;" IsEnabled="false" x:Name="ProfileTab" Style="{StaticResource NavRailItem}">
+            <TabItem Header="Profile" Tag="&#xE77B;" IsEnabled="false" x:Name="ProfileTab" ToolTip="Sign in to see your profile" ToolTipService.ShowOnDisabled="True" Style="{StaticResource NavRailItem}">
                 <profile:UserProfilePage x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
             <TabControl.Tag>
             <!-- Utilities and connection status live at the foot of the navigation sidebar -->
+            <Border Background="#FF141418" BorderBrush="#FF26262C" BorderThickness="1" CornerRadius="12" Padding="6">
             <StackPanel>
-                <Border Height="1" Background="{DynamicResource HairlineBrush}" Margin="4,0,4,10" />
+                
                 <Menu Style="{StaticResource SidebarMenu}">
                     <MenuItem x:Name="menuOptions" Header="_Options" ToolTip="Options" Tag="&#xE713;" Click="MenuOptionsClick" Style="{StaticResource SidebarMenuItem}"/>
                     <MenuItem Header="_Deck Editor" ToolTip="Deck Editor" Tag="&#xE70F;" Click="MenuDeckEditorClick" Style="{StaticResource SidebarMenuItem}"/>
@@ -62,10 +60,10 @@
                         <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
                         <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Su_bscribe" ToolTip="Subscribe" Tag="&#xE735;" Click="MenuSubscribeClick" Foreground="#FFF5C451" Style="{StaticResource SidebarMenuItem}"/>
-                    <MenuItem Header="Do_nate" ToolTip="Donate" Tag="&#xEB52;" Click="MenuDonateClick" Foreground="#FFFF5A5A" Style="{StaticResource SidebarMenuItem}"/>
+                    <MenuItem Header="Su_bscribe" ToolTip="Subscribe" Tag="&#xE735;" Click="MenuSubscribeClick" Style="{StaticResource SidebarMenuItem}"/>
+                    <MenuItem Header="Do_nate" ToolTip="Donate" Tag="&#xEB52;" Click="MenuDonateClick" Style="{StaticResource SidebarMenuItem}"/>
                 </Menu>
-                <Border Style="{StaticResource StatusPill}" Margin="4,12,4,0" HorizontalAlignment="Stretch">
+                <Border Style="{StaticResource StatusPill}" Margin="2,6,2,0" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0,1,0,0" CornerRadius="0" Height="38" Padding="8,0">
                     <Border.Resources>
                         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter"/>
                     </Border.Resources>
@@ -79,6 +77,7 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
+            </Border>
             </TabControl.Tag>
         </TabControl>
 

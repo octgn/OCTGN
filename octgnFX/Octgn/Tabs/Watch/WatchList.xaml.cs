@@ -150,6 +150,10 @@ namespace Octgn.Tabs.Watch
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+            private void OpenTwitch_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Program.LaunchUrl("https://www.twitch.tv/directory/game/OCTGN");
+        }
     }
 
     public class StreamModel : INotifyPropertyChanged

@@ -484,6 +484,7 @@
     <Compile Include="Utils\FileIcon.cs" />
     <Compile Include="Utils\GridViewSort.cs" />
     <Compile Include="Utils\GridViewStretch.cs" />
+    <Compile Include="Utils\Converters\RelativeDateConverter.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
     <Compile Include="Utils\ShellLink.cs" />
     <Compile Include="Utils\Win32.cs" />

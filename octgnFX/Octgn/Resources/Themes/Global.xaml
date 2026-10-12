@@ -2,6 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Octgn.Controls">
 
+    <LinearGradientBrush x:Key="ProgressAccentBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#FFC80000" Offset="0"/>
+        <GradientStop Color="#FFFF0000" Offset="1"/>
+    </LinearGradientBrush>
+
     <!-- TODO: this doesn't seem to work !? -->
     <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}">
         <!-- Empty style (by default it displays a dashed rectangle -->
@@ -32,7 +37,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
     <Style TargetType="{x:Type ProgressBar}">
-        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ProgressAccentBrush}"/>
         <Setter Property="Background" Value="{DynamicResource LightBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
@@ -63,14 +68,7 @@
                         <!--<Rectangle x:Name="PART_Track"/>-->
                         <Border x:Name="PART_Track" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4" Background="{TemplateBinding Background}" />
                         <Grid x:Name="PART_Indicator" ClipToBounds="True" HorizontalAlignment="Left">
-                            <Rectangle x:Name="Indicator" RadiusX="4" RadiusY="4">
-                                <Rectangle.Fill>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#FFC80000" Offset="0"/>
-                                        <GradientStop Color="#FFFF0000" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Rectangle.Fill>
-                            </Rectangle>
+                            <Rectangle x:Name="Indicator" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Foreground}" />
                             <Rectangle x:Name="Animation" RadiusX="4" RadiusY="4" RenderTransformOrigin="0.5,0.5">
                                 <Rectangle.Fill>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">

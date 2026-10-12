@@ -10,7 +10,7 @@
     <FontFamily x:Key="UiFont">Segoe UI</FontFamily>
     <FontFamily x:Key="DisplayFont">Segoe UI Semibold</FontFamily>
 
-    <!-- App background: deep charcoal with a red ember in the corner and the logo's octagon as a watermark -->
+    <!-- App background: deep charcoal with a faint red ember in the top corner -->
     <DrawingBrush x:Key="AppBackgroundBrush" Stretch="UniformToFill" AlignmentX="Left" AlignmentY="Top"
                   ViewboxUnits="Absolute" Viewbox="0,0,1600,1000">
         <DrawingBrush.Drawing>
@@ -26,25 +26,14 @@
                 <GeometryDrawing>
                     <GeometryDrawing.Brush>
                         <RadialGradientBrush Center="0.1,0" GradientOrigin="0.1,0" RadiusX="0.7" RadiusY="0.9">
-                            <GradientStop Color="#2EFF0000" Offset="0" />
-                            <GradientStop Color="#0AFF0000" Offset="0.5" />
+                            <GradientStop Color="#1CFF0000" Offset="0" />
+                            <GradientStop Color="#06FF0000" Offset="0.5" />
                             <GradientStop Color="#00FF0000" Offset="1" />
                         </RadialGradientBrush>
                     </GeometryDrawing.Brush>
                     <GeometryDrawing.Geometry>
                         <RectangleGeometry Rect="0,0,1600,1000" />
                     </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Octagon rings from the logo, bleeding off the bottom-right corner -->
-                <GeometryDrawing Geometry="M 1293,560 L 1527,560 L 1693,726 L 1693,960 L 1527,1126 L 1293,1126 L 1127,960 L 1127,726 Z">
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#0AFFFFFF" Thickness="46" LineJoin="Round" />
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing Geometry="M 1357,716 L 1463,716 L 1538,791 L 1538,895 L 1463,970 L 1357,970 L 1282,895 L 1282,791 Z">
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#14FF0000" Thickness="30" LineJoin="Round" />
-                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -338,7 +327,7 @@
                                 <ContentControl DockPanel.Dock="Bottom" Focusable="False"
                                                 Content="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
                                 <StackPanel>
-                                    <TextBlock Text="NAVIGATE" Style="{StaticResource EyebrowText}" Margin="16,0,0,10" />
+                                    
                                     <StackPanel x:Name="HeaderPanel" IsItemsHost="True" KeyboardNavigation.TabIndex="1" />
                                 </StackPanel>
                             </DockPanel>
@@ -361,8 +350,7 @@
                 <ControlTemplate TargetType="{x:Type TabItem}">
                     <Grid Height="38" Margin="0,0,0,2" Background="Transparent">
                         <Border x:Name="Bg" CornerRadius="9" Background="{DynamicResource SurfaceHoverBrush}" Opacity="0" />
-                        <Border x:Name="SelectedBg" CornerRadius="9" Background="{StaticResource SelectionGlowBrush}"
-                                BorderBrush="#26FF0000" BorderThickness="1" Opacity="0" />
+                        <Border x:Name="SelectedBg" CornerRadius="9" Background="#26FFFFFF" Opacity="0" />
                         <Border x:Name="Indicator" Width="4" Height="22" HorizontalAlignment="Left" CornerRadius="2"
                                 Background="{DynamicResource AccentBrush}" RenderTransformOrigin="0.5,0.5">
                             <Border.RenderTransform>

@@ -37,7 +37,7 @@
                                         </LinearGradientBrush>
                                     </Border.Background>
                                 </Border>
-                                <Border x:Name="Hover" CornerRadius="12" BorderThickness="1" BorderBrush="#66FF4D4D" Background="#0DFFFFFF" Opacity="0" />
+                                <Border x:Name="Hover" CornerRadius="12" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#0DFFFFFF" Opacity="0" />
                                 <Border x:Name="Selected" CornerRadius="12" BorderThickness="1" BorderBrush="#99FF0000" Background="{StaticResource SelectionGlowBrush}" Opacity="0" />
                                 <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                             </Grid>
@@ -193,6 +193,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!-- Caption: the one small-text style (12.5px, muted) -->
+        <Style x:Key="CaptionText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Effect" Value="{x:Null}" />
+        </Style>
     </UserControl.Resources>
 
     <UserControl.Triggers>
@@ -218,17 +225,31 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel x:Name="HeaderBlock" Grid.Row="0">
-            <StackPanel.RenderTransform>
+        <!-- Page header: title + subtitle left, actions right and centred on the title block -->
+        <Grid x:Name="HeaderBlock" Grid.Row="0" Height="64">
+            <Grid.RenderTransform>
                 <TranslateTransform x:Name="HeaderShift" />
-            </StackPanel.RenderTransform>
-            <TextBlock Text="Twitch.tv" Style="{StaticResource HeadingText}" FontSize="26" />
-            <TextBlock Text="Live OCTGN streams. Double-click a stream to watch it in your browser." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
-        </StackPanel>
+            </Grid.RenderTransform>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                <TextBlock Text="Twitch.tv" FontFamily="{StaticResource DisplayFont}" FontSize="26" Foreground="{DynamicResource TextBrush}" />
+                <TextBlock Text="Live OCTGN streams. Double-click a stream to watch it in your browser." FontSize="13" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0" />
+            </StackPanel>
+            <Border HorizontalAlignment="Right" VerticalAlignment="Center" Margin="16,0,0,0" CornerRadius="12" Padding="10,3" Background="#14FFFFFF" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=ListBoxStreams,Path=HasItems}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding ElementName=ListBoxStreams,Path=Items.Count,StringFormat='{}{0} live'}" Style="{StaticResource CaptionText}" FontWeight="SemiBold" TextWrapping="NoWrap" />
+            </Border>
+        </Grid>
 
         <!-- Streams -->
-        <ListBox x:Name="ListBoxStreams" Grid.Row="1" Margin="0,20,0,0"
+        <ListBox x:Name="ListBoxStreams" Grid.Row="1" Margin="0,24,0,0"
                  Style="{StaticResource WrapListBoxStyle}"
                  Background="Transparent" BorderThickness="0"
                  HorizontalContentAlignment="Stretch"
@@ -247,14 +268,15 @@
                             <ColumnDefinition Width="100*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Preview thumbnail with a LIVE tag -->
-                        <Border Width="112" Height="64" CornerRadius="8" Background="#FF0F0F12" BorderBrush="#26FFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                        <!-- Preview thumbnail with a LIVE tag; the glyph shows through if the image is missing -->
+                        <Border Width="112" Height="64" CornerRadius="8" Background="#FF222228" BorderBrush="#26FFFFFF" BorderThickness="1" VerticalAlignment="Center">
                             <Border.Clip>
                                 <RectangleGeometry Rect="0,0,112,64" RadiusX="8" RadiusY="8" />
                             </Border.Clip>
                             <Grid>
+                                <TextBlock Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="22" Foreground="#FF6B6B78" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <Image Source="{Binding Path=ThumbnailPreviewUrl}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
-                                <Border HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6" CornerRadius="4" Padding="5,1" Background="#F0D41313">
+                                <Border HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6" CornerRadius="6" Padding="5,1" Background="#F0D41313">
                                     <TextBlock Text="LIVE" FontSize="11" FontWeight="Bold" Foreground="White" />
                                 </Border>
                             </Grid>
@@ -264,13 +286,13 @@
                             <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"
                                        TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="38" ToolTip="{Binding Title}" />
                             <DockPanel Margin="0,6,0,0">
-                                <Border DockPanel.Dock="Right" CornerRadius="10" Padding="8,2" Margin="8,0,0,0" Background="#FF26262C" ToolTip="Viewers">
+                                <Border DockPanel.Dock="Right" CornerRadius="11" Padding="8,2" Margin="8,0,0,0" Background="#FF26262C" ToolTip="Viewers">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                        <TextBlock Text="{Binding ViewerCount}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding ViewerCount}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
-                                <TextBlock Text="{Binding ChannelOwner}" FontSize="13" Foreground="#FFFF8A8A" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding ChannelOwner}" Style="{StaticResource CaptionText}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                             </DockPanel>
                         </StackPanel>
                     </Grid>
@@ -282,11 +304,10 @@
                            ViewerCount="5"/>-->
         </ListBox>
 
-        <!-- Empty / offline state: shown whenever the list has no streams (also when Twitch can't be reached) -->
-        <Border x:Name="NoStreamsMessage" Grid.Row="1" Margin="0,20,0,0" Padding="32,40"
-                VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
+        <!-- Empty / offline state: upper third; shown whenever the list has no streams (also when Twitch can't be reached) -->
+        <Border x:Name="NoStreamsMessage" Grid.Row="1" Margin="0,48,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" MaxWidth="520">
             <Border.Style>
-                <Style TargetType="Border" BasedOn="{StaticResource Card}">
+                <Style TargetType="Border">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=ListBoxStreams,Path=HasItems}" Value="True">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -307,12 +328,17 @@
                 </EventTrigger>
             </Border.Triggers>
             <StackPanel>
-                <Border Width="56" Height="56" CornerRadius="28" Background="#26FF0000" HorizontalAlignment="Center">
-                    <TextBlock Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="22" Foreground="#FFFF8A8A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Width="48" Height="48" CornerRadius="24" Background="#14FFFFFF" HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="20" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
-                <TextBlock Text="No one is streaming right now" Style="{StaticResource HeadingText}" FontSize="18" HorizontalAlignment="Center" Margin="0,16,0,0" />
-                <TextBlock Style="{StaticResource BodyMutedText}" TextAlignment="Center" Margin="0,6,0,0"
-                           Text="Live OCTGN streams from Twitch.tv show up here. If you're offline or Twitch can't be reached this list stays empty and checks again every minute." />
+                <TextBlock Text="No one is streaming right now" Style="{StaticResource HeadingText}" FontSize="17" HorizontalAlignment="Center" Margin="0,14,0,0" />
+                <TextBlock Text="We check again every minute." Style="{StaticResource CaptionText}" TextAlignment="Center" TextWrapping="NoWrap" Margin="0,4,0,0" />
+                <Button Click="OpenTwitch_Click" Style="{StaticResource SecondaryButton}" Height="36" HorizontalAlignment="Center" Margin="0,16,0,0" ToolTip="Open the OCTGN directory on Twitch">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE71B;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,1,8,0" />
+                        <TextBlock Text="Open Twitch" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
     </Grid>

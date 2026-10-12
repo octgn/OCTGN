@@ -36,11 +36,11 @@
     <Color x:Key="WhiteColor">#FFFFFFFF</Color>
     <!-- Text drawn on top of the accent-coloured selection -->
     <Color x:Key="SelectedForegroundColor">#FFFFFFFF</Color>
-    <Color x:Key="MutedTextColor">#FF9A9AA3</Color>
+    <Color x:Key="MutedTextColor">#FFA9A9B4</Color>
 
     <SolidColorBrush x:Key="TextBrush" Color="#FFF2F2F4" />
     <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}" />
-    <SolidColorBrush x:Key="FaintTextBrush" Color="#FF6B6B74" />
+    <SolidColorBrush x:Key="FaintTextBrush" Color="#FF8B8B96" />
     <SolidColorBrush x:Key="NormalBrush" Color="{StaticResource MainColor}" />
     <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF34343B" />
     <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}" />

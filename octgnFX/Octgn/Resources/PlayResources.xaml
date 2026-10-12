@@ -6,6 +6,7 @@
     <converters:BooleanToVisibileHiddenConverter x:Key="BooleanToVisibilityHiddenConverter"/>
     <converters:BooleanToFontBoldConverter x:Key="BooleanToFontBoldConverter"></converters:BooleanToFontBoldConverter>
     <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>
+    <converters:RelativeDateConverter x:Key="RelativeDateConverter"/>
     <converters:InvertedBooleanToOpacityConverter x:Key="InvertedBooleanToOpacityConverter"/>
     <converters:BooleanInverterConverter x:Key="BooleanInverterConverter"/>
 </ResourceDictionary>

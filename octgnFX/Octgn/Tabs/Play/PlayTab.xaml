@@ -35,13 +35,13 @@
         <!-- Table name (primary text) with status chips on the right -->
         <DataTemplate x:Key="TableNameTemplate">
             <DockPanel LastChildFill="True" Margin="0,0,10,0" VerticalAlignment="Center">
-                <Border DockPanel.Dock="Right" Margin="8,0,0,0" CornerRadius="4" Padding="6,2" VerticalAlignment="Center"
+                <Border DockPanel.Dock="Right" Margin="8,0,0,0" CornerRadius="11" Padding="7,2" VerticalAlignment="Center"
                         Background="#1AFFFFFF" BorderBrush="#26FFFFFF" BorderThickness="1"
                         ToolTip="Password protected"
                         Visibility="{Binding Path=HasPassword,Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" />
                 </Border>
-                <Border DockPanel.Dock="Right" Margin="8,0,0,0" CornerRadius="4" Padding="6,2" VerticalAlignment="Center"
+                <Border DockPanel.Dock="Right" Margin="8,0,0,0" CornerRadius="11" Padding="8,2" VerticalAlignment="Center"
                         Background="#1AFFB84D" BorderBrush="#40FFB84D" BorderThickness="1"
                         ToolTip="This game is not installed on your machine">
                     <Border.Style>
@@ -54,7 +54,7 @@
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
-                    <TextBlock Text="Not installed" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFC875" />
+                    <TextBlock Text="Not installed" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFC875" />
                 </Border>
                 <TextBlock Text="{Binding Path=Name}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"
                            TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
@@ -62,14 +62,14 @@
         </DataTemplate>
 
         <DataTemplate x:Key="RunTimeTemplate">
-            <TextBlock Text="{Binding Path=RunTime}" FontSize="12.5" Foreground="{DynamicResource MutedTextBrush}"
+            <TextBlock Text="{Binding Path=RunTime}" Style="{StaticResource CaptionText}"
                        VerticalAlignment="Center" Margin="0,0,10,0" />
         </DataTemplate>
 
         <DataTemplate x:Key="SourceTemplate">
-            <Border HorizontalAlignment="Left" VerticalAlignment="Center" CornerRadius="10" Padding="8,1,8,2" Margin="0,0,10,0"
+            <Border HorizontalAlignment="Left" VerticalAlignment="Center" CornerRadius="11" Padding="9,2" Margin="0,0,10,0"
                     Background="#0FFFFFFF" BorderBrush="#26FFFFFF" BorderThickness="1">
-                <TextBlock Text="{Binding Path=GameSource}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" />
+                <TextBlock Text="{Binding Path=GameSource}" Style="{StaticResource CaptionText}" />
             </Border>
         </DataTemplate>
 
@@ -142,23 +142,55 @@
             </Setter>
         </Style>
 
-        <!-- Empty state shown only while the lobby holds no games at all -->
-        <Style x:Key="EmptyStateHost" TargetType="StackPanel">
-            <Setter Property="Visibility" Value="Collapsed" />
+        <!-- One caption style for all small text (12.5px, muted: 4.5:1+ on the card surfaces) -->
+        <Style x:Key="CaptionText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="Effect" Value="{x:Null}" />
+        </Style>
+
+        <!-- Column headers: muted, never faint, 12px -->
+        <Style x:Key="LobbyColumnHeader" TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+        </Style>
+
+        <!-- The two table cards (and their splitter) hide when the lobby holds no games at all -->
+        <Style x:Key="TableCard" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=Me, Path=GameCount}" Value="0">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SplitterGrip" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource HairlineBrush}" />
+            <Setter Property="CornerRadius" Value="2" />
             <Setter Property="IsHitTestVisible" Value="False" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=Me, Path=GameCount}" Value="0">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TableSplitter" TargetType="GridSplitter">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=Me, Path=GameCount}" Value="0">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Single empty-state card, shown only while the lobby holds no games -->
+        <Style x:Key="EmptyLobbyCard" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="Visibility" Value="Collapsed" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ElementName=Me, Path=GameCount}" Value="0">
                     <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
             </Style.Triggers>
-        </Style>
-        <Style x:Key="EmptyHint" TargetType="TextBlock" BasedOn="{StaticResource BodyMutedText}">
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="12.5" />
-            <Setter Property="Margin" Value="0,2,0,0" />
         </Style>
     </UserControl.Resources>
 
@@ -203,12 +235,12 @@
         </Grid.RowDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="8" Panel.ZIndex="10" Margin="-32,-24,-32,-24"></Border>
 
-        <!-- Page header: title + live status on the left, actions on the right -->
-        <DockPanel x:Name="BorderButtons" Grid.Row="0" IsEnabled="{Binding LoadingGame, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}">
+        <!-- Page header (shared template): 64px tall, title + subtitle left, actions right and centred -->
+        <DockPanel x:Name="BorderButtons" Grid.Row="0" Height="64" IsEnabled="{Binding LoadingGame, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}">
             <DockPanel.RenderTransform>
                 <TranslateTransform x:Name="HeaderSlide" />
             </DockPanel.RenderTransform>
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="16,0,0,0">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
                 <Button Click="ButtonKillGame" Style="{StaticResource FlatDarkRedButtonStyle}" Height="36" Margin="0,0,8,0"
                         Visibility="{Binding ElementName=Me,Path=ShowKillGameButton,Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
@@ -239,37 +271,30 @@
                 </Button>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Game Lobby" Style="{StaticResource HeadingText}" FontSize="24" />
-                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                    <!-- Online -->
-                    <Border CornerRadius="11" Padding="9,3" VerticalAlignment="Center"
-                            Background="#1A3DDC84" BorderBrush="#403DDC84" BorderThickness="1"
-                            Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="7" Height="7" Fill="#FF3DDC84" VerticalAlignment="Center" Margin="0,0,7,0" />
-                            <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#FF8EEDB6" VerticalAlignment="Center">
-                                <Run Text="Online" /><Run Text=" · " /><Run Text="{Binding GameCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" /><Run Text=" listed" />
-                            </TextBlock>
-                        </StackPanel>
-                    </Border>
-                    <!-- Offline -->
-                    <Border CornerRadius="11" Padding="9,3" VerticalAlignment="Center"
-                            Background="#1AFFB84D" BorderBrush="#40FFB84D" BorderThickness="1"
-                            Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="7" Height="7" Fill="#FFFFB84D" VerticalAlignment="Center" Margin="0,0,7,0" />
-                            <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#FFFFC875" VerticalAlignment="Center">
-                                <Run Text="Offline" /><Run Text=" · " /><Run Text="{Binding GameCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" /><Run Text=" listed" />
-                            </TextBlock>
-                        </StackPanel>
-                    </Border>
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding ElementName=Me, Path=HideUninstalledGames}" Margin="16,0,0,0"
+                <TextBlock Text="Game Lobby" Style="{StaticResource HeadingText}" FontSize="26" />
+                <!-- Subtitle: neutral connection status, then the filter -->
+                <StackPanel Orientation="Horizontal" Height="20" Margin="0,4,0,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                                Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Ellipse Width="7" Height="7" Fill="#FF3DDC84" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Style="{StaticResource BodyMutedText}" TextWrapping="NoWrap" VerticalAlignment="Center">
+                            <Run Text="Online" /><Run Text=" · " /><Run Text="{Binding GameCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" />
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                                Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                        <Ellipse Width="7" Height="7" Fill="#FF6B6B75" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Text="Offline" Style="{StaticResource BodyMutedText}" TextWrapping="NoWrap" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Rectangle Width="1" Height="14" Fill="{DynamicResource HairlineBrush}" VerticalAlignment="Center" Margin="14,0" />
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding ElementName=Me, Path=HideUninstalledGames}" Margin="0"
                               Foreground="{DynamicResource MutedTextBrush}" FontSize="13" Content="Only show installed games" />
                 </StackPanel>
             </StackPanel>
         </DockPanel>
 
-        <ProgressBar Grid.Row="1" Height="2" Opacity="0.55" Margin="0,12,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0">
+        <!-- 2px activity line; with its bottom margin it fills the 24px gap under the header -->
+        <ProgressBar Grid.Row="1" Height="2" Margin="0,0,0,22" VerticalAlignment="Top" BorderThickness="0" Background="#FF1A1A1E" Foreground="#FF4A4A54" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0">
             <ProgressBar.Style>
                 <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}">
                     <Style.Resources>
@@ -312,26 +337,56 @@
             </ProgressBar.Style>
         </ProgressBar>
 
-        <!-- Shown until the user signs in -->
-        <Border x:Name="OfflineBanner" Grid.Row="2" Margin="0,12,0,0" Background="#12FFB84D" BorderBrush="#33FFB84D" BorderThickness="1" CornerRadius="10" Padding="12,10"
+        <!-- Shown until the user signs in: the one place the offline state is explained -->
+        <Border x:Name="OfflineBanner" Grid.Row="2" Margin="0,0,0,12" Background="#0FFFFFFF" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="1" CornerRadius="12" Padding="14,10"
                 Visibility="{Binding ElementName=Me, Path=IsLoggedIn, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
             <Border.RenderTransform>
                 <TranslateTransform x:Name="BannerSlide" />
             </Border.RenderTransform>
             <DockPanel>
-                <Border DockPanel.Dock="Left" Width="28" Height="28" CornerRadius="14" Background="#26FFB84D" Margin="0,0,12,0" VerticalAlignment="Center">
+                <Border DockPanel.Dock="Left" Width="28" Height="28" CornerRadius="14" Background="#1AFFB84D" Margin="0,0,12,0" VerticalAlignment="Center">
                     <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="#FFFFC875" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="You're browsing offline" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextBrush}" />
-                    <TextBlock Style="{StaticResource BodyMutedText}" Margin="0,1,0,0"
+                    <TextBlock Style="{StaticResource CaptionText}" Margin="0,1,0,0" TextWrapping="Wrap"
                                Text="Only games on your local network are listed. Sign in on the Home tab to see online games." />
                 </StackPanel>
             </DockPanel>
         </Border>
 
+        <!-- Empty state: replaces both tables while the lobby holds no games -->
+        <Border x:Name="EmptyLobbyCard" Grid.Row="4" Grid.RowSpan="3" Style="{StaticResource EmptyLobbyCard}"
+                HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Padding="40,32">
+            <StackPanel HorizontalAlignment="Center">
+                <Border Width="56" Height="56" CornerRadius="28" Background="#0FFFFFFF" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="1" HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="24" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="No games in the lobby right now" FontFamily="{StaticResource DisplayFont}" FontSize="18" Foreground="{DynamicResource TextBrush}"
+                           HorizontalAlignment="Center" TextAlignment="Center" Margin="0,16,0,0" />
+                <TextBlock Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,6,0,0"
+                           Text="Host a game and others can join you, or connect to a friend's game directly." />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,24,0,0"
+                            IsEnabled="{Binding LoadingGame, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}">
+                    <Button Click="ButtonHostClick" Style="{StaticResource PrimaryButton}" Height="36" Padding="18,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
+                            <TextBlock Text="Host a game" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Click="ButtonJoinOfflineGame" Style="{StaticResource SecondaryButton}" Height="36" Padding="18,0"
+                            ToolTip="Connect to a game directly">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE71B;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" Margin="0,1,8,0" />
+                            <TextBlock Text="Connect to a game" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
         <!-- Open tables -->
-        <Border x:Name="OpenTablesCard" Grid.Row="4" Style="{StaticResource Card}" Padding="0" Margin="0,12,0,0">
+        <Border x:Name="OpenTablesCard" Grid.Row="4" Style="{StaticResource TableCard}" Padding="0">
             <Border.RenderTransform>
                 <TranslateTransform x:Name="OpenSlide" />
             </Border.RenderTransform>
@@ -341,9 +396,9 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Margin="16,12,16,4">
-                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBlock Text="OPEN TABLES" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
-                    <TextBlock Text="Waiting for players. Double-click to join." FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                    <TextBlock Text="Waiting for players. Double-click to join." Style="{StaticResource CaptionText}" VerticalAlignment="Center" Margin="12,0,0,0" />
                 </StackPanel>
                 <ListView x:Name="HostingGamesList" Grid.Row="1" utils:GridViewStretch.StretchColumn="3"
                           SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
@@ -376,7 +431,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
-                        <GridView>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource LobbyColumnHeader}">
                             <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="44"></GridViewColumn>
                             <GridViewColumn Header="User"
                                             utils:GridViewSort.PropertyName="UserName"
@@ -396,22 +451,15 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <StackPanel Grid.Row="1" Style="{StaticResource EmptyStateHost}" Margin="0,38,0,0">
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#14FF0000" BorderBrush="#33FF0000" BorderThickness="1" HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="18" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <TextBlock Text="No open tables right now" FontFamily="{StaticResource DisplayFont}" FontSize="14" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                    <TextBlock Style="{StaticResource EmptyHint}" Text="Host a game and others can join you." />
-                </StackPanel>
             </Grid>
         </Border>
 
-        <GridSplitter Grid.Row="5" Height="12" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Transparent"
+        <GridSplitter Grid.Row="5" Style="{StaticResource TableSplitter}" Height="12" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Transparent"
                       ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Cursor="SizeNS" />
-        <Border Grid.Row="5" Width="36" Height="4" CornerRadius="2" Background="#FF2E2E35" IsHitTestVisible="False" VerticalAlignment="Center" />
+        <Border Grid.Row="5" Style="{StaticResource SplitterGrip}" Width="36" Height="4" />
 
         <!-- Games in progress -->
-        <Border x:Name="InProgressCard" Grid.Row="6" Style="{StaticResource Card}" Padding="0">
+        <Border x:Name="InProgressCard" Grid.Row="6" Style="{StaticResource TableCard}" Padding="0">
             <Border.RenderTransform>
                 <TranslateTransform x:Name="ProgressSlide" />
             </Border.RenderTransform>
@@ -421,9 +469,9 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Margin="16,12,16,4">
-                    <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBlock Text="IN PROGRESS" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
-                    <TextBlock Text="Already started. Double-click to spectate." FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                    <TextBlock Text="Already started. Double-click to spectate." Style="{StaticResource CaptionText}" VerticalAlignment="Center" Margin="12,0,0,0" />
                 </StackPanel>
                 <ListView x:Name="SpectatingGamesList" Grid.Row="1" utils:GridViewStretch.StretchColumn="3"
                           SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
@@ -433,7 +481,7 @@
                           Margin="0,0,0,6"
                           ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PlayTab}}}" >
                     <ListView.View>
-                        <GridView>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource LobbyColumnHeader}">
                             <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="44"></GridViewColumn>
                             <GridViewColumn Header="User"
                                             utils:GridViewSort.PropertyName="UserName"
@@ -476,13 +524,6 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
-                <StackPanel Grid.Row="1" Style="{StaticResource EmptyStateHost}" Margin="0,38,0,0">
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#14FF0000" BorderBrush="#33FF0000" BorderThickness="1" HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="18" Foreground="#FFFF6B6B" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <TextBlock Text="Nothing to spectate yet" FontFamily="{StaticResource DisplayFont}" FontSize="14" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                    <TextBlock Style="{StaticResource EmptyHint}" Text="Games in progress will appear here." />
-                </StackPanel>
             </Grid>
         </Border>
     </Grid>
