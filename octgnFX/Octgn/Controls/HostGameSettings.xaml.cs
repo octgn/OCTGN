@@ -87,9 +87,13 @@ namespace Octgn.Controls
             {
                 lastHostedGameType = GameManager.Get().Games.First().Id;
             }
-            TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
+            var userName = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.User == null
                 || Program.LobbyClient.User.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.User.DisplayName;
+            // A fresh install can hand back an empty or literal "null" nickname; offer a random one instead
+            if (string.IsNullOrWhiteSpace(userName) || string.Equals(userName, "null", StringComparison.OrdinalIgnoreCase))
+                userName = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
+            TextBoxUserName.Text = userName;
 			Program.OnOptionsChanged += ProgramOnOptionsChanged;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
             if(Program.LobbyClient.IsConnected)
