@@ -8,7 +8,7 @@
     <Border x:Name="BorderHostGame" MinHeight="200" Visibility="Visible" Padding="0"
             Style="{StaticResource Panel}" CornerRadius="14" ClipToBounds="True"
             BorderThickness="1" BorderBrush="#FF2A2A31"
-            Background="#F00C0C0E">
+            Background="#FF0C0C0E">
         <Border.Effect>
             <DropShadowEffect BlurRadius="36" ShadowDepth="8" Direction="270" Opacity="0.6" Color="Black"/>
         </Border.Effect>
@@ -25,7 +25,25 @@
                     </controls:GameSelector.Effect>
                 </controls:GameSelector>
             </Border>
-            <Border VerticalAlignment="Top"
+            <!-- Shown when no games are installed yet -->
+            <StackPanel Grid.Row="1" Margin="320,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems, ElementName=ComboBoxGame}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Grid Width="84" Height="84" HorizontalAlignment="Center">
+                    <Ellipse Fill="#14FF0000" Stroke="#33FF0000" StrokeThickness="1" />
+                    <TextBlock Text="&#xE7FC;" FontFamily="{StaticResource IconFont}" FontSize="34" Foreground="#FFFF5A5A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+                <TextBlock Text="No games installed yet" FontFamily="{StaticResource DisplayFont}" FontSize="18" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,18,0,4" />
+                <TextBlock Text="Install a game from the Games Manager, then come back to host a table." Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" TextAlignment="Center" MaxWidth="320" />
+            </StackPanel>            <Border VerticalAlignment="Top"
                     Name="ErrorMessageBorder"
                     Grid.Row="1"
                     Margin="200 10 5 5"

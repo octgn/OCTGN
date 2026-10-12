@@ -16,123 +16,97 @@
                 <TextBlock x:Name="LabelError" Grid.ColumnSpan="4" Visibility="Collapsed" TextWrapping="Wrap"
                            Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5"/>
 
-                <TabControl x:Name="TabControlOptions" Grid.Row="1" Grid.ColumnSpan="4" Grid.IsSharedSizeScope="True">
-                    <TabItem x:Name="TabMain" Header="Basic Options" Background="Transparent">
+                <TabControl x:Name="TabControlOptions" Grid.Row="1" Grid.ColumnSpan="4" Grid.IsSharedSizeScope="True" Style="{StaticResource SettingsTabControl}">
+                    <TabItem x:Name="TabMain" Header="Basic Options" Style="{StaticResource SettingsTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
                             </Grid.RowDefinitions>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="600" Padding="0,0,6,0">
+                            <StackPanel Margin="0,14,0,6">
+                                <TextBlock Text="STORAGE" Style="{StaticResource EyebrowText}" Margin="2,0,0,8" />
+                                <Border Style="{StaticResource Card}" Padding="16" CornerRadius="10" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource SettingLabel}">Data directory <Run Foreground="#FFFF4D4D" Text="*"/></TextBlock>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="TextBoxDataDirectory" Height="36" Padding="12,0" />
+                                            <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse" Grid.Column="1"
+                                                    Style="{StaticResource SecondaryButton}" Height="36" Margin="8,0,0,0" Padding="16,0" />
+                                        </Grid>
+                                        <TextBlock Style="{StaticResource SettingLabel}" Margin="1,14,0,6">Image directory</TextBlock>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="TextBoxImageDirectory" Height="36" Padding="12,0" />
+                                            <Button x:Name="ButtonPickImageDirectory" Click="ButtonPickImageDirectoryClick" Content="Browse" Grid.Column="1"
+                                                    Style="{StaticResource SecondaryButton}" Height="36" Margin="8,0,0,0" Padding="16,0" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
 
-                            <StackPanel Grid.ColumnSpan="4" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,10">
-                                <Grid Height="10"/>
+                                <TextBlock Text="APPEARANCE" Style="{StaticResource EyebrowText}" Margin="2,0,0,8" />
+                                <Border Style="{StaticResource Card}" Padding="16,14" CornerRadius="10" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource SettingLabel}">Window skin <Run Foreground="#FFF5C451" Text="$"/></TextBlock>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="TextBoxWindowSkin" Height="36" Padding="12,0" />
+                                            <Button x:Name="ButtonPickWindowSkin" Click="ButtonPickWindowSkinClick" Content="Browse" Grid.Column="1"
+                                                    Style="{StaticResource SecondaryButton}" Height="36" Margin="8,0,0,0" Padding="16,0" />
+                                        </Grid>
+                                        <CheckBox x:Name="CheckBoxTileWindowSkin" Margin="0,12,0,5" Content="Tile window skin" />
+                                        <TextBlock Style="{StaticResource SettingLabel}" Margin="1,12,0,6">Window border <Run Foreground="#FFFF4D4D" Text="*"/></TextBlock>
+                                        <ComboBox x:Name="TextBoxWindowBorderDecorator" Height="36">
+                                            <ComboBox.Items>
+                                                <ComboBoxItem Tag="Native">Default operating system border</ComboBoxItem>
+                                                <ComboBoxItem Tag="Octgn">Octgn border</ComboBoxItem>
+                                            </ComboBox.Items>
+                                        </ComboBox>
+                                        <CheckBox x:Name="CheckBoxUseWindowTransparency" Margin="0,14,0,5">
+                                            <TextBlock>Use window transparency <Run Foreground="{DynamicResource FaintTextBrush}" Text="(may decrease performance)"/> <Run Foreground="#FFFF4D4D" Text="*"/></TextBlock>
+                                        </CheckBox>
+                                        <CheckBox x:Name="CheckBoxUseHardwareRendering">
+                                            <TextBlock>Use hardware rendering <Run Foreground="{DynamicResource FaintTextBrush}" Text="(may help or hurt performance)"/> <Run Foreground="#FFFF4D4D" Text="*"/></TextBlock>
+                                        </CheckBox>
+                                    </StackPanel>
+                                </Border>
 
-                                <TextBlock Foreground="White"> Data Directory <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="12*" />
-                                        <ColumnDefinition Width="203*"/>
-                                        <ColumnDefinition Width="10"/>
-                                        <ColumnDefinition Width="70"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0" Margin="0,0,1,0" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
-                                    <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse..."
-                                            Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"/>
-                                </Grid>
-
-                                <Grid Height="5"/>
-
-                                <TextBlock Foreground="White"> Image Directory
-                                </TextBlock>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="10"/>
-                                        <ColumnDefinition Width="70"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="TextBoxImageDirectory" Grid.Column="0" Margin="0,0,1,0" VerticalContentAlignment="Center"/>
-                                    <Button x:Name="ButtonPickImageDirectory" Click="ButtonPickImageDirectoryClick" Content="Browse..."
-                                            Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"/>
-                                </Grid>
-
-                                <Grid Height="5"/>
-
-                                <TextBlock Foreground="White" VerticalAlignment="Center"> Window Skin
-                                    <Bold Foreground="#FFFFCC00">$</Bold>
-                                </TextBlock>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="10"/>
-                                        <ColumnDefinition Width="70"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0" VerticalContentAlignment="Center"/>
-                                    <Button x:Name="ButtonPickWindowSkin" Click="ButtonPickWindowSkinClick" Content="Browse..."
-                                            Grid.Column="1" Grid.ColumnSpan="2"  Style="{StaticResource FlatDarkButtonStyle}"/>
-                                </Grid>
-
-                                <Grid Margin="0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Foreground="White">Window border decorator: <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                                    <ComboBox x:Name="TextBoxWindowBorderDecorator" Grid.Column="1" VerticalContentAlignment="Center">
-                                        <ComboBox.Items>
-                                            <ComboBoxItem Tag="Native">Default Operating System Border</ComboBoxItem>
-                                            <ComboBoxItem Tag="Octgn">Octgn Border</ComboBoxItem>
-                                        </ComboBox.Items>
-                                    </ComboBox>
-
-                                </Grid>
-
-                                <CheckBox x:Name="CheckBoxTileWindowSkin">
-                                    <TextBlock Foreground="White">Tile Window Skin</TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxUseWindowTransparency">
-                                    <TextBlock Foreground="White">Use Window Transparency (May Decrease Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxUseHardwareRendering">
-                                    <TextBlock Foreground="White">Use Hardware Rendering (May Decrease/Increase Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxUseInstantSearch">
-                                    <TextBlock Foreground="White">Use Instant Style Searching (Deck Editor Only)</TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableGameSounds">
-                                    <TextBlock Foreground="White">Enable Game Sounds</TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <CheckBox x:Name="CheckBoxEnableGameFonts">
-                                    <TextBlock Foreground="White">Enable Game Fonts</TextBlock>
-                                </CheckBox>
-
-                                <Grid Height="6"/>
-                                <TextBlock Foreground="White">Zoom Behavior on Cards When Original Image is Available</TextBlock>
-                                <ComboBox x:Name="ComboBoxZoomOptions">
-                                    <ComboBoxItem Tag="1">Display Original</ComboBoxItem>
-                                    <ComboBoxItem Tag="2">Display Original and Proxy</ComboBoxItem>
-                                    <ComboBoxItem Tag="3">Display Proxy when holding CTRL</ComboBoxItem>
-                                </ComboBox>
-
-                                <Grid Height="6"/>
-                                <TextBlock Foreground="White">Notification Sound For Users Joining Game Lobby</TextBlock>
-                                <ComboBox x:Name="ComboBoxJoinSound">
-                                    <ComboBoxItem Tag="1">Ding Dong</ComboBoxItem>
-                                    <ComboBoxItem Tag="2">Knock Knock</ComboBoxItem>
-                                    <ComboBoxItem Tag="3">None</ComboBoxItem>
-                                </ComboBox>
+                                <TextBlock Text="GAMEPLAY" Style="{StaticResource EyebrowText}" Margin="2,0,0,8" />
+                                <Border Style="{StaticResource Card}" Padding="16,14" CornerRadius="10">
+                                    <StackPanel>
+                                        <CheckBox x:Name="CheckBoxUseInstantSearch" Margin="0,0,0,5">
+                                            <TextBlock>Use instant style searching <Run Foreground="{DynamicResource FaintTextBrush}" Text="(deck editor only)"/></TextBlock>
+                                        </CheckBox>
+                                        <CheckBox x:Name="CheckBoxEnableGameSounds" Content="Enable game sounds" />
+                                        <CheckBox x:Name="CheckBoxEnableGameFonts" Content="Enable game fonts" />
+                                        <TextBlock Style="{StaticResource SettingLabel}" Margin="1,14,0,6">When an original card image is available, zoom shows</TextBlock>
+                                        <ComboBox x:Name="ComboBoxZoomOptions" Height="36">
+                                            <ComboBoxItem Tag="1">Display original</ComboBoxItem>
+                                            <ComboBoxItem Tag="2">Display original and proxy</ComboBoxItem>
+                                            <ComboBoxItem Tag="3">Display proxy when holding CTRL</ComboBoxItem>
+                                        </ComboBox>
+                                        <TextBlock Style="{StaticResource SettingLabel}" Margin="1,14,0,6">Sound when someone joins your game lobby</TextBlock>
+                                        <ComboBox x:Name="ComboBoxJoinSound" Height="36">
+                                            <ComboBoxItem Tag="1">Ding dong</ComboBoxItem>
+                                            <ComboBoxItem Tag="2">Knock knock</ComboBoxItem>
+                                            <ComboBoxItem Tag="3">None</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
+                            </ScrollViewer>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="TabChatOptions" Header="Chat Options" Background="Transparent">
+                    <TabItem x:Name="TabChatOptions" Header="Chat Options" Style="{StaticResource SettingsTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
@@ -219,13 +193,13 @@
                             </StackPanel>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="TabAdvancedOptions" Header="Advanced Options" Background="Transparent" >
+                    <TabItem x:Name="TabAdvancedOptions" Header="Advanced Options" Style="{StaticResource SettingsTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition SharedSizeGroup="TabsHeight"/>
                             </Grid.RowDefinitions>
+                            <Border Style="{StaticResource Card}" Padding="16,14" CornerRadius="10" Margin="0,16,0,0" VerticalAlignment="Top">
                             <StackPanel>
-                                <Grid Height="6"/>
                                 <CheckBox x:Name="CheckBoxEnableGameSandboxing">
                                     <TextBlock Foreground="White">Enable Game Sandboxing (Recommended for Security)</TextBlock>
                                 </CheckBox>
@@ -246,32 +220,33 @@
                                     </TextBlock>
                                 </CheckBox>
                                 <Grid Height="6"/>
-                                <TextBlock Foreground="White">Card Pulsing Animation Style (when a card is moved or changed)</TextBlock>
-                                <ComboBox x:Name="ComboBoxCardMoveNotification">
+                                <TextBlock Style="{StaticResource SettingLabel}" Margin="1,14,0,6">Card pulsing animation (when a card is moved or changed)</TextBlock>
+                                <ComboBox x:Name="ComboBoxCardMoveNotification" Height="36">
                                     <ComboBoxItem Tag="1">No Animation</ComboBoxItem>
                                     <ComboBoxItem Tag="2">Normal Animation</ComboBoxItem>
                                     <ComboBoxItem Tag="3">Minimal Animation</ComboBoxItem>
                                 </ComboBox>
                                 <Grid Height="6"/>
-                                <TextBlock Foreground="White">Default Card Density in Expanded Piles (minimum % of card to show)</TextBlock>
+                                <TextBlock Style="{StaticResource SettingLabel}" Margin="1,14,0,6">Default card density in expanded piles (minimum % of card to show)</TextBlock>
                                 <Slider x:Name="HandDensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1"
                                         LargeChange="10" SmallChange="1" TickFrequency="10" AutoToolTipPlacement="BottomRight"/>
                             </StackPanel>
+                            </Border>
                         </Grid>
                     </TabItem>
                 </TabControl>
                 <Grid Height="10"/>
-                <TextBlock VerticalAlignment="Center" Foreground="White">
-                    <Bold Foreground="#FFFFCC00">$</Bold> Subscriber Only Feature.
+                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource MutedTextBrush}" FontSize="12">
+                    <Bold Foreground="#FFF5C451">$</Bold> Subscriber only
                 </TextBlock>
-                <TextBlock VerticalAlignment="Center" Foreground="White">
-                    <Bold Foreground="#FFFF0000">*</Bold> Requires restart to take effect.
+                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource MutedTextBrush}" FontSize="12">
+                    <Bold Foreground="#FFFF4D4D">*</Bold> Requires a restart to take effect
                 </TextBlock>
-                <StackPanel Orientation="Horizontal" >
-                    <Button x:Name="ButtonSave" Click="ButtonSaveClick" Content="Save" Margin="295,0,0,0"
-                    Height="35" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource FlatDarkGreenButtonStyle}"/>
-                    <Button x:Name="ButtonCancel" Click="ButtonCancelClick" Content="Cancel" Margin="2,0,0,0"
-                    Height="35" Width="100" HorizontalAlignment="Right" Style="{StaticResource FlatDarkButtonStyle}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                    <Button x:Name="ButtonCancel" Click="ButtonCancelClick" Content="Cancel" Margin="0,0,10,0"
+                    Height="40" Width="110" Style="{StaticResource SecondaryButton}"/>
+                    <Button x:Name="ButtonSave" Click="ButtonSaveClick" Content="Save changes"
+                    Height="40" Width="140" Style="{StaticResource PrimaryButton}"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

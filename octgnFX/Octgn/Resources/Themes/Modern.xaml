@@ -921,4 +921,116 @@
         </Setter>
     </Style>
 
+    <!-- ===== CheckBox: rounded box that fills red when checked ===== -->
+    <Style TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Margin" Value="0,5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <Grid Width="20" Height="20" VerticalAlignment="Center">
+                            <Border x:Name="Box" CornerRadius="6" Background="#FF111114" BorderBrush="#FF4A4A53" BorderThickness="1" />
+                            <Border x:Name="Fill" CornerRadius="6" Background="{StaticResource AccentGradientBrush}" Opacity="0" />
+                            <Path x:Name="Tick" Data="M5,10.5 L8.5,14 L15,6.5" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round" StrokeLineJoin="Round" Opacity="0" />
+                            <Rectangle x:Name="Dash" Width="8" Height="2" RadiusX="1" RadiusY="1" Fill="White" Opacity="0" />
+                        </Grid>
+                        <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="#FF7A7A85" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Fill" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="Tick" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Fill" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="Tick" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="Fill" Property="Opacity" Value="1" />
+                            <Setter TargetName="Dash" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Settings-style tabs: text with a red underline ===== -->
+    <Style x:Key="SettingsTabControl" TargetType="{x:Type TabControl}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="#FF26262C" BorderThickness="0,0,0,1">
+                            <StackPanel x:Name="HeaderPanel" IsItemsHost="True" Orientation="Horizontal" KeyboardNavigation.TabIndex="1" />
+                        </Border>
+                        <ContentPresenter x:Name="PART_SelectedContentHost" Grid.Row="1" ContentSource="SelectedContent" KeyboardNavigation.TabIndex="2" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="SettingsTabItem" TargetType="{x:Type TabItem}">
+        <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Grid Background="Transparent" Margin="0,0,22,0">
+                        <ContentPresenter x:Name="Header" ContentSource="Header" Margin="0,8,0,12" RecognizesAccessKey="True" />
+                        <Border x:Name="Underline" Height="2" VerticalAlignment="Bottom" Background="{DynamicResource AccentBrush}" Opacity="0" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                            <Setter TargetName="Underline" Property="Opacity" Value="1" />
+                            <Setter TargetName="Header" Property="TextElement.FontWeight" Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SettingLabel" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+        <Setter Property="Margin" Value="1,0,0,6" />
+        <Setter Property="Effect" Value="{x:Null}" />
+    </Style>
+
 </ResourceDictionary>
