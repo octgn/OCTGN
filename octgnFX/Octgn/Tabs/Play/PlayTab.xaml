@@ -81,7 +81,7 @@
             </StackPanel>
         </DockPanel>
 
-        <ProgressBar Grid.Row="1" Height="3" Margin="0,14,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0">
+        <ProgressBar Grid.Row="1" Height="2" Opacity="0.55" Margin="0,14,0,0" BorderThickness="0" Background="#FF1A1A1E" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="200" Minimum="0">
             <ProgressBar.Style>
                 <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}">
                     <Style.Resources>
@@ -151,7 +151,7 @@
                     <TextBlock Text="OPEN TABLES" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
                     <TextBlock Text="  ·  waiting for players, double-click to join" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
                 </StackPanel>
-                <ListView x:Name="HostingGamesList" Grid.Row="1"
+                <ListView x:Name="HostingGamesList" Grid.Row="1" utils:GridViewStretch.StretchColumn="4"
                           SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
                           AlternationCount="1"
                           SelectionMode="Single"
@@ -195,14 +195,14 @@
                                             DisplayMemberBinding="{Binding Path=Name}" Width="300"></GridViewColumn>
                             <GridViewColumn Header="RunTime"
                                             utils:GridViewSort.PropertyName="StartTime"
-                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="70"></GridViewColumn>
+                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="96"></GridViewColumn>
                             <GridViewColumn Header="Source"
                                             utils:GridViewSort.PropertyName="Source"
-                                            DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
+                                            DisplayMemberBinding="{Binding Path=GameSource}" Width="84"></GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,8,0,0">
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,40,0,0">
                     
                     <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="26" Foreground="#FF3A3A42" HorizontalAlignment="Center" />
                     <TextBlock Text="No open tables right now" FontFamily="{StaticResource DisplayFont}" FontSize="14" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" Margin="0,8,0,2" />
@@ -227,7 +227,7 @@
                     <TextBlock Text="IN PROGRESS" Style="{StaticResource EyebrowText}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" />
                     <TextBlock Text="  ·  double-click to spectate" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
                 </StackPanel>
-                <ListView x:Name="SpectatingGamesList" Grid.Row="1"
+                <ListView x:Name="SpectatingGamesList" Grid.Row="1" utils:GridViewStretch.StretchColumn="4"
                           SelectedValue="{Binding ElementName=Me, Path=SelectedGame}"
                           AlternationCount="1"
                           SelectionMode="Single"
@@ -248,10 +248,10 @@
                                             DisplayMemberBinding="{Binding Path=Name}" Width="300"></GridViewColumn>
                             <GridViewColumn Header="RunTime"
                                             utils:GridViewSort.PropertyName="StartTime"
-                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="70"></GridViewColumn>
+                                            DisplayMemberBinding="{Binding Path=RunTime}" Width="96"></GridViewColumn>
                             <GridViewColumn Header="Source"
                                             utils:GridViewSort.PropertyName="Source"
-                                            DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
+                                            DisplayMemberBinding="{Binding Path=GameSource}" Width="84"></GridViewColumn>
                         </GridView>
                     </ListView.View>
                     <ListView.ItemContainerStyle>
@@ -278,7 +278,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,8,0,0">
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,40,0,0">
                     
                     <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="26" Foreground="#FF3A3A42" HorizontalAlignment="Center" />
                     <TextBlock Text="Nothing to spectate yet" FontFamily="{StaticResource DisplayFont}" FontSize="14" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" Margin="0,8,0,2" />

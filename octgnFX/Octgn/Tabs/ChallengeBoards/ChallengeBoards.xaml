@@ -53,47 +53,48 @@
             <TextBlock Text="Challenge Board" Style="{StaticResource HeadingText}" FontSize="26" />
             <TextBlock Text="Community ladders and leagues. See who's leading and how far each board has run." Style="{StaticResource BodyMutedText}" Margin="0,4,0,0" />
         </StackPanel>
-        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="6" Margin="0,18,0,0">
-            <ListBox x:Name="ListBoxBoards"
+        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="14,14,6,6" Margin="0,18,0,0">
+            <ListBox x:Name="ListBoxBoards" Style="{StaticResource WrapListBoxStyle}"
                      Background="Transparent" BorderThickness="0"
-                     HorizontalContentAlignment="Stretch"
-                     HorizontalAlignment="Stretch"
-                     ItemContainerStyle="{StaticResource CardListItem}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding Boards}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource CardListItem}">
+                        <Setter Property="Width" Value="316" />
+                        <Setter Property="Margin" Value="0,0,12,12" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="challengeBoards:BoardViewModel">
-                        <Grid Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" MinHeight="52" Background="Transparent">
+                        <Border CornerRadius="12" Background="#FF1C1C21" BorderBrush="#FF2C2C33" BorderThickness="1" Padding="14,12">
+                        <Grid DataContext="{Binding}" Background="Transparent">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="52"/>
-                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="14"/>
                                 <ColumnDefinition Width="100*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Width="52" Height="52"
                                          Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
                             <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
                                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                     <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                    <TextBlock Text="{Binding Owner.Name}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
-                                    <TextBlock Text="·" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="10,0" />
-                                    <TextBlock Text="&#xE787;" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" Margin="0,1,6,0" />
-                                    <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Owner.Name}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="120" />
                                 </StackPanel>
+                                <TextBlock Text="{Binding End, StringFormat='Ends {0:MMM d, yyyy}'}" FontSize="12" Foreground="{DynamicResource FaintTextBrush}" Margin="0,2,0,0" />
                             </StackPanel>
-                            <Button Grid.Column="3" Style="{StaticResource SecondaryButton}" Height="34" VerticalAlignment="Center" Click="ButtonBase_OnClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="View board" VerticalAlignment="Center" />
-                                    <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="10" VerticalAlignment="Center" Margin="8,1,0,0" />
-                                </StackPanel>
+                            <Button Grid.Column="3" Style="{StaticResource GhostButton}" Width="34" Height="34" MinHeight="0" Padding="0" VerticalAlignment="Center"
+                                    ToolTip="View board" Click="ButtonBase_OnClick">
+                                <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="12" />
                             </Button>
                         </Grid>
+                        </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </Border>
-        <StackPanel Grid.Row="1" Margin="0,18,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
+        </Border>        <StackPanel Grid.Row="1" Margin="0,18,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Border x:Name="NoBoardsMessage" Style="{StaticResource Card}" Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BodyMutedText}" HorizontalAlignment="Center" Text="There don't seem to be any boards right now, check back later." />
             </Border>

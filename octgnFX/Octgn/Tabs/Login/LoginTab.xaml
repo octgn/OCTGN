@@ -34,7 +34,8 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid x:Name="MainGrid" Margin="44,28,44,28" MaxWidth="1180">
+    <Viewbox Stretch="Uniform" StretchDirection="Both" MaxWidth="1500" MaxHeight="960" Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Grid x:Name="MainGrid" Width="820" Height="470">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MaxWidth="460" />
             <ColumnDefinition Width="48" />
@@ -178,4 +179,5 @@
             </Border>
         </Grid>
     </Grid>
+    </Viewbox>
 </UserControl>
