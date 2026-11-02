@@ -27,7 +27,7 @@
     {
         private static readonly HashSet<string> ReservedPropertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "name", "id", "alternate", "size", "type", "set"
+            "name", "id", "alternate", "size", "set"
         };
 
         internal DirectoryInfo Directory { get; set; }
