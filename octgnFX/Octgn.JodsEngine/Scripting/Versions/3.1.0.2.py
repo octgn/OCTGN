@@ -468,9 +468,17 @@ class Table(Group):
 		ids = _api.CreateOnTable(model, x, y, persist, quantity,facedown)
 		#if ids == None or ids == []: return None
 		if quantity != 1:
-			return [Card(id) for id in ids]
+			cards = [Card(id) for id in ids]
+			# Clear target states to prevent arrows from triggering events when cards are moved to table
+			for card in cards:
+				card.target(False)
+			return cards
 		else:
-			return Card(ids[0]) if len(ids) == 1 else None
+			card = Card(ids[0]) if len(ids) == 1 else None
+			# Clear target state to prevent arrows from triggering events when card is moved to table
+			if card:
+				card.target(False)
+			return card
 	@property
 	def board(self): return _api.GetBoard()
 	@board.setter
